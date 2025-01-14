@@ -279,7 +279,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// # use icu::segmenter::LineSegmenter;
 /// #
-/// # let segmenter = LineSegmenter::new_root_auto();
+/// # let segmenter = LineSegmenter::new_auto();
 /// #
 /// let text = "Summary\r\nThis annex…";
 /// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
@@ -309,7 +309,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu::segmenter::LineSegmenter;
 ///
-/// let segmenter = LineSegmenter::new_root_auto();
+/// let segmenter = LineSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -340,7 +340,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu::segmenter::LineSegmenter;
 ///
-/// let segmenter = LineSegmenter::new_root_auto();
+/// let segmenter = LineSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -353,7 +353,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// use icu::properties::{props::LineBreak, CodePointMapData};
 /// use icu::segmenter::LineSegmenter;
 ///
-/// # let segmenter = LineSegmenter::new_root_auto();
+/// # let segmenter = LineSegmenter::new_auto();
 /// #
 /// let text = "Summary\r\nThis annex…";
 ///
@@ -394,13 +394,13 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
-    pub fn new_root_auto() -> Self {
+    pub fn new_auto() -> Self {
         Self::new_auto_with_options(Default::default())
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_auto)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     #[cfg(feature = "auto")]
-    pub fn try_new_root_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -423,13 +423,13 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_root_lstm() -> Self {
+    pub fn new_lstm() -> Self {
         Self::new_lstm_with_options(Default::default())
     }
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_lstm)]
-    pub fn try_new_root_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
@@ -451,12 +451,12 @@ impl LineSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_root_dictionary() -> Self {
+    pub fn new_dictionary() -> Self {
         Self::new_dictionary_with_options(Default::default())
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_root_dictionary)]
-    pub fn try_new_root_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
@@ -471,7 +471,7 @@ impl LineSegmenter {
     ///
     /// The current behavior, which is subject to change, is to use the LSTM model when available.
     ///
-    /// See also [`Self::new_root_auto`].
+    /// See also [`Self::new_auto`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
     ///
@@ -515,7 +515,7 @@ impl LineSegmenter {
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
     /// the full dictionary but more expensive during segmentation (inference).
     ///
-    /// See also [`Self::new_root_lstm`].
+    /// See also [`Self::new_lstm`].
     ///
     /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
     ///
@@ -528,7 +528,7 @@ impl LineSegmenter {
             payload: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
             ),
-            complex: ComplexPayloads::new_root_lstm(),
+            complex: ComplexPayloads::new_lstm(),
         }
     }
 
@@ -569,7 +569,7 @@ impl LineSegmenter {
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.
     ///
-    /// See also [`Self::new_root_dictionary`].
+    /// See also [`Self::new_dictionary`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -1522,7 +1522,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineSegmenter::try_new_root_dictionary_unstable(&crate::provider::Baked)
+        let segmenter = LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked)
             .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
@@ -1705,7 +1705,7 @@ mod tests {
     fn thai_line_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let segmenter = LineSegmenter::new_root_lstm();
+        let segmenter = LineSegmenter::new_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(breaks, [0, 12, 21, 33, TEST_STR.len()], "Thai test");
 
@@ -1724,7 +1724,7 @@ mod tests {
         // "Burmese Language" in Burmese
         const TEST_STR: &str = "မြန်မာဘာသာစကား";
 
-        let segmenter = LineSegmenter::new_root_lstm();
+        let segmenter = LineSegmenter::new_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // LSTM model breaks more characters, but it is better to return [30].
         assert_eq!(breaks, [0, 12, 18, 30, TEST_STR.len()], "Burmese test");
@@ -1740,7 +1740,7 @@ mod tests {
     fn khmer_line_break() {
         const TEST_STR: &str = "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស";
 
-        let segmenter = LineSegmenter::new_root_lstm();
+        let segmenter = LineSegmenter::new_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: This small sample matches the ICU dictionary segmenter
         assert_eq!(breaks, [0, 39, 48, 54, 72, TEST_STR.len()], "Khmer test");
@@ -1759,7 +1759,7 @@ mod tests {
     fn lao_line_break() {
         const TEST_STR: &str = "ກ່ຽວກັບສິດຂອງມະນຸດ";
 
-        let segmenter = LineSegmenter::new_root_lstm();
+        let segmenter = LineSegmenter::new_lstm();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: LSTM finds a break at '12' that the dictionary does not find
         assert_eq!(breaks, [0, 12, 21, 30, 39, TEST_STR.len()], "Lao test");
@@ -1771,7 +1771,7 @@ mod tests {
 
     #[test]
     fn empty_string() {
-        let segmenter = LineSegmenter::new_root_auto();
+        let segmenter = LineSegmenter::new_auto();
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
         assert_eq!(breaks, [0]);
     }
