@@ -206,8 +206,7 @@ fn word_break_test(file: &'static str) {
     let mut options = WordBreakOptions::default();
     let langid = langid!("sv");
     options.content_locale = Some(&langid);
-    let segmenter =
-        WordSegmenter::try_new_dictionary_with_options(options).expect("Loading should succeed!");
+    let segmenter = WordSegmenter::try_new_dictionary(options).expect("Loading should succeed!");
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

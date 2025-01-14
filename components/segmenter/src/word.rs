@@ -222,38 +222,20 @@ impl WordSegmenter {
     }
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
-            + ?Sized,
-    {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_auto(provider)?,
-            payload_locale_override: None,
-        })
-    }
-
-    #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_data_constructors!(
         (options: WordBreakOptions) -> error: DataError,
         functions: [
-            try_new_auto_with_options,
-            try_new_auto_with_options_with_any_provider,
-            try_new_auto_with_options_with_buffer_provider,
-            try_new_auto_with_options_unstable,
+            try_new_auto,
+            try_new_auto_with_any_provider,
+            try_new_auto_with_buffer_provider,
+            try_new_auto_unstable,
             Self
         ]
     );
 
     #[cfg(feature = "auto")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_with_options_unstable<D>(
+    pub fn try_new_auto_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
@@ -334,37 +316,20 @@ impl WordSegmenter {
     }
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
-            + ?Sized,
-    {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_lstm(provider)?,
-            payload_locale_override: None,
-        })
-    }
-
-    #[cfg(feature = "lstm")]
     icu_provider::gen_any_buffer_data_constructors!(
         (options: WordBreakOptions) -> error: DataError,
         functions: [
-            try_new_lstm_with_options,
-            try_new_lstm_with_options_with_any_provider,
-            try_new_lstm_with_options_with_buffer_provider,
-            try_new_lstm_with_options_unstable,
+            try_new_lstm,
+            try_new_lstm_with_any_provider,
+            try_new_lstm_with_buffer_provider,
+            try_new_lstm_unstable,
             Self
         ]
     );
 
     #[cfg(feature = "lstm")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_with_options_unstable<D>(
+    pub fn try_new_lstm_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
@@ -437,36 +402,19 @@ impl WordSegmenter {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
-            + ?Sized,
-    {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_dict(provider)?,
-            payload_locale_override: None,
-        })
-    }
-
     icu_provider::gen_any_buffer_data_constructors!(
         (options: WordBreakOptions) -> error: DataError,
         functions: [
-            try_new_dictionary_with_options,
-            try_new_dictionary_with_options_with_any_provider,
-            try_new_dictionary_with_options_with_buffer_provider,
-            try_new_dictionary_with_options_unstable,
+            try_new_dictionary,
+            try_new_dictionary_with_any_provider,
+            try_new_dictionary_with_buffer_provider,
+            try_new_dictionary_unstable,
             Self
         ]
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_with_options_unstable<D>(
+    pub fn try_new_dictionary_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
