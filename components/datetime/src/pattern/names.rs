@@ -449,7 +449,7 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
 ///
-/// let mut dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
+/// let mut dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian).unwrap();
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
@@ -1016,11 +1016,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1128,7 +1128,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1195,11 +1195,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1272,11 +1272,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1349,11 +1349,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1426,11 +1426,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///

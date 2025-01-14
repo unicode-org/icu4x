@@ -291,11 +291,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        #[cfg(feature = "compiled_data")]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<DateTime>, CalendarParseError> {
-            Ok(Box::new(DateTime(
-                icu_calendar::DateTime::try_from_utf8(v)?.wrap_calendar_in_arc(),
-            )))
+        pub fn from_string(
+            v: &DiplomatStr,
+            calendar: &Calendar,
+        ) -> Result<Box<DateTime>, CalendarParseError> {
+            Ok(Box::new(DateTime(icu_calendar::DateTime::try_from_utf8(
+                v,
+                calendar.0.clone(),
+            )?)))
         }
 
         /// Gets a copy of the date contained in this object

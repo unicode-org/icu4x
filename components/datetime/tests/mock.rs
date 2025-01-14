@@ -33,8 +33,7 @@ use icu_timezone::{models, CustomZonedDateTime, IxdtfParser, TimeZoneInfo, ZoneV
 /// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
 /// ```
 pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
-    let datetime_iso = DateTime::try_iso_from_str(input).unwrap();
-    datetime_iso.to_calendar(Gregorian)
+    DateTime::try_from_str(input, Gregorian).unwrap()
 }
 
 /// Parse a [`DateTime`] and [`TimeZoneInfo`] from a string.
@@ -58,10 +57,10 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
 ) -> CustomZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
-    let iso_zdt = match IxdtfParser::new().try_iso_from_str(input) {
+    match IxdtfParser::new().try_from_str(input, Gregorian) {
         Ok(zdt) => zdt,
         Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
-            match IxdtfParser::new().try_loose_iso_from_str(input) {
+            match IxdtfParser::new().try_loose_from_str(input, Gregorian) {
                 Ok(zdt) => {
                     CustomZonedDateTime {
                         date: zdt.date,
@@ -74,6 +73,5 @@ pub fn parse_zoned_gregorian_from_str(
             }
         }
         Err(e) => panic!("could not parse input: {input}: {e:?}"),
-    };
-    iso_zdt.to_calendar(Gregorian)
+    }
 }

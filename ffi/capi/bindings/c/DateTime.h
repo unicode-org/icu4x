@@ -33,7 +33,7 @@ icu4x_DateTime_from_codes_in_calendar_mv1_result icu4x_DateTime_from_codes_in_ca
 DateTime* icu4x_DateTime_from_date_and_time_mv1(const Date* date, const Time* time);
 
 typedef struct icu4x_DateTime_from_string_mv1_result {union {DateTime* ok; CalendarParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
-icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(DiplomatStringView v);
+icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(DiplomatStringView v, const Calendar* calendar);
 
 Date* icu4x_DateTime_date_mv1(const DateTime* self);
 
