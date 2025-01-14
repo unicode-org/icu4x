@@ -1129,7 +1129,7 @@ impl AnyCalendarKind {
         if let Some(kind) = Self::get_for_prefs(prefs) {
             kind
         } else {
-            let lang = prefs.locale_prefs.language;
+            let lang = prefs.locale_prefs.language();
             if lang == language!("th") {
                 Self::Buddhist
             } else if lang == language!("sa") {

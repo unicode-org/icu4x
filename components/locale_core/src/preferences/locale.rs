@@ -5,21 +5,20 @@
 use crate::subtags::{Language, Region, Script, Subtag, Variant, Variants};
 
 /// The structure storing locale subtags used in preferences.
-#[allow(clippy::exhaustive_structs)] // this type is stable
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LocalePreferences {
     /// Preference of Language
-    pub language: Language,
+    pub(crate) language: Language,
     /// Preference of Script
-    pub script: Option<Script>,
+    pub(crate) script: Option<Script>,
     /// Preference of Region
-    pub region: Option<Region>,
+    pub(crate) region: Option<Region>,
     /// Preference of Variant
-    pub variant: Option<Variant>,
+    pub(crate) variant: Option<Variant>,
     /// Preference of Regional Subdivision
-    pub subdivision: Option<Subtag>,
+    pub(crate) subdivision: Option<Subtag>,
     /// Preference of Unicode Extension Region
-    pub ue_region: Option<Region>,
+    pub(crate) ue_region: Option<Region>,
 }
 
 impl Default for LocalePreferences {
@@ -115,6 +114,32 @@ impl LocalePreferences {
         }
     }
 
+    /// Preference of Language
+    pub const fn language(&self) -> Language {
+        self.language
+    }
+    /// Preference of Script
+    pub const fn script(&self) -> Option<Script> {
+        self.script
+    }
+    /// Preference of Region
+    pub const fn region(&self) -> Option<Region> {
+        self.region
+    }
+
+    /// Preference of Variant
+    pub const fn variant(&self) -> Option<Variant> {
+        self.variant
+    }
+
+    /// Preference of Regional Subdivision
+    pub const fn subdivision(&self) -> Option<Subtag> {
+        self.subdivision
+    }
+    /// Preference of Unicode Extension Region
+    pub const fn ue_region(&self) -> Option<Region> {
+        self.ue_region
+    }
     /// Extends the preferences with the values from another set of preferences.
     pub fn extend(&mut self, other: LocalePreferences) {
         if !other.language.is_default() {

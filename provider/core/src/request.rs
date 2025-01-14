@@ -293,9 +293,9 @@ impl DataLocale {
         info: DataMarkerInfo,
     ) -> Self {
         Self {
-            language: locale.language,
-            script: locale.script,
-            region: match (locale.region, locale.ue_region) {
+            language: locale.language(),
+            script: locale.script(),
+            region: match (locale.region(), locale.ue_region()) {
                 (Some(_), Some(r))
                     if matches!(
                         info.fallback_config.priority,
@@ -306,8 +306,8 @@ impl DataLocale {
                 }
                 (r, _) => r,
             },
-            variant: locale.variant,
-            subdivision: locale.subdivision,
+            variant: locale.variant(),
+            subdivision: locale.subdivision(),
         }
     }
 }
