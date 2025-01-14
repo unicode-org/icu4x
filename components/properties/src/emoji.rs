@@ -120,13 +120,13 @@ impl EmojiSetDataBorrowed<'_> {
 
     /// Check if the set contains the code point.
     #[inline]
-    pub fn contains(&self, ch: char) -> bool {
+    pub fn contains(self, ch: char) -> bool {
         self.set.contains(ch)
     }
 
     /// See [`Self::contains`].
     #[inline]
-    pub fn contains32(&self, cp: u32) -> bool {
+    pub fn contains32(self, cp: u32) -> bool {
         self.set.contains32(cp)
     }
 }

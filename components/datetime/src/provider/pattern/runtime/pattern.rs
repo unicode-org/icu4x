@@ -143,7 +143,7 @@ impl<'data> PatternBorrowed<'data> {
         metadata: PatternMetadata::DEFAULT,
     };
 
-    pub(crate) fn as_pattern(&self) -> Pattern<'data> {
+    pub(crate) fn as_pattern(self) -> Pattern<'data> {
         Pattern {
             items: self.items.as_zerovec(),
             metadata: self.metadata,

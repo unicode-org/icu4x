@@ -150,7 +150,7 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
     /// ```
     #[inline]
-    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
+    pub fn get_strict_u16(self, name: &str) -> Option<u16> {
         get_strict_u16(self.map, name)
     }
 
@@ -176,7 +176,7 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
     /// ```
     #[inline]
-    pub fn get_strict(&self, name: &str) -> Option<T> {
+    pub fn get_strict(self, name: &str) -> Option<T> {
         T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
     }
 
@@ -206,7 +206,7 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// );
     /// ```
     #[inline]
-    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
+    pub fn get_loose_u16(self, name: &str) -> Option<u16> {
         get_loose_u16(self.map, name)
     }
 
@@ -236,7 +236,7 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// );
     /// ```
     #[inline]
-    pub fn get_loose(&self, name: &str) -> Option<T> {
+    pub fn get_loose(self, name: &str) -> Option<T> {
         T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
     }
 }
@@ -411,7 +411,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     }
 }
 
-impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'_, T> {
+impl<'a, T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'a, T> {
     /// Get the property name given a value
     ///
     /// # Example
@@ -431,7 +431,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'_, T> {
     /// );
     /// ```
     #[inline]
-    pub fn get(&self, property: T) -> Option<&str> {
+    pub fn get(self, property: T) -> Option<&'a str> {
         self.map.get(property.to_u32())
     }
 }
@@ -544,7 +544,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     }
 }
 
-impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'_, T> {
+impl<'a, T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'a, T> {
     /// Get the property name given a value
     ///
     /// # Example
@@ -558,7 +558,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'_, T> {
     /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("AL"));
     /// ```
     #[inline]
-    pub fn get(&self, property: T) -> Option<&str> {
+    pub fn get(self, property: T) -> Option<&'a str> {
         self.map.get(property.to_u32())
     }
 }
@@ -603,7 +603,7 @@ impl PropertyNamesShortBorrowed<'_, Script> {
     /// );
     /// ```
     #[inline]
-    pub fn get_locale_script(&self, property: Script) -> Option<icu_locale_core::subtags::Script> {
+    pub fn get_locale_script(self, property: Script) -> Option<icu_locale_core::subtags::Script> {
         let prop = usize::try_from(property.to_u32()).ok()?;
         self.map.map.get(prop).and_then(|o| o.0)
     }

@@ -44,7 +44,7 @@ use icu_provider::prelude::*;
 /// However, this API is provided for callers such as HarfBuzz that specifically
 /// want access to the raw canonical composition operation e.g. for use in a
 /// glyph-availability-guided custom normalizer.
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct CanonicalCompositionBorrowed<'a> {
     canonical_compositions: &'a CanonicalCompositionsV1<'a>,
 }
@@ -100,7 +100,7 @@ impl CanonicalCompositionBorrowed<'_> {
     /// assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
     /// ```
     #[inline(always)]
-    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+    pub fn compose(self, starter: char, second: char) -> Option<char> {
         crate::compose(
             self.canonical_compositions.canonical_compositions.iter(),
             starter,
