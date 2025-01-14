@@ -64,15 +64,8 @@ name = "date"
 harness = false
 
 [[bench]]
-name = "datetime"
-harness = false
-
-[[bench]]
 name = "convert"
 harness = false
 
 [[example]]
 name = "iso_date_manipulations"
-
-[[example]]
-name = "iso_datetime_manipulations"

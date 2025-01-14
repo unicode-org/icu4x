@@ -151,25 +151,6 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
         "icu::calendar::Date::try_new_ummalqura_with_calendar",
-        "icu::calendar::DateTime::try_new_buddhist",
-        "icu::calendar::DateTime::try_new_chinese_with_calendar",
-        "icu::calendar::DateTime::try_new_coptic",
-        "icu::calendar::DateTime::try_new_dangi",
-        "icu::calendar::DateTime::try_new_dangi_with_calendar",
-        "icu::calendar::DateTime::try_new_ethiopian",
-        "icu::calendar::DateTime::try_new_gregorian",
-        "icu::calendar::DateTime::try_new_hebrew",
-        "icu::calendar::DateTime::try_new_hebrew_with_calendar",
-        "icu::calendar::DateTime::try_new_indian",
-        "icu::calendar::DateTime::try_new_islamic_civil_with_calendar",
-        "icu::calendar::DateTime::try_new_islamic_tabular_with_calendar",
-        "icu::calendar::DateTime::try_new_japanese_with_calendar",
-        "icu::calendar::DateTime::try_new_japanese_extended_with_calendar",
-        "icu::calendar::DateTime::try_new_julian",
-        "icu::calendar::DateTime::try_new_observational_islamic_with_calendar",
-        "icu::calendar::DateTime::try_new_persian",
-        "icu::calendar::DateTime::try_new_roc",
-        "icu::calendar::DateTime::try_new_ummalqura_with_calendar",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
@@ -349,8 +330,6 @@ lazy_static::lazy_static! {
         // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
-        "icu::calendar::DateTime::wrap_calendar_in_rc",
-        "icu::calendar::DateTime::wrap_calendar_in_arc",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike

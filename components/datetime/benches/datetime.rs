@@ -30,7 +30,8 @@ fn datetime_benches(c: &mut Criterion) {
                             if has_zones {
                                 mock::parse_zoned_gregorian_from_str(value)
                             } else {
-                                let DateTime { date, time } = mock::parse_gregorian_from_str(value);
+                                let DateTime { date, time } =
+                                    DateTime::try_from_str(value, Gregorian).unwrap();
                                 ZonedDateTime {
                                     date,
                                     time,

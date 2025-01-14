@@ -9,7 +9,7 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::DateTime;
+use icu_calendar::{Date, DateTime, Time};
 use icu_datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
 use icu_locale_core::locale;
 
@@ -33,8 +33,10 @@ fn main() {
     println!("\n====== Work Log (en) example ============");
 
     for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
-        let date = DateTime::try_new_gregorian(year, month, day, hour, minute, second)
-            .expect("datetime should parse");
+        let date = DateTime {
+            date: Date::try_new_gregorian(year, month, day).expect("date should parse"),
+            time: Time::try_new(hour, minute, second, 0).expect("time should parse"),
+        };
         let fdt = dtf.format(&date);
         println!("{idx}) {}", fdt);
     }

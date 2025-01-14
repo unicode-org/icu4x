@@ -70,27 +70,6 @@
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //! ```
 //!
-//! Example using `DateTime` object. Similar to `Date` objects, `DateTime` objects
-//! contain an accessible `Date` object containing information about the day, month,
-//! year, and calendar type. Additionally, `DateTime` objects contain an accessible
-//! `Time` object, including granularity of hour, minute, second, and nanosecond.
-//!
-//! ```rust
-//! use icu::calendar::{types::IsoWeekday, DateTime, Time};
-//!
-//! // Creating ISO date: 1992-09-02 8:59
-//! let mut datetime_iso = DateTime::try_new_iso(1992, 9, 2, 8, 59, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//!
-//! assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
-//! assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1992);
-//! assert_eq!(datetime_iso.date.month().ordinal, 9);
-//! assert_eq!(datetime_iso.date.day_of_month().0, 2);
-//! assert_eq!(datetime_iso.time.hour.number(), 8);
-//! assert_eq!(datetime_iso.time.minute.number(), 59);
-//! assert_eq!(datetime_iso.time.second.number(), 0);
-//! assert_eq!(datetime_iso.time.nanosecond.number(), 0);
-//! ```
 //! [`ICU4X`]: ../icu/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations

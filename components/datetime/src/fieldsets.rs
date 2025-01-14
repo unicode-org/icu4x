@@ -559,7 +559,7 @@ macro_rules! impl_date_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::DateTime;
+            /// use icu::calendar::{DateTime, Date, Time};
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
@@ -570,7 +570,7 @@ macro_rules! impl_date_marker {
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = DateTime::try_new_iso(2024, 5, 17, 15, 47, 50).unwrap();
+            /// let dt = DateTime { date: Date::try_new_iso(2024, 5, 17).unwrap(), time: Time::try_new(15, 47, 50, 0).unwrap() };
             ///
             /// assert_writeable_eq!(
             ///     fmt.format_any_calendar(&dt),
@@ -581,7 +581,7 @@ macro_rules! impl_date_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::DateTime;
+            /// use icu::calendar::{DateTime, Date, Time};
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
@@ -593,7 +593,7 @@ macro_rules! impl_date_marker {
             #[doc = concat!("    ", length_option_helper!($type_time, $sample_length), ",")]
             /// )
             /// .unwrap();
-            /// let dt = DateTime::try_new_gregorian(2024, 5, 17, 15, 47, 50).unwrap();
+            /// let dt = DateTime { date: Date::try_new_iso(2024, 5, 17).unwrap(), time: Time::try_new(15, 47, 50, 0).unwrap() };
             ///
             /// assert_writeable_eq!(
             ///     fmt.format(&dt),
@@ -1227,15 +1227,15 @@ impl_zone_marker!(
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail,E0271
-    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::calendar::{DateTime, Date, Iso, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::Z;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-    /// use tinystr::tinystr;
     /// use icu::locale::locale;
+    /// use tinystr::tinystr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
+    /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
     /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
     ///
@@ -1269,15 +1269,15 @@ impl_zone_marker!(
     /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
     ///
     /// ```compile_fail,E0271
-    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::calendar::{Date, DateTime, Iso, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::T;
+    /// use icu::locale::locale;
     /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     /// use tinystr::tinystr;
-    /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let datetime = DateTime::try_new_gregorian(2024, 10, 18, 0, 0, 0).unwrap();
+    /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
     /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
     /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
     ///
