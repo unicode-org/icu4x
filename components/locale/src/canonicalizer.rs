@@ -235,7 +235,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
     pub const fn new_extended() -> Self {
         Self::new_with_expander(LocaleExpander::new_extended())
     }
