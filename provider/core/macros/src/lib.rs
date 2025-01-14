@@ -331,7 +331,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {icu_provider::fallback::LocaleFallbackPriority::default()}
             };
             let attributes_domain_setter = if let Some(attributes_domain_lit) = attributes_domain {
-                quote! { info.attributes_domain = #attributes_domain_lit; }
+                quote! { info = info.with_attributes_domain(#attributes_domain_lit); }
             } else {
                 quote!()
             };
