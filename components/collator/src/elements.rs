@@ -1888,11 +1888,9 @@ where
                                     while !remaining.is_empty() {
                                         // Numeric CEs are generated for segments of
                                         // up to 254 digits.
-                                        let (head, tail) = if remaining.len() > 254 {
-                                            remaining.split_at(254)
-                                        } else {
-                                            (remaining, &b""[..])
-                                        };
+                                        let (head, tail) = remaining
+                                            .split_at_checked(254)
+                                            .unwrap_or((remaining, b""));
                                         remaining = tail;
                                         // From ICU4C CollationIterator::appendNumericSegmentCEs
                                         if head.len() <= 7 {

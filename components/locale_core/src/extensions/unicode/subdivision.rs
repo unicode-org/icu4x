@@ -122,10 +122,9 @@ impl SubdivisionId {
             })
             .ok_or(ParseError::InvalidExtension)?;
         let region_len = if is_alpha { 2 } else { 3 };
-        if code_units.len() < region_len + 1 {
-            return Err(ParseError::InvalidExtension);
-        }
-        let (region_code_units, suffix_code_units) = code_units.split_at(region_len);
+        let (region_code_units, suffix_code_units) = code_units
+            .split_at_checked(region_len)
+            .ok_or(ParseError::InvalidExtension)?;
         let region =
             Region::try_from_utf8(region_code_units).map_err(|_| ParseError::InvalidExtension)?;
         let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;

@@ -111,22 +111,16 @@ where
     V: VarULE + ?Sized,
 {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        // TODO: use split_first_chunk_mut in 1.77
-        if bytes.len() < size_of::<A::ULE>() {
-            return Err(UleError::length::<Self>(bytes.len()));
-        }
-        let (sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
+        let (sized_chunk, variable_chunk) = bytes
+            .split_at_checked(size_of::<A::ULE>())
+            .ok_or(UleError::length::<Self>(bytes.len()))?;
         A::ULE::validate_bytes(sized_chunk)?;
         V::validate_bytes(variable_chunk)?;
         Ok(())
     }
 
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        #[allow(clippy::panic)] // panic is documented in function contract
-        if bytes.len() < size_of::<A::ULE>() {
-            panic!("from_bytes_unchecked called with short slice")
-        }
-        let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
+        let (_sized_chunk, variable_chunk) = bytes.split_at_unchecked(size_of::<A::ULE>());
         // Safety: variable_chunk is a valid V because of this function's precondition: bytes is a valid Self,
         // and a valid Self contains a valid V after the space needed for A::ULE.
         let variable_ref = V::from_bytes_unchecked(variable_chunk);
