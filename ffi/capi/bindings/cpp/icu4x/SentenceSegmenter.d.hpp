@@ -38,8 +38,6 @@ public:
 
   inline static std::unique_ptr<icu4x::SentenceSegmenter> create();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
-
   inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale(const icu4x::Locale& locale);
 
   inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);

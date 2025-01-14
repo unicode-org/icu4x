@@ -16,8 +16,6 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct LocaleDirectionality; }
 class LocaleDirectionality;
-namespace capi { struct LocaleExpander; }
-class LocaleExpander;
 class DataError;
 class LocaleDirection;
 }
@@ -33,13 +31,13 @@ namespace icu4x {
 class LocaleDirectionality {
 public:
 
-  inline static std::unique_ptr<icu4x::LocaleDirectionality> create();
+  inline static std::unique_ptr<icu4x::LocaleDirectionality> create_common();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_common_with_provider(const icu4x::DataProvider& provider);
 
-  inline static std::unique_ptr<icu4x::LocaleDirectionality> create_with_expander(const icu4x::LocaleExpander& expander);
+  inline static std::unique_ptr<icu4x::LocaleDirectionality> create_extended();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_with_expander_and_provider(const icu4x::DataProvider& provider, const icu4x::LocaleExpander& expander);
+  inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_extended_with_provider(const icu4x::DataProvider& provider);
 
   inline icu4x::LocaleDirection get(const icu4x::Locale& locale) const;
 
