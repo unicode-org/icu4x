@@ -343,7 +343,7 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0277
     /// use icu::calendar::Time;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -357,6 +357,7 @@ where
     ///     )
     ///     .unwrap();
     ///
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
     /// formatter.format(&Time::midnight());
     /// ```
     pub fn format<I>(&self, input: &I) -> FormattedDateTime
@@ -574,7 +575,7 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0277
     /// use icu::calendar::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
@@ -582,10 +583,11 @@ where
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     Length::Long.into(),
+    ///     YMD::long(),
     /// )
     /// .unwrap();
     ///
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
     /// formatter.format_same_calendar(&Time::midnight());
     /// ```
     pub fn format_same_calendar<I>(
@@ -633,7 +635,7 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
+    /// ```compile_fail,E0277
     /// use icu::calendar::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
@@ -641,10 +643,11 @@ where
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     Length::Long.into(),
+    ///     YMD::long(),
     /// )
     /// .unwrap();
     ///
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
     /// formatter.format_any_calendar(&Time::midnight());
     /// ```
     pub fn format_any_calendar<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
