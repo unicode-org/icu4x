@@ -369,21 +369,21 @@ pub struct DataMarkerPath {
 impl PartialEq for DataMarkerPath {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        self.hash == other.hash && self.tagged == other.tagged
+        self.hash == other.hash
     }
 }
 
 impl Ord for DataMarkerPath {
     #[inline]
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.tagged.cmp(other.tagged)
+        self.hash.cmp(&other.hash)
     }
 }
 
 impl PartialOrd for DataMarkerPath {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.tagged.cmp(other.tagged))
+        Some(self.hash.cmp(&other.hash))
     }
 }
 
