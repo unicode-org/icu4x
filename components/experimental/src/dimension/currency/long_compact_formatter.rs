@@ -101,7 +101,7 @@ impl LongCompactCurrencyFormatter {
             })?;
 
         let locale = &DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
 
         let extended = crate::provider::Baked
@@ -143,8 +143,9 @@ impl LongCompactCurrencyFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
+        let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
+            prefs.locale_preferences,
+        );
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {

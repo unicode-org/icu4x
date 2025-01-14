@@ -110,7 +110,7 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = DataLocale::from_preferences_locale::<ShortCompactDecimalFormatDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
@@ -155,7 +155,7 @@ impl CompactDecimalFormatter {
             + ?Sized,
     {
         let locale = DataLocale::from_preferences_locale::<ShortCompactDecimalFormatDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
@@ -201,7 +201,7 @@ impl CompactDecimalFormatter {
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = DataLocale::from_preferences_locale::<LongCompactDecimalFormatDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
@@ -246,7 +246,7 @@ impl CompactDecimalFormatter {
             + ?Sized,
     {
         let locale = DataLocale::from_preferences_locale::<LongCompactDecimalFormatDataV1Marker>(
-            prefs.locale_prefs,
+            prefs.locale_preferences,
         );
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(

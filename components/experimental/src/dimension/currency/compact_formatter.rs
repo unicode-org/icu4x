@@ -90,8 +90,9 @@ impl CompactCurrencyFormatter {
         prefs: CompactCurrencyFormatterPreferences,
         options: CompactCurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        let short_locale =
-            DataLocale::from_preferences_locale::<ShortCurrencyCompactV1Marker>(prefs.locale_prefs);
+        let short_locale = DataLocale::from_preferences_locale::<ShortCurrencyCompactV1Marker>(
+            prefs.locale_preferences,
+        );
 
         let short_currency_compact = crate::provider::Baked
             .load(DataRequest {
@@ -100,8 +101,9 @@ impl CompactCurrencyFormatter {
             })?
             .payload;
 
-        let essential_locale =
-            DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
+        let essential_locale = DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(
+            prefs.locale_preferences,
+        );
 
         let essential = crate::provider::Baked
             .load(DataRequest {
@@ -138,8 +140,9 @@ impl CompactCurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
             + DataProvider<icu_plurals::provider::CardinalV1Marker>,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = DataLocale::from_preferences_locale::<CurrencyEssentialsV1Marker>(
+            prefs.locale_preferences,
+        );
 
         let compact_decimal_formatter = CompactDecimalFormatter::try_new_short_unstable(
             provider,

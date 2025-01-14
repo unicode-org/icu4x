@@ -194,7 +194,9 @@ impl DatePatternSelectionData {
         attributes: &DataMarkerAttributes,
         options: RawOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let payload = provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
@@ -297,7 +299,9 @@ impl OverlapPatternSelectionData {
         attributes: &DataMarkerAttributes,
         options: RawOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let prefs = RawPreferences::from_prefs(prefs);
         let payload = provider
             .load_bound(DataRequest {
@@ -364,7 +368,9 @@ impl TimePatternSelectionData {
         components: TimeFieldSet,
         options: RawOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let prefs = RawPreferences::from_prefs(prefs);
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
         // or if loading the explicit hour cycle fails, then load with the default hour cycle.
@@ -622,7 +628,9 @@ impl DateTimeZonePatternSelectionData {
         options: RawOptions,
         glue_type: GlueType,
     ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(

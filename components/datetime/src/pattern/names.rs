@@ -1789,7 +1789,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1812,7 +1814,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1835,7 +1839,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1858,7 +1864,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1878,7 +1886,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     where
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Four,
@@ -1903,7 +1913,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     where
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Four,
@@ -1946,7 +1958,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Four,
@@ -1970,7 +1984,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
@@ -1994,7 +2010,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Four,
@@ -2018,7 +2036,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
