@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{Date, DateTime, Gregorian, Time};
+use icu_calendar::{Date, Gregorian};
 use icu_datetime::{
     fieldsets::{self, enums::*},
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
@@ -11,6 +11,7 @@ use icu_datetime::{
 };
 use icu_locale_core::Locale;
 use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
+use icu_timezone::{DateTime, Time};
 
 fn assert_resolved_components(
     skeleton: CompositeDateTimeFieldSet,

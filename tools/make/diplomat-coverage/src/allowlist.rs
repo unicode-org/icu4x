@@ -313,12 +313,17 @@ lazy_static::lazy_static! {
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
+        "icu::timezone::types::ZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::calendar::types::Time",
+        "icu::timezone::types::Time",
+        "icu::timezone::types::DateTime",
+        "icu::timezone::types::UtcOffset",
+        "icu::timezone::types::ZoneVariant",
+        "icu::timezone::types::ZonedDateTime",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -353,17 +358,17 @@ lazy_static::lazy_static! {
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
-        "icu::calendar::types::MonthCode",
         "icu::calendar::types::DayOfMonth",
+        "icu::calendar::types::DayOfWeekInMonth",
+        "icu::calendar::types::Era",
+        "icu::calendar::types::IsoWeekday",
+        "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",
-        "icu::calendar::types::DayOfWeekInMonth",
-        "icu::calendar::types::IsoHour",
-        "icu::calendar::types::IsoMinute",
-        "icu::calendar::types::IsoSecond",
-        "icu::calendar::types::NanoSecond",
-        "icu::calendar::types::IsoWeekday",
-        "icu::calendar::types::Era",
+        "icu::timezone::types::IsoHour",
+        "icu::timezone::types::IsoMinute",
+        "icu::timezone::types::IsoSecond",
+        "icu::timezone::types::NanoSecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.

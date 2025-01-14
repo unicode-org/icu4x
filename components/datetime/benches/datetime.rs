@@ -7,9 +7,9 @@ mod fixtures;
 use criterion::{criterion_group, criterion_main, Criterion};
 use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
 
-use icu_calendar::{Date, DateTime, Gregorian, Time};
+use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{TimeZoneInfo, ZoneVariant, ZonedDateTime};
+use icu_timezone::{DateTime, Time, TimeZoneInfo, ZoneVariant, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]

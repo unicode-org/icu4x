@@ -4,7 +4,325 @@
 
 use crate::error::InvalidOffsetError;
 use core::str::FromStr;
-use icu_calendar::{AsCalendar, Date, Time};
+use icu_calendar::{AsCalendar, Date, RangeError};
+
+/// This macro defines a struct for 0-based date fields: hours, minutes, seconds
+/// and fractional seconds. Each unit is bounded by a range. The traits implemented
+/// here will return a Result on whether or not the unit is in range from the given
+/// input.
+macro_rules! dt_unit {
+    ($name:ident, $storage:ident, $value:expr, $docs:expr) => {
+        #[doc=$docs]
+        #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Ord, PartialOrd, Hash)]
+        pub struct $name($storage);
+
+        impl $name {
+            /// Gets the numeric value for this component.
+            pub const fn number(self) -> $storage {
+                self.0
+            }
+
+            /// Creates a new value at 0.
+            pub const fn zero() -> $name {
+                Self(0)
+            }
+        }
+
+        impl TryFrom<$storage> for $name {
+            type Error = RangeError;
+
+            fn try_from(input: $storage) -> Result<Self, Self::Error> {
+                if input > $value {
+                    Err(RangeError {
+                        field: "$name",
+                        min: 0,
+                        max: $value,
+                        value: input as i32,
+                    })
+                } else {
+                    Ok(Self(input))
+                }
+            }
+        }
+
+        impl TryFrom<usize> for $name {
+            type Error = RangeError;
+
+            fn try_from(input: usize) -> Result<Self, Self::Error> {
+                if input > $value {
+                    Err(RangeError {
+                        field: "$name",
+                        min: 0,
+                        max: $value,
+                        value: input as i32,
+                    })
+                } else {
+                    Ok(Self(input as $storage))
+                }
+            }
+        }
+
+        impl From<$name> for $storage {
+            fn from(input: $name) -> Self {
+                input.0
+            }
+        }
+
+        impl From<$name> for usize {
+            fn from(input: $name) -> Self {
+                input.0 as Self
+            }
+        }
+
+        impl $name {
+            /// Attempts to add two values.
+            /// Returns `Some` if the sum is within bounds.
+            /// Returns `None` if the sum is out of bounds.
+            pub fn try_add(self, other: $storage) -> Option<Self> {
+                let sum = self.0.saturating_add(other);
+                if sum > $value {
+                    None
+                } else {
+                    Some(Self(sum))
+                }
+            }
+
+            /// Attempts to subtract two values.
+            /// Returns `Some` if the difference is within bounds.
+            /// Returns `None` if the difference is out of bounds.
+            pub fn try_sub(self, other: $storage) -> Option<Self> {
+                self.0.checked_sub(other).map(Self)
+            }
+
+            /// Returns whether the value is zero.
+            #[inline]
+            pub fn is_zero(self) -> bool {
+                self.0 == 0
+            }
+        }
+    };
+}
+
+dt_unit!(
+    IsoHour,
+    u8,
+    24,
+    "An ISO-8601 hour component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 24]`. The value could be equal to 24 to
+denote the end of a day, with the writing 24:00:00. It corresponds to the same
+time as the next day at 00:00:00."
+);
+
+dt_unit!(
+    IsoMinute,
+    u8,
+    60,
+    "An ISO-8601 minute component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 60]`. The value could be equal to 60 to
+denote the end of an hour, with the writing 12:60:00. This example corresponds
+to the same time as 13:00:00. This is an extension to ISO 8601."
+);
+
+dt_unit!(
+    IsoSecond,
+    u8,
+    61,
+    "An ISO-8601 second component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 61]`. `60` accommodates for leap seconds.
+
+The value could also be equal to 60 or 61, to indicate the end of a leap second,
+with the writing `23:59:61.000000000Z` or `23:59:60.000000000Z`. These examples,
+if used with this goal, would correspond to the same time as the next day, at
+time `00:00:00.000000000Z`. This is an extension to ISO 8601."
+);
+
+dt_unit!(
+    NanoSecond,
+    u32,
+    999_999_999,
+    "A fractional second component, stored as nanoseconds.
+
+Must be within inclusive bounds `[0, 999_999_999]`."
+);
+
+#[test]
+fn test_iso_hour_arithmetic() {
+    const HOUR_MAX: u8 = 24;
+    const HOUR_VALUE: u8 = 5;
+    let hour = IsoHour(HOUR_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        hour.try_add(HOUR_VALUE - 1),
+        Some(IsoHour(HOUR_VALUE + (HOUR_VALUE - 1)))
+    );
+    assert_eq!(
+        hour.try_sub(HOUR_VALUE - 1),
+        Some(IsoHour(HOUR_VALUE - (HOUR_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(hour.try_add(HOUR_MAX - HOUR_VALUE), Some(IsoHour(HOUR_MAX)));
+    assert_eq!(hour.try_sub(HOUR_VALUE), Some(IsoHour(0)));
+
+    // out of bounds
+    assert_eq!(hour.try_add(1 + HOUR_MAX - HOUR_VALUE), None);
+    assert_eq!(hour.try_sub(1 + HOUR_VALUE), None);
+}
+
+#[test]
+fn test_iso_minute_arithmetic() {
+    const MINUTE_MAX: u8 = 60;
+    const MINUTE_VALUE: u8 = 5;
+    let minute = IsoMinute(MINUTE_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        minute.try_add(MINUTE_VALUE - 1),
+        Some(IsoMinute(MINUTE_VALUE + (MINUTE_VALUE - 1)))
+    );
+    assert_eq!(
+        minute.try_sub(MINUTE_VALUE - 1),
+        Some(IsoMinute(MINUTE_VALUE - (MINUTE_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(
+        minute.try_add(MINUTE_MAX - MINUTE_VALUE),
+        Some(IsoMinute(MINUTE_MAX))
+    );
+    assert_eq!(minute.try_sub(MINUTE_VALUE), Some(IsoMinute(0)));
+
+    // out of bounds
+    assert_eq!(minute.try_add(1 + MINUTE_MAX - MINUTE_VALUE), None);
+    assert_eq!(minute.try_sub(1 + MINUTE_VALUE), None);
+}
+
+#[test]
+fn test_iso_second_arithmetic() {
+    const SECOND_MAX: u8 = 61;
+    const SECOND_VALUE: u8 = 5;
+    let second = IsoSecond(SECOND_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        second.try_add(SECOND_VALUE - 1),
+        Some(IsoSecond(SECOND_VALUE + (SECOND_VALUE - 1)))
+    );
+    assert_eq!(
+        second.try_sub(SECOND_VALUE - 1),
+        Some(IsoSecond(SECOND_VALUE - (SECOND_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(
+        second.try_add(SECOND_MAX - SECOND_VALUE),
+        Some(IsoSecond(SECOND_MAX))
+    );
+    assert_eq!(second.try_sub(SECOND_VALUE), Some(IsoSecond(0)));
+
+    // out of bounds
+    assert_eq!(second.try_add(1 + SECOND_MAX - SECOND_VALUE), None);
+    assert_eq!(second.try_sub(1 + SECOND_VALUE), None);
+}
+
+#[test]
+fn test_iso_nano_second_arithmetic() {
+    const NANO_SECOND_MAX: u32 = 999_999_999;
+    const NANO_SECOND_VALUE: u32 = 5;
+    let nano_second = NanoSecond(NANO_SECOND_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        nano_second.try_add(NANO_SECOND_VALUE - 1),
+        Some(NanoSecond(NANO_SECOND_VALUE + (NANO_SECOND_VALUE - 1)))
+    );
+    assert_eq!(
+        nano_second.try_sub(NANO_SECOND_VALUE - 1),
+        Some(NanoSecond(NANO_SECOND_VALUE - (NANO_SECOND_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(
+        nano_second.try_add(NANO_SECOND_MAX - NANO_SECOND_VALUE),
+        Some(NanoSecond(NANO_SECOND_MAX))
+    );
+    assert_eq!(nano_second.try_sub(NANO_SECOND_VALUE), Some(NanoSecond(0)));
+
+    // out of bounds
+    assert_eq!(
+        nano_second.try_add(1 + NANO_SECOND_MAX - NANO_SECOND_VALUE),
+        None
+    );
+    assert_eq!(nano_second.try_sub(1 + NANO_SECOND_VALUE), None);
+}
+
+/// A representation of a time in hours, minutes, seconds, and nanoseconds
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+pub struct Time {
+    /// 0-based hour.
+    pub hour: IsoHour,
+
+    /// 0-based minute.
+    pub minute: IsoMinute,
+
+    /// 0-based second.
+    pub second: IsoSecond,
+
+    /// Fractional second
+    pub nanosecond: NanoSecond,
+}
+
+impl Time {
+    /// Construct a new [`Time`], without validating that all components are in range
+    pub const fn new(
+        hour: IsoHour,
+        minute: IsoMinute,
+        second: IsoSecond,
+        nanosecond: NanoSecond,
+    ) -> Self {
+        Self {
+            hour,
+            minute,
+            second,
+            nanosecond,
+        }
+    }
+
+    /// Construct a new [`Time`] representing midnight (00:00.000)
+    pub const fn midnight() -> Self {
+        Self {
+            hour: IsoHour::zero(),
+            minute: IsoMinute::zero(),
+            second: IsoSecond::zero(),
+            nanosecond: NanoSecond::zero(),
+        }
+    }
+
+    /// Construct a new [`Time`], whilst validating that all components are in range
+    pub fn try_new(hour: u8, minute: u8, second: u8, nanosecond: u32) -> Result<Self, RangeError> {
+        Ok(Self {
+            hour: hour.try_into()?,
+            minute: minute.try_into()?,
+            second: second.try_into()?,
+            nanosecond: nanosecond.try_into()?,
+        })
+    }
+}
+
+/// A date + time for a given calendar.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // this type is stable
+pub struct DateTime<A: AsCalendar> {
+    /// The date
+    pub date: Date<A>,
+    /// The time
+    pub time: Time,
+}
 
 /// A date and time local to a specified custom time zone.
 #[derive(Debug)]

@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Types for dealing with dates, times, and custom calendars.
+//! Types for dealing with dates and custom calendars.
 //!
 //! This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
-//! The [`types`] module has a lot of common types for dealing with dates and times.
+//! The [`types`] module has a lot of common types for dealing with dates.
 //!
 //! [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
 //! can represent dates for arbitrary calendars.
@@ -14,7 +14,7 @@
 //! The [`Iso`] and [`Gregorian`] types are implementations for the ISO and
 //! Gregorian calendars respectively. Further calendars can be found in the [`cal`] module.
 //!
-//! Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
+//! Most interaction with this crate will be done via the [`Date`] type.
 //!
 //! Some of the algorithms implemented here are based on
 //! Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
@@ -93,7 +93,6 @@ extern crate alloc;
 
 // Make sure inherent docs go first
 mod date;
-mod datetime;
 
 /// Types for individual calendars
 pub mod cal {
@@ -183,7 +182,6 @@ pub use crate::ixdtf::ParseError;
 pub use any_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
-pub use datetime::DateTime;
 #[doc(hidden)] // unstable
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
@@ -191,4 +189,3 @@ pub use error::{DateError, RangeError};
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
-pub use types::Time;

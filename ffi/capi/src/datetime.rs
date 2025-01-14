@@ -22,12 +22,12 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
-    #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
-    pub struct IsoDateTime(pub icu_calendar::DateTime<icu_calendar::Iso>);
+    #[diplomat::rust_link(icu::timezone::DateTime, Struct)]
+    pub struct IsoDateTime(pub icu_timezone::DateTime<icu_calendar::Iso>);
 
     impl IsoDateTime {
         /// Creates a new [`IsoDateTime`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(
             year: i32,
@@ -38,19 +38,19 @@ pub mod ffi {
             second: u8,
             nanosecond: u32,
         ) -> Result<Box<IsoDateTime>, CalendarError> {
-            let mut dt = icu_calendar::DateTime {
+            let mut dt = icu_timezone::DateTime {
                 date: icu_calendar::Date::try_new_iso(year, month, day)?,
-                time: icu_calendar::Time::try_new(hour, minute, second, 0)?,
+                time: icu_timezone::Time::try_new(hour, minute, second, 0)?,
             };
             dt.time.nanosecond = nanosecond.try_into()?;
             Ok(Box::new(IsoDateTime(dt)))
         }
 
         /// Creates a new [`IsoDateTime`] from an [`IsoDate`] and [`Time`] object
-        #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_date_and_time(date: &IsoDate, time: &Time) -> Box<IsoDateTime> {
-            let dt = icu_calendar::DateTime {
+            let dt = icu_timezone::DateTime {
                 date: date.0,
                 time: time.0,
             };
@@ -58,25 +58,25 @@ pub mod ffi {
         }
 
         /// Creates a new [`IsoDateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_iso_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, CalendarParseError> {
             Ok(Box::new(IsoDateTime(
-                icu_calendar::DateTime::try_iso_from_utf8(v)?,
+                icu_timezone::DateTime::try_iso_from_utf8(v)?,
             )))
         }
 
         /// Gets the date contained in this object
-        #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
+        #[diplomat::rust_link(icu::timezone::DateTime::date, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn date(&self) -> Box<IsoDate> {
             Box::new(IsoDate(self.0.date))
         }
 
         /// Gets the time contained in this object
-        #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
+        #[diplomat::rust_link(icu::timezone::DateTime::time, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn time(&self) -> Box<Time> {
             Box::new(Time(self.0.time))
@@ -84,44 +84,44 @@ pub mod ffi {
 
         /// Converts this to an [`DateTime`] capable of being mixed with dates of
         /// other calendars
-        #[diplomat::rust_link(icu::calendar::DateTime::to_any, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::DateTime::new_from_iso, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::DateTime::to_any, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::new_from_iso, FnInStruct, hidden)]
         pub fn to_any(&self) -> Box<DateTime> {
-            Box::new(DateTime(icu_calendar::DateTime {
+            Box::new(DateTime(icu_timezone::DateTime {
                 date: self.0.date.to_any().wrap_calendar_in_arc(),
                 time: self.0.time,
             }))
         }
 
         /// Convert this datetime to one in a different calendar
-        #[diplomat::rust_link(icu::calendar::DateTime::to_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::to_calendar, FnInStruct)]
         pub fn to_calendar(&self, calendar: &Calendar) -> Box<DateTime> {
-            Box::new(DateTime(icu_calendar::DateTime {
+            Box::new(DateTime(icu_timezone::DateTime {
                 date: self.0.date.to_calendar(calendar.0.clone()),
                 time: self.0.time,
             }))
         }
 
         /// Returns the hour in this time
-        #[diplomat::rust_link(icu::calendar::Time::hour, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::hour, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn hour(&self) -> u8 {
             self.0.time.hour.into()
         }
         /// Returns the minute in this time
-        #[diplomat::rust_link(icu::calendar::Time::minute, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::minute, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn minute(&self) -> u8 {
             self.0.time.minute.into()
         }
         /// Returns the second in this time
-        #[diplomat::rust_link(icu::calendar::Time::second, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::second, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn second(&self) -> u8 {
             self.0.time.second.into()
         }
         /// Returns the nanosecond in this time
-        #[diplomat::rust_link(icu::calendar::Time::nanosecond, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::nanosecond, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()
@@ -220,8 +220,8 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a date and time for any calendar.
-    #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
-    pub struct DateTime(pub icu_calendar::DateTime<Arc<icu_calendar::AnyCalendar>>);
+    #[diplomat::rust_link(icu::timezone::DateTime, Struct)]
+    pub struct DateTime(pub icu_timezone::DateTime<Arc<icu_calendar::AnyCalendar>>);
 
     impl DateTime {
         /// Creates a new [`DateTime`] representing the ISO date and time
@@ -241,16 +241,16 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<Box<DateTime>, CalendarError> {
             let cal = calendar.0.clone();
-            let dt = icu_calendar::DateTime {
+            let dt = icu_timezone::DateTime {
                 date: icu_calendar::Date::try_new_iso(year, month, day)?.to_calendar(cal),
-                time: icu_calendar::Time::try_new(hour, minute, second, nanosecond)?,
+                time: icu_timezone::Time::try_new(hour, minute, second, nanosecond)?,
             };
             Ok(Box::new(DateTime(dt)))
         }
         /// Creates a new [`DateTime`] from the given codes, which are interpreted in the given calendar system
         ///
         /// An empty era code will treat the year as an extended year
-        #[diplomat::rust_link(icu::calendar::DateTime::try_new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_new_from_codes, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         #[allow(clippy::too_many_arguments)]
         pub fn from_codes_in_calendar(
@@ -280,22 +280,22 @@ pub mod ffi {
             let minute = minute.try_into()?;
             let second = second.try_into()?;
             let nanosecond = nanosecond.try_into()?;
-            let time = icu_calendar::Time {
+            let time = icu_timezone::Time {
                 hour,
                 minute,
                 second,
                 nanosecond,
             };
-            Ok(Box::new(DateTime(icu_calendar::DateTime {
+            Ok(Box::new(DateTime(icu_timezone::DateTime {
                 date: icu_calendar::Date::try_new_from_codes(era, year, month, day, cal)?,
                 time,
             })))
         }
         /// Creates a new [`DateTime`] from an [`Date`] and [`Time`] object
-        #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_date_and_time(date: &Date, time: &Time) -> Box<DateTime> {
-            let dt = icu_calendar::DateTime {
+            let dt = icu_timezone::DateTime {
                 date: date.0.clone(),
                 time: time.0,
             };
@@ -303,72 +303,72 @@ pub mod ffi {
         }
 
         /// Creates a new [`DateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::calendar::DateTime::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::DateTime::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::calendar::DateTime::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
         ) -> Result<Box<DateTime>, CalendarParseError> {
-            Ok(Box::new(DateTime(icu_calendar::DateTime::try_from_utf8(
+            Ok(Box::new(DateTime(icu_timezone::DateTime::try_from_utf8(
                 v,
                 calendar.0.clone(),
             )?)))
         }
 
         /// Gets a copy of the date contained in this object
-        #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
+        #[diplomat::rust_link(icu::timezone::DateTime::date, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn date(&self) -> Box<Date> {
             Box::new(Date(self.0.date.clone()))
         }
 
         /// Gets the time contained in this object
-        #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
+        #[diplomat::rust_link(icu::timezone::DateTime::time, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn time(&self) -> Box<Time> {
             Box::new(Time(self.0.time))
         }
 
         /// Converts this date to ISO
-        #[diplomat::rust_link(icu::calendar::DateTime::to_iso, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::to_iso, FnInStruct)]
         pub fn to_iso(&self) -> Box<IsoDateTime> {
-            Box::new(IsoDateTime(icu_calendar::DateTime {
+            Box::new(IsoDateTime(icu_timezone::DateTime {
                 date: self.0.date.to_iso(),
                 time: self.0.time,
             }))
         }
 
         /// Convert this datetime to one in a different calendar
-        #[diplomat::rust_link(icu::calendar::DateTime::to_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::to_calendar, FnInStruct)]
         pub fn to_calendar(&self, calendar: &Calendar) -> Box<DateTime> {
-            Box::new(DateTime(icu_calendar::DateTime {
+            Box::new(DateTime(icu_timezone::DateTime {
                 date: self.0.date.to_calendar(calendar.0.clone()),
                 time: self.0.time,
             }))
         }
 
         /// Returns the hour in this time
-        #[diplomat::rust_link(icu::calendar::Time::hour, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::hour, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn hour(&self) -> u8 {
             self.0.time.hour.into()
         }
         /// Returns the minute in this time
-        #[diplomat::rust_link(icu::calendar::Time::minute, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::minute, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn minute(&self) -> u8 {
             self.0.time.minute.into()
         }
         /// Returns the second in this time
-        #[diplomat::rust_link(icu::calendar::Time::second, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::second, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn second(&self) -> u8 {
             self.0.time.second.into()
         }
         /// Returns the nanosecond in this time
-        #[diplomat::rust_link(icu::calendar::Time::nanosecond, StructField)]
+        #[diplomat::rust_link(icu::timezone::Time::nanosecond, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn nanosecond(&self) -> u32 {
             self.0.time.nanosecond.into()

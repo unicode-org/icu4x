@@ -13,7 +13,7 @@ use icu_calendar::cal::{
 };
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
-    AsCalendar, Calendar, DateTime,
+    AsCalendar, Calendar,
 };
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
@@ -28,7 +28,7 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZonedDateTime};
+use icu_timezone::{DateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZonedDateTime};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,

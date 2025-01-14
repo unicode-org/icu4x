@@ -58,7 +58,8 @@ formats may be unsupported.
 ## Examples
 
 ```rust
-use icu::calendar::{Date, Time};
+use icu::calendar::Date;
+use icu::timezone::Time;
 use icu::timezone::TimeZoneBcp47Id;
 use icu::timezone::TimeZoneIdMapper;
 use icu::timezone::ZoneVariant;
