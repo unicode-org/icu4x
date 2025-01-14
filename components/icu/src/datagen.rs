@@ -53,8 +53,8 @@ macro_rules! cb {
 
             use memchr::memmem::*;
 
-            const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
-            const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
+            const LEADING_TAG: &[u8] = &[];
+            const TRAILING_TAG: &[u8] = &[];
 
             let trailing_tag = Finder::new(TRAILING_TAG);
 
