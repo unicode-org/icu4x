@@ -360,6 +360,8 @@ fn test_data_locale_to_string() {
 
 #[test]
 fn test_data_locale_from_string() {
+    use std::str::FromStr;
+
     #[derive(Debug)]
     struct TestCase {
         pub input: &'static str,

@@ -15,6 +15,8 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
+    #[diplomat::rust_link(icu::locale::DataLocale, Struct, hidden)]
+    #[diplomat::rust_link(icu::locale::DataLocale::into_locale, FnInStruct, hidden)]
     pub struct Locale(pub icu_locale_core::Locale);
 
     impl Locale {
@@ -26,6 +28,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::Locale::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::Locale::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::try_from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         #[diplomat::demo(default_constructor)]
         pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
@@ -36,6 +41,8 @@ pub mod ffi {
 
         /// Construct a default undefined [`Locale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::default, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::DataLocale::default, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::is_default, FnInStruct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, named_constructor)]
         pub fn und() -> Box<Locale> {
             Box::new(Locale(icu_locale_core::Locale::default()))
@@ -147,6 +154,8 @@ pub mod ffi {
         /// Returns a string representation of [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale::write_to, FnInStruct)]
         #[diplomat::rust_link(icu::locale::Locale::to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::write_to, FnInStruct, hidden)]
         #[diplomat::attr(auto, stringifier)]
         pub fn to_string(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.write_to(write);
@@ -168,6 +177,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::Locale::total_cmp, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::DataLocale::strict_cmp, FnInStruct, hidden)]
         #[diplomat::attr(auto, comparison)]
         pub fn compare_to(&self, other: &Self) -> core::cmp::Ordering {
             self.0.total_cmp(&other.0)
