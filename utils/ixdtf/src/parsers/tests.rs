@@ -975,3 +975,77 @@ fn test_zulu_offset() {
         })
     );
 }
+
+// Examples referenced from
+#[test]
+fn subsecond_string_tests() {
+    let subsecond_time = "2025-01-15T15:23:30.1";
+    let result = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2025,
+                month: 1,
+                day: 15,
+            }),
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                nanosecond: 100_000_000,
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    let subsecond_time = "2025-01-15T15:23:30.12345678";
+    let result = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2025,
+                month: 1,
+                day: 15,
+            }),
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                nanosecond: 123_456_780,
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    let subsecond_time = "2025-01-15T15:23:30.123456789";
+    let result = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2025,
+                month: 1,
+                day: 15,
+            }),
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                nanosecond: 123_456_789,
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    let subsecond_time = "1976-11-18T15:23:30.1234567890";
+    let err = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(err, Err(ParseError::FractionPart));
+}
