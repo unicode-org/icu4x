@@ -223,7 +223,7 @@ pub mod ffi {
         /// Construct a new CaseMapCloser instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(auto, constructor)]
+        #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Result<Box<CaseMapCloser>, DataError> {
             Ok(Box::new(CaseMapCloser(icu_casemap::CaseMapCloser::new())))
@@ -278,7 +278,7 @@ pub mod ffi {
         /// Construct a new `TitlecaseMapper` instance using compiled data.
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(auto, constructor)]
+        #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Result<Box<TitlecaseMapper>, DataError> {
             Ok(Box::new(TitlecaseMapper(
