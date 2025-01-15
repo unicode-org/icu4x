@@ -2388,9 +2388,10 @@ impl RawDateTimeNamesBorrowed<'_> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match (year_names, era) {
-            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
-                .get(era_code.0.as_str().into())
-                .ok_or(GetNameForEraError::InvalidEraCode),
+            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => {
+                crate::provider::neo::get_year_name_from_map(era_names, era_code.0.as_str().into())
+                    .ok_or(GetNameForEraError::InvalidEraCode)
+            }
             (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
                 era_names
                     .get(index.into())

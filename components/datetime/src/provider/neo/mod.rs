@@ -12,7 +12,7 @@ use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec, ZeroMap};
 
 /// Helpers involving the data marker attributes used for date names.
 ///
@@ -405,9 +405,20 @@ pub enum YearNamesV1<'data> {
     /// era code to the name.
     ///
     /// Only the Japanese calendars need this
-    VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, PotentialUtf8, str>),
+    VariableEras(#[cfg_attr(feature = "serde", serde(borrow))] YearNamesMap<'data>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+}
+
+type YearNamesMap<'data> =
+    VarZeroCow<'data, Tuple2VarULE<VarZeroSlice<PotentialUtf8>, VarZeroSlice<str>>>;
+
+pub(crate) fn get_year_name_from_map<'a, 'data>(
+    map: &'a YearNamesMap<'data>,
+    year: &PotentialUtf8,
+) -> Option<&'a str> {
+    let idx = map.a().binary_search_by(|x| x.cmp(year)).ok()?;
+    map.b().get(idx)
 }
 
 size_test!(MonthNamesV1, month_names_v1_size, 32);
