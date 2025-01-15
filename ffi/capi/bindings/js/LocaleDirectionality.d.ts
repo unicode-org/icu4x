@@ -8,12 +8,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html) for more information.
 */
+
+
 export class LocaleDirectionality {
     
-
     get ffiValue(): pointer;
-
-    static createCommon(): LocaleDirectionality;
 
     static createCommonWithProvider(provider: DataProvider): LocaleDirectionality;
 
@@ -26,4 +25,6 @@ export class LocaleDirectionality {
     isLeftToRight(locale: Locale): boolean;
 
     isRightToLeft(locale: Locale): boolean;
+
+    constructor();
 }

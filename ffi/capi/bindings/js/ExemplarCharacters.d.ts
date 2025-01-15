@@ -13,9 +13,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `ExemplarCharactersBorrowed`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharactersBorrowed.html) for more information.
 */
+
+
 export class ExemplarCharacters {
     
-
     get ffiValue(): pointer;
 
     containsStr(s: string): boolean;

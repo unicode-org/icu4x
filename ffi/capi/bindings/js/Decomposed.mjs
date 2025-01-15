@@ -9,20 +9,23 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 */
-export class Decomposed {
 
+
+export class Decomposed {
+    
     #first;
+    
     get first()  {
         return this.#first;
     }
     
-
     #second;
+    
     get second()  {
         return this.#second;
     }
     
-    constructor(structObj, internalConstructor) {
+    #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("Decomposed's constructor takes an object of Decomposed's fields.");
         }
@@ -42,6 +45,7 @@ export class Decomposed {
             throw new Error("Missing required field second.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -52,6 +56,18 @@ export class Decomposed {
         appendArrayMap
     ) {
         return [this.#first, this.#second]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof Decomposed) {
+            return obj;
+        }
+
+        return Decomposed.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -73,12 +89,16 @@ export class Decomposed {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("Decomposed._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const firstDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
         structObj.first = firstDeref;
         const secondDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
         structObj.second = secondDeref;
 
         return new Decomposed(structObj, internalConstructor);
+    }
+
+    constructor(structObj, internalConstructor) {
+        return this.#internalConstructor(...arguments)
     }
 }

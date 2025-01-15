@@ -3,10 +3,13 @@ import { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
 */
+
+
 export class GeneralCategory {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -45,14 +48,14 @@ export class GeneralCategory {
     static getAllEntries() {
         return GeneralCategory.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return GeneralCategory.#objectValues[arguments[1]];
         }
@@ -64,11 +67,15 @@ export class GeneralCategory {
         let intVal = GeneralCategory.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return GeneralCategory.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a GeneralCategory and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new GeneralCategory(value);
     }
 
     get value() {
@@ -157,17 +164,13 @@ export class GeneralCategory {
     }
 
     toGroup() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategory_to_group_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_GeneralCategory_to_group_mv1(this.ffiValue);
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static fromInteger(other) {
@@ -185,5 +188,9 @@ export class GeneralCategory {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
     }
 }

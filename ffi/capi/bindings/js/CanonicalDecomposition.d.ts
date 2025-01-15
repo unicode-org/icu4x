@@ -11,14 +11,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
 */
+
+
 export class CanonicalDecomposition {
     
-
     get ffiValue(): pointer;
-
-    static create(): CanonicalDecomposition;
 
     static createWithProvider(provider: DataProvider): CanonicalDecomposition;
 
     decompose(c: codepoint): Decomposed;
+
+    constructor();
 }

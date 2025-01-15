@@ -84,7 +84,7 @@ pub mod ffi {
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_uint32(v: u32) -> Box<SignedFixedDecimal> {
             Box::new(SignedFixedDecimal(fixed_decimal::SignedFixedDecimal::from(
                 v,
@@ -119,7 +119,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(any(dart, js), disable)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_double_with_integer_precision(
             f: f64,
         ) -> Result<Box<SignedFixedDecimal>, FixedDecimalLimitError> {
@@ -134,7 +134,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_lower_magnitude")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
         pub fn from_double_with_lower_magnitude(
             f: f64,
@@ -151,7 +151,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_significant_digits")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_double_with_significant_digits(
             f: f64,
             digits: u8,
@@ -168,7 +168,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_round_trip_precision")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_double_with_round_trip_precision(
             f: f64,
         ) -> Result<Box<SignedFixedDecimal>, FixedDecimalLimitError> {
@@ -182,7 +182,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_str, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(fixed_decimal::SignedFixedDecimal::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(
             v: &DiplomatStr,
         ) -> Result<Box<SignedFixedDecimal>, FixedDecimalParseError> {

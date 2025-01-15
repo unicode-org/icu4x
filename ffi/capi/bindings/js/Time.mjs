@@ -14,6 +14,7 @@ const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class Time {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +22,7 @@ export class Time {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("Time is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,13 +35,14 @@ export class Time {
         if (this.#selfEdge.length === 0) {
             Time_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(hour, minute, second, nanosecond) {
+    #defaultConstructor(hour, minute, second, nanosecond) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, nanosecond);
@@ -138,5 +140,15 @@ export class Time {
         }
         
         finally {}
+    }
+
+    constructor(hour, minute, second, nanosecond) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

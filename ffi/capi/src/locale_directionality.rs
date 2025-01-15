@@ -39,7 +39,7 @@ pub mod ffi {
 
         /// Construct a new LocaleDirectionality instance using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_common, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_common_with_provider(
             provider: &DataProvider,
@@ -72,7 +72,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,

@@ -10,9 +10,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
 */
+
+
 export class WordSegmenter {
     
-
     get ffiValue(): pointer;
 
     static createAuto(): WordSegmenter;

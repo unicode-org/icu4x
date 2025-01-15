@@ -11,26 +11,22 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
 */
-export class CollatorResolvedOptions {
 
+
+export class CollatorResolvedOptions {
+    
     get strength() : CollatorStrength;
     
-
     get alternateHandling() : CollatorAlternateHandling;
     
-
     get caseFirst() : CollatorCaseFirst;
     
-
     get maxVariable() : CollatorMaxVariable;
     
-
     get caseLevel() : CollatorCaseLevel;
     
-
     get numeric() : CollatorNumericOrdering;
     
-
     get backwardSecondLevel() : CollatorBackwardSecondLevel;
     
 }

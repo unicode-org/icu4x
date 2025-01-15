@@ -11,26 +11,29 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *iteration will NOT produce a range done=true, in other words `start` and `end` are useful
 *values if and only if `done=false`.
 */
-export class CodePointRangeIteratorResult {
 
+
+export class CodePointRangeIteratorResult {
+    
     #start;
+    
     get start()  {
         return this.#start;
     }
     
-
     #end;
+    
     get end()  {
         return this.#end;
     }
     
-
     #done;
+    
     get done()  {
         return this.#done;
     }
     
-    constructor(structObj, internalConstructor) {
+    #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("CodePointRangeIteratorResult's constructor takes an object of CodePointRangeIteratorResult's fields.");
         }
@@ -56,6 +59,7 @@ export class CodePointRangeIteratorResult {
             throw new Error("Missing required field done.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -66,6 +70,18 @@ export class CodePointRangeIteratorResult {
         appendArrayMap
     ) {
         return [this.#start, this.#end, this.#done, /* [3 x i8] padding */ 0, 0, 0 /* end padding */]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof CodePointRangeIteratorResult) {
+            return obj;
+        }
+
+        return CodePointRangeIteratorResult.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -88,7 +104,7 @@ export class CodePointRangeIteratorResult {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("CodePointRangeIteratorResult._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const startDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
         structObj.start = startDeref;
         const endDeref = (new Uint32Array(wasm.memory.buffer, ptr + 4, 1))[0];
@@ -97,5 +113,9 @@ export class CodePointRangeIteratorResult {
         structObj.done = doneDeref;
 
         return new CodePointRangeIteratorResult(structObj, internalConstructor);
+    }
+
+    constructor(structObj, internalConstructor) {
+        return this.#internalConstructor(...arguments)
     }
 }

@@ -2,12 +2,15 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** Increment used in a rounding operation.
 *
 *See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
 */
+
+
 export class FixedDecimalRoundingIncrement {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -20,14 +23,14 @@ export class FixedDecimalRoundingIncrement {
     static getAllEntries() {
         return FixedDecimalRoundingIncrement.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return FixedDecimalRoundingIncrement.#objectValues[arguments[1]];
         }
@@ -39,11 +42,15 @@ export class FixedDecimalRoundingIncrement {
         let intVal = FixedDecimalRoundingIncrement.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return FixedDecimalRoundingIncrement.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a FixedDecimalRoundingIncrement and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new FixedDecimalRoundingIncrement(value);
     }
 
     get value() {
@@ -64,4 +71,8 @@ export class FixedDecimalRoundingIncrement {
     static MultiplesOf2 = FixedDecimalRoundingIncrement.#objectValues[1];
     static MultiplesOf5 = FixedDecimalRoundingIncrement.#objectValues[2];
     static MultiplesOf25 = FixedDecimalRoundingIncrement.#objectValues[3];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

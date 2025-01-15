@@ -15,12 +15,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) for more information.
 */
+
+
 export class IsoDateTime {
     
-
     get ffiValue(): pointer;
-
-    static create(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number): IsoDateTime;
 
     static fromDateAndTime(date: IsoDate, time: Time): IsoDateTime;
 
@@ -63,4 +62,6 @@ export class IsoDateTime {
     get daysInMonth(): number;
 
     get daysInYear(): number;
+
+    constructor(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number);
 }

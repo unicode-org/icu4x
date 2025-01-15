@@ -20,7 +20,7 @@ export function formatTime(name, length, hour, minute, second, nanosecond) {
                     length
                 ]
             ),
-            Time.create.apply(
+            (function (...args) { return new Time(...args) } ).apply(
                 null,
                 [
                     hour,
@@ -90,7 +90,7 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
                     length
                 ]
             ),
-            IsoDateTime.create.apply(
+            (function (...args) { return new IsoDateTime(...args) } ).apply(
                 null,
                 [
                     year,

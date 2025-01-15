@@ -36,7 +36,7 @@ pub mod ffi {
         }
         /// Create a new [`LocaleCanonicalizer`].
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_common, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_common_with_provider(
             provider: &DataProvider,
@@ -63,7 +63,7 @@ pub mod ffi {
         }
         /// Create a new [`LocaleCanonicalizer`] with extended data.
         #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_extended, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,
@@ -95,7 +95,7 @@ pub mod ffi {
         }
         /// Create a new [`LocaleExpander`] using a new_common data source.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_common, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_common_with_provider(
             provider: &DataProvider,
@@ -113,7 +113,7 @@ pub mod ffi {
         }
         /// Create a new [`LocaleExpander`] with extended data using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,

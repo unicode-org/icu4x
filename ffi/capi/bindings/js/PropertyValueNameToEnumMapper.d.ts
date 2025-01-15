@@ -12,9 +12,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html#method.new) for more information.
 */
+
+
 export class PropertyValueNameToEnumMapper {
     
-
     get ffiValue(): pointer;
 
     getStrict(name: string): number;

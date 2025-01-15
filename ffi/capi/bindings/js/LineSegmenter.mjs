@@ -17,6 +17,7 @@ const LineSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class LineSegmenter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +25,7 @@ export class LineSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LineSegmenter is an Opaque type. You cannot call its constructor.");
             return;
@@ -37,8 +38,9 @@ export class LineSegmenter {
         if (this.#selfEdge.length === 0) {
             LineSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -76,7 +78,7 @@ export class LineSegmenter {
     static autoWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -92,7 +94,7 @@ export class LineSegmenter {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -112,7 +114,7 @@ export class LineSegmenter {
     static lstmWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -128,7 +130,7 @@ export class LineSegmenter {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -148,7 +150,7 @@ export class LineSegmenter {
     static dictionaryWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -164,7 +166,7 @@ export class LineSegmenter {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -197,5 +199,9 @@ export class LineSegmenter {
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

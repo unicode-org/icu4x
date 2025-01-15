@@ -10,14 +10,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
 */
+
+
 export class CanonicalComposition {
     
-
     get ffiValue(): pointer;
-
-    static create(): CanonicalComposition;
 
     static createWithProvider(provider: DataProvider): CanonicalComposition;
 
     compose(starter: codepoint, second: codepoint): codepoint;
+
+    constructor();
 }

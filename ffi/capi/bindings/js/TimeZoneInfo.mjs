@@ -13,6 +13,7 @@ const TimeZoneInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class TimeZoneInfo {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -20,7 +21,7 @@ export class TimeZoneInfo {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TimeZoneInfo is an Opaque type. You cannot call its constructor.");
             return;
@@ -33,8 +34,9 @@ export class TimeZoneInfo {
         if (this.#selfEdge.length === 0) {
             TimeZoneInfo_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -59,7 +61,7 @@ export class TimeZoneInfo {
         finally {}
     }
 
-    static fromParts(bcp47Id, offsetSeconds, dst) {
+    #defaultConstructor(bcp47Id, offsetSeconds, dst) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const bcp47IdSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, bcp47Id));
@@ -80,7 +82,7 @@ export class TimeZoneInfo {
     
         try {
             if (result !== 1) {
-                const cause = new TimeZoneInvalidOffsetError({}, diplomatRuntime.internalConstructor);
+                const cause = TimeZoneInvalidOffsetError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
     
@@ -105,7 +107,7 @@ export class TimeZoneInfo {
     
         try {
             if (result !== 1) {
-                const cause = new TimeZoneInvalidOffsetError({}, diplomatRuntime.internalConstructor);
+                const cause = TimeZoneInvalidOffsetError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
     
@@ -358,5 +360,15 @@ export class TimeZoneInfo {
         }
         
         finally {}
+    }
+
+    constructor(bcp47Id, offsetSeconds, dst) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

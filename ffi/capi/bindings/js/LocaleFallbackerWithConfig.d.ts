@@ -10,9 +10,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
 */
+
+
 export class LocaleFallbackerWithConfig {
     
-
     get ffiValue(): pointer;
 
     fallbackForLocale(locale: Locale): LocaleFallbackIterator;

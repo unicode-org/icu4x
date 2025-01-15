@@ -68,7 +68,7 @@ pub mod ffi {
 
         /// Construct a new CaseMapper instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
             Ok(Box::new(CaseMapper(
@@ -223,7 +223,7 @@ pub mod ffi {
         /// Construct a new CaseMapCloser instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(auto, constructor)]
+        #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Result<Box<CaseMapCloser>, DataError> {
             Ok(Box::new(CaseMapCloser(icu_casemap::CaseMapCloser::new())))
@@ -231,7 +231,7 @@ pub mod ffi {
         /// Construct a new CaseMapCloser instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
@@ -278,7 +278,7 @@ pub mod ffi {
         /// Construct a new `TitlecaseMapper` instance using compiled data.
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(auto, constructor)]
+        #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Result<Box<TitlecaseMapper>, DataError> {
             Ok(Box::new(TitlecaseMapper(
@@ -288,7 +288,7 @@ pub mod ffi {
         /// Construct a new `TitlecaseMapper` instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,

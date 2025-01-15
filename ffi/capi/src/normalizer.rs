@@ -39,7 +39,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfc_with_provider(
             provider: &DataProvider,
@@ -71,7 +71,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfkc_with_provider(
             provider: &DataProvider,
@@ -195,7 +195,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_nfd() -> Box<DecomposingNormalizer> {
@@ -211,7 +211,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfd_with_provider(
             provider: &DataProvider,
@@ -245,7 +245,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfkd_with_provider(
             provider: &DataProvider,

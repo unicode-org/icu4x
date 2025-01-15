@@ -11,6 +11,7 @@ const BidiParagraph_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class BidiParagraph {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -19,7 +20,7 @@ export class BidiParagraph {
     #selfEdge = [];
     #infoEdge = [];
     
-    constructor(symbol, ptr, selfEdge, infoEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, infoEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("BidiParagraph is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,8 +36,9 @@ export class BidiParagraph {
         if (this.#selfEdge.length === 0) {
             BidiParagraph_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -113,5 +115,9 @@ export class BidiParagraph {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, infoEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

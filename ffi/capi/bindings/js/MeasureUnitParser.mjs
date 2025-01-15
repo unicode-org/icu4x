@@ -14,6 +14,7 @@ const MeasureUnitParser_box_destroy_registry = new FinalizationRegistry((ptr) =>
 });
 
 export class MeasureUnitParser {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,7 +23,7 @@ export class MeasureUnitParser {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("MeasureUnitParser is an Opaque type. You cannot call its constructor.");
             return;
@@ -38,8 +39,9 @@ export class MeasureUnitParser {
         if (this.#selfEdge.length === 0) {
             MeasureUnitParser_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -58,5 +60,9 @@ export class MeasureUnitParser {
         finally {
             functionCleanupArena.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

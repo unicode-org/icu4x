@@ -10,48 +10,63 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 */
-export class CollatorOptions {
 
+
+export class CollatorOptions {
+    
     #strength;
+    
     get strength()  {
         return this.#strength;
-    }
+    } 
     set strength(value) {
         this.#strength = value;
     }
-
+    
     #alternateHandling;
+    
     get alternateHandling()  {
         return this.#alternateHandling;
-    }
+    } 
     set alternateHandling(value) {
         this.#alternateHandling = value;
     }
-
+    
     #maxVariable;
+    
     get maxVariable()  {
         return this.#maxVariable;
-    }
+    } 
     set maxVariable(value) {
         this.#maxVariable = value;
     }
-
+    
     #caseLevel;
+    
     get caseLevel()  {
         return this.#caseLevel;
-    }
+    } 
     set caseLevel(value) {
         this.#caseLevel = value;
     }
-
+    
     #backwardSecondLevel;
+    
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
-    }
+    } 
     set backwardSecondLevel(value) {
         this.#backwardSecondLevel = value;
     }
-    constructor(structObj) {
+    
+    /** Create `CollatorOptions` from an object that contains all of `CollatorOptions`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj) {
+        return new CollatorOptions(structObj);
+    }
+    
+    #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("CollatorOptions's constructor takes an object of CollatorOptions's fields.");
         }
@@ -86,6 +101,7 @@ export class CollatorOptions {
             this.#backwardSecondLevel = null;
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -96,6 +112,18 @@ export class CollatorOptions {
         appendArrayMap
     ) {
         return [...diplomatRuntime.optionToArgsForCalling(this.#strength, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#alternateHandling, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#maxVariable, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#caseLevel, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#backwardSecondLevel, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof CollatorOptions) {
+            return obj;
+        }
+
+        return CollatorOptions.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -120,7 +148,7 @@ export class CollatorOptions {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("CollatorOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const strengthDeref = ptr;
         structObj.strength = diplomatRuntime.readOption(wasm, strengthDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorStrength(diplomatRuntime.internalConstructor, deref) });
         const alternateHandlingDeref = ptr + 8;
@@ -132,6 +160,10 @@ export class CollatorOptions {
         const backwardSecondLevelDeref = ptr + 32;
         structObj.backwardSecondLevel = diplomatRuntime.readOption(wasm, backwardSecondLevelDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, deref) });
 
-        return new CollatorOptions(structObj, internalConstructor);
+        return new CollatorOptions(structObj);
+    }
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

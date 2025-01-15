@@ -43,7 +43,7 @@ export function formatDatetimeWithCustomTimeZone(name, length, year, month, day,
                     )
                 ]
             ),
-            TimeZoneInfo.fromParts.apply(
+            (function (...args) { return new TimeZoneInfo(...args) } ).apply(
                 null,
                 [
                     bcp47Id,
@@ -70,7 +70,7 @@ export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, d
                     length
                 ]
             ),
-            IsoDateTime.create.apply(
+            (function (...args) { return new IsoDateTime(...args) } ).apply(
                 null,
                 [
                     year,
@@ -82,7 +82,7 @@ export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, d
                     nanosecond
                 ]
             ),
-            TimeZoneInfo.fromParts.apply(
+            (function (...args) { return new TimeZoneInfo(...args) } ).apply(
                 null,
                 [
                     bcp47Id,

@@ -13,6 +13,7 @@ const CaseMapCloser_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class CaseMapCloser {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -20,7 +21,7 @@ export class CaseMapCloser {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CaseMapCloser is an Opaque type. You cannot call its constructor.");
             return;
@@ -33,13 +34,14 @@ export class CaseMapCloser {
         if (this.#selfEdge.length === 0) {
             CaseMapCloser_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create() {
+    #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_CaseMapCloser_create_mv1(diplomatReceive.buffer);
@@ -95,6 +97,16 @@ export class CaseMapCloser {
         
         finally {
             functionCleanupArena.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

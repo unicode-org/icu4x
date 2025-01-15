@@ -10,6 +10,7 @@ const SentenceBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry
 });
 
 export class SentenceBreakIteratorUtf16 {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -18,7 +19,7 @@ export class SentenceBreakIteratorUtf16 {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("SentenceBreakIteratorUtf16 is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,8 +35,9 @@ export class SentenceBreakIteratorUtf16 {
         if (this.#selfEdge.length === 0) {
             SentenceBreakIteratorUtf16_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -48,5 +50,9 @@ export class SentenceBreakIteratorUtf16 {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

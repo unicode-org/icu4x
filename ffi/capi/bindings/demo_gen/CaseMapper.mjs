@@ -5,7 +5,7 @@ export function lowercase(s, name) {
     return (function (...args) { return args[0].lowercase(...args.slice(1)) }).apply(
         null,
         [
-            CaseMapper.create.apply(
+            (function (...args) { return new CaseMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -24,7 +24,7 @@ export function uppercase(s, name) {
     return (function (...args) { return args[0].uppercase(...args.slice(1)) }).apply(
         null,
         [
-            CaseMapper.create.apply(
+            (function (...args) { return new CaseMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -43,7 +43,7 @@ export function titlecaseSegmentWithOnlyCaseData(s, name, leading_adjustment, tr
     return (function (...args) { return args[0].titlecaseSegmentWithOnlyCaseData(...args.slice(1)) }).apply(
         null,
         [
-            CaseMapper.create.apply(
+            (function (...args) { return new CaseMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -56,7 +56,7 @@ export function titlecaseSegmentWithOnlyCaseData(s, name, leading_adjustment, tr
                 ]
             ),
             (function (...args) {
-                return new TitlecaseOptions({
+                return TitlecaseOptions.fromFields({
                     leadingAdjustment: args[0],
                     trailingCase: args[1]});
             }).apply(
@@ -73,7 +73,7 @@ export function fold(s) {
     return (function (...args) { return args[0].fold(...args.slice(1)) }).apply(
         null,
         [
-            CaseMapper.create.apply(
+            (function (...args) { return new CaseMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -86,7 +86,7 @@ export function foldTurkic(s) {
     return (function (...args) { return args[0].foldTurkic(...args.slice(1)) }).apply(
         null,
         [
-            CaseMapper.create.apply(
+            (function (...args) { return new CaseMapper(...args) } ).apply(
                 null,
                 [
                 ]

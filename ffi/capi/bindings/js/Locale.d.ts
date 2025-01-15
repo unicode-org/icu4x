@@ -7,9 +7,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
 */
+
+
 export class Locale {
     
-
     get ffiValue(): pointer;
 
     static fromString(name: string): Locale;

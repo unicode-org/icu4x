@@ -17,6 +17,7 @@ const TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry = new Finali
 });
 
 export class TimeZoneIdMapperWithFastCanonicalization {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +25,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TimeZoneIdMapperWithFastCanonicalization is an Opaque type. You cannot call its constructor.");
             return;
@@ -37,13 +38,14 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         if (this.#selfEdge.length === 0) {
             TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create() {
+    #defaultConstructor() {
         const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1();
     
         try {
@@ -108,6 +110,16 @@ export class TimeZoneIdMapperWithFastCanonicalization {
             functionCleanupArena.free();
         
             write.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

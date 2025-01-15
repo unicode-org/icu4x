@@ -80,7 +80,7 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::WordBreakOptions, Struct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_content_locale(
             locale: &Locale,
@@ -96,7 +96,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_auto_with_content_locale_and_provider(
             provider: &DataProvider,
@@ -130,7 +130,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_content_locale")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_lstm_with_content_locale(
             locale: &Locale,
@@ -146,7 +146,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_content_locale_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_content_locale_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_lstm_with_content_locale_and_provider(
             provider: &DataProvider,
@@ -180,7 +180,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_dictionary, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_content_locale")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary_with_content_locale(
             locale: &Locale,
@@ -196,7 +196,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_dictionary, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_content_locale_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_content_locale_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_dictionary_with_content_locale_and_provider(
             provider: &DataProvider,

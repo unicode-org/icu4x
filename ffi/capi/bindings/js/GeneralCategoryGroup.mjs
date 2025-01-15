@@ -8,16 +8,27 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
 */
-export class GeneralCategoryGroup {
 
+
+export class GeneralCategoryGroup {
+    
     #mask;
+    
     get mask()  {
         return this.#mask;
-    }
+    } 
     set mask(value) {
         this.#mask = value;
     }
-    constructor(structObj) {
+    
+    /** Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj) {
+        return new GeneralCategoryGroup(structObj);
+    }
+    
+    #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("GeneralCategoryGroup's constructor takes an object of GeneralCategoryGroup's fields.");
         }
@@ -28,6 +39,7 @@ export class GeneralCategoryGroup {
             throw new Error("Missing required field mask.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -38,6 +50,18 @@ export class GeneralCategoryGroup {
         appendArrayMap
     ) {
         return [this.#mask]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof GeneralCategoryGroup) {
+            return obj;
+        }
+
+        return GeneralCategoryGroup.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -54,15 +78,15 @@ export class GeneralCategoryGroup {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    static _fromFFI(internalConstructor, ptr) {
+    static _fromFFI(internalConstructor, primitiveValue) {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("GeneralCategoryGroup._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
-        const maskDeref = (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
-        structObj.mask = maskDeref;
+        let structObj = {};
+        structObj.mask = primitiveValue;
+        
 
-        return new GeneralCategoryGroup(structObj, internalConstructor);
+        return new GeneralCategoryGroup(structObj);
     }
 
     contains(val) {
@@ -82,194 +106,146 @@ export class GeneralCategoryGroup {
     complement() {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(diplomatReceive.buffer, ...this._intoFFI());
+        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(...this._intoFFI());
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
         }
     }
 
     static all() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_all_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_all_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static empty() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_empty_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_empty_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     union(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(diplomatReceive.buffer, ...this._intoFFI(), ...other._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(...this._intoFFI(), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
         }
     }
 
     intersection(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(diplomatReceive.buffer, ...this._intoFFI(), ...other._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(...this._intoFFI(), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
         }
     }
 
     static casedLetter() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_cased_letter_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_cased_letter_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static letter() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_letter_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_letter_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static mark() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_mark_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_mark_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static number() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_number_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_number_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static separator() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_separator_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_separator_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static other() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_other_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_other_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static punctuation() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_punctuation_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_punctuation_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     static symbol() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_symbol_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_GeneralCategoryGroup_symbol_mv1();
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
+    }
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

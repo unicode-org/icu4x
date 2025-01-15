@@ -2,10 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locale/enum.TransformResult.html) for more information.
 */
+
+
 export class TransformResult {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -16,14 +19,14 @@ export class TransformResult {
     static getAllEntries() {
         return TransformResult.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return TransformResult.#objectValues[arguments[1]];
         }
@@ -35,11 +38,15 @@ export class TransformResult {
         let intVal = TransformResult.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return TransformResult.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a TransformResult and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new TransformResult(value);
     }
 
     get value() {
@@ -56,4 +63,8 @@ export class TransformResult {
 
     static Modified = TransformResult.#objectValues[0];
     static Unmodified = TransformResult.#objectValues[1];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

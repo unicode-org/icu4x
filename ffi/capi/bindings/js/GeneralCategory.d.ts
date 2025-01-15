@@ -2,11 +2,15 @@
 import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
 */
+
+
 export class GeneralCategory {
-    constructor(value : GeneralCategory | string);
+    
+
+    static fromValue(value : GeneralCategory | string) : GeneralCategory; 
 
     get value() : string;
 
@@ -48,4 +52,6 @@ export class GeneralCategory {
     toGroup(): GeneralCategoryGroup;
 
     static fromInteger(other: number): GeneralCategory | null;
+
+    constructor(value: GeneralCategory | string );
 }

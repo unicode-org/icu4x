@@ -4,9 +4,18 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
 */
-type FixedDecimalLimitError_Obj = {
+type FixedDecimalLimitError_obj = {
 };
 
+
+
 export class FixedDecimalLimitError {
-    constructor(structObj : FixedDecimalLimitError_Obj);
+    
+    /** Create `FixedDecimalLimitError` from an object that contains all of `FixedDecimalLimitError`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj : FixedDecimalLimitError_obj) : FixedDecimalLimitError;
+    
+
+    constructor(structObj : FixedDecimalLimitError_obj);
 }

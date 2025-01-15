@@ -213,10 +213,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { version = "0.9.0", default-features = false }
-diplomat-runtime = { version = "0.9.0", default-features = false }
-diplomat_core = { version = "0.9.0", default-features = false }
-diplomat-tool = { version = "0.9.0", default-features = false }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "c94ac61c7fd41cc0db045c22b23f2b27052aaa67", default-features = false }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "c94ac61c7fd41cc0db045c22b23f2b27052aaa67", default-features = false }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "c94ac61c7fd41cc0db045c22b23f2b27052aaa67", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "c94ac61c7fd41cc0db045c22b23f2b27052aaa67", default-features = false }
 
 # EXTERNAL DEPENDENCIES
 #
