@@ -24,7 +24,7 @@ pub mod models {
     use super::*;
 
     /// A time zone containing a time zone ID and optional offset.
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum Base {}
 
@@ -35,7 +35,7 @@ pub mod models {
     }
 
     /// A time zone containing a time zone ID, optional offset, and local time.
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum AtTime {}
 
@@ -46,7 +46,7 @@ pub mod models {
     }
 
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum Full {}
 

@@ -315,7 +315,7 @@ impl Time {
 }
 
 /// A date + time for a given calendar.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     /// The date
@@ -325,7 +325,7 @@ pub struct DateTime<A: AsCalendar> {
 }
 
 /// A date and time local to a specified custom time zone.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone

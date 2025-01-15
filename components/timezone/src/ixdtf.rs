@@ -122,6 +122,12 @@ impl UtcOffset {
 }
 
 #[derive(Debug)]
+/// A parser for [`ZonedDateTime`] based on IXDTF strings.
+///
+/// Any function that takes a calendar argument  returns an error if the
+/// string has a calendar annotation that does not match the calendar
+/// argument.
+///
 /// ✨ *Enabled with the `ixdtf` Cargo feature.*
 pub struct IxdtfParser {
     mapper: TimeZoneIdMapper,
@@ -509,6 +515,11 @@ impl IxdtfParser {
     /// );
     /// assert_eq!(zoneddatetime.zone.zone_variant(), ZoneVariant::Daylight);
     /// let (_, _) = zoneddatetime.zone.local_time();
+    ///
+    /// // Calendar annotations are ignored:
+    /// assert_eq!(zoneddatetime, IxdtfParser::new()
+    ///     .try_iso_from_str("2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]")
+    ///     .unwrap());
     /// ```
     ///
     /// For more information on date, time, and time zone parsing,
@@ -624,9 +635,6 @@ impl IxdtfParser {
     ///
     /// For more information on IXDTF, see the [`ixdtf`] crate.
     ///
-    /// This is a convenience constructor that uses compiled data. For custom data providers,
-    /// use [`ixdtf`] and/or the other primitives in this crate such as [`TimeZoneIdMapper`].
-    ///
     /// # Examples
     ///
     /// Basic usage:
@@ -676,11 +684,11 @@ impl IxdtfParser {
     /// DateTime string.
     ///
     /// ```
-    /// use icu_calendar::Gregorian;
+    /// use icu_calendar::Iso;
     /// use icu_timezone::{IxdtfParser, TimeZoneInfo, UtcOffset};
     ///
     /// let tz_from_offset = IxdtfParser::new()
-    ///     .try_offset_only_from_str("2024-08-08T12:08:19-05:00", Gregorian)
+    ///     .try_offset_only_from_str("2024-08-08T12:08:19-05:00", Iso)
     ///     .unwrap();
     ///
     /// assert_eq!(
@@ -694,17 +702,17 @@ impl IxdtfParser {
     /// Below is an example of a time zone being provided by a time zone annotation.
     ///
     /// ```
-    /// use icu_calendar::Gregorian;
+    /// use icu_calendar::Iso;
     /// use icu_timezone::{
     ///     IxdtfParser, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant,
     /// };
     /// use tinystr::tinystr;
     ///
     /// let tz_from_offset_annotation = IxdtfParser::new()
-    ///     .try_offset_only_from_str("2024-08-08T12:08:19[-05:00]", Gregorian)
+    ///     .try_offset_only_from_str("2024-08-08T12:08:19[-05:00]", Iso)
     ///     .unwrap();
     /// let tz_from_iana_annotation = IxdtfParser::new()
-    ///     .try_location_only_from_str("2024-08-08T12:08:19[America/Chicago]", Gregorian)
+    ///     .try_location_only_from_str("2024-08-08T12:08:19[America/Chicago]", Iso)
     ///     .unwrap();
     ///
     /// assert_eq!(
@@ -729,11 +737,11 @@ impl IxdtfParser {
     /// In cases where the DateTime UTC Offset is provided and the IANA identifier, some validity checks are performed.
     ///
     /// ```
-    /// use icu_calendar::Gregorian;
+    /// use icu_calendar::Iso;
     /// use icu_timezone::{TimeZoneInfo, IxdtfParser, UtcOffset, TimeZoneBcp47Id, ZoneVariant, ParseError};
     /// use tinystr::tinystr;
     ///
-    /// let consistent_tz_from_both = IxdtfParser::new().try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Gregorian).unwrap();
+    /// let consistent_tz_from_both = IxdtfParser::new().try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Iso).unwrap();
     ///
     ///
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id(), TimeZoneBcp47Id(tinystr!(8, "uschi")));
@@ -743,13 +751,13 @@ impl IxdtfParser {
     ///
     /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
     /// assert_eq!(
-    ///     IxdtfParser::new().try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Gregorian).unwrap_err(),
+    ///     IxdtfParser::new().try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso).unwrap_err(),
     ///     ParseError::InvalidOffsetError
     /// );
     ///
     /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August
     /// assert!(
-    ///     IxdtfParser::new().try_from_str("2024-08-08T12:08:19-08:00[America/Los_Angeles]", Gregorian).is_ok()
+    ///     IxdtfParser::new().try_from_str("2024-08-08T12:08:19-08:00[America/Los_Angeles]", Iso).is_ok()
     /// );
     /// ```
     ///
@@ -758,14 +766,14 @@ impl IxdtfParser {
     /// These annotations must always be consistent as they should be either the same value or are inconsistent.
     ///
     /// ```
-    /// use icu_calendar::Gregorian;
+    /// use icu_calendar::Iso;
     /// use icu_timezone::{
     ///     IxdtfParser, ParseError, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset,
     /// };
     /// use tinystr::tinystr;
     ///
     /// let consistent_tz_from_both = IxdtfParser::new()
-    ///     .try_offset_only_from_str("2024-08-08T12:08:19-05:00[-05:00]", Gregorian)
+    ///     .try_offset_only_from_str("2024-08-08T12:08:19-05:00[-05:00]", Iso)
     ///     .unwrap();
     ///
     /// assert_eq!(
@@ -774,7 +782,7 @@ impl IxdtfParser {
     /// );
     ///
     /// let inconsistent_tz_from_both = IxdtfParser::new()
-    ///     .try_offset_only_from_str("2024-08-08T12:08:19-05:00[+05:00]", Gregorian);
+    ///     .try_offset_only_from_str("2024-08-08T12:08:19-05:00[+05:00]", Iso);
     ///
     /// assert!(matches!(
     ///     inconsistent_tz_from_both,
@@ -879,12 +887,17 @@ impl DateTime<Iso> {
     /// assert_eq!(datetime.time.minute.number(), 1);
     /// assert_eq!(datetime.time.second.number(), 17);
     /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
+    ///
+    /// // Calendar annotations are ignored:
+    /// assert_eq!(datetime, DateTime::try_iso_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]").unwrap());
     /// ```
     pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_iso_from_utf8(ixdtf_str.as_bytes())
     }
 
     /// Creates a [`DateTime`] in the ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// Ignores any calendar annotations in the string.
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -910,7 +923,12 @@ impl FromStr for DateTime<Iso> {
 }
 
 impl<A: AsCalendar> DateTime<A> {
-    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
+    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// Returns an error if the string has a calendar annotation that does not
+    /// match the calendar argument.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -937,9 +955,14 @@ impl<A: AsCalendar> DateTime<A> {
         Self::try_from_utf8(ixdtf_str.as_bytes(), calendar)
     }
 
-    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
+    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string.
+    ///
+    /// Returns an error if the string has a calendar annotation that does not
+    /// match the calendar argument.
     ///
     /// See [`Self::try_from_str()`].
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     pub fn try_from_utf8(ixdtf_str: &[u8], calendar: A) -> Result<Self, ParseError> {
         let ixdtf_record = ixdtf::parsers::IxdtfParser::from_utf8(ixdtf_str).parse()?;
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {

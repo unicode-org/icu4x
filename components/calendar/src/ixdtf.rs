@@ -60,6 +60,9 @@ impl Date<Iso> {
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
     /// );
     /// assert_eq!(date.day_of_month().0, 17);
+    ///
+    /// // Calendar annotations are ignored:
+    /// assert_eq!(date, Date::try_iso_from_str("2024-07-17[u-ca=buddhist]").unwrap());
     /// ```
     pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_iso_from_utf8(ixdtf_str.as_bytes())
@@ -92,7 +95,8 @@ impl FromStr for Date<Iso> {
 impl<A: AsCalendar> Date<A> {
     /// Creates a [`Date`] in the given calendar from an IXDTF syntax string.
     ///
-    /// Ignores any calendar annotations in the string.
+    /// Returns an error if the string has a calendar annotation that does not
+    /// match the calendar argument.
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -117,6 +121,9 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Creates a [`Date`] in the given calendar from an IXDTF syntax string.
+    ///
+    /// Returns an error if the string has a calendar annotation that does not
+    /// match the calendar argument.
     ///
     /// See [`Self::try_from_str()`].
     ///
