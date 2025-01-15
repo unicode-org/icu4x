@@ -48,6 +48,7 @@ icu_datetime = { path = "../../components/datetime", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_provider_blob = { path = "../../provider/blob" }
 writeable = { path = "../../utils/writeable" }
+jiff = "0.1"
 
 [features]
 default = [
@@ -134,3 +135,6 @@ skip_feature_sets = [[]]
 [[example]]
 name = "tui"
 required-features = ["serde"]
+
+[[example]]
+name = "jiff"
