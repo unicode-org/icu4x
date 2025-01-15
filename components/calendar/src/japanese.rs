@@ -286,7 +286,7 @@ impl Calendar for Japanese {
         let prev_dec_31 = self.date_from_iso(Date::from_raw(prev_dec_31, Iso));
         let next_jan_1 = self.date_from_iso(Date::from_raw(next_jan_1, Iso));
         types::DayOfYearInfo {
-            day_of_year: Iso::days_in_year_direct(date.inner.0.year),
+            day_of_year: date.inner.0.day_of_year(),
             days_in_year: Iso::days_in_year_direct(date.inner.0.year),
             prev_year: self.year(&prev_dec_31),
             days_in_prev_year: Iso::days_in_year_direct(prev_dec_31.inner.0.year),
