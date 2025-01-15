@@ -42,7 +42,7 @@ export class Time {
         return this.#ptr;
     }
 
-    static create(hour, minute, second, nanosecond) {
+    #defaultConstructor(hour, minute, second, nanosecond) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, nanosecond);
@@ -142,7 +142,13 @@ export class Time {
         finally {}
     }
 
-    constructor(symbol, ptr, selfEdge) {
-        return this.#internalConstructor(...arguments)
+    constructor(hour, minute, second, nanosecond) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

@@ -13,11 +13,11 @@ export class CaseMapCloser {
     
     get ffiValue(): pointer;
 
-    static create(): CaseMapCloser;
-
     static createWithProvider(provider: DataProvider): CaseMapCloser;
 
     addCaseClosureTo(c: codepoint, builder: CodePointSetBuilder): void;
 
     addStringCaseClosureTo(s: string, builder: CodePointSetBuilder): boolean;
+
+    constructor();
 }

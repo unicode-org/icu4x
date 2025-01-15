@@ -19,8 +19,6 @@ export class IsoDate {
     
     get ffiValue(): pointer;
 
-    static create(year: number, month: number, day: number): IsoDate;
-
     static fromString(v: string): IsoDate;
 
     toCalendar(calendar: Calendar): Date;
@@ -48,4 +46,6 @@ export class IsoDate {
     get daysInMonth(): number;
 
     get daysInYear(): number;
+
+    constructor(year: number, month: number, day: number);
 }

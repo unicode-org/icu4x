@@ -45,7 +45,7 @@ export class WeekCalculator {
         return this.#ptr;
     }
 
-    static create(locale) {
+    #defaultConstructor(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_WeekCalculator_create_mv1(diplomatReceive.buffer, locale.ffiValue);
@@ -125,7 +125,13 @@ export class WeekCalculator {
         }
     }
 
-    constructor(symbol, ptr, selfEdge) {
-        return this.#internalConstructor(...arguments)
+    constructor(locale) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

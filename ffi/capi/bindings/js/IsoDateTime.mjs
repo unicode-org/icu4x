@@ -49,7 +49,7 @@ export class IsoDateTime {
         return this.#ptr;
     }
 
-    static create(year, month, day, hour, minute, second, nanosecond) {
+    #defaultConstructor(year, month, day, hour, minute, second, nanosecond) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_IsoDateTime_create_mv1(diplomatReceive.buffer, year, month, day, hour, minute, second, nanosecond);
@@ -295,7 +295,13 @@ export class IsoDateTime {
         finally {}
     }
 
-    constructor(symbol, ptr, selfEdge) {
-        return this.#internalConstructor(...arguments)
+    constructor(year, month, day, hour, minute, second, nanosecond) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

@@ -17,8 +17,6 @@ export class WeekCalculator {
     
     get ffiValue(): pointer;
 
-    static create(locale: Locale): WeekCalculator;
-
     static createWithProvider(provider: DataProvider, locale: Locale): WeekCalculator;
 
     static fromFirstDayOfWeekAndMinWeekDays(firstWeekday: IsoWeekday, minWeekDays: number): WeekCalculator;
@@ -28,4 +26,6 @@ export class WeekCalculator {
     get minWeekDays(): number;
 
     get weekend(): WeekendContainsDay;
+
+    constructor(locale: Locale);
 }

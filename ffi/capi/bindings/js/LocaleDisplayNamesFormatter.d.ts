@@ -15,9 +15,9 @@ export class LocaleDisplayNamesFormatter {
     
     get ffiValue(): pointer;
 
-    static create(locale: Locale, options: DisplayNamesOptions_obj): LocaleDisplayNamesFormatter;
-
     static createWithProvider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions_obj): LocaleDisplayNamesFormatter;
 
     of(locale: Locale): string;
+
+    constructor(locale: Locale, options: DisplayNamesOptions_obj);
 }

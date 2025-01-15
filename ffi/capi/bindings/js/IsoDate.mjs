@@ -47,7 +47,7 @@ export class IsoDate {
         return this.#ptr;
     }
 
-    static create(year, month, day) {
+    #defaultConstructor(year, month, day) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_IsoDate_create_mv1(diplomatReceive.buffer, year, month, day);
@@ -223,7 +223,13 @@ export class IsoDate {
         finally {}
     }
 
-    constructor(symbol, ptr, selfEdge) {
-        return this.#internalConstructor(...arguments)
+    constructor(year, month, day) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

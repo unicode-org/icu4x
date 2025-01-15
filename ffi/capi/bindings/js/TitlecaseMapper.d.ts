@@ -15,9 +15,9 @@ export class TitlecaseMapper {
     
     get ffiValue(): pointer;
 
-    static create(): TitlecaseMapper;
-
     static createWithProvider(provider: DataProvider): TitlecaseMapper;
 
     titlecaseSegment(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
+
+    constructor();
 }

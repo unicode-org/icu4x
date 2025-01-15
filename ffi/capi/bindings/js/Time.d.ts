@@ -14,8 +14,6 @@ export class Time {
     
     get ffiValue(): pointer;
 
-    static create(hour: number, minute: number, second: number, nanosecond: number): Time;
-
     static fromString(v: string): Time;
 
     static midnight(): Time;
@@ -27,4 +25,6 @@ export class Time {
     get second(): number;
 
     get nanosecond(): number;
+
+    constructor(hour: number, minute: number, second: number, nanosecond: number);
 }

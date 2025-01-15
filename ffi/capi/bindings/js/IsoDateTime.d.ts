@@ -21,8 +21,6 @@ export class IsoDateTime {
     
     get ffiValue(): pointer;
 
-    static create(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number): IsoDateTime;
-
     static fromDateAndTime(date: IsoDate, time: Time): IsoDateTime;
 
     static fromString(v: string): IsoDateTime;
@@ -64,4 +62,6 @@ export class IsoDateTime {
     get daysInMonth(): number;
 
     get daysInYear(): number;
+
+    constructor(year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number);
 }

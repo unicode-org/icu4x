@@ -18,9 +18,9 @@ export class Collator {
 
     static create(locale: Locale, options: CollatorOptions_obj): Collator;
 
-    static createWithProvider(provider: DataProvider, locale: Locale, options: CollatorOptions_obj): Collator;
-
     compare(left: string, right: string): number;
 
     get resolvedOptions(): CollatorResolvedOptions;
+
+    constructor(provider: DataProvider, locale: Locale, options: CollatorOptions_obj);
 }

@@ -16,9 +16,9 @@ export class RegionDisplayNames {
     
     get ffiValue(): pointer;
 
-    static create(locale: Locale, options: DisplayNamesOptions_obj): RegionDisplayNames;
-
     static createWithProvider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions_obj): RegionDisplayNames;
 
     of(region: string): string;
+
+    constructor(locale: Locale, options: DisplayNamesOptions_obj);
 }
