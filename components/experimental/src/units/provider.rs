@@ -40,11 +40,6 @@ use super::ratio::IcuRatio;
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfoV1<'data> {
-    // TODO: remove this field once we are using this map from `measure/provider::UnitsTrie`.
-    /// Maps from unit name (e.g. foot) to it is conversion information.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_conversion_trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
-
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
