@@ -325,19 +325,71 @@ size_test!(YearNamesV1, year_names_v1_size, 48);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistYearNamesV1Marker, "datetime/names/buddhist/years@1"),
-    marker(ChineseYearNamesV1Marker, "datetime/names/chinese/years@1"),
-    marker(CopticYearNamesV1Marker, "datetime/names/coptic/years@1"),
-    marker(DangiYearNamesV1Marker, "datetime/names/dangi/years@1"),
-    marker(EthiopianYearNamesV1Marker, "datetime/names/ethiopic/years@1"),
-    marker(GregorianYearNamesV1Marker, "datetime/names/gregory/years@1"),
-    marker(HebrewYearNamesV1Marker, "datetime/names/hebrew/years@1"),
-    marker(IndianYearNamesV1Marker, "datetime/names/indian/years@1"),
-    marker(IslamicYearNamesV1Marker, "datetime/names/islamic/years@1"),
-    marker(JapaneseYearNamesV1Marker, "datetime/names/japanese/years@1"),
-    marker(JapaneseExtendedYearNamesV1Marker, "datetime/names/japanext/years@1"),
-    marker(PersianYearNamesV1Marker, "datetime/names/persian/years@1"),
-    marker(RocYearNamesV1Marker, "datetime/names/roc/years@1")
+    marker(
+        BuddhistYearNamesV1Marker,
+        "datetime/names/buddhist/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        ChineseYearNamesV1Marker,
+        "datetime/names/chinese/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        CopticYearNamesV1Marker,
+        "datetime/names/coptic/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        DangiYearNamesV1Marker,
+        "datetime/names/dangi/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        EthiopianYearNamesV1Marker,
+        "datetime/names/ethiopic/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        GregorianYearNamesV1Marker,
+        "datetime/names/gregory/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        HebrewYearNamesV1Marker,
+        "datetime/names/hebrew/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        IndianYearNamesV1Marker,
+        "datetime/names/indian/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        IslamicYearNamesV1Marker,
+        "datetime/names/islamic/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        JapaneseYearNamesV1Marker,
+        "datetime/names/japanese/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        JapaneseExtendedYearNamesV1Marker,
+        "datetime/names/japanext/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        PersianYearNamesV1Marker,
+        "datetime/names/persian/years@1",
+        attributes_domain = "datetime_year_length"
+    ),
+    marker(
+        RocYearNamesV1Marker,
+        "datetime/names/roc/years@1",
+        attributes_domain = "datetime_year_length"
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -372,19 +424,71 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistMonthNamesV1Marker, "datetime/names/buddhist/months@1"),
-    marker(ChineseMonthNamesV1Marker, "datetime/names/chinese/months@1"),
-    marker(CopticMonthNamesV1Marker, "datetime/names/coptic/months@1"),
-    marker(DangiMonthNamesV1Marker, "datetime/names/dangi/months@1"),
-    marker(EthiopianMonthNamesV1Marker, "datetime/names/ethiopic/months@1"),
-    marker(GregorianMonthNamesV1Marker, "datetime/names/gregory/months@1"),
-    marker(HebrewMonthNamesV1Marker, "datetime/names/hebrew/months@1"),
-    marker(IndianMonthNamesV1Marker, "datetime/names/indian/months@1"),
-    marker(IslamicMonthNamesV1Marker, "datetime/names/islamic/months@1"),
-    marker(JapaneseMonthNamesV1Marker, "datetime/names/japanese/months@1"),
-    marker(JapaneseExtendedMonthNamesV1Marker, "datetime/names/japanext/months@1"),
-    marker(PersianMonthNamesV1Marker, "datetime/names/persian/months@1"),
-    marker(RocMonthNamesV1Marker, "datetime/names/roc/months@1")
+    marker(
+        BuddhistMonthNamesV1Marker,
+        "datetime/names/buddhist/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        ChineseMonthNamesV1Marker,
+        "datetime/names/chinese/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        CopticMonthNamesV1Marker,
+        "datetime/names/coptic/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        DangiMonthNamesV1Marker,
+        "datetime/names/dangi/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        EthiopianMonthNamesV1Marker,
+        "datetime/names/ethiopic/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        GregorianMonthNamesV1Marker,
+        "datetime/names/gregory/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        HebrewMonthNamesV1Marker,
+        "datetime/names/hebrew/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        IndianMonthNamesV1Marker,
+        "datetime/names/indian/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        IslamicMonthNamesV1Marker,
+        "datetime/names/islamic/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        JapaneseMonthNamesV1Marker,
+        "datetime/names/japanese/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        JapaneseExtendedMonthNamesV1Marker,
+        "datetime/names/japanext/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        PersianMonthNamesV1Marker,
+        "datetime/names/persian/months@1",
+        attributes_domain = "datetime_month_length"
+    ),
+    marker(
+        RocMonthNamesV1Marker,
+        "datetime/names/roc/months@1",
+        attributes_domain = "datetime_month_length"
+    )
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
