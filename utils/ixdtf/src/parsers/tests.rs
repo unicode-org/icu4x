@@ -653,6 +653,38 @@ fn duration_exceeds_range() {
 }
 
 #[test]
+fn maximum_duration_units() {
+    use crate::parsers::IsoDurationParser;
+
+    // All the values below represent the value 90,071,992,547,409,910,000,000,000
+    // which is the maximum representable duration in nanoseconds for ECMA402
+
+    let result = IsoDurationParser::from_str("P416999965497D").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("PT25019997929836H").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("PT1501199875790165M").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("PT90071992547409910S").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-P416999965497D").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-PT25019997929836H").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-PT1501199875790165M").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-PT90071992547409910S").parse();
+    assert!(result.is_ok());
+}
+
+#[test]
 fn temporal_invalid_iso_datetime_strings() {
     // NOTE: The below tests were initially pulled from test262's `argument-string-invalid`
     const INVALID_DATETIME_STRINGS: [&str; 32] = [

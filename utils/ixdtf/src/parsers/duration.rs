@@ -65,14 +65,14 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
     let mut previous_unit = DateUnit::None;
 
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        let mut value: u32 = 0;
+        let mut value: u64 = 0;
         while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParseError::abrupt_end("DateDuration"))?;
             value = value
                 .checked_mul(10)
-                .and_then(|v| v.checked_add(u32::from(digit)))
+                .and_then(|v| v.checked_add(u64::from(digit)))
                 .ok_or(ParseError::DurationValueExceededRange)?
         }
 
@@ -81,21 +81,24 @@ pub(crate) fn parse_date_duration(cursor: &mut Cursor) -> ParserResult<DateDurat
                 if previous_unit > DateUnit::Year {
                     return Err(ParseError::DateDurationPartOrder);
                 }
-                date.years = value;
+                date.years =
+                    u32::try_from(value).map_err(|_| ParseError::DurationValueExceededRange)?;
                 previous_unit = DateUnit::Year;
             }
             Some(ch) if is_month_designator(ch) => {
                 if previous_unit > DateUnit::Month {
                     return Err(ParseError::DateDurationPartOrder);
                 }
-                date.months = value;
+                date.months =
+                    u32::try_from(value).map_err(|_| ParseError::DurationValueExceededRange)?;
                 previous_unit = DateUnit::Month;
             }
             Some(ch) if is_week_designator(ch) => {
                 if previous_unit > DateUnit::Week {
                     return Err(ParseError::DateDurationPartOrder);
                 }
-                date.weeks = value;
+                date.weeks =
+                    u32::try_from(value).map_err(|_| ParseError::DurationValueExceededRange)?;
                 previous_unit = DateUnit::Week;
             }
             Some(ch) if is_day_designator(ch) => {
@@ -131,17 +134,17 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
         TimeDurationDesignator,
     );
 
-    let mut time: (u32, u32, u32, Option<u32>) = (0, 0, 0, None);
+    let mut time: (u64, u64, u64, Option<u32>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
     while cursor.check_or(false, |c| c.is_ascii_digit()) {
-        let mut value: u32 = 0;
+        let mut value: u64 = 0;
         while cursor.check_or(false, |c| c.is_ascii_digit()) {
             let digit = cursor
                 .next_digit()?
                 .ok_or_else(|| ParseError::abrupt_end("TimeDurationDigit"))?;
             value = value
                 .checked_mul(10)
-                .and_then(|v| v.checked_add(u32::from(digit)))
+                .and_then(|v| v.checked_add(u64::from(digit)))
                 .ok_or(ParseError::DurationValueExceededRange)?
         }
 
@@ -205,6 +208,6 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
             seconds: time.2,
             fraction: time.3.unwrap_or(0),
         })),
-        TimeUnit::None => Err(ParseError::abrupt_end("TimeDUrationDesignator")),
+        TimeUnit::None => Err(ParseError::abrupt_end("TimeDurationDesignator")),
     }
 }
