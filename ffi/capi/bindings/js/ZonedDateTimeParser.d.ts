@@ -8,15 +8,15 @@ import type { ZonedIsoDateTime } from "./ZonedIsoDateTime"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `IxdtfParser`](https://docs.rs/icu/latest/icu/timezone/struct.IxdtfParser.html) for more information.
+/** See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html) for more information.
 */
 
 
-export class IxdtfParser {
+export class ZonedDateTimeParser {
     
     get ffiValue(): pointer;
 
-    static createWithProvider(provider: DataProvider): IxdtfParser;
+    static createWithProvider(provider: DataProvider): ZonedDateTimeParser;
 
     tryIsoFromStr(v: string): ZonedIsoDateTime;
 

@@ -432,7 +432,7 @@ size_test!(
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{Time, TimeZoneInfo, IxdtfParser, ZonedDateTime};
+/// use icu::timezone::{Time, TimeZoneInfo, ZonedDateTimeParser, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -450,7 +450,7 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
 ///
-/// let mut dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian).unwrap();
+/// let mut dtz = ZonedDateTimeParser::new().parse("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian).unwrap();
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
@@ -1012,15 +1012,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1124,11 +1124,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1191,15 +1191,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1268,15 +1268,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1345,15 +1345,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1422,15 +1422,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
