@@ -1,11 +1,22 @@
 {
-  "VariableEras": {
-    "bce": "খৃষ্টাব্দ",
-    "ce": "খ্রিস্টপূর্ব",
-    "heisei": "H",
-    "meiji": "M",
-    "reiwa": "R",
-    "showa": "S",
-    "taisho": "T"
-  }
+  "VariableEras": [
+    [
+      "bce",
+      "ce",
+      "heisei",
+      "meiji",
+      "reiwa",
+      "showa",
+      "taisho"
+    ],
+    [
+      "খৃষ্টাব্দ",
+      "খ্রিস্টপূর্ব",
+      "H",
+      "M",
+      "R",
+      "S",
+      "T"
+    ]
+  ]
 }
