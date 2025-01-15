@@ -100,16 +100,11 @@ functionality are compiled. These features are:
 
 - `compiled_data` (default): Whether to include compiled data. Without this flag, only constructors with
    explicit `provider` arguments are available.
-- `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with non-static data.
+- `datagen`: Whether to implement functionality that is only required during data generation.
 - `logging`: Enables logging through the `log` crate.
 - `serde`: Activates `serde` implementations for core library types, such as `Locale`, as well
-   as `*_with_buffer_provider` constructors for explicit data management.
-
-The following Cargo features are only available on the individual crates, but not on this meta-crate:
-
-- `datagen`: Whether to implement functionality that is only required during data generation.
-- `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
-  when running `cargo bench`.
+   as `*_with_buffer_provider` constructors for runtime data management.
+- `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with runtime data.
 
 ## Experimental modules
 

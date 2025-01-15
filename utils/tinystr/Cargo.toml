@@ -41,11 +41,6 @@ criterion = { workspace = true }
 [features]
 default = ["alloc"]
 alloc = []
-bench = []
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
@@ -61,14 +56,12 @@ harness = false
 [[bench]]
 name = "construct"
 harness = false
-required-features = ["bench"]
 
 [[bench]]
 name = "read"
 harness = false
-required-features = ["bench"]
 
 [[bench]]
 name = "serde"
 harness = false
-required-features = ["bench", "serde"]
+required-features = ["serde"]

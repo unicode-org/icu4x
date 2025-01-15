@@ -46,14 +46,9 @@ criterion = { workspace = true }
 [features]
 serde = ["dep:serde", "zerovec/serde", "potential_utf/serde"]
 databake = ["dep:databake", "zerovec/databake"]
-bench = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "codepointtrie"
@@ -63,7 +58,6 @@ path = "benches/codepointtrie.rs"
 [[bench]]
 name = "iai_cpt"
 harness = false
-required-features = ["bench"]
 path = "benches/iai_cpt.rs"
 
 [[bench]]

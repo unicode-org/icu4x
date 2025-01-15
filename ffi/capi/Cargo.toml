@@ -28,9 +28,8 @@ version.workspace = true
 all-features = true
 
 [package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI.
-# logging enables a feature of a dependency that has no externally visible API changes
-denylist = ["bench", "looping_panic_handler", "libc_alloc"]
+# These features don't build on std targets
+denylist = ["looping_panic_handler", "libc_alloc"]
 # This has a lot of features, run a reduced test that is likely to catch 99% of bugs
 max_combination_size = 2
 

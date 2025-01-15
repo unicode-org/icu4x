@@ -31,75 +31,62 @@ fn convert_benches(c: &mut Criterion) {
 
     bench_calendar(&mut group, "calendar/iso", icu::calendar::cal::Iso);
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/buddhist",
         icu::calendar::cal::Buddhist,
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(&mut group, "calendar/coptic", icu::calendar::cal::Coptic);
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/ethiopic",
         icu::calendar::cal::Ethiopian::new(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(&mut group, "calendar/indian", icu::calendar::cal::Indian);
 
-    #[cfg(feature = "bench")]
     bench_calendar(&mut group, "calendar/julian", icu::calendar::cal::Julian);
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/chinese_calculating",
         icu::calendar::cal::Chinese::new_always_calculating(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/chinese_cached",
         icu::calendar::cal::Chinese::new(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/gregorian",
         icu::calendar::cal::Gregorian,
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(&mut group, "calendar/hebrew", icu::calendar::cal::Hebrew);
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
         icu::calendar::cal::IslamicObservational::new_always_calculating(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
         icu::calendar::cal::IslamicCivil::new(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
         icu::calendar::cal::IslamicUmmAlQura::new_always_calculating(),
     );
 
-    #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",

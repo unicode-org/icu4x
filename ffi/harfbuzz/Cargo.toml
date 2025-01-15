@@ -25,10 +25,9 @@ all-features = true
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
 # serde enables dependency features but buffer_provider affects the actual code
-denylist = ["bench", "serde", "logging"]
+denylist = ["serde", "logging"]
 
 [dependencies]
 harfbuzz-traits = { version = "0.6.0" }

@@ -46,15 +46,10 @@ default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/databake", "dep:databake"]
 experimental = []
-bench = ["serde", "datagen"]
 compiled_data = ["dep:icu_plurals_data"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "operands"

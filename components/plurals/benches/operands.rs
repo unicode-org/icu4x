@@ -37,7 +37,6 @@ fn operands(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
     {
         use criterion::BenchmarkId;
 

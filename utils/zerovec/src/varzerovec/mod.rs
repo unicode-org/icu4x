@@ -19,7 +19,6 @@ mod serde;
 
 pub use crate::{VarZeroSlice, VarZeroVec};
 
-#[cfg(feature = "bench")]
 #[doc(hidden)]
 pub use components::VarZeroVecComponents;
 

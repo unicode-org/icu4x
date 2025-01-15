@@ -55,7 +55,6 @@ icu_provider_adapters = { path = "../adapters", default-features = false }
 criterion = { workspace = true }
 
 [features]
-bench = []
 std = []
 sync = []
 macros = ["dep:icu_provider_macros"]

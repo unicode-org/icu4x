@@ -28,7 +28,6 @@ fn pluralrules(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
     {
         use criterion::black_box;
         use icu_locale_core::locale;

@@ -24,7 +24,6 @@ fn triangular_nums(range: f64) -> Vec<isize> {
 }
 
 // TODO: move to helpers.rs
-#[cfg(feature = "bench")]
 fn triangular_floats(range: f64) -> impl Iterator<Item = f64> {
     // Use Lcg64Xsh32, a small, fast PRNG.s
     // Generate 1000 numbers between -range and +range, weighted around 0.
@@ -56,7 +55,6 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     {
         smaller_isize_benches(c);
         larger_isize_benches(c);
@@ -66,7 +64,6 @@ fn overview_bench(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
 fn smaller_isize_benches(c: &mut Criterion) {
     // Smaller nums: -1e4 to 1e4
     let nums = triangular_nums(1e4);
@@ -84,7 +81,6 @@ fn smaller_isize_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
 fn larger_isize_benches(c: &mut Criterion) {
     // Larger nums: -1e16 to 1e16
     let nums = triangular_nums(1e16);
@@ -102,7 +98,6 @@ fn larger_isize_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
 fn to_string_benches(c: &mut Criterion) {
     use criterion::BenchmarkId;
     use writeable::Writeable;
@@ -141,7 +136,6 @@ fn to_string_benches(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
 fn from_string_benches(c: &mut Criterion) {
     use criterion::BenchmarkId;
 
@@ -174,7 +168,6 @@ fn from_string_benches(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
 fn rounding_benches(c: &mut Criterion) {
     use fixed_decimal::{FloatPrecision, SignedRoundingMode, UnsignedRoundingMode};
     const ROUNDING_MODES: [(&str, SignedRoundingMode); 9] = [
