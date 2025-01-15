@@ -16,7 +16,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h12"
             }
@@ -47,7 +47,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h12"
             }

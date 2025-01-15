@@ -350,7 +350,6 @@ fn apply_fractional_seconds(
     pattern: &mut runtime::Pattern,
     fractional_seconds: Option<FractionalSecondDigits>,
 ) {
-    use FractionalSecondDigits::*;
     if let Some(fractional_seconds) = fractional_seconds {
         let mut items = pattern.items.to_vec();
         for item in items.iter_mut() {
@@ -368,11 +367,7 @@ fn apply_fractional_seconds(
         *pattern = runtime::Pattern::from(items);
         pattern
             .metadata
-            .set_time_granularity(if fractional_seconds == F0 {
-                TimeGranularity::Seconds
-            } else {
-                TimeGranularity::Nanoseconds
-            });
+            .set_time_granularity(TimeGranularity::Nanoseconds);
     }
 }
 

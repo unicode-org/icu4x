@@ -238,12 +238,9 @@ impl TryFrom<CompositeFieldSetSerde> for CompositeFieldSet {
 #[derive(Copy, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) enum TimePrecisionSerde {
-    HourPlus,
-    HourExact,
-    MinutePlus,
-    MinuteExact,
-    SecondPlus,
-    SecondF0,
+    Hour,
+    Minute,
+    Second,
     SecondF1,
     SecondF2,
     SecondF3,
@@ -253,26 +250,43 @@ pub(crate) enum TimePrecisionSerde {
     SecondF7,
     SecondF8,
     SecondF9,
+    MinuteOptional,
 }
 
 impl From<TimePrecision> for TimePrecisionSerde {
     fn from(value: TimePrecision) -> Self {
         match value {
-            TimePrecision::HourPlus => TimePrecisionSerde::HourPlus,
-            TimePrecision::HourExact => TimePrecisionSerde::HourExact,
-            TimePrecision::MinutePlus => TimePrecisionSerde::MinutePlus,
-            TimePrecision::MinuteExact => TimePrecisionSerde::MinuteExact,
-            TimePrecision::SecondPlus => TimePrecisionSerde::SecondPlus,
-            TimePrecision::SecondExact(FractionalSecondDigits::F0) => TimePrecisionSerde::SecondF0,
-            TimePrecision::SecondExact(FractionalSecondDigits::F1) => TimePrecisionSerde::SecondF1,
-            TimePrecision::SecondExact(FractionalSecondDigits::F2) => TimePrecisionSerde::SecondF2,
-            TimePrecision::SecondExact(FractionalSecondDigits::F3) => TimePrecisionSerde::SecondF3,
-            TimePrecision::SecondExact(FractionalSecondDigits::F4) => TimePrecisionSerde::SecondF4,
-            TimePrecision::SecondExact(FractionalSecondDigits::F5) => TimePrecisionSerde::SecondF5,
-            TimePrecision::SecondExact(FractionalSecondDigits::F6) => TimePrecisionSerde::SecondF6,
-            TimePrecision::SecondExact(FractionalSecondDigits::F7) => TimePrecisionSerde::SecondF7,
-            TimePrecision::SecondExact(FractionalSecondDigits::F8) => TimePrecisionSerde::SecondF8,
-            TimePrecision::SecondExact(FractionalSecondDigits::F9) => TimePrecisionSerde::SecondF9,
+            TimePrecision::Hour => TimePrecisionSerde::Hour,
+            TimePrecision::Minute => TimePrecisionSerde::Minute,
+            TimePrecision::Second => TimePrecisionSerde::Second,
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F1) => {
+                TimePrecisionSerde::SecondF1
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F2) => {
+                TimePrecisionSerde::SecondF2
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F3) => {
+                TimePrecisionSerde::SecondF3
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F4) => {
+                TimePrecisionSerde::SecondF4
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F5) => {
+                TimePrecisionSerde::SecondF5
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F6) => {
+                TimePrecisionSerde::SecondF6
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F7) => {
+                TimePrecisionSerde::SecondF7
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F8) => {
+                TimePrecisionSerde::SecondF8
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F9) => {
+                TimePrecisionSerde::SecondF9
+            }
+            TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
         }
     }
 }
@@ -280,21 +294,37 @@ impl From<TimePrecision> for TimePrecisionSerde {
 impl From<TimePrecisionSerde> for TimePrecision {
     fn from(value: TimePrecisionSerde) -> Self {
         match value {
-            TimePrecisionSerde::HourPlus => TimePrecision::HourPlus,
-            TimePrecisionSerde::HourExact => TimePrecision::HourExact,
-            TimePrecisionSerde::MinutePlus => TimePrecision::MinutePlus,
-            TimePrecisionSerde::MinuteExact => TimePrecision::MinuteExact,
-            TimePrecisionSerde::SecondPlus => TimePrecision::SecondPlus,
-            TimePrecisionSerde::SecondF0 => TimePrecision::SecondExact(FractionalSecondDigits::F0),
-            TimePrecisionSerde::SecondF1 => TimePrecision::SecondExact(FractionalSecondDigits::F1),
-            TimePrecisionSerde::SecondF2 => TimePrecision::SecondExact(FractionalSecondDigits::F2),
-            TimePrecisionSerde::SecondF3 => TimePrecision::SecondExact(FractionalSecondDigits::F3),
-            TimePrecisionSerde::SecondF4 => TimePrecision::SecondExact(FractionalSecondDigits::F4),
-            TimePrecisionSerde::SecondF5 => TimePrecision::SecondExact(FractionalSecondDigits::F5),
-            TimePrecisionSerde::SecondF6 => TimePrecision::SecondExact(FractionalSecondDigits::F6),
-            TimePrecisionSerde::SecondF7 => TimePrecision::SecondExact(FractionalSecondDigits::F7),
-            TimePrecisionSerde::SecondF8 => TimePrecision::SecondExact(FractionalSecondDigits::F8),
-            TimePrecisionSerde::SecondF9 => TimePrecision::SecondExact(FractionalSecondDigits::F9),
+            TimePrecisionSerde::Hour => TimePrecision::Hour,
+            TimePrecisionSerde::Minute => TimePrecision::Minute,
+            TimePrecisionSerde::Second => TimePrecision::Second,
+            TimePrecisionSerde::SecondF1 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F1)
+            }
+            TimePrecisionSerde::SecondF2 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F2)
+            }
+            TimePrecisionSerde::SecondF3 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F3)
+            }
+            TimePrecisionSerde::SecondF4 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F4)
+            }
+            TimePrecisionSerde::SecondF5 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F5)
+            }
+            TimePrecisionSerde::SecondF6 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F6)
+            }
+            TimePrecisionSerde::SecondF7 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F7)
+            }
+            TimePrecisionSerde::SecondF8 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F8)
+            }
+            TimePrecisionSerde::SecondF9 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
+            }
+            TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
         }
     }
 }
@@ -596,7 +626,7 @@ fn test_basic() {
             length: Length::Medium,
             alignment: Some(Alignment::Column),
             year_style: Some(YearStyle::Always),
-            time_precision: Some(TimePrecision::SecondExact(FractionalSecondDigits::F3)),
+            time_precision: Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3)),
         }),
         ZoneFieldSet::Vs(fieldsets::Vs::new()),
     ));

@@ -4,8 +4,8 @@
 
 #![cfg(feature = "serde")]
 
+use icu_datetime::fieldsets::serde::CompositeFieldSetSerde;
 use icu_datetime::provider::fields::components;
-use icu_datetime::{fieldsets::serde::CompositeFieldSetSerde, options};
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -65,7 +65,7 @@ pub struct TestComponentsBag {
     pub hour: Option<components::Numeric>,
     pub minute: Option<components::Numeric>,
     pub second: Option<components::Numeric>,
-    pub fractional_second: Option<options::FractionalSecondDigits>,
+    pub fractional_second: Option<u8>,
 
     pub time_zone_name: Option<components::TimeZoneName>,
 }

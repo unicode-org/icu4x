@@ -178,7 +178,6 @@ impl FieldSymbol {
     ) -> Self {
         use FractionalSecondDigits::*;
         match fractional_second_digits {
-            F0 => FieldSymbol::Second(Second::Second),
             F1 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF1),
             F2 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF2),
             F3 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF3),

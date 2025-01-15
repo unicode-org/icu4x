@@ -21,7 +21,7 @@
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)).with_zone_specific(),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F2)).with_zone_specific(),
 //! )
 //! .unwrap();
 //!
