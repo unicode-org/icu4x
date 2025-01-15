@@ -11,8 +11,9 @@
 #include "DateTimeFormatError.d.h"
 #include "DateTimeFormatterLoadError.d.h"
 #include "DateTimeLength.d.h"
-#include "IsoDateTime.d.h"
+#include "IsoDate.d.h"
 #include "Locale.d.h"
+#include "Time.d.h"
 #include "TimeZoneInfo.d.h"
 
 #include "GregorianZonedDateTimeFormatter.d.h"
@@ -28,8 +29,8 @@ icu4x_GregorianZonedDateTimeFormatter_create_with_length_mv1_result icu4x_Gregor
 typedef struct icu4x_GregorianZonedDateTimeFormatter_create_with_length_and_provider_mv1_result {union {GregorianZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_create_with_length_and_provider_mv1_result;
 icu4x_GregorianZonedDateTimeFormatter_create_with_length_and_provider_mv1_result icu4x_GregorianZonedDateTimeFormatter_create_with_length_and_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
-typedef struct icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { DateTimeFormatError err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
-icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const GregorianZonedDateTimeFormatter* self, const IsoDateTime* datetime, const TimeZoneInfo* time_zone, DiplomatWrite* write);
+typedef struct icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1_result {union { DateTimeFormatError err;}; bool is_ok;} icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1_result;
+icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1_result icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1(const GregorianZonedDateTimeFormatter* self, const IsoDate* date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
 
 
 void icu4x_GregorianZonedDateTimeFormatter_destroy_mv1(GregorianZonedDateTimeFormatter* self);

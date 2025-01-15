@@ -2,13 +2,12 @@
 import { Calendar } from "./Calendar.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Date } from "./Date.mjs"
-import { DateTime } from "./DateTime.mjs"
 import { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
 import { IsoDate } from "./IsoDate.mjs"
-import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Locale } from "./Locale.mjs"
+import { Time } from "./Time.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -131,12 +130,12 @@ export class DateFormatter {
         }
     }
 
-    formatDatetime(value) {
+    formatDatetime(date, time) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_DateFormatter_format_datetime_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
+        const result = wasm.icu4x_DateFormatter_format_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -153,12 +152,12 @@ export class DateFormatter {
         }
     }
 
-    formatIsoDatetime(value) {
+    formatIsoDatetime(date, time) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_DateFormatter_format_iso_datetime_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
+        const result = wasm.icu4x_DateFormatter_format_iso_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

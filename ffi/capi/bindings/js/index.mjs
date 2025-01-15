@@ -20,6 +20,10 @@ export { WeekendContainsDay } from "./WeekendContainsDay.mjs"
 
 export { CollatorResolvedOptions } from "./CollatorResolvedOptions.mjs"
 
+export { DateTime } from "./DateTime.mjs"
+
+export { IsoDateTime } from "./IsoDateTime.mjs"
+
 export { Decomposed } from "./Decomposed.mjs"
 
 export { PluralCategories } from "./PluralCategories.mjs"
@@ -27,6 +31,10 @@ export { PluralCategories } from "./PluralCategories.mjs"
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult.mjs"
 
 export { WeekOf } from "./WeekOf.mjs"
+
+export { ZonedDateTime } from "./ZonedDateTime.mjs"
+
+export { ZonedIsoDateTime } from "./ZonedIsoDateTime.mjs"
 
 export { Bidi } from "./Bidi.mjs"
 
@@ -51,10 +59,6 @@ export { CodePointSetBuilder } from "./CodePointSetBuilder.mjs"
 export { Date } from "./Date.mjs"
 
 export { IsoDate } from "./IsoDate.mjs"
-
-export { DateTime } from "./DateTime.mjs"
-
-export { IsoDateTime } from "./IsoDateTime.mjs"
 
 export { DateFormatter } from "./DateFormatter.mjs"
 
@@ -179,6 +183,8 @@ export { UnitsConverter } from "./UnitsConverter.mjs"
 export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
 export { WeekCalculator } from "./WeekCalculator.mjs"
+
+export { IxdtfParser } from "./IxdtfParser.mjs"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 

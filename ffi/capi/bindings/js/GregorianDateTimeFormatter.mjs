@@ -2,13 +2,14 @@
 import { DataProvider } from "./DataProvider.mjs"
 import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
-import { IsoDateTime } from "./IsoDateTime.mjs"
+import { IsoDate } from "./IsoDate.mjs"
 import { Locale } from "./Locale.mjs"
+import { Time } from "./Time.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+/** An ICU4X FixedCalendarDateTimeFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
 *using the Gregorian Calendar.
 *
 *See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
@@ -82,9 +83,9 @@ export class GregorianDateTimeFormatter {
         }
     }
 
-    formatIsoDatetime(value) {
+    formatIsoDatetime(date, time) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_GregorianDateTimeFormatter_format_iso_datetime_mv1(this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
     
         try {
             return write.readString8();

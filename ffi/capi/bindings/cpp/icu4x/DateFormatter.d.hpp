@@ -18,14 +18,12 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct DateFormatter; }
 class DateFormatter;
-namespace capi { struct DateTime; }
-class DateTime;
 namespace capi { struct IsoDate; }
 class IsoDate;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
+namespace capi { struct Time; }
+class Time;
 class DateTimeFormatError;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
@@ -50,9 +48,9 @@ public:
 
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_date(const icu4x::IsoDate& value) const;
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime(const icu4x::DateTime& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime(const icu4x::Date& date, const icu4x::Time& time) const;
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDateTime& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
   inline std::unique_ptr<icu4x::Calendar> calendar() const;
 

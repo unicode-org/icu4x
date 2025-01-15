@@ -52,12 +52,12 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
     return GregorianZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
+  /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
   ///
   /// Throws [DateTimeFormatError] on failure.
-  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
+  String formatZonedIsoDatetime(IsoDate date, Time time, TimeZoneInfo zone) {
     final write = _Write();
-    final result = _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
+    final result = _icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1(_ffi, date._ffi, time._ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
       throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -81,6 +81,6 @@ external _ResultOpaqueInt32 _icu4x_GregorianZonedDateTimeFormatter_create_with_l
 external _ResultOpaqueInt32 _icu4x_GregorianZonedDateTimeFormatter_create_with_length_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);

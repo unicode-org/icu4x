@@ -12,10 +12,6 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
-namespace capi { struct DateTime; }
-class DateTime;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct Time; }
@@ -42,10 +38,6 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
   inline std::string format_time(const icu4x::Time& value) const;
-
-  inline std::string format_datetime(const icu4x::DateTime& value) const;
-
-  inline std::string format_iso_datetime(const icu4x::IsoDateTime& value) const;
 
   inline const icu4x::capi::TimeFormatter* AsFFI() const;
   inline icu4x::capi::TimeFormatter* AsFFI();

@@ -10,13 +10,13 @@ pub mod ffi {
     use icu_datetime::fieldsets::{Combo, Vs, YMDT};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
-    use icu_timezone::ZoneVariant;
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use crate::{
-        datetime::ffi::{DateTime, IsoDateTime},
+        date::ffi::{Date, IsoDate},
         errors::ffi::DateTimeFormatError,
+        time::ffi::Time,
         timezone::ffi::TimeZoneInfo,
     };
 
@@ -76,21 +76,25 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
-        pub fn format_iso_datetime_with_custom_time_zone(
+        /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
+        pub fn format_zoned_iso_datetime(
             &self,
-            datetime: &IsoDateTime,
-            time_zone: &TimeZoneInfo,
+            date: &IsoDate,
+            time: &Time,
+            zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::ZonedDateTime {
-                date: icu_calendar::Date::new_from_iso(datetime.0.date, icu_calendar::Gregorian),
-                time: datetime.0.time,
-                zone: time_zone
+                date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
+                time: time.0,
+                zone: zone
                     .time_zone_id
-                    .with_offset(time_zone.offset)
-                    .at_time((datetime.0.date, datetime.0.time))
-                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
+                    .with_offset(zone.offset)
+                    .at_time((date.0, time.0))
+                    .with_zone_variant(
+                        zone.zone_variant
+                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
+                    ),
             };
             let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
@@ -143,23 +147,24 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
-        pub fn format_datetime_with_custom_time_zone(
+        /// Formats a [`Date`] a [`Time`], and a [`TimeZoneInfo`] to a string.
+        pub fn format_zoned_datetime(
             &self,
-            datetime: &DateTime,
-            time_zone: &TimeZoneInfo,
+            date: &Date,
+            time: &Time,
+            zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::ZonedDateTime {
-                date: datetime.0.date.clone(),
-                time: datetime.0.time,
-                zone: time_zone
+                // Arc clone
+                date: date.0.clone(),
+                time: time.0,
+                zone: zone
                     .time_zone_id
-                    .with_offset(time_zone.offset)
-                    .at_time((datetime.0.date.to_iso(), datetime.0.time))
+                    .with_offset(zone.offset)
+                    .at_time((date.0.to_iso(), time.0))
                     .with_zone_variant(
-                        time_zone
-                            .zone_variant
+                        zone.zone_variant
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
@@ -167,21 +172,25 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
-        pub fn format_iso_datetime_with_custom_time_zone(
+        /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
+        pub fn format_zoned_iso_datetime(
             &self,
-            datetime: &IsoDateTime,
-            time_zone: &TimeZoneInfo,
+            date: &IsoDate,
+            time: &Time,
+            zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::ZonedDateTime {
-                date: datetime.0.date,
-                time: datetime.0.time,
-                zone: time_zone
+                date: date.0,
+                time: time.0,
+                zone: zone
                     .time_zone_id
-                    .with_offset(time_zone.offset)
-                    .at_time((datetime.0.date, datetime.0.time))
-                    .with_zone_variant(time_zone.zone_variant.unwrap_or(ZoneVariant::Standard)),
+                    .with_offset(zone.offset)
+                    .at_time((date.0, time.0))
+                    .with_zone_variant(
+                        zone.zone_variant
+                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
+                    ),
             };
             let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
             Ok(())

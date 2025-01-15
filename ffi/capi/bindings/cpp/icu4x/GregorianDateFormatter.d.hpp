@@ -16,10 +16,10 @@ namespace capi { struct GregorianDateFormatter; }
 class GregorianDateFormatter;
 namespace capi { struct IsoDate; }
 class IsoDate;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
+namespace capi { struct Time; }
+class Time;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
 }
@@ -41,7 +41,7 @@ public:
 
   inline std::string format_iso_date(const icu4x::IsoDate& value) const;
 
-  inline std::string format_iso_datetime(const icu4x::IsoDateTime& value) const;
+  inline std::string format_iso_datetime(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
   inline const icu4x::capi::GregorianDateFormatter* AsFFI() const;
   inline icu4x::capi::GregorianDateFormatter* AsFFI();

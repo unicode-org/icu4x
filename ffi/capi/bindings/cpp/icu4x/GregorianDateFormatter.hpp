@@ -14,8 +14,8 @@
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
 #include "IsoDate.hpp"
-#include "IsoDateTime.hpp"
 #include "Locale.hpp"
+#include "Time.hpp"
 
 
 namespace icu4x {
@@ -30,7 +30,7 @@ namespace capi {
     
     void icu4x_GregorianDateFormatter_format_iso_date_mv1(const icu4x::capi::GregorianDateFormatter* self, const icu4x::capi::IsoDate* value, diplomat::capi::DiplomatWrite* write);
     
-    void icu4x_GregorianDateFormatter_format_iso_datetime_mv1(const icu4x::capi::GregorianDateFormatter* self, const icu4x::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_GregorianDateFormatter_format_iso_datetime_mv1(const icu4x::capi::GregorianDateFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_GregorianDateFormatter_destroy_mv1(GregorianDateFormatter* self);
@@ -61,11 +61,12 @@ inline std::string icu4x::GregorianDateFormatter::format_iso_date(const icu4x::I
   return output;
 }
 
-inline std::string icu4x::GregorianDateFormatter::format_iso_datetime(const icu4x::IsoDateTime& value) const {
+inline std::string icu4x::GregorianDateFormatter::format_iso_datetime(const icu4x::IsoDate& date, const icu4x::Time& time) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_GregorianDateFormatter_format_iso_datetime_mv1(this->AsFFI(),
-    value.AsFFI(),
+    date.AsFFI(),
+    time.AsFFI(),
     &write);
   return output;
 }

@@ -11,8 +11,8 @@
 #include "DateTimeFormatterLoadError.d.h"
 #include "DateTimeLength.d.h"
 #include "IsoDate.d.h"
-#include "IsoDateTime.d.h"
 #include "Locale.d.h"
+#include "Time.d.h"
 
 #include "GregorianDateFormatter.d.h"
 
@@ -29,7 +29,7 @@ icu4x_GregorianDateFormatter_create_with_length_and_provider_mv1_result icu4x_Gr
 
 void icu4x_GregorianDateFormatter_format_iso_date_mv1(const GregorianDateFormatter* self, const IsoDate* value, DiplomatWrite* write);
 
-void icu4x_GregorianDateFormatter_format_iso_datetime_mv1(const GregorianDateFormatter* self, const IsoDateTime* value, DiplomatWrite* write);
+void icu4x_GregorianDateFormatter_format_iso_datetime_mv1(const GregorianDateFormatter* self, const IsoDate* date, const Time* time, DiplomatWrite* write);
 
 
 void icu4x_GregorianDateFormatter_destroy_mv1(GregorianDateFormatter* self);

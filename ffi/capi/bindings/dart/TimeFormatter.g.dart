@@ -52,20 +52,6 @@ final class TimeFormatter implements ffi.Finalizable {
     _icu4x_TimeFormatter_format_time_mv1(_ffi, value._ffi, write._ffi);
     return write.finalize();
   }
-
-  /// Formats a [`DateTime`] to a string.
-  String formatDatetime(DateTime value) {
-    final write = _Write();
-    _icu4x_TimeFormatter_format_datetime_mv1(_ffi, value._ffi, write._ffi);
-    return write.finalize();
-  }
-
-  /// Formats a [`IsoDateTime`] to a string.
-  String formatIsoDatetime(IsoDateTime value) {
-    final write = _Write();
-    _icu4x_TimeFormatter_format_iso_datetime_mv1(_ffi, value._ffi, write._ffi);
-    return write.finalize();
-  }
 }
 
 @meta.RecordUse()
@@ -87,13 +73,3 @@ external _ResultOpaqueInt32 _icu4x_TimeFormatter_create_with_length_and_provider
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_format_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeFormatter_format_time_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_format_datetime_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_TimeFormatter_format_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
-
-@meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_format_iso_datetime_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_TimeFormatter_format_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

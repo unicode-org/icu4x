@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X TypedDateFormatter object capable of formatting a [`IsoDateTime`] as a string,
+/// An ICU4X TypedDateFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
 /// using the Gregorian Calendar.
 ///
 /// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
@@ -54,10 +54,10 @@ final class GregorianDateFormatter implements ffi.Finalizable {
     return write.finalize();
   }
 
-  /// Formats a [`IsoDateTime`] to a string.
-  String formatIsoDatetime(IsoDateTime value) {
+  /// Formats an [`IsoDate`] and a [`Time`] to a string.
+  String formatIsoDatetime(IsoDate date, Time time) {
     final write = _Write();
-    _icu4x_GregorianDateFormatter_format_iso_datetime_mv1(_ffi, value._ffi, write._ffi);
+    _icu4x_GregorianDateFormatter_format_iso_datetime_mv1(_ffi, date._ffi, time._ffi, write._ffi);
     return write.finalize();
   }
 }
@@ -83,6 +83,6 @@ external _ResultOpaqueInt32 _icu4x_GregorianDateFormatter_create_with_length_and
 external void _icu4x_GregorianDateFormatter_format_iso_date_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianDateFormatter_format_iso_datetime_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_GregorianDateFormatter_format_iso_datetime_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_GregorianDateFormatter_format_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_GregorianDateFormatter_format_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> write);

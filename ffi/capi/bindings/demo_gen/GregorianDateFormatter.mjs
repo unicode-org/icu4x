@@ -1,7 +1,7 @@
 import { GregorianDateFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
-import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
+import { Time } from "icu4x"
 export function formatIsoDate(name, length, year, month, day) {
     return (function (...args) { return args[0].formatIsoDate(...args.slice(1)) }).apply(
         null,
@@ -45,12 +45,17 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
                     length
                 ]
             ),
-            (function (...args) { return new IsoDateTime(...args) } ).apply(
+            (function (...args) { return new IsoDate(...args) } ).apply(
                 null,
                 [
                     year,
                     month,
-                    day,
+                    day
+                ]
+            ),
+            (function (...args) { return new Time(...args) } ).apply(
+                null,
+                [
                     hour,
                     minute,
                     second,

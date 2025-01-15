@@ -11,12 +11,13 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
-#include "DateTime.hpp"
+#include "Date.hpp"
 #include "DateTimeFormatError.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
-#include "IsoDateTime.hpp"
+#include "IsoDate.hpp"
 #include "Locale.hpp"
+#include "Time.hpp"
 #include "TimeZoneInfo.hpp"
 
 
@@ -30,11 +31,11 @@ namespace capi {
     typedef struct icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1_result {union {icu4x::capi::ZonedDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1_result;
     icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
-    typedef struct icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result;
-    icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::DateTime* datetime, const icu4x::capi::TimeZoneInfo* time_zone, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_ZonedDateTimeFormatter_format_zoned_datetime_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_zoned_datetime_mv1_result;
+    icu4x_ZonedDateTimeFormatter_format_zoned_datetime_mv1_result icu4x_ZonedDateTimeFormatter_format_zoned_datetime_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::Date* date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, diplomat::capi::DiplomatWrite* write);
     
-    typedef struct icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
-    icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::IsoDateTime* datetime, const icu4x::capi::TimeZoneInfo* time_zone, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_ZonedDateTimeFormatter_format_zoned_iso_datetime_mv1_result {union { icu4x::capi::DateTimeFormatError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_zoned_iso_datetime_mv1_result;
+    icu4x_ZonedDateTimeFormatter_format_zoned_iso_datetime_mv1_result icu4x_ZonedDateTimeFormatter_format_zoned_iso_datetime_mv1(const icu4x::capi::ZonedDateTimeFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);
@@ -56,22 +57,24 @@ inline diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::D
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::ZonedDateTimeFormatter>>(std::unique_ptr<icu4x::ZonedDateTimeFormatter>(icu4x::ZonedDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::ZonedDateTimeFormatter::format_datetime_with_custom_time_zone(const icu4x::DateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const {
+inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::ZonedDateTimeFormatter::format_zoned_datetime(const icu4x::Date& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(this->AsFFI(),
-    datetime.AsFFI(),
-    time_zone.AsFFI(),
+  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_zoned_datetime_mv1(this->AsFFI(),
+    date.AsFFI(),
+    time.AsFFI(),
+    zone.AsFFI(),
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Err<icu4x::DateTimeFormatError>(icu4x::DateTimeFormatError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::ZonedDateTimeFormatter::format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const {
+inline diplomat::result<std::string, icu4x::DateTimeFormatError> icu4x::ZonedDateTimeFormatter::format_zoned_iso_datetime(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(this->AsFFI(),
-    datetime.AsFFI(),
-    time_zone.AsFFI(),
+  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatter_format_zoned_iso_datetime_mv1(this->AsFFI(),
+    date.AsFFI(),
+    time.AsFFI(),
+    zone.AsFFI(),
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeFormatError>(diplomat::Err<icu4x::DateTimeFormatError>(icu4x::DateTimeFormatError::FromFFI(result.err)));
 }
