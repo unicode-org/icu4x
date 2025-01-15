@@ -54,7 +54,7 @@ pub mod ffi {
         /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_content_locale(
             locale: &Locale,
@@ -66,7 +66,7 @@ pub mod ffi {
 
         /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_content_locale_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_content_locale_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_content_locale_and_provider(
             provider: &DataProvider,

@@ -38,7 +38,7 @@ pub mod ffi {
 
         /// Creates a new [`Bidi`] from locale data, and a particular data source.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
             Ok(Box::new(Bidi(

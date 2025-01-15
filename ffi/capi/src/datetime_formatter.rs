@@ -43,7 +43,7 @@ pub mod ffi {
 
     impl TimeFormatter {
         /// Creates a new [`TimeFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -59,7 +59,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`TimeFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
@@ -112,7 +112,7 @@ pub mod ffi {
 
     impl GregorianDateFormatter {
         /// Creates a new [`GregorianDateFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -128,7 +128,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`GregorianDateFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
@@ -180,7 +180,7 @@ pub mod ffi {
 
     impl GregorianDateTimeFormatter {
         /// Creates a new [`GregorianDateTimeFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -196,7 +196,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`GregorianDateTimeFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
@@ -237,7 +237,7 @@ pub mod ffi {
 
     impl DateFormatter {
         /// Creates a new [`DateFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -253,7 +253,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`DateFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
@@ -336,7 +336,7 @@ pub mod ffi {
 
     impl DateTimeFormatter {
         /// Creates a new [`DateTimeFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -352,7 +352,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`DateTimeFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,

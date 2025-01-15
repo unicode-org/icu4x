@@ -40,7 +40,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -58,7 +58,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
@@ -107,7 +107,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_length(
@@ -125,7 +125,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,

@@ -48,7 +48,7 @@ pub mod ffi {
 
         /// Creates a new [`IsoDateTime`] from an [`IsoDate`] and [`Time`] object
         #[diplomat::rust_link(icu::timezone::DateTime::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_date_and_time(date: &IsoDate, time: &Time) -> Box<IsoDateTime> {
             let dt = icu_timezone::DateTime {
                 date: date.0,
@@ -61,7 +61,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::DateTime::try_iso_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::DateTime::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, CalendarParseError> {
             Ok(Box::new(IsoDateTime(
                 icu_timezone::DateTime::try_iso_from_utf8(v)?,
@@ -227,7 +227,7 @@ pub mod ffi {
         /// Creates a new [`DateTime`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::DateTime::new_from_iso, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
         #[allow(clippy::too_many_arguments)]
         pub fn from_iso_in_calendar(
@@ -251,7 +251,7 @@ pub mod ffi {
         ///
         /// An empty era code will treat the year as an extended year
         #[diplomat::rust_link(icu::timezone::DateTime::try_new_from_codes, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[allow(clippy::too_many_arguments)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
@@ -293,7 +293,7 @@ pub mod ffi {
         }
         /// Creates a new [`DateTime`] from an [`Date`] and [`Time`] object
         #[diplomat::rust_link(icu::timezone::DateTime::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_date_and_time(date: &Date, time: &Time) -> Box<DateTime> {
             let dt = icu_timezone::DateTime {
                 date: date.0.clone(),
@@ -306,7 +306,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::DateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,

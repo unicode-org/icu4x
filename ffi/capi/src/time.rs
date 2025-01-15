@@ -43,14 +43,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::Time::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::Time::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::Time::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<Time>, CalendarParseError> {
             Ok(Box::new(Time(icu_timezone::Time::try_from_utf8(v)?)))
         }
 
         /// Creates a new [`Time`] representing midnight (00:00.000).
         #[diplomat::rust_link(icu::timezone::Time::midnight, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn midnight() -> Result<Box<Time>, CalendarError> {
             let time = icu_timezone::Time::midnight();
             Ok(Box::new(Time(time)))

@@ -60,7 +60,7 @@ pub mod ffi {
             not(any(target_arch = "wasm32", target_os = "none"))
         ))]
         #[diplomat::attr(any(dart, js), disable)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_fs(path: &DiplomatStr) -> Result<Box<DataProvider>, DataError> {
             Ok(Box::new(DataProvider(Some(Box::new(
                 icu_provider_fs::FsDataProvider::try_new(
@@ -74,7 +74,7 @@ pub mod ffi {
 
         /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::attr(not(supports = static_slices), disable)]
         pub fn from_byte_slice(
             blob: &'static [DiplomatByte],

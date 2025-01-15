@@ -39,7 +39,7 @@ pub mod ffi {
 
         /// Create a new [`TimeZoneIdMapper`] using a particular data source
         #[diplomat::rust_link(icu::timezone::TimeZoneIdMapper::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
@@ -166,7 +166,7 @@ pub mod ffi {
             icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::new,
             FnInStruct
         )]
-        #[diplomat::attr(auto, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,

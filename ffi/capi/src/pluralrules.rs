@@ -46,7 +46,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "cardinal")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
         pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
@@ -58,7 +58,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "cardinal_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_cardinal_with_provider(
             provider: &DataProvider,
@@ -76,7 +76,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ordinal")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal")]
         #[cfg(feature = "compiled_data")]
         pub fn create_ordinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
@@ -88,7 +88,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ordinal_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ordinal_with_provider(
             provider: &DataProvider,
@@ -123,7 +123,7 @@ pub mod ffi {
     impl PluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
             Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
                 &fixed_decimal::SignedFixedDecimal::try_from_utf8(s)?,

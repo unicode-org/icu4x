@@ -48,7 +48,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_iso_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, CalendarParseError> {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
         }
@@ -167,7 +167,7 @@ pub mod ffi {
         /// Creates a new [`Date`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::Date::new_from_iso, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
         pub fn from_iso_in_calendar(
             year: i32,
@@ -185,7 +185,7 @@ pub mod ffi {
         ///
         /// An empty era code will treat the year as an extended year
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
             year: i32,
@@ -214,7 +214,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
