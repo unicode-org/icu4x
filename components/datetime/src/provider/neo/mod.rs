@@ -413,8 +413,8 @@ pub enum YearNamesV1<'data> {
 type YearNamesMap<'data> =
     VarZeroCow<'data, Tuple2VarULE<VarZeroSlice<PotentialUtf8>, VarZeroSlice<str>>>;
 
-pub(crate) fn get_year_name_from_map<'a, 'data>(
-    map: &'a YearNamesMap<'data>,
+pub(crate) fn get_year_name_from_map<'a>(
+    map: &'a YearNamesMap<'_>,
     year: &PotentialUtf8,
 ) -> Option<&'a str> {
     let idx = map.a().binary_search_by(|x| x.cmp(year)).ok()?;
