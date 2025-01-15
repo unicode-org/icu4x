@@ -2,10 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Style.html) for more information.
 */
+
+
 export class DisplayNamesStyle {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -18,14 +21,14 @@ export class DisplayNamesStyle {
     static getAllEntries() {
         return DisplayNamesStyle.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return DisplayNamesStyle.#objectValues[arguments[1]];
         }
@@ -37,11 +40,15 @@ export class DisplayNamesStyle {
         let intVal = DisplayNamesStyle.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return DisplayNamesStyle.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DisplayNamesStyle and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new DisplayNamesStyle(value);
     }
 
     get value() {
@@ -62,4 +69,8 @@ export class DisplayNamesStyle {
     static Short = DisplayNamesStyle.#objectValues[1];
     static Long = DisplayNamesStyle.#objectValues[2];
     static Menu = DisplayNamesStyle.#objectValues[3];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

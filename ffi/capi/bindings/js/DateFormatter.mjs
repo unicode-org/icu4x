@@ -23,6 +23,7 @@ const DateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class DateFormatter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -30,7 +31,7 @@ export class DateFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("DateFormatter is an Opaque type. You cannot call its constructor.");
             return;
@@ -43,8 +44,9 @@ export class DateFormatter {
         if (this.#selfEdge.length === 0) {
             DateFormatter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -181,5 +183,9 @@ export class DateFormatter {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

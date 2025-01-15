@@ -4,6 +4,7 @@ import type { CodePointSetData } from "./CodePointSetData"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
+import type { GeneralCategoryGroup_obj } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -17,9 +18,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
 */
+
+
 export class CodePointMapData8 {
     
-
     get ffiValue(): pointer;
 
     get(cp: codepoint): number;
@@ -28,7 +30,7 @@ export class CodePointMapData8 {
 
     iterRangesForValueComplemented(value: number): CodePointRangeIterator;
 
-    iterRangesForGroup(group: GeneralCategoryGroup): CodePointRangeIterator;
+    iterRangesForGroup(group: GeneralCategoryGroup_obj): CodePointRangeIterator;
 
     getSetForValue(value: number): CodePointSetData;
 

@@ -19,6 +19,7 @@ const GregorianDateFormatter_box_destroy_registry = new FinalizationRegistry((pt
 });
 
 export class GregorianDateFormatter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -26,7 +27,7 @@ export class GregorianDateFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GregorianDateFormatter is an Opaque type. You cannot call its constructor.");
             return;
@@ -39,8 +40,9 @@ export class GregorianDateFormatter {
         if (this.#selfEdge.length === 0) {
             GregorianDateFormatter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -105,5 +107,9 @@ export class GregorianDateFormatter {
         finally {
             write.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

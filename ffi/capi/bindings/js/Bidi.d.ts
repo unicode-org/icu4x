@@ -12,12 +12,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
 */
+
+
 export class Bidi {
     
-
     get ffiValue(): pointer;
-
-    static create(): Bidi;
 
     static createWithProvider(provider: DataProvider): Bidi;
 
@@ -32,4 +31,6 @@ export class Bidi {
     static levelRtl(): number;
 
     static levelLtr(): number;
+
+    constructor();
 }

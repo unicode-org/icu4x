@@ -8,11 +8,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 */
-export class Decomposed {
 
+
+export class Decomposed {
+    
     get first() : codepoint;
     
-
     get second() : codepoint;
     
 }

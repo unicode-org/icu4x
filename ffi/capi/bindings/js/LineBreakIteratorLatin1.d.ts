@@ -6,9 +6,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorLatin1.html)
 */
+
+
 export class LineBreakIteratorLatin1 {
     
-
     get ffiValue(): pointer;
 
     next(): number;

@@ -2,6 +2,7 @@
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { DisplayNamesOptions } from "./DisplayNamesOptions"
+import type { DisplayNamesOptions_obj } from "./DisplayNamesOptions"
 import type { Locale } from "./Locale"
 import type { LocaleParseError } from "./LocaleParseError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
@@ -9,14 +10,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html) for more information.
 */
+
+
 export class RegionDisplayNames {
     
-
     get ffiValue(): pointer;
 
-    static create(locale: Locale, options: DisplayNamesOptions): RegionDisplayNames;
+    static create(locale: Locale, options: DisplayNamesOptions_obj): RegionDisplayNames;
 
-    static createWithProvider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions): RegionDisplayNames;
+    static createWithProvider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions_obj): RegionDisplayNames;
 
     of(region: string): string;
 }

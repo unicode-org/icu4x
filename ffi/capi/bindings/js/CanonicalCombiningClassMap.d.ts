@@ -8,14 +8,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
 */
+
+
 export class CanonicalCombiningClassMap {
     
-
     get ffiValue(): pointer;
-
-    static create(): CanonicalCombiningClassMap;
 
     static createWithProvider(provider: DataProvider): CanonicalCombiningClassMap;
 
     get(ch: codepoint): number;
+
+    constructor();
 }

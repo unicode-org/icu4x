@@ -10,16 +10,17 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
 */
+
+
 export class SentenceSegmenter {
     
-
     get ffiValue(): pointer;
-
-    static create(): SentenceSegmenter;
 
     static createWithContentLocale(locale: Locale): SentenceSegmenter;
 
     static createWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): SentenceSegmenter;
 
     segment(input: string): SentenceBreakIteratorUtf16;
+
+    constructor();
 }

@@ -18,7 +18,7 @@ export function formatIsoDate(name, length, year, month, day) {
                     length
                 ]
             ),
-            IsoDate.create.apply(
+            (function (...args) { return new IsoDate(...args) } ).apply(
                 null,
                 [
                     year,
@@ -45,7 +45,7 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
                     length
                 ]
             ),
-            IsoDateTime.create.apply(
+            (function (...args) { return new IsoDateTime(...args) } ).apply(
                 null,
                 [
                     year,

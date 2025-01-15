@@ -13,6 +13,7 @@ const LocaleFallbackIterator_box_destroy_registry = new FinalizationRegistry((pt
 });
 
 export class LocaleFallbackIterator {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +22,7 @@ export class LocaleFallbackIterator {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleFallbackIterator is an Opaque type. You cannot call its constructor.");
             return;
@@ -37,8 +38,9 @@ export class LocaleFallbackIterator {
         if (this.#selfEdge.length === 0) {
             LocaleFallbackIterator_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -53,13 +55,16 @@ export class LocaleFallbackIterator {
         finally {}
     }
 
-    
     next() {
         const out = this.#iteratorNext();
-    
+
         return {
             value: out,
             done: out === null,
         };
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

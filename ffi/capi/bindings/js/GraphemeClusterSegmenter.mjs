@@ -16,6 +16,7 @@ const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((
 });
 
 export class GraphemeClusterSegmenter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +24,7 @@ export class GraphemeClusterSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GraphemeClusterSegmenter is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,13 +37,14 @@ export class GraphemeClusterSegmenter {
         if (this.#selfEdge.length === 0) {
             GraphemeClusterSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create() {
+    #defaultConstructor() {
         const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1();
     
         try {
@@ -85,6 +87,16 @@ export class GraphemeClusterSegmenter {
         
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

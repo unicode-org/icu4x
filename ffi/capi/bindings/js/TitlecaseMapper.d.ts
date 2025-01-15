@@ -3,19 +3,21 @@ import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { Locale } from "./Locale"
 import type { TitlecaseOptions } from "./TitlecaseOptions"
+import type { TitlecaseOptions_obj } from "./TitlecaseOptions"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
 */
+
+
 export class TitlecaseMapper {
     
-
     get ffiValue(): pointer;
 
     static create(): TitlecaseMapper;
 
     static createWithProvider(provider: DataProvider): TitlecaseMapper;
 
-    titlecaseSegment(s: string, locale: Locale, options: TitlecaseOptions): string;
+    titlecaseSegment(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
 }

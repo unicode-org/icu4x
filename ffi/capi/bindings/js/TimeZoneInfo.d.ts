@@ -7,16 +7,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneInfo.html) for more information.
 */
+
+
 export class TimeZoneInfo {
     
-
     get ffiValue(): pointer;
 
     static unknown(): TimeZoneInfo;
 
     static utc(): TimeZoneInfo;
-
-    static fromParts(bcp47Id: string, offsetSeconds: number, dst: boolean): TimeZoneInfo;
 
     trySetOffsetSeconds(offsetSeconds: number): void;
 
@@ -61,4 +60,6 @@ export class TimeZoneInfo {
     clearLocalTime(): void;
 
     get getLocalTime(): IsoDateTime | null;
+
+    constructor(bcp47Id: string, offsetSeconds: number, dst: boolean);
 }

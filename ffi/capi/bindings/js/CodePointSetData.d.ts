@@ -3,6 +3,7 @@ import type { CodePointRangeIterator } from "./CodePointRangeIterator"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
+import type { GeneralCategoryGroup_obj } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -14,9 +15,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetDataBorrowed.html) for more information.
 */
+
+
 export class CodePointSetData {
     
-
     get ffiValue(): pointer;
 
     contains(cp: codepoint): boolean;
@@ -25,7 +27,7 @@ export class CodePointSetData {
 
     iterRangesComplemented(): CodePointRangeIterator;
 
-    static createGeneralCategoryGroup(group: GeneralCategoryGroup): CodePointSetData;
+    static createGeneralCategoryGroup(group: GeneralCategoryGroup_obj): CodePointSetData;
 
     static createGeneralCategoryGroupWithProvider(provider: DataProvider, group: number): CodePointSetData;
 

@@ -2,10 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
 */
+
+
 export class WeekRelativeUnit {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -17,14 +20,14 @@ export class WeekRelativeUnit {
     static getAllEntries() {
         return WeekRelativeUnit.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return WeekRelativeUnit.#objectValues[arguments[1]];
         }
@@ -36,11 +39,15 @@ export class WeekRelativeUnit {
         let intVal = WeekRelativeUnit.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return WeekRelativeUnit.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a WeekRelativeUnit and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new WeekRelativeUnit(value);
     }
 
     get value() {
@@ -59,4 +66,8 @@ export class WeekRelativeUnit {
     static Previous = WeekRelativeUnit.#objectValues[0];
     static Current = WeekRelativeUnit.#objectValues[1];
     static Next = WeekRelativeUnit.#objectValues[2];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

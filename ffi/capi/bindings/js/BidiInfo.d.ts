@@ -7,9 +7,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
 */
+
+
 export class BidiInfo {
     
-
     get ffiValue(): pointer;
 
     get paragraphCount(): number;

@@ -16,6 +16,7 @@ const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry
 });
 
 export class LocaleFallbackerWithConfig {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +25,7 @@ export class LocaleFallbackerWithConfig {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleFallbackerWithConfig is an Opaque type. You cannot call its constructor.");
             return;
@@ -40,8 +41,9 @@ export class LocaleFallbackerWithConfig {
         if (this.#selfEdge.length === 0) {
             LocaleFallbackerWithConfig_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -57,5 +59,9 @@ export class LocaleFallbackerWithConfig {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

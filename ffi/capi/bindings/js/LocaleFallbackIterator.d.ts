@@ -7,13 +7,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
 */
+
+
 export class LocaleFallbackIterator {
     
-
     get ffiValue(): pointer;
 
-    #iteratorNext(): Locale | null;
-
-    
     next() : IteratorResult<Locale>;
 }

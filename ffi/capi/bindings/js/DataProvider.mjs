@@ -19,6 +19,7 @@ const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class DataProvider {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -26,7 +27,7 @@ export class DataProvider {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("DataProvider is an Opaque type. You cannot call its constructor.");
             return;
@@ -39,8 +40,9 @@ export class DataProvider {
         if (this.#selfEdge.length === 0) {
             DataProvider_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -97,5 +99,9 @@ export class DataProvider {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

@@ -14,9 +14,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
 */
+
+
 export class ZonedDateTimeFormatter {
     
-
     get ffiValue(): pointer;
 
     static createWithLength(locale: Locale, length: DateTimeLength): ZonedDateTimeFormatter;

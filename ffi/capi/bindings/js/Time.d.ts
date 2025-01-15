@@ -8,9 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html) for more information.
 */
+
+
 export class Time {
     
-
     get ffiValue(): pointer;
 
     static create(hour: number, minute: number, second: number, nanosecond: number): Time;

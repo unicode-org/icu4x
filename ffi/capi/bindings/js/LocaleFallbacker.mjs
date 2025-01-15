@@ -16,6 +16,7 @@ const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => 
 });
 
 export class LocaleFallbacker {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +24,7 @@ export class LocaleFallbacker {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleFallbacker is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,13 +37,14 @@ export class LocaleFallbacker {
         if (this.#selfEdge.length === 0) {
             LocaleFallbacker_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create() {
+    #defaultConstructor() {
         const result = wasm.icu4x_LocaleFallbacker_create_mv1();
     
         try {
@@ -86,7 +88,7 @@ export class LocaleFallbacker {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
         
-        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...config._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...LocaleFallbackConfig._fromSuppliedValue(diplomatRuntime.internalConstructor, config)._intoFFI(functionCleanupArena, {}));
     
         try {
             return new LocaleFallbackerWithConfig(diplomatRuntime.internalConstructor, result, [], aEdges);
@@ -94,6 +96,16 @@ export class LocaleFallbacker {
         
         finally {
             functionCleanupArena.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

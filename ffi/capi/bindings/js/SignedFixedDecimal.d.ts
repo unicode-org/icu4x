@@ -10,9 +10,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
 */
+
+
 export class SignedFixedDecimal {
     
-
     get ffiValue(): pointer;
 
     static fromNumber(v: number): SignedFixedDecimal;

@@ -14,6 +14,7 @@ const TitlecaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class TitlecaseMapper {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +22,7 @@ export class TitlecaseMapper {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TitlecaseMapper is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,8 +35,9 @@ export class TitlecaseMapper {
         if (this.#selfEdge.length === 0) {
             TitlecaseMapper_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -82,7 +84,7 @@ export class TitlecaseMapper {
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}), write.buffer);
     
         try {
             return write.readString8();
@@ -93,5 +95,9 @@ export class TitlecaseMapper {
         
             write.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

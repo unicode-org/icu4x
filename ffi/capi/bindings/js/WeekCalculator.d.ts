@@ -11,9 +11,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
 */
+
+
 export class WeekCalculator {
     
-
     get ffiValue(): pointer;
 
     static create(locale: Locale): WeekCalculator;

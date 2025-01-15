@@ -21,6 +21,7 @@ const IsoDateTime_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class IsoDateTime {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -28,7 +29,7 @@ export class IsoDateTime {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("IsoDateTime is an Opaque type. You cannot call its constructor.");
             return;
@@ -41,8 +42,9 @@ export class IsoDateTime {
         if (this.#selfEdge.length === 0) {
             IsoDateTime_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -291,5 +293,9 @@ export class IsoDateTime {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }
