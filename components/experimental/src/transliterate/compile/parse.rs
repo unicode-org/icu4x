@@ -888,7 +888,6 @@ where
     fn parse_literal(&mut self) -> Result<String> {
         let mut buf = String::new();
         loop {
-            self.skip_whitespace();
             let c = self.must_peek_char()?;
             if c == Self::ESCAPE {
                 self.parse_escaped_char_into_buf(&mut buf)?;
