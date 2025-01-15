@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
@@ -25,7 +29,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
             + u32::from(zoned.nanosecond().unsigned_abs()),
     )?;
 
-    let zone = 
+    let zone =
         // ICU uses BCP47 time zone IDs
         TimeZoneIdMapper::new().iana_to_bcp47(zoned.time_zone().iana_name().unwrap_or("Etc/Unknown"))
         // In ICU's model, a time zone has a fixed offset, as that's required for formatting
