@@ -317,7 +317,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// 2. 16:20 (4:20 pm) with 24-hour time
 /// 3. 7:15:01.85 with 24-hour time
 ///
-/// Fractional second digits can be displayed with an exact precision. If you would like
+/// Fractional second digits can be displayed with a fixed precision. If you would like
 /// additional options for fractional second digit display, please leave a comment in
 /// <https://github.com/unicode-org/icu4x/issues/6008>.
 ///
