@@ -303,7 +303,7 @@ pub mod marker_attrs {
     }
 }
 
-size_test!(YearNamesV1, year_names_v1_size, 48);
+size_test!(YearNamesV1, year_names_v1_size, 32);
 
 /// Names used for representing the year.
 ///
