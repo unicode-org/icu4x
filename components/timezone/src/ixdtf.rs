@@ -438,7 +438,7 @@ impl ZonedDateTimeParser {
 
     /// Create a [`ZonedDateTime`] in any calendar from IXDTF syntax UTF-8 bytes.
     ///
-    /// See [`Self::try_offset_only_from_str`].
+    /// See [`Self::parse_offset_only`].
     pub fn parse_offset_only_from_utf8<A: AsCalendar>(
         &self,
         ixdtf_str: &[u8],
@@ -467,7 +467,7 @@ impl ZonedDateTimeParser {
 
     /// Create a [`ZonedDateTime`] in any calendar from IXDTF syntax UTF-8 bytes.
     ///
-    /// See [`Self::try_location_only_from_str`].
+    /// See [`Self::parse_location_only`].
     pub fn parse_location_only_from_utf8<A: AsCalendar>(
         &self,
         ixdtf_str: &[u8],
@@ -501,7 +501,7 @@ impl ZonedDateTimeParser {
 
     /// Create a [`ZonedDateTime`] in any calendar from IXDTF syntax UTF-8 bytes.
     ///
-    /// See [`Self::try_loose_from_str`].
+    /// See [`Self::parse_loose`].
     pub fn parse_loose_from_utf8<A: AsCalendar>(
         &self,
         ixdtf_str: &[u8],

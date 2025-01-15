@@ -57,7 +57,7 @@ void main() {
 
   test('DateTime formatting', () {
     final zonedDateTime =
-        IxdtfParser().tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
+        ZonedDateTimeParser().tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
 
     var locale = Locale.fromString('de');
 
