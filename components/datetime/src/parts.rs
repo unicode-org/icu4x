@@ -25,7 +25,7 @@
 //! )
 //! .unwrap();
 //!
-//! let dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", Gregorian).unwrap();
+//! let dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(

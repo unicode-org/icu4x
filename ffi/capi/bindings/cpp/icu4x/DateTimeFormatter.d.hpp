@@ -10,6 +10,8 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
+namespace capi { struct Calendar; }
+class Calendar;
 namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct DateTime; }
@@ -20,7 +22,6 @@ namespace capi { struct IsoDateTime; }
 class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
-class AnyCalendarKind;
 class DateTimeFormatError;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
@@ -45,7 +46,7 @@ public:
 
   inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDateTime& value) const;
 
-  inline icu4x::AnyCalendarKind calendar_kind() const;
+  inline std::unique_ptr<icu4x::Calendar> calendar() const;
 
   inline const icu4x::capi::DateTimeFormatter* AsFFI() const;
   inline icu4x::capi::DateTimeFormatter* AsFFI();
