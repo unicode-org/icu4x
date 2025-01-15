@@ -11,16 +11,16 @@ use icu_calendar::{
         ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
         IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     },
-    types::{
-        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    },
-    Date, Iso, Time,
+    types::{DayOfMonth, DayOfYearInfo, IsoWeekday, MonthInfo, YearInfo},
+    Date, Iso,
 };
 use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{
+    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+};
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
@@ -149,9 +149,9 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// The following types implement this trait:
 ///
 /// - [`Date`](icu_calendar::Date)
-/// - [`Time`](icu_calendar::Time)
-/// - [`DateTime`](icu_calendar::DateTime)
-/// - [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+/// - [`Time`](icu_timezone::Time)
+/// - [`DateTime`](icu_timezone::DateTime)
+/// - [`ZonedDateTime`](icu_timezone::ZonedDateTime)
 /// - [`UtcOffset`](icu_timezone::UtcOffset)
 /// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 ///

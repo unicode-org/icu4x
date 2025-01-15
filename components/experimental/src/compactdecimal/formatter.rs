@@ -109,7 +109,7 @@ impl CompactDecimalFormatter {
         prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = ShortCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_prefs);
+        let locale = ShortCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 (&prefs).into(),
@@ -152,7 +152,7 @@ impl CompactDecimalFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + ?Sized,
     {
-        let locale = ShortCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_prefs);
+        let locale = ShortCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,
@@ -196,7 +196,7 @@ impl CompactDecimalFormatter {
         prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = LongCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_prefs);
+        let locale = LongCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new(
                 (&prefs).into(),
@@ -239,7 +239,7 @@ impl CompactDecimalFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + ?Sized,
     {
-        let locale = LongCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_prefs);
+        let locale = LongCompactDecimalFormatDataV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self {
             fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
                 provider,

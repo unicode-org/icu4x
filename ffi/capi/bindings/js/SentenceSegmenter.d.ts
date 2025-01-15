@@ -17,8 +17,6 @@ export class SentenceSegmenter {
 
     static create(): SentenceSegmenter;
 
-    static createWithProvider(provider: DataProvider): SentenceSegmenter;
-
     static createWithContentLocale(locale: Locale): SentenceSegmenter;
 
     static createWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): SentenceSegmenter;

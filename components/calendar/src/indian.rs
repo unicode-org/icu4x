@@ -5,43 +5,28 @@
 //! This module contains types and implementations for the Indian national calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Indian, Date, DateTime};
+//! use icu::calendar::{cal::Indian, Date};
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_indian = Date::new_from_iso(date_iso, Indian);
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_indian = DateTime::new_from_iso(datetime_iso, Indian);
-//!
-//! // `Date` checks
 //! assert_eq!(date_indian.year().era_year_or_extended(), 1891);
 //! assert_eq!(date_indian.month().ordinal, 10);
 //! assert_eq!(date_indian.day_of_month().0, 12);
-//!
-//! // `DateTime` type
-//! assert_eq!(datetime_indian.date.year().era_year_or_extended(), 1891);
-//! assert_eq!(datetime_indian.date.month().ordinal, 10);
-//! assert_eq!(datetime_indian.date.day_of_month().0, 12);
-//! assert_eq!(datetime_indian.time.hour.number(), 13);
-//! assert_eq!(datetime_indian.time.minute.number(), 1);
-//! assert_eq!(datetime_indian.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
 /// The Indian National Calendar (aka the Saka calendar)
 ///
 /// The [Indian National calendar] is a solar calendar used by the Indian government, with twelve months.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// [Indian National calendar]: https://en.wikipedia.org/wiki/Indian_national_calendar
 ///
@@ -277,37 +262,6 @@ impl Date<Indian> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
-    }
-}
-
-impl DateTime<Indian> {
-    /// Construct a new Indian datetime from integers, with year provided in the Śaka era.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_indian = DateTime::try_new_indian(1891, 10, 12, 13, 1, 0)
-    ///     .expect("Failed to initialize Indian DateTime instance.");
-    ///
-    /// assert_eq!(datetime_indian.date.year().era_year_or_extended(), 1891);
-    /// assert_eq!(datetime_indian.date.month().ordinal, 10);
-    /// assert_eq!(datetime_indian.date.day_of_month().0, 12);
-    /// assert_eq!(datetime_indian.time.hour.number(), 13);
-    /// assert_eq!(datetime_indian.time.minute.number(), 1);
-    /// assert_eq!(datetime_indian.time.second.number(), 0);
-    /// ```
-    pub fn try_new_indian(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Indian>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_indian(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

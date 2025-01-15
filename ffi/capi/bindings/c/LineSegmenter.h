@@ -24,18 +24,9 @@
 
 LineSegmenter* icu4x_LineSegmenter_create_auto_mv1(void);
 
-typedef struct icu4x_LineSegmenter_create_auto_with_provider_mv1_result {union {LineSegmenter* ok; DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_auto_with_provider_mv1_result;
-icu4x_LineSegmenter_create_auto_with_provider_mv1_result icu4x_LineSegmenter_create_auto_with_provider_mv1(const DataProvider* provider);
-
 LineSegmenter* icu4x_LineSegmenter_create_lstm_mv1(void);
 
-typedef struct icu4x_LineSegmenter_create_lstm_with_provider_mv1_result {union {LineSegmenter* ok; DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_lstm_with_provider_mv1_result;
-icu4x_LineSegmenter_create_lstm_with_provider_mv1_result icu4x_LineSegmenter_create_lstm_with_provider_mv1(const DataProvider* provider);
-
 LineSegmenter* icu4x_LineSegmenter_create_dictionary_mv1(void);
-
-typedef struct icu4x_LineSegmenter_create_dictionary_with_provider_mv1_result {union {LineSegmenter* ok; DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_with_provider_mv1_result;
-icu4x_LineSegmenter_create_dictionary_with_provider_mv1_result icu4x_LineSegmenter_create_dictionary_with_provider_mv1(const DataProvider* provider);
 
 LineSegmenter* icu4x_LineSegmenter_create_auto_with_options_v2_mv1(const Locale* content_locale, LineBreakOptionsV2 options);
 

@@ -18,27 +18,21 @@ export class LineSegmenter {
 
     static createAuto(): LineSegmenter;
 
-    static createAutoWithProvider(provider: DataProvider): LineSegmenter;
-
     static createLstm(): LineSegmenter;
-
-    static createLstmWithProvider(provider: DataProvider): LineSegmenter;
 
     static createDictionary(): LineSegmenter;
 
-    static createDictionaryWithProvider(provider: DataProvider): LineSegmenter;
+    static autoWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static autoWithOptions(contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static autoWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static autoWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static lstmWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static lstmWithOptions(contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static lstmWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static lstmWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static dictionaryWithOptions(contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
-    static dictionaryWithOptions(contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
-
-    static dictionaryWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale, options: LineBreakOptions): LineSegmenter;
+    static dictionaryWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions): LineSegmenter;
 
     segment(input: string): LineBreakIteratorUtf16;
 }

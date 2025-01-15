@@ -138,7 +138,7 @@ macro_rules! constructor {
             prefs: RelativeTimeFormatterPreferences,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError> {
-            let locale = <$marker>::make_locale(prefs.locale_prefs);
+            let locale = <$marker>::make_locale(prefs.locale_preferences);
             let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new(
@@ -183,7 +183,7 @@ macro_rules! constructor {
                 + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
                 + ?Sized,
         {
-            let locale = <$marker>::make_locale(prefs.locale_prefs);
+            let locale = <$marker>::make_locale(prefs.locale_preferences);
             let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(

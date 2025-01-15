@@ -52,7 +52,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::timezone::{IxdtfParser, ZonedDateTime};
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -106,7 +106,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::timezone::{IxdtfParser, ZonedDateTime};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(

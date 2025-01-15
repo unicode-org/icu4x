@@ -28,7 +28,7 @@ use tinystr::TinyAsciiStr;
 /// use icu::locale::Locale;
 /// use icu::locale::{LocaleCanonicalizer, TransformResult};
 ///
-/// let lc = LocaleCanonicalizer::new();
+/// let lc = LocaleCanonicalizer::new_extended();
 ///
 /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
@@ -194,43 +194,71 @@ fn uts35_check_language_rules(
     TransformResult::Unmodified
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for LocaleCanonicalizer<LocaleExpander> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl LocaleCanonicalizer<LocaleExpander> {
-    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
+    /// using a [`LocaleExpander`] for common locales.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self::new_with_expander(LocaleExpander::new_extended())
+    pub const fn new_common() -> Self {
+        Self::new_with_expander(LocaleExpander::new_common())
     }
 
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            new_common: skip,
+            try_new_common_with_any_provider,
+            try_new_common_with_buffer_provider,
+            try_new_common_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
+    pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
             + ?Sized,
     {
-        let expander = LocaleExpander::try_new_unstable(provider)?;
+        let expander = LocaleExpander::try_new_common_unstable(provider)?;
+        Self::try_new_with_expander_unstable(provider, expander)
+    }
+
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
+    /// using a [`LocaleExpander`] for all locales.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_extended() -> Self {
+        Self::new_with_expander(LocaleExpander::new_extended())
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+        functions: [
+            new_extended: skip,
+            try_new_extended_with_any_provider,
+            try_new_extended_with_buffer_provider,
+            try_new_extended_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
+    where
+        P: DataProvider<AliasesV2Marker>
+            + DataProvider<LikelySubtagsForLanguageV1Marker>
+            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + DataProvider<LikelySubtagsExtendedV1Marker>
+            + ?Sized,
+    {
+        let expander = LocaleExpander::try_new_extended_unstable(provider)?;
         Self::try_new_with_expander_unstable(provider, expander)
     }
 }
@@ -289,7 +317,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     /// ```
     /// use icu::locale::{Locale, LocaleCanonicalizer, TransformResult};
     ///
-    /// let lc = LocaleCanonicalizer::new();
+    /// let lc = LocaleCanonicalizer::new_extended();
     ///
     /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);

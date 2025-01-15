@@ -161,7 +161,10 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
+            let greg = icu_timezone::DateTime {
+                date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
+                time: value.0.time,
+            };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -217,7 +220,10 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
+            let greg = icu_timezone::DateTime {
+                date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
+                time: value.0.time,
+            };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -306,7 +312,10 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = value.0.to_any();
+            let any = icu_timezone::DateTime {
+                date: value.0.date.to_any(),
+                time: value.0.time,
+            };
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
@@ -378,7 +387,10 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = value.0.to_any();
+            let any = icu_timezone::DateTime {
+                date: value.0.date.to_any(),
+                time: value.0.time,
+            };
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }

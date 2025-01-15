@@ -15,9 +15,9 @@ export class LocaleCanonicalizer {
 
     get ffiValue(): pointer;
 
-    static create(): LocaleCanonicalizer;
+    static createCommon(): LocaleCanonicalizer;
 
-    static createWithProvider(provider: DataProvider): LocaleCanonicalizer;
+    static createCommonWithProvider(provider: DataProvider): LocaleCanonicalizer;
 
     static createExtended(): LocaleCanonicalizer;
 

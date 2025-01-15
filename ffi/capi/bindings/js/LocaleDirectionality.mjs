@@ -3,7 +3,6 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Locale } from "./Locale.mjs"
 import { LocaleDirection } from "./LocaleDirection.mjs"
-import { LocaleExpander } from "./LocaleExpander.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -41,8 +40,8 @@ export class LocaleDirectionality {
         return this.#ptr;
     }
 
-    static create() {
-        const result = wasm.icu4x_LocaleDirectionality_create_mv1();
+    static createCommon() {
+        const result = wasm.icu4x_LocaleDirectionality_create_common_mv1();
     
         try {
             return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
@@ -51,10 +50,10 @@ export class LocaleDirectionality {
         finally {}
     }
 
-    static createWithProvider(provider) {
+    static createCommonWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -69,8 +68,8 @@ export class LocaleDirectionality {
         }
     }
 
-    static createWithExpander(expander) {
-        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(expander.ffiValue);
+    static createExtended() {
+        const result = wasm.icu4x_LocaleDirectionality_create_extended_mv1();
     
         try {
             return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
@@ -79,10 +78,10 @@ export class LocaleDirectionality {
         finally {}
     }
 
-    static createWithExpanderAndProvider(provider, expander) {
+    static createExtendedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
