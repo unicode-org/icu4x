@@ -456,7 +456,7 @@ mod test {
 
     /// Key for HelloAlt, used for testing mismatched types
     const HELLO_ALT_KEY: DataMarkerInfo =
-        DataMarkerInfo::from_path(crate::marker::data_marker_path!("core/helloalt1@1"));
+        DataMarkerInfo::from_id(crate::marker::data_marker_id!("core/helloalt1@1"));
 
     /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
     #[derive(

@@ -308,12 +308,12 @@ macro_rules! cb {
                     <$emarker>::INFO,
                 )+
             ] {
-                if let Some(colliding_marker) = map.insert(marker.path.hashed(), marker) {
+                if let Some(colliding_marker) = map.insert(marker.id.hashed(), marker) {
                     println!(
                         "{:?} and {:?} collide at {:?}",
-                        marker.path,
-                        colliding_marker.path,
-                        marker.path.hashed(),
+                        marker.id,
+                        colliding_marker.id,
+                        marker.id.hashed(),
                     );
                     failed = true;
                 }
@@ -326,12 +326,13 @@ macro_rules! cb {
         #[test]
         fn test_paths_correct() {
             use icu_provider::prelude::*;
+            use icu_provider::marker::data_marker_id;
 
             $(
-                assert_eq!(<$marker>::INFO.path.as_str(), $path);
+                assert_eq!(<$marker>::INFO.id, data_marker_id!($path));
             )+
             $(
-                assert_eq!(<$emarker>::INFO.path.as_str(), $epath);
+                assert_eq!(<$emarker>::INFO.id, data_marker_id!($epath));
             )+
         }
     }

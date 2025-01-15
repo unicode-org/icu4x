@@ -75,13 +75,11 @@ mod tests;
 /// // Note: FooV1Marker implements `DynamicDataMarker` but not `DataMarker`.
 /// // The other two implement `DataMarker`.
 ///
-/// assert_eq!(BarV1Marker::INFO.path.as_str(), "demo/bar@1");
 /// assert_eq!(
 ///     BarV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Language
 /// );
 ///
-/// assert_eq!(BazV1Marker::INFO.path.as_str(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Region
@@ -331,14 +329,14 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {icu_provider::fallback::LocaleFallbackPriority::default()}
             };
             let attributes_domain_setter = if let Some(attributes_domain_lit) = attributes_domain {
-                quote! { info.attributes_domain = #attributes_domain_lit; }
+                quote! { info = info.with_attributes_domain(#attributes_domain_lit); }
             } else {
                 quote!()
             };
             result.extend(quote!(
                 impl icu_provider::DataMarker for #marker_name {
                     const INFO: icu_provider::DataMarkerInfo = {
-                        let mut info = icu_provider::DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!(#path_str));
+                        let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(#path_str));
                         info.is_singleton = #singleton;
                         info.fallback_config.priority = #fallback_by_expr;
                         #attributes_domain_setter

@@ -41,7 +41,7 @@ use yoke::Yokeable;
 /// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// # }
 /// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
 /// # }
 /// // Requests for invalid markers get MissingDataMarker
 /// assert!(matches!(

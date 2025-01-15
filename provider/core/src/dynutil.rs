@@ -123,7 +123,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// # }
 /// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
 /// # }
 /// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
@@ -174,7 +174,7 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
 /// }
 /// impl DataMarker for DummyMarker {
-///     const INFO: DataMarkerInfo = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("dummy@1"));
+///     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
 /// }
 /// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
@@ -216,9 +216,9 @@ macro_rules! __impl_dynamic_data_provider {
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match marker.path.hashed() {
+                match marker.id.hashed() {
                     $(
-                        h if h == $marker.path.hashed() => {
+                        h if h == $marker.id.hashed() => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DynamicDataProvider::<$struct_m>::load_data(self, marker, req)?;
                             Ok($crate::DataResponse {
@@ -254,10 +254,10 @@ macro_rules! __impl_dynamic_data_provider {
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match marker.path.hashed() {
+                match marker.id.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
+                        h if h == <$struct_m as $crate::DataMarker>::INFO.id.hashed() => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DataProvider::load(self, req)?;
                             Ok($crate::DataResponse {
@@ -281,10 +281,10 @@ macro_rules! __impl_iterable_dynamic_data_provider {
     ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path) => {
         impl $crate::IterableDynamicDataProvider<$dyn_m> for $provider {
             fn iter_ids_for_marker(&self, marker: $crate::DataMarkerInfo) -> Result<alloc::collections::BTreeSet<$crate::DataIdentifierCow>, $crate::DataError> {
-                match marker.path.hashed() {
+                match marker.id.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m as $crate::DataMarker>::INFO.path.hashed() => {
+                        h if h == <$struct_m as $crate::DataMarker>::INFO.id.hashed() => {
                             $crate::IterableDataProvider::<$struct_m>::iter_ids(self)
                         }
                     )+,
