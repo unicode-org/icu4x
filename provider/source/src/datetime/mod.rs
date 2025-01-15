@@ -231,8 +231,8 @@ macro_rules! impl_data_provider {
                 // TODO(#3212): Remove
                 if $marker::INFO == TimeLengthsV1Marker::INFO {
                     r.retain(|id| {
-                        *id.locale != DataLocale::from(icu::locale::langid!("byn"))
-                            && *id.locale != DataLocale::from(icu::locale::langid!("ssy"))
+                        id.locale != DataLocale::from(icu::locale::langid!("byn"))
+                            && id.locale != DataLocale::from(icu::locale::langid!("ssy"))
                     });
                 }
 

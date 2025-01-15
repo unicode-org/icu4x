@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fallback::LocaleFallbackConfig;
+use crate::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use crate::{DataError, DataErrorKind, DataLocale, DataProvider, DataProviderWithMarker};
 use core::fmt;
 use core::marker::PhantomData;
+use icu_locale_core::preferences::LocalePreferences;
 use yoke::Yokeable;
 use zerovec::ule::*;
 
@@ -84,14 +85,28 @@ pub trait DynamicDataMarker: 'static {
 pub trait DataMarker: DynamicDataMarker {
     /// The single [`DataMarkerInfo`] associated with this marker.
     const INFO: DataMarkerInfo;
+}
 
-    /// Binds this [`DataMarker`] to a provider supporting it.
+/// Extension trait for methods on [`DataMarker`]
+pub trait DataMarkerExt: DataMarker + Sized {
+    /// Binds a [`DataMarker`] to a provider supporting it.
+    fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
+    where
+        P: DataProvider<Self>;
+    /// Constructs a [`DataLocale`] using fallback preferences from this [`DataMarker`].
+    fn make_locale(locale: LocalePreferences) -> DataLocale;
+}
+
+impl<M: DataMarker + Sized> DataMarkerExt for M {
     fn bind<P>(provider: P) -> DataProviderWithMarker<Self, P>
     where
         P: DataProvider<Self>,
-        Self: Sized,
     {
         DataProviderWithMarker::new(provider)
+    }
+
+    fn make_locale(locale: LocalePreferences) -> DataLocale {
+        M::INFO.make_locale(locale)
     }
 }
 
@@ -607,11 +622,12 @@ impl DataMarkerInfo {
     }
 
     /// Constructs a [`DataLocale`] for this [`DataMarkerInfo`].
-    pub fn make_locale(
-        self,
-        locale: icu_locale_core::preferences::LocalePreferences,
-    ) -> DataLocale {
-        DataLocale::from_preferences_with_info(locale, self)
+    pub fn make_locale(self, locale: LocalePreferences) -> DataLocale {
+        if self.fallback_config.priority == LocaleFallbackPriority::Region {
+            locale.to_data_locale_region_priority()
+        } else {
+            locale.to_data_locale_language_priority()
+        }
     }
 }
 

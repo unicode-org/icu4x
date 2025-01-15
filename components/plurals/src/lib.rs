@@ -337,8 +337,7 @@ impl PluralRules {
         provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<CardinalV1Marker>(prefs.locale_preferences);
+        let locale = CardinalV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self(
             provider
                 .load(DataRequest {
@@ -395,8 +394,7 @@ impl PluralRules {
         provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<OrdinalV1Marker>(prefs.locale_preferences);
+        let locale = OrdinalV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self(
             provider
                 .load(DataRequest {
@@ -715,8 +713,7 @@ where
         prefs: PluralRulesPreferences,
         rules: R,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<PluralRangesV1Marker>(prefs.locale_preferences);
+        let locale = PluralRangesV1Marker::make_locale(prefs.locale_preferences);
         let ranges = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

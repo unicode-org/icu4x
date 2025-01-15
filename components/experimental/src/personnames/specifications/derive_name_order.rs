@@ -29,7 +29,7 @@ pub fn name_order_derive(
         let chain_locale_str = chain_locale.write_to_string();
 
         // switch lookup with UND
-        let mut chain_locale_und = chain_locale.clone();
+        let mut chain_locale_und = *chain_locale;
         chain_locale_und.language = Language::UND;
         let chain_locale_und_str = chain_locale_und.write_to_string();
 

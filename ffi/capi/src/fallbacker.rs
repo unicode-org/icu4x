@@ -165,7 +165,7 @@ pub mod ffi {
             if current.is_default() {
                 None
             } else {
-                let current = current.clone();
+                let current = *current;
                 self.0.step();
                 Some(Box::new(Locale(current.into_locale())))
             }

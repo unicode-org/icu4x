@@ -153,7 +153,7 @@ impl<P> LocaleFallbackProvider<P> {
         let mut fallback_iterator = self
             .fallbacker
             .for_config(marker.fallback_config)
-            .fallback_for(base_req.id.locale.clone());
+            .fallback_for(*base_req.id.locale);
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {

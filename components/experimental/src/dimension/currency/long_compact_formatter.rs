@@ -100,9 +100,7 @@ impl LongCompactCurrencyFormatter {
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
 
-        let locale = &DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
-            prefs.locale_preferences,
-        );
+        let locale = &CurrencyPatternsDataV1Marker::make_locale(prefs.locale_preferences);
 
         let extended = crate::provider::Baked
             .load(DataRequest {
@@ -143,9 +141,7 @@ impl LongCompactCurrencyFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1Marker>
             + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>,
     {
-        let locale = DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
-            prefs.locale_preferences,
-        );
+        let locale = CurrencyPatternsDataV1Marker::make_locale(prefs.locale_preferences);
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
