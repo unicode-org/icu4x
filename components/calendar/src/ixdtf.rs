@@ -75,10 +75,11 @@ impl Date<Iso> {
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        Self::try_from_ixdtf_record(&ixdtf_record)
+        Self::try_iso_from_ixdtf_record(&ixdtf_record)
     }
 
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+    #[doc(hidden)]
+    pub fn try_iso_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
         let date = Self::try_new_iso(date_record.year, date_record.month, date_record.day)?;
         Ok(date)
@@ -130,6 +131,15 @@ impl<A: AsCalendar> Date<A> {
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     pub fn try_from_utf8(ixdtf_str: &[u8], calendar: A) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        Self::try_from_ixdtf_record(&ixdtf_record, calendar)
+    }
+
+    #[doc(hidden)]
+    pub fn try_from_ixdtf_record(
+        ixdtf_record: &IxdtfParseRecord,
+        calendar: A,
+    ) -> Result<Self, ParseError> {
+        let iso = Date::try_iso_from_ixdtf_record(ixdtf_record)?;
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
             let parsed_calendar = crate::AnyCalendarKind::get_for_bcp47_bytes(ixdtf_calendar)
                 .ok_or(ParseError::UnknownCalendar)?;
@@ -144,9 +154,6 @@ impl<A: AsCalendar> Date<A> {
                 ));
             }
         }
-        let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let date = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?
-            .to_calendar(calendar);
-        Ok(date)
+        Ok(iso.to_calendar(calendar))
     }
 }
