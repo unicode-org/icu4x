@@ -1,4 +1,8 @@
 {
+  "dedupe_target": [
+    "ja",
+    null
+  ],
   "locations": {
     "adalv": "アンドラ",
     "aedxb": "アラブ首長国連邦",

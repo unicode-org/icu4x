@@ -5,6 +5,7 @@
 //! Data provider structs for time zones.
 
 use alloc::borrow::Cow;
+use icu_locale_core::subtags::{Language, Script};
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -82,6 +83,8 @@ pub struct TimeZoneEssentialsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LocationsV1<'data> {
+    /// The data struct against which the location names are deduplicated.
+    pub dedupe_target: (Language, Option<Script>),
     /// Per-zone location display name
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
