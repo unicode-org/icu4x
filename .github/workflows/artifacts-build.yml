@@ -344,7 +344,7 @@ jobs:
     - name: Run benchmark
       shell: /usr/bin/bash -o pipefail -e {0}
       run: |
-        cargo bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
+        cargo bench --manifest-path ${{ matrix.component }}/Cargo.toml --all-features -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
 
     - name:  Download previous benchmark data
       run: |
