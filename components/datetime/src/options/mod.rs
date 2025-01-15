@@ -317,6 +317,10 @@ impl IntoOption<YearStyle> for YearStyle {
 /// 2. 16:20 (4:20 pm) with 24-hour time
 /// 3. 7:15:01.85 with 24-hour time
 ///
+/// Fractional second digits can be displayed with an exact precision. If you would like
+/// additional options for fractional second digit display, please leave a comment in
+/// <https://github.com/unicode-org/icu4x/issues/6008>.
+///
 /// # Examples
 ///
 /// ```
@@ -334,7 +338,6 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::Second,
 ///     TimePrecision::FractionalSecond(FractionalSecondDigits::F2),
 ///     TimePrecision::MinuteOptional,
-///     TimePrecision::FractionalSecondOptional,
 /// ]
 /// .map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
@@ -357,7 +360,6 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"],          // Second
 ///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // FractionalSecond(F2)
 ///     ["7 AM", "7 AM", "7:12 AM"],                         // MinuteOptional
-///     ["7:00:00 AM", "7:00:10 AM", "7:12:20.5432 AM"],     // FractionalSecondOptional
 /// ];
 ///
 /// for (expected_value_row, formatter) in
@@ -403,11 +405,14 @@ pub enum TimePrecision {
     Minute,
     /// Display the hour, minute, and second. Hide fractional seconds.
     ///
+    /// This is currently the default, but the default is subject to change.
+    ///
     /// Examples:
     ///
     /// 1. `11:00:00 am`
     /// 2. `16:20:00`
     /// 3. `07:15:01`
+    #[default]
     Second,
     /// Display the hour, minute, and second with the given number of
     /// fractional second digits.
@@ -426,18 +431,6 @@ pub enum TimePrecision {
     /// 2. `16:20`
     /// 3. `07:15`
     MinuteOptional,
-    /// Display the hour, minute, and second. Display fractional second
-    /// if it is nonzero.
-    ///
-    /// This is currently the default.
-    ///
-    /// Examples:
-    ///
-    /// 1. `11:00:00 am`
-    /// 2. `16:20:00`
-    /// 3. `07:15:01.85`
-    #[default]
-    FractionalSecondOptional,
 }
 
 impl IntoOption<TimePrecision> for TimePrecision {

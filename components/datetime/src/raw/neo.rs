@@ -256,23 +256,19 @@ impl ExtractedInput {
         &self,
         time_precision: TimePrecision,
     ) -> (PackedSkeletonVariant, Option<FractionalSecondDigits>) {
-        let min_sec_required = match time_precision {
-            TimePrecision::Hour => return (PackedSkeletonVariant::Standard, None),
-            TimePrecision::Minute => return (PackedSkeletonVariant::Variant0, None),
-            TimePrecision::Second => return (PackedSkeletonVariant::Variant1, None),
-            TimePrecision::FractionalSecond(f) => return (PackedSkeletonVariant::Variant1, Some(f)),
-            TimePrecision::MinuteOptional => false,
-            TimePrecision::FractionalSecondOptional => true,
-        };
-        let minute = self.minute.unwrap_or_default();
-        let second = self.second.unwrap_or_default();
-        let nanosecond = self.nanosecond.unwrap_or_default();
-        if !nanosecond.is_zero() || !second.is_zero() || min_sec_required {
-            (PackedSkeletonVariant::Variant1, None)
-        } else if !minute.is_zero() || min_sec_required {
-            (PackedSkeletonVariant::Variant0, None)
-        } else {
-            (PackedSkeletonVariant::Standard, None)
+        match time_precision {
+            TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
+            TimePrecision::Minute => (PackedSkeletonVariant::Variant0, None),
+            TimePrecision::Second => (PackedSkeletonVariant::Variant1, None),
+            TimePrecision::FractionalSecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
+            TimePrecision::MinuteOptional => {
+                let minute = self.minute.unwrap_or_default();
+                if minute.is_zero() {
+                    (PackedSkeletonVariant::Standard, None)
+                } else {
+                    (PackedSkeletonVariant::Variant1, None)
+                }
+            },
         }
     }
 }
