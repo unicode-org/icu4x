@@ -329,11 +329,10 @@ impl IntoOption<YearStyle> for YearStyle {
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatters = [
-///     TimePrecision::Auto,
 ///     TimePrecision::Hour,
 ///     TimePrecision::Minute,
-///     TimePrecision::Second(FractionalSecondDigits::F0),
-///     TimePrecision::Second(FractionalSecondDigits::F2),
+///     TimePrecision::Second,
+///     TimePrecision::FractionalSecond(FractionalSecondDigits::F2),
 ///     TimePrecision::MinuteOptional,
 ///     TimePrecision::FractionalSecondOptional,
 /// ]
@@ -351,15 +350,14 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     Time::try_new(7, 12, 20, 5).unwrap(),
 /// ];
 ///
-/// // TODO(#5782): the Plus variants should render fractional digits
 /// let expected_value_table = [
 ///     // 7:00:00, 7:00:10, 7:12:20.5432
 ///     ["7 AM", "7 AM", "7 AM"],                            // Hour
 ///     ["7:00 AM", "7:00 AM", "7:12 AM"],                   // Minute
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"],          // Second
-///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // SecondF2
+///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // FractionalSecond(F2)
 ///     ["7 AM", "7 AM", "7:12 AM"],                         // MinuteOptional
-///     ["7:00:00 AM", "7:00:10 AM", "7:12:20.5432 AM"],        // FractionalSecondOptional
+///     ["7:00:00 AM", "7:00:10 AM", "7:12:20.5432 AM"],     // FractionalSecondOptional
 /// ];
 ///
 /// for (expected_value_row, formatter) in
@@ -472,7 +470,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///     locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::Second(
+///     T::short().with_time_precision(TimePrecision::FractionalSecond(
 ///         FractionalSecondDigits::F2,
 ///     )),
 /// )
