@@ -26,8 +26,8 @@ use icu_timezone::{DateTime, Time, TimeZoneInfo, TimeZoneModel, UtcOffset, Zoned
 /// in the CLDR transformer to support any new era maps.
 ///
 /// <div class="stab unstable">
-/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
 /// </div>
 pub trait CldrCalendar: UnstableSealed {
     /// The data marker for loading year symbols for this calendar.

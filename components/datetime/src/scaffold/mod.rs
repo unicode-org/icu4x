@@ -46,11 +46,16 @@ pub use names_storage::MaybePayloadError;
 pub use names_storage::NamesContainer;
 pub(crate) use names_storage::OptionalNames;
 
-/// Trait marking other traits that are considered unstable and should not generally be
-/// implemented outside of the datetime crate.
-///
-/// <div class="stab unstable">
-/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
-/// </div>
-pub trait UnstableSealed {}
+// Should be private for sealing
+pub(crate) use sealed::UnstableSealed;
+
+mod sealed {
+    /// Trait marking other traits that are considered unstable and should not generally be
+    /// implemented outside of the datetime crate.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland.
+    /// </div>
+    pub trait UnstableSealed {}
+}
