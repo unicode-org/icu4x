@@ -335,7 +335,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::Second(FractionalSecondDigits::F0),
 ///     TimePrecision::Second(FractionalSecondDigits::F2),
 ///     TimePrecision::MinuteOptional,
-///     TimePrecision::SecondOptional,
+///     TimePrecision::FractionalSecondOptional,
 /// ]
 /// .map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
@@ -359,7 +359,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"],          // Second
 ///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // SecondF2
 ///     ["7 AM", "7 AM", "7:12 AM"],                         // MinuteOptional
-///     ["7:00 AM", "7:00:10 AM", "7:12:20.5432 AM"],        // SecondOptional
+///     ["7:00:00 AM", "7:00:10 AM", "7:12:20.5432 AM"],        // FractionalSecondOptional
 /// ];
 ///
 /// for (expected_value_row, formatter) in
@@ -428,25 +428,18 @@ pub enum TimePrecision {
     /// 2. `16:20`
     /// 3. `07:15`
     MinuteOptional,
-    /// Display the hour and minute; display the second and fractional second if nonzero.
+    /// Display the hour, minute, and second. Display fractional second
+    /// if it is nonzero.
     ///
     /// This is currently the default.
     ///
     /// Examples:
     ///
-    /// 1. `11:00 am`
-    /// 2. `16:20`
+    /// 1. `11:00:00 am`
+    /// 2. `16:20:00`
     /// 3. `07:15:01.85`
     #[default]
-    SecondOptional,
-    /// Display the hour; display the minute, second, and fractional second if nonzero.
-    ///
-    /// Examples:
-    ///
-    /// 1. `11 am`
-    /// 2. `16:20`
-    /// 3. `07:15:01.85`
-    MinuteSecondOptional,
+    FractionalSecondOptional,
 }
 
 impl IntoOption<TimePrecision> for TimePrecision {

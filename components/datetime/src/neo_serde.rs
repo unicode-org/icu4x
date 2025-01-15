@@ -251,8 +251,7 @@ pub(crate) enum TimePrecisionSerde {
     SecondF8,
     SecondF9,
     MinuteOptional,
-    SecondOptional,
-    MinuteSecondOptional,
+    FractionalSecondOptional,
 }
 
 impl From<TimePrecision> for TimePrecisionSerde {
@@ -271,8 +270,7 @@ impl From<TimePrecision> for TimePrecisionSerde {
             TimePrecision::FractionalSecond(FractionalSecondDigits::F8) => TimePrecisionSerde::SecondF8,
             TimePrecision::FractionalSecond(FractionalSecondDigits::F9) => TimePrecisionSerde::SecondF9,
             TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
-            TimePrecision::SecondOptional => TimePrecisionSerde::SecondOptional,
-            TimePrecision::MinuteSecondOptional => TimePrecisionSerde::MinuteSecondOptional,
+            TimePrecision::FractionalSecondOptional => TimePrecisionSerde::FractionalSecondOptional,
         }
     }
 }
@@ -293,8 +291,7 @@ impl From<TimePrecisionSerde> for TimePrecision {
             TimePrecisionSerde::SecondF8 => TimePrecision::FractionalSecond(FractionalSecondDigits::F8),
             TimePrecisionSerde::SecondF9 => TimePrecision::FractionalSecond(FractionalSecondDigits::F9),
             TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
-            TimePrecisionSerde::SecondOptional => TimePrecision::SecondOptional,
-            TimePrecisionSerde::MinuteSecondOptional => TimePrecision::MinuteSecondOptional,
+            TimePrecisionSerde::FractionalSecondOptional => TimePrecision::FractionalSecondOptional,
         }
     }
 }
@@ -596,7 +593,7 @@ fn test_basic() {
             length: Length::Medium,
             alignment: Some(Alignment::Column),
             year_style: Some(YearStyle::Always),
-            time_precision: Some(TimePrecision::Second(FractionalSecondDigits::F3)),
+            time_precision: Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3)),
         }),
         ZoneFieldSet::Vs(fieldsets::Vs::new()),
     ));

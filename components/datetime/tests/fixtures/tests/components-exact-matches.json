@@ -421,7 +421,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "auto"
+                    "timePrecision": "fractionalSecondOptional"
                 }
             }
         },
@@ -469,7 +469,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "auto"
+                    "timePrecision": "fractionalSecondOptional"
                 },
                 "hourCycle": "h23"
             }
@@ -538,7 +538,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "auto"
+                    "timePrecision": "fractionalSecondOptional"
                 },
                 "hourCycle": "h12"
             }
@@ -607,7 +607,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "auto"
+                    "timePrecision": "fractionalSecondOptional"
                 },
                 "hourCycle": "h23"
             }

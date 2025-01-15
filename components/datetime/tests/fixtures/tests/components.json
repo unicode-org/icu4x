@@ -16,7 +16,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
-                    "timePrecision": "auto",
+                    "timePrecision": "fractionalSecondOptional",
                     "yearStyle": "always"
                 },
                 "hourCycle": "h23"
@@ -74,7 +74,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
-                    "timePrecision": "auto",
+                    "timePrecision": "fractionalSecondOptional",
                     "yearStyle": "always"
                 },
                 "hourCycle": "h23"
@@ -104,7 +104,7 @@
                 "semantic": {
                     "fieldSet": ["year", "month", "day", "weekday", "time"],
                     "length": "long",
-                    "timePrecision": "auto",
+                    "timePrecision": "fractionalSecondOptional",
                     "yearStyle": "always"
                 },
                 "hourCycle": "h23"
@@ -130,7 +130,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "auto"
+                    "timePrecision": "fractionalSecondOptional"
                 },
                 "hourCycle": "h23"
             }

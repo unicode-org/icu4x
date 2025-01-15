@@ -82,7 +82,7 @@ fn test_date_and_time() {
         fieldsets::YMDET::medium()
             .with_year_style(YearStyle::Always)
             .with_alignment(Alignment::Column)
-            .with_time_precision(TimePrecision::Second(FractionalSecondDigits::F4)),
+            .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F4)),
     ));
 
     let mut input_bag = components::Bag::default();
