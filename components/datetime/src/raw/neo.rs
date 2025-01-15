@@ -266,7 +266,7 @@ impl ExtractedInput {
                 if minute.is_zero() {
                     (PackedSkeletonVariant::Standard, None)
                 } else {
-                    (PackedSkeletonVariant::Variant1, None)
+                    (PackedSkeletonVariant::Variant0, None)
                 }
             },
         }

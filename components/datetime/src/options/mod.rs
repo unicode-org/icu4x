@@ -350,7 +350,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// let times = [
 ///     Time::try_new(7, 0, 0, 0).unwrap(),
 ///     Time::try_new(7, 0, 10, 0).unwrap(),
-///     Time::try_new(7, 12, 20, 5).unwrap(),
+///     Time::try_new(7, 12, 20, 543_200_000).unwrap(),
 /// ];
 ///
 /// let expected_value_table = [
