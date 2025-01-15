@@ -151,7 +151,7 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
     let mut result = 0;
     let mut fraction_len = 0;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        if fraction_len > 9 {
+        if fraction_len >= 9 {
             return Err(ParseError::FractionPart);
         }
         result = result * 10 + u32::from(cursor.next_digit()?.ok_or(ParseError::FractionPart)?);
