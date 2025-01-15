@@ -9,10 +9,8 @@
 
 #include "CollatorAlternateHandling.d.h"
 #include "CollatorBackwardSecondLevel.d.h"
-#include "CollatorCaseFirst.d.h"
 #include "CollatorCaseLevel.d.h"
 #include "CollatorMaxVariable.d.h"
-#include "CollatorNumeric.d.h"
 #include "CollatorStrength.d.h"
 
 
@@ -21,10 +19,8 @@
 typedef struct CollatorOptionsV1 {
   CollatorStrength_option strength;
   CollatorAlternateHandling_option alternate_handling;
-  CollatorCaseFirst_option case_first;
   CollatorMaxVariable_option max_variable;
   CollatorCaseLevel_option case_level;
-  CollatorNumeric_option numeric;
   CollatorBackwardSecondLevel_option backward_second_level;
 } CollatorOptionsV1;
 

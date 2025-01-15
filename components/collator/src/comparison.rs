@@ -26,7 +26,10 @@ use crate::provider::CollationRootV1Marker;
 use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::provider::CollationTailoringV1Marker;
-use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
+use crate::{
+    AlternateHandling, CaseFirst, CollationType, CollatorOptions, MaxVariable, NumericOrdering,
+    ResolvedCollatorOptions, Strength,
+};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_normalizer::provider::CanonicalDecompositionDataV2Marker;
@@ -72,11 +75,35 @@ struct LocaleSpecificDataHolder {
 
 icu_locale_core::preferences::define_preferences!(
     /// The preferences for collation.
+    ///
+    /// # Preferences
+    ///
+    /// Examples for using the different preferences below can be found in the [crate-level docs](crate).
+    ///
+    /// ## Case First
+    ///
+    /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
+    /// This is the BCP47 key `kf`. Three possibilities: [`CaseFirst::False`] (default,
+    /// except for Danish and Maltese), [`CaseFirst::Lower`], and [`CaseFirst::Upper`]
+    /// (default for Danish and Maltese).
+    ///
+    /// ## Numeric
+    ///
+    /// This is the BCP47 key `kn`. When set to [`NumericOrdering::True`], any sequence of decimal
+    /// digits (General_Category = Nd) is sorted at the primary level according to the
+    /// numeric value. The default is [`NumericOrdering::False`].
     [Copy]
     CollatorPreferences,
     {
         /// The collation type. This corresponds to the `-u-co` BCP-47 tag.
-        collation_type: icu_locale_core::preferences::extensions::unicode::keywords::CollationType
+        collation_type: CollationType,
+        /// Treatment of case. (Large and small kana differences are treated as case differences.)
+        /// This corresponds to the `-u-kf` BCP-47 tag.
+        case_first: CaseFirst,
+        /// When set to `True`, any sequence of decimal digits is sorted at a primary level according
+        /// to the numeric value.
+        /// This corresponds to the `-u-kn` BPC-47 tag.
+        numeric_ordering: NumericOrdering
     }
 );
 
@@ -197,6 +224,8 @@ impl LocaleSpecificDataHolder {
         altered_defaults.set_max_variable(Some(metadata.max_variable()));
 
         let mut merged_options = CollatorOptionsBitField::from(options);
+        merged_options.set_case_first(prefs.case_first);
+        merged_options.set_numeric_from_enum(prefs.numeric_ordering);
         merged_options.set_defaults(altered_defaults);
 
         Ok(LocaleSpecificDataHolder {

@@ -13,7 +13,7 @@
 #include "CollatorCaseFirst.d.hpp"
 #include "CollatorCaseLevel.d.hpp"
 #include "CollatorMaxVariable.d.hpp"
-#include "CollatorNumeric.d.hpp"
+#include "CollatorNumericOrdering.d.hpp"
 #include "CollatorStrength.d.hpp"
 
 namespace icu4x {
@@ -22,7 +22,7 @@ class CollatorBackwardSecondLevel;
 class CollatorCaseFirst;
 class CollatorCaseLevel;
 class CollatorMaxVariable;
-class CollatorNumeric;
+class CollatorNumericOrdering;
 class CollatorStrength;
 }
 
@@ -35,7 +35,7 @@ namespace capi {
       icu4x::capi::CollatorCaseFirst case_first;
       icu4x::capi::CollatorMaxVariable max_variable;
       icu4x::capi::CollatorCaseLevel case_level;
-      icu4x::capi::CollatorNumeric numeric;
+      icu4x::capi::CollatorNumericOrdering numeric;
       icu4x::capi::CollatorBackwardSecondLevel backward_second_level;
     };
     
@@ -51,7 +51,7 @@ struct CollatorResolvedOptionsV1 {
   icu4x::CollatorCaseFirst case_first;
   icu4x::CollatorMaxVariable max_variable;
   icu4x::CollatorCaseLevel case_level;
-  icu4x::CollatorNumeric numeric;
+  icu4x::CollatorNumericOrdering numeric;
   icu4x::CollatorBackwardSecondLevel backward_second_level;
 
   inline icu4x::capi::CollatorResolvedOptionsV1 AsFFI() const;
