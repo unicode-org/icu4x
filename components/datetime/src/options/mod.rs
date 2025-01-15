@@ -478,23 +478,23 @@ impl IntoOption<TimePrecision> for TimePrecision {
 #[non_exhaustive]
 pub enum FractionalSecondDigits {
     /// One fractional digit (tenths of a second).
-    F1,
+    F1 = 1,
     /// Two fractional digits (hundredths of a second).
-    F2,
+    F2 = 2,
     /// Three fractional digits (thousandths of a second).
-    F3,
+    F3 = 3,
     /// Four fractional digits.
-    F4,
+    F4 = 4,
     /// Five fractional digits.
-    F5,
+    F5 = 5,
     /// Six fractional digits.
-    F6,
+    F6 = 6,
     /// Seven fractional digits.
-    F7,
+    F7 = 7,
     /// Eight fractional digits.
-    F8,
+    F8 = 8,
     /// Nine fractional digits.
-    F9,
+    F9 = 9,
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
