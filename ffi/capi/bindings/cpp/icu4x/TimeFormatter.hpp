@@ -11,10 +11,8 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
-#include "DateTime.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
-#include "IsoDateTime.hpp"
 #include "Locale.hpp"
 #include "Time.hpp"
 
@@ -30,10 +28,6 @@ namespace capi {
     icu4x_TimeFormatter_create_with_length_and_provider_mv1_result icu4x_TimeFormatter_create_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
     void icu4x_TimeFormatter_format_time_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::Time* value, diplomat::capi::DiplomatWrite* write);
-    
-    void icu4x_TimeFormatter_format_datetime_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::DateTime* value, diplomat::capi::DiplomatWrite* write);
-    
-    void icu4x_TimeFormatter_format_iso_datetime_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::IsoDateTime* value, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_TimeFormatter_destroy_mv1(TimeFormatter* self);
@@ -59,24 +53,6 @@ inline std::string icu4x::TimeFormatter::format_time(const icu4x::Time& value) c
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_TimeFormatter_format_time_mv1(this->AsFFI(),
-    value.AsFFI(),
-    &write);
-  return output;
-}
-
-inline std::string icu4x::TimeFormatter::format_datetime(const icu4x::DateTime& value) const {
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_TimeFormatter_format_datetime_mv1(this->AsFFI(),
-    value.AsFFI(),
-    &write);
-  return output;
-}
-
-inline std::string icu4x::TimeFormatter::format_iso_datetime(const icu4x::IsoDateTime& value) const {
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_TimeFormatter_format_iso_datetime_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
   return output;

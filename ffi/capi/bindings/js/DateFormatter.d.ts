@@ -2,13 +2,12 @@
 import type { Calendar } from "./Calendar"
 import type { DataProvider } from "./DataProvider"
 import type { Date } from "./Date"
-import type { DateTime } from "./DateTime"
 import type { DateTimeFormatError } from "./DateTimeFormatError"
 import type { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 import type { DateTimeLength } from "./DateTimeLength"
 import type { IsoDate } from "./IsoDate"
-import type { IsoDateTime } from "./IsoDateTime"
 import type { Locale } from "./Locale"
+import type { Time } from "./Time"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -31,9 +30,9 @@ export class DateFormatter {
 
     formatIsoDate(value: IsoDate): string;
 
-    formatDatetime(value: DateTime): string;
+    formatDatetime(date: Date, time: Time): string;
 
-    formatIsoDatetime(value: IsoDateTime): string;
+    formatIsoDatetime(date: IsoDate, time: Time): string;
 
     calendar(): Calendar;
 }

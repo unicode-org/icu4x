@@ -22,6 +22,10 @@ export { WeekendContainsDay } from "./WeekendContainsDay"
 
 export { CollatorResolvedOptions } from "./CollatorResolvedOptions"
 
+export { DateTime } from "./DateTime"
+
+export { IsoDateTime } from "./IsoDateTime"
+
 export { Decomposed } from "./Decomposed"
 
 export { PluralCategories } from "./PluralCategories"
@@ -29,6 +33,10 @@ export { PluralCategories } from "./PluralCategories"
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
 
 export { WeekOf } from "./WeekOf"
+
+export { ZonedDateTime } from "./ZonedDateTime"
+
+export { ZonedIsoDateTime } from "./ZonedIsoDateTime"
 
 export { Bidi } from "./Bidi"
 
@@ -53,10 +61,6 @@ export { CodePointSetBuilder } from "./CodePointSetBuilder"
 export { Date } from "./Date"
 
 export { IsoDate } from "./IsoDate"
-
-export { DateTime } from "./DateTime"
-
-export { IsoDateTime } from "./IsoDateTime"
 
 export { DateFormatter } from "./DateFormatter"
 
@@ -181,6 +185,8 @@ export { UnitsConverter } from "./UnitsConverter"
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { WeekCalculator } from "./WeekCalculator"
+
+export { IxdtfParser } from "./IxdtfParser"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 

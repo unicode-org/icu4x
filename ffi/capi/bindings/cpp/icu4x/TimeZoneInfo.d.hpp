@@ -10,12 +10,15 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
+namespace capi { struct IsoDate; }
+class IsoDate;
+namespace capi { struct Time; }
+class Time;
 namespace capi { struct TimeZoneIdMapper; }
 class TimeZoneIdMapper;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
+struct IsoDateTime;
 struct TimeZoneInvalidOffsetError;
 }
 
@@ -74,11 +77,11 @@ public:
 
   inline std::optional<bool> is_daylight_time() const;
 
-  inline void set_local_time(const icu4x::IsoDateTime& datetime);
+  inline void set_local_time(const icu4x::IsoDate& date, const icu4x::Time& time);
 
   inline void clear_local_time();
 
-  inline std::unique_ptr<icu4x::IsoDateTime> get_local_time() const;
+  inline std::optional<icu4x::IsoDateTime> get_local_time() const;
 
   inline const icu4x::capi::TimeZoneInfo* AsFFI() const;
   inline icu4x::capi::TimeZoneInfo* AsFFI();

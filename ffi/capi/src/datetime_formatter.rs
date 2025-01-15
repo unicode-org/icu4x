@@ -21,7 +21,6 @@ pub mod ffi {
     use crate::{
         calendar::ffi::Calendar,
         date::ffi::{Date, IsoDate},
-        datetime::ffi::{DateTime, IsoDateTime},
         errors::ffi::DateTimeFormatError,
         time::ffi::Time,
     };
@@ -82,28 +81,10 @@ pub mod ffi {
         pub fn format_time(&self, value: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
-
-        /// Formats a [`DateTime`] to a string.
-        pub fn format_datetime(
-            &self,
-            value: &DateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let _infallible = self.0.format(&value.0.time).write_to(write);
-        }
-
-        /// Formats a [`IsoDateTime`] to a string.
-        pub fn format_iso_datetime(
-            &self,
-            value: &IsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let _infallible = self.0.format(&value.0.time).write_to(write);
-        }
     }
 
     #[diplomat::opaque]
-    /// An ICU4X TypedDateFormatter object capable of formatting a [`IsoDateTime`] as a string,
+    /// An ICU4X TypedDateFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateFormatter(
@@ -156,22 +137,24 @@ pub mod ffi {
             let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
         }
-        /// Formats a [`IsoDateTime`] to a string.
+
+        /// Formats an [`IsoDate`] and a [`Time`] to a string.
         pub fn format_iso_datetime(
             &self,
-            value: &IsoDateTime,
+            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_timezone::DateTime {
-                date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
-                time: value.0.time,
+                date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
+                time: time.0,
             };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
 
     #[diplomat::opaque]
-    /// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+    /// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct GregorianDateTimeFormatter(
@@ -215,15 +198,16 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`IsoDateTime`] to a string.
+        /// Formats an [`IsoDate`] and a [`Time`] to a string.
         pub fn format_iso_datetime(
             &self,
-            value: &IsoDateTime,
+            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             let greg = icu_timezone::DateTime {
-                date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
-                time: value.0.time,
+                date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
+                time: time.0,
             };
             let _infallible = self.0.format(&greg).write_to(write);
         }
@@ -295,29 +279,40 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Formats a [`DateTime`] to a string.
+        /// Formats a [`Date`] and a [`Time`] to a string.
         pub fn format_datetime(
             &self,
-            value: &DateTime,
+            date: &Date,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
+            let _infallible = self
+                .0
+                .format_any_calendar(&icu_timezone::DateTime {
+                    // Arc clone
+                    date: date.0.clone(),
+                    time: time.0,
+                })
+                .write_to(write);
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] to a string.
+        /// Formats an [`IsoDate`] and a [`Time`] to a string.
         ///
         /// Will convert to this formatter's calendar first
         pub fn format_iso_datetime(
             &self,
-            value: &IsoDateTime,
+            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = icu_timezone::DateTime {
-                date: value.0.date.to_any(),
-                time: value.0.time,
-            };
-            let _infallible = self.0.format_any_calendar(&any).write_to(write);
+            let _infallible = self
+                .0
+                .format_any_calendar(&icu_timezone::DateTime {
+                    date: date.0,
+                    time: time.0,
+                })
+                .write_to(write);
             Ok(())
         }
 
@@ -329,7 +324,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X DateFormatter object capable of formatting a [`DateTime`] as a string,
+    /// An ICU4X DateFormatter object capable of formatting a [`Date`] and a [`Time`] as a string,
     /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime, Mod)]
     pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDT>);
@@ -370,29 +365,40 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Formats a [`DateTime`] to a string.
+        /// Formats a [`Date`] and a [`Time`] to a string.
         pub fn format_datetime(
             &self,
-            value: &DateTime,
+            date: &Date,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
+            let _infallible = self
+                .0
+                .format_any_calendar(&icu_timezone::DateTime {
+                    // Arc clone
+                    date: date.0.clone(),
+                    time: time.0,
+                })
+                .write_to(write);
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] to a string.
+        /// Formats an [`IsoDate`] and a [`Time`] to a string.
         ///
         /// Will convert to this formatter's calendar first
         pub fn format_iso_datetime(
             &self,
-            value: &IsoDateTime,
+            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = icu_timezone::DateTime {
-                date: value.0.date.to_any(),
-                time: value.0.time,
-            };
-            let _infallible = self.0.format_any_calendar(&any).write_to(write);
+            let _infallible = self
+                .0
+                .format_any_calendar(&icu_timezone::DateTime {
+                    date: date.0,
+                    time: time.0,
+                })
+                .write_to(write);
             Ok(())
         }
 

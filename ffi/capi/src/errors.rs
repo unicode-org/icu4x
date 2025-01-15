@@ -64,6 +64,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
+    #[diplomat::rust_link(icu::timezone::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
     pub enum CalendarParseError {
         Unknown = 0x00,

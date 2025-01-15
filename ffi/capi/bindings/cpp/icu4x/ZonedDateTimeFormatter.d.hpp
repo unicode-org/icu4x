@@ -12,12 +12,14 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
-namespace capi { struct DateTime; }
-class DateTime;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
+namespace capi { struct Date; }
+class Date;
+namespace capi { struct IsoDate; }
+class IsoDate;
 namespace capi { struct Locale; }
 class Locale;
+namespace capi { struct Time; }
+class Time;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 namespace capi { struct ZonedDateTimeFormatter; }
@@ -42,9 +44,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime_with_custom_time_zone(const icu4x::DateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_zoned_datetime(const icu4x::Date& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime_with_custom_time_zone(const icu4x::IsoDateTime& datetime, const icu4x::TimeZoneInfo& time_zone) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_zoned_iso_datetime(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
 
   inline const icu4x::capi::ZonedDateTimeFormatter* AsFFI() const;
   inline icu4x::capi::ZonedDateTimeFormatter* AsFFI();

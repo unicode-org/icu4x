@@ -1,11 +1,12 @@
 import { Calendar } from "icu4x"
-import { DateTime } from "icu4x"
-import { IsoDateTime } from "icu4x"
+import { Date } from "icu4x"
+import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
+import { Time } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function formatDatetimeWithCustomTimeZone(name, length, year, month, day, hour, minute, second, nanosecond, name_1, bcp47Id, offsetSeconds, dst) {
-    return (function (...args) { return args[0].formatDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
+export function formatZonedDatetime(name, length, year, month, day, name_1, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
+    return (function (...args) { return args[0].formatZonedDatetime(...args.slice(1)) }).apply(
         null,
         [
             ZonedDateTimeFormatter.createWithLength.apply(
@@ -20,16 +21,12 @@ export function formatDatetimeWithCustomTimeZone(name, length, year, month, day,
                     length
                 ]
             ),
-            DateTime.fromIsoInCalendar.apply(
+            Date.fromIsoInCalendar.apply(
                 null,
                 [
                     year,
                     month,
                     day,
-                    hour,
-                    minute,
-                    second,
-                    nanosecond,
                     Calendar.createForLocale.apply(
                         null,
                         [
@@ -43,6 +40,15 @@ export function formatDatetimeWithCustomTimeZone(name, length, year, month, day,
                     )
                 ]
             ),
+            (function (...args) { return new Time(...args) } ).apply(
+                null,
+                [
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
+                ]
+            ),
             (function (...args) { return new TimeZoneInfo(...args) } ).apply(
                 null,
                 [
@@ -54,8 +60,8 @@ export function formatDatetimeWithCustomTimeZone(name, length, year, month, day,
         ]
     );
 }
-export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
-    return (function (...args) { return args[0].formatIsoDatetimeWithCustomTimeZone(...args.slice(1)) }).apply(
+export function formatZonedIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
+    return (function (...args) { return args[0].formatZonedIsoDatetime(...args.slice(1)) }).apply(
         null,
         [
             ZonedDateTimeFormatter.createWithLength.apply(
@@ -70,12 +76,17 @@ export function formatIsoDatetimeWithCustomTimeZone(name, length, year, month, d
                     length
                 ]
             ),
-            (function (...args) { return new IsoDateTime(...args) } ).apply(
+            (function (...args) { return new IsoDate(...args) } ).apply(
                 null,
                 [
                     year,
                     month,
-                    day,
+                    day
+                ]
+            ),
+            (function (...args) { return new Time(...args) } ).apply(
+                null,
+                [
                     hour,
                     minute,
                     second,

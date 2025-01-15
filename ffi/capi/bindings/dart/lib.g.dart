@@ -83,6 +83,7 @@ part 'IndicSyllabicCategory.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoWeekday.g.dart';
+part 'IxdtfParser.g.dart';
 part 'JoiningType.g.dart';
 part 'LanguageDisplay.g.dart';
 part 'LeadingAdjustment.g.dart';
@@ -150,7 +151,9 @@ part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
+part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
+part 'ZonedIsoDateTime.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.
 /// 
@@ -243,6 +246,34 @@ final class _ResultBoolVoid extends ffi.Struct {
   }
 }
 
+final class _ResultDateTimeFfiInt32Union extends ffi.Union {
+  external _DateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultDateTimeFfiInt32.ok(_DateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
 final class _ResultInt32VoidUnion extends ffi.Union {
   @ffi.Int32()
   external int ok;
@@ -290,6 +321,59 @@ final class _ResultInt8Void extends ffi.Struct {
   }
   factory _ResultInt8Void.err() {
     final struct = ffi.Struct.create<_ResultInt8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultIsoDateTimeFfiInt32Union extends ffi.Union {
+  external _IsoDateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultIsoDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultIsoDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultIsoDateTimeFfiInt32.ok(_IsoDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultIsoDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultIsoDateTimeFfiVoidUnion extends ffi.Union {
+  external _IsoDateTimeFfi ok;
+
+}
+
+final class _ResultIsoDateTimeFfiVoid extends ffi.Struct {
+  external _ResultIsoDateTimeFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultIsoDateTimeFfiVoid.ok(_IsoDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultIsoDateTimeFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiVoid>();
     struct.isOk = false;
     return struct;
   }
@@ -486,6 +570,62 @@ final class _ResultVoidVoid extends ffi.Struct {
   factory _ResultVoidVoid.err() {
     final struct = ffi.Struct.create<_ResultVoidVoid>();
     struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultZonedDateTimeFfiInt32Union extends ffi.Union {
+  external _ZonedDateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultZonedDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultZonedDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultZonedDateTimeFfiInt32.ok(_ZonedDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultZonedDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultZonedDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultZonedDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultZonedIsoDateTimeFfiInt32Union extends ffi.Union {
+  external _ZonedIsoDateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultZonedIsoDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultZonedIsoDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultZonedIsoDateTimeFfiInt32.ok(_ZonedIsoDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultZonedIsoDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultZonedIsoDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultZonedIsoDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
     return struct;
   }
 }

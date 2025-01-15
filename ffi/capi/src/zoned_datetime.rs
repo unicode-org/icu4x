@@ -1,0 +1,102 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
+pub mod ffi {
+    use alloc::boxed::Box;
+    use icu_calendar::Iso;
+
+    use crate::calendar::ffi::Calendar;
+    use crate::date::ffi::{Date, IsoDate};
+    use crate::errors::ffi::CalendarParseError;
+    #[cfg(feature = "buffer_provider")]
+    use crate::errors::ffi::DataError;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
+    use crate::time::ffi::Time;
+    use crate::timezone::ffi::TimeZoneInfo;
+
+    #[diplomat::rust_link(icu::timezone::IxdtfParser, Struct)]
+    #[diplomat::opaque]
+    pub struct IxdtfParser(icu_timezone::IxdtfParser);
+
+    impl IxdtfParser {
+        /// Construct a new [`IxdtfParser`] instance using compiled data.
+        #[diplomat::rust_link(icu::timezone::IxdtfParser::new, FnInStruct)]
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<IxdtfParser> {
+            Box::new(IxdtfParser(icu_timezone::IxdtfParser::new()))
+        }
+        /// Construct a new [`IxdtfParser`] instance using a particular data source.
+        #[diplomat::rust_link(icu::timezone::IxdtfParser::new, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<IxdtfParser>, DataError> {
+            Ok(Box::new(IxdtfParser(
+                icu_timezone::IxdtfParser::try_new_with_buffer_provider(provider.get()?)?,
+            )))
+        }
+    }
+
+    /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+    #[diplomat::rust_link(icu::timezone::ZonedDateTime, Struct)]
+    #[diplomat::out]
+    pub struct ZonedIsoDateTime {
+        pub date: Box<IsoDate>,
+        pub time: Box<Time>,
+        pub zone: Box<TimeZoneInfo>,
+    }
+
+    impl IxdtfParser {
+        /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+        #[diplomat::rust_link(icu::timezone::IxdtfParser::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::IxdtfParser::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::IxdtfParser::from_str, FnInStruct, hidden)]
+        pub fn try_iso_from_str(
+            &self,
+            v: &DiplomatStr,
+        ) -> Result<ZonedIsoDateTime, CalendarParseError> {
+            let icu_timezone::ZonedDateTime { date, time, zone } = self.0.try_from_utf8(v, Iso)?;
+            Ok(ZonedIsoDateTime {
+                date: Box::new(IsoDate(date)),
+                time: Box::new(Time(time)),
+                zone: Box::new(TimeZoneInfo::from(zone)),
+            })
+        }
+    }
+
+    /// An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
+    #[diplomat::rust_link(icu::timezone::ZonedDateTime, Struct)]
+    #[diplomat::out]
+    pub struct ZonedDateTime {
+        pub date: Box<Date>,
+        pub time: Box<Time>,
+        pub zone: Box<TimeZoneInfo>,
+    }
+
+    impl IxdtfParser {
+        /// Creates a new [`ZonedDateTime`] from an IXDTF string.
+        #[diplomat::rust_link(icu::timezone::DateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::DateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
+        pub fn try_from_str(
+            &self,
+            v: &DiplomatStr,
+            calendar: &Calendar,
+        ) -> Result<ZonedDateTime, CalendarParseError> {
+            let icu_timezone::ZonedDateTime { date, time, zone } =
+                self.0.try_from_utf8(v, calendar.0.clone())?;
+            Ok(ZonedDateTime {
+                date: Box::new(Date(date)),
+                time: Box::new(Time(time)),
+                zone: Box::new(TimeZoneInfo::from(zone)),
+            })
+        }
+    }
+}

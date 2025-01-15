@@ -1,10 +1,9 @@
 import { Calendar } from "icu4x"
 import { Date } from "icu4x"
 import { DateFormatter } from "icu4x"
-import { DateTime } from "icu4x"
 import { IsoDate } from "icu4x"
-import { IsoDateTime } from "icu4x"
 import { Locale } from "icu4x"
+import { Time } from "icu4x"
 export function formatDate(name, length, year, month, day, name_1) {
     return (function (...args) { return args[0].formatDate(...args.slice(1)) }).apply(
         null,
@@ -70,7 +69,7 @@ export function formatIsoDate(name, length, year, month, day) {
         ]
     );
 }
-export function formatDatetime(name, length, year, month, day, hour, minute, second, nanosecond, name_1) {
+export function formatDatetime(name, length, year, month, day, name_1, hour, minute, second, nanosecond) {
     return (function (...args) { return args[0].formatDatetime(...args.slice(1)) }).apply(
         null,
         [
@@ -86,16 +85,12 @@ export function formatDatetime(name, length, year, month, day, hour, minute, sec
                     length
                 ]
             ),
-            DateTime.fromIsoInCalendar.apply(
+            Date.fromIsoInCalendar.apply(
                 null,
                 [
                     year,
                     month,
                     day,
-                    hour,
-                    minute,
-                    second,
-                    nanosecond,
                     Calendar.createForLocale.apply(
                         null,
                         [
@@ -107,6 +102,15 @@ export function formatDatetime(name, length, year, month, day, hour, minute, sec
                             )
                         ]
                     )
+                ]
+            ),
+            (function (...args) { return new Time(...args) } ).apply(
+                null,
+                [
+                    hour,
+                    minute,
+                    second,
+                    nanosecond
                 ]
             )
         ]
@@ -128,12 +132,17 @@ export function formatIsoDatetime(name, length, year, month, day, hour, minute, 
                     length
                 ]
             ),
-            (function (...args) { return new IsoDateTime(...args) } ).apply(
+            (function (...args) { return new IsoDate(...args) } ).apply(
                 null,
                 [
                     year,
                     month,
-                    day,
+                    day
+                ]
+            ),
+            (function (...args) { return new Time(...args) } ).apply(
+                null,
+                [
                     hour,
                     minute,
                     second,
