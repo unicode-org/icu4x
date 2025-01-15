@@ -64,9 +64,7 @@ impl CldrCache {
                         // This attempts to group the decomposed character, but erroneously uses a context (chr-chr_FONIPA)
                         .replace("ə̃ {ə̃}+ → ə̃;", "ə̃ ə̃+ → ə̃;")
                         // Back references don't work in reverse (byn-Ethi-t-byn-latn-m0-xaleget)
-                        .replace("$1 ↔", "$1 ←")
-                    
-                    ;
+                        .replace("$1 ↔", "$1 ←");
 
                     if matches!(
                         metadata.direction,
