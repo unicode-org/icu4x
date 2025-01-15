@@ -39,11 +39,6 @@ impl CldrCache {
                         continue;
                     };
 
-                    if transform == "und-Ethi-t-und-latn-m0-beta_metsehaf-geminate" {
-                        // References an unknown transliterator
-                        continue;
-                    }
-
                     if transform == "Thai-Latin" {
                         // References an unknown transliterator (Any-BreakInternal)
                         continue;
@@ -61,6 +56,11 @@ impl CldrCache {
                             "cldr-transforms/transforms/{}",
                             metadata.rules_file
                         ))?
+                        // und-Ethi-t-und-latn-m0-beta_metsehaf-geminate has a typo
+                        .replace(
+                            "Ethiopic-Latin/BetaMetsehaf",
+                            "Ethiopic-Latin/Beta_Metsehaf",
+                        )
                         // This attempts to group the decomposed character, but erroneously uses a context (chr-chr_FONIPA)
                         .replace("ə̃ {ə̃}+ → ə̃;", "ə̃ ə̃+ → ə̃;")
                         // Back references don't work in reverse (byn-Ethi-t-byn-latn-m0-xaleget)
