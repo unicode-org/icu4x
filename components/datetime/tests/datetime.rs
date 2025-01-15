@@ -74,7 +74,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 continue;
             }
         };
-        let input_iso = DateTime::try_iso_from_str(&fx.input.value).unwrap();
+        let input_iso = DateTime::try_from_str(&fx.input.value, Iso).unwrap();
 
         let input_buddhist = DateTime::try_from_str(&fx.input.value, Buddhist).unwrap();
         let input_chinese = DateTime::try_from_str(&fx.input.value, Chinese::new()).unwrap();

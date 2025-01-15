@@ -36,7 +36,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// let zdt = IxdtfParser::new()
-///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", formatter.calendar())
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
@@ -90,7 +90,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// .unwrap();
 ///
 /// let zdt = IxdtfParser::new()
-///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
+///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", formatter.calendar())
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
