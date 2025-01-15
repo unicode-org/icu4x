@@ -184,7 +184,7 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
 export { WeekCalculator } from "./WeekCalculator.mjs"
 
-export { IxdtfParser } from "./IxdtfParser.mjs"
+export { ZonedDateTimeParser } from "./ZonedDateTimeParser.mjs"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 

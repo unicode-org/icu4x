@@ -766,12 +766,6 @@ icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
-icu::timezone::IxdtfParser::try_location_only_from_str#FnInStruct
-icu::timezone::IxdtfParser::try_location_only_from_utf8#FnInStruct
-icu::timezone::IxdtfParser::try_loose_from_str#FnInStruct
-icu::timezone::IxdtfParser::try_loose_from_utf8#FnInStruct
-icu::timezone::IxdtfParser::try_offset_only_from_str#FnInStruct
-icu::timezone::IxdtfParser::try_offset_only_from_utf8#FnInStruct
 icu::timezone::TimeZoneBcp47Id::into_option#FnInStruct
 icu::timezone::TimeZoneBcp47Iter#Struct
 icu::timezone::TimeZoneBcp47Iter::next#FnInStruct
@@ -790,6 +784,14 @@ icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct
 icu::timezone::ZoneOffsets#Struct
 icu::timezone::ZoneVariant::into_option#FnInEnum
+icu::timezone::ZonedDateTimeParser::parse#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_from_utf8#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_location_only#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_location_only_from_utf8#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_loose#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_loose_from_utf8#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_offset_only#FnInStruct
+icu::timezone::ZonedDateTimeParser::parse_offset_only_from_utf8#FnInStruct
 icu::timezone::models::AtTime#Enum
 icu::timezone::models::Base#Enum
 icu::timezone::models::Full#Enum

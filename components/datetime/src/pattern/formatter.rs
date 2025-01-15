@@ -157,14 +157,14 @@ where
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap();
-    /// let mut london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap();
     ///
     /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(

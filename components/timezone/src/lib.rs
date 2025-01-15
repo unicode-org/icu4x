@@ -115,7 +115,7 @@ mod zone_offset;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
 #[cfg(feature = "ixdtf")]
-pub use self::ixdtf::IxdtfParser;
+pub use self::ixdtf::ZonedDateTimeParser;
 
 pub use error::InvalidOffsetError;
 pub use ids::{

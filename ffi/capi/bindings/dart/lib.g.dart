@@ -83,7 +83,6 @@ part 'IndicSyllabicCategory.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoWeekday.g.dart';
-part 'IxdtfParser.g.dart';
 part 'JoiningType.g.dart';
 part 'LanguageDisplay.g.dart';
 part 'LeadingAdjustment.g.dart';
@@ -153,6 +152,7 @@ part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
 part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
+part 'ZonedDateTimeParser.g.dart';
 part 'ZonedIsoDateTime.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.

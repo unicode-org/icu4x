@@ -16,7 +16,7 @@
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
 //! use icu::locale::locale;
-//! use icu::timezone::{IxdtfParser, Time};
+//! use icu::timezone::{ZonedDateTimeParser, Time};
 //! use writeable::assert_writeable_parts_eq;
 //!
 //! let dtf = DateTimeFormatter::try_new(
@@ -25,7 +25,7 @@
 //! )
 //! .unwrap();
 //!
-//! let dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar()).unwrap();
+//! let dtz = ZonedDateTimeParser::new().parse("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
