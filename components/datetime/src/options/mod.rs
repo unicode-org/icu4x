@@ -484,14 +484,6 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
-    serde(try_from = "u8", into = "u8")
-)]
 #[non_exhaustive]
 pub enum FractionalSecondDigits {
     /// One fractional digit (tenths of a second).
