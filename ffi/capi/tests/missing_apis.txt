@@ -16,6 +16,21 @@
 
 icu::calendar::types::YearAmbiguity#Enum
 icu::calendar::types::YearInfo::year_ambiguity#FnInStruct
+icu::collator::CollationCaseFirst#Enum
+icu::collator::CollationCaseFirst::as_str#FnInEnum
+icu::collator::CollationCaseFirst::try_from_key_value#FnInEnum
+icu::collator::CollationCaseFirst::unicode_extension_key#FnInEnum
+icu::collator::CollationCaseFirst::unicode_extension_value#FnInEnum
+icu::collator::CollationNumericOrdering#Enum
+icu::collator::CollationNumericOrdering::as_str#FnInEnum
+icu::collator::CollationNumericOrdering::try_from_key_value#FnInEnum
+icu::collator::CollationNumericOrdering::unicode_extension_key#FnInEnum
+icu::collator::CollationNumericOrdering::unicode_extension_value#FnInEnum
+icu::collator::CollationType#Enum
+icu::collator::CollationType::as_str#FnInEnum
+icu::collator::CollationType::try_from_key_value#FnInEnum
+icu::collator::CollationType::unicode_extension_key#FnInEnum
+icu::collator::CollationType::unicode_extension_value#FnInEnum
 icu::collator::CollatorPreferences::extend#FnInStruct
 icu::datetime::DateTimeFormatter#Struct
 icu::datetime::DateTimeFormatter::format_any_calendar#FnInStruct
@@ -751,9 +766,6 @@ icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
-icu::timezone::CustomZonedDateTime#Struct
-icu::timezone::CustomZonedDateTime::to_calendar#FnInStruct
-icu::timezone::CustomZonedDateTime::to_iso#FnInStruct
 icu::timezone::IxdtfParser#Struct
 icu::timezone::IxdtfParser::new#FnInStruct
 icu::timezone::IxdtfParser::try_from_str#FnInStruct
@@ -791,6 +803,7 @@ icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::timezone::ZoneOffsetCalculator::new#FnInStruct
 icu::timezone::ZoneOffsets#Struct
 icu::timezone::ZoneVariant::into_option#FnInEnum
+icu::timezone::ZonedDateTime#Struct
 icu::timezone::models::AtTime#Enum
 icu::timezone::models::Base#Enum
 icu::timezone::models::Full#Enum

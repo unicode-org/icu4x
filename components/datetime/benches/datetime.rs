@@ -7,9 +7,9 @@ mod fixtures;
 use criterion::{criterion_group, criterion_main, Criterion};
 use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
 
-use icu_calendar::{Date, DateTime, Gregorian, Time};
+use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
+use icu_timezone::{DateTime, Time, TimeZoneInfo, ZoneVariant, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
@@ -23,15 +23,16 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
+                    let datetimes: Vec<ZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
                             if has_zones {
                                 mock::parse_zoned_gregorian_from_str(value)
                             } else {
-                                let DateTime { date, time } = mock::parse_gregorian_from_str(value);
-                                CustomZonedDateTime {
+                                let DateTime { date, time } =
+                                    DateTime::try_from_str(value, Gregorian).unwrap();
+                                ZonedDateTime {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match

@@ -7,7 +7,7 @@ use core::cmp::Ordering;
 use atoi::FromRadix16;
 use icu_collator::provider::*;
 use icu_collator::*;
-use icu_locale_core::{langid, locale};
+use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
 struct TestingProvider;
@@ -1449,9 +1449,9 @@ fn test_nb_nn_no() {
         DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                    prefs.locale_preferences
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1472,9 +1472,9 @@ fn test_nb_nn_no() {
         DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                    prefs.locale_preferences
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1495,9 +1495,9 @@ fn test_nb_nn_no() {
         DataProvider::<CollationTailoringV1Marker>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                    prefs.locale_preferences
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1534,10 +1534,10 @@ fn test_basics() {
 
 #[test]
 fn test_numeric_long() {
-    let mut options = CollatorOptions::default();
-    options.numeric = Some(Numeric::On);
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(NumericOrdering::True);
 
-    let collator = Collator::try_new(Default::default(), options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     let mut left = String::new();
     let mut right = String::new();
     // We'll make left larger than right numerically. However, first, let's use
@@ -1569,10 +1569,10 @@ fn test_numeric_long() {
 
 #[test]
 fn test_numeric_after() {
-    let mut options = CollatorOptions::default();
-    options.numeric = Some(Numeric::On);
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(NumericOrdering::True);
 
-    let collator = Collator::try_new(Default::default(), options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     assert_eq!(collator.compare("0001000b", "1000a"), Ordering::Greater);
 }
 
@@ -1802,10 +1802,10 @@ fn test_default_resolved_options() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.numeric, NumericOrdering::False);
     assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
@@ -1819,10 +1819,10 @@ fn test_data_resolved_options_th() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::Shifted);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.numeric, NumericOrdering::False);
     assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     // There's a separate more comprehensive test for the shifted behavior
@@ -1837,10 +1837,10 @@ fn test_data_resolved_options_da() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+    assert_eq!(resolved.case_first, CaseFirst::Upper);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.numeric, NumericOrdering::False);
     assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
@@ -1854,10 +1854,10 @@ fn test_data_resolved_options_fr_ca() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.numeric, NumericOrdering::False);
     assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
@@ -1869,19 +1869,17 @@ fn test_data_resolved_options_fr_ca() {
 
 #[test]
 fn test_manual_and_data_resolved_options_fr_ca() {
-    let prefs = locale!("fr-CA").into();
+    let mut prefs: CollatorPreferences = locale!("fr-CA").into();
+    prefs.case_first = Some(CaseFirst::Upper);
 
-    let mut options = CollatorOptions::default();
-    options.case_first = Some(CaseFirst::UpperFirst);
-
-    let collator = Collator::try_new(prefs, options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+    assert_eq!(resolved.case_first, CaseFirst::Upper);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.numeric, NumericOrdering::False);
     assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
@@ -1893,19 +1891,17 @@ fn test_manual_and_data_resolved_options_fr_ca() {
 
 #[test]
 fn test_manual_resolved_options_da() {
-    let prefs = locale!("da").into();
+    let mut prefs: CollatorPreferences = locale!("da").into();
+    prefs.case_first = Some(CaseFirst::False);
 
-    let mut options = CollatorOptions::default();
-    options.case_first = Some(CaseFirst::Off);
-
-    let collator = Collator::try_new(prefs, options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
+    assert_eq!(resolved.numeric, NumericOrdering::False);
     assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
@@ -1946,6 +1942,40 @@ fn test_ecma_sensitivity() {
         let collator = Collator::try_new(Default::default(), options).unwrap();
         assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
         assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+    }
+}
+
+#[test]
+fn test_prefs_overrides() {
+    let locale_prefs = "da-u-kn-kf-upper".parse::<Locale>().unwrap().into();
+
+    // preferences from locale are applied
+    {
+        let prefs = locale_prefs;
+        let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+        let resolved = collator.resolved_options();
+        assert_eq!(resolved.case_first, CaseFirst::Upper);
+        assert_eq!(resolved.numeric, NumericOrdering::True);
+
+        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Greater);
+    }
+
+    // preferences from locale can be overridden by explicit preferences
+    {
+        let mut prefs = locale_prefs;
+        let mut explicit_prefs = CollatorPreferences::default();
+        explicit_prefs.case_first = Some(CaseFirst::False);
+        explicit_prefs.numeric_ordering = Some(NumericOrdering::False);
+        prefs.extend(explicit_prefs);
+
+        let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+        let resolved = collator.resolved_options();
+        assert_eq!(resolved.case_first, CaseFirst::False);
+        assert_eq!(resolved.numeric, NumericOrdering::False);
+
+        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Less);
     }
 }
 

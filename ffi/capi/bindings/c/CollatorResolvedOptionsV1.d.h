@@ -12,7 +12,7 @@
 #include "CollatorCaseFirst.d.h"
 #include "CollatorCaseLevel.d.h"
 #include "CollatorMaxVariable.d.h"
-#include "CollatorNumeric.d.h"
+#include "CollatorNumericOrdering.d.h"
 #include "CollatorStrength.d.h"
 
 
@@ -24,7 +24,7 @@ typedef struct CollatorResolvedOptionsV1 {
   CollatorCaseFirst case_first;
   CollatorMaxVariable max_variable;
   CollatorCaseLevel case_level;
-  CollatorNumeric numeric;
+  CollatorNumericOrdering numeric;
   CollatorBackwardSecondLevel backward_second_level;
 } CollatorResolvedOptionsV1;
 

@@ -60,7 +60,7 @@ fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
 
     let mut r = vec![];
 
-    let Ok(mut locale) = DataLocale::try_from_str(language) else {
+    let Ok(mut locale) = DataLocale::try_from_str(&language.replace('_', "-")) else {
         return Default::default();
     };
 

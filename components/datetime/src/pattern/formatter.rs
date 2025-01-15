@@ -107,7 +107,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -161,13 +161,11 @@ where
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .to_calendar(Gregorian);
+    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    ///     .unwrap();
     /// let mut london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .to_calendar(Gregorian);
+    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    ///     .unwrap();
     ///
     /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///     locale!("en-GB").into(),
@@ -237,8 +235,9 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::super::*;
-    use icu_calendar::{DateTime, Gregorian};
+    use icu_calendar::{Date, Gregorian};
     use icu_locale_core::locale;
+    use icu_timezone::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
 
     #[test]
@@ -257,7 +256,10 @@ mod tests {
         let pattern: DateTimePattern = "'It is' E, MMMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
             .unwrap();
-        let datetime = DateTime::try_new_gregorian(2023, 10, 25, 15, 0, 55).unwrap();
+        let datetime = DateTime {
+            date: Date::try_new_gregorian(2023, 10, 25).unwrap(),
+            time: Time::try_new(15, 0, 55, 0).unwrap(),
+        };
         let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
         assert_try_writeable_eq!(
@@ -315,7 +317,10 @@ mod tests {
                 .load_year_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -378,7 +383,10 @@ mod tests {
                 .load_month_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -480,7 +488,10 @@ mod tests {
                 .load_weekday_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -562,7 +573,10 @@ mod tests {
                 .load_day_period_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");

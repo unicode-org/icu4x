@@ -29,7 +29,7 @@
 //!```rust
 //! use icu::segmenter::LineSegmenter;
 //!
-//! let segmenter = LineSegmenter::new_auto();
+//! let segmenter = LineSegmenter::new_auto(Default::default());
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -67,9 +67,9 @@
 //! Find all word boundaries:
 //!
 //!```rust
-//! use icu::segmenter::WordSegmenter;
+//! use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
 //!
-//! let segmenter = WordSegmenter::new_auto();
+//! let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -87,9 +87,9 @@
 //! Segment the string into sentences:
 //!
 //!```rust
-//! use icu::segmenter::SentenceSegmenter;
+//! use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
 //!
-//! let segmenter = SentenceSegmenter::new();
+//! let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -144,7 +144,9 @@ pub use crate::word::WordSegmenter;
 pub use crate::line::LineBreakOptions;
 pub use crate::line::LineBreakStrictness;
 pub use crate::line::LineBreakWordOption;
+pub use crate::sentence::SentenceBreakInvariantOptions;
 pub use crate::sentence::SentenceBreakOptions;
+pub use crate::word::WordBreakInvariantOptions;
 pub use crate::word::WordBreakOptions;
 pub use crate::word::WordType;
 

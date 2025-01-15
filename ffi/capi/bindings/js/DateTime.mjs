@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X DateTime object capable of containing a date and time for any calendar.
 *
-*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
+*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) for more information.
 */
 const DateTime_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateTime_destroy_mv1(ptr);
@@ -101,14 +101,14 @@ export class DateTime {
         finally {}
     }
 
-    static fromString(v) {
+    static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
+        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

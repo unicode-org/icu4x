@@ -45,7 +45,7 @@ public:
 
   inline static std::unique_ptr<icu4x::DateTime> from_date_and_time(const icu4x::Date& date, const icu4x::Time& time);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<icu4x::DateTime>, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   inline std::unique_ptr<icu4x::Date> date() const;
 

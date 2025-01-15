@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use alloc::sync::Arc;
     use icu_datetime::fieldsets::{T, YMD, YMDT};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
@@ -18,7 +19,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use crate::{
-        calendar::ffi::AnyCalendarKind,
+        calendar::ffi::Calendar,
         date::ffi::{Date, IsoDate},
         datetime::ffi::{DateTime, IsoDateTime},
         errors::ffi::DateTimeFormatError,
@@ -161,7 +162,10 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
+            let greg = icu_timezone::DateTime {
+                date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
+                time: value.0.time,
+            };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -217,7 +221,10 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
+            let greg = icu_timezone::DateTime {
+                date: icu_calendar::Date::new_from_iso(value.0.date, icu_calendar::Gregorian),
+                time: value.0.time,
+            };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -306,15 +313,18 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = value.0.to_any();
+            let any = icu_timezone::DateTime {
+                date: value.0.date.to_any(),
+                time: value.0.time,
+            };
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
-        pub fn calendar_kind(&self) -> AnyCalendarKind {
-            self.0.calendar_kind().into()
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
+        pub fn calendar(&self) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(self.0.calendar().0.clone())))
         }
     }
 
@@ -378,15 +388,18 @@ pub mod ffi {
             value: &IsoDateTime,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = value.0.to_any();
+            let any = icu_timezone::DateTime {
+                date: value.0.date.to_any(),
+                time: value.0.time,
+            };
             let _infallible = self.0.format_any_calendar(&any).write_to(write);
             Ok(())
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
-        pub fn calendar_kind(&self) -> AnyCalendarKind {
-            self.0.calendar_kind().into()
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
+        pub fn calendar(&self) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(self.0.calendar().0.clone())))
         }
     }
 }

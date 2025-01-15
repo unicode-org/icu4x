@@ -4,38 +4,8 @@
 
 //! Some useful parsing functions for tests.
 
-use icu_calendar::{DateTime, Gregorian};
-use icu_timezone::{models, CustomZonedDateTime, IxdtfParser, TimeZoneInfo, ZoneVariant};
-
-/// Temporary function for parsing a `DateTime<Gregorian>`
-///
-/// This utility is for easily creating dates, not a complete robust solution. The
-/// string must take a specific form of the ISO-8601 format: `YYYY-MM-DDThh:mm:ss`.
-///
-/// ```
-/// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::mock::parse_gregorian_from_str;
-///
-/// let date: DateTime<Gregorian> =
-///     parse_gregorian_from_str("2020-10-14T13:21:00")
-///         .expect("Failed to parse a datetime.");
-/// ```
-///
-/// Optionally, fractional seconds can be specified: `YYYY-MM-DDThh:mm:ss.SSS`.
-///
-/// ```
-/// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::mock::parse_gregorian_from_str;
-///
-/// let date: DateTime<Gregorian> =
-///     parse_gregorian_from_str("2020-10-14T13:21:00.101")
-///         .expect("Failed to parse a datetime.");
-/// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
-/// ```
-pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
-    let datetime_iso = DateTime::try_iso_from_str(input).unwrap();
-    datetime_iso.to_calendar(Gregorian)
-}
+use icu_calendar::Gregorian;
+use icu_timezone::{models, IxdtfParser, TimeZoneInfo, ZoneVariant, ZonedDateTime};
 
 /// Parse a [`DateTime`] and [`TimeZoneInfo`] from a string.
 ///
@@ -57,13 +27,13 @@ pub fn parse_gregorian_from_str(input: &str) -> DateTime<Gregorian> {
 /// ```
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
-) -> CustomZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
-    let iso_zdt = match IxdtfParser::new().try_iso_from_str(input) {
+) -> ZonedDateTime<Gregorian, TimeZoneInfo<models::Full>> {
+    match IxdtfParser::new().try_from_str(input, Gregorian) {
         Ok(zdt) => zdt,
         Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
-            match IxdtfParser::new().try_loose_iso_from_str(input) {
+            match IxdtfParser::new().try_loose_from_str(input, Gregorian) {
                 Ok(zdt) => {
-                    CustomZonedDateTime {
+                    ZonedDateTime {
                         date: zdt.date,
                         time: zdt.time,
                         // For fixture tests, set the zone variant to standard here
@@ -74,6 +44,5 @@ pub fn parse_zoned_gregorian_from_str(
             }
         }
         Err(e) => panic!("could not parse input: {input}: {e:?}"),
-    };
-    iso_zdt.to_calendar(Gregorian)
+    }
 }

@@ -63,7 +63,7 @@ fn bench_langid_strict_cmp() {
     // Tests the cost of comparing a langid against byte strings.
     use core::cmp::Ordering;
 
-    let lid = langid!("en_us");
+    let lid = langid!("en-us");
 
     let result = LIDS_STR
         .iter()
@@ -76,7 +76,7 @@ fn bench_langid_strict_cmp() {
 fn bench_langid_matching() {
     // Tests matching a LID against other LIDs.
 
-    let lid = langid!("en_us");
+    let lid = langid!("en-us");
 
     let count = LIDS.iter().filter(|l| lid == **l).count();
     assert_eq!(count, 1);
@@ -85,7 +85,7 @@ fn bench_langid_matching() {
 fn bench_langid_matching_str() {
     // Tests matching a LID against list of str.
 
-    let lid = langid!("en_us");
+    let lid = langid!("en-us");
 
     let count = LIDS_STR.iter().filter(|&l| lid.normalizing_eq(l)).count();
     assert_eq!(count, 1);

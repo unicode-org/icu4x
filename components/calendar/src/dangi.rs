@@ -6,34 +6,16 @@
 //!
 //! ```rust
 //! use icu::calendar::cal::Dangi;
-//! use icu::calendar::{Date, DateTime, Ref};
+//! use icu::calendar::Date;
 //!
 //! let dangi = Dangi::new();
-//! let dangi = Ref(&dangi); // to avoid cloning
-//!
-//! // `Date` type
 //! let dangi_date = Date::try_new_dangi_with_calendar(4356, 6, 6, dangi)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
-//! // `DateTime` type
-//! let dangi_datetime =
-//!     DateTime::try_new_dangi_with_calendar(4356, 6, 6, 13, 1, 0, dangi)
-//!         .expect("Failed to initialize Dangi DateTime instance.");
-//!
-//! // `Date` checks
 //! assert_eq!(dangi_date.year().era_year_or_extended(), 4356);
 //! assert_eq!(dangi_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
-//!
-//! // `DateTime` checks
-//! assert_eq!(dangi_datetime.date.year().era_year_or_extended(), 4356);
-//! assert_eq!(dangi_datetime.date.year().cyclic().unwrap().get(), 40);
-//! assert_eq!(dangi_datetime.date.month().ordinal, 6);
-//! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
-//! assert_eq!(dangi_datetime.time.hour.number(), 13);
-//! assert_eq!(dangi_datetime.time.minute.number(), 1);
-//! assert_eq!(dangi_datetime.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
@@ -45,11 +27,7 @@ use crate::chinese_based::{
 use crate::error::DateError;
 use crate::provider::chinese_based::DangiCacheV1Marker;
 use crate::AsCalendar;
-use crate::{
-    chinese_based::ChineseBasedDateInner,
-    types::{self},
-    Calendar, Date, DateTime, Iso, Time,
-};
+use crate::{chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -327,46 +305,6 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
             DangiDateInner(ChineseBasedDateInner(arithmetic?)),
             calendar,
         ))
-    }
-}
-
-impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
-    /// Construct a new Dangi DateTime from integers. See `try_new_dangi_with_calendar`.
-    ///
-    /// This datetime will not use any precomputed calendrical calculations,
-    /// one that loads such data from a provider will be added in the future (#3933)
-    ///
-    /// ```rust
-    /// use icu::calendar::cal::Dangi;
-    /// use icu::calendar::DateTime;
-    ///
-    /// let dangi = Dangi::new();
-    ///
-    /// let dangi_datetime =
-    ///     DateTime::try_new_dangi_with_calendar(4356, 6, 6, 13, 1, 0, dangi)
-    ///         .expect("Failed to initialize Dangi DateTime instance.");
-    ///
-    /// assert_eq!(dangi_datetime.date.year().era_year_or_extended(), 4356);
-    /// assert_eq!(dangi_datetime.date.year().cyclic().unwrap().get(), 40);
-    /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
-    /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);
-    /// assert_eq!(dangi_datetime.time.hour.number(), 13);
-    /// assert_eq!(dangi_datetime.time.minute.number(), 1);
-    /// assert_eq!(dangi_datetime.time.second.number(), 0);
-    /// ```
-    pub fn try_new_dangi_with_calendar(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-        calendar: A,
-    ) -> Result<DateTime<A>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_dangi_with_calendar(year, month, day, calendar)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

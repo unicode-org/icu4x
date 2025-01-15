@@ -21,7 +21,7 @@ const fn skip_before_separator(slice: &[u8]) -> &[u8] {
     let mut end = 0;
 
     #[allow(clippy::indexing_slicing)] // very protected, should optimize out
-    while end < slice.len() && !matches!(slice[end], b'-' | b'_') {
+    while end < slice.len() && !matches!(slice[end], b'-') {
         // Advance until we reach end of slice or a separator.
         end += 1;
     }
@@ -99,7 +99,7 @@ mod test {
 
     #[test]
     fn subtag_iterator_peek_test() {
-        let slice = "de_at-u-ca-foobar";
+        let slice = "de-at-u-ca-foobar";
         let mut si = SubtagIterator::new(slice.as_bytes());
 
         assert_eq!(si.peek().map(slice_to_str), Some("de"));
@@ -149,7 +149,7 @@ mod test {
         assert_eq!(si.next().map(slice_to_str), Some(""));
         assert_eq!(si.next(), None);
 
-        let slice = "de_at-u-ca-foobar";
+        let slice = "de-at-u-ca-foobar";
         let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(
             si.map(slice_to_str).collect::<Vec<_>>(),

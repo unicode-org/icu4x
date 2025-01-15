@@ -66,7 +66,7 @@ use alloc::borrow::Cow;
 ///     subtags::{language, region, script, variant},
 /// };
 ///
-/// let li = langid!("eN_latn_Us-Valencia");
+/// let li = langid!("eN-latn-Us-Valencia");
 ///
 /// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, Some(script!("Latn")));
@@ -175,7 +175,7 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
@@ -194,7 +194,7 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```

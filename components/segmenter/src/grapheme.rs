@@ -131,13 +131,6 @@ pub struct GraphemeClusterSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV2Marker>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for GraphemeClusterSegmenter {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl GraphemeClusterSegmenter {
     /// Constructs a [`GraphemeClusterSegmenter`] with an invariant locale from compiled data.
     ///
@@ -145,6 +138,7 @@ impl GraphemeClusterSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(

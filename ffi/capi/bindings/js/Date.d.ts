@@ -22,7 +22,7 @@ export class Date {
 
     static fromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, calendar: Calendar): Date;
 
-    static fromString(v: string): Date;
+    static fromString(v: string, calendar: Calendar): Date;
 
     toCalendar(calendar: Calendar): Date;
 

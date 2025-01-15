@@ -29,7 +29,7 @@ typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {Date* ok; Ca
 icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(DiplomatStringView era_code, int32_t year, DiplomatStringView month_code, uint8_t day, const Calendar* calendar);
 
 typedef struct icu4x_Date_from_string_mv1_result {union {Date* ok; CalendarParseError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
-icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(DiplomatStringView v);
+icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(DiplomatStringView v, const Calendar* calendar);
 
 Date* icu4x_Date_to_calendar_mv1(const Date* self, const Calendar* calendar);
 

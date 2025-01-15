@@ -169,6 +169,20 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
     }
 }
 
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+impl From<icu_timezone::ParseError> for CalendarParseError {
+    fn from(e: icu_timezone::ParseError) -> Self {
+        match e {
+            icu_timezone::ParseError::Syntax(_) => Self::InvalidSyntax,
+            icu_timezone::ParseError::MissingFields => Self::MissingFields,
+            icu_timezone::ParseError::Range(_) => Self::OutOfRange,
+            icu_timezone::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            // TODO
+            _ => Self::Unknown,
+        }
+    }
+}
+
 #[cfg(feature = "datetime")]
 impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadError {
     fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {

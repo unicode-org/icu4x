@@ -59,9 +59,9 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///
   /// Throws [CalendarParseError] on failure.
-  factory Date.fromString(String v) {
+  factory Date.fromString(String v, Calendar calendar) {
     final temp = _FinalizedArena();
-    final result = _icu4x_Date_from_string_mv1(v._utf8AllocIn(temp.arena));
+    final result = _icu4x_Date_from_string_mv1(v._utf8AllocIn(temp.arena), calendar._ffi);
     if (!result.isOk) {
       throw CalendarParseError.values[result.union.err];
     }
@@ -249,9 +249,9 @@ external _ResultOpaqueInt32 _icu4x_Date_from_iso_in_calendar_mv1(int year, int m
 external _ResultOpaqueInt32 _icu4x_Date_from_codes_in_calendar_mv1(_SliceUtf8 eraCode, int year, _SliceUtf8 monthCode, int day, ffi.Pointer<ffi.Opaque> calendar);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Date_from_string_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Date_from_string_mv1(_SliceUtf8 v);
+external _ResultOpaqueInt32 _icu4x_Date_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_calendar_mv1')

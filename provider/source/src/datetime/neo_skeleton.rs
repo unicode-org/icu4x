@@ -184,9 +184,7 @@ impl SourceDataProvider {
             .flat_map(|locale| {
                 TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES
                     .iter()
-                    .map(move |attrs| {
-                        DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
-                    })
+                    .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
             })
             .collect())
     }
@@ -208,9 +206,7 @@ impl SourceDataProvider {
                     .iter()
                     .chain(CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
                     .chain(DateAndTimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
-                    .map(move |attrs| {
-                        DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
-                    })
+                    .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
             })
             .collect())
     }

@@ -246,7 +246,8 @@ mod tests {
             provider.as_any_provider(),
         );
 
-        let segmenter = LineSegmenter::try_new_lstm_with_any_provider(&provider).unwrap();
+        let segmenter =
+            LineSegmenter::try_new_lstm_with_any_provider(&provider, Default::default()).unwrap();
 
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();

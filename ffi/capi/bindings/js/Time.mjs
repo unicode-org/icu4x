@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 *
-*See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html) for more information.
+*See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html) for more information.
 */
 const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Time_destroy_mv1(ptr);

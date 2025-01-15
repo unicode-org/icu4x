@@ -6,6 +6,7 @@
       "text": "The given language subtag is invalid"
     }
   },
+
   {
     "input": "--",
     "output": {
@@ -32,6 +33,13 @@
     "output": {
       "error": "InvalidSubtag",
       "text": "The given subtag is invalid"
+    }
+  },
+  {
+    "input": "en_us",
+    "output": {
+      "error": "InvalidLanguage",
+      "text": "The given language subtag is invalid"
     }
   },
   {
@@ -105,7 +113,7 @@
     }
   },
   {
-    "input": "pl-Latn-US-3_dd",
+    "input": "pl-Latn-US-3-dd",
     "output": {
       "error": "InvalidSubtag",
       "text": "Invalid subtag"

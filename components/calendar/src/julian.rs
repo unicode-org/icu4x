@@ -5,37 +5,22 @@
 //! This module contains types and implementations for the Julian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Julian, Date, DateTime};
+//! use icu::calendar::{cal::Julian, Date};
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_julian = DateTime::new_from_iso(datetime_iso, Julian);
-//!
-//! // `Date` checks
 //! assert_eq!(date_julian.year().era_year_or_extended(), 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
-//!
-//! // `DateTime` type
-//! assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
-//! assert_eq!(datetime_julian.date.month().ordinal, 12);
-//! assert_eq!(datetime_julian.date.day_of_month().0, 20);
-//! assert_eq!(datetime_julian.time.hour.number(), 13);
-//! assert_eq!(datetime_julian.time.minute.number(), 1);
-//! assert_eq!(datetime_julian.time.second.number(), 0);
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -44,7 +29,7 @@ use tinystr::tinystr;
 ///
 /// The [Julian calendar] is a solar calendar that was used commonly historically, with twelve months.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// [Julian calendar]: https://en.wikipedia.org/wiki/Julian_calendar
 ///
@@ -293,39 +278,6 @@ impl Date<Julian> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))
-    }
-}
-
-impl DateTime<Julian> {
-    /// Construct a new Julian datetime from integers.
-    ///
-    /// Years are arithmetic, meaning there is a year 0. Zero and negative years are in BC, with year 0 = 1 BC
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_julian = DateTime::try_new_julian(1969, 12, 20, 13, 1, 0)
-    ///     .expect("Failed to initialize Julian DateTime instance.");
-    ///
-    /// assert_eq!(datetime_julian.date.year().era_year_or_extended(), 1969);
-    /// assert_eq!(datetime_julian.date.month().ordinal, 12);
-    /// assert_eq!(datetime_julian.date.day_of_month().0, 20);
-    /// assert_eq!(datetime_julian.time.hour.number(), 13);
-    /// assert_eq!(datetime_julian.time.minute.number(), 1);
-    /// assert_eq!(datetime_julian.time.second.number(), 0);
-    /// ```
-    pub fn try_new_julian(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Julian>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_julian(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 
