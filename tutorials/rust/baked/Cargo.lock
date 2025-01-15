@@ -1428,7 +1428,7 @@ dependencies = [
  "icu_provider_baked",
  "icu_provider_export",
  "icu_provider_source",
- "zerovec 0.11.0",
+ "zerovec 0.11.1-dev",
 ]
 
 [[package]]
@@ -1752,15 +1752,6 @@ dependencies = [
  "yoke",
  "zerofrom",
  "zerovec-derive 0.10.3",
-]
-
-[[package]]
-name = "zerovec"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b622856b789971a6fe0442b69f3a2d7ac949005c4c8586b2c4ef09cc5182f2b"
-dependencies = [
- "zerofrom",
 ]
 
 [[package]]

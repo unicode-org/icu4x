@@ -337,7 +337,7 @@ fn eras_convert(
         }
         let keys: Vec<&PotentialUtf8> = out_eras
             .keys()
-            .map(|k| PotentialUtf8::from_str(&k))
+            .map(|k| PotentialUtf8::from_str(k))
             .collect();
         let values: Vec<&str> = out_eras.values().copied().collect();
         let kv = (keys, values);
