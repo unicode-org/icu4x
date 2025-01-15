@@ -322,7 +322,7 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, self.time.nanosecond)?;
         let offset = match time_zone_id.as_str() {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
@@ -358,7 +358,7 @@ impl<'a> Intermediate<'a> {
             },
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, self.time.nanosecond)?;
         Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
@@ -375,7 +375,7 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, self.time.nanosecond)?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         let zone_variant = match zone_offset_calculator
             .compute_offsets_from_time_zone(time_zone_id, (date, time))
