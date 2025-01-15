@@ -268,7 +268,7 @@ impl ExtractedInput {
                 } else {
                     (PackedSkeletonVariant::Variant0, None)
                 }
-            },
+            }
         }
     }
 }
