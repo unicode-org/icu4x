@@ -21,7 +21,7 @@ pub mod ffi {
         pub(crate) time_zone_id: icu_timezone::TimeZoneBcp47Id,
         pub(crate) offset: Option<icu_timezone::UtcOffset>,
         pub(crate) zone_variant: Option<icu_timezone::ZoneVariant>,
-        pub(crate) local_time: Option<(icu_calendar::Date<icu_calendar::Iso>, icu_calendar::Time)>,
+        pub(crate) local_time: Option<(icu_calendar::Date<icu_calendar::Iso>, icu_timezone::Time)>,
     }
 
     impl TimeZoneInfo {
@@ -271,7 +271,7 @@ pub mod ffi {
         #[diplomat::attr(auto, getter)]
         pub fn get_local_time(&self) -> Option<Box<IsoDateTime>> {
             self.local_time
-                .map(|(date, time)| Box::new(IsoDateTime(icu_calendar::DateTime { date, time })))
+                .map(|(date, time)| Box::new(IsoDateTime(icu_timezone::DateTime { date, time })))
         }
     }
 }

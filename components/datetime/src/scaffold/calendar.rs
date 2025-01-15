@@ -15,12 +15,10 @@ use icu_calendar::cal::{
     Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, Indian, IslamicCivil,
     IslamicObservational, IslamicTabular, IslamicUmmAlQura, Japanese, JapaneseExtended, Persian,
 };
-use icu_calendar::{
-    any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, DateTime, Ref, Time,
-};
+use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_timezone::{TimeZoneInfo, TimeZoneModel, UtcOffset, ZonedDateTime};
+use icu_timezone::{DateTime, Time, TimeZoneInfo, TimeZoneModel, UtcOffset, ZonedDateTime};
 
 /// A calendar that can be found in CLDR.
 ///
@@ -411,7 +409,11 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
+        let date = self.date.to_any().to_calendar(Ref(calendar));
+        DateTime {
+            date,
+            time: self.time,
+        }
     }
 }
 

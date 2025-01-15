@@ -83,10 +83,9 @@ pub mod ffi {
             time_zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let greg = icu_calendar::DateTime::new_from_iso(datetime.0, icu_calendar::Gregorian);
             let zdt = icu_timezone::ZonedDateTime {
-                date: greg.date,
-                time: greg.time,
+                date: icu_calendar::Date::new_from_iso(datetime.0.date, icu_calendar::Gregorian),
+                time: datetime.0.time,
                 zone: time_zone
                     .time_zone_id
                     .with_offset(time_zone.offset)

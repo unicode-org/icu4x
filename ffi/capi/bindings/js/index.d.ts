@@ -204,7 +204,7 @@ export { CollatorCaseLevel } from "./CollatorCaseLevel"
 
 export { CollatorMaxVariable } from "./CollatorMaxVariable"
 
-export { CollatorNumeric } from "./CollatorNumeric"
+export { CollatorNumericOrdering } from "./CollatorNumericOrdering"
 
 export { CollatorStrength } from "./CollatorStrength"
 

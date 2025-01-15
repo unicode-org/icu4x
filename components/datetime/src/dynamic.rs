@@ -28,11 +28,12 @@
 //! Format with the time display depending on a runtime boolean:
 //!
 //! ```
-//! use icu::calendar::DateTime;
+//! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
+//! use icu::timezone::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
@@ -49,7 +50,7 @@
 //!     }
 //! }
 //!
-//! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
+//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 0, 0, 0).unwrap() };
 //!
 //! let results = [true, false]
 //!     .map(get_field_set)

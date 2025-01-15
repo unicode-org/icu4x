@@ -14,7 +14,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 *
-*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
+*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) for more information.
 */
 const IsoDateTime_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_IsoDateTime_destroy_mv1(ptr);

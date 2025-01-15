@@ -4,7 +4,7 @@ import type { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel"
 import type { CollatorCaseFirst } from "./CollatorCaseFirst"
 import type { CollatorCaseLevel } from "./CollatorCaseLevel"
 import type { CollatorMaxVariable } from "./CollatorMaxVariable"
-import type { CollatorNumeric } from "./CollatorNumeric"
+import type { CollatorNumericOrdering } from "./CollatorNumericOrdering"
 import type { CollatorStrength } from "./CollatorStrength"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
@@ -28,7 +28,7 @@ export class CollatorResolvedOptions {
     get caseLevel() : CollatorCaseLevel;
     
 
-    get numeric() : CollatorNumeric;
+    get numeric() : CollatorNumericOrdering;
     
 
     get backwardSecondLevel() : CollatorBackwardSecondLevel;

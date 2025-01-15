@@ -143,9 +143,7 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for SourceDataPr
                     DataMarkerAttributes::from_str_or_panic("narrow"),
                 ]
                 .into_iter()
-                .map(move |length| {
-                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
-                })
+                .map(move |length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
             })
             .collect())
     }

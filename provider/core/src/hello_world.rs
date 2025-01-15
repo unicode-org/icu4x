@@ -316,7 +316,7 @@ impl HelloWorldFormatter {
     where
         P: DataProvider<HelloWorldV1Marker>,
     {
-        let locale = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_prefs);
+        let locale = HelloWorldV1Marker::make_locale(prefs.locale_preferences);
         let data = provider
             .load(DataRequest {
                 id: crate::request::DataIdentifierBorrowed::for_locale(&locale),

@@ -15,9 +15,9 @@ export class LocaleExpander {
 
     get ffiValue(): pointer;
 
-    static create(): LocaleExpander;
+    static createCommon(): LocaleExpander;
 
-    static createWithProvider(provider: DataProvider): LocaleExpander;
+    static createCommonWithProvider(provider: DataProvider): LocaleExpander;
 
     static createExtended(): LocaleExpander;
 

@@ -21,7 +21,7 @@ use crate::MismatchedCalendarError;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
+use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
 use icu_decimal::FixedDecimalFormatterPreferences;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HourCycle, NumberingSystem,
@@ -46,8 +46,9 @@ define_preferences!(
     ///
     /// let prefs1: DateTimeFormatterPreferences = Locale::try_from_str("fr-u-ca-buddhist-hc-h12").unwrap().into();
     ///
+    /// let locale = Locale::try_from_str("fr").unwrap();
     /// let mut prefs2 = DateTimeFormatterPreferences::default();
-    /// prefs2.locale_prefs.language = Language::try_from_str("fr").unwrap();
+    /// prefs2.locale_preferences = (&locale).into();
     /// prefs2.hour_cycle = Some(HourCycle::H12);
     /// prefs2.calendar_algorithm = Some(CalendarAlgorithm::Buddhist);
     ///
@@ -343,8 +344,8 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
-    /// use icu::calendar::Time;
+    /// ```compile_fail,E0277
+    /// use icu::timezone::Time;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
@@ -357,9 +358,8 @@ where
     ///     )
     ///     .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// formatter.format(&Time::midnight());
     /// ```
     pub fn format<I>(&self, input: &I) -> FormattedDateTime
     where
@@ -419,11 +419,10 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
+    /// use icu::calendar::Date;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
@@ -432,10 +431,10 @@ where
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
+    /// let date = Date::try_new_iso(2024, 5, 8).unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&datetime),
+    ///     formatter.format_any_calendar(&date),
     ///     "30 Nisan 5784"
     /// );
     /// ```
@@ -577,21 +576,20 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
-    /// use icu::calendar::Time;
+    /// ```compile_fail,E0277
+    /// use icu::timezone::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     Length::Long.into(),
+    ///     YMD::long(),
     /// )
     /// .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_same_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// formatter.format_same_calendar(&Time::midnight());
     /// ```
     pub fn format_same_calendar<I>(
         &self,
@@ -638,21 +636,20 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
-    /// use icu::calendar::Time;
+    /// ```compile_fail,E0277
+    /// use icu::timezone::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     Length::Long.into(),
+    ///     YMD::long(),
     /// )
     /// .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_any_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// formatter.format_any_calendar(&Time::midnight());
     /// ```
     pub fn format_any_calendar<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
@@ -724,7 +721,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
     /// use icu::locale::locale;
@@ -737,9 +734,9 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// .unwrap();
     ///
     /// // Test that the specific formatter works:
-    /// let datetime = DateTime::try_new_gregorian(2024, 12, 20, 14, 30, 0).unwrap();
+    /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     specific_formatter.format(&datetime),
+    ///     specific_formatter.format(&date),
     ///     "20 déc. 2024"
     /// );
     ///
@@ -748,7 +745,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
-    ///     general_formatter.format(&datetime),
+    ///     general_formatter.format(&date),
     ///     "20 déc. 2024"
     /// );
     /// ```
@@ -840,7 +837,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
     /// use icu::locale::locale;
@@ -853,9 +850,9 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// .unwrap();
     ///
     /// // Test that the specific formatter works:
-    /// let datetime = DateTime::try_new_gregorian(2024, 12, 20, 14, 30, 0).unwrap();
+    /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     specific_formatter.format_any_calendar(&datetime),
+    ///     specific_formatter.format_any_calendar(&date),
     ///     "20 déc. 2024"
     /// );
     ///
@@ -864,7 +861,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
-    ///     general_formatter.format_any_calendar(&datetime),
+    ///     general_formatter.format_any_calendar(&date),
     ///     "20 déc. 2024"
     /// );
     /// ```
@@ -876,7 +873,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
         }
     }
 
-    /// Returns the calendar system used in this formatter.
+    /// Returns the calendar used in this formatter.
     ///
     /// # Examples
     ///
@@ -899,11 +896,11 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///     "16 ธันวาคม 2567"
     /// );
     ///
-    /// assert_eq!(formatter.calendar_kind(), AnyCalendarKind::Buddhist);
-    /// assert_eq!(formatter.calendar_kind().as_bcp47_string(), "buddhist");
+    /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
+    /// assert_eq!(formatter.calendar().kind().as_bcp47_string(), "buddhist");
     /// ```
-    pub fn calendar_kind(&self) -> AnyCalendarKind {
-        self.calendar.kind()
+    pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
+        icu_calendar::Ref(&self.calendar)
     }
 }
 

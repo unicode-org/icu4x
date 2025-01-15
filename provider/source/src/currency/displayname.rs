@@ -71,7 +71,7 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1Marker> for SourceDa
                     continue;
                 }
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
-                    result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
+                    result.insert(DataIdentifierCow::from_owned(attributes, locale));
                 }
             }
         }

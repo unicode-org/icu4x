@@ -5,12 +5,12 @@
 use crate::{
     provider::{names::IanaToBcp47MapV3Marker, ZoneOffsetPeriodV1Marker},
     time_zone::models,
-    InvalidOffsetError, TimeZoneBcp47Id, TimeZoneIdMapper, TimeZoneIdMapperBorrowed, TimeZoneInfo,
-    UtcOffset, ZoneOffsetCalculator, ZoneOffsets, ZoneVariant, ZonedDateTime,
+    DateTime, InvalidOffsetError, Time, TimeZoneBcp47Id, TimeZoneIdMapper,
+    TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneOffsets,
+    ZoneVariant, ZonedDateTime,
 };
-use icu_calendar::{
-    AnyCalendarKind, AsCalendar, Calendar, Date, DateError, DateTime, Iso, RangeError, Time,
-};
+use core::str::FromStr;
+use icu_calendar::{AnyCalendarKind, AsCalendar, Calendar, Date, DateError, Iso, RangeError};
 use icu_provider::prelude::*;
 use ixdtf::{
     parsers::records::{
@@ -94,6 +94,18 @@ impl From<DateError> for ParseError {
 impl From<InvalidOffsetError> for ParseError {
     fn from(_: InvalidOffsetError) -> Self {
         Self::InvalidOffsetError
+    }
+}
+
+impl From<icu_calendar::ParseError> for ParseError {
+    fn from(value: icu_calendar::ParseError) -> Self {
+        match value {
+            icu_calendar::ParseError::MissingFields => Self::MissingFields,
+            icu_calendar::ParseError::Range(r) => Self::Range(r),
+            icu_calendar::ParseError::Syntax(s) => Self::Syntax(s),
+            icu_calendar::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            _ => unreachable!(),
+        }
     }
 }
 
@@ -303,21 +315,13 @@ impl<'a> Intermediate<'a> {
             return Err(ParseError::MismatchedTimeZoneFields);
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
-        let iso = DateTime::<Iso>::try_new_iso(
-            self.date.year,
-            self.date.month,
-            self.date.day,
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-        )?;
+        let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
         let offset = match time_zone_id.as_str() {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
         };
-        Ok(time_zone_id
-            .with_offset(offset)
-            .at_time((iso.date, iso.time)))
+        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
     fn loose(
@@ -347,17 +351,9 @@ impl<'a> Intermediate<'a> {
                 _ => None,
             },
         };
-        let iso = DateTime::<Iso>::try_new_iso(
-            self.date.year,
-            self.date.month,
-            self.date.day,
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-        )?;
-        Ok(time_zone_id
-            .with_offset(offset)
-            .at_time((iso.date, iso.time)))
+        let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let time = Time::try_new(self.time.hour, self.time.minute, self.time.second, 0)?;
+        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
     fn full(
@@ -854,6 +850,169 @@ impl IxdtfParser {
         )?;
 
         Ok(ZonedDateTime { date, time, zone })
+    }
+}
+
+impl DateTime<Iso> {
+    /// Creates a [`DateTime`] in the ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// Ignores any calendar annotations in the string.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::DateTime;
+    ///
+    /// let datetime =
+    ///     DateTime::try_iso_from_str("2024-07-17T16:01:17.045").unwrap();
+    ///
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 2024);
+    /// assert_eq!(
+    ///     datetime.date.month().standard_code,
+    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
+    /// );
+    /// assert_eq!(datetime.date.day_of_month().0, 17);
+    ///
+    /// assert_eq!(datetime.time.hour.number(), 16);
+    /// assert_eq!(datetime.time.minute.number(), 1);
+    /// assert_eq!(datetime.time.second.number(), 17);
+    /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
+    /// ```
+    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_iso_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Creates a [`DateTime`] in the ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
+    /// See [`Self::try_iso_from_str()`].
+    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = ixdtf::parsers::IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        Self::try_from_ixdtf_record(&ixdtf_record)
+    }
+
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+        let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
+        let date = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
+        let time = Time::try_from_ixdtf_record(ixdtf_record)?;
+        Ok(Self { date, time })
+    }
+}
+
+impl FromStr for DateTime<Iso> {
+    type Err = ParseError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_iso_from_str(ixdtf_str)
+    }
+}
+
+impl<A: AsCalendar> DateTime<A> {
+    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::timezone::DateTime;
+    ///
+    /// let datetime =
+    ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]", Hebrew).unwrap();
+    ///
+    /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
+    /// assert_eq!(
+    ///     datetime.date.month().standard_code,
+    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))
+    /// );
+    /// assert_eq!(datetime.date.day_of_month().0, 11);
+    ///
+    /// assert_eq!(datetime.time.hour.number(), 16);
+    /// assert_eq!(datetime.time.minute.number(), 1);
+    /// assert_eq!(datetime.time.second.number(), 17);
+    /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
+    /// ```
+    pub fn try_from_str(ixdtf_str: &str, calendar: A) -> Result<Self, ParseError> {
+        Self::try_from_utf8(ixdtf_str.as_bytes(), calendar)
+    }
+
+    /// Creates a [`DateTime`] in any calendar from an IXDTF syntax string with compiled data.
+    ///
+    /// See [`Self::try_from_str()`].
+    pub fn try_from_utf8(ixdtf_str: &[u8], calendar: A) -> Result<Self, ParseError> {
+        let ixdtf_record = ixdtf::parsers::IxdtfParser::from_utf8(ixdtf_str).parse()?;
+        if let Some(ixdtf_calendar) = ixdtf_record.calendar {
+            let parsed_calendar = AnyCalendarKind::get_for_bcp47_bytes(ixdtf_calendar)
+                .ok_or(ParseError::UnknownCalendar)?;
+            let expected_calendar = calendar
+                .as_calendar()
+                .any_calendar_kind()
+                .ok_or(ParseError::UnknownCalendar)?;
+            if parsed_calendar != expected_calendar {
+                return Err(ParseError::MismatchedCalendar(
+                    expected_calendar,
+                    parsed_calendar,
+                ));
+            }
+        }
+        let DateTime { date, time } = DateTime::<Iso>::try_from_ixdtf_record(&ixdtf_record)?;
+        Ok(DateTime {
+            date: date.to_calendar(calendar),
+            time,
+        })
+    }
+}
+
+impl Time {
+    /// Creates a [`Time`] from an IXDTF syntax string of a time.
+    ///
+    /// Does not support parsing an IXDTF string with a date and time; for that, use [`DateTime`].
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::Time;
+    ///
+    /// let time = Time::try_from_str("16:01:17.045").unwrap();
+    ///
+    /// assert_eq!(time.hour.number(), 16);
+    /// assert_eq!(time.minute.number(), 1);
+    /// assert_eq!(time.second.number(), 17);
+    /// assert_eq!(time.nanosecond.number(), 45000000);
+    /// ```
+    pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
+        Self::try_from_utf8(ixdtf_str.as_bytes())
+    }
+
+    /// Creates a [`Time`] in the ISO-8601 calendar from an IXDTF syntax string.
+    ///
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    ///
+    /// See [`Self::try_from_str()`].
+    pub fn try_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
+        let ixdtf_record = ixdtf::parsers::IxdtfParser::from_utf8(ixdtf_str).parse_time()?;
+        Self::try_from_ixdtf_record(&ixdtf_record)
+    }
+
+    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+        let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
+        let time = Self::try_new(
+            time_record.hour,
+            time_record.minute,
+            time_record.second,
+            time_record.nanosecond,
+        )?;
+        Ok(time)
+    }
+}
+
+impl FromStr for Time {
+    type Err = ParseError;
+    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(ixdtf_str)
     }
 }
 

@@ -171,9 +171,7 @@ impl FixedDecimalFormatter {
         prefs: FixedDecimalFormatterPreferences,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = DataLocale::from_preferences_locale::<provider::DecimalSymbolsV2Marker>(
-            prefs.locale_prefs,
-        );
+        let locale = provider::DecimalSymbolsV2Marker::make_locale(prefs.locale_preferences);
         let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
 
         // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,

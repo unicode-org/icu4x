@@ -58,7 +58,7 @@ fn test_minimize() {
 
 #[test]
 fn test_canonicalize() {
-    let lc = LocaleCanonicalizer::new();
+    let lc = LocaleCanonicalizer::new_extended();
 
     let testcases: Vec<fixtures::CanonicalizationTest> =
         serde_json::from_str(include_str!("fixtures/canonicalize.json"))

@@ -37,7 +37,7 @@ part 'CollatorBackwardSecondLevel.g.dart';
 part 'CollatorCaseFirst.g.dart';
 part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
-part 'CollatorNumeric.g.dart';
+part 'CollatorNumericOrdering.g.dart';
 part 'CollatorOptions.g.dart';
 part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';

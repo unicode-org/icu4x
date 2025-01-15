@@ -202,7 +202,7 @@ export { CollatorCaseLevel } from "./CollatorCaseLevel.mjs"
 
 export { CollatorMaxVariable } from "./CollatorMaxVariable.mjs"
 
-export { CollatorNumeric } from "./CollatorNumeric.mjs"
+export { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 
 export { CollatorStrength } from "./CollatorStrength.mjs"
 

@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 ///
-/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
+/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) for more information.
 final class IsoDateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Creates a new [`IsoDateTime`] from the specified date and time.
   ///
-  /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso) for more information.
+  /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#method.try_new_iso) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory IsoDateTime(int year, int month, int day, int hour, int minute, int second, int nanosecond) {
@@ -39,7 +39,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Creates a new [`IsoDateTime`] from an [`IsoDate`] and [`Time`] object
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#method.new) for more information.
   factory IsoDateTime.fromDateAndTime(IsoDate date, Time time) {
     final result = _icu4x_IsoDateTime_from_date_and_time_mv1(date._ffi, time._ffi);
     return IsoDateTime._fromFfi(result, []);
@@ -47,7 +47,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Creates a new [`IsoDateTime`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_iso_from_str) for more information.
+  /// See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#method.try_iso_from_str) for more information.
   ///
   /// Throws [CalendarParseError] on failure.
   factory IsoDateTime.fromString(String v) {
@@ -61,7 +61,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Gets the date contained in this object
   ///
-  /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
+  /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#structfield.date) for more information.
   IsoDate get date {
     final result = _icu4x_IsoDateTime_date_mv1(_ffi);
     return IsoDate._fromFfi(result, []);
@@ -69,7 +69,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Gets the time contained in this object
   ///
-  /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
+  /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#structfield.time) for more information.
   Time get time {
     final result = _icu4x_IsoDateTime_time_mv1(_ffi);
     return Time._fromFfi(result, []);
@@ -78,7 +78,7 @@ final class IsoDateTime implements ffi.Finalizable {
   /// Converts this to an [`DateTime`] capable of being mixed with dates of
   /// other calendars
   ///
-  /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_any) for more information.
+  /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#method.to_any) for more information.
   DateTime toAny() {
     final result = _icu4x_IsoDateTime_to_any_mv1(_ffi);
     return DateTime._fromFfi(result, []);
@@ -86,7 +86,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Convert this datetime to one in a different calendar
   ///
-  /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
+  /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#method.to_calendar) for more information.
   DateTime toCalendar(Calendar calendar) {
     final result = _icu4x_IsoDateTime_to_calendar_mv1(_ffi, calendar._ffi);
     return DateTime._fromFfi(result, []);
@@ -94,7 +94,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the hour in this time
   ///
-  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.hour) for more information.
+  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.hour) for more information.
   int get hour {
     final result = _icu4x_IsoDateTime_hour_mv1(_ffi);
     return result;
@@ -102,7 +102,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the minute in this time
   ///
-  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.minute) for more information.
+  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.minute) for more information.
   int get minute {
     final result = _icu4x_IsoDateTime_minute_mv1(_ffi);
     return result;
@@ -110,7 +110,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the second in this time
   ///
-  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.second) for more information.
+  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.second) for more information.
   int get second {
     final result = _icu4x_IsoDateTime_second_mv1(_ffi);
     return result;
@@ -118,7 +118,7 @@ final class IsoDateTime implements ffi.Finalizable {
 
   /// Returns the nanosecond in this time
   ///
-  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/struct.Time.html#structfield.nanosecond) for more information.
+  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.nanosecond) for more information.
   int get nanosecond {
     final result = _icu4x_IsoDateTime_nanosecond_mv1(_ffi);
     return result;

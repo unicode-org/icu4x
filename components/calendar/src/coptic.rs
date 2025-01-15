@@ -5,36 +5,21 @@
 //! This module contains types and implementations for the Coptic calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Coptic, Date, DateTime};
+//! use icu::calendar::{cal::Coptic, Date};
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
-//!
-//! // `Date` checks
 //! assert_eq!(date_coptic.year().era_year_or_extended(), 1686);
 //! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
-//!
-//! // `DateTime` type
-//! assert_eq!(datetime_coptic.date.year().era_year_or_extended(), 1686);
-//! assert_eq!(datetime_coptic.date.month().ordinal, 4);
-//! assert_eq!(datetime_coptic.date.day_of_month().0, 24);
-//! assert_eq!(datetime_coptic.time.hour.number(), 13);
-//! assert_eq!(datetime_coptic.time.minute.number(), 1);
-//! assert_eq!(datetime_coptic.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -44,7 +29,7 @@ use tinystr::tinystr;
 /// The [Coptic calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
 /// and a thirteenth small epagomenal month.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// [Coptic calendar]: https://en.wikipedia.org/wiki/Coptic_calendar
 ///
@@ -268,39 +253,6 @@ impl Date<Coptic> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))
-    }
-}
-
-impl DateTime<Coptic> {
-    /// Construct a new Coptic datetime from integers.
-    ///
-    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_coptic = DateTime::try_new_coptic(1686, 5, 6, 13, 1, 0)
-    ///     .expect("Failed to initialize Coptic DateTime instance.");
-    ///
-    /// assert_eq!(datetime_coptic.date.year().era_year_or_extended(), 1686);
-    /// assert_eq!(datetime_coptic.date.month().ordinal, 5);
-    /// assert_eq!(datetime_coptic.date.day_of_month().0, 6);
-    /// assert_eq!(datetime_coptic.time.hour.number(), 13);
-    /// assert_eq!(datetime_coptic.time.minute.number(), 1);
-    /// assert_eq!(datetime_coptic.time.second.number(), 0);
-    /// ```
-    pub fn try_new_coptic(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Coptic>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_coptic(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

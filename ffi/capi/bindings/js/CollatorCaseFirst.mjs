@@ -10,8 +10,8 @@ export class CollatorCaseFirst {
 
     static #values = new Map([
         ["Off", 0],
-        ["LowerFirst", 1],
-        ["UpperFirst", 2]
+        ["Lower", 1],
+        ["Upper", 2]
     ]);
 
     static getAllEntries() {
@@ -57,6 +57,6 @@ export class CollatorCaseFirst {
     ];
 
     static Off = CollatorCaseFirst.#objectValues[0];
-    static LowerFirst = CollatorCaseFirst.#objectValues[1];
-    static UpperFirst = CollatorCaseFirst.#objectValues[2];
+    static Lower = CollatorCaseFirst.#objectValues[1];
+    static Upper = CollatorCaseFirst.#objectValues[2];
 }

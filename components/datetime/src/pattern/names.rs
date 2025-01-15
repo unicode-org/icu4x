@@ -391,13 +391,14 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
+/// use icu::calendar::Date;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::pattern::MonthNameLength;
 /// use icu::datetime::pattern::WeekdayNameLength;
 /// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
+/// use icu::timezone::{DateTime, Time};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -416,7 +417,7 @@ size_test!(
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+/// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::try_new(12, 35, 3, 0).unwrap() };
 /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
@@ -424,14 +425,14 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::{Date, Time};
+/// use icu::calendar::Date;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{TimeZoneInfo, IxdtfParser};
+/// use icu::timezone::{Time, TimeZoneInfo, IxdtfParser, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -494,14 +495,13 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::O;
 /// use icu::locale::locale;
-/// use icu::timezone::TimeZoneInfo;
+/// use icu::timezone::{DateTime, TimeZoneInfo};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -1483,7 +1483,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -1581,11 +1581,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
@@ -1597,7 +1597,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// // Load data for the pattern and format:
     /// let datetime =
-    ///     DateTime::try_new_gregorian(2023, 12, 5, 17, 43, 12).unwrap();
+    ///     DateTime { date: Date::try_new_gregorian(2023, 12, 5).unwrap(), time: Time::try_new(17, 43, 12, 0).unwrap() };
     /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
@@ -1654,12 +1654,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Date;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated month names:
@@ -1672,7 +1673,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// // Test it with a pattern:
     /// let pattern_str = "MMM d y";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+    /// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::midnight() };
     /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
     ///
     /// // Convert the field set to `CompositeDateTimeFieldSet`:
@@ -1788,7 +1789,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1811,7 +1814,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1834,7 +1839,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1857,7 +1864,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1877,7 +1886,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     where
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Four,
@@ -1902,7 +1913,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     where
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Four,
@@ -1945,7 +1958,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Four,
@@ -1969,7 +1984,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
@@ -1993,7 +2010,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Four,
@@ -2017,7 +2036,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
@@ -2406,7 +2427,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
-        hour: input::IsoHour,
+        hour: icu_timezone::types::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;

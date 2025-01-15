@@ -9,10 +9,10 @@ use crate::provider::time_zones::MetazoneId;
 use crate::{input::ExtractedInput, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::SignedFixedDecimal;
-use icu_calendar::{Date, Iso, Time};
+use icu_calendar::{Date, Iso};
 use icu_decimal::FixedDecimalFormatter;
 use icu_timezone::provider::EPOCH;
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriodV1<'_> {
