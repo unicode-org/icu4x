@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 747B for the lookup data structure (139 data identifiers)
-/// * 2051B[^1] for the actual data (35 unique structs)
+/// * 1491B[^1] for the actual data (35 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
