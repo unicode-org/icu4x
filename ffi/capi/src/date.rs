@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
+    use icu_calendar::Iso;
 
     use crate::calendar::ffi::Calendar;
     use crate::errors::ffi::{CalendarError, CalendarParseError};
@@ -50,7 +51,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, CalendarParseError> {
-            Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
+            Ok(Box::new(IsoDate(icu_calendar::Date::try_from_utf8(
+                v, Iso,
+            )?)))
         }
 
         /// Convert this date to one in a different calendar

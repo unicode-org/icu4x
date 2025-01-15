@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
+    use icu_calendar::Iso;
 
     use crate::calendar::ffi::Calendar;
     use crate::date::ffi::{Date, IsoDate, IsoWeekday};
@@ -64,7 +65,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDateTime>, CalendarParseError> {
             Ok(Box::new(IsoDateTime(
-                icu_timezone::DateTime::try_iso_from_utf8(v)?,
+                icu_timezone::DateTime::try_from_utf8(v, Iso)?,
             )))
         }
 

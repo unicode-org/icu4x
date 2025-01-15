@@ -40,56 +40,10 @@ impl From<IxdtfError> for ParseError {
     }
 }
 
-impl Date<Iso> {
-    /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
-    ///
-    /// Ignores any calendar annotations in the string.
-    ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    ///
-    /// let date = Date::try_iso_from_str("2024-07-17").unwrap();
-    ///
-    /// assert_eq!(date.year().era_year_or_extended(), 2024);
-    /// assert_eq!(
-    ///     date.month().standard_code,
-    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
-    /// );
-    /// assert_eq!(date.day_of_month().0, 17);
-    ///
-    /// // Calendar annotations are ignored:
-    /// assert_eq!(date, Date::try_iso_from_str("2024-07-17[u-ca=buddhist]").unwrap());
-    /// ```
-    pub fn try_iso_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
-        Self::try_iso_from_utf8(ixdtf_str.as_bytes())
-    }
-
-    /// Creates a [`Date`] in the ISO-8601 calendar from an IXDTF syntax string.
-    ///
-    /// See [`Self::try_iso_from_str()`].
-    ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
-    pub fn try_iso_from_utf8(ixdtf_str: &[u8]) -> Result<Self, ParseError> {
-        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
-        Self::try_iso_from_ixdtf_record(&ixdtf_record)
-    }
-
-    #[doc(hidden)]
-    pub fn try_iso_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
-        let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
-        let date = Self::try_new_iso(date_record.year, date_record.month, date_record.day)?;
-        Ok(date)
-    }
-}
-
 impl FromStr for Date<Iso> {
     type Err = ParseError;
     fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
-        Self::try_iso_from_str(ixdtf_str)
+        Self::try_from_str(ixdtf_str, Iso)
     }
 }
 
@@ -97,7 +51,7 @@ impl<A: AsCalendar> Date<A> {
     /// Creates a [`Date`] in the given calendar from an IXDTF syntax string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
-    /// match the calendar argument.
+    /// match the calendar argument, unless the argument is [`Iso`].
     ///
     /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
@@ -139,7 +93,9 @@ impl<A: AsCalendar> Date<A> {
         ixdtf_record: &IxdtfParseRecord,
         calendar: A,
     ) -> Result<Self, ParseError> {
-        let iso = Date::try_iso_from_ixdtf_record(ixdtf_record)?;
+        let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
+        let iso = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
+
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
             let parsed_calendar = crate::AnyCalendarKind::get_for_bcp47_bytes(ixdtf_calendar)
                 .ok_or(ParseError::UnknownCalendar)?;
@@ -147,7 +103,7 @@ impl<A: AsCalendar> Date<A> {
                 .as_calendar()
                 .any_calendar_kind()
                 .ok_or(ParseError::UnknownCalendar)?;
-            if parsed_calendar != expected_calendar {
+            if parsed_calendar != expected_calendar && expected_calendar != AnyCalendarKind::Iso {
                 return Err(ParseError::MismatchedCalendar(
                     expected_calendar,
                     parsed_calendar,

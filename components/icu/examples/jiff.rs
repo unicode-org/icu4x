@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
     // Alternatively, the ICU ZonedDateTime can be parsed from a serialized IXDTF string.
     assert_eq!(
         IxdtfParser::new()
-            .try_iso_from_str(&zoned.to_string())
+            .try_from_str(&zoned.to_string(), icu::calendar::Iso)
             .unwrap(),
         zoned_date_time
     );
