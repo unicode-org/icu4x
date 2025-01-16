@@ -715,7 +715,12 @@ fn is_break_utf32_by_loose(
 /// A trait allowing for LineBreakIterator to be generalized to multiple string iteration methods.
 ///
 /// This is implemented by ICU4X for several common string types.
-pub trait LineBreakType<'l, 's> {
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+pub trait LineBreakType<'l, 's>: crate::private::Sealed {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
 
@@ -1065,6 +1070,8 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
 #[derive(Debug)]
 pub struct LineBreakTypeUtf8;
 
+impl crate::private::Sealed for LineBreakTypeUtf8 {}
+
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
@@ -1096,6 +1103,8 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
 
 #[derive(Debug)]
 pub struct LineBreakTypePotentiallyIllFormedUtf8;
+
+impl crate::private::Sealed for LineBreakTypePotentiallyIllFormedUtf8 {}
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
@@ -1181,6 +1190,7 @@ where
 
 #[derive(Debug)]
 pub struct LineBreakTypeLatin1;
+impl crate::private::Sealed for LineBreakTypeLatin1 {}
 
 impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
@@ -1211,6 +1221,7 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
 
 #[derive(Debug)]
 pub struct LineBreakTypeUtf16;
+impl crate::private::Sealed for LineBreakTypeUtf16 {}
 
 impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
