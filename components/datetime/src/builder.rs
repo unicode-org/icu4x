@@ -30,7 +30,7 @@
 //! let static_field_set = fieldsets::YMD::medium()
 //!     .with_year_style(YearStyle::WithEra);
 //!
-//! let mut builder = FieldSetBuilder::default();
+//! let mut builder = FieldSetBuilder::new();
 //! builder.date_fields = Some(DateFields::YMD);
 //! builder.length = Some(Length::Medium);
 //! builder.year_style = Some(YearStyle::WithEra);
@@ -46,7 +46,7 @@
 //!
 //! let static_field_set = fieldsets::M::long();
 //!
-//! let mut builder = FieldSetBuilder::default();
+//! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Long);
 //! builder.date_fields = Some(DateFields::M);
 //! let dynamic_field_set = builder.build_calendar_period().unwrap();
@@ -63,7 +63,7 @@
 //! let static_field_set = fieldsets::ET::medium()
 //!     .with_time_precision(TimePrecision::Minute);
 //!
-//! let mut builder = FieldSetBuilder::default();
+//! let mut builder = FieldSetBuilder::new();
 //! builder.date_fields = Some(DateFields::E);
 //! builder.time_precision = Some(TimePrecision::Minute);
 //! let dynamic_field_set = builder.build_date_and_time().unwrap();
@@ -84,7 +84,7 @@
 //!     .with_alignment(Alignment::Column)
 //!     .with_zone_specific_long();
 //!
-//! let mut builder = FieldSetBuilder::default();
+//! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
 //! builder.time_precision = Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3));
 //! builder.alignment = Some(Alignment::Column);
@@ -220,26 +220,56 @@ pub struct FieldSetBuilder {
 // that generates the `take_from_builder` fns, but it would be easily lost.
 pub(crate) const DEFAULT_LENGTH: Length = Length::Medium;
 
+enum DateOrCalendarPeriodFieldSet {
+    Date(DateFieldSet),
+    CalendarPeriod(CalendarPeriodFieldSet),
+}
+
 impl FieldSetBuilder {
+    /// Creates a new, empty [`FieldSetBuilder`].
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    fn build_date_or_calendar_period_without_checking_options(
+        &mut self,
+    ) -> Result<DateOrCalendarPeriodFieldSet, BuilderError> {
+        use DateOrCalendarPeriodFieldSet::*;
+        let field_set = match self.date_fields.take() {
+            Some(DateFields::D) => Date(DateFieldSet::D(fieldsets::D::take_from_builder(self))),
+            Some(DateFields::MD) => Date(DateFieldSet::MD(fieldsets::MD::take_from_builder(self))),
+            Some(DateFields::YMD) => {
+                Date(DateFieldSet::YMD(fieldsets::YMD::take_from_builder(self)))
+            }
+            Some(DateFields::DE) => Date(DateFieldSet::DE(fieldsets::DE::take_from_builder(self))),
+            Some(DateFields::MDE) => {
+                Date(DateFieldSet::MDE(fieldsets::MDE::take_from_builder(self)))
+            }
+            Some(DateFields::YMDE) => {
+                Date(DateFieldSet::YMDE(fieldsets::YMDE::take_from_builder(self)))
+            }
+            Some(DateFields::E) => Date(DateFieldSet::E(fieldsets::E::take_from_builder(self))),
+            Some(DateFields::M) => CalendarPeriod(CalendarPeriodFieldSet::M(
+                fieldsets::M::take_from_builder(self),
+            )),
+            Some(DateFields::YM) => CalendarPeriod(CalendarPeriodFieldSet::YM(
+                fieldsets::YM::take_from_builder(self),
+            )),
+            Some(DateFields::Y) => CalendarPeriod(CalendarPeriodFieldSet::Y(
+                fieldsets::Y::take_from_builder(self),
+            )),
+            Option::None => return Err(BuilderError::InvalidFields),
+        };
+        Ok(field_set)
+    }
+
     /// Builds a [`DateFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_date(mut self) -> Result<DateFieldSet, BuilderError> {
-        let date_field_set = match self.date_fields.take() {
-            Some(DateFields::D) => DateFieldSet::D(fieldsets::D::take_from_builder(&mut self)),
-            Some(DateFields::MD) => DateFieldSet::MD(fieldsets::MD::take_from_builder(&mut self)),
-            Some(DateFields::YMD) => {
-                DateFieldSet::YMD(fieldsets::YMD::take_from_builder(&mut self))
-            }
-            Some(DateFields::DE) => DateFieldSet::DE(fieldsets::DE::take_from_builder(&mut self)),
-            Some(DateFields::MDE) => {
-                DateFieldSet::MDE(fieldsets::MDE::take_from_builder(&mut self))
-            }
-            Some(DateFields::YMDE) => {
-                DateFieldSet::YMDE(fieldsets::YMDE::take_from_builder(&mut self))
-            }
-            Some(DateFields::E) => DateFieldSet::E(fieldsets::E::take_from_builder(&mut self)),
-            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | Option::None => {
+        let date_field_set = match self.build_date_or_calendar_period_without_checking_options()? {
+            DateOrCalendarPeriodFieldSet::Date(fs) => fs,
+            DateOrCalendarPeriodFieldSet::CalendarPeriod(_) => {
                 return Err(BuilderError::InvalidFields)
             }
         };
@@ -251,25 +281,11 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_calendar_period(mut self) -> Result<CalendarPeriodFieldSet, BuilderError> {
-        let calendar_period_field_set = match self.date_fields.take() {
-            Some(DateFields::M) => {
-                CalendarPeriodFieldSet::M(fieldsets::M::take_from_builder(&mut self))
-            }
-            Some(DateFields::YM) => {
-                CalendarPeriodFieldSet::YM(fieldsets::YM::take_from_builder(&mut self))
-            }
-            Some(DateFields::Y) => {
-                CalendarPeriodFieldSet::Y(fieldsets::Y::take_from_builder(&mut self))
-            }
-            Some(DateFields::D)
-            | Some(DateFields::MD)
-            | Some(DateFields::YMD)
-            | Some(DateFields::DE)
-            | Some(DateFields::MDE)
-            | Some(DateFields::YMDE)
-            | Some(DateFields::E)
-            | Option::None => return Err(BuilderError::InvalidFields),
-        };
+        let calendar_period_field_set =
+            match self.build_date_or_calendar_period_without_checking_options()? {
+                DateOrCalendarPeriodFieldSet::Date(_) => return Err(BuilderError::InvalidFields),
+                DateOrCalendarPeriodFieldSet::CalendarPeriod(fs) => fs,
+            };
         self.check_options_consumed()?;
         Ok(calendar_period_field_set)
     }
@@ -310,6 +326,9 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_date_and_time(mut self) -> Result<DateAndTimeFieldSet, BuilderError> {
+        if self.time_precision.is_none() {
+            return Err(BuilderError::InvalidOptions);
+        }
         let date_and_time_field_set = match self.date_fields.take() {
             Some(DateFields::D) => {
                 DateAndTimeFieldSet::DT(fieldsets::DT::take_from_builder(&mut self))
@@ -336,16 +355,28 @@ impl FieldSetBuilder {
                 return Err(BuilderError::InvalidFields)
             }
         };
+        self.check_options_consumed()?;
         Ok(date_and_time_field_set)
     }
 
     /// Builds a [`CompositeDateTimeFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
-    pub fn build_composite_datetime(self) -> Result<CompositeDateTimeFieldSet, BuilderError> {
+    pub fn build_composite_datetime(mut self) -> Result<CompositeDateTimeFieldSet, BuilderError> {
         // Check for the presence of date and time, then delegate to the correct impl.
         match (self.date_fields.is_some(), self.time_precision.is_some()) {
-            (true, false) => self.build_date().map(CompositeDateTimeFieldSet::Date),
+            (true, false) => {
+                let field_set = match self
+                    .build_date_or_calendar_period_without_checking_options()?
+                {
+                    DateOrCalendarPeriodFieldSet::Date(fs) => CompositeDateTimeFieldSet::Date(fs),
+                    DateOrCalendarPeriodFieldSet::CalendarPeriod(fs) => {
+                        CompositeDateTimeFieldSet::CalendarPeriod(fs)
+                    }
+                };
+                self.check_options_consumed()?;
+                Ok(field_set)
+            }
             (false, true) => self.build_time().map(CompositeDateTimeFieldSet::Time),
             (true, true) => self
                 .build_date_and_time()
@@ -364,7 +395,17 @@ impl FieldSetBuilder {
             self.time_precision.is_some(),
             self.zone_style.is_some(),
         ) {
-            (true, false, false) => self.build_date().map(CompositeFieldSet::Date),
+            (true, false, false) => {
+                let field_set =
+                    match self.build_date_or_calendar_period_without_checking_options()? {
+                        DateOrCalendarPeriodFieldSet::Date(fs) => CompositeFieldSet::Date(fs),
+                        DateOrCalendarPeriodFieldSet::CalendarPeriod(fs) => {
+                            CompositeFieldSet::CalendarPeriod(fs)
+                        }
+                    };
+                self.check_options_consumed()?;
+                Ok(field_set)
+            }
             (false, true, false) => self.build_time().map(CompositeFieldSet::Time),
             (true, true, false) => self.build_date_and_time().map(CompositeFieldSet::DateTime),
             (false, false, true) => self.build_zone().map(CompositeFieldSet::Zone),
@@ -401,6 +442,217 @@ impl FieldSetBuilder {
             Err(BuilderError::InvalidOptions)
         } else {
             Ok(())
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    static DATE_FIELD_SETS: &[DateFields] = &[
+        DateFields::D,
+        DateFields::MD,
+        DateFields::YMD,
+        DateFields::DE,
+        DateFields::MDE,
+        DateFields::YMDE,
+        DateFields::E,
+    ];
+
+    static CALENDAR_PERIOD_FIELD_SETS: &[DateFields] =
+        &[DateFields::M, DateFields::YM, DateFields::Y];
+
+    static ZONE_STYLES: &[ZoneStyle] = &[
+        ZoneStyle::Z,
+        ZoneStyle::Zs,
+        ZoneStyle::O,
+        ZoneStyle::Os,
+        ZoneStyle::V,
+        ZoneStyle::Vs,
+        ZoneStyle::L,
+    ];
+
+    #[test]
+    fn test_date_field_sets() {
+        for date_fields in DATE_FIELD_SETS.iter() {
+            let mut builder = FieldSetBuilder::new();
+            builder.date_fields = Some(*date_fields);
+            builder.clone().build_date().unwrap();
+            builder.clone().build_calendar_period().unwrap_err();
+            builder.clone().build_time().unwrap_err();
+            builder.clone().build_zone().unwrap_err();
+            builder.clone().build_date_and_time().unwrap_err();
+            builder.clone().build_composite_datetime().unwrap();
+            builder.build_composite().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_calendar_period_field_sets() {
+        for date_fields in CALENDAR_PERIOD_FIELD_SETS.iter() {
+            let mut builder = FieldSetBuilder::new();
+            builder.date_fields = Some(*date_fields);
+            builder.clone().build_date().unwrap_err();
+            builder.clone().build_calendar_period().unwrap();
+            builder.clone().build_time().unwrap_err();
+            builder.clone().build_zone().unwrap_err();
+            builder.clone().build_date_and_time().unwrap_err();
+            builder.clone().build_composite_datetime().unwrap();
+            builder.build_composite().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_time_field_sets() {
+        let mut builder = FieldSetBuilder::new();
+        builder.time_precision = Some(TimePrecision::Minute);
+        builder.clone().build_date().unwrap_err();
+        builder.clone().build_calendar_period().unwrap_err();
+        builder.clone().build_time().unwrap();
+        builder.clone().build_zone().unwrap_err();
+        builder.clone().build_date_and_time().unwrap_err();
+        builder.clone().build_composite_datetime().unwrap();
+        builder.build_composite().unwrap();
+    }
+
+    #[test]
+    fn test_zone_field_sets() {
+        for zone_style in ZONE_STYLES.iter() {
+            let mut builder = FieldSetBuilder::new();
+            builder.zone_style = Some(*zone_style);
+            builder.clone().build_date().unwrap_err();
+            builder.clone().build_calendar_period().unwrap_err();
+            builder.clone().build_time().unwrap_err();
+            builder.clone().build_zone().unwrap();
+            builder.clone().build_date_and_time().unwrap_err();
+            builder.clone().build_composite_datetime().unwrap_err();
+            builder.build_composite().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_date_time_field_sets() {
+        for date_fields in DATE_FIELD_SETS.iter() {
+            let mut builder = FieldSetBuilder::new();
+            builder.date_fields = Some(*date_fields);
+            builder.time_precision = Some(TimePrecision::Minute);
+            builder.clone().build_date().unwrap_err();
+            builder.clone().build_calendar_period().unwrap_err();
+            builder.clone().build_time().unwrap_err();
+            builder.clone().build_zone().unwrap_err();
+            builder.clone().build_date_and_time().unwrap();
+            builder.clone().build_composite_datetime().unwrap();
+            builder.build_composite().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_calendar_period_time_field_sets() {
+        // Should always fail
+        for date_fields in CALENDAR_PERIOD_FIELD_SETS.iter() {
+            let mut builder = FieldSetBuilder::new();
+            builder.date_fields = Some(*date_fields);
+            builder.time_precision = Some(TimePrecision::Minute);
+            builder.clone().build_date().unwrap_err();
+            builder.clone().build_calendar_period().unwrap_err();
+            builder.clone().build_time().unwrap_err();
+            builder.clone().build_zone().unwrap_err();
+            builder.clone().build_date_and_time().unwrap_err();
+            builder.clone().build_composite_datetime().unwrap_err();
+            builder.build_composite().unwrap_err();
+        }
+    }
+
+    #[test]
+    fn test_date_zone_field_sets() {
+        for date_fields in DATE_FIELD_SETS.iter() {
+            for zone_style in ZONE_STYLES.iter() {
+                let mut builder = FieldSetBuilder::new();
+                builder.date_fields = Some(*date_fields);
+                builder.zone_style = Some(*zone_style);
+                builder.clone().build_date().unwrap_err();
+                builder.clone().build_calendar_period().unwrap_err();
+                builder.clone().build_time().unwrap_err();
+                builder.clone().build_zone().unwrap_err();
+                builder.clone().build_date_and_time().unwrap_err();
+                builder.clone().build_composite_datetime().unwrap_err();
+                builder.build_composite().unwrap();
+            }
+        }
+    }
+
+    #[test]
+    fn test_calendar_period_zone_field_sets() {
+        // Should always fail
+        for date_fields in CALENDAR_PERIOD_FIELD_SETS.iter() {
+            for zone_style in ZONE_STYLES.iter() {
+                let mut builder = FieldSetBuilder::new();
+                builder.date_fields = Some(*date_fields);
+                builder.zone_style = Some(*zone_style);
+                builder.clone().build_date().unwrap_err();
+                builder.clone().build_calendar_period().unwrap_err();
+                builder.clone().build_time().unwrap_err();
+                builder.clone().build_zone().unwrap_err();
+                builder.clone().build_date_and_time().unwrap_err();
+                builder.clone().build_composite_datetime().unwrap_err();
+                builder.build_composite().unwrap_err();
+            }
+        }
+    }
+
+    #[test]
+    fn test_time_zone_field_sets() {
+        for zone_style in ZONE_STYLES.iter() {
+            let mut builder = FieldSetBuilder::new();
+            builder.time_precision = Some(TimePrecision::Minute);
+            builder.zone_style = Some(*zone_style);
+            builder.clone().build_date().unwrap_err();
+            builder.clone().build_calendar_period().unwrap_err();
+            builder.clone().build_time().unwrap_err();
+            builder.clone().build_zone().unwrap_err();
+            builder.clone().build_date_and_time().unwrap_err();
+            builder.clone().build_composite_datetime().unwrap_err();
+            builder.build_composite().unwrap();
+        }
+    }
+
+    #[test]
+    fn test_date_time_zone_field_sets() {
+        for date_fields in DATE_FIELD_SETS.iter() {
+            for zone_style in ZONE_STYLES.iter() {
+                let mut builder = FieldSetBuilder::new();
+                builder.date_fields = Some(*date_fields);
+                builder.time_precision = Some(TimePrecision::Minute);
+                builder.zone_style = Some(*zone_style);
+                builder.clone().build_date().unwrap_err();
+                builder.clone().build_calendar_period().unwrap_err();
+                builder.clone().build_time().unwrap_err();
+                builder.clone().build_zone().unwrap_err();
+                builder.clone().build_date_and_time().unwrap_err();
+                builder.clone().build_composite_datetime().unwrap_err();
+                builder.build_composite().unwrap();
+            }
+        }
+    }
+
+    #[test]
+    fn test_calendar_period_time_zone_field_sets() {
+        // Should always fail
+        for date_fields in CALENDAR_PERIOD_FIELD_SETS.iter() {
+            for zone_style in ZONE_STYLES.iter() {
+                let mut builder = FieldSetBuilder::new();
+                builder.date_fields = Some(*date_fields);
+                builder.time_precision = Some(TimePrecision::Minute);
+                builder.zone_style = Some(*zone_style);
+                builder.clone().build_date().unwrap_err();
+                builder.clone().build_calendar_period().unwrap_err();
+                builder.clone().build_time().unwrap_err();
+                builder.clone().build_zone().unwrap_err();
+                builder.clone().build_date_and_time().unwrap_err();
+                builder.clone().build_composite_datetime().unwrap_err();
+                builder.build_composite().unwrap_err();
+            }
         }
     }
 }
