@@ -47,9 +47,9 @@ pub use names_storage::NamesContainer;
 pub(crate) use names_storage::OptionalNames;
 
 // Should be private for sealing
-pub(crate) use sealed::UnstableSealed;
+pub(crate) use private::Sealed;
 
-mod sealed {
+mod private {
     /// Trait marking other traits that are considered unstable and should not generally be
     /// implemented outside of the datetime crate.
     ///
@@ -57,5 +57,5 @@ mod sealed {
     /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. Do not implement this trait in userland.
     /// </div>
-    pub trait UnstableSealed {}
+    pub trait Sealed {}
 }

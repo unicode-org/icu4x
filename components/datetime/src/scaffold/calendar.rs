@@ -5,7 +5,7 @@
 //! Scaffolding traits and impls for calendars.
 
 use crate::provider::{neo::*, *};
-use crate::scaffold::UnstableSealed;
+use crate::scaffold::Sealed;
 use crate::MismatchedCalendarError;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::AnyCalendarKind;
@@ -29,7 +29,7 @@ use icu_timezone::{DateTime, Time, TimeZoneInfo, TimeZoneModel, UtcOffset, Zoned
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait CldrCalendar: UnstableSealed {
+pub trait CldrCalendar: Sealed {
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
 
@@ -145,23 +145,23 @@ impl CldrCalendar for Roc {
     type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;
 }
 
-impl UnstableSealed for () {}
-impl UnstableSealed for Buddhist {}
-impl UnstableSealed for Chinese {}
-impl UnstableSealed for Coptic {}
-impl UnstableSealed for Dangi {}
-impl UnstableSealed for Ethiopian {}
-impl UnstableSealed for Gregorian {}
-impl UnstableSealed for Hebrew {}
-impl UnstableSealed for Indian {}
-impl UnstableSealed for IslamicCivil {}
-impl UnstableSealed for IslamicObservational {}
-impl UnstableSealed for IslamicTabular {}
-impl UnstableSealed for IslamicUmmAlQura {}
-impl UnstableSealed for Japanese {}
-impl UnstableSealed for JapaneseExtended {}
-impl UnstableSealed for Persian {}
-impl UnstableSealed for Roc {}
+impl Sealed for () {}
+impl Sealed for Buddhist {}
+impl Sealed for Chinese {}
+impl Sealed for Coptic {}
+impl Sealed for Dangi {}
+impl Sealed for Ethiopian {}
+impl Sealed for Gregorian {}
+impl Sealed for Hebrew {}
+impl Sealed for Indian {}
+impl Sealed for IslamicCivil {}
+impl Sealed for IslamicObservational {}
+impl Sealed for IslamicTabular {}
+impl Sealed for IslamicUmmAlQura {}
+impl Sealed for Japanese {}
+impl Sealed for JapaneseExtended {}
+impl Sealed for Persian {}
+impl Sealed for Roc {}
 
 /// A collection of marker types associated with all calendars.
 ///
@@ -169,7 +169,7 @@ impl UnstableSealed for Roc {}
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
-pub trait CalMarkers<M>: UnstableSealed
+pub trait CalMarkers<M>: Sealed
 where
     M: DynamicDataMarker,
 {
@@ -214,14 +214,14 @@ where
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum FullDataCalMarkers {}
 
-impl UnstableSealed for FullDataCalMarkers {}
+impl Sealed for FullDataCalMarkers {}
 
 /// Implementation of [`CalMarkers`] that includes data for no calendars.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
 pub enum NoDataCalMarkers {}
 
-impl UnstableSealed for NoDataCalMarkers {}
+impl Sealed for NoDataCalMarkers {}
 
 impl<M> CalMarkers<M> for NoDataCalMarkers
 where

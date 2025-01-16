@@ -462,7 +462,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             $(alignment: $option_alignment_yes,)?
             $(year_style: $year_yes,)?
         );
-        impl UnstableSealed for $type {}
+        impl Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
             type MonthNames = datetime_marker_helper!(@names/month, $($months_yes)?);
@@ -617,7 +617,7 @@ macro_rules! impl_date_marker {
             time_precision: yes,
         );
         impl_zone_combo_helpers!($type_time, DateTimeZone, DateAndTimeFieldSet);
-        impl UnstableSealed for $type_time {}
+        impl Sealed for $type_time {}
         impl DateTimeNamesMarker for $type_time {
             type YearNames = datetime_marker_helper!(@names/year, $($years_yes)?);
             type MonthNames = datetime_marker_helper!(@names/month, $($months_yes)?);
@@ -783,7 +783,7 @@ macro_rules! impl_time_marker {
             time_precision: yes,
         );
         impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet);
-        impl UnstableSealed for $type {}
+        impl Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
             type MonthNames = datetime_marker_helper!(@names/month,);
@@ -892,7 +892,7 @@ macro_rules! impl_zone_marker {
             $type,
             length_override: $length_override,
         );
-        impl UnstableSealed for $type {}
+        impl Sealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
             type MonthNames = datetime_marker_helper!(@names/month,);

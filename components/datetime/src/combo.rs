@@ -140,7 +140,7 @@ impl<DT, Z> Combo<DT, Z> {
     }
 }
 
-impl<DT, Z> UnstableSealed for Combo<DT, Z> {}
+impl<DT, Z> Sealed for Combo<DT, Z> {}
 
 impl<DT, Z> Combo<DT, Z> {
     #[inline]

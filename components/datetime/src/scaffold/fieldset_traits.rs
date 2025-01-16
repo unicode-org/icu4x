@@ -28,7 +28,7 @@ use icu_timezone::{
 /// (input types only).
 ///
 /// This is a sealed trait implemented on field set markers.
-pub trait DateInputMarkers: UnstableSealed {
+pub trait DateInputMarkers: Sealed {
     /// Marker for resolving the year input field.
     type YearInput: IntoOption<YearInfo>;
     /// Marker for resolving the month input field.
@@ -45,7 +45,7 @@ pub trait DateInputMarkers: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
-pub trait TypedDateDataMarkers<C>: UnstableSealed {
+pub trait TypedDateDataMarkers<C>: Sealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
     /// Marker for loading year names.
@@ -60,7 +60,7 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
-pub trait DateDataMarkers: UnstableSealed {
+pub trait DateDataMarkers: Sealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
     /// Cross-calendar data markers for year names.
@@ -75,7 +75,7 @@ pub trait DateDataMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
-pub trait TimeMarkers: UnstableSealed {
+pub trait TimeMarkers: Sealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: IntoOption<IsoHour>;
     /// Marker for resolving the day-of-week input field.
@@ -94,7 +94,7 @@ pub trait TimeMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
-pub trait ZoneMarkers: UnstableSealed {
+pub trait ZoneMarkers: Sealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
     /// Marker for resolving the time zone offset input field.
@@ -123,7 +123,7 @@ pub trait ZoneMarkers: UnstableSealed {
 /// required for datetime formatting.
 ///
 /// This is a sealed trait implemented on field set markers.
-pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
+pub trait DateTimeMarkers: Sealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///
     /// Should implement [`DateDataMarkers`], [`TypedDateDataMarkers`], and [`DateInputMarkers`].

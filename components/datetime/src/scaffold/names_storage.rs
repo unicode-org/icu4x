@@ -12,7 +12,7 @@ use core::fmt;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
 
-use super::UnstableSealed;
+use super::Sealed;
 
 /// Trait for a type that owns datetime names data, usually in the form of data payloads.
 ///
@@ -20,7 +20,7 @@ use super::UnstableSealed;
 /// allowing for reduced stack size. For example, a type could contain year and month names but
 /// not weekday, day period, or time zone names.
 #[allow(missing_docs)]
-pub trait DateTimeNamesMarker: UnstableSealed {
+pub trait DateTimeNamesMarker: Sealed {
     type YearNames: NamesContainer<YearNamesV1Marker, YearNameLength>;
     type MonthNames: NamesContainer<MonthNamesV1Marker, MonthNameLength>;
     type WeekdayNames: NamesContainer<WeekdayNamesV1Marker, WeekdayNameLength>;
@@ -36,7 +36,7 @@ pub trait DateTimeNamesMarker: UnstableSealed {
 
 /// Trait that associates a container for a payload parameterized by the given variables.
 #[allow(missing_docs)]
-pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
+pub trait NamesContainer<M: DynamicDataMarker, Variables>: Sealed
 where
     Variables: PartialEq + Copy + fmt::Debug,
 {
@@ -52,7 +52,7 @@ where
 
 macro_rules! impl_holder_trait {
     ($marker:path) => {
-        impl UnstableSealed for $marker {}
+        impl Sealed for $marker {}
         impl<Variables> NamesContainer<$marker, Variables> for $marker
         where
             Variables: PartialEq + Copy + fmt::Debug,
@@ -101,7 +101,7 @@ impl MaybePayloadError {
 ///
 /// Helper trait for [`DateTimeNamesMarker`].
 #[allow(missing_docs)]
-pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
+pub trait MaybePayload<M: DynamicDataMarker, Variables>: Sealed {
     fn new_empty() -> Self;
     fn load_put<P>(
         &mut self,
@@ -121,7 +121,7 @@ pub struct DataPayloadWithVariables<M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, DataPayload<M>>,
 }
 
-impl<M: DynamicDataMarker, Variables> UnstableSealed for DataPayloadWithVariables<M, Variables> {}
+impl<M: DynamicDataMarker, Variables> Sealed for DataPayloadWithVariables<M, Variables> {}
 
 impl<M: DynamicDataMarker, Variables> fmt::Debug for DataPayloadWithVariables<M, Variables>
 where

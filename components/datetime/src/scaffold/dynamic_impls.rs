@@ -15,7 +15,7 @@ use icu_timezone::{
     Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
-impl UnstableSealed for DateFieldSet {}
+impl Sealed for DateFieldSet {}
 
 impl DateTimeNamesMarker for DateFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -60,7 +60,7 @@ impl DateTimeMarkers for DateFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl UnstableSealed for CalendarPeriodFieldSet {}
+impl Sealed for CalendarPeriodFieldSet {}
 
 impl DateTimeNamesMarker for CalendarPeriodFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -105,7 +105,7 @@ impl DateTimeMarkers for CalendarPeriodFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl UnstableSealed for TimeFieldSet {}
+impl Sealed for TimeFieldSet {}
 
 impl DateTimeNamesMarker for TimeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year,);
@@ -137,9 +137,9 @@ impl DateTimeMarkers for TimeFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl UnstableSealed for DateAndTimeFieldSet {}
+impl Sealed for DateAndTimeFieldSet {}
 
-impl UnstableSealed for ZoneFieldSet {}
+impl Sealed for ZoneFieldSet {}
 
 impl DateTimeNamesMarker for ZoneFieldSet {
     type YearNames = datetime_marker_helper!(@names/year,);
@@ -176,7 +176,7 @@ impl DateTimeMarkers for ZoneFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue,);
 }
 
-impl UnstableSealed for CompositeDateTimeFieldSet {}
+impl Sealed for CompositeDateTimeFieldSet {}
 
 impl DateTimeNamesMarker for CompositeDateTimeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);
@@ -199,7 +199,7 @@ impl DateTimeMarkers for CompositeDateTimeFieldSet {
     type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
 }
 
-impl UnstableSealed for CompositeFieldSet {}
+impl Sealed for CompositeFieldSet {}
 
 impl DateTimeNamesMarker for CompositeFieldSet {
     type YearNames = datetime_marker_helper!(@names/year, yes);

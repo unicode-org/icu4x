@@ -12,19 +12,19 @@ use icu_timezone::{
     ZonedDateTime,
 };
 
-use super::UnstableSealed;
+use super::Sealed;
 
 /// A type that can return a certain field `T`.
 ///
 /// This is used as a bound on various datetime functions.
-pub trait GetField<T>: UnstableSealed {
+pub trait GetField<T>: Sealed {
     /// Returns the value of this trait's field `T`.
     fn get_field(&self) -> T;
 }
 
 impl<T> GetField<T> for T
 where
-    T: Copy + UnstableSealed,
+    T: Copy + Sealed,
 {
     #[inline]
     fn get_field(&self) -> T {
@@ -32,7 +32,7 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for Date<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> Sealed for Date<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for Date<A> {
     #[inline]
@@ -69,7 +69,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<
     }
 }
 
-impl UnstableSealed for Time {}
+impl Sealed for Time {}
 
 impl GetField<IsoHour> for Time {
     #[inline]
@@ -99,7 +99,7 @@ impl GetField<NanoSecond> for Time {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for DateTime<A> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>> Sealed for DateTime<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for DateTime<A> {
     #[inline]
@@ -164,7 +164,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for DateTime
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> UnstableSealed for ZonedDateTime<A, Z> {}
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> Sealed for ZonedDateTime<A, Z> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<YearInfo> for ZonedDateTime<A, Z> {
     #[inline]
@@ -271,7 +271,7 @@ where
     }
 }
 
-impl UnstableSealed for UtcOffset {}
+impl Sealed for UtcOffset {}
 
 impl GetField<Option<UtcOffset>> for UtcOffset {
     #[inline]
@@ -280,7 +280,7 @@ impl GetField<Option<UtcOffset>> for UtcOffset {
     }
 }
 
-impl<O: TimeZoneModel> UnstableSealed for TimeZoneInfo<O> {}
+impl<O: TimeZoneModel> Sealed for TimeZoneInfo<O> {}
 
 impl<O> GetField<TimeZoneBcp47Id> for TimeZoneInfo<O>
 where
