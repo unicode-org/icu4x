@@ -232,7 +232,7 @@ impl DatePatternSelectionData {
                         .map(|y| y.year_ambiguity())
                         .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
                 ) {
-                    (YearStyle::Always, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
+                    (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
                         PackedSkeletonVariant::Variant1
                     }
                     (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
