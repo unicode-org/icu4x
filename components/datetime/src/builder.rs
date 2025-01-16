@@ -41,6 +41,21 @@
 //!     DateFieldSet::YMD(static_field_set),
 //! );
 //!
+//! // Standalone Month
+//! // Long length
+//!
+//! let static_field_set = fieldsets::M::long();
+//!
+//! let mut builder = FieldSetBuilder::default();
+//! builder.length = Some(Length::Long);
+//! builder.date_fields = Some(DateFields::M);
+//! let dynamic_field_set = builder.build_calendar_period().unwrap();
+//!
+//! assert_eq!(
+//!     dynamic_field_set,
+//!     CalendarPeriodFieldSet::M(static_field_set),
+//! );
+//!
 //! // Weekday and Time of day
 //! // Medium length, implicit in the builder
 //! // Display time to the minute
@@ -224,12 +239,39 @@ impl FieldSetBuilder {
                 DateFieldSet::YMDE(fieldsets::YMDE::take_from_builder(&mut self))
             }
             Some(DateFields::E) => DateFieldSet::E(fieldsets::E::take_from_builder(&mut self)),
-            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | None => {
+            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | Option::None => {
                 return Err(BuilderError::InvalidFields)
             }
         };
         self.check_options_consumed()?;
         Ok(date_field_set)
+    }
+
+    /// Builds a [`CalendarPeriodFieldSet`].
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_calendar_period(mut self) -> Result<CalendarPeriodFieldSet, BuilderError> {
+        let calendar_period_field_set = match self.date_fields.take() {
+            Some(DateFields::M) => {
+                CalendarPeriodFieldSet::M(fieldsets::M::take_from_builder(&mut self))
+            }
+            Some(DateFields::YM) => {
+                CalendarPeriodFieldSet::YM(fieldsets::YM::take_from_builder(&mut self))
+            }
+            Some(DateFields::Y) => {
+                CalendarPeriodFieldSet::Y(fieldsets::Y::take_from_builder(&mut self))
+            }
+            Some(DateFields::D)
+            | Some(DateFields::MD)
+            | Some(DateFields::YMD)
+            | Some(DateFields::DE)
+            | Some(DateFields::MDE)
+            | Some(DateFields::YMDE)
+            | Some(DateFields::E)
+            | Option::None => return Err(BuilderError::InvalidFields),
+        };
+        self.check_options_consumed()?;
+        Ok(calendar_period_field_set)
     }
 
     /// Builds a [`TimeFieldSet`].
@@ -250,7 +292,7 @@ impl FieldSetBuilder {
             Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
             Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
             Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
-            None => return Err(BuilderError::InvalidFields),
+            Option::None => return Err(BuilderError::InvalidFields),
         };
         Ok(zone_field_set)
     }
@@ -290,7 +332,7 @@ impl FieldSetBuilder {
             Some(DateFields::E) => {
                 DateAndTimeFieldSet::ET(fieldsets::ET::take_from_builder(&mut self))
             }
-            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | None => {
+            Some(DateFields::M) | Some(DateFields::YM) | Some(DateFields::Y) | Option::None => {
                 return Err(BuilderError::InvalidFields)
             }
         };
