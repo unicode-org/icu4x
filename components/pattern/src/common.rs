@@ -115,6 +115,8 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 /// This trait can add [`Part`]s for individual literals or placeholders. The implementations
 /// of this trait on standard types do not add any [`Part`]s.
 ///
+/// This trait is not implementable by user code due to the blanket impl.
+///
 /// # Examples
 ///
 /// A custom implementation that adds parts:

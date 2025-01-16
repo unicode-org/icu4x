@@ -382,6 +382,7 @@ impl_load_any_calendar!([
 ]);
 
 /// A type that can be converted into a specific calendar system.
+// This trait is implementable
 pub trait ConvertCalendar {
     /// The converted type. This can be the same as the receiver type.
     type Converted<'a>: Sized;
@@ -441,6 +442,7 @@ impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
 }
 
 /// An input that may be associated with a specific runtime calendar.
+// This trait is implementable
 pub trait InSameCalendar {
     /// Checks whether this type is compatible with the given calendar.
     ///
@@ -514,6 +516,7 @@ impl<O: TimeZoneModel> InSameCalendar for TimeZoneInfo<O> {
 }
 
 /// An input associated with a fixed, static calendar.
+// This trait is implementable
 pub trait InFixedCalendar<C> {}
 
 impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for Date<A> {}

@@ -334,6 +334,7 @@ where
 /// is_trait_implemented::<TimeFieldSet, CompositeFieldSet>();
 /// ```
 #[allow(missing_docs)]
+// This trait is implicitly sealed by deriving from a sealed trait
 pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
     fn map_year_names(
         other: <M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,

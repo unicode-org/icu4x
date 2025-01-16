@@ -650,6 +650,7 @@ pub trait ParseableEnumeratedProperty: crate::private::Sealed + TrieValue {
 }
 
 // Abstract over Linear/Sparse/Script representation
+// This trait is implicitly sealed by not being exported.
 pub trait PropertyEnumToValueNameLookup {
     fn get(&self, prop: u32) -> Option<&str>;
 }
