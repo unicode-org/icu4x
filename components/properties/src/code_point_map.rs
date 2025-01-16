@@ -342,6 +342,11 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
 /// The descriptions of most properties are taken from [`TR44`], the documentation for the
 /// Unicode Character Database.
 ///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
 /// [`TR44`]: https://www.unicode.org/reports/tr44
 pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]

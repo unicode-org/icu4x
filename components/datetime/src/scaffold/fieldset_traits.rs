@@ -28,6 +28,11 @@ use icu_timezone::{
 /// (input types only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
     type YearInput: IntoOption<YearInfo>;
@@ -45,6 +50,11 @@ pub trait DateInputMarkers: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
@@ -60,6 +70,11 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
@@ -75,6 +90,11 @@ pub trait DateDataMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: IntoOption<IsoHour>;
@@ -94,6 +114,11 @@ pub trait TimeMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
@@ -123,6 +148,11 @@ pub trait ZoneMarkers: UnstableSealed {
 /// required for datetime formatting.
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///

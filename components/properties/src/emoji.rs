@@ -144,6 +144,11 @@ impl EmojiSetDataBorrowed<'static> {
 }
 
 /// An Emoji set as defined by [`Unicode Technical Standard #51`](https://unicode.org/reports/tr51/#Emoji_Sets>).
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub trait EmojiSet: crate::private::Sealed {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyUnicodeSetV1<'static>>;

@@ -23,8 +23,10 @@ pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
     /// The character type.
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
+    #[doc(hidden)]
     fn get_current_position_character_len(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
 
+    #[doc(hidden)]
     fn handle_complex_language(
         iter: &mut RuleBreakIterator<'l, 's, Self>,
         left_codepoint: Self::CharType,

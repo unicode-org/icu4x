@@ -727,15 +727,19 @@ pub trait LineBreakType<'l, 's>: crate::private::Sealed {
     /// The character type.
     type CharType: Copy + Into<u32>;
 
+    #[doc(hidden)]
     fn use_complex_breaking(iterator: &LineBreakIterator<'l, 's, Self>, c: Self::CharType) -> bool;
 
+    #[doc(hidden)]
     fn get_linebreak_property_with_rule(
         iterator: &LineBreakIterator<'l, 's, Self>,
         c: Self::CharType,
     ) -> u8;
 
+    #[doc(hidden)]
     fn get_current_position_character_len(iterator: &LineBreakIterator<'l, 's, Self>) -> usize;
 
+    #[doc(hidden)]
     fn handle_complex_language(
         iterator: &mut LineBreakIterator<'l, 's, Self>,
         left_codepoint: Self::CharType,

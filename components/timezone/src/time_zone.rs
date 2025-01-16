@@ -12,6 +12,11 @@ mod private {
 }
 
 /// Trait encoding a particular data model for time zones.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub trait TimeZoneModel: private::Sealed {
     /// The zone variant, if required for this time zone model.
     type ZoneVariant: IntoOption<ZoneVariant> + fmt::Debug + Copy;

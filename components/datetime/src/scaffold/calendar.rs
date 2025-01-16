@@ -169,6 +169,11 @@ impl UnstableSealed for Roc {}
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland.
+/// </div>
 pub trait CalMarkers<M>: UnstableSealed
 where
     M: DynamicDataMarker,

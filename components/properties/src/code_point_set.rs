@@ -204,6 +204,11 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 /// documentation for Unicode regular expressions. In particular, Annex C of this document
 /// defines properties for POSIX compatibility.
 ///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
 /// [`CodePointSetData`]: crate::sets::CodePointSetData
 /// [`TR44`]: https://www.unicode.org/reports/tr44
 /// [`TR18`]: https://www.unicode.org/reports/tr18
