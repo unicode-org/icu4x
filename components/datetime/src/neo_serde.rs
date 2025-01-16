@@ -625,7 +625,7 @@ fn test_basic() {
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET {
             length: Length::Medium,
             alignment: Some(Alignment::Column),
-            year_style: Some(YearStyle::Always),
+            year_style: Some(YearStyle::WithEra),
             time_precision: Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3)),
         }),
         ZoneFieldSet::Vs(fieldsets::Vs::new()),
@@ -635,7 +635,7 @@ fn test_basic() {
     let json_string = serde_json::to_string(&skeleton_serde).unwrap();
     assert_eq!(
         json_string,
-        r#"{"fieldSet":["year","month","day","weekday","time","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"always","timePrecision":"secondF3"}"#
+        r#"{"fieldSet":["year","month","day","weekday","time","zoneGeneric"],"length":"medium","alignment":"column","yearStyle":"withEra","timePrecision":"secondF3"}"#
     );
     let json_skeleton: CompositeFieldSet =
         serde_json::from_str::<CompositeFieldSetSerde>(&json_string)

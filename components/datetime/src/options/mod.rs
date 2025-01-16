@@ -165,6 +165,9 @@ impl IntoOption<Alignment> for Alignment {
 
 /// A specification of how to render the year and the era.
 ///
+/// The choices may grow over time; to follow along and offer feedback, see
+/// <https://github.com/unicode-org/icu4x/issues/6010>.
+///
 /// # Examples
 ///
 /// ```
@@ -231,7 +234,7 @@ impl IntoOption<Alignment> for Alignment {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 ///     locale!("en-US").into(),
-///     YMD::short().with_year_style(YearStyle::Always),
+///     YMD::short().with_year_style(YearStyle::WithEra),
 /// )
 /// .unwrap();
 ///
@@ -261,7 +264,7 @@ impl IntoOption<Alignment> for Alignment {
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    serde(rename_all = "lowercase")
+    serde(rename_all = "camelCase")
 )]
 #[non_exhaustive]
 pub enum YearStyle {
@@ -295,8 +298,7 @@ pub enum YearStyle {
     /// - `77 AD`
     /// - `1900 AD`
     /// - `2024 AD`
-    Always,
-    // TODO(#4478): add Hide and Never options once there is data to back them
+    WithEra,
 }
 
 impl IntoOption<YearStyle> for YearStyle {

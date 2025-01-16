@@ -28,12 +28,12 @@
 //! // Always display the era
 //!
 //! let static_field_set = fieldsets::YMD::medium()
-//!     .with_year_style(YearStyle::Always);
+//!     .with_year_style(YearStyle::WithEra);
 //!
 //! let mut builder = FieldSetBuilder::default();
 //! builder.date_fields = Some(DateFields::YMD);
 //! builder.length = Some(Length::Medium);
-//! builder.year_style = Some(YearStyle::Always);
+//! builder.year_style = Some(YearStyle::WithEra);
 //! let dynamic_field_set = builder.build_date().unwrap();
 //!
 //! assert_eq!(
