@@ -11,7 +11,12 @@ use utf8_iter::Utf8CharIndices;
 
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
-pub trait RuleBreakType<'l, 's> {
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
@@ -258,6 +263,8 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 #[derive(Debug)]
 pub struct RuleBreakTypeUtf8;
 
+impl crate::private::Sealed for RuleBreakTypeUtf8 {}
+
 impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
@@ -276,6 +283,8 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
 
 #[derive(Debug)]
 pub struct RuleBreakTypePotentiallyIllFormedUtf8;
+
+impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
 
 impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
@@ -296,6 +305,8 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
 #[derive(Debug)]
 pub struct RuleBreakTypeLatin1;
 
+impl crate::private::Sealed for RuleBreakTypeLatin1 {}
+
 impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
@@ -314,6 +325,8 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
 
 #[derive(Debug)]
 pub struct RuleBreakTypeUtf16;
+
+impl crate::private::Sealed for RuleBreakTypeUtf16 {}
 
 impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;

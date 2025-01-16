@@ -167,3 +167,14 @@ pub use crate::word::WordBreakIteratorLatin1;
 pub use crate::word::WordBreakIteratorPotentiallyIllFormedUtf8;
 pub use crate::word::WordBreakIteratorUtf16;
 pub use crate::word::WordBreakIteratorUtf8;
+
+pub(crate) mod private {
+    /// Trait marking other traits that are considered unstable and should not generally be
+    /// implemented outside of the segmenter crate.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not implement this trait in userland.
+    /// </div>
+    pub trait Sealed {}
+}
