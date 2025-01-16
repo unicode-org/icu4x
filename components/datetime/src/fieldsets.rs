@@ -1188,7 +1188,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{IxdtfParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{ZonedDateTimeParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{Z, Zs};
@@ -1378,7 +1378,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{IxdtfParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{Time, TimeZoneBcp47Id};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::Vs;
@@ -1407,7 +1407,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{Time, TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
+    /// use icu::timezone::{Time, TimeZoneIdMapper};
     /// use icu::datetime::TimeFormatter;
     /// use icu::datetime::fieldsets::Vs;
     /// use icu::datetime::DateTimeWriteError;
@@ -1460,7 +1460,7 @@ impl_zone_marker!(
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::TimeFormatter;
     /// use icu::datetime::fieldsets::V;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
+    /// use icu::timezone::TimeZoneBcp47Id;
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;

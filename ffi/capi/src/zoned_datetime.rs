@@ -19,27 +19,27 @@ pub mod ffi {
     use crate::time::ffi::Time;
     use crate::timezone::ffi::TimeZoneInfo;
 
-    #[diplomat::rust_link(icu::timezone::IxdtfParser, Struct)]
+    #[diplomat::rust_link(icu::timezone::ZonedDateTimeParser, Struct)]
     #[diplomat::opaque]
-    pub struct IxdtfParser(icu_timezone::IxdtfParser);
+    pub struct ZonedDateTimeParser(icu_timezone::ZonedDateTimeParser);
 
-    impl IxdtfParser {
-        /// Construct a new [`IxdtfParser`] instance using compiled data.
-        #[diplomat::rust_link(icu::timezone::IxdtfParser::new, FnInStruct)]
+    impl ZonedDateTimeParser {
+        /// Construct a new [`ZonedDateTimeParser`] instance using compiled data.
+        #[diplomat::rust_link(icu::timezone::ZonedDateTimeParser::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<IxdtfParser> {
-            Box::new(IxdtfParser(icu_timezone::IxdtfParser::new()))
+        pub fn create() -> Box<ZonedDateTimeParser> {
+            Box::new(ZonedDateTimeParser(icu_timezone::ZonedDateTimeParser::new()))
         }
-        /// Construct a new [`IxdtfParser`] instance using a particular data source.
-        #[diplomat::rust_link(icu::timezone::IxdtfParser::new, FnInStruct)]
+        /// Construct a new [`ZonedDateTimeParser`] instance using a particular data source.
+        #[diplomat::rust_link(icu::timezone::ZonedDateTimeParser::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<IxdtfParser>, DataError> {
-            Ok(Box::new(IxdtfParser(
-                icu_timezone::IxdtfParser::try_new_with_buffer_provider(provider.get()?)?,
+        ) -> Result<Box<ZonedDateTimeParser>, DataError> {
+            Ok(Box::new(ZonedDateTimeParser(
+                icu_timezone::ZonedDateTimeParser::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
     }
@@ -53,16 +53,21 @@ pub mod ffi {
         pub zone: Box<TimeZoneInfo>,
     }
 
-    impl IxdtfParser {
+    impl ZonedDateTimeParser {
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::timezone::IxdtfParser::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::IxdtfParser::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::IxdtfParser::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::ZonedDateTimeParser::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::timezone::ZonedDateTimeParser::try_from_utf8,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(icu::timezone::ZonedDateTimeParser::from_str, FnInStruct, hidden)]
         pub fn try_iso_from_str(
             &self,
             v: &DiplomatStr,
         ) -> Result<ZonedIsoDateTime, CalendarParseError> {
-            let icu_timezone::ZonedDateTime { date, time, zone } = self.0.try_from_utf8(v, Iso)?;
+            let icu_timezone::ZonedDateTime { date, time, zone } =
+                self.0.parse_from_utf8(v, Iso)?;
             Ok(ZonedIsoDateTime {
                 date: Box::new(IsoDate(date)),
                 time: Box::new(Time(time)),
@@ -80,7 +85,7 @@ pub mod ffi {
         pub zone: Box<TimeZoneInfo>,
     }
 
-    impl IxdtfParser {
+    impl ZonedDateTimeParser {
         /// Creates a new [`ZonedDateTime`] from an IXDTF string.
         #[diplomat::rust_link(icu::timezone::DateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::DateTime::try_from_utf8, FnInStruct, hidden)]
@@ -91,7 +96,7 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<ZonedDateTime, CalendarParseError> {
             let icu_timezone::ZonedDateTime { date, time, zone } =
-                self.0.try_from_utf8(v, calendar.0.clone())?;
+                self.0.parse_from_utf8(v, calendar.0.clone())?;
             Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),

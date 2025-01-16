@@ -9,13 +9,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `IxdtfParser`](https://docs.rs/icu/latest/icu/timezone/struct.IxdtfParser.html) for more information.
+/** See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html) for more information.
 */
-const IxdtfParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_IxdtfParser_destroy_mv1(ptr);
+const ZonedDateTimeParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_ZonedDateTimeParser_destroy_mv1(ptr);
 });
 
-export class IxdtfParser {
+export class ZonedDateTimeParser {
     
     // Internal ptr reference:
     #ptr = null;
@@ -26,7 +26,7 @@ export class IxdtfParser {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("IxdtfParser is an Opaque type. You cannot call its constructor.");
+            console.error("ZonedDateTimeParser is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -35,7 +35,7 @@ export class IxdtfParser {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            IxdtfParser_box_destroy_registry.register(this, this.#ptr);
+            ZonedDateTimeParser_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -45,10 +45,10 @@ export class IxdtfParser {
     }
 
     #defaultConstructor() {
-        const result = wasm.icu4x_IxdtfParser_create_mv1();
+        const result = wasm.icu4x_ZonedDateTimeParser_create_mv1();
     
         try {
-            return new IxdtfParser(diplomatRuntime.internalConstructor, result, []);
+            return new ZonedDateTimeParser(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -57,14 +57,14 @@ export class IxdtfParser {
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_IxdtfParser_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeParser_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new IxdtfParser(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeParser(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -79,7 +79,7 @@ export class IxdtfParser {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_IxdtfParser_try_iso_from_str_mv1(diplomatReceive.buffer, this.ffiValue, ...vSlice.splat());
+        const result = wasm.icu4x_ZonedDateTimeParser_try_iso_from_str_mv1(diplomatReceive.buffer, this.ffiValue, ...vSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -103,7 +103,7 @@ export class IxdtfParser {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_IxdtfParser_try_from_str_mv1(diplomatReceive.buffer, this.ffiValue, ...vSlice.splat(), calendar.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeParser_try_from_str_mv1(diplomatReceive.buffer, this.ffiValue, ...vSlice.splat(), calendar.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
