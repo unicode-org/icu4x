@@ -718,7 +718,9 @@ mod tests {
             builder.clone().build_zone().unwrap_err();
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap_err();
-            builder.build_composite().unwrap_err();
+            builder.clone().build_composite().unwrap_err();
+            #[cfg(all(feature = "serde", feature = "experimental"))]
+            check_serde(&builder);
         }
     }
 
@@ -756,7 +758,9 @@ mod tests {
                 builder.clone().build_zone().unwrap_err();
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
-                builder.build_composite().unwrap_err();
+                builder.clone().build_composite().unwrap_err();
+                #[cfg(all(feature = "serde", feature = "experimental"))]
+                check_serde(&builder);
             }
         }
     }
@@ -815,7 +819,9 @@ mod tests {
                 builder.clone().build_zone().unwrap_err();
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
-                builder.build_composite().unwrap_err();
+                builder.clone().build_composite().unwrap_err();
+                #[cfg(all(feature = "serde", feature = "experimental"))]
+                check_serde(&builder);
             }
         }
     }
