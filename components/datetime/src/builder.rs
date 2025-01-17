@@ -13,6 +13,8 @@
 //! If the field set is known at compile time, use the static fieldset APIs instead of the
 //! builder exported in this module.
 //!
+//! A field set builder can be serialized with the right set of Cargo features.
+//!
 //! All examples below will show both ways to build a field set.
 //!
 //! # Examples
@@ -105,6 +107,10 @@ use crate::options::*;
 ///
 /// This is a builder enum. See [`builder`](crate::fieldsets::builder).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    all(feature = "serde", feature = "experimental"),
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[non_exhaustive]
 pub enum DateFields {
     /// The day of the month, as in
@@ -143,6 +149,10 @@ pub enum DateFields {
 ///
 /// This is a builder enum. See [`builder`](crate::fieldsets::builder).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    all(feature = "serde", feature = "experimental"),
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[non_exhaustive]
 pub enum ZoneStyle {
     /// The long specific non-location format, as in
@@ -179,6 +189,134 @@ pub enum BuilderError {
 }
 
 impl core::error::Error for BuilderError {}
+
+/// Serde impls: We can't directly use `derive(Serialize)` and also hide null fields
+/// due to <https://github.com/serde-rs/serde/issues/2191>
+#[cfg(all(feature = "serde", feature = "experimental"))]
+mod _serde {
+    use super::*;
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct FieldSetBuilderHuman {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub length: Option<Length>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub date_fields: Option<DateFields>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub time_precision: Option<TimePrecision>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub zone_style: Option<ZoneStyle>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub alignment: Option<Alignment>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub year_style: Option<YearStyle>,
+    }
+
+    #[derive(Serialize)]
+    #[serde(rename_all = "camelCase")]
+    struct FieldSetBuilderMachine {
+        pub length: Option<Length>,
+        pub date_fields: Option<DateFields>,
+        pub time_precision: Option<TimePrecision>,
+        pub zone_style: Option<ZoneStyle>,
+        pub alignment: Option<Alignment>,
+        pub year_style: Option<YearStyle>,
+    }
+
+    /// Serialization for [`FieldSetBuilder`].
+    ///
+    /// ✨ *Enabled with the `serde` and `experimental` Cargo features.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::enums::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// builder.date_fields = Some(DateFields::YMD);
+    /// builder.length = Some(Length::Medium);
+    /// builder.year_style = Some(YearStyle::WithEra);
+    ///
+    /// let json_str = serde_json::to_string(&builder).unwrap();
+    ///
+    /// assert_eq!(json_str, r#"{"length":"medium","dateFields":"YMD","yearStyle":"withEra"}"#);
+    ///
+    /// let json_parsed = serde_json::from_str(&json_str).unwrap();
+    ///
+    /// assert_eq!(builder, json_parsed);
+    /// ```
+    impl Serialize for FieldSetBuilder {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            let FieldSetBuilder {
+                length,
+                date_fields,
+                time_precision,
+                zone_style,
+                alignment,
+                year_style,
+            } = *self;
+            if serializer.is_human_readable() {
+                FieldSetBuilderHuman {
+                    length,
+                    date_fields,
+                    time_precision,
+                    zone_style,
+                    alignment,
+                    year_style,
+                }
+                .serialize(serializer)
+            } else {
+                FieldSetBuilderMachine {
+                    length,
+                    date_fields,
+                    time_precision,
+                    zone_style,
+                    alignment,
+                    year_style,
+                }
+                .serialize(serializer)
+            }
+        }
+    }
+
+    /// Deserialization for [`FieldSetBuilder`].
+    ///
+    /// ✨ *Enabled with the `serde` and `experimental` Cargo features.*
+    ///
+    /// For an example, see the `Serialize` impl.
+    impl<'de> Deserialize<'de> for FieldSetBuilder {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            // Note: the Deserialize impls are the same. We could even derive this
+            // directly on FieldSetBuilder.
+            let FieldSetBuilderHuman {
+                length,
+                date_fields,
+                time_precision,
+                zone_style,
+                alignment,
+                year_style,
+            } = FieldSetBuilderHuman::deserialize(deserializer)?;
+            Ok(FieldSetBuilder {
+                length,
+                date_fields,
+                time_precision,
+                zone_style,
+                alignment,
+                year_style,
+            })
+        }
+    }
+}
 
 /// A builder for [dynamic field sets](crate::fieldsets::enums).
 ///
@@ -473,6 +611,16 @@ mod tests {
         ZoneStyle::L,
     ];
 
+    #[cfg(all(feature = "serde", feature = "experimental"))]
+    fn check_serde(value: &FieldSetBuilder) {
+        let json_str = serde_json::to_string(value).unwrap();
+        let json_parsed: FieldSetBuilder = serde_json::from_str(&json_str).unwrap();
+        assert_eq!(value, &json_parsed);
+        let bincode_bytes = bincode::serialize(value).unwrap();
+        let bincode_parsed: FieldSetBuilder = bincode::deserialize(&bincode_bytes).unwrap();
+        assert_eq!(value, &bincode_parsed);
+    }
+
     #[test]
     fn test_date_field_sets() {
         for date_fields in DATE_FIELD_SETS.iter() {
@@ -484,7 +632,9 @@ mod tests {
             builder.clone().build_zone().unwrap_err();
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap();
-            builder.build_composite().unwrap();
+            builder.clone().build_composite().unwrap();
+            #[cfg(all(feature = "serde", feature = "experimental"))]
+            check_serde(&builder);
         }
     }
 
@@ -499,7 +649,9 @@ mod tests {
             builder.clone().build_zone().unwrap_err();
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap();
-            builder.build_composite().unwrap();
+            builder.clone().build_composite().unwrap();
+            #[cfg(all(feature = "serde", feature = "experimental"))]
+            check_serde(&builder);
         }
     }
 
@@ -513,7 +665,9 @@ mod tests {
         builder.clone().build_zone().unwrap_err();
         builder.clone().build_date_and_time().unwrap_err();
         builder.clone().build_composite_datetime().unwrap();
-        builder.build_composite().unwrap();
+        builder.clone().build_composite().unwrap();
+        #[cfg(all(feature = "serde", feature = "experimental"))]
+        check_serde(&builder);
     }
 
     #[test]
@@ -527,7 +681,9 @@ mod tests {
             builder.clone().build_zone().unwrap();
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap_err();
-            builder.build_composite().unwrap();
+            builder.clone().build_composite().unwrap();
+            #[cfg(all(feature = "serde", feature = "experimental"))]
+            check_serde(&builder);
         }
     }
 
@@ -543,7 +699,9 @@ mod tests {
             builder.clone().build_zone().unwrap_err();
             builder.clone().build_date_and_time().unwrap();
             builder.clone().build_composite_datetime().unwrap();
-            builder.build_composite().unwrap();
+            builder.clone().build_composite().unwrap();
+            #[cfg(all(feature = "serde", feature = "experimental"))]
+            check_serde(&builder);
         }
     }
 
@@ -577,7 +735,9 @@ mod tests {
                 builder.clone().build_zone().unwrap_err();
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
-                builder.build_composite().unwrap();
+                builder.clone().build_composite().unwrap();
+                #[cfg(all(feature = "serde", feature = "experimental"))]
+                check_serde(&builder);
             }
         }
     }
@@ -613,7 +773,9 @@ mod tests {
             builder.clone().build_zone().unwrap_err();
             builder.clone().build_date_and_time().unwrap_err();
             builder.clone().build_composite_datetime().unwrap_err();
-            builder.build_composite().unwrap();
+            builder.clone().build_composite().unwrap();
+            #[cfg(all(feature = "serde", feature = "experimental"))]
+            check_serde(&builder);
         }
     }
 
@@ -631,7 +793,9 @@ mod tests {
                 builder.clone().build_zone().unwrap_err();
                 builder.clone().build_date_and_time().unwrap_err();
                 builder.clone().build_composite_datetime().unwrap_err();
-                builder.build_composite().unwrap();
+                builder.clone().build_composite().unwrap();
+                #[cfg(all(feature = "serde", feature = "experimental"))]
+                check_serde(&builder);
             }
         }
     }
