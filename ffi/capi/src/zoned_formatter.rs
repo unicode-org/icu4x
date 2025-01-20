@@ -158,7 +158,7 @@ pub mod ffi {
             )))
         }
         /// Formats a [`Date`] a [`Time`], and a [`TimeZoneInfo`] to a string.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_any_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format(
             &self,
@@ -179,12 +179,12 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
+            let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
         }
 
         /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_any_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format_iso(
             &self,
@@ -205,7 +205,7 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
+            let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
         }
     }
