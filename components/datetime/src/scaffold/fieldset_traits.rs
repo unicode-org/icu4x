@@ -186,7 +186,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
-// This trait is implicitly sealed due to its blanket impl
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
