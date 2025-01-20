@@ -424,7 +424,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
             ///
             /// assert_writeable_eq!(
-            ///     fmt.format_any_calendar(&dt),
+            ///     fmt.format(&dt),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
@@ -575,7 +575,7 @@ macro_rules! impl_date_marker {
             /// let dt = DateTime { date: Date::try_new_iso(2024, 5, 17).unwrap(), time: Time::try_new(15, 47, 50, 0).unwrap() };
             ///
             /// assert_writeable_eq!(
-            ///     fmt.format_any_calendar(&dt),
+            ///     fmt.format(&dt),
             #[doc = concat!("    \"", $sample_time, "\"")]
             /// );
             /// ```

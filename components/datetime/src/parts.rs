@@ -29,7 +29,7 @@
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
-//!     dtf.format_any_calendar(&dtz),
+//!     dtf.format(&dtz),
 //!     "Nov 20, 2566 BE, 11:35:03.50 AM GMT",
 //!     [
 //!         (0, 3, datetime_parts::MONTH),

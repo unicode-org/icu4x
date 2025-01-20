@@ -319,7 +319,7 @@ fn assert_fixture_element<C>(
         description
     );
 
-    let actual3 = any_dtf.format_any_calendar(&iso_any_input);
+    let actual3 = any_dtf.format(&iso_any_input);
     assert_writeable_eq!(
         actual3,
         output_value.expectation(),

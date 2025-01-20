@@ -55,7 +55,7 @@ final class DateTimeFormatter implements ffi.Finalizable {
 
   /// Formats a [`Date`] and a [`Time`] to a string.
   ///
-  /// See the [Rust documentation for `format_any_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_any_calendar) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
   String format(Date date, Time time) {
@@ -71,7 +71,7 @@ final class DateTimeFormatter implements ffi.Finalizable {
   ///
   /// Will convert to this formatter's calendar first
   ///
-  /// See the [Rust documentation for `format_any_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_any_calendar) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
   String formatIso(IsoDate date, Time time) {

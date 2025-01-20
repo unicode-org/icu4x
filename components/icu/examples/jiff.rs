@@ -62,7 +62,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
     let formatter =
         DateTimeFormatter::try_new(prefs, fieldsets::YMDT::medium().with_zone_specific_long())?;
 
-    println!("{}", formatter.format_any_calendar(&zoned_date_time)); // 11 Sept 6 Reiwa, 08:37:20 Japan Standard Time
+    println!("{}", formatter.format(&zoned_date_time)); // 11 Sept 6 Reiwa, 08:37:20 Japan Standard Time
 
     Ok(())
 }

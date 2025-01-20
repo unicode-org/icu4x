@@ -257,21 +257,21 @@ pub mod ffi {
         }
 
         /// Formats a [`Date`] to a string.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_any_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format(
             &self,
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
+            let _infallible = self.0.format(&value.0).write_to(write);
             Ok(())
         }
 
         /// Formats a [`IsoDate`] to a string.
         ///
         /// Will convert to this formatter's calendar first
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_any_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format_iso(
             &self,
@@ -279,7 +279,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _infallible = self.0.format_any_calendar(&any).write_to(write);
+            let _infallible = self.0.format(&any).write_to(write);
             Ok(())
         }
 
@@ -337,7 +337,7 @@ pub mod ffi {
         }
 
         /// Formats a [`Date`] and a [`Time`] to a string.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_any_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format(
             &self,
@@ -347,7 +347,7 @@ pub mod ffi {
         ) -> Result<(), DateTimeFormatError> {
             let _infallible = self
                 .0
-                .format_any_calendar(&icu_timezone::DateTime {
+                .format(&icu_timezone::DateTime {
                     date: date.0.wrap_calendar_in_ref(),
                     time: time.0,
                 })
@@ -358,7 +358,7 @@ pub mod ffi {
         /// Formats an [`IsoDate`] and a [`Time`] to a string.
         ///
         /// Will convert to this formatter's calendar first
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_any_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format_iso(
             &self,
@@ -368,7 +368,7 @@ pub mod ffi {
         ) -> Result<(), DateTimeFormatError> {
             let _infallible = self
                 .0
-                .format_any_calendar(&icu_timezone::DateTime {
+                .format(&icu_timezone::DateTime {
                     date: date.0,
                     time: time.0,
                 })

@@ -60,7 +60,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
 
   /// Formats a [`Date`] a [`Time`], and a [`TimeZoneInfo`] to a string.
   ///
-  /// See the [Rust documentation for `format_any_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_any_calendar) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
   String format(Date date, Time time, TimeZoneInfo zone) {
@@ -74,7 +74,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
 
   /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
   ///
-  /// See the [Rust documentation for `format_any_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_any_calendar) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
   String formatIso(IsoDate date, Time time, TimeZoneInfo zone) {
