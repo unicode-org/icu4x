@@ -416,8 +416,8 @@ impl FormatTimeZone for ExemplarCityFormat {
         let Some(location) = exemplars
             .exemplars
             .get(&time_zone_id)
-            .or_else(|| locations.locations.get(&time_zone_id))
             .or_else(|| exemplars_root.exemplars.get(&time_zone_id))
+            .or_else(|| locations.locations.get(&time_zone_id))
             .or_else(|| locations_root.locations.get(&time_zone_id))
             .or_else(|| exemplars.exemplars.get(&TimeZoneBcp47Id::unknown()))
             .or_else(|| exemplars_root.exemplars.get(&TimeZoneBcp47Id::unknown()))
