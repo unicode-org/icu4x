@@ -4,8 +4,8 @@ import { DateTimeFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
-export function formatDatetime(name, length, year, month, day, name_1, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].formatDatetime(...args.slice(1)) }).apply(
+export function format(name, length, year, month, day, name_1, hour, minute, second, nanosecond) {
+    return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
         null,
         [
             DateTimeFormatter.createWithLength.apply(
@@ -51,8 +51,8 @@ export function formatDatetime(name, length, year, month, day, name_1, hour, min
         ]
     );
 }
-export function formatIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(
+export function formatIso(name, length, year, month, day, hour, minute, second, nanosecond) {
+    return (function (...args) { return args[0].formatIso(...args.slice(1)) }).apply(
         null,
         [
             DateTimeFormatter.createWithLength.apply(

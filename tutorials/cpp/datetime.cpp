@@ -28,7 +28,7 @@ int main() {
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
 
     std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
-    std::string out = tf->format_time(*time.get());
+    std::string out = tf->format(*time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "13:06") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -36,7 +36,7 @@ int main() {
     }
 
     std::unique_ptr<GregorianDateFormatter> df = GregorianDateFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = df->format_iso_datetime(*date.get(), *time.get());
+    out = df->format_iso(*date.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 de julio de 2022") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -44,7 +44,7 @@ int main() {
     }
 
     std::unique_ptr<GregorianDateTimeFormatter> dtf = GregorianDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Medium).ok().value();
-    out = dtf->format_iso_datetime(*date.get(), *time.get());
+    out = dtf->format_iso(*date.get(), *time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 jul 2022, 13:06") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -57,7 +57,7 @@ int main() {
     std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
 
     std::unique_ptr<DateTimeFormatter> any_dtf = DateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Medium).ok().value();
-    out = any_dtf->format_datetime(*any_date.get(), *any_time.get()).ok().value();
+    out = any_dtf->format(*any_date.get(), *any_time.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "Oct 5, 2 Reiwa, 1:33\u202fPM") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -104,7 +104,7 @@ int main() {
     time_zone->set_daylight_time();
 
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_zoned_iso_datetime(*date.get(), *time.get(), *time_zone.get()).ok().value();
+    out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -112,7 +112,7 @@ int main() {
     }
 
     std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = zdtf->format_zoned_datetime(*any_date.get(), *any_time.get(), *time_zone.get()).ok().value();
+    out = zdtf->format(*any_date.get(), *any_time.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;

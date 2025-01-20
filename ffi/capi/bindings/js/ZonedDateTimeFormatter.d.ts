@@ -13,7 +13,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** An object capable of formatting a date time with time zone to a string.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Vs.html)
 */
 
 
@@ -25,7 +27,7 @@ export class ZonedDateTimeFormatter {
 
     static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): ZonedDateTimeFormatter;
 
-    formatZonedDatetime(date: Date, time: Time, zone: TimeZoneInfo): string;
+    format(date: Date, time: Time, zone: TimeZoneInfo): string;
 
-    formatZonedIsoDatetime(date: IsoDate, time: Time, zone: TimeZoneInfo): string;
+    formatIso(date: IsoDate, time: Time, zone: TimeZoneInfo): string;
 }

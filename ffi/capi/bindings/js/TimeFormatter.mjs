@@ -10,7 +10,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.TimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
 */
 const TimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeFormatter_destroy_mv1(ptr);
@@ -81,9 +83,9 @@ export class TimeFormatter {
         }
     }
 
-    formatTime(value) {
+    format(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TimeFormatter_format_time_mv1(this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_TimeFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
             return write.readString8();

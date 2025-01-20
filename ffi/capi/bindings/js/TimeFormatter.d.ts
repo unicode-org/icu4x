@@ -9,7 +9,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.TimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
 */
 
 
@@ -21,5 +23,5 @@ export class TimeFormatter {
 
     static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): TimeFormatter;
 
-    formatTime(value: Time): string;
+    format(value: Time): string;
 }

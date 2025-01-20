@@ -230,6 +230,7 @@ pub mod ffi {
 
         /// Convert this date to one in a different calendar
         #[diplomat::rust_link(icu::calendar::Date::to_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::convert_any_date, FnInEnum, hidden)]
         pub fn to_calendar(&self, calendar: &Calendar) -> Box<Date> {
             Box::new(Date(self.0.to_calendar(calendar.0.clone())))
         }

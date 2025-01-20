@@ -14,7 +14,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /** An ICU4X DateFormatter object capable of formatting a [`Date`] and a [`Time`] as a string,
 *using some calendar specified at runtime in the locale.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html)
 */
 
 
@@ -26,9 +28,9 @@ export class DateTimeFormatter {
 
     static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): DateTimeFormatter;
 
-    formatDatetime(date: Date, time: Time): string;
+    format(date: Date, time: Time): string;
 
-    formatIsoDatetime(date: IsoDate, time: Time): string;
+    formatIso(date: IsoDate, time: Time): string;
 
     calendar(): Calendar;
 }

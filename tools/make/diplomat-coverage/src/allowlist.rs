@@ -91,6 +91,8 @@ lazy_static::lazy_static! {
         "AsCalendar",
         "IntoAnyCalendar",
         "GetField",
+        "IntoOption",
+        "DateTimeNamesFrom",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
@@ -120,11 +122,6 @@ lazy_static::lazy_static! {
         // for ones we do plan and adding links here
         // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
-
-        // Largely for use by datetimeformat, not generally useful
-        "icu::calendar::AnyCalendar::convert_any_date",
-        "icu::calendar::AnyCalendar::convert_any_datetime",
-        "icu::calendar::Date::formattable_year",
 
         // Individual calendars: Currently the main entry point is AnyCalendar
         // We have chosen to not do individual calendars (except Iso) over FFI
@@ -156,6 +153,7 @@ lazy_static::lazy_static! {
         // useful information to clients.
         "icu::calendar::types::MonthInfo",
         "icu::calendar::types::FormattingEra",
+        "icu::calendar::Date::formattable_year",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
@@ -164,12 +162,22 @@ lazy_static::lazy_static! {
         "icu::calendar::types::CyclicYear",
         "icu::calendar::types::YearInfo::cyclic",
         "icu::calendar::types::YearInfo::related_iso",
+        "icu::calendar::types::YearAmbiguity",
+        "icu::calendar::types::YearInfo::year_ambiguity",
 
+        // Strongly calendar-typed datetime methods
+        "icu::datetime::DateTimeFormatter::format_same_calendar",
+        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
+        "icu::datetime::MismatchedCalendarError",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
         "icu::datetime::parts",
         "icu::decimal::parts",
+
+        // Not planned for 2.0: Intermediate Writeable types.
+        "icu::datetime::FormattedDateTime::to_string",
+        "icu::datetime::FormattedDateTime::pattern",
 
         // Not planned for 2.0: Until someone needs them
         "icu::locale::extensions",
@@ -192,18 +200,19 @@ lazy_static::lazy_static! {
 
         // Doesn't make sense to expose through `icu_normalizer`
         "icu::normalizer::uts46::Uts46Mapper",
+        "icu::normalizer::uts46::Uts46MapperBorrowed",
 
         // Not planned for 2.0: we need DiplomatWriteable16
-        "icu::normalizer::ComposingNormalizer::normalize_utf16",
-        "icu::normalizer::ComposingNormalizer::normalize_utf16_to",
-        "icu::normalizer::DecomposingNormalizer::normalize_utf16",
-        "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16_to",
 
         // Not planned for 2.0
         // Can't be exposed till diplomat has input iterators, as well as
         // safety for borrowing input iterators into return types
-        "icu::normalizer::ComposingNormalizer::normalize_iter",
-        "icu::normalizer::DecomposingNormalizer::normalize_iter",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_iter",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_iter",
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
 
@@ -242,6 +251,13 @@ lazy_static::lazy_static! {
         "fixed_decimal::UnsignedFixedDecimal",
         "fixed_decimal::UnsignedRoundingMode",
 
+        // Not planned for 2.0
+        // Lower-level pattern API
+        "icu::datetime::pattern::TypedDateTimeNames",
+
+        // Not planned for 2.0
+        // Serde-specific
+        "icu::datetime::fieldsets::serde",
 
         // Stuff that is experimental
         //
@@ -252,23 +268,9 @@ lazy_static::lazy_static! {
 
         "icu::pattern",
 
-        "icu::datetime::fields::components",
-        "icu::datetime::fieldsets::serde",
-        "icu::datetime::neo_pattern",
-        "icu::datetime::neo_skeleton",
-        "icu::datetime::options::components",
-        "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeWriteError",
-        "icu::datetime::FormattedDateTimePattern",
-        "icu::datetime::pattern::TypedDateTimeNames",
-
         "fixed_decimal::CompactDecimal",
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
-
-        // Experimental API mostly used for provider, components bags, and patterns,
-        // may in the future be exposed for options
-        "icu::datetime::fields",
 
         "icu::plurals::rules",
 
@@ -318,6 +320,7 @@ lazy_static::lazy_static! {
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::timezone::types::Time",
         "icu::timezone::types::DateTime",

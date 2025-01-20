@@ -15,7 +15,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** An ICU4X DateFormatter object capable of formatting a [`Date`] and a [`Time`] as a string,
 *using some calendar specified at runtime in the locale.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html)
 */
 const DateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateTimeFormatter_destroy_mv1(ptr);
@@ -86,12 +88,12 @@ export class DateTimeFormatter {
         }
     }
 
-    formatDatetime(date, time) {
+    format(date, time) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_DateTimeFormatter_format_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
+        const result = wasm.icu4x_DateTimeFormatter_format_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -108,12 +110,12 @@ export class DateTimeFormatter {
         }
     }
 
-    formatIsoDatetime(date, time) {
+    formatIso(date, time) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_DateTimeFormatter_format_iso_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
+        const result = wasm.icu4x_DateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

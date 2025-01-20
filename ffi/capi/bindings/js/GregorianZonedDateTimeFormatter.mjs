@@ -13,7 +13,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An object capable of formatting a date time with time zone to a string.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Vs.html)
 */
 const GregorianZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GregorianZonedDateTimeFormatter_destroy_mv1(ptr);
@@ -84,12 +86,12 @@ export class GregorianZonedDateTimeFormatter {
         }
     }
 
-    formatZonedIsoDatetime(date, time, zone) {
+    formatIso(date, time, zone) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_format_zoned_iso_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
+        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

@@ -7,7 +7,6 @@ import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
 import { IsoDate } from "./IsoDate.mjs"
 import { Locale } from "./Locale.mjs"
-import { Time } from "./Time.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -15,7 +14,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** An ICU4X DateFormatter object capable of formatting a [`Date`] as a string,
 *using some calendar specified at runtime in the locale.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html)
 */
 const DateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateFormatter_destroy_mv1(ptr);
@@ -86,12 +87,12 @@ export class DateFormatter {
         }
     }
 
-    formatDate(value) {
+    format(value) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_DateFormatter_format_date_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
+        const result = wasm.icu4x_DateFormatter_format_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -108,56 +109,12 @@ export class DateFormatter {
         }
     }
 
-    formatIsoDate(value) {
+    formatIso(value) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_DateFormatter_format_iso_date_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DateTimeFormatError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatError: ' + cause.value, { cause });
-            }
-            return write.readString8();
-        }
-        
-        finally {
-            diplomatReceive.free();
-        
-            write.free();
-        }
-    }
-
-    formatDatetime(date, time) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_DateFormatter_format_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DateTimeFormatError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatError: ' + cause.value, { cause });
-            }
-            return write.readString8();
-        }
-        
-        finally {
-            diplomatReceive.free();
-        
-            write.free();
-        }
-    }
-
-    formatIsoDatetime(date, time) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_DateFormatter_format_iso_datetime_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
+        const result = wasm.icu4x_DateFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
