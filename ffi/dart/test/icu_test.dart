@@ -63,12 +63,12 @@ void main() {
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long)
-            .formatZonedIsoDatetime(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
+            .formatIso(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
         '15. Januar 2025, 14:32:12 MEZ');
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.short)
-            .formatZonedIsoDatetime(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
+            .formatIso(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
         '15.01.25, 14:32:12 MEZ');
   });
 }
