@@ -59,6 +59,7 @@ icu::datetime::fieldsets::Combo::map_month_names#FnInStruct
 icu::datetime::fieldsets::Combo::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::Combo::map_year_names#FnInStruct
 icu::datetime::fieldsets::Combo::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::Combo::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::Combo::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::Combo::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::Combo::map_zone_locations#FnInStruct
@@ -72,6 +73,7 @@ icu::datetime::fieldsets::D::map_month_names#FnInStruct
 icu::datetime::fieldsets::D::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::D::map_year_names#FnInStruct
 icu::datetime::fieldsets::D::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::D::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::D::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::D::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::D::map_zone_locations#FnInStruct
@@ -96,6 +98,7 @@ icu::datetime::fieldsets::DE::map_month_names#FnInStruct
 icu::datetime::fieldsets::DE::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::DE::map_year_names#FnInStruct
 icu::datetime::fieldsets::DE::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::DE::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::DE::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::DE::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::DE::map_zone_locations#FnInStruct
@@ -121,6 +124,7 @@ icu::datetime::fieldsets::DET::map_month_names#FnInStruct
 icu::datetime::fieldsets::DET::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::DET::map_year_names#FnInStruct
 icu::datetime::fieldsets::DET::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::DET::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::DET::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::DET::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::DET::map_zone_locations#FnInStruct
@@ -147,6 +151,7 @@ icu::datetime::fieldsets::DT::map_month_names#FnInStruct
 icu::datetime::fieldsets::DT::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::DT::map_year_names#FnInStruct
 icu::datetime::fieldsets::DT::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::DT::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::DT::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::DT::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::DT::map_zone_locations#FnInStruct
@@ -172,6 +177,7 @@ icu::datetime::fieldsets::E::map_month_names#FnInStruct
 icu::datetime::fieldsets::E::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::E::map_year_names#FnInStruct
 icu::datetime::fieldsets::E::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::E::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::E::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::E::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::E::map_zone_locations#FnInStruct
@@ -196,6 +202,7 @@ icu::datetime::fieldsets::ET::map_month_names#FnInStruct
 icu::datetime::fieldsets::ET::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::ET::map_year_names#FnInStruct
 icu::datetime::fieldsets::ET::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::ET::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::ET::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::ET::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::ET::map_zone_locations#FnInStruct
@@ -220,6 +227,7 @@ icu::datetime::fieldsets::L::map_month_names#FnInStruct
 icu::datetime::fieldsets::L::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::L::map_year_names#FnInStruct
 icu::datetime::fieldsets::L::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::L::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::L::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::L::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::L::map_zone_locations#FnInStruct
@@ -234,6 +242,7 @@ icu::datetime::fieldsets::M::map_month_names#FnInStruct
 icu::datetime::fieldsets::M::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::M::map_year_names#FnInStruct
 icu::datetime::fieldsets::M::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::M::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::M::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::M::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::M::map_zone_locations#FnInStruct
@@ -251,6 +260,7 @@ icu::datetime::fieldsets::MD::map_month_names#FnInStruct
 icu::datetime::fieldsets::MD::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::MD::map_year_names#FnInStruct
 icu::datetime::fieldsets::MD::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::MD::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::MD::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::MD::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::MD::map_zone_locations#FnInStruct
@@ -275,6 +285,7 @@ icu::datetime::fieldsets::MDE::map_month_names#FnInStruct
 icu::datetime::fieldsets::MDE::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::MDE::map_year_names#FnInStruct
 icu::datetime::fieldsets::MDE::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::MDE::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::MDE::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::MDE::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::MDE::map_zone_locations#FnInStruct
@@ -300,6 +311,7 @@ icu::datetime::fieldsets::MDET::map_month_names#FnInStruct
 icu::datetime::fieldsets::MDET::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::MDET::map_year_names#FnInStruct
 icu::datetime::fieldsets::MDET::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::MDET::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::MDET::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::MDET::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::MDET::map_zone_locations#FnInStruct
@@ -326,6 +338,7 @@ icu::datetime::fieldsets::MDT::map_month_names#FnInStruct
 icu::datetime::fieldsets::MDT::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::MDT::map_year_names#FnInStruct
 icu::datetime::fieldsets::MDT::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::MDT::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::MDT::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::MDT::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::MDT::map_zone_locations#FnInStruct
@@ -350,6 +363,7 @@ icu::datetime::fieldsets::O::map_month_names#FnInStruct
 icu::datetime::fieldsets::O::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::O::map_year_names#FnInStruct
 icu::datetime::fieldsets::O::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::O::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::O::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::O::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::O::map_zone_locations#FnInStruct
@@ -363,6 +377,7 @@ icu::datetime::fieldsets::Os::map_month_names#FnInStruct
 icu::datetime::fieldsets::Os::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::Os::map_year_names#FnInStruct
 icu::datetime::fieldsets::Os::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::Os::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::Os::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::Os::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::Os::map_zone_locations#FnInStruct
@@ -378,6 +393,7 @@ icu::datetime::fieldsets::T::map_month_names#FnInStruct
 icu::datetime::fieldsets::T::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::T::map_year_names#FnInStruct
 icu::datetime::fieldsets::T::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::T::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::T::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::T::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::T::map_zone_locations#FnInStruct
@@ -402,6 +418,7 @@ icu::datetime::fieldsets::V::map_month_names#FnInStruct
 icu::datetime::fieldsets::V::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::V::map_year_names#FnInStruct
 icu::datetime::fieldsets::V::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::V::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::V::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::V::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::V::map_zone_locations#FnInStruct
@@ -415,12 +432,27 @@ icu::datetime::fieldsets::Vs::map_month_names#FnInStruct
 icu::datetime::fieldsets::Vs::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::Vs::map_year_names#FnInStruct
 icu::datetime::fieldsets::Vs::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::Vs::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::Vs::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::Vs::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::Vs::map_zone_locations#FnInStruct
 icu::datetime::fieldsets::Vs::map_zone_specific_long#FnInStruct
 icu::datetime::fieldsets::Vs::map_zone_specific_short#FnInStruct
 icu::datetime::fieldsets::Vs::new#FnInStruct
+icu::datetime::fieldsets::X#Struct
+icu::datetime::fieldsets::X::map_day_period_names#FnInStruct
+icu::datetime::fieldsets::X::map_metazone_lookup#FnInStruct
+icu::datetime::fieldsets::X::map_month_names#FnInStruct
+icu::datetime::fieldsets::X::map_weekday_names#FnInStruct
+icu::datetime::fieldsets::X::map_year_names#FnInStruct
+icu::datetime::fieldsets::X::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::X::map_zone_exemplars#FnInStruct
+icu::datetime::fieldsets::X::map_zone_generic_long#FnInStruct
+icu::datetime::fieldsets::X::map_zone_generic_short#FnInStruct
+icu::datetime::fieldsets::X::map_zone_locations#FnInStruct
+icu::datetime::fieldsets::X::map_zone_specific_long#FnInStruct
+icu::datetime::fieldsets::X::map_zone_specific_short#FnInStruct
+icu::datetime::fieldsets::X::new#FnInStruct
 icu::datetime::fieldsets::Y#Struct
 icu::datetime::fieldsets::Y::long#FnInStruct
 icu::datetime::fieldsets::Y::map_day_period_names#FnInStruct
@@ -429,6 +461,7 @@ icu::datetime::fieldsets::Y::map_month_names#FnInStruct
 icu::datetime::fieldsets::Y::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::Y::map_year_names#FnInStruct
 icu::datetime::fieldsets::Y::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::Y::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::Y::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::Y::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::Y::map_zone_locations#FnInStruct
@@ -447,6 +480,7 @@ icu::datetime::fieldsets::YM::map_month_names#FnInStruct
 icu::datetime::fieldsets::YM::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::YM::map_year_names#FnInStruct
 icu::datetime::fieldsets::YM::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::YM::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::YM::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::YM::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::YM::map_zone_locations#FnInStruct
@@ -465,6 +499,7 @@ icu::datetime::fieldsets::YMD::map_month_names#FnInStruct
 icu::datetime::fieldsets::YMD::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::YMD::map_year_names#FnInStruct
 icu::datetime::fieldsets::YMD::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::YMD::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::YMD::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::YMD::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::YMD::map_zone_locations#FnInStruct
@@ -490,6 +525,7 @@ icu::datetime::fieldsets::YMDE::map_month_names#FnInStruct
 icu::datetime::fieldsets::YMDE::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::YMDE::map_year_names#FnInStruct
 icu::datetime::fieldsets::YMDE::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::YMDE::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::YMDE::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::YMDE::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::YMDE::map_zone_locations#FnInStruct
@@ -516,6 +552,7 @@ icu::datetime::fieldsets::YMDET::map_month_names#FnInStruct
 icu::datetime::fieldsets::YMDET::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::YMDET::map_year_names#FnInStruct
 icu::datetime::fieldsets::YMDET::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::YMDET::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::YMDET::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::YMDET::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::YMDET::map_zone_locations#FnInStruct
@@ -543,6 +580,7 @@ icu::datetime::fieldsets::YMDT::map_month_names#FnInStruct
 icu::datetime::fieldsets::YMDT::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::YMDT::map_year_names#FnInStruct
 icu::datetime::fieldsets::YMDT::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::YMDT::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::YMDT::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::YMDT::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::YMDT::map_zone_locations#FnInStruct
@@ -568,6 +606,7 @@ icu::datetime::fieldsets::Z::map_month_names#FnInStruct
 icu::datetime::fieldsets::Z::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::Z::map_year_names#FnInStruct
 icu::datetime::fieldsets::Z::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::Z::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::Z::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::Z::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::Z::map_zone_locations#FnInStruct
@@ -581,6 +620,7 @@ icu::datetime::fieldsets::Zs::map_month_names#FnInStruct
 icu::datetime::fieldsets::Zs::map_weekday_names#FnInStruct
 icu::datetime::fieldsets::Zs::map_year_names#FnInStruct
 icu::datetime::fieldsets::Zs::map_zone_essentials#FnInStruct
+icu::datetime::fieldsets::Zs::map_zone_exemplars#FnInStruct
 icu::datetime::fieldsets::Zs::map_zone_generic_long#FnInStruct
 icu::datetime::fieldsets::Zs::map_zone_generic_short#FnInStruct
 icu::datetime::fieldsets::Zs::map_zone_locations#FnInStruct
@@ -604,6 +644,7 @@ icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_month_names#FnInEnu
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_weekday_names#FnInEnum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_year_names#FnInEnum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_zone_essentials#FnInEnum
+icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_zone_exemplars#FnInEnum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_zone_generic_long#FnInEnum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_zone_generic_short#FnInEnum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_zone_locations#FnInEnum
@@ -616,6 +657,7 @@ icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_month_names#FnIn
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_weekday_names#FnInEnum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_year_names#FnInEnum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_zone_essentials#FnInEnum
+icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_zone_exemplars#FnInEnum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_zone_generic_long#FnInEnum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_zone_generic_short#FnInEnum
 icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet::map_zone_locations#FnInEnum
@@ -630,6 +672,7 @@ icu::datetime::fieldsets::enums::CompositeFieldSet::map_month_names#FnInEnum
 icu::datetime::fieldsets::enums::CompositeFieldSet::map_weekday_names#FnInEnum
 icu::datetime::fieldsets::enums::CompositeFieldSet::map_year_names#FnInEnum
 icu::datetime::fieldsets::enums::CompositeFieldSet::map_zone_essentials#FnInEnum
+icu::datetime::fieldsets::enums::CompositeFieldSet::map_zone_exemplars#FnInEnum
 icu::datetime::fieldsets::enums::CompositeFieldSet::map_zone_generic_long#FnInEnum
 icu::datetime::fieldsets::enums::CompositeFieldSet::map_zone_generic_short#FnInEnum
 icu::datetime::fieldsets::enums::CompositeFieldSet::map_zone_locations#FnInEnum
@@ -650,6 +693,7 @@ icu::datetime::fieldsets::enums::DateFieldSet::map_month_names#FnInEnum
 icu::datetime::fieldsets::enums::DateFieldSet::map_weekday_names#FnInEnum
 icu::datetime::fieldsets::enums::DateFieldSet::map_year_names#FnInEnum
 icu::datetime::fieldsets::enums::DateFieldSet::map_zone_essentials#FnInEnum
+icu::datetime::fieldsets::enums::DateFieldSet::map_zone_exemplars#FnInEnum
 icu::datetime::fieldsets::enums::DateFieldSet::map_zone_generic_long#FnInEnum
 icu::datetime::fieldsets::enums::DateFieldSet::map_zone_generic_short#FnInEnum
 icu::datetime::fieldsets::enums::DateFieldSet::map_zone_locations#FnInEnum
@@ -669,6 +713,7 @@ icu::datetime::fieldsets::enums::TimeFieldSet::map_month_names#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet::map_weekday_names#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet::map_year_names#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet::map_zone_essentials#FnInEnum
+icu::datetime::fieldsets::enums::TimeFieldSet::map_zone_exemplars#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet::map_zone_generic_long#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet::map_zone_generic_short#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet::map_zone_locations#FnInEnum
@@ -688,6 +733,7 @@ icu::datetime::fieldsets::enums::ZoneFieldSet::map_month_names#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet::map_weekday_names#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet::map_year_names#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet::map_zone_essentials#FnInEnum
+icu::datetime::fieldsets::enums::ZoneFieldSet::map_zone_exemplars#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet::map_zone_generic_long#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet::map_zone_generic_short#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet::map_zone_locations#FnInEnum
