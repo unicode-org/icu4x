@@ -65,10 +65,17 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
+    #[allow(clippy::type_complexity)]
     fn calculate_locations(
         &self,
         req: DataRequest,
-    ) -> Result<BTreeMap<TimeZoneBcp47Id, String>, DataError> {
+    ) -> Result<
+        (
+            BTreeMap<TimeZoneBcp47Id, String>,
+            BTreeMap<TimeZoneBcp47Id, String>,
+        ),
+        DataError,
+    > {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
@@ -80,6 +87,62 @@ impl SourceDataProvider {
             .value
             .dates
             .time_zone_names;
+
+        let bcp47_tzids = &self
+            .cldr()?
+            .bcp47()
+            .read_and_parse::<cldr_serde::time_zones::bcp47_tzid::Resource>("timezone.json")?
+            .keyword
+            .u
+            .time_zones
+            .values;
+
+        let mut exemplar_cities = bcp47_tzids
+            .iter()
+            .filter_map(|(bcp47, bcp47_tzid_data)| {
+                bcp47_tzid_data
+                    .alias
+                    .as_ref()
+                    .map(|aliases| (bcp47, aliases))
+            })
+            // Montreal is meant to be deprecated, but pre-43 the deprecation
+            // fallback was not set, which is why it might show up here.
+            .filter(|(bcp47, _)| bcp47.0 != "camtr")
+            .filter_map(|(bcp47, aliases)| {
+                aliases
+                    .split(' ')
+                    .filter_map(|alias| {
+                        let mut alias_parts = alias.split('/');
+                        let continent = alias_parts.next().expect("split non-empty");
+                        let location_or_subregion = alias_parts.next()?;
+                        let location_in_subregion = alias_parts.next();
+                        time_zone_names
+                            .zone
+                            .0
+                            .get(continent)
+                            .and_then(|x| x.0.get(location_or_subregion))
+                            .and_then(|x| match x {
+                                LocationOrSubRegion::Location(place) => Some(place),
+                                LocationOrSubRegion::SubRegion(region) => {
+                                    region.get(location_in_subregion?)
+                                }
+                            })
+                            .and_then(|p| p.exemplar_city.clone())
+                    })
+                    .next()
+                    .or_else(|| {
+                        let canonical_alias = aliases.split(' ').next().expect("split non-empty");
+                        let mut alias_parts = canonical_alias.split('/');
+                        (alias_parts.next() != Some("Etc")).then(|| {
+                            alias_parts
+                                .next_back()
+                                .expect("split non-empty")
+                                .replace('_', " ")
+                        })
+                    })
+                    .map(|name| (*bcp47, name))
+            })
+            .collect::<BTreeMap<_, _>>();
 
         let primary_zones = self.compute_primary_zones()?;
 
@@ -171,78 +234,28 @@ impl SourceDataProvider {
                 .map(|x| x.as_str())
         };
 
-        let bcp47_tzids = &self
-            .cldr()?
-            .bcp47()
-            .read_and_parse::<cldr_serde::time_zones::bcp47_tzid::Resource>("timezone.json")?
-            .keyword
-            .u
-            .time_zones
-            .values;
+        let mut locations = BTreeMap::new();
 
-        let mut locations = bcp47_tzids
-            .iter()
-            .filter_map(|(bcp47, bcp47_tzid_data)| {
-                bcp47_tzid_data
-                    .alias
-                    .as_ref()
-                    .map(|aliases| (bcp47, aliases))
-            })
-            // Montreal is meant to be deprecated, but pre-43 the deprecation
-            // fallback was not set, which is why it might show up here.
-            .filter(|(bcp47, _)| bcp47.0 != "camtr")
-            .filter_map(|(bcp47, aliases)| {
-                if let Some(region) = primary_zones.get(bcp47) {
-                    Some((
-                        *bcp47,
-                        region_display_names
-                            .get(region)
-                            .copied()
-                            .or_else(|| find_endonym_or_en(*region))
-                            .unwrap_or(region.as_str())
-                            .to_string(),
-                    ))
-                } else {
-                    aliases
-                        .split(' ')
-                        .filter_map(|alias| {
-                            let mut alias_parts = alias.split('/');
-                            let continent = alias_parts.next().expect("split non-empty");
-                            let location_or_subregion = alias_parts.next()?;
-                            let location_in_subregion = alias_parts.next();
-                            time_zone_names
-                                .zone
-                                .0
-                                .get(continent)
-                                .and_then(|x| x.0.get(location_or_subregion))
-                                .and_then(|x| match x {
-                                    LocationOrSubRegion::Location(place) => Some(place),
-                                    LocationOrSubRegion::SubRegion(region) => {
-                                        region.get(location_in_subregion?)
-                                    }
-                                })
-                                .and_then(|p| p.exemplar_city.clone())
-                        })
-                        .next()
-                        .or_else(|| {
-                            let canonical_alias =
-                                aliases.split(' ').next().expect("split non-empty");
-                            let mut alias_parts = canonical_alias.split('/');
-                            (alias_parts.next() != Some("Etc")).then(|| {
-                                alias_parts
-                                    .next_back()
-                                    .expect("split non-empty")
-                                    .replace('_', " ")
-                            })
-                        })
-                        .map(|name| (*bcp47, name))
-                }
-            })
-            .collect::<BTreeMap<_, _>>();
+        exemplar_cities.retain(|&k, v| {
+            if k.0 == "unk" {
+                true
+            } else if let Some(region) = primary_zones.get(&k) {
+                let region_name = region_display_names
+                    .get(region)
+                    .copied()
+                    .or_else(|| find_endonym_or_en(*region))
+                    .unwrap_or(region.as_str())
+                    .to_string();
+                let retain = &region_name != v;
+                locations.insert(k, region_name);
+                retain
+            } else {
+                locations.insert(k, v.clone());
+                false
+            }
+        });
 
-        locations.remove(&TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
-
-        Ok(locations)
+        Ok((locations, exemplar_cities))
     }
 }
 
@@ -262,11 +275,11 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        let mut locations = self.calculate_locations(req)?;
+        let mut locations = self.calculate_locations(req)?.0;
 
         if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?;
-            locations.retain(|k, v| und.get(k).unwrap() != v);
+            let und = self.calculate_locations(Default::default())?.0;
+            locations.retain(|k, v| und.get(k) != Some(v));
         }
 
         Ok(DataResponse {
@@ -277,6 +290,26 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
                 pattern_daylight: Cow::Owned(time_zone_names.region_format_dt.0.clone()),
                 pattern_partial_location: Cow::Owned(time_zone_names.fallback_format.0.clone()),
+            }),
+        })
+    }
+}
+
+impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
+        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+
+        let mut exemplars = self.calculate_locations(req)?.1;
+
+        if *req.id.locale != DataLocale::default() {
+            let und = self.calculate_locations(Default::default())?.1;
+            exemplars.retain(|k, v| und.get(k) != Some(v));
+        }
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+                exemplars: exemplars.into_iter().collect(),
             }),
         })
     }
@@ -537,7 +570,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         let mz_periods =
             DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
-        let locations = self.calculate_locations(req)?;
+        let locations = self.calculate_locations(req)?.0;
         let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
             BTreeMap::new();
         for cursor in mz_periods.get().0.iter0() {
@@ -605,7 +638,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
 
         let mz_periods =
             DataProvider::<MetazonePeriodV1Marker>::load(self, Default::default())?.payload;
-        let locations = self.calculate_locations(req)?;
+        let locations = self.calculate_locations(req)?.0;
         let mut reverse_meta_zone_id_data: BTreeMap<MetazoneId, BTreeSet<TimeZoneBcp47Id>> =
             BTreeMap::new();
         for cursor in mz_periods.get().0.iter0() {

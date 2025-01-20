@@ -38,6 +38,7 @@ macro_rules! registry(
             icu::collator::provider::CollationReorderingV1Marker = "collator/reord@1",
             icu::collator::provider::CollationSpecialPrimariesV1Marker = "collator/prim@1",
             icu::datetime::provider::time_zones::LocationsV1Marker = "time_zone/locations@1",
+            icu::datetime::provider::time_zones::ExemplarCitiesV1Marker = "time_zone/exemplars@1",
             icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker = "time_zone/generic_long@1",
             icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker = "time_zone/generic_short@1",
             icu::datetime::provider::time_zones::MetazonePeriodV1Marker = "time_zone/metazone_period@1",

@@ -45,6 +45,7 @@ pub(super) enum TimeZoneFormatterUnit {
     SpecificNonLocation(FieldLength),
     GenericLocation,
     SpecificLocation,
+    ExemplarCity,
     #[allow(dead_code)]
     GenericPartialLocation(FieldLength),
     LocalizedOffset(FieldLength),
@@ -91,6 +92,7 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
             Self::SpecificLocation => {
                 SpecificLocationFormat.format(sink, input, data_payloads, fdf)
             }
+            Self::ExemplarCity => ExemplarCityFormat.format(sink, input, data_payloads, fdf),
             Self::GenericPartialLocation(length) => {
                 GenericPartialLocationFormat(length).format(sink, input, data_payloads, fdf)
             }
@@ -376,6 +378,54 @@ impl FormatTimeZone for SpecificLocationFormat {
         }
         .interpolate([location])
         .write_to(sink)?;
+
+        Ok(Ok(()))
+    }
+}
+
+// Los Angeles
+struct ExemplarCityFormat;
+
+impl FormatTimeZone for ExemplarCityFormat {
+    /// Writes the time zone exemplar city format as defined by the UTS-35 spec.
+    /// e.g. Los Angeles
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
+    fn format<W: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut W,
+        input: &ExtractedInput,
+        data_payloads: TimeZoneDataPayloadsBorrowed,
+        _fdf: Option<&FixedDecimalFormatter>,
+    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
+        let Some(time_zone_id) = input.time_zone_id else {
+            return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
+        };
+        let Some(exemplars) = data_payloads.exemplars else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(exemplars_root) = data_payloads.exemplars_root else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(locations) = data_payloads.locations else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(locations_root) = data_payloads.locations_root else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+
+        let Some(location) = exemplars
+            .exemplars
+            .get(&time_zone_id)
+            .or_else(|| locations.locations.get(&time_zone_id))
+            .or_else(|| exemplars_root.exemplars.get(&time_zone_id))
+            .or_else(|| locations_root.locations.get(&time_zone_id))
+            .or_else(|| exemplars.exemplars.get(&TimeZoneBcp47Id::unknown()))
+            .or_else(|| exemplars_root.exemplars.get(&TimeZoneBcp47Id::unknown()))
+        else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        location.write_to(sink)?;
 
         Ok(Ok(()))
     }

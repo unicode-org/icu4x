@@ -322,6 +322,7 @@ enum FieldSetField {
     // ZoneGenericShort = 39,
     ZoneGenericLong = 40,
     ZoneLocation = 41,
+    ZoneExemplar = 42,
 }
 
 impl FieldSetField {
@@ -410,6 +411,7 @@ impl FieldSetSerde {
     const ZONE_GENERIC: Self = Self::from_fields(&[ZoneGeneric]);
     const ZONE_GENERIC_LONG: Self = Self::from_fields(&[ZoneGenericLong]);
     const ZONE_LOCATION: Self = Self::from_fields(&[ZoneLocation]);
+    const ZONE_EXEMPLAR: Self = Self::from_fields(&[ZoneExemplar]);
 
     const fn from_fields(fields: &[FieldSetField]) -> Self {
         let mut bit_fields = 0;
@@ -557,6 +559,7 @@ impl FieldSetSerde {
             (ZoneFieldSet::V(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
             (ZoneFieldSet::Vs(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
             (ZoneFieldSet::L(v), true) => (Self::ZONE_LOCATION, v.to_raw_options()),
+            (ZoneFieldSet::X(v), true) => (Self::ZONE_EXEMPLAR, v.to_raw_options()),
             // Non-standalone: return the short as default and long as opt-in
             (ZoneFieldSet::Z(v), false) => (Self::ZONE_SPECIFIC_LONG, v.to_raw_options()),
             (ZoneFieldSet::Zs(v), false) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
@@ -565,6 +568,7 @@ impl FieldSetSerde {
             (ZoneFieldSet::V(v), false) => (Self::ZONE_GENERIC_LONG, v.to_raw_options()),
             (ZoneFieldSet::Vs(v), false) => (Self::ZONE_GENERIC, v.to_raw_options()),
             (ZoneFieldSet::L(v), false) => (Self::ZONE_LOCATION, v.to_raw_options()),
+            (ZoneFieldSet::X(v), false) => (Self::ZONE_EXEMPLAR, v.to_raw_options()),
         }
     }
 

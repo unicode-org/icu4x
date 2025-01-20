@@ -17,6 +17,8 @@ use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant}
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
+    pub(crate) use super::ExemplarCitiesV1;
+    pub(crate) use super::ExemplarCitiesV1Marker;
     pub(crate) use super::LocationsV1;
     pub(crate) use super::LocationsV1Marker;
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
@@ -121,6 +123,26 @@ pub struct LocationsV1<'data> {
         )
     )]
     pub pattern_partial_location: Cow<'data, DoublePlaceholderPattern>,
+}
+
+/// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
+/// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplars@1")]
+#[derive(PartialEq, Debug, Clone, Default)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct ExemplarCitiesV1<'data> {
+    /// Per-zone exemplar city name
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub exemplars: ZeroMap<'data, TimeZoneBcp47Id, str>,
 }
 
 /// An ICU4X mapping to generic metazone names.
