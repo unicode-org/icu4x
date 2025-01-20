@@ -337,7 +337,7 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
 }
 
 /// An offset from Coordinated Universal Time (UTC)
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default, PartialOrd, Ord)]
 pub struct UtcOffset(i32);
 
 impl UtcOffset {

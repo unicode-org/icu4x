@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::BTreeMap;
+
 use icu::calendar::Date;
 use icu::datetime::{fieldsets, DateTimeFormatter};
 use icu::locale::locale;
@@ -17,36 +19,67 @@ fn main() {
     let non_location_formatter = DateTimeFormatter::try_new(prefs, fieldsets::V::new()).unwrap();
     let city_formatter = DateTimeFormatter::try_new(prefs, fieldsets::X::new()).unwrap();
 
-    let max_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
+    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
 
-    let mut tzs = Vec::new();
+    let mut grouped_tzs = BTreeMap::<_, BTreeMap<_, _>>::new();
 
     for tz in mapper.iter_bcp47() {
         if tz.0 == "unk" || tz.starts_with("utc") || tz.0 == "gmt" {
             continue;
         }
 
-        let standard_offset = offsets
-            .compute_offsets_from_time_zone(tz, max_date)
-            .unwrap()
-            .standard;
+        let offsets = offsets
+            .compute_offsets_from_time_zone(tz, reference_date)
+            .unwrap();
 
-        let tzi = tz.with_offset(Some(standard_offset)).at_time(max_date);
+        let tzi = tz.with_offset(Some(offsets.standard)).at_time(reference_date);
 
-        tzs.push((
-            -tzi.offset().unwrap().to_seconds(),
-            format!("({})", offset_formatter.format_any_calendar(&tzi)),
-            non_location_formatter.format_any_calendar(&tzi).to_string(),
-            city_formatter.format_any_calendar(&tzi).to_string(),
-        ));
+        grouped_tzs
+            .entry(non_location_formatter.format_any_calendar(&tzi).to_string())
+            .or_default()
+            .insert(offsets, tzi);
     }
 
-    tzs.sort();
+    let mut list = Vec::new();
 
-    for (_, offset, non_location, city) in &tzs {
+    for (non_location, zones) in grouped_tzs {
+        for (offsets, tzi) in &zones {
+            list.push((
+                -offsets.standard.to_seconds(),
+                format!(
+                    "({}{})",
+                    offset_formatter.format_any_calendar(tzi),
+                    if let Some(daylight) = offsets.daylight {
+                        format!(
+                            "/{}",
+                            offset_formatter.format_any_calendar(
+                                &tzi.time_zone_id()
+                                    .with_offset(Some(daylight))
+                                    .at_time(reference_date)
+                            )
+                        )
+                    } else {
+                        String::new()
+                    }
+                ),
+                if zones.len() == 1 {
+                    non_location.clone()
+                } else {
+                    format!(
+                        "{non_location} - {}",
+                        city_formatter.format_any_calendar(tzi)
+                    )
+                },
+            ));
+        }
+    }
+
+    list.sort_by(|a, b| (a.0, &a.2).cmp(&(b.0, &b.2)));
+
+    for (_, offset, non_location) in &list {
         println!(
-            "{offset:0$} {non_location} - {city}",
-            tzs.iter().map(|(_, l, ..)| l.len()).max().unwrap()
+            "{offset:0$} {non_location}",
+            list.iter().map(|(_, l, ..)| l.len()).max().unwrap()
         );
     }
 }
