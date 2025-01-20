@@ -62,6 +62,11 @@ where
 ///
 /// The trait has no public methods and is not implementable outside of this crate.
 ///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
 /// [`Pattern`]: crate::Pattern
 // Debug so that `#[derive(Debug)]` on types generic in `PatternBackend` works
 pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
@@ -114,6 +119,8 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 ///
 /// This trait can add [`Part`]s for individual literals or placeholders. The implementations
 /// of this trait on standard types do not add any [`Part`]s.
+///
+/// This trait has a blanket implementation and is therefore not implementable by user code.
 ///
 /// # Examples
 ///

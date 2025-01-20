@@ -546,6 +546,7 @@ impl WordSegmenter {
 
 #[derive(Debug)]
 pub struct WordBreakTypeUtf8;
+impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
@@ -565,6 +566,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
 
 #[derive(Debug)]
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
+impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
@@ -639,6 +641,8 @@ where
 
 #[derive(Debug)]
 pub struct WordBreakTypeUtf16;
+
+impl crate::private::Sealed for WordBreakTypeUtf16 {}
 
 impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;

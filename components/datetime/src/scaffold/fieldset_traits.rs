@@ -28,6 +28,11 @@ use icu_timezone::{
 /// (input types only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
     type YearInput: IntoOption<YearInfo>;
@@ -45,6 +50,11 @@ pub trait DateInputMarkers: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
@@ -60,6 +70,11 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
@@ -75,6 +90,11 @@ pub trait DateDataMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: IntoOption<IsoHour>;
@@ -94,6 +114,11 @@ pub trait TimeMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
@@ -123,6 +148,11 @@ pub trait ZoneMarkers: UnstableSealed {
 /// required for datetime formatting.
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///
@@ -156,6 +186,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
@@ -204,6 +235,7 @@ where
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker>
@@ -256,6 +288,7 @@ where
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
@@ -400,6 +433,7 @@ where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with a fixed calendar.
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarExternalDataMarkers:
     DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
 {
@@ -412,6 +446,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with any calendar.
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
     DataProvider<ChineseCacheV1Marker>
     + DataProvider<DangiCacheV1Marker>

@@ -12,6 +12,9 @@ use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 /// will be some kind of set over codepoints and strings, or something that
 /// can be built into one.
 ///
+/// An implementation is provided for [`CodePointInversionListBuilder`], but users are encouraged
+/// to implement this trait on their own collections as needed.
+///
 /// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
 /// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
 pub trait ClosureSink {

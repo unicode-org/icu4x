@@ -19,6 +19,11 @@ use super::UnstableSealed;
 /// This trait allows for types that contain data for some but not all types of datetime names,
 /// allowing for reduced stack size. For example, a type could contain year and month names but
 /// not weekday, day period, or time zone names.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 #[allow(missing_docs)]
 pub trait DateTimeNamesMarker: UnstableSealed {
     type YearNames: NamesContainer<YearNamesV1Marker, YearNameLength>;
@@ -35,6 +40,11 @@ pub trait DateTimeNamesMarker: UnstableSealed {
 }
 
 /// Trait that associates a container for a payload parameterized by the given variables.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 #[allow(missing_docs)]
 pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
 where
@@ -100,6 +110,11 @@ impl MaybePayloadError {
 /// a value depending on the type parameter `Variables`.
 ///
 /// Helper trait for [`DateTimeNamesMarker`].
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 #[allow(missing_docs)]
 pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
     fn new_empty() -> Self;
@@ -334,6 +349,7 @@ where
 /// is_trait_implemented::<TimeFieldSet, CompositeFieldSet>();
 /// ```
 #[allow(missing_docs)]
+// This trait is implicitly sealed due to sealed supertraits
 pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
     fn map_year_names(
         other: <M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,
