@@ -151,7 +151,7 @@ impl DateTimeNamesMarker for ZoneFieldSet {
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
     type ZoneLocations = datetime_marker_helper!(@names/zone/locations, yes);
-    type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars,);
+    type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars, yes);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
@@ -214,7 +214,7 @@ impl DateTimeNamesMarker for CompositeFieldSet {
     type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
     type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, yes);
     type ZoneLocations = datetime_marker_helper!(@names/zone/locations, yes);
-    type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars,);
+    type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars, yes);
     type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, yes);
     type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, yes);
     type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, yes);
