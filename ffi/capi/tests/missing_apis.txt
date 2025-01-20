@@ -590,12 +590,14 @@ icu::datetime::fieldsets::Zs::new#FnInStruct
 icu::datetime::fieldsets::builder::BuilderError#Enum
 icu::datetime::fieldsets::builder::DateFields#Enum
 icu::datetime::fieldsets::builder::FieldSetBuilder#Struct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_calendar_period#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_composite#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_composite_datetime#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_date#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_date_and_time#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_time#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_zone#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::new#FnInStruct
 icu::datetime::fieldsets::builder::ZoneStyle#Enum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet#Enum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet::map_day_period_names#FnInEnum
