@@ -13,7 +13,7 @@ use icu_calendar::cal::{
 };
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
-    AsCalendar, Calendar,
+    Calendar,
 };
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
@@ -263,20 +263,18 @@ fn test_fixture(fixture_name: &str, file: &str) {
     }
 }
 
-fn assert_fixture_element<A>(
+fn assert_fixture_element<C>(
     locale: &Locale,
-    input_value: &DateTime<A>,
+    input_value: &DateTime<C>,
     input_iso: &DateTime<Iso>,
     output_value: &TestOutputItem,
     skeleton: CompositeDateTimeFieldSet,
     description: &str,
 ) where
-    A: AsCalendar + Clone,
-    A::Calendar: CldrCalendar,
-    A::Calendar: IntoAnyCalendar,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::YearNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::MonthNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::SkeletaV1Marker>,
+    C: Calendar + CldrCalendar + IntoAnyCalendar + Clone,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::SkeletaV1Marker>,
 {
     assert!(
         input_value.date.calendar().any_calendar_kind().is_some(),
@@ -296,7 +294,7 @@ fn assert_fixture_element<A>(
     };
 
     let any_input = ZonedDateTime {
-        date: input_value.date.to_any(),
+        date: input_value.date.clone().to_any(),
         time: input_value.time,
         zone: TimeZoneInfo::utc(),
     };
