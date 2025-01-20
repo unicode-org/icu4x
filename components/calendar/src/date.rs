@@ -344,11 +344,13 @@ impl Date<Iso> {
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
+impl<C: IntoAnyCalendar> Date<C> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
-    pub fn to_any(&self) -> Date<AnyCalendar> {
-        let cal = self.calendar();
-        Date::from_raw(cal.date_to_any(self.inner()), cal.to_any_cloned())
+    pub fn to_any(self) -> Date<AnyCalendar> {
+        Date::from_raw(
+            self.calendar.date_to_any(&self.inner),
+            self.calendar.to_any(),
+        )
     }
 }
 
