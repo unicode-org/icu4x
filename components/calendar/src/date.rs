@@ -433,18 +433,13 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
 impl<A: AsCalendar + Clone> Clone for Date<A> {
     fn clone(&self) -> Self {
         Self {
-            inner: self.inner.clone(),
+            inner: self.inner,
             calendar: self.calendar.clone(),
         }
     }
 }
 
-impl<A> Copy for Date<A>
-where
-    A: AsCalendar + Copy,
-    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
-{
-}
+impl<A> Copy for Date<A> where A: AsCalendar + Copy {}
 
 #[cfg(test)]
 mod tests {

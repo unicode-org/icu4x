@@ -123,7 +123,7 @@ pub enum AnyCalendar {
 
 // TODO(#3469): Decide on the best way to implement Ord.
 /// The inner date type for [`AnyCalendar`]
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug, Copy)]
 #[non_exhaustive]
 pub enum AnyDateInner {
     /// A date for a [`Buddhist`] calendar
@@ -833,7 +833,7 @@ impl AnyCalendar {
             Date::new_from_iso(date.to_iso(), Ref(self))
         } else {
             Date {
-                inner: date.inner.clone(),
+                inner: date.inner,
                 calendar: Ref(self),
             }
         }
@@ -1189,7 +1189,7 @@ impl IntoAnyCalendar for AnyCalendar {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        d.clone()
+        *d
     }
 }
 
