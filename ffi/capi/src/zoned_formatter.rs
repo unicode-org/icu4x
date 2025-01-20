@@ -156,8 +156,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::ZonedDateTime {
-                // Arc clone
-                date: date.0.clone(),
+                date: date.0.wrap_calendar_in_ref(),
                 time: time.0,
                 zone: zone
                     .time_zone_id

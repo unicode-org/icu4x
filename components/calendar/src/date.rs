@@ -30,19 +30,19 @@ impl<C: Calendar> AsCalendar for C {
     }
 }
 
-impl<C: Calendar> AsCalendar for Rc<C> {
-    type Calendar = C;
+impl<C: AsCalendar> AsCalendar for Rc<C> {
+    type Calendar = C::Calendar;
     #[inline]
-    fn as_calendar(&self) -> &C {
-        self
+    fn as_calendar(&self) -> &Self::Calendar {
+        self.as_ref().as_calendar()
     }
 }
 
-impl<C: Calendar> AsCalendar for Arc<C> {
-    type Calendar = C;
+impl<C: AsCalendar> AsCalendar for Arc<C> {
+    type Calendar = C::Calendar;
     #[inline]
-    fn as_calendar(&self) -> &C {
-        self
+    fn as_calendar(&self) -> &Self::Calendar {
+        self.as_ref().as_calendar()
     }
 }
 
@@ -67,11 +67,11 @@ impl<C> Clone for Ref<'_, C> {
     }
 }
 
-impl<C: Calendar> AsCalendar for Ref<'_, C> {
-    type Calendar = C;
+impl<C: AsCalendar> AsCalendar for Ref<'_, C> {
+    type Calendar = C::Calendar;
     #[inline]
-    fn as_calendar(&self) -> &C {
-        self.0
+    fn as_calendar(&self) -> &Self::Calendar {
+        self.0.as_calendar()
     }
 }
 
@@ -352,19 +352,27 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
     }
 }
 
-impl<C: Calendar> Date<C> {
+impl<A: AsCalendar> Date<A> {
     /// Wrap the calendar type in `Rc<T>`
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
-    pub fn wrap_calendar_in_rc(self) -> Date<Rc<C>> {
+    pub fn wrap_calendar_in_rc(self) -> Date<Rc<A>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
     }
 
     /// Wrap the calendar type in `Arc<T>`
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
-    pub fn wrap_calendar_in_arc(self) -> Date<Arc<C>> {
+    pub fn wrap_calendar_in_arc(self) -> Date<Arc<A>> {
         Date::from_raw(self.inner, Arc::new(self.calendar))
+    }
+
+    /// Wrap the calendar type in `Ref<T>`
+    ///
+    /// Useful for converting a `&Date<C>` into an equivalent `Date<D>` without cloning
+    /// the calendar.
+    pub fn wrap_calendar_in_ref(&self) -> Date<Ref<A>> {
+        Date::from_raw(self.inner, Ref(&self.calendar))
     }
 }
 

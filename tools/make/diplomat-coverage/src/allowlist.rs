@@ -335,6 +335,7 @@ lazy_static::lazy_static! {
         // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
+        "icu::calendar::Date::wrap_calendar_in_ref",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike

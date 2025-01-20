@@ -289,8 +289,7 @@ pub mod ffi {
             let _infallible = self
                 .0
                 .format_any_calendar(&icu_timezone::DateTime {
-                    // Arc clone
-                    date: date.0.clone(),
+                    date: date.0.wrap_calendar_in_ref(),
                     time: time.0,
                 })
                 .write_to(write);
@@ -375,8 +374,7 @@ pub mod ffi {
             let _infallible = self
                 .0
                 .format_any_calendar(&icu_timezone::DateTime {
-                    // Arc clone
-                    date: date.0.clone(),
+                    date: date.0.wrap_calendar_in_ref(),
                     time: time.0,
                 })
                 .write_to(write);
