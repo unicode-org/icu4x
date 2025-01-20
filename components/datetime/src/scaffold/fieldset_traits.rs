@@ -673,7 +673,7 @@ macro_rules! datetime_marker_helper {
     (@names/zone/locations, yes) => {
         tz::LocationsV1Marker
     };
-    (@names/zone/exemplar, yes) => {
+    (@names/zone/exemplars, yes) => {
         tz::ExemplarCitiesV1Marker
     };
     (@names/zone/generic_long, yes) => {

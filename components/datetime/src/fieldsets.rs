@@ -905,7 +905,7 @@ macro_rules! impl_zone_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $($zone_essentials_yes)?);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations, $($zone_locations_yes)?);
-            type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar, $($zone_exemplars_yes)?);
+            type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars, $($zone_exemplars_yes)?);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
