@@ -21,7 +21,7 @@ fn main() {
 
     let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
 
-    let mut grouped_tzs = BTreeMap::<_, BTreeMap<_, _>>::new();
+    let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
     for tz in mapper.iter_bcp47() {
         if tz.0 == "unk" || tz.starts_with("utc") || tz.0 == "gmt" {
@@ -39,7 +39,7 @@ fn main() {
         grouped_tzs
             .entry(non_location_formatter.format_any_calendar(&tzi).to_string())
             .or_default()
-            .insert(offsets, tzi);
+            .push((offsets, tzi));
     }
 
     let mut list = Vec::new();
