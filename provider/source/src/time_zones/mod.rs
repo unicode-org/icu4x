@@ -11,7 +11,6 @@ use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
-use tinystr::tinystr;
 
 mod convert;
 mod names;
