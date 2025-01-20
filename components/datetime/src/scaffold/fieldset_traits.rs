@@ -186,7 +186,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
-// This trait is implicitly sealed due to its blanket impl
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
@@ -235,7 +235,7 @@ where
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
-// This trait is implicitly sealed due to its blanket impl
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker>
@@ -288,7 +288,7 @@ where
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
-// This trait is implicitly sealed due to its blanket impl
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
@@ -433,7 +433,7 @@ where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with a fixed calendar.
-// This trait is implicitly sealed due to its blanket impl
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarExternalDataMarkers:
     DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
 {
@@ -446,7 +446,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with any calendar.
-// This trait is implicitly sealed due to its blanket impl
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
     DataProvider<ChineseCacheV1Marker>
     + DataProvider<DangiCacheV1Marker>
