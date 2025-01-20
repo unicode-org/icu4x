@@ -67,10 +67,7 @@ fn main() {
                 if zones.len() == 1 {
                     non_location.clone()
                 } else {
-                    format!(
-                        "{non_location} - {}",
-                        city_formatter.format(tzi)
-                    )
+                    format!("{non_location} - {}", city_formatter.format(tzi))
                 },
             ));
         }
