@@ -22,7 +22,7 @@ use super::UnstableSealed;
 ///
 /// <div class="stab unstable">
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 #[allow(missing_docs)]
 pub trait DateTimeNamesMarker: UnstableSealed {
@@ -43,7 +43,7 @@ pub trait DateTimeNamesMarker: UnstableSealed {
 ///
 /// <div class="stab unstable">
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 #[allow(missing_docs)]
 pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
@@ -113,7 +113,7 @@ impl MaybePayloadError {
 ///
 /// <div class="stab unstable">
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 #[allow(missing_docs)]
 pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {

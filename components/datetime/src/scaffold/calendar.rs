@@ -193,7 +193,7 @@ impl UnstableSealed for Roc {}
 ///
 /// <div class="stab unstable">
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 pub trait CalMarkers<M>: UnstableSealed
 where
