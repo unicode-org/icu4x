@@ -140,7 +140,8 @@ pub struct LocationsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ExemplarCitiesV1<'data> {
-    /// Per-zone exemplar city name
+    /// Per-zone exemplar city name. This is deduplicated against `LocationsV1.locations`, so it
+    /// only contains time zones that don't use the exemplar city in the location format.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub exemplars: ZeroMap<'data, TimeZoneBcp47Id, str>,
 }

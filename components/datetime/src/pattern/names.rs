@@ -2284,7 +2284,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // VVV
                 (FS::TimeZone(TimeZone::Location), Three) => {
-                    numeric_field = Some(field);
                     self.load_time_zone_location_names(locations_provider, prefs)?;
                     self.load_time_zone_exemplar_cities_names(exemplar_cities_provider, prefs)?;
                 }
