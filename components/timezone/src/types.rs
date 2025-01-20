@@ -103,10 +103,10 @@ dt_unit!(
 dt_unit!(
     IsoSecond,
     u8,
-    59,
+    60,
     /// An ISO-8601 second component, for use with ISO calendars.
     ///
-    /// Must be within inclusive bounds `[0, 59]`.
+    /// Must be within inclusive bounds `[0, 60]`. `60` accommodates for leap seconds.
 );
 
 dt_unit!(
