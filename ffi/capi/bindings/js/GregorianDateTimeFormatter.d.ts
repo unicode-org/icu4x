@@ -11,7 +11,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /** An ICU4X FixedCalendarDateTimeFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
 *using the Gregorian Calendar.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html)
 */
 
 
@@ -23,5 +25,5 @@ export class GregorianDateTimeFormatter {
 
     static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): GregorianDateTimeFormatter;
 
-    formatIsoDatetime(date: IsoDate, time: Time): string;
+    formatIso(date: IsoDate, time: Time): string;
 }

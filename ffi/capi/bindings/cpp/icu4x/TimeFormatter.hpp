@@ -27,7 +27,7 @@ namespace capi {
     typedef struct icu4x_TimeFormatter_create_with_length_and_provider_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_and_provider_mv1_result;
     icu4x_TimeFormatter_create_with_length_and_provider_mv1_result icu4x_TimeFormatter_create_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
     
-    void icu4x_TimeFormatter_format_time_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::Time* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_TimeFormatter_format_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::Time* value, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_TimeFormatter_destroy_mv1(TimeFormatter* self);
@@ -49,10 +49,10 @@ inline diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFo
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::TimeFormatter>>(std::unique_ptr<icu4x::TimeFormatter>(icu4x::TimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline std::string icu4x::TimeFormatter::format_time(const icu4x::Time& value) const {
+inline std::string icu4x::TimeFormatter::format(const icu4x::Time& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_TimeFormatter_format_time_mv1(this->AsFFI(),
+  icu4x::capi::icu4x_TimeFormatter_format_mv1(this->AsFFI(),
     value.AsFFI(),
     &write);
   return output;
