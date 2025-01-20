@@ -32,7 +32,9 @@ fn main() {
             .compute_offsets_from_time_zone(tz, reference_date)
             .unwrap();
 
-        let tzi = tz.with_offset(Some(offsets.standard)).at_time(reference_date);
+        let tzi = tz
+            .with_offset(Some(offsets.standard))
+            .at_time(reference_date);
 
         grouped_tzs
             .entry(non_location_formatter.format_any_calendar(&tzi).to_string())
