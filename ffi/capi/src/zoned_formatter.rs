@@ -30,7 +30,9 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
-    #[diplomat::rust_link(icu::datetime, Mod)]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::Vs, Struct, compact)]
     pub struct GregorianZonedDateTimeFormatter(
         pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, Combo<YMDT, Vs>>,
     );
@@ -43,6 +45,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -60,6 +63,7 @@ pub mod ffi {
         /// for the time zone.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -77,7 +81,9 @@ pub mod ffi {
             )))
         }
         /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
-        pub fn format_zoned_iso_datetime(
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_iso(
             &self,
             date: &IsoDate,
             time: &Time,
@@ -103,7 +109,9 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An object capable of formatting a date time with time zone to a string.
-    #[diplomat::rust_link(icu::datetime, Mod)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::Vs, Struct, compact)]
     pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<Combo<YMDT, Vs>>);
 
     impl ZonedDateTimeFormatter {
@@ -114,6 +122,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -131,6 +140,7 @@ pub mod ffi {
         /// for the time zone.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -148,7 +158,9 @@ pub mod ffi {
             )))
         }
         /// Formats a [`Date`] a [`Time`], and a [`TimeZoneInfo`] to a string.
-        pub fn format_zoned_datetime(
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format(
             &self,
             date: &Date,
             time: &Time,
@@ -156,8 +168,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let zdt = icu_timezone::ZonedDateTime {
-                // Arc clone
-                date: date.0.clone(),
+                date: date.0.wrap_calendar_in_ref(),
                 time: time.0,
                 zone: zone
                     .time_zone_id
@@ -168,12 +179,14 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
+            let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
         }
 
         /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
-        pub fn format_zoned_iso_datetime(
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_iso(
             &self,
             date: &IsoDate,
             time: &Time,
@@ -192,7 +205,7 @@ pub mod ffi {
                             .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
                     ),
             };
-            let _infallible = self.0.format_any_calendar(&zdt).write_to(write);
+            let _infallible = self.0.format(&zdt).write_to(write);
             Ok(())
         }
     }

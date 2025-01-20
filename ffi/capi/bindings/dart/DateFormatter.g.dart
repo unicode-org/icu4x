@@ -5,7 +5,9 @@ part of 'lib.g.dart';
 /// An ICU4X DateFormatter object capable of formatting a [`Date`] as a string,
 /// using some calendar specified at runtime in the locale.
 ///
-/// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+///
+/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html)
 final class DateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -27,6 +29,8 @@ final class DateFormatter implements ffi.Finalizable {
 
   /// Creates a new [`DateFormatter`] using compiled data.
   ///
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.withLength(Locale locale, DateTimeLength length) {
     final result = _icu4x_DateFormatter_create_with_length_mv1(locale._ffi, length.index);
@@ -37,6 +41,8 @@ final class DateFormatter implements ffi.Finalizable {
   }
 
   /// Creates a new [`DateFormatter`] using a particular data source.
+  ///
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.withLengthAndProvider(DataProvider provider, Locale locale, DateTimeLength length) {
@@ -49,10 +55,12 @@ final class DateFormatter implements ffi.Finalizable {
 
   /// Formats a [`Date`] to a string.
   ///
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  ///
   /// Throws [DateTimeFormatError] on failure.
-  String formatDate(Date value) {
+  String format(Date value) {
     final write = _Write();
-    final result = _icu4x_DateFormatter_format_date_mv1(_ffi, value._ffi, write._ffi);
+    final result = _icu4x_DateFormatter_format_mv1(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
       throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -63,36 +71,12 @@ final class DateFormatter implements ffi.Finalizable {
   ///
   /// Will convert to this formatter's calendar first
   ///
-  /// Throws [DateTimeFormatError] on failure.
-  String formatIsoDate(IsoDate value) {
-    final write = _Write();
-    final result = _icu4x_DateFormatter_format_iso_date_mv1(_ffi, value._ffi, write._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return write.finalize();
-  }
-
-  /// Formats a [`Date`] and a [`Time`] to a string.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
-  String formatDatetime(Date date, Time time) {
+  String formatIso(IsoDate value) {
     final write = _Write();
-    final result = _icu4x_DateFormatter_format_datetime_mv1(_ffi, date._ffi, time._ffi, write._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return write.finalize();
-  }
-
-  /// Formats an [`IsoDate`] and a [`Time`] to a string.
-  ///
-  /// Will convert to this formatter's calendar first
-  ///
-  /// Throws [DateTimeFormatError] on failure.
-  String formatIsoDatetime(IsoDate date, Time time) {
-    final write = _Write();
-    final result = _icu4x_DateFormatter_format_iso_datetime_mv1(_ffi, date._ffi, time._ffi, write._ffi);
+    final result = _icu4x_DateFormatter_format_iso_mv1(_ffi, value._ffi, write._ffi);
     if (!result.isOk) {
       throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -124,24 +108,14 @@ external _ResultOpaqueInt32 _icu4x_DateFormatter_create_with_length_mv1(ffi.Poin
 external _ResultOpaqueInt32 _icu4x_DateFormatter_create_with_length_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_date_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_DateFormatter_format_date_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_DateFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_iso_date_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_iso_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_DateFormatter_format_iso_date_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
-
-@meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_datetime_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_DateFormatter_format_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> write);
-
-@meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_iso_datetime_mv1')
-// ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_DateFormatter_format_iso_datetime_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_DateFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_calendar_mv1')

@@ -39,12 +39,12 @@
 //! let field_set_1 = YMDT::long()
 //!     .with_year_style(YearStyle::Full)
 //!     .with_alignment(Alignment::Column)
-//!     .with_time_precision(TimePrecision::MinuteExact);
+//!     .with_time_precision(TimePrecision::Minute);
 //!
 //! let mut field_set_2 = YMDT::long();
 //! field_set_2.year_style = Some(YearStyle::Full);
 //! field_set_2.alignment = Some(Alignment::Column);
-//! field_set_2.time_precision = Some(TimePrecision::MinuteExact);
+//! field_set_2.time_precision = Some(TimePrecision::Minute);
 //!
 //! assert_eq!(field_set_1, field_set_2);
 //! ```
@@ -277,9 +277,9 @@ macro_rules! impl_marker_with_options {
                     self.time_precision = Some(yes_to!(time_precision, $timeprecision_yes));
                     self
                 }
-                /// Sets the time precision to [`TimePrecision::MinuteExact`]
+                /// Sets the time precision to [`TimePrecision::Minute`]
                 pub fn hm(mut self) -> Self {
-                    self.time_precision = Some(TimePrecision::MinuteExact);
+                    self.time_precision = Some(TimePrecision::Minute);
                     self
                 }
             }
@@ -424,7 +424,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// let dt = Date::try_new_iso(2024, 5, 17).unwrap();
             ///
             /// assert_writeable_eq!(
-            ///     fmt.format_any_calendar(&dt),
+            ///     fmt.format(&dt),
             #[doc = concat!("    \"", $sample, "\"")]
             /// );
             /// ```
@@ -576,7 +576,7 @@ macro_rules! impl_date_marker {
             /// let dt = DateTime { date: Date::try_new_iso(2024, 5, 17).unwrap(), time: Time::try_new(15, 47, 50, 0).unwrap() };
             ///
             /// assert_writeable_eq!(
-            ///     fmt.format_any_calendar(&dt),
+            ///     fmt.format(&dt),
             #[doc = concat!("    \"", $sample_time, "\"")]
             /// );
             /// ```
@@ -1195,7 +1195,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{IxdtfParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{ZonedDateTimeParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{Z, Zs};
@@ -1385,7 +1385,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{IxdtfParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+    /// use icu::timezone::{Time, TimeZoneBcp47Id};
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::Vs;
@@ -1414,7 +1414,7 @@ impl_zone_marker!(
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{Time, TimeZoneInfo, UtcOffset, TimeZoneIdMapper, TimeZoneBcp47Id};
+    /// use icu::timezone::{Time, TimeZoneIdMapper};
     /// use icu::datetime::TimeFormatter;
     /// use icu::datetime::fieldsets::Vs;
     /// use icu::datetime::DateTimeWriteError;
@@ -1467,7 +1467,7 @@ impl_zone_marker!(
     /// use icu::calendar::{DateTime, Iso};
     /// use icu::datetime::TimeFormatter;
     /// use icu::datetime::fieldsets::V;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
+    /// use icu::timezone::TimeZoneBcp47Id;
     /// use tinystr::tinystr;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;

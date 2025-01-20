@@ -5,8 +5,8 @@ import { Locale } from "icu4x"
 import { Time } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function formatZonedDatetime(name, length, year, month, day, name_1, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
-    return (function (...args) { return args[0].formatZonedDatetime(...args.slice(1)) }).apply(
+export function format(name, length, year, month, day, name_1, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
+    return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
         null,
         [
             ZonedDateTimeFormatter.createWithLength.apply(
@@ -60,8 +60,8 @@ export function formatZonedDatetime(name, length, year, month, day, name_1, hour
         ]
     );
 }
-export function formatZonedIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
-    return (function (...args) { return args[0].formatZonedIsoDatetime(...args.slice(1)) }).apply(
+export function formatIso(name, length, year, month, day, hour, minute, second, nanosecond, bcp47Id, offsetSeconds, dst) {
+    return (function (...args) { return args[0].formatIso(...args.slice(1)) }).apply(
         null,
         [
             ZonedDateTimeFormatter.createWithLength.apply(

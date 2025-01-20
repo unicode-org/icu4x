@@ -13,7 +13,7 @@
 //!
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
-//! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar.clone());
+//! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar);
 //!
 //! assert_eq!(date_japanese.year().era_year_or_extended(), 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);

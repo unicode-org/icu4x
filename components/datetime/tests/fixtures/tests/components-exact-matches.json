@@ -397,7 +397,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 }
             }
         },
@@ -421,7 +421,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 }
             }
         },
@@ -444,7 +444,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h23"
             }
@@ -469,7 +469,7 @@
                 "semantic": {
                     "fieldSet": ["weekday", "time"],
                     "length": "medium",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h23"
             }
@@ -491,7 +491,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "hourExact"
+                    "timePrecision": "hour"
                 },
                 "hourCycle": "h12"
             }
@@ -514,7 +514,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h12"
             }
@@ -538,7 +538,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h12"
             }
@@ -560,7 +560,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "hourExact"
+                    "timePrecision": "hour"
                 },
                 "hourCycle": "h23"
             }
@@ -583,7 +583,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h23"
             }
@@ -607,7 +607,7 @@
                 "semantic": {
                     "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h23"
             }

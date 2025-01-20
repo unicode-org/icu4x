@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
+/** See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/enum.Length.html) for more information.
 */
 
 

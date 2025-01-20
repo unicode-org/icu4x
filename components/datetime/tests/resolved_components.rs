@@ -80,9 +80,9 @@ fn test_length_time_preferences() {
 fn test_date_and_time() {
     let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
         fieldsets::YMDET::medium()
-            .with_year_style(YearStyle::Always)
+            .with_year_style(YearStyle::WithEra)
             .with_alignment(Alignment::Column)
-            .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F4)),
+            .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F4)),
     ));
 
     let mut input_bag = components::Bag::default();

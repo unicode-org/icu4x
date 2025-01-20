@@ -19,7 +19,7 @@ use core::fmt;
 /// unstable and prone to change, especially for `offset_date()` and `until()`.
 pub trait Calendar {
     /// The internal type used to represent dates
-    type DateInner: PartialEq + Eq + Clone + fmt::Debug;
+    type DateInner: Eq + Copy + fmt::Debug;
     /// Construct a date from era/month codes and fields
     ///
     /// The year is extended_year if no era is provided

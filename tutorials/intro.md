@@ -126,7 +126,7 @@ fn main() {
     // For smaller codesize you can use FixedCalendarDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
     let date = date.to_any();
 
-    let formatted_date = dtf.format_any_calendar(&date).to_string();
+    let formatted_date = dtf.format(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }

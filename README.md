@@ -49,7 +49,7 @@ let dtf = DateTimeFormatter::try_new(
 let date = Date::try_new_iso(2020, 9, 12).expect("date should be valid");
 let date = date.to_any();
 
-let formatted_date = dtf.format_any_calendar(&date).to_string();
+let formatted_date = dtf.format(&date).to_string();
 assert_eq!(
     formatted_date,
     "12 de septiembre de 2020"

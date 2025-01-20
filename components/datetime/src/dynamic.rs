@@ -58,7 +58,7 @@
 //!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
 //!             .unwrap()
 //!     })
-//!     .map(|formatter| formatter.format_any_calendar(&datetime).to_string());
+//!     .map(|formatter| formatter.format(&datetime).to_string());
 //!
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```

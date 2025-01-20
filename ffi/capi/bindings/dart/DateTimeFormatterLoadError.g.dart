@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [2](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [3](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
+/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
 enum DateTimeFormatterLoadError {
   unknown,
 

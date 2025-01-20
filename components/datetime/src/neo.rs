@@ -435,7 +435,7 @@ where
     /// let date = Date::try_new_iso(2024, 5, 8).unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&date),
+    ///     formatter.format(&date),
     ///     "30 Nisan 5784"
     /// );
     /// ```
@@ -633,7 +633,7 @@ where
     ///
     /// let date = Date::try_new_roc(113, 5, 8).unwrap();
     ///
-    /// assert_writeable_eq!(formatter.format_any_calendar(&date), "30 Nisan 5784");
+    /// assert_writeable_eq!(formatter.format(&date), "30 Nisan 5784");
     /// ```
     ///
     /// A time cannot be passed into the formatter when a date is expected:
@@ -651,9 +651,9 @@ where
     /// .unwrap();
     ///
     /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
-    /// formatter.format_any_calendar(&Time::midnight());
+    /// formatter.format(&Time::midnight());
     /// ```
-    pub fn format_any_calendar<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
+    pub fn format<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
         I: ?Sized + ConvertCalendar,
         I::Converted<'a>: Sized + AllInputMarkers<FSet>,
@@ -697,7 +697,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&date),
+    ///     formatter.format(&date),
     ///     "12 Tishri 5785"
     /// );
     /// ```
@@ -854,7 +854,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// // Test that the specific formatter works:
     /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     specific_formatter.format_any_calendar(&date),
+    ///     specific_formatter.format(&date),
     ///     "20 déc. 2024"
     /// );
     ///
@@ -863,7 +863,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
-    ///     general_formatter.format_any_calendar(&date),
+    ///     general_formatter.format(&date),
     ///     "20 déc. 2024"
     /// );
     /// ```
@@ -894,7 +894,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&Date::try_new_iso(2024, 12, 16).unwrap()),
+    ///     formatter.format(&Date::try_new_iso(2024, 12, 16).unwrap()),
     ///     "16 ธันวาคม 2567"
     /// );
     ///

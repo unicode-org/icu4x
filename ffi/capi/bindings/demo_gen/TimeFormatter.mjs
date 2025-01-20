@@ -1,8 +1,8 @@
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
 import { TimeFormatter } from "icu4x"
-export function formatTime(name, length, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].formatTime(...args.slice(1)) }).apply(
+export function format(name, length, hour, minute, second, nanosecond) {
+    return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
         null,
         [
             TimeFormatter.createWithLength.apply(

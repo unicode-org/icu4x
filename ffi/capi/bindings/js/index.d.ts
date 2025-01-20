@@ -186,7 +186,7 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { WeekCalculator } from "./WeekCalculator"
 
-export { IxdtfParser } from "./IxdtfParser"
+export { ZonedDateTimeParser } from "./ZonedDateTimeParser"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 

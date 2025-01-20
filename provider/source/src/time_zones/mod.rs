@@ -11,7 +11,6 @@ use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
-use tinystr::tinystr;
 
 mod convert;
 mod names;
@@ -105,8 +104,6 @@ impl SourceDataProvider {
         for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
             meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
         }
-        // TODO(#1781): Remove this special case once the short id is updated in CLDR
-        meta_zone_ids.insert("Yukon".to_owned(), MetazoneId(tinystr!(4, "yuko")));
         Ok(meta_zone_ids)
     }
 

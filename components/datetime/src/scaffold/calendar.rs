@@ -393,7 +393,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A
     type Converted<'a> = Date<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
+        self.to_calendar(Ref(calendar))
     }
 }
 
@@ -409,9 +409,8 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        let date = self.date.to_any().to_calendar(Ref(calendar));
         DateTime {
-            date,
+            date: self.date.to_calendar(Ref(calendar)),
             time: self.time,
         }
     }
@@ -423,9 +422,8 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
     type Converted<'a> = ZonedDateTime<Ref<'a, AnyCalendar>, Z>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        let date = self.date.to_any().to_calendar(Ref(calendar));
         ZonedDateTime {
-            date,
+            date: self.date.to_calendar(Ref(calendar)),
             time: self.time,
             zone: self.zone,
         }

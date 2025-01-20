@@ -16,20 +16,20 @@
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
 //! use icu::locale::locale;
-//! use icu::timezone::{IxdtfParser, Time};
+//! use icu::timezone::{ZonedDateTimeParser, Time};
 //! use writeable::assert_writeable_parts_eq;
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F2)).with_zone_specific(),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F2)).with_zone_specific(),
 //! )
 //! .unwrap();
 //!
-//! let dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar()).unwrap();
+//! let dtz = ZonedDateTimeParser::new().parse("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
-//!     dtf.format_any_calendar(&dtz),
+//!     dtf.format(&dtz),
 //!     "Nov 20, 2566 BE, 11:35:03.50 AM GMT",
 //!     [
 //!         (0, 3, datetime_parts::MONTH),

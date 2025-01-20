@@ -57,18 +57,18 @@ void main() {
 
   test('DateTime formatting', () {
     final zonedDateTime =
-        IxdtfParser().tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
+        ZonedDateTimeParser().tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
 
     var locale = Locale.fromString('de');
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long)
-            .formatZonedIsoDatetime(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
+            .formatIso(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
         '15. Januar 2025, 14:32:12 MEZ');
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.short)
-            .formatZonedIsoDatetime(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
+            .formatIso(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
         '15.01.25, 14:32:12 MEZ');
   });
 }

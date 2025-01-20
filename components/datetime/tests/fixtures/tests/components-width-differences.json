@@ -34,7 +34,7 @@
                 "semantic": {
                     "fieldSet": ["year"],
                     "length": "medium",
-                    "yearStyle": "always"
+                    "yearStyle": "withEra"
                 }
             }
         },

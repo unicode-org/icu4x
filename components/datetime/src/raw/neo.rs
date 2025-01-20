@@ -232,7 +232,7 @@ impl DatePatternSelectionData {
                         .map(|y| y.year_ambiguity())
                         .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
                 ) {
-                    (YearStyle::Always, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
+                    (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
                         PackedSkeletonVariant::Variant1
                     }
                     (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
@@ -256,27 +256,19 @@ impl ExtractedInput {
         &self,
         time_precision: TimePrecision,
     ) -> (PackedSkeletonVariant, Option<FractionalSecondDigits>) {
-        enum HourMinute {
-            Hour,
-            Minute,
-        }
-        let smallest_required_field = match time_precision {
-            TimePrecision::HourExact => return (PackedSkeletonVariant::Standard, None),
-            TimePrecision::MinuteExact => return (PackedSkeletonVariant::Variant0, None),
-            TimePrecision::SecondExact(f) => return (PackedSkeletonVariant::Variant1, Some(f)),
-            TimePrecision::HourPlus => HourMinute::Hour,
-            TimePrecision::MinutePlus => HourMinute::Minute,
-            TimePrecision::SecondPlus => return (PackedSkeletonVariant::Variant1, None),
-        };
-        let minute = self.minute.unwrap_or_default();
-        let second = self.second.unwrap_or_default();
-        let nanosecond = self.nanosecond.unwrap_or_default();
-        if !nanosecond.is_zero() || !second.is_zero() {
-            (PackedSkeletonVariant::Variant1, None)
-        } else if !minute.is_zero() || matches!(smallest_required_field, HourMinute::Minute) {
-            (PackedSkeletonVariant::Variant0, None)
-        } else {
-            (PackedSkeletonVariant::Standard, None)
+        match time_precision {
+            TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
+            TimePrecision::Minute => (PackedSkeletonVariant::Variant0, None),
+            TimePrecision::Second => (PackedSkeletonVariant::Variant1, None),
+            TimePrecision::FractionalSecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
+            TimePrecision::MinuteOptional => {
+                let minute = self.minute.unwrap_or_default();
+                if minute.is_zero() {
+                    (PackedSkeletonVariant::Standard, None)
+                } else {
+                    (PackedSkeletonVariant::Variant0, None)
+                }
+            }
         }
     }
 }
@@ -347,7 +339,7 @@ impl OverlapPatternSelectionData {
                 // year and a time because that would involve 3*3 = 9 variants
                 // instead of 3 variants.
                 debug_assert!(options.year_style.is_none());
-                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
+                let time_precision = options.time_precision.unwrap_or_default();
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
@@ -432,7 +424,7 @@ impl TimePatternSelectionData {
                 prefs,
                 payload,
             } => {
-                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
+                let time_precision = options.time_precision.unwrap_or_default();
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
