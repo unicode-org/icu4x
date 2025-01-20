@@ -37,7 +37,7 @@ fn main() {
             .at_time(reference_date);
 
         grouped_tzs
-            .entry(non_location_formatter.format_any_calendar(&tzi).to_string())
+            .entry(non_location_formatter.format(&tzi).to_string())
             .or_default()
             .push((offsets, tzi));
     }
@@ -50,11 +50,11 @@ fn main() {
                 -offsets.standard.to_seconds(),
                 format!(
                     "({}{})",
-                    offset_formatter.format_any_calendar(tzi),
+                    offset_formatter.format(tzi),
                     if let Some(daylight) = offsets.daylight {
                         format!(
                             "/{}",
-                            offset_formatter.format_any_calendar(
+                            offset_formatter.format(
                                 &tzi.time_zone_id()
                                     .with_offset(Some(daylight))
                                     .at_time(reference_date)
@@ -69,7 +69,7 @@ fn main() {
                 } else {
                     format!(
                         "{non_location} - {}",
-                        city_formatter.format_any_calendar(tzi)
+                        city_formatter.format(tzi)
                     )
                 },
             ));
