@@ -474,6 +474,16 @@ impl SourceDataProvider {
                             // Dedup consecutive offsets, keeping higher end time
                             data.dedup_by_key(|(_, offsets)| *offsets);
 
+                            // Use start times instead of end times
+                            data = data
+                                .iter()
+                                .copied()
+                                .enumerate()
+                                .map(|(i, (_, offsets))| {
+                                    (data.get(i + 1).map(|d| d.0).unwrap_or(0), offsets)
+                                })
+                                .collect();
+
                             data.into_iter().map(
                                 move |(end_time, (utc_offset, dst_offset_relative))| {
                                     (
