@@ -113,8 +113,8 @@ impl ZoneOffsetCalculator {
                 let mut offsets = None;
                 let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
                     + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
-                for (minutes, id) in cursor.iter1_copied().rev() {
-                    if minutes_since_epoch_walltime <= i32::from_unaligned(*minutes) {
+                for (minutes, id) in cursor.iter1_copied() {
+                    if minutes_since_epoch_walltime >= i32::from_unaligned(*minutes) {
                         offsets = Some(id);
                     } else {
                         break;
