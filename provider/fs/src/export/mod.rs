@@ -21,7 +21,7 @@
 //! // Set up the exporter
 //! let mut options = Options::default();
 //! options.root = demo_path.clone();
-//! let serializer = Box::new(serializers::Json::default());
+//! let serializer = serializers::Json::default();
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!

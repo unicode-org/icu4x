@@ -24,7 +24,7 @@ use std::io;
 /// // Then pass it to a FilesystemExporter:
 /// let demo_path = std::env::temp_dir().join("icu4x_postcard_serializer_demo");
 /// FilesystemExporter::try_new(
-///     Box::from(serializer),
+///     serializer,
 ///     demo_path.clone().into(),
 /// )
 /// .unwrap();
