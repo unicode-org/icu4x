@@ -23,7 +23,7 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
             .core()
             .read_and_parse("supplemental/windowsZones.json")?;
 
-        let iana2bcp = self.compute_bcp47_tzids_btreemap()?;
+        let iana2bcp = self.iana_to_bcp47_map()?;
 
         let windows_zones = &resource.supplemental.windows_zones;
 

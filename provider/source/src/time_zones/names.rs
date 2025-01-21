@@ -15,7 +15,7 @@ use zerovec::{ZeroSlice, ZeroVec};
 
 impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3Marker>, DataError> {
-        let iana2bcp = &self.compute_bcp47_tzids_btreemap()?;
+        let iana2bcp = self.iana_to_bcp47_map()?;
 
         // Sort and deduplicate the BCP-47 IDs:
         let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
@@ -25,7 +25,7 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
         // Get the canonical IANA names.
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
-        let bcp2iana = self.compute_canonical_tzids_btreemap()?;
+        let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
@@ -79,7 +79,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
-        let bcp2iana = &self.compute_canonical_tzids_btreemap()?;
+        let bcp2iana = self.bcp47_to_canonical_iana_map()?;
         let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp2iana.keys().copied().collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
@@ -206,7 +206,7 @@ fn test_compute_bcp47_ids_hash() {
 fn test_normalize_canonicalize_iana_coverage() {
     let provider = crate::SourceDataProvider::new_testing();
 
-    let iana2bcp = &provider.compute_bcp47_tzids_btreemap().unwrap();
+    let iana2bcp = provider.iana_to_bcp47_map().unwrap();
 
     let mapper = icu::timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
     let mapper = mapper.as_borrowed();
@@ -216,7 +216,7 @@ fn test_normalize_canonicalize_iana_coverage() {
         assert_eq!(&normalized, iana_id);
     }
 
-    let bcp2iana = &provider.compute_canonical_tzids_btreemap().unwrap();
+    let bcp2iana = provider.bcp47_to_canonical_iana_map().unwrap();
     for (iana_id, bcp47_id) in iana2bcp.iter() {
         let canonicalized = mapper.canonicalize_iana(iana_id).unwrap().0;
         assert_eq!(&canonicalized, bcp2iana.get(bcp47_id).unwrap());
