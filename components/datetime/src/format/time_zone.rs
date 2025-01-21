@@ -16,11 +16,12 @@ use icu_timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriodV1<'_> {
+    // returns the lowercase metazone id, and the cased metazone id
     fn resolve(
         &self,
         time_zone_id: TimeZoneBcp47Id,
         (date, time): (Date<Iso>, Time),
-    ) -> Option<MetazoneId> {
+    ) -> Option<(MetazoneId, MetazoneId)> {
         let cursor = self.0.get0(&time_zone_id)?;
         let mut metazone_id = None;
         let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
@@ -34,7 +35,7 @@ impl crate::provider::time_zones::MetazonePeriodV1<'_> {
                 break;
             }
         }
-        metazone_id
+        metazone_id.map(|id| (MetazoneId(id.0.to_ascii_lowercase()), id))
     }
 }
 
@@ -137,7 +138,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
         let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
             names
                 .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?)
+                .get(&metazone_period.resolve(time_zone_id, local_time)?.0)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -164,7 +165,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         let Some(time_zone_id) = input.time_zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(zone_variant) = input.zone_variant else {
+        let Some(mut zone_variant) = input.zone_variant else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("zone_variant")));
         };
         let Some(local_time) = input.local_time else {
@@ -185,10 +186,11 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             .overrides
             .get(&(time_zone_id, zone_variant))
             .or_else(|| {
-                names.defaults.get(&(
-                    metazone_period.resolve(time_zone_id, local_time)?,
-                    zone_variant,
-                ))
+                let (mz, cased_mz) = metazone_period.resolve(time_zone_id, local_time)?;
+                if cased_mz.0.is_ascii_lowercase() {
+                    zone_variant = ZoneVariant::Standard;
+                }
+                names.defaults.get(&(mz, zone_variant))
             })
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
@@ -476,7 +478,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
             non_locations
                 .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?)
+                .get(&metazone_period.resolve(time_zone_id, local_time)?.0)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };

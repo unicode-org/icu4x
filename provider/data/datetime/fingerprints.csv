@@ -28268,7 +28268,7 @@ time_zone/locations@1, zh-Hant, 9060B, 8924B, ea7ff60940f7e5
 time_zone/locations@1, zh-MO, -> zh-HK
 time_zone/locations@1, zh-SG, 9163B, 9027B, cdda2647bc617a7a
 time_zone/locations@1, zu, 8939B, 8803B, 4ffe068623c9adb7
-time_zone/metazone_period@1, <singleton>, 11097B, 11009B, dcfa50fb39ebd549
+time_zone/metazone_period@1, <singleton>, 15885B, 15797B, 487f18edc4e76a9c
 time_zone/specific_long@1, <lookup>, 979B, 196 identifiers
 time_zone/specific_long@1, <total>, 1446148B, 1429047B, 190 unique payloads
 time_zone/specific_long@1, af, 5140B, 5050B, 74c6dd82476ee9f8

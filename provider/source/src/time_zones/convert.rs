@@ -299,23 +299,67 @@ impl SourceDataProvider {
                                 .collect::<Vec<_>>(),
                         })
                         .flat_map(|(iana, periods)| {
-                            periods.iter().flat_map(move |period| {
-                                Some((
-                                    bcp47_tzid_data.get(&iana)?,
-                                    period
-                                        .uses_meta_zone
-                                        .from
-                                        .as_deref()
-                                        .map(parse_mzone_from)
-                                        .map(|(date, time)| {
-                                            (date.to_fixed() - EPOCH) as i32 * 24 * 60
-                                                + (time.hour.number() as i32 * 60
-                                                    + time.minute.number() as i32)
-                                        })
-                                        .unwrap_or_default(),
-                                    meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
-                                ))
+                            let id = bcp47_tzid_data.get(&iana).unwrap();
+                        let mz_periods = periods
+                            .iter()
+                            .map(move |period| {
+                                        (
+                                        period
+                                            .uses_meta_zone
+                                            .from
+                                            .as_deref()
+                                            .map(parse_mzone_from)
+                                            .map(|(date, time)| {
+                                                (date.to_fixed() - EPOCH) as i32 * 24 * 60
+                                                    + (time.hour.number() as i32 * 60
+                                                        + time.minute.number() as i32)
+                                            })
+                                            .unwrap_or_default(),
+                                        meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                                    )
                             })
+                                .collect::<Vec<_>>();
+                        let offset_periods = self
+                            .offset_period()
+                            .unwrap()
+                            .0
+                            .get0(id)
+                            .unwrap()
+                            .iter1_copied()
+                            .map(|(k, v)| {
+                                use zerovec::ule::AsULE;
+                                (i32::from_unaligned(*k), v)
+                            })
+                            .collect::<Vec<_>>();
+
+                        let mut out = Vec::new();
+
+                        let mut offset_i = 0;
+                        let mut mz_i = 0;
+                        let mut start = 0;
+                        loop {
+                            let has_dst = offset_periods[offset_i].1.1 != 0;
+                            let mz_name = mz_periods[mz_i].1;
+
+                            out.push((start, if has_dst { mz_name.map(|n| MetazoneId(n.0.to_ascii_uppercase()))} else { mz_name } ));
+
+                            let next_offset_start = offset_periods.get(offset_i+1).map(|(start, _)| start);
+                            let next_mz_start = mz_periods.get(mz_i + 1).map(|(start, _)| start);
+
+                            match (next_offset_start, next_mz_start) {
+                                (None, None) => break,
+                                (Some(s), None) => {offset_i += 1; start = *s},
+                                (None, Some(s)) => { mz_i += 1; start = *s},
+                                (Some(s), Some(s2)) if s < s2 => {offset_i += 1; start = *s}
+                                (Some(s2), Some(s)) if s < s2 => {mz_i += 1; start = *s}
+                                (Some(s), Some(_s2)) /* if s == _s2 */ => {offset_i +=1; mz_i +=1; start = *s}
+                            }
+                        }
+
+                        // Dedupe consecutive values, keeping lower start time.
+                        out.dedup_by_key(|(_, mz)| *mz);
+
+                        out.into_iter().map(move |(start, mz)| (id, start, mz))
                         })
                         .collect(),
                 ))
