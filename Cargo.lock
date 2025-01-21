@@ -1590,6 +1590,7 @@ dependencies = [
  "crlify",
  "displaydoc",
  "icu_benchmark_macros",
+ "icu_locale",
  "icu_locale_core",
  "icu_provider",
  "icu_provider_export",
