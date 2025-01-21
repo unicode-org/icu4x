@@ -470,6 +470,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -625,6 +626,7 @@ macro_rules! impl_date_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -791,6 +793,7 @@ macro_rules! impl_time_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, $($dayperiods_yes)?);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -840,6 +843,8 @@ macro_rules! impl_zone_marker {
         $(zone_essentials = $zone_essentials_yes:ident,)?
         // Whether locations formats can occur.
         $(zone_locations = $zone_locations_yes:ident,)?
+        // Whether exemplar city formats can occur.
+        $(zone_exemplars = $zone_exemplars_yes:ident,)?
         // Whether generic long formats can occur.
         $(zone_generic_long = $zone_generic_long_yes:ident,)?
         // Whether generic short formats can occur.
@@ -900,6 +905,7 @@ macro_rules! impl_zone_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $($zone_essentials_yes)?);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations, $($zone_locations_yes)?);
+            type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars, $($zone_exemplars_yes)?);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
@@ -913,6 +919,7 @@ macro_rules! impl_zone_marker {
             type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
+            type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplars, $($zone_exemplars_yes)?);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
             type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
             type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
@@ -1561,6 +1568,41 @@ impl_zone_marker!(
     field = (fields::TimeZone::Location, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
+    input_tzid = yes,
+);
+
+impl_zone_marker!(
+    /// A time zone ID is required to format with this style.
+    /// For example, a raw [`UtcOffset`] cannot be used here.
+    ///
+    /// ```compile_fail,E0277
+    /// use icu::calendar::{DateTime, Iso};
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldsets::X;
+    /// use icu::timezone::UtcOffset;
+    /// use tinystr::tinystr;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("en-US").into(),
+    ///     X::new(),
+    /// )
+    /// .unwrap();
+    ///
+    /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<X>` is not satisfied
+    /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
+    /// formatter.format(&utc_offset);
+    /// ```
+    X,
+    description = "time zone in exemplar city format",
+    length_override = Long,
+    sample = "Chicago",
+    field = (fields::TimeZone::Location, fields::FieldLength::Three),
+    zone_locations = yes,
+    zone_exemplars = yes,
     input_tzid = yes,
 );
 

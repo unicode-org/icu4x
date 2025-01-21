@@ -170,6 +170,7 @@ macro_rules! impl_iterable_data_provider {
 impl_iterable_data_provider!(
     TimeZoneEssentialsV1Marker,
     LocationsV1Marker,
+    ExemplarCitiesV1Marker,
     MetazoneGenericNamesLongV1Marker,
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesLongV1Marker,

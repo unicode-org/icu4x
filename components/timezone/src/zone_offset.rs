@@ -134,7 +134,7 @@ impl ZoneOffsetCalculator {
 
 /// Represents the different offsets in use for a time zone
 #[non_exhaustive]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ZoneOffsets {
     /// The standard offset.
     pub standard: UtcOffset,

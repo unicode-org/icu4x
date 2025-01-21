@@ -203,6 +203,8 @@ icu::datetime::fieldsets::T::with_zone_specific_long#FnInStruct
 icu::datetime::fieldsets::V#Struct
 icu::datetime::fieldsets::V::new#FnInStruct
 icu::datetime::fieldsets::Vs::new#FnInStruct
+icu::datetime::fieldsets::X#Struct
+icu::datetime::fieldsets::X::new#FnInStruct
 icu::datetime::fieldsets::Y#Struct
 icu::datetime::fieldsets::Y::long#FnInStruct
 icu::datetime::fieldsets::Y::medium#FnInStruct

@@ -27,6 +27,7 @@ include!("metazone_period_v1_marker.rs.data");
 include!("coptic_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("chinese_year_names_v1_marker.rs.data");
 include!("persian_month_names_v1_marker.rs.data");
+include!("exemplar_cities_v1_marker.rs.data");
 include!("roc_year_names_v1_marker.rs.data");
 include!("persian_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("locations_v1_marker.rs.data");
@@ -106,6 +107,7 @@ macro_rules! impl_data_provider {
         impl_coptic_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_chinese_year_names_v1_marker!($provider);
         impl_persian_month_names_v1_marker!($provider);
+        impl_exemplar_cities_v1_marker!($provider);
         impl_roc_year_names_v1_marker!($provider);
         impl_persian_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_locations_v1_marker!($provider);
@@ -165,6 +167,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::CopticDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::CopticDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::ChineseYearNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::PersianMonthNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::PersianMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::time_zones::ExemplarCitiesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::RocYearNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::RocYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::PersianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::PersianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::LocationsV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::LocationsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

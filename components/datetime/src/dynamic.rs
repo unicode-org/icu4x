@@ -163,8 +163,11 @@ pub enum ZoneFieldSet {
     /// “PT”.
     Vs(fieldsets::Vs),
     /// The location format, as in
-    /// “Los Angeles time”.
+    /// “Los Angeles Time”.
     L(fieldsets::L),
+    /// The exemplar city format, as in
+    /// “Los Angeles.
+    X(fieldsets::X),
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -476,6 +479,7 @@ impl_attrs! {
         V,
         Vs,
         L,
+        X,
     ]
 }
 
