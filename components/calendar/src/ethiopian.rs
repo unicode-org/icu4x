@@ -241,10 +241,6 @@ impl Ethiopian {
     pub const fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
         Self(matches!(era_style, EthiopianEraStyle::AmeteAlem))
     }
-    /// Set whether or not this uses the Amete Alem era scheme
-    pub fn set_era_style(&mut self, era_style: EthiopianEraStyle) {
-        self.0 = era_style == EthiopianEraStyle::AmeteAlem
-    }
 
     /// Returns whether this has the Amete Alem era
     pub fn era_style(&self) -> EthiopianEraStyle {
