@@ -39,10 +39,7 @@ impl SourceDataProvider {
                 for cursor in mz_period.0.iter0() {
                     let tz = *cursor.key0();
                     for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
-                        reverse_metazones
-                            .entry(MetazoneId(mz.0.to_ascii_lowercase()))
-                            .or_default()
-                            .push(tz);
+                        reverse_metazones.entry(mz).or_default().push(tz);
                     }
                 }
                 Ok(reverse_metazones)

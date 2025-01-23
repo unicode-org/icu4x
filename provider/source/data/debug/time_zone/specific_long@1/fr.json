@@ -205,13 +205,6 @@
     ],
     [
       [
-        "aqto",
-        "Daylight"
-      ],
-      "heure d’été d’Aqtöbe"
-    ],
-    [
-      [
         "arab",
         "Standard"
       ],
@@ -419,13 +412,6 @@
         "Standard"
       ],
       "heure normale du Cap-Vert"
-    ],
-    [
-      [
-        "cave",
-        "Daylight"
-      ],
-      "heure d’été du Cap-Vert"
     ],
     [
       [
@@ -881,13 +867,6 @@
         "Standard"
       ],
       "heure normale du Japon"
-    ],
-    [
-      [
-        "japa",
-        "Daylight"
-      ],
-      "heure d’été du Japon"
     ],
     [
       [
@@ -1392,13 +1371,6 @@
         "Standard"
       ],
       "heure normale des Samoa"
-    ],
-    [
-      [
-        "samo",
-        "Daylight"
-      ],
-      "heure d’été des Samoa"
     ],
     [
       [

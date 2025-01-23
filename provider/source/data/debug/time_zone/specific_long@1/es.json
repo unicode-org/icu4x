@@ -191,13 +191,6 @@
     ],
     [
       [
-        "aqto",
-        "Daylight"
-      ],
-      "Hora de verano de Aktobe"
-    ],
-    [
-      [
         "arab",
         "Standard"
       ],
@@ -405,13 +398,6 @@
         "Standard"
       ],
       "hora estándar de Cabo Verde"
-    ],
-    [
-      [
-        "cave",
-        "Daylight"
-      ],
-      "hora de verano de Cabo Verde"
     ],
     [
       [
@@ -867,13 +853,6 @@
         "Standard"
       ],
       "hora estándar de Japón"
-    ],
-    [
-      [
-        "japa",
-        "Daylight"
-      ],
-      "hora de verano de Japón"
     ],
     [
       [
@@ -1413,13 +1392,6 @@
         "Standard"
       ],
       "hora estándar de Samoa"
-    ],
-    [
-      [
-        "samo",
-        "Daylight"
-      ],
-      "hora de verano de Samoa"
     ],
     [
       [

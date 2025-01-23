@@ -653,21 +653,28 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
             .filter(|&(mz, v)| {
-                let Some(tzs) = reverse_metazones.get(&mz) else {
+                let dst_tzs = reverse_metazones.get(&MetazoneId(mz.0.to_ascii_uppercase()));
+                let std_tzs = reverse_metazones.get(&mz);
+                if dst_tzs.is_none() && std_tzs.is_none() {
                     log::warn!("No tzs for {mz:?}");
                     return false;
                 };
-                tzs.iter().any(|tz| {
-                    let Some(location) = locations.get(tz) else {
-                        return true;
-                    };
-                    writeable::cmp_utf8(
-                        &time_zone_names_resource
-                            .region_format
-                            .interpolate([location]),
-                        v.as_bytes(),
-                    ) != Ordering::Equal
-                })
+                dst_tzs
+                    .iter()
+                    .chain(std_tzs.iter())
+                    .copied()
+                    .flatten()
+                    .any(|tz| {
+                        let Some(location) = locations.get(tz) else {
+                            return true;
+                        };
+                        writeable::cmp_utf8(
+                            &time_zone_names_resource
+                                .region_format
+                                .interpolate([location]),
+                            v.as_bytes(),
+                        ) != Ordering::Equal
+                    })
             })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
@@ -711,35 +718,46 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
             .filter(|&((mz, zv), v)| {
-                let Some(tzs) = reverse_metazones.get(&mz) else {
+                let dst_tzs = reverse_metazones.get(&MetazoneId(mz.0.to_ascii_uppercase()));
+                let std_tzs = reverse_metazones.get(&mz);
+
+                if dst_tzs.is_none() && std_tzs.is_none() {
                     log::warn!("No tzs for {mz:?}");
                     return false;
                 };
-                tzs.iter().any(|tz| {
-                    let Some(location) = locations.get(tz) else {
-                        return true;
-                    };
-                    if zv == ZoneVariant::Daylight {
-                        writeable::cmp_utf8(
-                            &time_zone_names_resource
-                                .region_format_dt
-                                .0
-                                .interpolate([location]),
-                            v.as_bytes(),
-                        ) != Ordering::Equal
-                    } else if zv == ZoneVariant::Standard {
-                        writeable::cmp_utf8(
-                            &time_zone_names_resource
-                                .region_format_st
-                                .0
-                                .interpolate([location]),
-                            v.as_bytes(),
-                        ) != Ordering::Equal
-                    } else {
-                        // tilde dep on icu_timezone
-                        unreachable!()
-                    }
-                })
+                if dst_tzs.is_none() && zv == ZoneVariant::Daylight {
+                    return false;
+                }
+                dst_tzs
+                    .iter()
+                    .chain(std_tzs.iter())
+                    .copied()
+                    .flatten()
+                    .any(|tz| {
+                        let Some(location) = locations.get(tz) else {
+                            return true;
+                        };
+                        if zv == ZoneVariant::Daylight {
+                            writeable::cmp_utf8(
+                                &time_zone_names_resource
+                                    .region_format_dt
+                                    .0
+                                    .interpolate([location]),
+                                v.as_bytes(),
+                            ) != Ordering::Equal
+                        } else if zv == ZoneVariant::Standard {
+                            writeable::cmp_utf8(
+                                &time_zone_names_resource
+                                    .region_format_st
+                                    .0
+                                    .interpolate([location]),
+                                v.as_bytes(),
+                            ) != Ordering::Equal
+                        } else {
+                            // tilde dep on icu_timezone
+                            unreachable!()
+                        }
+                    })
             })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
@@ -814,9 +832,23 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let meta_zone_id_data = self.metazone_to_short_map()?;
+        let reverse_metazones = self.reverse_metazones()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
+            .filter(|&((mz, zv), _)| {
+                let dst_tzs = reverse_metazones.get(&MetazoneId(mz.0.to_ascii_uppercase()));
+                let std_tzs = reverse_metazones.get(&mz);
+
+                if dst_tzs.is_none() && std_tzs.is_none() {
+                    log::warn!("No tzs for {mz:?}");
+                    return false;
+                };
+                if dst_tzs.is_none() && zv == ZoneVariant::Daylight {
+                    return false;
+                }
+                true
+            })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
             .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
