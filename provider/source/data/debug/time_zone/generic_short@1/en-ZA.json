@@ -1,5 +1,8 @@
 {
   "defaults": {
+    "AFCE": "CAT",
+    "AFWE": "WAT",
+    "MGMT": "GMT",
     "afce": "CAT",
     "afea": "EAT",
     "afso": "SAST",

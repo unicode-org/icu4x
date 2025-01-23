@@ -1,5 +1,6 @@
 {
   "defaults": {
+    "MGMT": "GMT",
     "mgmt": "GMT"
   },
   "overrides": {

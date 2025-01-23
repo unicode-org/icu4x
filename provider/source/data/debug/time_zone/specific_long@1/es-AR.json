@@ -3,30 +3,9 @@
     [
       [
         "acre",
-        "Standard"
-      ],
-      "Hora estándar de Acre"
-    ],
-    [
-      [
-        "acre",
         "Daylight"
       ],
       "Hora de verano de Acre"
-    ],
-    [
-      [
-        "afce",
-        "Standard"
-      ],
-      "hora de África central"
-    ],
-    [
-      [
-        "afea",
-        "Standard"
-      ],
-      "hora de África oriental"
     ],
     [
       [
@@ -34,20 +13,6 @@
         "Standard"
       ],
       "hora de Afganistán"
-    ],
-    [
-      [
-        "afso",
-        "Standard"
-      ],
-      "hora de Sudáfrica"
-    ],
-    [
-      [
-        "afwe",
-        "Standard"
-      ],
-      "hora estándar de África occidental"
     ],
     [
       [
@@ -59,23 +24,9 @@
     [
       [
         "alas",
-        "Standard"
-      ],
-      "hora estándar de Alaska"
-    ],
-    [
-      [
-        "alas",
         "Daylight"
       ],
       "hora de verano de Alaska"
-    ],
-    [
-      [
-        "amaz",
-        "Standard"
-      ],
-      "hora estándar del Amazonas"
     ],
     [
       [
@@ -87,23 +38,9 @@
     [
       [
         "amce",
-        "Standard"
-      ],
-      "hora estándar central"
-    ],
-    [
-      [
-        "amce",
         "Daylight"
       ],
       "hora de verano central"
-    ],
-    [
-      [
-        "amea",
-        "Standard"
-      ],
-      "hora estándar oriental"
     ],
     [
       [
@@ -115,23 +52,9 @@
     [
       [
         "ammo",
-        "Standard"
-      ],
-      "hora estándar de la montaña"
-    ],
-    [
-      [
-        "ammo",
         "Daylight"
       ],
       "hora de verano de la montaña"
-    ],
-    [
-      [
-        "ampa",
-        "Standard"
-      ],
-      "hora estándar del Pacífico"
     ],
     [
       [
@@ -143,23 +66,9 @@
     [
       [
         "anad",
-        "Standard"
-      ],
-      "hora estándar de Anadyr"
-    ],
-    [
-      [
-        "anad",
         "Daylight"
       ],
       "hora de verano de Anadyr"
-    ],
-    [
-      [
-        "apia",
-        "Standard"
-      ],
-      "hora estándar de Apia"
     ],
     [
       [
@@ -171,13 +80,6 @@
     [
       [
         "aqta",
-        "Standard"
-      ],
-      "Hora estándar de Aktau"
-    ],
-    [
-      [
-        "aqta",
         "Daylight"
       ],
       "Hora de verano de Aktau"
@@ -185,16 +87,9 @@
     [
       [
         "aqto",
-        "Standard"
+        "Daylight"
       ],
-      "Hora estándar de Aktobe"
-    ],
-    [
-      [
-        "arab",
-        "Standard"
-      ],
-      "hora estándar de Arabia"
+      "Hora de verano de Aktobe"
     ],
     [
       [
@@ -206,23 +101,9 @@
     [
       [
         "arge",
-        "Standard"
-      ],
-      "hora estándar de Argentina"
-    ],
-    [
-      [
-        "arge",
         "Daylight"
       ],
       "hora de verano de Argentina"
-    ],
-    [
-      [
-        "arwe",
-        "Standard"
-      ],
-      "hora estándar de Argentina occidental"
     ],
     [
       [
@@ -234,23 +115,9 @@
     [
       [
         "atla",
-        "Standard"
-      ],
-      "hora estándar del Atlántico"
-    ],
-    [
-      [
-        "atla",
         "Daylight"
       ],
       "hora de verano del Atlántico"
-    ],
-    [
-      [
-        "auce",
-        "Standard"
-      ],
-      "hora estándar de Australia central"
     ],
     [
       [
@@ -262,23 +129,9 @@
     [
       [
         "aucw",
-        "Standard"
-      ],
-      "hora estándar de Australia centroccidental"
-    ],
-    [
-      [
-        "aucw",
         "Daylight"
       ],
       "hora de verano de Australia centroccidental"
-    ],
-    [
-      [
-        "auea",
-        "Standard"
-      ],
-      "hora estándar de Australia oriental"
     ],
     [
       [
@@ -290,23 +143,9 @@
     [
       [
         "auwe",
-        "Standard"
-      ],
-      "hora estándar de Australia occidental"
-    ],
-    [
-      [
-        "auwe",
         "Daylight"
       ],
       "hora de verano de Australia occidental"
-    ],
-    [
-      [
-        "azor",
-        "Standard"
-      ],
-      "hora estándar de las Azores"
     ],
     [
       [
@@ -332,13 +171,6 @@
     [
       [
         "bras",
-        "Standard"
-      ],
-      "hora estándar de Brasilia"
-    ],
-    [
-      [
-        "bras",
         "Daylight"
       ],
       "hora de verano de Brasilia"
@@ -352,31 +184,10 @@
     ],
     [
       [
-        "cham",
-        "Standard"
-      ],
-      "hora estándar de Chamorro"
-    ],
-    [
-      [
-        "chil",
-        "Standard"
-      ],
-      "hora estándar de Chile"
-    ],
-    [
-      [
         "chil",
         "Daylight"
       ],
       "hora de verano de Chile"
-    ],
-    [
-      [
-        "chin",
-        "Standard"
-      ],
-      "hora estándar de China"
     ],
     [
       [
@@ -387,24 +198,10 @@
     ],
     [
       [
-        "chri",
-        "Standard"
-      ],
-      "hora de la Isla de Navidad"
-    ],
-    [
-      [
         "coco",
         "Standard"
       ],
       "hora de Islas Cocos"
-    ],
-    [
-      [
-        "cook",
-        "Standard"
-      ],
-      "hora estándar de las islas Cook"
     ],
     [
       [
@@ -422,38 +219,10 @@
     ],
     [
       [
-        "dumo",
-        "Standard"
-      ],
-      "hora de Dumont-d’Urville"
-    ],
-    [
-      [
         "east",
         "Daylight"
       ],
       "hora de verano de la Isla de Pascua"
-    ],
-    [
-      [
-        "eati",
-        "Standard"
-      ],
-      "hora de Timor Oriental"
-    ],
-    [
-      [
-        "ecua",
-        "Standard"
-      ],
-      "hora de Ecuador"
-    ],
-    [
-      [
-        "euce",
-        "Standard"
-      ],
-      "hora estándar de Europa central"
     ],
     [
       [
@@ -465,30 +234,9 @@
     [
       [
         "euea",
-        "Standard"
-      ],
-      "hora estándar de Europa del Este"
-    ],
-    [
-      [
-        "euea",
         "Daylight"
       ],
       "hora de verano de Europa del Este"
-    ],
-    [
-      [
-        "eufe",
-        "Standard"
-      ],
-      "horario del lejano este de Europa"
-    ],
-    [
-      [
-        "euwe",
-        "Standard"
-      ],
-      "hora estándar de Europa del Oeste"
     ],
     [
       [
@@ -500,30 +248,9 @@
     [
       [
         "falk",
-        "Standard"
-      ],
-      "hora estándar de las Islas Malvinas"
-    ],
-    [
-      [
-        "falk",
         "Daylight"
       ],
       "hora de verano de las Islas Malvinas"
-    ],
-    [
-      [
-        "frgu",
-        "Standard"
-      ],
-      "hora de la Guayana Francesa"
-    ],
-    [
-      [
-        "frso",
-        "Standard"
-      ],
-      "hora de las Tierras Australes y Antárticas Francesas"
     ],
     [
       [
@@ -538,13 +265,6 @@
         "Standard"
       ],
       "hora de Gambier"
-    ],
-    [
-      [
-        "giis",
-        "Standard"
-      ],
-      "hora de Islas Gilbert"
     ],
     [
       [
@@ -563,30 +283,9 @@
     [
       [
         "grwe",
-        "Standard"
-      ],
-      "hora estándar de Groenlandia occidental"
-    ],
-    [
-      [
-        "grwe",
         "Daylight"
       ],
       "hora de verano de Groenlandia occidental"
-    ],
-    [
-      [
-        "guam",
-        "Standard"
-      ],
-      "Hora estándar de Guam"
-    ],
-    [
-      [
-        "gulf",
-        "Standard"
-      ],
-      "hora estándar del Golfo"
     ],
     [
       [
@@ -598,65 +297,9 @@
     [
       [
         "haal",
-        "Standard"
-      ],
-      "hora estándar de Hawái-Aleutianas"
-    ],
-    [
-      [
-        "haal",
         "Daylight"
       ],
       "hora de verano de Hawái-Aleutianas"
-    ],
-    [
-      [
-        "ince",
-        "Standard"
-      ],
-      "hora de Indonesia central"
-    ],
-    [
-      [
-        "indi",
-        "Standard"
-      ],
-      "hora de India"
-    ],
-    [
-      [
-        "indo",
-        "Standard"
-      ],
-      "hora de Indochina"
-    ],
-    [
-      [
-        "inea",
-        "Standard"
-      ],
-      "hora de Indonesia oriental"
-    ],
-    [
-      [
-        "inoc",
-        "Standard"
-      ],
-      "hora del océano Índico"
-    ],
-    [
-      [
-        "inwe",
-        "Standard"
-      ],
-      "hora de Indonesia occidental"
-    ],
-    [
-      [
-        "irku",
-        "Standard"
-      ],
-      "hora estándar de Irkutsk"
     ],
     [
       [
@@ -668,44 +311,9 @@
     [
       [
         "isra",
-        "Standard"
-      ],
-      "hora estándar de Israel"
-    ],
-    [
-      [
-        "isra",
         "Daylight"
       ],
       "hora de verano de Israel"
-    ],
-    [
-      [
-        "kaea",
-        "Standard"
-      ],
-      "hora de Kazajistán oriental"
-    ],
-    [
-      [
-        "kawe",
-        "Standard"
-      ],
-      "hora de Kazajistán occidental"
-    ],
-    [
-      [
-        "kaza",
-        "Standard"
-      ],
-      "hora de Kazajistán"
-    ],
-    [
-      [
-        "kore",
-        "Standard"
-      ],
-      "hora estándar de Corea"
     ],
     [
       [
@@ -724,13 +332,6 @@
     [
       [
         "kras",
-        "Standard"
-      ],
-      "hora estándar de Krasnoyarsk"
-    ],
-    [
-      [
-        "kras",
         "Daylight"
       ],
       "hora de verano de Krasnoyarsk"
@@ -744,27 +345,6 @@
     ],
     [
       [
-        "lank",
-        "Standard"
-      ],
-      "Hora de Sri Lanka"
-    ],
-    [
-      [
-        "liis",
-        "Standard"
-      ],
-      "hora de las Espóradas Ecuatoriales"
-    ],
-    [
-      [
-        "maca",
-        "Standard"
-      ],
-      "Hora estándar de Macao"
-    ],
-    [
-      [
         "maca",
         "Daylight"
       ],
@@ -773,30 +353,9 @@
     [
       [
         "maga",
-        "Standard"
-      ],
-      "hora estándar de Magadán"
-    ],
-    [
-      [
-        "maga",
         "Daylight"
       ],
       "hora de verano de Magadán"
-    ],
-    [
-      [
-        "mais",
-        "Standard"
-      ],
-      "hora de Islas Marshall"
-    ],
-    [
-      [
-        "mala",
-        "Standard"
-      ],
-      "hora de Malasia"
     ],
     [
       [
@@ -822,30 +381,9 @@
     [
       [
         "mepa",
-        "Standard"
-      ],
-      "hora estándar del Pacífico de México"
-    ],
-    [
-      [
-        "mepa",
         "Daylight"
       ],
       "hora de verano del Pacífico de México"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "hora del meridiano de Greenwich"
-    ],
-    [
-      [
-        "mosc",
-        "Standard"
-      ],
-      "hora estándar de Moscú"
     ],
     [
       [
@@ -878,13 +416,6 @@
     [
       [
         "newf",
-        "Standard"
-      ],
-      "hora estándar de Terranova"
-    ],
-    [
-      [
-        "newf",
         "Daylight"
       ],
       "hora de verano de Terranova"
@@ -912,20 +443,6 @@
     ],
     [
       [
-        "noma",
-        "Standard"
-      ],
-      "Hora de las Islas Marianas del Norte"
-    ],
-    [
-      [
-        "norf",
-        "Standard"
-      ],
-      "hora estándar de la Isla Norfolk"
-    ],
-    [
-      [
         "norf",
         "Daylight"
       ],
@@ -934,23 +451,9 @@
     [
       [
         "noro",
-        "Standard"
-      ],
-      "hora estándar de Fernando de Noronha"
-    ],
-    [
-      [
-        "noro",
         "Daylight"
       ],
       "hora de verano de Fernando de Noronha"
-    ],
-    [
-      [
-        "novo",
-        "Standard"
-      ],
-      "hora estándar de Novosibirsk"
     ],
     [
       [
@@ -968,45 +471,10 @@
     ],
     [
       [
-        "pang",
-        "Standard"
-      ],
-      "hora de Papúa Nueva Guinea"
-    ],
-    [
-      [
-        "phis",
-        "Standard"
-      ],
-      "hora de las Islas Fénix"
-    ],
-    [
-      [
-        "pitc",
-        "Standard"
-      ],
-      "hora de Pitcairn"
-    ],
-    [
-      [
         "pona",
         "Standard"
       ],
       "hora de Pohnpei"
-    ],
-    [
-      [
-        "pyon",
-        "Standard"
-      ],
-      "hora de Pionyang"
-    ],
-    [
-      [
-        "qyzy",
-        "Standard"
-      ],
-      "Hora estándar de Qyzylorda"
     ],
     [
       [
@@ -1032,9 +500,9 @@
     [
       [
         "samo",
-        "Standard"
+        "Daylight"
       ],
-      "hora estándar de Samoa"
+      "hora de verano de Samoa"
     ],
     [
       [
@@ -1049,13 +517,6 @@
         "Standard"
       ],
       "hora de Singapur"
-    ],
-    [
-      [
-        "soge",
-        "Standard"
-      ],
-      "hora de Georgia del Sur"
     ],
     [
       [
@@ -1084,13 +545,6 @@
         "Standard"
       ],
       "hora de Tahití"
-    ],
-    [
-      [
-        "taip",
-        "Standard"
-      ],
-      "hora estándar de Taipéi"
     ],
     [
       [
@@ -1130,13 +584,6 @@
     [
       [
         "uzbe",
-        "Standard"
-      ],
-      "hora estándar de Uzbekistán"
-    ],
-    [
-      [
-        "uzbe",
         "Daylight"
       ],
       "hora de verano de Uzbekistán"
@@ -1147,13 +594,6 @@
         "Standard"
       ],
       "hora de Venezuela"
-    ],
-    [
-      [
-        "vlad",
-        "Standard"
-      ],
-      "hora estándar de Vladivostok"
     ],
     [
       [
@@ -1186,23 +626,9 @@
     [
       [
         "yaku",
-        "Standard"
-      ],
-      "hora estándar de Yakutsk"
-    ],
-    [
-      [
-        "yaku",
         "Daylight"
       ],
       "hora de verano de Yakutsk"
-    ],
-    [
-      [
-        "yuko",
-        "Standard"
-      ],
-      "hora de Yukón"
     ]
   ],
   "overrides": [
@@ -1219,13 +645,6 @@
         "Daylight"
       ],
       "hora estándar de Irlanda"
-    ],
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "hora universal coordinada"
     ]
   ]
 }

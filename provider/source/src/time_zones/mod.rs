@@ -316,7 +316,7 @@ mod tests {
             })
             .unwrap();
         assert_eq!(
-            "Australian Central Western Time",
+            "Australian Central Western Standard Time",
             generic_names_long
                 .payload
                 .get()
@@ -341,22 +341,20 @@ mod tests {
             })
             .unwrap();
         assert_eq!(
-            "Australian Central Western Standard Time",
+            None, // deduplicated against generic
             specific_names_long
                 .payload
                 .get()
                 .defaults
                 .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::Standard))
-                .unwrap()
         );
         assert_eq!(
-            "Coordinated Universal Time",
+            None, // deduplicated against generic
             specific_names_long
                 .payload
                 .get()
                 .overrides
                 .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
-                .unwrap()
         );
 
         let generic_names_short: DataResponse<MetazoneGenericNamesShortV1Marker> = provider
@@ -367,6 +365,15 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PT",
+            generic_names_short
+                .payload
+                .get()
+                .defaults
+                .get(&MetazoneId(tinystr!(4, "AMPA")))
+                .unwrap()
+        );
+        assert_eq!(
+            "PST",
             generic_names_short
                 .payload
                 .get()
@@ -400,13 +407,12 @@ mod tests {
                 .unwrap()
         );
         assert_eq!(
-            "UTC",
+            None, // deduplicated against generic
             specific_names_short
                 .payload
                 .get()
                 .overrides
                 .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
-                .unwrap()
         );
 
         let metazone_period: DataResponse<MetazonePeriodV1Marker> =

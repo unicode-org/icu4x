@@ -1,12 +1,20 @@
 {
   "defaults": {
-    "alas": "AKT",
-    "amce": "CT",
-    "amea": "ET",
-    "ammo": "MT",
-    "ampa": "PT",
-    "atla": "AT",
-    "haal": "HAT",
+    "ALAS": "AKT",
+    "AMCE": "CT",
+    "AMEA": "ET",
+    "AMMO": "MT",
+    "AMPA": "PT",
+    "ATLA": "AT",
+    "HAAL": "HAT",
+    "MGMT": "GMT",
+    "alas": "AKST",
+    "amce": "CST",
+    "amea": "EST",
+    "ammo": "MST",
+    "ampa": "PST",
+    "atla": "AST",
+    "haal": "HAST",
     "mgmt": "GMT"
   },
   "overrides": {

@@ -1,5 +1,9 @@
 {
   "defaults": {
+    "EUCE": "CET",
+    "EUEA": "EET",
+    "EUWE": "WET",
+    "MGMT": "GMT",
     "euce": "CET",
     "euea": "EET",
     "euwe": "WET",

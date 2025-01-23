@@ -3,23 +3,9 @@
     [
       [
         "euce",
-        "Standard"
-      ],
-      "CET"
-    ],
-    [
-      [
-        "euce",
         "Daylight"
       ],
       "CEST"
-    ],
-    [
-      [
-        "euea",
-        "Standard"
-      ],
-      "EET"
     ],
     [
       [
@@ -31,32 +17,10 @@
     [
       [
         "euwe",
-        "Standard"
-      ],
-      "WET"
-    ],
-    [
-      [
-        "euwe",
         "Daylight"
       ],
       "WEST"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "GMT"
     ]
   ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "overrides": {}
 }

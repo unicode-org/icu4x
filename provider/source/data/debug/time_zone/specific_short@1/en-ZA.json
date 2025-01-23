@@ -2,54 +2,11 @@
   "defaults": [
     [
       [
-        "afce",
-        "Standard"
-      ],
-      "CAT"
-    ],
-    [
-      [
-        "afea",
-        "Standard"
-      ],
-      "EAT"
-    ],
-    [
-      [
-        "afso",
-        "Standard"
-      ],
-      "SAST"
-    ],
-    [
-      [
-        "afwe",
-        "Standard"
-      ],
-      "WAT"
-    ],
-    [
-      [
         "afwe",
         "Daylight"
       ],
       "WAST"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "GMT"
     ]
   ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "overrides": {}
 }

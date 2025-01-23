@@ -3,23 +3,9 @@
     [
       [
         "alas",
-        "Standard"
-      ],
-      "AKST"
-    ],
-    [
-      [
-        "alas",
         "Daylight"
       ],
       "AKDT"
-    ],
-    [
-      [
-        "amce",
-        "Standard"
-      ],
-      "CST"
     ],
     [
       [
@@ -31,23 +17,9 @@
     [
       [
         "amea",
-        "Standard"
-      ],
-      "EST"
-    ],
-    [
-      [
-        "amea",
         "Daylight"
       ],
       "EDT"
-    ],
-    [
-      [
-        "ammo",
-        "Standard"
-      ],
-      "MST"
     ],
     [
       [
@@ -59,23 +31,9 @@
     [
       [
         "ampa",
-        "Standard"
-      ],
-      "PST"
-    ],
-    [
-      [
-        "ampa",
         "Daylight"
       ],
       "PDT"
-    ],
-    [
-      [
-        "atla",
-        "Standard"
-      ],
-      "AST"
     ],
     [
       [
@@ -87,46 +45,18 @@
     [
       [
         "haal",
-        "Standard"
-      ],
-      "HAST"
-    ],
-    [
-      [
-        "haal",
         "Daylight"
       ],
       "HADT"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "GMT"
     ]
   ],
   "overrides": [
     [
       [
         "ushnl",
-        "Standard"
-      ],
-      "HST"
-    ],
-    [
-      [
-        "ushnl",
         "Daylight"
       ],
       "HDT"
-    ],
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
     ]
   ]
 }

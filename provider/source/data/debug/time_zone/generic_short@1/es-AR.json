@@ -1,5 +1,7 @@
 {
   "defaults": {
+    "ARGE": "ART",
+    "ARWE": "WART",
     "arge": "ART",
     "arwe": "WART"
   },

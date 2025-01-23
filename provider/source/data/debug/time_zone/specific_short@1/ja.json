@@ -3,18 +3,10 @@
     [
       [
         "japa",
-        "Standard"
+        "Daylight"
       ],
-      "JST"
+      "JDT"
     ]
   ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "overrides": {}
 }

@@ -2,38 +2,10 @@
   "defaults": [
     [
       [
-        "afce",
-        "Standard"
-      ],
-      "Oras sa Gitnang Africa"
-    ],
-    [
-      [
-        "afea",
-        "Standard"
-      ],
-      "Oras sa Silangang Africa"
-    ],
-    [
-      [
         "afgh",
         "Standard"
       ],
       "Oras sa Afghanistan"
-    ],
-    [
-      [
-        "afso",
-        "Standard"
-      ],
-      "Oras sa Timog Africa"
-    ],
-    [
-      [
-        "afwe",
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Africa"
     ],
     [
       [
@@ -45,23 +17,9 @@
     [
       [
         "alas",
-        "Standard"
-      ],
-      "Standard na Oras sa Alaska"
-    ],
-    [
-      [
-        "alas",
         "Daylight"
       ],
       "Daylight Time sa Alaska"
-    ],
-    [
-      [
-        "amaz",
-        "Standard"
-      ],
-      "Standard na Oras sa Amazon"
     ],
     [
       [
@@ -73,23 +31,9 @@
     [
       [
         "amce",
-        "Standard"
-      ],
-      "Sentral na Standard na Oras sa North America"
-    ],
-    [
-      [
-        "amce",
         "Daylight"
       ],
       "Sentral na Daylight na Oras sa North America"
-    ],
-    [
-      [
-        "amea",
-        "Standard"
-      ],
-      "Standard na Oras sa Silangan ng Hilangang Amerika"
     ],
     [
       [
@@ -101,23 +45,9 @@
     [
       [
         "ammo",
-        "Standard"
-      ],
-      "Standard na Oras sa Bundok sa Hilagang Amerika"
-    ],
-    [
-      [
-        "ammo",
         "Daylight"
       ],
       "Daylight na Oras sa Bundok sa Hilagang Amerika"
-    ],
-    [
-      [
-        "ampa",
-        "Standard"
-      ],
-      "Standard na Oras sa Pasipiko sa Hilagang Amerika"
     ],
     [
       [
@@ -129,23 +59,9 @@
     [
       [
         "anad",
-        "Standard"
-      ],
-      "Standard Time sa Anadyr"
-    ],
-    [
-      [
-        "anad",
         "Daylight"
       ],
       "Summer Time sa Anadyr"
-    ],
-    [
-      [
-        "apia",
-        "Standard"
-      ],
-      "Standard na Oras sa Apia"
     ],
     [
       [
@@ -157,23 +73,9 @@
     [
       [
         "arab",
-        "Standard"
-      ],
-      "Standard na Oras sa Arabia"
-    ],
-    [
-      [
-        "arab",
         "Daylight"
       ],
       "Daylight Time sa Arabia"
-    ],
-    [
-      [
-        "arge",
-        "Standard"
-      ],
-      "Standard na Oras sa Argentina"
     ],
     [
       [
@@ -192,23 +94,9 @@
     [
       [
         "arwe",
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Argentina"
-    ],
-    [
-      [
-        "arwe",
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Argentina"
-    ],
-    [
-      [
-        "atla",
-        "Standard"
-      ],
-      "Standard na Oras sa Atlantiko"
     ],
     [
       [
@@ -220,23 +108,9 @@
     [
       [
         "auce",
-        "Standard"
-      ],
-      "Standard na Oras sa Gitnang Australya"
-    ],
-    [
-      [
-        "auce",
         "Daylight"
       ],
       "Daylight Time sa Gitnang Australya"
-    ],
-    [
-      [
-        "aucw",
-        "Standard"
-      ],
-      "Standard Time ng Gitnang Kanluran ng Australia"
     ],
     [
       [
@@ -248,23 +122,9 @@
     [
       [
         "auea",
-        "Standard"
-      ],
-      "Standard na Oras sa Silangang Australia"
-    ],
-    [
-      [
-        "auea",
         "Daylight"
       ],
       "Daylight Time sa Silangang Australia"
-    ],
-    [
-      [
-        "auwe",
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Australia"
     ],
     [
       [
@@ -311,30 +171,16 @@
     [
       [
         "bras",
-        "Standard"
-      ],
-      "Standard na Oras sa Brasilia"
-    ],
-    [
-      [
-        "bras",
         "Daylight"
       ],
       "Oras sa Tag-init ng Brasilia"
     ],
     [
       [
-        "brun",
-        "Standard"
+        "cave",
+        "Daylight"
       ],
-      "Oras sa Brunei Darussalam"
-    ],
-    [
-      [
-        "cham",
-        "Standard"
-      ],
-      "Standard na Oras sa Chamorro"
+      "Oras sa Tag-init ng Cape Verde"
     ],
     [
       [
@@ -346,23 +192,9 @@
     [
       [
         "chil",
-        "Standard"
-      ],
-      "Standard na Oras sa Chile"
-    ],
-    [
-      [
-        "chil",
         "Daylight"
       ],
       "Oras sa Tag-init ng Chile"
-    ],
-    [
-      [
-        "chin",
-        "Standard"
-      ],
-      "Standard na Oras sa China"
     ],
     [
       [
@@ -377,13 +209,6 @@
         "Standard"
       ],
       "Oras sa Christmas Island"
-    ],
-    [
-      [
-        "coco",
-        "Standard"
-      ],
-      "Oras sa Cocos Islands"
     ],
     [
       [
@@ -415,13 +240,6 @@
     ],
     [
       [
-        "dumo",
-        "Standard"
-      ],
-      "Oras sa Dumont-d’Urville"
-    ],
-    [
-      [
         "east",
         "Standard"
       ],
@@ -436,27 +254,6 @@
     ],
     [
       [
-        "eati",
-        "Standard"
-      ],
-      "Oras sa East Timor"
-    ],
-    [
-      [
-        "ecua",
-        "Standard"
-      ],
-      "Oras sa Ecuador"
-    ],
-    [
-      [
-        "euce",
-        "Standard"
-      ],
-      "Standard na Oras sa Gitnang Europe"
-    ],
-    [
-      [
         "euce",
         "Daylight"
       ],
@@ -465,30 +262,9 @@
     [
       [
         "euea",
-        "Standard"
-      ],
-      "Standard na Oras sa Silangang Europe"
-    ],
-    [
-      [
-        "euea",
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Europe"
-    ],
-    [
-      [
-        "eufe",
-        "Standard"
-      ],
-      "Oras sa Pinaka-silangang Europe"
-    ],
-    [
-      [
-        "euwe",
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Europe"
     ],
     [
       [
@@ -520,13 +296,6 @@
     ],
     [
       [
-        "frso",
-        "Standard"
-      ],
-      "Oras sa Katimugang France at Antartiko"
-    ],
-    [
-      [
         "gala",
         "Standard"
       ],
@@ -548,13 +317,6 @@
     ],
     [
       [
-        "giis",
-        "Standard"
-      ],
-      "Oras sa Gilbert Islands"
-    ],
-    [
-      [
         "grea",
         "Standard"
       ],
@@ -570,23 +332,9 @@
     [
       [
         "grwe",
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Greenland"
-    ],
-    [
-      [
-        "grwe",
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Greenland"
-    ],
-    [
-      [
-        "gulf",
-        "Standard"
-      ],
-      "Oras sa Gulf"
     ],
     [
       [
@@ -594,13 +342,6 @@
         "Standard"
       ],
       "Oras sa Guyana"
-    ],
-    [
-      [
-        "haal",
-        "Standard"
-      ],
-      "Standard na Oras sa Hawaii-Aleutian"
     ],
     [
       [
@@ -625,59 +366,10 @@
     ],
     [
       [
-        "ince",
-        "Standard"
-      ],
-      "Oras sa Gitnang Indonesia"
-    ],
-    [
-      [
-        "indi",
-        "Standard"
-      ],
-      "Standard na Oras sa India"
-    ],
-    [
-      [
-        "indo",
-        "Standard"
-      ],
-      "Oras sa Indochina"
-    ],
-    [
-      [
-        "inea",
-        "Standard"
-      ],
-      "Oras sa Silangang Indonesia"
-    ],
-    [
-      [
-        "inoc",
-        "Standard"
-      ],
-      "Oras sa Indian Ocean"
-    ],
-    [
-      [
-        "inwe",
-        "Standard"
-      ],
-      "Oras sa Kanlurang Indonesia"
-    ],
-    [
-      [
         "iran",
         "Daylight"
       ],
       "Daylight Time sa Iran"
-    ],
-    [
-      [
-        "irku",
-        "Standard"
-      ],
-      "Standard na Oras sa Irkutsk"
     ],
     [
       [
@@ -689,30 +381,16 @@
     [
       [
         "isra",
-        "Standard"
-      ],
-      "Standard na Oras sa Israel"
-    ],
-    [
-      [
-        "isra",
         "Daylight"
       ],
       "Daylight Time sa Israel"
     ],
     [
       [
-        "kaea",
-        "Standard"
+        "japa",
+        "Daylight"
       ],
-      "Oras sa Silangang Kazakhstan"
-    ],
-    [
-      [
-        "kamc",
-        "Standard"
-      ],
-      "Standard Time sa Petropavlovsk-Kamchatski"
+      "Daylight Time sa Japan"
     ],
     [
       [
@@ -720,27 +398,6 @@
         "Daylight"
       ],
       "Summer Time sa Petropavlovsk-Kamchatski"
-    ],
-    [
-      [
-        "kawe",
-        "Standard"
-      ],
-      "Oras sa Kanlurang Kazakhstan"
-    ],
-    [
-      [
-        "kaza",
-        "Standard"
-      ],
-      "Oras ng Kazakhstan"
-    ],
-    [
-      [
-        "kore",
-        "Standard"
-      ],
-      "Standard na Oras sa Korea"
     ],
     [
       [
@@ -759,30 +416,9 @@
     [
       [
         "kras",
-        "Standard"
-      ],
-      "Standard na Oras sa Krasnoyarsk"
-    ],
-    [
-      [
-        "kras",
         "Daylight"
       ],
       "Oras sa Tag-init ng Krasnoyarsk"
-    ],
-    [
-      [
-        "kyrg",
-        "Standard"
-      ],
-      "Oras sa Kyrgystan"
-    ],
-    [
-      [
-        "liis",
-        "Standard"
-      ],
-      "Oras sa Line Islands"
     ],
     [
       [
@@ -794,30 +430,9 @@
     [
       [
         "maga",
-        "Standard"
-      ],
-      "Standard na Oras sa Magadan"
-    ],
-    [
-      [
-        "maga",
         "Daylight"
       ],
       "Oras sa Tag-init ng Magadan"
-    ],
-    [
-      [
-        "mais",
-        "Standard"
-      ],
-      "Oras sa Marshall Islands"
-    ],
-    [
-      [
-        "mala",
-        "Standard"
-      ],
-      "Oras sa Malaysia"
     ],
     [
       [
@@ -850,30 +465,9 @@
     [
       [
         "mepa",
-        "Standard"
-      ],
-      "Standard na Oras sa Pasipiko ng Mexico"
-    ],
-    [
-      [
-        "mepa",
         "Daylight"
       ],
       "Daylight na Oras sa Pasipiko ng Mexico"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "Greenwich Mean Time"
-    ],
-    [
-      [
-        "mong",
-        "Standard"
-      ],
-      "Standard na Oras sa Ulan Bator"
     ],
     [
       [
@@ -885,23 +479,9 @@
     [
       [
         "mosc",
-        "Standard"
-      ],
-      "Standard na Oras sa Moscow"
-    ],
-    [
-      [
-        "mosc",
         "Daylight"
       ],
       "Oras sa Tag-init ng Moscow"
-    ],
-    [
-      [
-        "myan",
-        "Standard"
-      ],
-      "Oras sa Myanmar"
     ],
     [
       [
@@ -923,13 +503,6 @@
         "Standard"
       ],
       "Oras sa Nepal"
-    ],
-    [
-      [
-        "newf",
-        "Standard"
-      ],
-      "Standard na Oras sa Newfoundland"
     ],
     [
       [
@@ -969,23 +542,9 @@
     [
       [
         "noro",
-        "Standard"
-      ],
-      "Standard na Oras sa Fernando de Noronha"
-    ],
-    [
-      [
-        "noro",
         "Daylight"
       ],
       "Oras sa Tag-init ng Fernando de Noronha"
-    ],
-    [
-      [
-        "novo",
-        "Standard"
-      ],
-      "Standard na Oras sa Novosibirsk"
     ],
     [
       [
@@ -1017,13 +576,6 @@
     ],
     [
       [
-        "pang",
-        "Standard"
-      ],
-      "Oras sa Papua New Guinea"
-    ],
-    [
-      [
         "para",
         "Daylight"
       ],
@@ -1045,52 +597,10 @@
     ],
     [
       [
-        "phis",
-        "Standard"
-      ],
-      "Oras sa Phoenix Islands"
-    ],
-    [
-      [
-        "pimi",
-        "Standard"
-      ],
-      "Standard na Oras sa Saint Pierre & Miquelon"
-    ],
-    [
-      [
         "pimi",
         "Daylight"
       ],
       "Daylight na Oras sa Saint Pierre & Miquelon"
-    ],
-    [
-      [
-        "pitc",
-        "Standard"
-      ],
-      "Oras sa Pitcairn"
-    ],
-    [
-      [
-        "pona",
-        "Standard"
-      ],
-      "Oras sa Ponape"
-    ],
-    [
-      [
-        "pyon",
-        "Standard"
-      ],
-      "Oras sa Pyongyang"
-    ],
-    [
-      [
-        "reun",
-        "Standard"
-      ],
-      "Oras sa Reunion"
     ],
     [
       [
@@ -1109,13 +619,6 @@
     [
       [
         "sama",
-        "Standard"
-      ],
-      "Standard Time sa Samara"
-    ],
-    [
-      [
-        "sama",
         "Daylight"
       ],
       "Samara Daylight"
@@ -1123,9 +626,9 @@
     [
       [
         "samo",
-        "Standard"
+        "Daylight"
       ],
-      "Standard na Oras sa Samoa"
+      "Daylight Time sa Samoa"
     ],
     [
       [
@@ -1133,13 +636,6 @@
         "Standard"
       ],
       "Oras sa Seychelles"
-    ],
-    [
-      [
-        "soge",
-        "Standard"
-      ],
-      "Oras sa Timog Georgia"
     ],
     [
       [
@@ -1168,13 +664,6 @@
         "Standard"
       ],
       "Oras sa Tahiti"
-    ],
-    [
-      [
-        "taip",
-        "Standard"
-      ],
-      "Standard na Oras sa Taipei"
     ],
     [
       [
@@ -1235,13 +724,6 @@
     [
       [
         "uzbe",
-        "Standard"
-      ],
-      "Standard na Oras sa Uzbekistan"
-    ],
-    [
-      [
-        "uzbe",
         "Daylight"
       ],
       "Oras sa Tag-init ng Uzbekistan"
@@ -1259,13 +741,6 @@
         "Standard"
       ],
       "Oras sa Venezuela"
-    ],
-    [
-      [
-        "vlad",
-        "Standard"
-      ],
-      "Standard na Oras sa Vladivostok"
     ],
     [
       [
@@ -1290,24 +765,10 @@
     ],
     [
       [
-        "wake",
-        "Standard"
-      ],
-      "Oras sa Wake Island"
-    ],
-    [
-      [
         "wall",
         "Standard"
       ],
       "Oras sa Wallis & Futuna"
-    ],
-    [
-      [
-        "yaku",
-        "Standard"
-      ],
-      "Standard na Oras sa Yakutsk"
     ],
     [
       [
@@ -1322,13 +783,6 @@
         "Daylight"
       ],
       "Oras sa Tag-init ng Yekaterinburg"
-    ],
-    [
-      [
-        "yuko",
-        "Standard"
-      ],
-      "Oras sa Yukon"
     ]
   ],
   "overrides": [
@@ -1345,13 +799,6 @@
         "Daylight"
       ],
       "Standard na Oras sa Ireland"
-    ],
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "Coordinated Universal Time"
     ]
   ]
 }

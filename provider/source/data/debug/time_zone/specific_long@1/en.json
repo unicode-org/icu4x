@@ -3,30 +3,9 @@
     [
       [
         "acre",
-        "Standard"
-      ],
-      "Acre Standard Time"
-    ],
-    [
-      [
-        "acre",
         "Daylight"
       ],
       "Acre Summer Time"
-    ],
-    [
-      [
-        "afce",
-        "Standard"
-      ],
-      "Central Africa Time"
-    ],
-    [
-      [
-        "afea",
-        "Standard"
-      ],
-      "East Africa Time"
     ],
     [
       [
@@ -34,20 +13,6 @@
         "Standard"
       ],
       "Afghanistan Time"
-    ],
-    [
-      [
-        "afso",
-        "Standard"
-      ],
-      "South Africa Standard Time"
-    ],
-    [
-      [
-        "afwe",
-        "Standard"
-      ],
-      "West Africa Standard Time"
     ],
     [
       [
@@ -66,23 +31,9 @@
     [
       [
         "alas",
-        "Standard"
-      ],
-      "Alaska Standard Time"
-    ],
-    [
-      [
-        "alas",
         "Daylight"
       ],
       "Alaska Daylight Time"
-    ],
-    [
-      [
-        "amaz",
-        "Standard"
-      ],
-      "Amazon Standard Time"
     ],
     [
       [
@@ -94,23 +45,9 @@
     [
       [
         "amce",
-        "Standard"
-      ],
-      "Central Standard Time"
-    ],
-    [
-      [
-        "amce",
         "Daylight"
       ],
       "Central Daylight Time"
-    ],
-    [
-      [
-        "amea",
-        "Standard"
-      ],
-      "Eastern Standard Time"
     ],
     [
       [
@@ -122,23 +59,9 @@
     [
       [
         "ammo",
-        "Standard"
-      ],
-      "Mountain Standard Time"
-    ],
-    [
-      [
-        "ammo",
         "Daylight"
       ],
       "Mountain Daylight Time"
-    ],
-    [
-      [
-        "ampa",
-        "Standard"
-      ],
-      "Pacific Standard Time"
     ],
     [
       [
@@ -157,13 +80,6 @@
     [
       [
         "apia",
-        "Standard"
-      ],
-      "Apia Standard Time"
-    ],
-    [
-      [
-        "apia",
         "Daylight"
       ],
       "Apia Daylight Time"
@@ -177,10 +93,10 @@
     ],
     [
       [
-        "arab",
-        "Standard"
+        "aqto",
+        "Daylight"
       ],
-      "Arabian Standard Time"
+      "Aqtobe Summer Time"
     ],
     [
       [
@@ -188,13 +104,6 @@
         "Daylight"
       ],
       "Arabian Daylight Time"
-    ],
-    [
-      [
-        "arge",
-        "Standard"
-      ],
-      "Argentina Standard Time"
     ],
     [
       [
@@ -213,23 +122,9 @@
     [
       [
         "arwe",
-        "Standard"
-      ],
-      "Western Argentina Standard Time"
-    ],
-    [
-      [
-        "arwe",
         "Daylight"
       ],
       "Western Argentina Summer Time"
-    ],
-    [
-      [
-        "atla",
-        "Standard"
-      ],
-      "Atlantic Standard Time"
     ],
     [
       [
@@ -241,23 +136,9 @@
     [
       [
         "auce",
-        "Standard"
-      ],
-      "Australian Central Standard Time"
-    ],
-    [
-      [
-        "auce",
         "Daylight"
       ],
       "Australian Central Daylight Time"
-    ],
-    [
-      [
-        "aucw",
-        "Standard"
-      ],
-      "Australian Central Western Standard Time"
     ],
     [
       [
@@ -269,23 +150,9 @@
     [
       [
         "auea",
-        "Standard"
-      ],
-      "Australian Eastern Standard Time"
-    ],
-    [
-      [
-        "auea",
         "Daylight"
       ],
       "Australian Eastern Daylight Time"
-    ],
-    [
-      [
-        "auwe",
-        "Standard"
-      ],
-      "Australian Western Standard Time"
     ],
     [
       [
@@ -332,23 +199,9 @@
     [
       [
         "bras",
-        "Standard"
-      ],
-      "Brasilia Standard Time"
-    ],
-    [
-      [
-        "bras",
         "Daylight"
       ],
       "Brasilia Summer Time"
-    ],
-    [
-      [
-        "brun",
-        "Standard"
-      ],
-      "Brunei Darussalam Time"
     ],
     [
       [
@@ -359,17 +212,10 @@
     ],
     [
       [
-        "cham",
-        "Standard"
+        "cave",
+        "Daylight"
       ],
-      "Chamorro Standard Time"
-    ],
-    [
-      [
-        "chil",
-        "Standard"
-      ],
-      "Chile Standard Time"
+      "Cape Verde Summer Time"
     ],
     [
       [
@@ -377,13 +223,6 @@
         "Daylight"
       ],
       "Chile Summer Time"
-    ],
-    [
-      [
-        "chin",
-        "Standard"
-      ],
-      "China Standard Time"
     ],
     [
       [
@@ -398,13 +237,6 @@
         "Standard"
       ],
       "Christmas Island Time"
-    ],
-    [
-      [
-        "coco",
-        "Standard"
-      ],
-      "Cocos Islands Time"
     ],
     [
       [
@@ -429,13 +261,6 @@
     ],
     [
       [
-        "dumo",
-        "Standard"
-      ],
-      "Dumont-d’Urville Time"
-    ],
-    [
-      [
         "east",
         "Standard"
       ],
@@ -450,27 +275,6 @@
     ],
     [
       [
-        "eati",
-        "Standard"
-      ],
-      "East Timor Time"
-    ],
-    [
-      [
-        "ecua",
-        "Standard"
-      ],
-      "Ecuador Time"
-    ],
-    [
-      [
-        "euce",
-        "Standard"
-      ],
-      "Central European Standard Time"
-    ],
-    [
-      [
         "euce",
         "Daylight"
       ],
@@ -479,30 +283,9 @@
     [
       [
         "euea",
-        "Standard"
-      ],
-      "Eastern European Standard Time"
-    ],
-    [
-      [
-        "euea",
         "Daylight"
       ],
       "Eastern European Summer Time"
-    ],
-    [
-      [
-        "eufe",
-        "Standard"
-      ],
-      "Further-eastern European Time"
-    ],
-    [
-      [
-        "euwe",
-        "Standard"
-      ],
-      "Western European Standard Time"
     ],
     [
       [
@@ -534,13 +317,6 @@
     ],
     [
       [
-        "frso",
-        "Standard"
-      ],
-      "French Southern & Antarctic Time"
-    ],
-    [
-      [
         "gala",
         "Standard"
       ],
@@ -559,13 +335,6 @@
         "Daylight"
       ],
       "Georgia Summer Time"
-    ],
-    [
-      [
-        "giis",
-        "Standard"
-      ],
-      "Gilbert Islands Time"
     ],
     [
       [
@@ -598,23 +367,9 @@
     [
       [
         "grwe",
-        "Standard"
-      ],
-      "West Greenland Standard Time"
-    ],
-    [
-      [
-        "grwe",
         "Daylight"
       ],
       "West Greenland Summer Time"
-    ],
-    [
-      [
-        "gulf",
-        "Standard"
-      ],
-      "Gulf Standard Time"
     ],
     [
       [
@@ -622,13 +377,6 @@
         "Standard"
       ],
       "Guyana Time"
-    ],
-    [
-      [
-        "haal",
-        "Standard"
-      ],
-      "Hawaii-Aleutian Standard Time"
     ],
     [
       [
@@ -653,66 +401,10 @@
     ],
     [
       [
-        "ince",
-        "Standard"
-      ],
-      "Central Indonesia Time"
-    ],
-    [
-      [
-        "indi",
-        "Standard"
-      ],
-      "India Standard Time"
-    ],
-    [
-      [
-        "indo",
-        "Standard"
-      ],
-      "Indochina Time"
-    ],
-    [
-      [
-        "inea",
-        "Standard"
-      ],
-      "Eastern Indonesia Time"
-    ],
-    [
-      [
-        "inoc",
-        "Standard"
-      ],
-      "Indian Ocean Time"
-    ],
-    [
-      [
-        "inwe",
-        "Standard"
-      ],
-      "Western Indonesia Time"
-    ],
-    [
-      [
-        "irku",
-        "Standard"
-      ],
-      "Irkutsk Standard Time"
-    ],
-    [
-      [
         "irku",
         "Daylight"
       ],
       "Irkutsk Summer Time"
-    ],
-    [
-      [
-        "isra",
-        "Standard"
-      ],
-      "Israel Standard Time"
     ],
     [
       [
@@ -723,45 +415,10 @@
     ],
     [
       [
-        "kaea",
-        "Standard"
-      ],
-      "East Kazakhstan Time"
-    ],
-    [
-      [
-        "kamc",
-        "Standard"
-      ],
-      "Petropavlovsk-Kamchatski Standard Time"
-    ],
-    [
-      [
         "kamc",
         "Daylight"
       ],
       "Petropavlovsk-Kamchatski Summer Time"
-    ],
-    [
-      [
-        "kawe",
-        "Standard"
-      ],
-      "West Kazakhstan Time"
-    ],
-    [
-      [
-        "kaza",
-        "Standard"
-      ],
-      "Kazakhstan Time"
-    ],
-    [
-      [
-        "kore",
-        "Standard"
-      ],
-      "Korean Standard Time"
     ],
     [
       [
@@ -780,13 +437,6 @@
     [
       [
         "kras",
-        "Standard"
-      ],
-      "Krasnoyarsk Standard Time"
-    ],
-    [
-      [
-        "kras",
         "Daylight"
       ],
       "Krasnoyarsk Summer Time"
@@ -800,20 +450,6 @@
     ],
     [
       [
-        "lank",
-        "Standard"
-      ],
-      "Lanka Time"
-    ],
-    [
-      [
-        "liis",
-        "Standard"
-      ],
-      "Line Islands Time"
-    ],
-    [
-      [
         "maca",
         "Daylight"
       ],
@@ -822,30 +458,9 @@
     [
       [
         "maga",
-        "Standard"
-      ],
-      "Magadan Standard Time"
-    ],
-    [
-      [
-        "maga",
         "Daylight"
       ],
       "Magadan Summer Time"
-    ],
-    [
-      [
-        "mais",
-        "Standard"
-      ],
-      "Marshall Islands Time"
-    ],
-    [
-      [
-        "mala",
-        "Standard"
-      ],
-      "Malaysia Time"
     ],
     [
       [
@@ -878,23 +493,9 @@
     [
       [
         "mepa",
-        "Standard"
-      ],
-      "Mexican Pacific Standard Time"
-    ],
-    [
-      [
-        "mepa",
         "Daylight"
       ],
       "Mexican Pacific Daylight Time"
-    ],
-    [
-      [
-        "mgmt",
-        "Standard"
-      ],
-      "Greenwich Mean Time"
     ],
     [
       [
@@ -902,13 +503,6 @@
         "Daylight"
       ],
       "Ulaanbaatar Summer Time"
-    ],
-    [
-      [
-        "mosc",
-        "Standard"
-      ],
-      "Moscow Standard Time"
     ],
     [
       [
@@ -948,13 +542,6 @@
     [
       [
         "newf",
-        "Standard"
-      ],
-      "Newfoundland Standard Time"
-    ],
-    [
-      [
-        "newf",
         "Daylight"
       ],
       "Newfoundland Daylight Time"
@@ -982,31 +569,10 @@
     ],
     [
       [
-        "noma",
-        "Standard"
-      ],
-      "North Mariana Islands Time"
-    ],
-    [
-      [
-        "noro",
-        "Standard"
-      ],
-      "Fernando de Noronha Standard Time"
-    ],
-    [
-      [
         "noro",
         "Daylight"
       ],
       "Fernando de Noronha Summer Time"
-    ],
-    [
-      [
-        "novo",
-        "Standard"
-      ],
-      "Novosibirsk Standard Time"
     ],
     [
       [
@@ -1038,13 +604,6 @@
     ],
     [
       [
-        "pang",
-        "Standard"
-      ],
-      "Papua New Guinea Time"
-    ],
-    [
-      [
         "para",
         "Daylight"
       ],
@@ -1060,44 +619,9 @@
     [
       [
         "phil",
-        "Standard"
-      ],
-      "Philippine Standard Time"
-    ],
-    [
-      [
-        "phil",
         "Daylight"
       ],
       "Philippine Summer Time"
-    ],
-    [
-      [
-        "phis",
-        "Standard"
-      ],
-      "Phoenix Islands Time"
-    ],
-    [
-      [
-        "pitc",
-        "Standard"
-      ],
-      "Pitcairn Time"
-    ],
-    [
-      [
-        "pona",
-        "Standard"
-      ],
-      "Ponape Time"
-    ],
-    [
-      [
-        "pyon",
-        "Standard"
-      ],
-      "Pyongyang Time"
     ],
     [
       [
@@ -1137,9 +661,9 @@
     [
       [
         "samo",
-        "Standard"
+        "Daylight"
       ],
-      "Samoa Standard Time"
+      "Samoa Daylight Time"
     ],
     [
       [
@@ -1147,13 +671,6 @@
         "Standard"
       ],
       "Seychelles Time"
-    ],
-    [
-      [
-        "soge",
-        "Standard"
-      ],
-      "South Georgia Time"
     ],
     [
       [
@@ -1182,13 +699,6 @@
         "Standard"
       ],
       "Tahiti Time"
-    ],
-    [
-      [
-        "taip",
-        "Standard"
-      ],
-      "Taipei Standard Time"
     ],
     [
       [
@@ -1249,13 +759,6 @@
     [
       [
         "uzbe",
-        "Standard"
-      ],
-      "Uzbekistan Standard Time"
-    ],
-    [
-      [
-        "uzbe",
         "Daylight"
       ],
       "Uzbekistan Summer Time"
@@ -1273,13 +776,6 @@
         "Standard"
       ],
       "Venezuela Time"
-    ],
-    [
-      [
-        "vlad",
-        "Standard"
-      ],
-      "Vladivostok Standard Time"
     ],
     [
       [
@@ -1304,24 +800,10 @@
     ],
     [
       [
-        "wake",
-        "Standard"
-      ],
-      "Wake Island Time"
-    ],
-    [
-      [
         "wall",
         "Standard"
       ],
       "Wallis & Futuna Time"
-    ],
-    [
-      [
-        "yaku",
-        "Standard"
-      ],
-      "Yakutsk Standard Time"
     ],
     [
       [
@@ -1336,13 +818,6 @@
         "Daylight"
       ],
       "Yekaterinburg Summer Time"
-    ],
-    [
-      [
-        "yuko",
-        "Standard"
-      ],
-      "Yukon Time"
     ]
   ],
   "overrides": [
@@ -1359,13 +834,6 @@
         "Daylight"
       ],
       "Irish Standard Time"
-    ],
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "Coordinated Universal Time"
     ]
   ]
 }

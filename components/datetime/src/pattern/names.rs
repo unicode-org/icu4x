@@ -1326,10 +1326,14 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzSpecificLongV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: DataProvider<tz::MzSpecificLongV1Marker>
+            + DataProvider<tz::MzGenericLongV1Marker>
+            + DataProvider<tz::MzPeriodV1Marker>
+            + ?Sized,
     {
         self.inner.load_time_zone_specific_long_names(
             &tz::MzSpecificLongV1Marker::bind(provider),
+            &tz::MzGenericLongV1Marker::bind(provider),
             &tz::MzPeriodV1Marker::bind(provider),
             self.prefs,
         )?;
@@ -1403,10 +1407,14 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzSpecificShortV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: DataProvider<tz::MzSpecificShortV1Marker>
+            + DataProvider<tz::MzGenericShortV1Marker>
+            + DataProvider<tz::MzPeriodV1Marker>
+            + ?Sized,
     {
         self.inner.load_time_zone_specific_short_names(
             &tz::MzSpecificShortV1Marker::bind(provider),
+            &tz::MzGenericShortV1Marker::bind(provider),
             &tz::MzPeriodV1Marker::bind(provider),
             self.prefs,
         )?;
@@ -2059,6 +2067,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn load_time_zone_specific_long_names(
         &mut self,
         provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
+        generic_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
@@ -2078,6 +2087,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.mz_generic_long
+            .load_put(generic_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.load_mz_periods(mz_period_provider, error_field)?;
         Ok(())
     }
@@ -2085,6 +2098,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn load_time_zone_specific_short_names(
         &mut self,
         provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
+        generic_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
@@ -2102,6 +2116,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.mz_specific_short
             .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.mz_generic_short
+            .load_put(generic_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.load_mz_periods(mz_period_provider, error_field)?;
@@ -2237,6 +2255,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
                     self.load_time_zone_specific_short_names(
                         mz_specific_short_provider,
+                        mz_generic_short_provider,
                         mz_period_provider,
                         prefs,
                     )?;
@@ -2247,6 +2266,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
                     self.load_time_zone_specific_long_names(
                         mz_specific_long_provider,
+                        mz_generic_long_provider,
                         mz_period_provider,
                         prefs,
                     )?;

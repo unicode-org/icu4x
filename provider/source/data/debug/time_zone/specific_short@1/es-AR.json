@@ -3,23 +3,9 @@
     [
       [
         "arge",
-        "Standard"
-      ],
-      "ART"
-    ],
-    [
-      [
-        "arge",
         "Daylight"
       ],
       "ARST"
-    ],
-    [
-      [
-        "arwe",
-        "Standard"
-      ],
-      "WART"
     ],
     [
       [
@@ -29,13 +15,5 @@
       "WARST"
     ]
   ],
-  "overrides": [
-    [
-      [
-        "utc",
-        "Standard"
-      ],
-      "UTC"
-    ]
-  ]
+  "overrides": {}
 }

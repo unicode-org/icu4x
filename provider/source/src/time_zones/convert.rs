@@ -648,37 +648,51 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let meta_zone_id_data = self.metazone_to_short_map()?;
         let reverse_metazones = self.reverse_metazones()?;
+        let offsets = self.offset_period()?;
         let locations = self.calculate_locations(req)?.0;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
-            .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
+            .flat_map(|(mz, zf)| {
+                [
+                    // The non-DST version of the metazone
+                    zf.0.get("standard").map(|s| s.as_str()).map(|v| (mz, v)),
+                    // The DST version
+                    zf.0.get("generic")
+                        .or_else(|| zf.0.get("standard"))
+                        .map(|s| s.as_str())
+                        .map(|v| (MetazoneId(mz.0.to_ascii_uppercase()), v)),
+                ]
+                .into_iter()
+                .flatten()
+            })
             .filter(|&(mz, v)| {
-                let dst_tzs = reverse_metazones.get(&MetazoneId(mz.0.to_ascii_uppercase()));
-                let std_tzs = reverse_metazones.get(&mz);
-                if dst_tzs.is_none() && std_tzs.is_none() {
-                    log::warn!("No tzs for {mz:?}");
+                let Some(tzs) = reverse_metazones.get(&mz) else {
+                    // log::warn!("No tzs for {mz:?}");
                     return false;
                 };
-                dst_tzs
-                    .iter()
-                    .chain(std_tzs.iter())
-                    .copied()
-                    .flatten()
-                    .any(|tz| {
-                        let Some(location) = locations.get(tz) else {
-                            return true;
-                        };
-                        writeable::cmp_utf8(
-                            &time_zone_names_resource
-                                .region_format
-                                .interpolate([location]),
-                            v.as_bytes(),
-                        ) != Ordering::Equal
-                    })
+                tzs.iter().any(|tz| {
+                    let Some(location) = locations.get(tz) else {
+                        return true;
+                    };
+                    writeable::cmp_utf8(
+                        &time_zone_names_resource
+                            .region_format
+                            .interpolate([location]),
+                        v.as_bytes(),
+                    ) != Ordering::Equal
+                })
             })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
-            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| {
+                if offsets.0.get0(&tz).unwrap().iter1().last().unwrap().1 .1 != 0 {
+                    zf.0.get("generic").or_else(|| zf.0.get("standard"))
+                } else {
+                    zf.0.get("standard")
+                }
+                .map(|s| s.as_str())
+                .map(|v| (tz, v))
+            })
             .collect();
 
         Ok(DataResponse {
@@ -713,55 +727,73 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let meta_zone_id_data = self.metazone_to_short_map()?;
         let reverse_metazones = self.reverse_metazones()?;
+        let generic = DataProvider::<MetazoneGenericNamesLongV1Marker>::load(self, req)?.payload;
+        let generic = generic.get();
         let locations = self.calculate_locations(req)?.0;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
             .filter(|&((mz, zv), v)| {
-                let dst_tzs = reverse_metazones.get(&MetazoneId(mz.0.to_ascii_uppercase()));
-                let std_tzs = reverse_metazones.get(&mz);
-
-                if dst_tzs.is_none() && std_tzs.is_none() {
-                    log::warn!("No tzs for {mz:?}");
-                    return false;
-                };
-                if dst_tzs.is_none() && zv == ZoneVariant::Daylight {
-                    return false;
-                }
-                dst_tzs
+                // The name will be used for both uppercase and lowercase metazones
+                let tzs = reverse_metazones
+                    .get(&MetazoneId(mz.0.to_ascii_uppercase()))
                     .iter()
-                    .chain(std_tzs.iter())
+                    .chain(reverse_metazones.get(&mz).iter())
                     .copied()
                     .flatten()
-                    .any(|tz| {
-                        let Some(location) = locations.get(tz) else {
-                            return true;
-                        };
-                        if zv == ZoneVariant::Daylight {
-                            writeable::cmp_utf8(
-                                &time_zone_names_resource
-                                    .region_format_dt
-                                    .0
-                                    .interpolate([location]),
-                                v.as_bytes(),
-                            ) != Ordering::Equal
-                        } else if zv == ZoneVariant::Standard {
-                            writeable::cmp_utf8(
-                                &time_zone_names_resource
-                                    .region_format_st
-                                    .0
-                                    .interpolate([location]),
-                                v.as_bytes(),
-                            ) != Ordering::Equal
-                        } else {
-                            // tilde dep on icu_timezone
-                            unreachable!()
-                        }
-                    })
+                    .collect::<BTreeSet<_>>();
+                if tzs.is_empty() {
+                    // log::warn!("No tzs for {mz:?}");
+                    return false;
+                };
+                if zv == ZoneVariant::Standard {
+                    if let Some(v2) = generic.defaults.get(&mz) {
+                        debug_assert_eq!(v, v2);
+                        // This meta zone is also in use as a non-DST zone, which means the standard name
+                        // is already present in the generic data struct.
+                        return false;
+                    }
+                }
+                tzs.iter().any(|tz| {
+                    let Some(location) = locations.get(tz) else {
+                        return true;
+                    };
+                    if zv == ZoneVariant::Daylight {
+                        writeable::cmp_utf8(
+                            &time_zone_names_resource
+                                .region_format_dt
+                                .0
+                                .interpolate([location]),
+                            v.as_bytes(),
+                        ) != Ordering::Equal
+                    } else if zv == ZoneVariant::Standard {
+                        writeable::cmp_utf8(
+                            &time_zone_names_resource
+                                .region_format_st
+                                .0
+                                .interpolate([location]),
+                            v.as_bytes(),
+                        ) != Ordering::Equal
+                    } else {
+                        // tilde dep on icu_timezone
+                        unreachable!()
+                    }
+                })
             })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
             .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
+            .filter(|&((mz, zv), v)| {
+                if zv == ZoneVariant::Standard {
+                    if let Some(v2) = generic.overrides.get(&mz) {
+                        debug_assert_eq!(v, v2);
+                        // This override is also in use as a non-DST zone, which means the standard name
+                        // is already present in the generic data struct.
+                        return false;
+                    }
+                }
+                true
+            })
             .collect();
 
         Ok(DataResponse {
@@ -794,12 +826,41 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let meta_zone_id_data = self.metazone_to_short_map()?;
+        let reverse_metazones = self.reverse_metazones()?;
+        let offsets = self.offset_period()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
-            .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
+            .flat_map(|(mz, zf)| {
+                [
+                    // The non-DST version of the metazone
+                    zf.0.get("standard").map(|s| s.as_str()).map(|v| (mz, v)),
+                    // The DST version
+                    zf.0.get("generic")
+                        .or_else(|| zf.0.get("standard"))
+                        .map(|s| s.as_str())
+                        .map(|v| (MetazoneId(mz.0.to_ascii_uppercase()), v)),
+                ]
+                .into_iter()
+                .flatten()
+            })
+            .filter(|&(mz, _)| {
+                let Some(_tzs) = reverse_metazones.get(&mz) else {
+                    // log::warn!("No tzs for {mz:?}");
+                    return false;
+                };
+                true
+            })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| {
+                if offsets.0.get0(&tz).unwrap().iter1().last().unwrap().1 .1 != 0 {
+                    zf.0.get("generic").or_else(|| zf.0.get("standard"))
+                } else {
+                    zf.0.get("standard")
+                }
+                .map(|s| s.as_str())
+                .map(|v| (tz, v))
+            })
             .collect();
 
         Ok(DataResponse {
@@ -833,25 +894,48 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let meta_zone_id_data = self.metazone_to_short_map()?;
         let reverse_metazones = self.reverse_metazones()?;
+        let generic = DataProvider::<MetazoneGenericNamesShortV1Marker>::load(self, req)?.payload;
+        let generic = generic.get();
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
-            .filter(|&((mz, zv), _)| {
-                let dst_tzs = reverse_metazones.get(&MetazoneId(mz.0.to_ascii_uppercase()));
-                let std_tzs = reverse_metazones.get(&mz);
-
-                if dst_tzs.is_none() && std_tzs.is_none() {
-                    log::warn!("No tzs for {mz:?}");
+            .filter(|&((mz, zv), v)| {
+                // The name will be used for both uppercase and lowercase metazones
+                let tzs = reverse_metazones
+                    .get(&MetazoneId(mz.0.to_ascii_uppercase()))
+                    .iter()
+                    .chain(reverse_metazones.get(&mz).iter())
+                    .copied()
+                    .flatten()
+                    .collect::<BTreeSet<_>>();
+                if tzs.is_empty() {
+                    // log::warn!("No tzs for {mz:?}");
                     return false;
                 };
-                if dst_tzs.is_none() && zv == ZoneVariant::Daylight {
-                    return false;
+                if zv == ZoneVariant::Standard {
+                    if let Some(v2) = generic.defaults.get(&mz) {
+                        debug_assert_eq!(v, v2);
+                        // This meta zone is also in use as a non-DST zone, which means the standard name
+                        // is already present in the generic data struct.
+                        return false;
+                    }
                 }
                 true
             })
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
             .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
+            .filter(|&((mz, zv), v)| {
+                if zv == ZoneVariant::Standard {
+                    if let Some(v2) = generic.overrides.get(&mz) {
+                        debug_assert_eq!(v, v2);
+                        // This override is also in use as a non-DST zone, which means the standard name
+                        // is already present in the generic data struct.
+                        return false;
+                    }
+                }
+                true
+            })
             .collect();
 
         Ok(DataResponse {
@@ -920,19 +1004,6 @@ fn iter_mz_overrides<'a>(
                     }
                 })
         })
-}
-
-/// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
-/// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
-///
-/// Part 2 of type fallback requires access to the IANA TimeZone Database
-/// as well as a specific datetime context, so it is not relevant to DataProvider.
-fn zone_variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
-    zone_format
-        .0
-        .get("generic")
-        .or_else(|| zone_format.0.get("standard"))
-        .map(|s| s.as_str())
 }
 
 fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneVariant, &str)> {

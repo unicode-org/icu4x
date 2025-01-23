@@ -165,6 +165,12 @@ pub struct ExemplarCitiesV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneGenericNamesV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
+    ///
+    /// This mapping may contain a MetazoneId twice:
+    /// * A lowercase ID means the time zone using the metazone does not use DST.
+    ///   The value is the `-standard` display name.
+    /// * An uppercase ID means the time zone using the metazone uses DST. The value
+    ///   is the `-generic` display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
     /// The override mapping between timezone id and localized metazone name.
@@ -192,9 +198,16 @@ pub struct MetazoneGenericNamesV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneSpecificNamesV1<'data> {
     /// The default mapping between metazone id and localized metazone name.
+    ///
+    /// This mapping only contains each MetazoneId once, lowercase. The
+    /// `ZoneVariant::Standard` values are deduplicated against the generic data
+    /// struct's lowercase entries.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
-    /// The override mapping between timezone id and localized metazone name.
+    /// The override mapping between timezone id and localized zone name.
+    ///
+    /// The `ZoneVariant::Standard` values are deduplicated against the generic data
+    /// struct's lowercase entries.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub overrides: ZeroMap<'data, (TimeZoneBcp47Id, ZoneVariant), str>,
 }

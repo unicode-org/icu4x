@@ -138,7 +138,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
         let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
             names
                 .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?.0)
+                .get(&metazone_period.resolve(time_zone_id, local_time)?.1)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -178,6 +178,13 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         }) else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
+
+        let Some(generic_names) = (match self.0 {
+            FieldLength::Four => data_payloads.mz_generic_long.as_ref(),
+            _ => data_payloads.mz_generic_short.as_ref(),
+        }) else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
         let Some(metazone_period) = data_payloads.mz_periods else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
@@ -186,11 +193,19 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             .overrides
             .get(&(time_zone_id, zone_variant))
             .or_else(|| {
+                if zone_variant == ZoneVariant::Standard {
+                    generic_names.overrides.get(&time_zone_id)
+                } else {
+                    None
+                }
+            })
+            .or_else(|| {
                 let (mz, cased_mz) = metazone_period.resolve(time_zone_id, local_time)?;
                 if cased_mz.0.is_ascii_lowercase() {
-                    zone_variant = ZoneVariant::Standard;
+                    generic_names.defaults.get(&mz)
+                } else {
+                    names.defaults.get(&(mz, zone_variant))
                 }
-                names.defaults.get(&(mz, zone_variant))
             })
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
@@ -478,7 +493,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
             non_locations
                 .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?.0)
+                .get(&metazone_period.resolve(time_zone_id, local_time)?.1)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
