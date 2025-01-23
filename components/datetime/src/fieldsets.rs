@@ -1574,6 +1574,11 @@ impl L {
         (fields::TimeZone::Location, fields::FieldLength::Four)
     }
 }
+impl Default for L {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl_zone_marker!(
     /// A time zone ID is required to format with this style.
@@ -1615,6 +1620,11 @@ impl X {
     }
     pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
         (fields::TimeZone::Location, fields::FieldLength::Three)
+    }
+}
+impl Default for X {
+    fn default() -> Self {
+        Self::new()
     }
 }
 impl_zone_combo_helpers!(DateFieldSet, DateZone, DateFieldSet);
