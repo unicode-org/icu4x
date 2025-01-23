@@ -77,14 +77,14 @@
 //!
 //! // Time and Time Zone
 //! // Short length
-//! // specific non-location time zone
+//! // Long specific non-location time zone
 //! // Display time to the millisecond
 //! // Render for column alignment
 //!
 //! let static_field_set = fieldsets::T::short()
 //!     .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F3))
 //!     .with_alignment(Alignment::Column)
-//!     .with_zone(fieldsets::Z::short());
+//!     .with_zone(fieldsets::Z::long());
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
@@ -155,21 +155,24 @@ pub enum DateFields {
 )]
 #[non_exhaustive]
 pub enum ZoneStyle {
-    /// The specific non-location format, as in
-    /// “Pacific Daylight Time” or “PDT”
+    /// The long specific non-location format, as in
+    /// “Pacific Daylight Time”.
     Z,
     /// The short specific non-location format, as in
     /// “PDT”.
     Zs,
-    /// The generic non-location format, as in
-    /// “Pacific Time” or “PT”.
+    /// The long offset format, as in
+    /// “GMT−8:00”.
+    O,
+    /// The short offset format, as in
+    /// “GMT−8”.
+    Os,
+    /// The long generic non-location format, as in
+    /// “Pacific Time”.
     V,
     /// The short generic non-location format, as in
     /// “PT”.
     Vs,
-    /// The offset format, as in
-    /// “GMT−8:00” or “GMT-8”.
-    O,
     /// The location format, as in
     /// “Los Angeles time”.
     L,
@@ -440,11 +443,26 @@ impl FieldSetBuilder {
     fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
         let length = self.length;
         let zone_field_set = match self.zone_style.take() {
-            Some(ZoneStyle::Z) => ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self)),
-            Some(ZoneStyle::Zs) => ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self)),
-            Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
+            Some(ZoneStyle::Z) => {
+                let mut fs = fieldsets::Z::take_from_builder(self);
+                // ignore parsed length
+                fs.length = Length::Long;
+                ZoneFieldSet::Z(fs)
+            }     
+            Some(ZoneStyle::Zs) => ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self)),     
+            Some(ZoneStyle::V) => {
+                let mut fs = fieldsets::V::take_from_builder(self);
+                // ignore parsed length
+                fs.length = Length::Long;
+                ZoneFieldSet::V(fs)
+            }    
             Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
-            Some(ZoneStyle::O) => ZoneFieldSet::O(fieldsets::O::take_from_builder(self)),
+            Some(s @ (ZoneStyle::O | ZoneStyle::Os)) => {
+                let mut fs = fieldsets::O::take_from_builder(self);
+                // ignore parsed length
+                fs.length = if s == ZoneStyle::O { Length::Long } else { Length::Short };
+                ZoneFieldSet::O(fs)
+            }       
             Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
             Some(ZoneStyle::X) => ZoneFieldSet::X(fieldsets::X::take_from_builder(self)),
             Option::None => return Err(BuilderError::InvalidFields),
@@ -607,6 +625,7 @@ mod tests {
         ZoneStyle::Z,
         ZoneStyle::Zs,
         ZoneStyle::O,
+        ZoneStyle::Os,
         ZoneStyle::V,
         ZoneStyle::Vs,
         ZoneStyle::L,
