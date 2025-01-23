@@ -135,11 +135,11 @@ icu::datetime::fieldsets::T::with_alignment#FnInStruct
 icu::datetime::fieldsets::T::with_length#FnInStruct
 icu::datetime::fieldsets::T::with_time_precision#FnInStruct
 icu::datetime::fieldsets::T::with_zone#FnInStruct
+icu::datetime::fieldsets::V#Struct
 icu::datetime::fieldsets::V::long#FnInStruct
 icu::datetime::fieldsets::V::medium#FnInStruct
 icu::datetime::fieldsets::V::short#FnInStruct
 icu::datetime::fieldsets::V::with_length#FnInStruct
-icu::datetime::fieldsets::Vs#Struct
 icu::datetime::fieldsets::Vs::short#FnInStruct
 icu::datetime::fieldsets::X#Struct
 icu::datetime::fieldsets::X::new#FnInStruct

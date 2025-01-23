@@ -64,7 +64,7 @@ void main() {
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long)
             .formatIso(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
-        '15. Januar 2025, 14:32:12 Mitteleuropäische Zeit');
+        '15. Januar 2025, 14:32:12 MEZ');
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.short)
