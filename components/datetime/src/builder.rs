@@ -77,7 +77,7 @@
 //!
 //! // Time and Time Zone
 //! // Short length
-//! // Long specific non-location time zone
+//! // specific non-location time zone
 //! // Display time to the millisecond
 //! // Render for column alignment
 //!
@@ -155,20 +155,20 @@ pub enum DateFields {
 )]
 #[non_exhaustive]
 pub enum ZoneStyle {
-    /// The long specific non-location format, as in
-    /// “Pacific Daylight Time”.
+    /// The specific non-location format, as in
+    /// “Pacific Daylight Time” or “PDT”
     Z,
     /// The short specific non-location format, as in
     /// “PDT”.
     Zs,
-    /// The long generic non-location format, as in
-    /// “Pacific Time”.
+    /// The generic non-location format, as in
+    /// “Pacific Time” or “PT”.
     V,
     /// The short generic non-location format, as in
     /// “PT”.
     Vs,
-    /// The long offset format, as in
-    /// “GMT−8:00” or "GMT-8".
+    /// The offset format, as in
+    /// “GMT−8:00” or “GMT-8”.
     O,
     /// The location format, as in
     /// “Los Angeles time”.
@@ -607,7 +607,6 @@ mod tests {
         ZoneStyle::Z,
         ZoneStyle::Zs,
         ZoneStyle::O,
-        ZoneStyle::Os,
         ZoneStyle::V,
         ZoneStyle::Vs,
         ZoneStyle::L,

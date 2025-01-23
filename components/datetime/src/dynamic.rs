@@ -145,19 +145,19 @@ pub enum TimeFieldSet {
 #[non_exhaustive]
 pub enum ZoneFieldSet {
     /// The specific non-location format, as in
-    /// “Pacific Daylight Time” or "PDT"
+    /// “Pacific Daylight Time” or “PDT”
     Z(fieldsets::Z),
     /// The short specific non-location format, as in
     /// “PDT”.
     Zs(fieldsets::Zs),
     /// The generic non-location format, as in
-    /// “Pacific Time” or "PT".
+    /// “Pacific Time” or “PT”.
     V(fieldsets::V),
     /// The short generic non-location format, as in
     /// “PT”.
     Vs(fieldsets::Vs),
     /// The offset format, as in
-    /// “GMT−8:00” or "GMT-8".
+    /// “GMT−8:00” or “GMT-8”.
     O(fieldsets::O),
     /// The location format, as in
     /// “Los Angeles Time”.

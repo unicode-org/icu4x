@@ -106,7 +106,7 @@ int main() {
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
     out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
+    if (out != "July 11, 2022, 1:06:42\u202fPM Central Time") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
@@ -114,7 +114,7 @@ int main() {
     std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
     out = zdtf->format(*any_date.get(), *any_time.get(), *time_zone.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
+    if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM Central Time") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
