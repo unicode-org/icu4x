@@ -51,7 +51,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).with_zone(Vs::short());
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
@@ -70,7 +70,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).with_zone(Vs::short());
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
@@ -128,7 +128,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).with_zone(Vs::short());
 
             Ok(Box::new(ZonedDateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
@@ -147,7 +147,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).with_zone(Vs::short());
 
             Ok(Box::new(ZonedDateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
