@@ -18,13 +18,14 @@ pub struct TimeZoneTest {
 
 pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => ZoneFieldSet::V(fieldsets::V::new()),
-        "v" => ZoneFieldSet::Vs(fieldsets::Vs::new()),
+        "vvvv" => ZoneFieldSet::V(fieldsets::V::long()),
+        "v" => ZoneFieldSet::Vs(fieldsets::Vs::short()),
+        "zzzz" => ZoneFieldSet::Z(fieldsets::Z::long()),
+        "z" => ZoneFieldSet::Zs(fieldsets::Zs::short()),
+        "OOOO" => ZoneFieldSet::O(fieldsets::O::long()),
+        "O" => ZoneFieldSet::Os(fieldsets::O::short()),
         "VVVV" => ZoneFieldSet::L(fieldsets::L::new()),
-        "zzzz" => ZoneFieldSet::Z(fieldsets::Z::new()),
-        "z" => ZoneFieldSet::Zs(fieldsets::Zs::new()),
-        "OOOO" => ZoneFieldSet::O(fieldsets::O::new()),
-        "O" => ZoneFieldSet::Os(fieldsets::Os::new()),
+        "VVV" => ZoneFieldSet::L(fieldsets::X::new()),
         _ => return None,
     })
 }

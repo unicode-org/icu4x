@@ -585,7 +585,6 @@ impl FieldSetSerde {
             (ZoneFieldSet::Z(v), true) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
             (ZoneFieldSet::Zs(v), true) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
             (ZoneFieldSet::O(v), true) => (Self::ZONE_OFFSET, v.to_raw_options()),
-            (ZoneFieldSet::Os(v), true) => (Self::ZONE_OFFSET, v.to_raw_options()),
             (ZoneFieldSet::V(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
             (ZoneFieldSet::Vs(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
             (ZoneFieldSet::L(v), true) => (Self::ZONE_LOCATION, v.to_raw_options()),
@@ -594,7 +593,6 @@ impl FieldSetSerde {
             (ZoneFieldSet::Z(v), false) => (Self::ZONE_SPECIFIC_LONG, v.to_raw_options()),
             (ZoneFieldSet::Zs(v), false) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
             (ZoneFieldSet::O(v), false) => (Self::ZONE_OFFSET_LONG, v.to_raw_options()),
-            (ZoneFieldSet::Os(v), false) => (Self::ZONE_OFFSET, v.to_raw_options()),
             (ZoneFieldSet::V(v), false) => (Self::ZONE_GENERIC_LONG, v.to_raw_options()),
             (ZoneFieldSet::Vs(v), false) => (Self::ZONE_GENERIC, v.to_raw_options()),
             (ZoneFieldSet::L(v), false) => (Self::ZONE_LOCATION, v.to_raw_options()),
@@ -605,19 +603,20 @@ impl FieldSetSerde {
     fn to_zone_field_set(self, options: RawOptions, is_standalone: bool) -> Option<ZoneFieldSet> {
         use ZoneFieldSet::*;
         match (self, is_standalone, options.length) {
-            (Self::ZONE_SPECIFIC_LONG, _, _) => Some(Z(fieldsets::Z::new())),
-            (Self::ZONE_SPECIFIC, false, _) => Some(Zs(fieldsets::Zs::new())),
-            (Self::ZONE_SPECIFIC, true, Length::Long) => Some(Z(fieldsets::Z::new())),
-            (Self::ZONE_SPECIFIC, true, Length::Short) => Some(Zs(fieldsets::Zs::new())),
-            (Self::ZONE_OFFSET_LONG, _, _) => Some(O(fieldsets::O::new())),
-            (Self::ZONE_OFFSET, false, _) => Some(Os(fieldsets::Os::new())),
-            (Self::ZONE_OFFSET, true, Length::Long) => Some(O(fieldsets::O::new())),
-            (Self::ZONE_OFFSET, true, Length::Short) => Some(Os(fieldsets::Os::new())),
-            (Self::ZONE_GENERIC_LONG, _, _) => Some(V(fieldsets::V::new())),
-            (Self::ZONE_GENERIC, false, _) => Some(Vs(fieldsets::Vs::new())),
-            (Self::ZONE_GENERIC, true, Length::Long) => Some(V(fieldsets::V::new())),
-            (Self::ZONE_GENERIC, true, Length::Short) => Some(Vs(fieldsets::Vs::new())),
+            (Self::ZONE_SPECIFIC_LONG, _, _) => Some(Z(fieldsets::Z::long())),
+            (Self::ZONE_SPECIFIC, false, _) => Some(Zs(fieldsets::Zs::short())),
+            (Self::ZONE_SPECIFIC, true, Length::Long) => Some(Z(fieldsets::Z::long())),
+            (Self::ZONE_SPECIFIC, true, Length::Short) => Some(Zs(fieldsets::Zs::short())),
+            (Self::ZONE_OFFSET_LONG, _, _) => Some(O(fieldsets::O::long())),
+            (Self::ZONE_OFFSET, false, _) => Some(O(fieldsets::O::short())),
+            (Self::ZONE_OFFSET, true, Length::Long) => Some(O(fieldsets::O::long())),
+            (Self::ZONE_OFFSET, true, Length::Short) => Some(O(fieldsets::O::short())),
+            (Self::ZONE_GENERIC_LONG, _, _) => Some(V(fieldsets::V::long())),
+            (Self::ZONE_GENERIC, false, _) => Some(Vs(fieldsets::Vs::short())),
+            (Self::ZONE_GENERIC, true, Length::Long) => Some(V(fieldsets::V::long())),
+            (Self::ZONE_GENERIC, true, Length::Short) => Some(Vs(fieldsets::Vs::short())),
             (Self::ZONE_LOCATION, _, _) => Some(L(fieldsets::L::new())),
+            (Self::ZONE_EXEMPLAR, _, _) => Some(X(fieldsets::X::new())),
             (_, _, _) => None,
         }
     }
@@ -632,7 +631,7 @@ fn test_basic() {
             year_style: Some(YearStyle::WithEra),
             time_precision: Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3)),
         }),
-        ZoneFieldSet::Vs(fieldsets::Vs::new()),
+        ZoneFieldSet::Vs(fieldsets::Vs::short()),
     ));
     let skeleton_serde = CompositeFieldSetSerde::from(skeleton);
 

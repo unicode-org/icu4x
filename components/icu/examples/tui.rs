@@ -10,7 +10,7 @@ use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::fieldsets::YMDT;
+use icu_datetime::fieldsets::{O, YMDT};
 use icu_datetime::FixedCalendarDateTimeFormatter;
 use icu_timezone::{Time, ZonedDateTime};
 use std::env;
@@ -40,7 +40,7 @@ fn main() {
     {
         let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
             locale.into(),
-            YMDT::medium().with_zone_offset(),
+            YMDT::medium().with_zone(O::short()),
         )
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();

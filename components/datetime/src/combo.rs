@@ -16,7 +16,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// ```
 /// use icu::datetime::fieldsets::{Combo, E, L};
 ///
-/// let field_set = E::long().with_zone_location();
+/// let field_set = E::long().with_zone(L::new());
 /// ```
 ///
 /// Format the weekday, hour, and location-based zone:
@@ -31,7 +31,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().with_zone_location(),
+///     ET::short().hm().with_zone(L::new()),
 /// )
 /// .unwrap();
 ///
@@ -58,7 +58,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().with_zone_location(),
+///     ET::short().hm().with_zone(L::new()),
 /// )
 /// .unwrap();
 ///
@@ -85,7 +85,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
 ///     locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).with_zone_generic(),
+///     DateFieldSet::YMD(YMD::long()).with_zone(Vs::short()),
 /// )
 /// .unwrap();
 ///
@@ -103,15 +103,16 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::fieldsets::{T, Z};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::options::Length;
 /// use icu::locale::locale;
 /// use icu::timezone::{ZonedDateTimeParser, ZonedDateTime};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     locale!("en-US").into(),
-///     T::medium().with_zone_specific_long(),
+///     T::medium().with_zone(Z::long()),
 /// )
 /// .unwrap();
 ///

@@ -109,7 +109,7 @@ macro_rules! ternary {
     ($present:expr, $missing:expr, yes) => {
         $present
     };
-    ($present:expr, $missing:expr, $any:literal) => {
+    ($present:expr, $missing:expr, $any:expr) => {
         $present
     };
     ($present:expr, $missing:expr,) => {
@@ -223,7 +223,7 @@ macro_rules! impl_marker_with_options {
             #[allow(dead_code)]
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
-                    length: yes_or!(self.length, $(Length::$length_override)?),
+                    length: ternary!(yes_or!(self.length, $(Length::$length_override)?), Length::Long, $($sample_length)?),
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
                     time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
@@ -314,56 +314,18 @@ macro_rules! impl_zone_combo_helpers {
         $enum:ident
     ) => {
         impl $type {
-            /// Associates this field set with a long specific non-location format time zone, as in
-            /// “Pacific Daylight Time”.
-            #[inline]
-            pub fn with_zone_specific_long(self) -> Combo<Self, Z> {
-                Combo::new(self, Z::new())
-            }
-            /// Associates this field set with a short specific non-location format time zone, as in
-            /// “PDT”.
-            #[inline]
-            pub fn with_zone_specific(self) -> Combo<Self, Zs> {
-                Combo::new(self, Zs::new())
-            }
-            /// Associates this field set with a long offset format time zone, as in
-            /// “GMT−08:00”.
-            #[inline]
-            pub fn with_zone_offset_long(self) -> Combo<Self, O> {
-                Combo::new(self, O::new())
-            }
-            /// Associates this field set with a short offset format time zone, as in
-            /// “GMT−8”.
-            #[inline]
-            pub fn with_zone_offset(self) -> Combo<Self, Os> {
-                Combo::new(self, Os::new())
-            }
-            /// Associates this field set with a long generic non-location format time zone, as in
-            /// “Pacific Time”.
-            #[inline]
-            pub fn with_zone_generic_long(self) -> Combo<Self, V> {
-                Combo::new(self, V::new())
-            }
-            /// Associates this field set with a short generic non-location format time zone, as in
-            /// “PT”.
-            #[inline]
-            pub fn with_zone_generic(self) -> Combo<Self, Vs> {
-                Combo::new(self, Vs::new())
-            }
-            /// Associates this field set with a location format time zone, as in
-            /// “Los Angeles time”.
-            #[inline]
-            pub fn with_zone_location(self) -> Combo<Self, L> {
-                Combo::new(self, L::new())
+            /// Associates this field set with a time zone format.
+            pub fn with_zone<Z: ZoneMarkers>(self, zone: Z) -> Combo<Self, Z> {
+                Combo::new(self, zone)
             }
         }
         impl_combo_get_field!($type, $composite, $enum, Z);
         impl_combo_get_field!($type, $composite, $enum, Zs);
-        impl_combo_get_field!($type, $composite, $enum, O);
-        impl_combo_get_field!($type, $composite, $enum, Os);
         impl_combo_get_field!($type, $composite, $enum, V);
         impl_combo_get_field!($type, $composite, $enum, Vs);
+        impl_combo_get_field!($type, $composite, $enum, O);
         impl_combo_get_field!($type, $composite, $enum, L);
+        impl_combo_get_field!($type, $composite, $enum, X);
     };
 }
 
@@ -833,11 +795,9 @@ macro_rules! impl_zone_marker {
         // A plain language description of the field set for documentation.
         description = $description:literal,
         // Length of the skeleton if this is the only field.
-        length_override = $length_override:ident,
+        $(sample_length = $sample_length:ident,)?
         // A sample string. A docs test will be generated!
         sample = $sample:literal,
-        // The field symbol and field length.
-        field = $field:expr,
         // The type in ZoneFieldSet for this field set
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
@@ -878,7 +838,7 @@ macro_rules! impl_zone_marker {
             ///
             #[doc = concat!("let fmt = TimeFormatter::try_new(")]
             ///     locale!("en").into(),
-            #[doc = concat!("    ", stringify!($type), "::new(),")]
+            #[doc = concat!("    ", stringify!($type), "::", $(stringify!($sample_length),)? ternary!("", "new", $($sample_length)?), "()")]
             /// )
             /// .unwrap();
             ///
@@ -895,7 +855,7 @@ macro_rules! impl_zone_marker {
             /// ```
             $(#[$attr])*
             $type,
-            length_override: $length_override,
+            $(sample_length: $sample_length,)?
         );
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -933,20 +893,6 @@ macro_rules! impl_zone_marker {
             type GluePatternV1Marker = datetime_marker_helper!(@glue,);
         }
         impl_composite!($type, Zone, ZoneFieldSet);
-        impl $type {
-            /// Creates a new field set with default options.
-            pub const fn new() -> Self {
-                Self {}
-            }
-            pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
-                $field
-            }
-        }
-        impl Default for $type {
-            fn default() -> Self {
-                Self::new()
-            }
-        }
     };
 }
 
@@ -1211,7 +1157,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("en").into(),
-    ///     Zs::new(),
+    ///     Zs::short(),
     /// )
     /// .unwrap();
     ///
@@ -1222,7 +1168,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("en").into(),
-    ///     Z::new(),
+    ///     Z::long(),
     /// )
     /// .unwrap();
     ///
@@ -1251,7 +1197,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     Z::new(),
+    ///     Z::long(),
     /// )
     /// .unwrap();
     ///
@@ -1260,9 +1206,8 @@ impl_zone_marker!(
     /// ```
     Z,
     description = "time zone in specific non-location format, long length",
-    length_override = Long,
+    sample_length = long,
     sample = "Central Daylight Time",
-    field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
     zone_specific_long = yes,
@@ -1272,6 +1217,18 @@ impl_zone_marker!(
     input_variant = yes,
     input_localtime = yes,
 );
+impl_marker_length_constructors!(Z,);
+impl Z {
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (
+            fields::TimeZone::SpecificNonLocation,
+            match self.length {
+                Length::Long => fields::FieldLength::Four,
+                _ => fields::FieldLength::One,
+            },
+        )
+    }
+}
 
 impl_zone_marker!(
     /// This style requires a [`ZoneVariant`], so
@@ -1293,7 +1250,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     T::medium().with_zone_specific(),
+    ///     T::medium().with_zone(Zs::short()),
     /// )
     /// .unwrap();
     ///
@@ -1303,9 +1260,8 @@ impl_zone_marker!(
     /// ```
     Zs,
     description = "time zone in specific non-location format, short length",
-    length_override = Short,
+    sample_length = short,
     sample = "CDT",
-    field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
     zone_essentials = yes,
     zone_specific_short = yes,
     metazone_periods = yes,
@@ -1313,6 +1269,21 @@ impl_zone_marker!(
     input_variant = yes,
     input_localtime = yes,
 );
+
+impl Zs {
+    /// Creates a Zs skeleton with a short length.
+    pub const fn short() -> Self {
+        Self {
+            length: Length::Short,
+        }
+    }
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (
+            fields::TimeZone::SpecificNonLocation,
+            fields::FieldLength::One,
+        )
+    }
+}
 
 impl_zone_marker!(
     /// All shapes of time zones can be formatted with this style.
@@ -1337,7 +1308,7 @@ impl_zone_marker!(
     ///
     /// let formatter = TimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     O::new(),
+    ///     O::long(),
     /// )
     /// .unwrap();
     ///
@@ -1363,22 +1334,22 @@ impl_zone_marker!(
     /// ```
     O,
     description = "UTC offset, long length",
-    length_override = Long,
+    sample_length = long,
     sample = "GMT-05:00",
-    field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Four),
     zone_essentials = yes,
 );
-
-impl_zone_marker!(
-    Os,
-    description = "UTC offset, short length",
-    length_override = Short,
-    sample = "GMT-5",
-    field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
-    zone_essentials = yes,
-);
-
-// TODO: Add short/long UTC offset?
+impl_marker_length_constructors!(O,);
+impl O {
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (
+            fields::TimeZone::LocalizedOffset,
+            match self.length {
+                Length::Long => fields::FieldLength::Four,
+                _ => fields::FieldLength::One,
+            },
+        )
+    }
+}
 
 impl_zone_marker!(
     /// When a display name is unavailable, falls back to the location format:
@@ -1400,7 +1371,7 @@ impl_zone_marker!(
     ///
     /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
     ///     locale!("en").into(),
-    ///     Vs::new(),
+    ///     Vs::short(),
     /// )
     /// .unwrap();
     ///
@@ -1425,7 +1396,7 @@ impl_zone_marker!(
     /// // Set up the formatter
     /// let mut tzf = TimeFormatter::try_new(
     ///     locale!("en").into(),
-    ///     Vs::new(),
+    ///     Vs::short(),
     /// )
     /// .unwrap();
     ///
@@ -1476,7 +1447,7 @@ impl_zone_marker!(
     ///
     /// let formatter = TimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     V::new(),
+    ///     V::long(),
     /// )
     /// .unwrap();
     ///
@@ -1486,9 +1457,8 @@ impl_zone_marker!(
     /// ```
     V,
     description = "time zone in generic non-location format, long length",
-    length_override = Long,
+    sample_length = long,
     sample = "Central Time",
-    field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_long = yes,
@@ -1497,6 +1467,18 @@ impl_zone_marker!(
     input_tzid = yes,
     input_localtime = yes,
 );
+impl_marker_length_constructors!(V,);
+impl V {
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (
+            fields::TimeZone::GenericNonLocation,
+            match self.length {
+                Length::Long => fields::FieldLength::Four,
+                _ => fields::FieldLength::One,
+            },
+        )
+    }
+}
 
 impl_zone_marker!(
     /// Since non-location names might change over time,
@@ -1515,7 +1497,7 @@ impl_zone_marker!(
     ///
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("en-US").into(),
-    ///     Vs::new(),
+    ///     Vs::short(),
     /// )
     /// .unwrap();
     ///
@@ -1525,9 +1507,8 @@ impl_zone_marker!(
     /// ```
     Vs,
     description = "time zone in generic non-location format, short length",
-    length_override = Short,
+    sample_length = short,
     sample = "CT",
-    field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_short = yes,
@@ -1535,6 +1516,21 @@ impl_zone_marker!(
     input_tzid = yes,
     input_localtime = yes,
 );
+
+impl Vs {
+    /// Creates a Vs skeleton with a short length.
+    pub const fn short() -> Self {
+        Self {
+            length: Length::Short,
+        }
+    }
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (
+            fields::TimeZone::GenericNonLocation,
+            fields::FieldLength::One,
+        )
+    }
+}
 
 impl_zone_marker!(
     /// A time zone ID is required to format with this style.
@@ -1563,13 +1559,21 @@ impl_zone_marker!(
     /// ```
     L,
     description = "time zone in location format",
-    length_override = Long,
     sample = "Chicago Time",
-    field = (fields::TimeZone::Location, fields::FieldLength::Four),
     zone_essentials = yes,
     zone_locations = yes,
     input_tzid = yes,
 );
+
+impl L {
+    /// Creates an L skeleton.
+    pub const fn new() -> Self {
+        Self {}
+    }
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (fields::TimeZone::Location, fields::FieldLength::Four)
+    }
+}
 
 impl_zone_marker!(
     /// A time zone ID is required to format with this style.
@@ -1598,14 +1602,21 @@ impl_zone_marker!(
     /// ```
     X,
     description = "time zone in exemplar city format",
-    length_override = Long,
     sample = "Chicago",
-    field = (fields::TimeZone::Location, fields::FieldLength::Three),
     zone_locations = yes,
     zone_exemplars = yes,
     input_tzid = yes,
 );
 
+impl X {
+    /// Creates an X skeleton.
+    pub const fn new() -> Self {
+        Self {}
+    }
+    pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+        (fields::TimeZone::Location, fields::FieldLength::Three)
+    }
+}
 impl_zone_combo_helpers!(DateFieldSet, DateZone, DateFieldSet);
 
 impl_zone_combo_helpers!(TimeFieldSet, TimeZone, TimeFieldSet);

@@ -15,8 +15,8 @@ fn main() {
 
     let prefs = locale!("en").into();
 
-    let offset_formatter = DateTimeFormatter::try_new(prefs, fieldsets::O::new()).unwrap();
-    let non_location_formatter = DateTimeFormatter::try_new(prefs, fieldsets::V::new()).unwrap();
+    let offset_formatter = DateTimeFormatter::try_new(prefs, fieldsets::O::long()).unwrap();
+    let non_location_formatter = DateTimeFormatter::try_new(prefs, fieldsets::V::long()).unwrap();
     let city_formatter = DateTimeFormatter::try_new(prefs, fieldsets::X::new()).unwrap();
 
     let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());

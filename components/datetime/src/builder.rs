@@ -84,7 +84,7 @@
 //! let static_field_set = fieldsets::T::short()
 //!     .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F3))
 //!     .with_alignment(Alignment::Column)
-//!     .with_zone_specific_long();
+//!     .with_zone(fieldsets::Z::short());
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
@@ -161,21 +161,21 @@ pub enum ZoneStyle {
     /// The short specific non-location format, as in
     /// “PDT”.
     Zs,
-    /// The long offset format, as in
-    /// “GMT−8:00”.
-    O,
-    /// The short offset format, as in
-    /// “GMT−8”.
-    Os,
     /// The long generic non-location format, as in
     /// “Pacific Time”.
     V,
     /// The short generic non-location format, as in
     /// “PT”.
     Vs,
+    /// The long offset format, as in
+    /// “GMT−8:00” or "GMT-8".
+    O,
     /// The location format, as in
     /// “Los Angeles time”.
     L,
+    /// The exemplar city format, as in
+    /// “Los Angeles.
+    X,
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
@@ -438,16 +438,18 @@ impl FieldSetBuilder {
     }
 
     fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
+        let length = self.length;
         let zone_field_set = match self.zone_style.take() {
             Some(ZoneStyle::Z) => ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self)),
             Some(ZoneStyle::Zs) => ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self)),
-            Some(ZoneStyle::O) => ZoneFieldSet::O(fieldsets::O::take_from_builder(self)),
-            Some(ZoneStyle::Os) => ZoneFieldSet::Os(fieldsets::Os::take_from_builder(self)),
             Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
             Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
+            Some(ZoneStyle::O) => ZoneFieldSet::O(fieldsets::O::take_from_builder(self)),
             Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
+            Some(ZoneStyle::X) => ZoneFieldSet::X(fieldsets::X::take_from_builder(self)),
             Option::None => return Err(BuilderError::InvalidFields),
         };
+        self.length = length;
         Ok(zone_field_set)
     }
 

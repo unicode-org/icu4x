@@ -66,7 +66,7 @@
 use crate::fieldsets::Combo;
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
-use crate::{fieldsets, provider};
+use crate::{fieldsets, provider, Length};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
@@ -141,33 +141,49 @@ pub enum TimeFieldSet {
 ///
 /// - [`fieldsets::Zs`]
 /// - [`fieldsets::O`]
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Eq)]
 #[non_exhaustive]
 pub enum ZoneFieldSet {
-    /// The long specific non-location format, as in
-    /// “Pacific Daylight Time”.
+    /// The specific non-location format, as in
+    /// “Pacific Daylight Time” or "PDT"
     Z(fieldsets::Z),
     /// The short specific non-location format, as in
     /// “PDT”.
     Zs(fieldsets::Zs),
-    /// The long offset format, as in
-    /// “GMT−8:00”.
-    O(fieldsets::O),
-    /// The short offset format, as in
-    /// “GMT−8”.
-    Os(fieldsets::Os),
-    /// The long generic non-location format, as in
-    /// “Pacific Time”.
+    /// The generic non-location format, as in
+    /// “Pacific Time” or "PT".
     V(fieldsets::V),
     /// The short generic non-location format, as in
     /// “PT”.
     Vs(fieldsets::Vs),
+    /// The offset format, as in
+    /// “GMT−8:00” or "GMT-8".
+    O(fieldsets::O),
     /// The location format, as in
     /// “Los Angeles Time”.
     L(fieldsets::L),
     /// The exemplar city format, as in
     /// “Los Angeles.
     X(fieldsets::X),
+}
+
+impl PartialEq for ZoneFieldSet {
+    fn eq(&self, other: &Self) -> bool {
+        use fieldsets as fs;
+        use ZoneFieldSet::*;
+        match (*self, *other) {
+            (Z(a), Z(b)) => a == b,
+            (Z(fs::Z { length }), Zs(_)) | (Zs(_), Z(fs::Z { length })) => length == Length::Short,
+            (Zs(a), Zs(b)) => a == b,
+            (V(a), V(b)) => a == b,
+            (V(fs::V { length }), Vs(_)) | (Vs(_), V(fs::V { length })) => length == Length::Short,
+            (Vs(a), Vs(b)) => a == b,
+            (O(a), O(b)) => a == b,
+            (L(a), L(b)) => a == b,
+            (X(a), X(b)) => a == b,
+            _ => false,
+        }
+    }
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -475,7 +491,6 @@ impl_attrs! {
         Z,
         Zs,
         O,
-        Os,
         V,
         Vs,
         L,
