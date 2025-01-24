@@ -99,9 +99,15 @@ pub(crate) struct ZipData {
     file_list: HashSet<String>,
 }
 
+pub(crate) struct TarArchive {
+    archive: Vec<u8>,
+    file_list: HashSet<String>,
+}
+
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipData, String>>),
+    Tar(RwLock<Result<TarArchive, String>>),
     Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
@@ -118,7 +124,7 @@ impl AbstractFs {
             .is_dir()
         {
             Ok(Self::Fs(root.to_path_buf()))
-        } else {
+        } else if root.ends_with(".zip") {
             let archive = ZipArchive::new(Cursor::new(std::fs::read(root)?)).map_err(|e| {
                 DataError::custom("Invalid ZIP file")
                     .with_display_context(&e)
@@ -126,15 +132,60 @@ impl AbstractFs {
             })?;
             let file_list = archive.file_names().map(String::from).collect();
             Ok(Self::Zip(RwLock::new(Ok(ZipData { archive, file_list }))))
+        } else if root.ends_with(".tar.gz") {
+            use std::io::Read;
+            let mut data = Vec::new();
+            flate2::read::GzDecoder::new(Cursor::new(std::fs::read(&root)?))
+                .read_to_end(&mut data)?;
+
+            let file_list = tar::Archive::new(Cursor::new(&data))
+                .entries_with_seek()
+                .map(|e| {
+                    e.into_iter().filter_map(|e| {
+                        Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string())
+                    })
+                })?
+                .collect::<HashSet<_>>();
+
+            Ok(Self::Tar(RwLock::new(Ok(TarArchive {
+                archive: data,
+                file_list,
+            }))))
+        } else {
+            Err(DataError::custom("unsupported archive type").with_display_context(&root.display()))
         }
     }
 
     #[cfg(feature = "networking")]
     pub fn new_from_url(path: String) -> Self {
-        Self::Zip(RwLock::new(Err(path)))
+        if path.ends_with(".zip") {
+            Self::Zip(RwLock::new(Err(path)))
+        } else {
+            Self::Tar(RwLock::new(Err(path)))
+        }
     }
 
     fn init(&self) -> Result<(), DataError> {
+        #[cfg(feature = "networking")]
+        fn download(resource: &String) -> Result<PathBuf, DataError> {
+            let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+                .map(PathBuf::from)
+                .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
+                .join(resource.rsplit("//").next().unwrap());
+            if !root.exists() {
+                log::info!("Downloading {resource}");
+                std::fs::create_dir_all(root.parent().unwrap())?;
+                std::io::copy(
+                    &mut ureq::get(resource)
+                        .call()
+                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                        .into_reader(),
+                    &mut BufWriter::new(File::create(&root)?),
+                )?;
+            }
+            Ok(root)
+        }
+
         #[cfg(feature = "networking")]
         if let Self::Zip(lock) = self {
             if lock.read().expect("poison").is_ok() {
@@ -147,22 +198,7 @@ impl AbstractFs {
                 return Ok(());
             };
 
-            let root = std::env::var_os("ICU4X_SOURCE_CACHE")
-                .map(PathBuf::from)
-                .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
-                .join(resource.rsplit("//").next().unwrap());
-
-            if !root.exists() {
-                log::info!("Downloading {resource}");
-                std::fs::create_dir_all(root.parent().unwrap())?;
-                std::io::copy(
-                    &mut ureq::get(resource)
-                        .call()
-                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-                        .into_reader(),
-                    &mut BufWriter::new(File::create(&root)?),
-                )?;
-            }
+            let root = download(resource)?;
 
             let archive = ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
                 DataError::custom("Invalid ZIP file")
@@ -173,6 +209,35 @@ impl AbstractFs {
             let file_list = archive.file_names().map(String::from).collect();
 
             *lock = Ok(ZipData { archive, file_list });
+        } else if let Self::Tar(lock) = self {
+            if lock.read().expect("poison").is_ok() {
+                return Ok(());
+            }
+            let mut lock = lock.write().expect("poison");
+            let resource = if let Err(resource) = &*lock {
+                resource
+            } else {
+                return Ok(());
+            };
+
+            use std::io::Read;
+            let mut data = Vec::new();
+            flate2::read::GzDecoder::new(Cursor::new(std::fs::read(&download(resource)?)?))
+                .read_to_end(&mut data)?;
+
+            let file_list = tar::Archive::new(Cursor::new(&data))
+                .entries_with_seek()
+                .map(|e| {
+                    e.into_iter().filter_map(|e| {
+                        Some(e.ok()?.path().ok()?.as_os_str().to_str()?.to_string())
+                    })
+                })?
+                .collect::<HashSet<_>>();
+
+            *lock = Ok(TarArchive {
+                archive: data,
+                file_list,
+            })
         }
         Ok(())
     }
@@ -203,6 +268,28 @@ impl AbstractFs {
                     })?
                     .read_to_end(&mut buf)?;
                 Ok(buf)
+            }
+            Self::Tar(tar) => {
+                log::debug!("Reading: <tar>/{}", path);
+                tar::Archive::new(Cursor::new(
+                    &tar.read().expect("poison").as_ref().unwrap().archive,
+                )) // init called
+                .entries_with_seek()
+                .and_then(|mut e| {
+                    while let Some(e) = e.next() {
+                        let e = e?;
+                        if e.path()?.as_os_str() == path {
+                            return e.bytes().collect::<Result<Vec<_>, std::io::Error>>();
+                        }
+                    }
+                    Err(std::io::ErrorKind::NotFound.into())
+                })
+                .map_err(|e| {
+                    DataErrorKind::Io(e.kind())
+                        .into_error()
+                        .with_display_context(&e)
+                        .with_display_context(path)
+                })
             }
             Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
                 DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
@@ -239,6 +326,19 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            Self::Tar(tar) => tar
+                .read()
+                .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap() // init called
+                .file_list
+                .iter()
+                .filter_map(|p| p.strip_prefix(path))
+                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
+                .map(String::from)
+                .collect::<HashSet<_>>()
+                .into_iter(),
             Self::Memory(map) => map
                 .keys()
                 .copied()
@@ -255,6 +355,14 @@ impl AbstractFs {
         Ok(match self {
             Self::Fs(root) => root.join(path).is_file(),
             Self::Zip(zip) => zip
+                .read()
+                .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap() // init called
+                .file_list
+                .contains(path),
+            Self::Tar(tar) => tar
                 .read()
                 .expect("poison")
                 .as_ref()
@@ -328,8 +436,6 @@ impl TzdbCache {
 
         self.transitions
             .get_or_init(|| {
-                let singleton_dir = self.root.list("").unwrap().next().unwrap();
-
                 let tzfiles = [
                     "africa",
                     "antarctica",
@@ -347,7 +453,7 @@ impl TzdbCache {
                 for file in tzfiles {
                     lines.extend(
                         self.root
-                            .read_to_string(&format!("{singleton_dir}/{file}"))?
+                            .read_to_string(&file)?
                             .lines()
                             .map(ToOwned::to_owned)
                             .map(strip_comments),

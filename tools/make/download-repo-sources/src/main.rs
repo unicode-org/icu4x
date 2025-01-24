@@ -8,6 +8,7 @@ use icu_locale_core::*;
 use icu_provider::DataError;
 use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
+use std::collections::BTreeSet;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
@@ -76,7 +77,7 @@ fn main() -> eyre::Result<()> {
         Ok(root)
     }
 
-    fn extract(
+    fn extract_zip(
         zip: PathBuf,
         paths: Vec<String>,
         root: PathBuf,
@@ -99,6 +100,38 @@ fn main() -> eyre::Result<()> {
                     ),
                 )
                 .with_context(|| format!("Failed to write file {:?}", &path))?;
+                success.push(spath);
+            }
+        }
+        Ok(())
+    }
+
+    fn extract_tar(
+        tar: PathBuf,
+        paths: BTreeSet<String>,
+        root: PathBuf,
+        success: &mut Vec<String>,
+    ) -> eyre::Result<()> {
+        let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(
+            std::fs::File::open(&tar).expect("should just have been downloaded"),
+        ));
+
+        for e in tar.entries()? {
+            let mut e = e?;
+            let Some(spath) = e.path()?.to_str().map(ToString::to_string) else {
+                continue;
+            };
+            if paths.contains(&spath) {
+                let path = root.join(&spath);
+                fs::create_dir_all(path.parent().unwrap())?;
+                io::copy(
+                    &mut e,
+                    &mut crlify::BufWriterWithLineEndingFix::new(
+                        File::create(&path)
+                            .with_context(|| format!("Failed to create file {:?}", &path))?,
+                    ),
+                )
+                .with_context(|| format!("Failed to write file {:?}", &spath))?;
                 success.push(spath);
             }
         }
@@ -128,7 +161,7 @@ fn main() -> eyre::Result<()> {
 
     std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     let mut cldr_data = Vec::new();
-    extract(
+    extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
             SourceDataProvider::LATEST_TESTED_CLDR_TAG,
@@ -142,7 +175,7 @@ fn main() -> eyre::Result<()> {
 
     std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     let mut icuexport_data = Vec::new();
-    extract(
+    extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
             SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG,
@@ -155,7 +188,7 @@ fn main() -> eyre::Result<()> {
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/lstm"))?;
-    extract(
+    extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
             SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
@@ -167,28 +200,16 @@ fn main() -> eyre::Result<()> {
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/tzdb"))?;
-    extract(
+    extract_tar(
         cached(&format!(
-            "https://github.com/eggert/tz/archive/refs/tags/{}.zip",
+            "https://www.iana.org/time-zones/repository/releases/tzdata{}.tar.gz",
             SourceDataProvider::LATEST_TESTED_TZDB_TAG,
         ))
-        .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
-        TZDB_GLOB
-            .iter()
-            .copied()
-            .map(|p| format!("tz-{}/{p}", SourceDataProvider::LATEST_TESTED_TZDB_TAG))
-            .collect(),
-        out_root.join("tests/data"),
+        .with_context(|| "Failed to download TZDB ZIP".to_owned())?,
+        TZDB_GLOB.iter().copied().map(String::from).collect(),
+        out_root.join("tests/data/tzdb"),
         &mut Default::default(),
     )?;
-    std::fs::rename(
-        out_root.join(format!(
-            "tests/data/tz-{}",
-            SourceDataProvider::LATEST_TESTED_TZDB_TAG
-        )),
-        out_root.join("tests/data/tzdb"),
-    )
-    .unwrap();
 
     let cldr_data = cldr_data
         .iter()
