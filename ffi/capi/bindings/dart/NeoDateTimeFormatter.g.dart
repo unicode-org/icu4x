@@ -33,7 +33,7 @@ final class NeoDateTimeFormatter implements ffi.Finalizable {
     return NeoDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  /// See the [Rust documentation for `MDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NeoDateTimeFormatter.mdt(Locale locale, NeoDateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
@@ -44,7 +44,7 @@ final class NeoDateTimeFormatter implements ffi.Finalizable {
     return NeoDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NeoDateTimeFormatter.ymdt(Locale locale, NeoDateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment, YearStyle yearStyle) {
@@ -55,7 +55,7 @@ final class NeoDateTimeFormatter implements ffi.Finalizable {
     return NeoDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  /// See the [Rust documentation for `DET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NeoDateTimeFormatter.det(Locale locale, NeoDateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
@@ -66,7 +66,7 @@ final class NeoDateTimeFormatter implements ffi.Finalizable {
     return NeoDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  /// See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NeoDateTimeFormatter.mdet(Locale locale, NeoDateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
@@ -77,7 +77,7 @@ final class NeoDateTimeFormatter implements ffi.Finalizable {
     return NeoDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NeoDateTimeFormatter.ymdet(Locale locale, NeoDateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment, YearStyle yearStyle) {
@@ -88,7 +88,7 @@ final class NeoDateTimeFormatter implements ffi.Finalizable {
     return NeoDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  /// See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NeoDateTimeFormatter.et(Locale locale, NeoDateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {

@@ -80,7 +80,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_mdt(
@@ -99,7 +99,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdt(
@@ -120,7 +120,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_det(
@@ -139,7 +139,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_mdet(
@@ -158,7 +158,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdet(
@@ -179,7 +179,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_et(
