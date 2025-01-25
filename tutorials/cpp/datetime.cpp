@@ -13,6 +13,7 @@
 #include <icu4x/GregorianZonedDateTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
 #include <icu4x/NeoDateTimeFormatter.hpp>
+#include <icu4x/DateTimeFieldSetBuilder.hpp>
 
 #include <atomic>
 #include <iostream>
@@ -88,6 +89,18 @@ int main() {
     out = fmt_et->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset ET: " << out;
     if (out != "lun, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    DateTimeFieldSetBuilder builder;
+    builder.length = std::optional<NeoDateTimeLength>(NeoDateTimeLength::Long);
+    builder.date_fields = std::optional<DateFields>(DateFields::YM);
+    std::unique_ptr<NeoDateTimeFormatter> fmt_ym_bld = NeoDateTimeFormatter::create_from_builder(*locale.get(), builder).ok().value();
+    out = fmt_ym_bld->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset YM in DateTimeFormatter via builder: " << out;
+    if (out != "julio de 2022") {
         std::cout << " (unexpected!)";
         saw_unexpected_output = true;
     }

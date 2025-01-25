@@ -8,6 +8,8 @@
 #include "diplomat_runtime.h"
 
 #include "DateTimeAlignment.d.h"
+#include "DateTimeFieldSetBuilder.d.h"
+#include "DateTimeFormatterBuildOrLoadError.d.h"
 #include "DateTimeFormatterLoadError.d.h"
 #include "IsoDate.d.h"
 #include "Locale.d.h"
@@ -22,6 +24,9 @@
 
 
 
+
+typedef struct icu4x_NeoDateTimeFormatter_create_from_builder_mv1_result {union {NeoDateTimeFormatter* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_from_builder_mv1_result;
+icu4x_NeoDateTimeFormatter_create_from_builder_mv1_result icu4x_NeoDateTimeFormatter_create_from_builder_mv1(const Locale* locale, DateTimeFieldSetBuilder builder);
 
 typedef struct icu4x_NeoDateTimeFormatter_create_dt_mv1_result {union {NeoDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_dt_mv1_result;
 icu4x_NeoDateTimeFormatter_create_dt_mv1_result icu4x_NeoDateTimeFormatter_create_dt_mv1(const Locale* locale, NeoDateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);

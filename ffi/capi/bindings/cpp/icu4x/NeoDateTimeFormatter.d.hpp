@@ -18,7 +18,9 @@ namespace capi { struct NeoDateTimeFormatter; }
 class NeoDateTimeFormatter;
 namespace capi { struct Time; }
 class Time;
+struct DateTimeFieldSetBuilder;
 class DateTimeAlignment;
+class DateTimeFormatterBuildOrLoadError;
 class DateTimeFormatterLoadError;
 class NeoDateTimeLength;
 class TimePrecision;
@@ -35,6 +37,8 @@ namespace capi {
 namespace icu4x {
 class NeoDateTimeFormatter {
 public:
+
+  inline static diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
 
   inline static diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_dt(const icu4x::Locale& locale, icu4x::NeoDateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment);
 

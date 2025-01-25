@@ -12,6 +12,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
+export { DateTimeFieldSetBuilder } from "./DateTimeFieldSetBuilder.mjs"
+
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
@@ -234,6 +236,8 @@ export { DataError } from "./DataError.mjs"
 
 export { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 
+export { DateTimeFormatterBuildOrLoadError } from "./DateTimeFormatterBuildOrLoadError.mjs"
+
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
@@ -256,6 +260,8 @@ export { TransformResult } from "./TransformResult.mjs"
 
 export { LocaleDirection } from "./LocaleDirection.mjs"
 
+export { DateFields } from "./DateFields.mjs"
+
 export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
 
 export { NeoDateTimeLength } from "./NeoDateTimeLength.mjs"
@@ -263,6 +269,8 @@ export { NeoDateTimeLength } from "./NeoDateTimeLength.mjs"
 export { TimePrecision } from "./TimePrecision.mjs"
 
 export { YearStyle } from "./YearStyle.mjs"
+
+export { ZoneStyle } from "./ZoneStyle.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 

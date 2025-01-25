@@ -11,6 +11,8 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DateTimeAlignment.hpp"
+#include "DateTimeFieldSetBuilder.hpp"
+#include "DateTimeFormatterBuildOrLoadError.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "IsoDate.hpp"
 #include "Locale.hpp"
@@ -23,6 +25,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
+    
+    typedef struct icu4x_NeoDateTimeFormatter_create_from_builder_mv1_result {union {icu4x::capi::NeoDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_from_builder_mv1_result;
+    icu4x_NeoDateTimeFormatter_create_from_builder_mv1_result icu4x_NeoDateTimeFormatter_create_from_builder_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
     
     typedef struct icu4x_NeoDateTimeFormatter_create_dt_mv1_result {union {icu4x::capi::NeoDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_dt_mv1_result;
     icu4x_NeoDateTimeFormatter_create_dt_mv1_result icu4x_NeoDateTimeFormatter_create_dt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::NeoDateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
@@ -53,6 +58,12 @@ namespace capi {
     } // extern "C"
 } // namespace capi
 } // namespace
+
+inline diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::NeoDateTimeFormatter::create_from_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_NeoDateTimeFormatter_create_from_builder_mv1(locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::NeoDateTimeFormatter>>(std::unique_ptr<icu4x::NeoDateTimeFormatter>(icu4x::NeoDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
 
 inline diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::NeoDateTimeFormatter::create_dt(const icu4x::Locale& locale, icu4x::NeoDateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
   auto result = icu4x::capi::icu4x_NeoDateTimeFormatter_create_dt_mv1(locale.AsFFI(),

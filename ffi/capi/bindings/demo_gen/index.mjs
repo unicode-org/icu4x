@@ -818,20 +818,38 @@ let termini = Object.assign({
             },
             
             {
-                name: "Self:Length",
+                name: "Self:Builder:Length",
                 type: "NeoDateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "Self:TimePrecision",
+                name: "Self:Builder:DateFields",
+                type: "DateFields",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Self:Builder:TimePrecision",
                 type: "TimePrecision",
                 typeUse: "enumerator"
             },
             
             {
-                name: "Self:Alignment",
+                name: "Self:Builder:ZoneStyle",
+                type: "ZoneStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Self:Builder:Alignment",
                 type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Self:Builder:YearStyle",
+                type: "YearStyle",
                 typeUse: "enumerator"
             },
             
