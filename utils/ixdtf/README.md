@@ -20,7 +20,7 @@ RFC 9557 also updates the interpretation of `Z` from RFC 3339.
 
 ```rust
 use ixdtf::parsers::{
-    records::{Sign, TimeZoneRecord},
+    records::{Sign, TimeZoneRecord, Fraction},
     IxdtfParser,
 };
 
@@ -42,7 +42,7 @@ assert_eq!(offset.sign, Sign::Negative);
 assert_eq!(offset.hour, 5);
 assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
-assert_eq!(offset.nanosecond, 0);
+assert_eq!(offset.fraction, Fraction::Nanoseconds(0));
 assert!(!tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
@@ -74,7 +74,7 @@ RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
 
 ```rust
 use ixdtf::parsers::{
-    records::{Sign, TimeZoneRecord},
+    records::{Sign, TimeZoneRecord, Fraction},
     IxdtfParser,
 };
 
@@ -96,7 +96,7 @@ assert_eq!(offset.sign, Sign::Negative);
 assert_eq!(offset.hour, 0);
 assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
-assert_eq!(offset.nanosecond, 0);
+assert_eq!(offset.fraction, Fraction::Nanoseconds(0));
 assert!(!tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
@@ -135,7 +135,7 @@ zone annotation if it is provided.
 
 ```rust
 use ixdtf::parsers::{
-    records::{Sign, TimeZoneRecord},
+    records::{Sign, TimeZoneRecord, Fraction},
     IxdtfParser,
 };
 
@@ -152,7 +152,7 @@ assert_eq!(offset.sign, Sign::Negative);
 assert_eq!(offset.hour, 0);
 assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
-assert_eq!(offset.nanosecond, 0);
+assert_eq!(offset.fraction, Fraction::Nanoseconds(0));
 assert!(tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,

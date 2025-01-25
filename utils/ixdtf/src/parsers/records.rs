@@ -55,7 +55,7 @@ pub struct TimeRecord {
     /// A second value.
     pub second: u8,
     /// A nanosecond value representing all sub-second components.
-    pub nanosecond: u32,
+    pub fraction: Fraction,
 }
 
 /// A `TimeZoneAnnotation` that represents a parsed `TimeZoneRecord` and its critical flag.
@@ -111,7 +111,7 @@ pub struct UtcOffsetRecord {
     /// The second value of the `UtcOffsetRecord`.
     pub second: u8,
     /// Any nanosecond value of the `UTCOffsetRecord`.
-    pub nanosecond: u32,
+    pub fraction: Fraction,
 }
 
 impl UtcOffsetRecord {
@@ -122,7 +122,7 @@ impl UtcOffsetRecord {
             hour: 0,
             minute: 0,
             second: 0,
-            nanosecond: 0,
+            fraction: Fraction::Nanoseconds(0),
         }
     }
 }
@@ -144,7 +144,7 @@ impl UtcOffsetRecordOrZ {
                 hour: 0,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             },
         }
     }
@@ -191,7 +191,7 @@ pub enum TimeDurationRecord {
         /// Hours value.
         hours: u64,
         /// The parsed fraction value in nanoseconds.
-        fraction: u64,
+        fraction: Fraction,
     },
     // A Minutes Time duration record.
     Minutes {
@@ -200,7 +200,7 @@ pub enum TimeDurationRecord {
         /// Minutes value.
         minutes: u64,
         /// The parsed fraction value in nanoseconds.
-        fraction: u64,
+        fraction: Fraction,
     },
     // A Seconds Time duration record.
     Seconds {
@@ -211,6 +211,26 @@ pub enum TimeDurationRecord {
         /// Seconds value.
         seconds: u64,
         /// The parsed fraction value in nanoseconds.
-        fraction: u32,
+        fraction: Fraction,
     },
+}
+
+/// A fraction value in nanoseconds or lower value.
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // Parsed fraction must be one of the four provided options.
+pub enum Fraction {
+    /// Parsed nanoseconds value (A fraction value from 1-9 digits length)
+    Nanoseconds(u64),
+    /// Parsed picoseconds value (A fraction value from 10-12 digits length)
+    Picoseconds(u64),
+    /// Parsed femtoseconds value (A fraction value from 12-15 digits length)
+    Femtoseconds(u64),
+    /// A parsed value truncated to nanoseconds (A fraction value of 15+ digits length)
+    Truncated(u64), // An unbound fraction value truncated to nanoseconds
+}
+
+impl Default for Fraction {
+    fn default() -> Self {
+        Self::Nanoseconds(0)
+    }
 }

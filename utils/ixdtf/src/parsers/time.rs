@@ -18,7 +18,10 @@ use crate::{
     ParseError, ParserResult,
 };
 
-use super::{annotations, records::IxdtfParseRecord};
+use super::{
+    annotations,
+    records::{Fraction, IxdtfParseRecord},
+};
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
@@ -75,7 +78,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
             hour,
             minute: 0,
             second: 0,
-            nanosecond: 0,
+            fraction: Fraction::default(),
         });
     }
 
@@ -89,7 +92,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
             hour,
             minute,
             second: 0,
-            nanosecond: 0,
+            fraction: Fraction::default(),
         });
     }
 
@@ -99,13 +102,13 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 
     let second = parse_minute_second(cursor, true)?;
 
-    let nanosecond = parse_fraction(cursor)?.unwrap_or(0);
+    let fraction = parse_fraction(cursor)?.unwrap_or_default();
 
     Ok(TimeRecord {
         hour,
         minute,
         second,
-        nanosecond,
+        fraction,
     })
 }
 
@@ -141,7 +144,7 @@ pub(crate) fn parse_minute_second(cursor: &mut Cursor, is_second: bool) -> Parse
 /// This is primarily used in ISO8601 to add percision past
 /// a second.
 #[inline]
-pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
+pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<Fraction>> {
     // Assert that the first char provided is a decimal separator.
     if !cursor.check_or(false, is_decimal_separator) {
         return Ok(None);
@@ -151,18 +154,40 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<u32>> {
     let mut result = 0;
     let mut fraction_len = 0;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
-        if fraction_len >= 9 {
-            return Err(ParseError::FractionPart);
+        let next_value = u64::from(cursor.next_digit()?.ok_or(ParseError::ImplAssert)?);
+        if fraction_len < 15 {
+            result = result * 10 + next_value;
         }
-        result = result * 10 + u32::from(cursor.next_digit()?.ok_or(ParseError::FractionPart)?);
         fraction_len += 1;
     }
 
-    // Assert: 10^9-1 should always be a valid u32.
-    let result = result
-        * 10u32
-            .checked_pow(9 - fraction_len)
-            .ok_or(ParseError::ImplAssert)?;
+    if fraction_len == 0 {
+        return Err(ParseError::FractionPart);
+    }
 
-    Ok(Some(result))
+    let result = if fraction_len <= 9 {
+        // Assert: 10^9-1 should always be a valid u32.
+        let result = result
+            * 10u64
+                .checked_pow(9 - fraction_len)
+                .ok_or(ParseError::ImplAssert)?;
+        Some(Fraction::Nanoseconds(result))
+    } else if fraction_len <= 12 {
+        let result = result
+            * 10u64
+                .checked_pow(12 - fraction_len)
+                .ok_or(ParseError::ImplAssert)?;
+        Some(Fraction::Picoseconds(result))
+    } else if fraction_len <= 15 {
+        let result = result
+            * 10u64
+                .checked_pow(15 - fraction_len)
+                .ok_or(ParseError::ImplAssert)?;
+        Some(Fraction::Femtoseconds(result))
+    } else {
+        let result = result / 1_000_000;
+        Some(Fraction::Truncated(result))
+    };
+
+    Ok(result)
 }

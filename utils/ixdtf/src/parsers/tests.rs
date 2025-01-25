@@ -8,7 +8,7 @@ use alloc::vec::Vec;
 use crate::{
     parsers::{
         records::{
-            Annotation, DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
+            Annotation, DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
             TimeZoneRecord, UtcOffsetRecordOrZ,
         },
         IxdtfParser,
@@ -46,7 +46,7 @@ fn temporal_date_time_max() {
             hour: 12,
             minute: 28,
             second: 32,
-            nanosecond: 329402834,
+            fraction: Fraction::Nanoseconds(329402834),
         })
     );
 }
@@ -573,7 +573,7 @@ fn temporal_duration_parsing() {
                 hours: 1,
                 minutes: 1,
                 seconds: 1,
-                fraction: 123456789
+                fraction: Fraction::Nanoseconds(123456789)
             })
         },
         "Failing to parse a valid Duration string: \"{}\" should pass.",
@@ -593,7 +593,7 @@ fn temporal_duration_parsing() {
             }),
             time: Some(TimeDurationRecord::Hours {
                 hours: 0,
-                fraction: 1_800_000_000_000,
+                fraction: Fraction::Nanoseconds(1_800_000_000_000),
             })
         }
     );
@@ -604,12 +604,7 @@ fn temporal_duration_parsing() {
 fn temporal_invalid_durations() {
     use crate::parsers::IsoDurationParser;
 
-    let invalids = [
-        "P1Y1M1W0,5D",
-        "P1Y1M1W1DT1H1M1.123456789123S",
-        "+PT",
-        "P1Y1M1W1DT1H0.5M0.5S",
-    ];
+    let invalids = ["P1Y1M1W0,5D", "+PT", "P1Y1M1W1DT1H0.5M0.5S"];
 
     for test in invalids {
         let err = IsoDurationParser::from_str(test).parse();
@@ -636,6 +631,29 @@ fn maximum_duration_fraction() {
     let test = "P1Y1DT1H1M1.999999999S";
     let result = IsoDurationParser::from_str(test).parse();
     assert!(result.is_ok());
+}
+
+#[test]
+#[cfg(feature = "duration")]
+fn duration_fraction_extended() {
+    use crate::parsers::{
+        records::{DurationParseRecord, Sign, TimeDurationRecord},
+        IsoDurationParser,
+    };
+    let test = "PT1H1.123456789123M";
+    let result = IsoDurationParser::from_str(test).parse();
+    assert_eq!(
+        result,
+        Ok(DurationParseRecord {
+            sign: Sign::Positive,
+            date: None,
+            time: Some(TimeDurationRecord::Minutes {
+                hours: 1,
+                minutes: 1,
+                fraction: Fraction::Picoseconds(7_407_407_347_380)
+            })
+        })
+    );
 }
 
 #[test]
@@ -781,7 +799,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: None,
             tz: None,
@@ -803,7 +821,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 0,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: None,
             tz: None,
@@ -825,7 +843,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: None,
             tz: None,
@@ -847,7 +865,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: None,
             tz: None,
@@ -869,7 +887,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: None,
             tz: None,
@@ -974,7 +992,7 @@ fn test_zulu_offset() {
                 hour: 14,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: Some(crate::parsers::records::UtcOffsetRecordOrZ::Z),
             tz: Some(TimeZoneAnnotation {
@@ -999,7 +1017,7 @@ fn test_zulu_offset() {
                 hour: 14,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: Fraction::Nanoseconds(0),
             }),
             offset: Some(UtcOffsetRecordOrZ::Z),
             tz: None,
@@ -1011,6 +1029,10 @@ fn test_zulu_offset() {
 // Examples referenced from
 #[test]
 fn subsecond_string_tests() {
+    let hanging_subsecond_start = "15:23:30.";
+    let err = IxdtfParser::from_str(hanging_subsecond_start).parse_time();
+    assert!(err.is_err());
+
     let subsecond_time = "2025-01-15T15:23:30.1";
     let result = IxdtfParser::from_str(subsecond_time).parse();
     assert_eq!(
@@ -1025,7 +1047,7 @@ fn subsecond_string_tests() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                nanosecond: 100_000_000,
+                fraction: Fraction::Nanoseconds(100_000_000),
             }),
             offset: None,
             tz: None,
@@ -1047,7 +1069,7 @@ fn subsecond_string_tests() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                nanosecond: 123_456_780,
+                fraction: Fraction::Nanoseconds(123_456_780),
             }),
             offset: None,
             tz: None,
@@ -1069,7 +1091,29 @@ fn subsecond_string_tests() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                nanosecond: 123_456_789,
+                fraction: Fraction::Nanoseconds(123_456_789),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+}
+
+#[test]
+fn subseconds_parsing_extended_nanoseconds() {
+    // Test nanoseconds unbalanced
+    let subsecond_time = "15:23:30.1234567";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Nanoseconds(123_456_700),
             }),
             offset: None,
             tz: None,
@@ -1077,7 +1121,145 @@ fn subsecond_string_tests() {
         })
     );
 
-    let subsecond_time = "1976-11-18T15:23:30.1234567890";
-    let err = IxdtfParser::from_str(subsecond_time).parse();
-    assert_eq!(err, Err(ParseError::FractionPart));
+    // Test nanoseconds
+    let subsecond_time = "15:23:30.123456789";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Nanoseconds(123_456_789),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+}
+
+#[test]
+fn subseconds_parsing_extended_picoseconds() {
+    // Test picoseconds unbalanced
+    let subsecond_time = "15:23:30.1234567890";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Picoseconds(123_456_789_000),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    // Test picoseconds
+    let subsecond_time = "15:23:30.123456789876";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Picoseconds(123_456_789_876),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+}
+
+#[test]
+fn subseconds_parsing_extended_femtoseconds() {
+    // Test femtoseconds unbalanced
+    let subsecond_time = "15:23:30.1234567898765";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Femtoseconds(123_456_789_876_500),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    // Test femtoseconds
+    let subsecond_time = "15:23:30.123456789876543";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Femtoseconds(123_456_789_876_543),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+}
+
+#[test]
+fn subseconds_parsing_extended_truncated() {
+    // Test truncated unbalanced
+    let subsecond_time = "15:23:30.1234567898765432";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Truncated(123_456_789),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    // Test truncation
+    let subsecond_time = "15:23:30.1234567898765432101234567890987654321";
+    let result = IxdtfParser::from_str(subsecond_time).parse_time();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: None,
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                fraction: Fraction::Truncated(123_456_789),
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
 }
