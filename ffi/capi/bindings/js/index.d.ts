@@ -100,6 +100,8 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
+export { NeoDateTimeFormatter } from "./NeoDateTimeFormatter"
+
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer"
@@ -255,6 +257,12 @@ export { ListLength } from "./ListLength"
 export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
+
+export { DateTimeAlignment } from "./DateTimeAlignment"
+
+export { NeoDateTimeLength } from "./NeoDateTimeLength"
+
+export { TimePrecision } from "./TimePrecision"
 
 export { PluralCategory } from "./PluralCategory"
 

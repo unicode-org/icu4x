@@ -12,6 +12,7 @@
 #include <icu4x/TimeZoneIdMapperWithFastCanonicalization.hpp>
 #include <icu4x/GregorianZonedDateTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
+#include <icu4x/NeoDateTimeFormatter.hpp>
 
 #include <atomic>
 #include <iostream>
@@ -24,11 +25,35 @@ int main() {
     std::unique_ptr<Locale> locale = Locale::from_string("es").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
 
+    bool saw_unexpected_output = false;
+
     std::unique_ptr<IsoDate> date = IsoDate::create(2022, 07, 11).ok().value();
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
 
+    std::unique_ptr<NeoDateTimeFormatter> fmt_dt = NeoDateTimeFormatter::create_dt(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    std::string out = fmt_dt->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset DT: " << out;
+    if (out != "11, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<NeoDateTimeFormatter> fmt_mdt = NeoDateTimeFormatter::create_mdt(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    out = fmt_mdt->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset MDT: " << out;
+    if (out != "11 jul, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    if (saw_unexpected_output) {
+        return 1;
+    }
+
     std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
-    std::string out = tf->format(*time.get());
+    out = tf->format(*time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "13:06") {
         std::cout << "Output does not match expected output" << std::endl;

@@ -98,6 +98,8 @@ export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
 
+export { NeoDateTimeFormatter } from "./NeoDateTimeFormatter.mjs"
+
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer.mjs"
@@ -253,6 +255,12 @@ export { ListLength } from "./ListLength.mjs"
 export { TransformResult } from "./TransformResult.mjs"
 
 export { LocaleDirection } from "./LocaleDirection.mjs"
+
+export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
+
+export { NeoDateTimeLength } from "./NeoDateTimeLength.mjs"
+
+export { TimePrecision } from "./TimePrecision.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 

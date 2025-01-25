@@ -23,6 +23,8 @@ import * as ListFormatterDemo from "./ListFormatter.mjs";
 export * as ListFormatterDemo from "./ListFormatter.mjs";
 import * as LocaleDemo from "./Locale.mjs";
 export * as LocaleDemo from "./Locale.mjs";
+import * as NeoDateTimeFormatterDemo from "./NeoDateTimeFormatter.mjs";
+export * as NeoDateTimeFormatterDemo from "./NeoDateTimeFormatter.mjs";
 import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
@@ -798,6 +800,81 @@ let termini = Object.assign({
                 name: "Self:Name",
                 type: "string",
                 typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "NeoDateTimeFormatter.formatIso": {
+        func: NeoDateTimeFormatterDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "NeoDateTimeFormatter.formatIso",
+        parameters: [
+            
+            {
+                name: "Self:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Self:Length",
+                type: "NeoDateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Self:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Self:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Nanosecond",
+                type: "number",
+                typeUse: "number"
             }
             
         ]
