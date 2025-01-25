@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 use ixdtf::{
     parsers::{
         records::{
-            DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
+            DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
             UtcOffsetRecord, UtcOffsetRecordOrZ,
         },
         IxdtfParser,
@@ -326,11 +326,15 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let nanosecond = match self.time.fraction {
+            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
+            _ => Err(IxdtfParseError::FractionPart),
+        }?;
         let time = Time::try_new(
             self.time.hour,
             self.time.minute,
             self.time.second,
-            self.time.nanosecond,
+            nanosecond,
         )?;
         let offset = match time_zone_id.as_str() {
             "utc" | "gmt" => Some(UtcOffset::zero()),
@@ -367,11 +371,15 @@ impl<'a> Intermediate<'a> {
             },
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let nanosecond = match self.time.fraction {
+            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
+            _ => Err(IxdtfParseError::FractionPart),
+        }?;
         let time = Time::try_new(
             self.time.hour,
             self.time.minute,
             self.time.second,
-            self.time.nanosecond,
+            nanosecond,
         )?;
         Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
@@ -389,11 +397,15 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
+        let nanosecond = match self.time.fraction {
+            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
+            _ => Err(IxdtfParseError::FractionPart),
+        }?;
         let time = Time::try_new(
             self.time.hour,
             self.time.minute,
             self.time.second,
-            self.time.nanosecond,
+            nanosecond,
         )?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         let zone_variant = match zone_offset_calculator
@@ -792,11 +804,15 @@ impl Time {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
+        let nanosecond = match time_record.fraction {
+            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
+            _ => Err(IxdtfParseError::FractionPart),
+        }?;
         let time = Self::try_new(
             time_record.hour,
             time_record.minute,
             time_record.second,
-            time_record.nanosecond,
+            nanosecond,
         )?;
         Ok(time)
     }
