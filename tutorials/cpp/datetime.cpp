@@ -48,6 +48,15 @@ int main() {
     }
     std::cout << std::endl;
 
+    std::unique_ptr<NeoDateTimeFormatter> fmt_ymdt = NeoDateTimeFormatter::create_ymdt(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto, YearStyle::Auto).ok().value();
+    out = fmt_ymdt->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset YMDT: " << out;
+    if (out != "11 jul 2022, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
     if (saw_unexpected_output) {
         return 1;
     }

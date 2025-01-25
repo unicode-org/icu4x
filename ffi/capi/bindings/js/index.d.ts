@@ -264,6 +264,8 @@ export { NeoDateTimeLength } from "./NeoDateTimeLength"
 
 export { TimePrecision } from "./TimePrecision"
 
+export { YearStyle } from "./YearStyle"
+
 export { PluralCategory } from "./PluralCategory"
 
 export { BidiClass } from "./BidiClass"

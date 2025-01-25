@@ -17,6 +17,7 @@
 #include "NeoDateTimeLength.hpp"
 #include "Time.hpp"
 #include "TimePrecision.hpp"
+#include "YearStyle.hpp"
 
 
 namespace icu4x {
@@ -28,6 +29,9 @@ namespace capi {
     
     typedef struct icu4x_NeoDateTimeFormatter_create_mdt_mv1_result {union {icu4x::capi::NeoDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_mdt_mv1_result;
     icu4x_NeoDateTimeFormatter_create_mdt_mv1_result icu4x_NeoDateTimeFormatter_create_mdt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::NeoDateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
+    
+    typedef struct icu4x_NeoDateTimeFormatter_create_ymdt_mv1_result {union {icu4x::capi::NeoDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_ymdt_mv1_result;
+    icu4x_NeoDateTimeFormatter_create_ymdt_mv1_result icu4x_NeoDateTimeFormatter_create_ymdt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::NeoDateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment, icu4x::capi::YearStyle year_style);
     
     void icu4x_NeoDateTimeFormatter_format_iso_mv1(const icu4x::capi::NeoDateTimeFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
     
@@ -51,6 +55,15 @@ inline diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::Dat
     length.AsFFI(),
     time_precision.AsFFI(),
     alignment.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::NeoDateTimeFormatter>>(std::unique_ptr<icu4x::NeoDateTimeFormatter>(icu4x::NeoDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::NeoDateTimeFormatter::create_ymdt(const icu4x::Locale& locale, icu4x::NeoDateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment, icu4x::YearStyle year_style) {
+  auto result = icu4x::capi::icu4x_NeoDateTimeFormatter_create_ymdt_mv1(locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI(),
+    year_style.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::NeoDateTimeFormatter>>(std::unique_ptr<icu4x::NeoDateTimeFormatter>(icu4x::NeoDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 

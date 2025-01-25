@@ -6,6 +6,7 @@ import type { Locale } from "./Locale"
 import type { NeoDateTimeLength } from "./NeoDateTimeLength"
 import type { Time } from "./Time"
 import type { TimePrecision } from "./TimePrecision"
+import type { YearStyle } from "./YearStyle"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -20,6 +21,8 @@ export class NeoDateTimeFormatter {
     static createDt(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): NeoDateTimeFormatter;
 
     static createMdt(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): NeoDateTimeFormatter;
+
+    static createYmdt(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): NeoDateTimeFormatter;
 
     formatIso(date: IsoDate, time: Time): string;
 }

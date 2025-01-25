@@ -6,6 +6,7 @@ import { Locale } from "./Locale.mjs"
 import { NeoDateTimeLength } from "./NeoDateTimeLength.mjs"
 import { Time } from "./Time.mjs"
 import { TimePrecision } from "./TimePrecision.mjs"
+import { YearStyle } from "./YearStyle.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -67,6 +68,24 @@ export class NeoDateTimeFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_NeoDateTimeFormatter_create_mdt_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue, timePrecision.ffiValue, alignment.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createYmdt(locale, length, timePrecision, alignment, yearStyle) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_NeoDateTimeFormatter_create_ymdt_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue, timePrecision.ffiValue, alignment.ffiValue, yearStyle.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

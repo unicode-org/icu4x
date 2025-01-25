@@ -14,6 +14,7 @@
 #include "NeoDateTimeLength.d.h"
 #include "Time.d.h"
 #include "TimePrecision.d.h"
+#include "YearStyle.d.h"
 
 #include "NeoDateTimeFormatter.d.h"
 
@@ -27,6 +28,9 @@ icu4x_NeoDateTimeFormatter_create_dt_mv1_result icu4x_NeoDateTimeFormatter_creat
 
 typedef struct icu4x_NeoDateTimeFormatter_create_mdt_mv1_result {union {NeoDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_mdt_mv1_result;
 icu4x_NeoDateTimeFormatter_create_mdt_mv1_result icu4x_NeoDateTimeFormatter_create_mdt_mv1(const Locale* locale, NeoDateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
+
+typedef struct icu4x_NeoDateTimeFormatter_create_ymdt_mv1_result {union {NeoDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_NeoDateTimeFormatter_create_ymdt_mv1_result;
+icu4x_NeoDateTimeFormatter_create_ymdt_mv1_result icu4x_NeoDateTimeFormatter_create_ymdt_mv1(const Locale* locale, NeoDateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment, YearStyle year_style);
 
 void icu4x_NeoDateTimeFormatter_format_iso_mv1(const NeoDateTimeFormatter* self, const IsoDate* date, const Time* time, DiplomatWrite* write);
 

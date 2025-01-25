@@ -31,6 +31,14 @@ pub mod ffi {
         Column,
     }
 
+    #[diplomat::enum_convert(icu_datetime::options::YearStyle, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::YearStyle, Enum)]
+    pub enum YearStyle {
+        Auto,
+        Full,
+        WithEra,
+    }
+
     #[diplomat::rust_link(icu::datetime::TimePrecision, Enum)]
     pub enum TimePrecision {
         Hour,
@@ -85,6 +93,27 @@ pub mod ffi {
             let options = icu_datetime::fieldsets::MDT::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into());
+            Ok(Box::new(NeoDateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ymdt(
+            locale: &Locale,
+            length: NeoDateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+            year_style: YearStyle,
+        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::YMDT::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into())
+                .with_year_style(year_style.into());
             Ok(Box::new(NeoDateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))

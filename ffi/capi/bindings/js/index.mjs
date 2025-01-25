@@ -262,6 +262,8 @@ export { NeoDateTimeLength } from "./NeoDateTimeLength.mjs"
 
 export { TimePrecision } from "./TimePrecision.mjs"
 
+export { YearStyle } from "./YearStyle.mjs"
+
 export { PluralCategory } from "./PluralCategory.mjs"
 
 export { BidiClass } from "./BidiClass.mjs"

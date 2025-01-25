@@ -22,6 +22,7 @@ class DateTimeAlignment;
 class DateTimeFormatterLoadError;
 class NeoDateTimeLength;
 class TimePrecision;
+class YearStyle;
 }
 
 
@@ -38,6 +39,8 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_dt(const icu4x::Locale& locale, icu4x::NeoDateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment);
 
   inline static diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_mdt(const icu4x::Locale& locale, icu4x::NeoDateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::NeoDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_ymdt(const icu4x::Locale& locale, icu4x::NeoDateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment, icu4x::YearStyle year_style);
 
   inline std::string format_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
