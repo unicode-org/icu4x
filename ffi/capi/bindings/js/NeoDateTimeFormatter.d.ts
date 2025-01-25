@@ -24,5 +24,13 @@ export class NeoDateTimeFormatter {
 
     static createYmdt(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): NeoDateTimeFormatter;
 
+    static createDet(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): NeoDateTimeFormatter;
+
+    static createMdet(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): NeoDateTimeFormatter;
+
+    static createYmdet(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): NeoDateTimeFormatter;
+
+    static createEt(locale: Locale, length: NeoDateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): NeoDateTimeFormatter;
+
     formatIso(date: IsoDate, time: Time): string;
 }

@@ -57,6 +57,42 @@ int main() {
     }
     std::cout << std::endl;
 
+    std::unique_ptr<NeoDateTimeFormatter> fmt_det = NeoDateTimeFormatter::create_det(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    out = fmt_det->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset DET: " << out;
+    if (out != "lun 11, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<NeoDateTimeFormatter> fmt_mdet = NeoDateTimeFormatter::create_mdet(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    out = fmt_mdet->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset MDET: " << out;
+    if (out != "lun, 11 jul, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<NeoDateTimeFormatter> fmt_ymdet = NeoDateTimeFormatter::create_ymdet(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto, YearStyle::Auto).ok().value();
+    out = fmt_ymdet->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset YMDET: " << out;
+    if (out != "lun, 11 jul 2022, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<NeoDateTimeFormatter> fmt_et = NeoDateTimeFormatter::create_et(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    out = fmt_et->format_iso(*date.get(), *time.get());
+    std::cout << "Fieldset ET: " << out;
+    if (out != "lun, 13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
     if (saw_unexpected_output) {
         return 1;
     }

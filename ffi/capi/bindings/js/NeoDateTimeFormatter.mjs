@@ -100,6 +100,78 @@ export class NeoDateTimeFormatter {
         }
     }
 
+    static createDet(locale, length, timePrecision, alignment) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_NeoDateTimeFormatter_create_det_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue, timePrecision.ffiValue, alignment.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createMdet(locale, length, timePrecision, alignment) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_NeoDateTimeFormatter_create_mdet_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue, timePrecision.ffiValue, alignment.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createYmdet(locale, length, timePrecision, alignment, yearStyle) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_NeoDateTimeFormatter_create_ymdet_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue, timePrecision.ffiValue, alignment.ffiValue, yearStyle.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createEt(locale, length, timePrecision, alignment) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_NeoDateTimeFormatter_create_et_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue, timePrecision.ffiValue, alignment.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
     formatIso(date, time) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_NeoDateTimeFormatter_format_iso_mv1(this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);

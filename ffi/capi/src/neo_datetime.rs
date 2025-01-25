@@ -119,6 +119,84 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_det(
+            locale: &Locale,
+            length: NeoDateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::DET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(NeoDateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_mdet(
+            locale: &Locale,
+            length: NeoDateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::MDET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(NeoDateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ymdet(
+            locale: &Locale,
+            length: NeoDateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+            year_style: YearStyle,
+        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::YMDET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into())
+                .with_year_style(year_style.into());
+            Ok(Box::new(NeoDateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::demo(default_constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_et(
+            locale: &Locale,
+            length: NeoDateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::ET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(NeoDateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format_iso(&self, date: &IsoDate, time: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
