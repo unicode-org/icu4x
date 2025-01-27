@@ -42,7 +42,7 @@ assert_eq!(offset.sign, Sign::Negative);
 assert_eq!(offset.hour, 5);
 assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
-assert_eq!(offset.fraction, Fraction::Nanoseconds(0));
+assert_eq!(offset.fraction, Fraction { digits: 0, value: 0});
 assert!(!tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
@@ -96,7 +96,7 @@ assert_eq!(offset.sign, Sign::Negative);
 assert_eq!(offset.hour, 0);
 assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
-assert_eq!(offset.fraction, Fraction::Nanoseconds(0));
+assert_eq!(offset.fraction, Fraction { digits: 0, value: 0});
 assert!(!tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
@@ -152,7 +152,7 @@ assert_eq!(offset.sign, Sign::Negative);
 assert_eq!(offset.hour, 0);
 assert_eq!(offset.minute, 0);
 assert_eq!(offset.second, 0);
-assert_eq!(offset.fraction, Fraction::Nanoseconds(0));
+assert_eq!(offset.fraction, Fraction { digits: 0, value: 0});
 assert!(tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,

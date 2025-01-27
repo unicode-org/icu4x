@@ -151,43 +151,19 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<Fractio
     }
     cursor.next_or(ParseError::FractionPart)?;
 
-    let mut result = 0;
-    let mut fraction_len = 0;
+    let mut value = 0;
+    let mut digits: u8 = 0;
     while cursor.check_or(false, |ch| ch.is_ascii_digit()) {
         let next_value = u64::from(cursor.next_digit()?.ok_or(ParseError::ImplAssert)?);
-        if fraction_len < 15 {
-            result = result * 10 + next_value;
+        if digits < 18 {
+            value = value * 10 + next_value;
         }
-        fraction_len += 1;
+        digits = digits.saturating_add(1);
     }
 
-    if fraction_len == 0 {
+    if digits == 0 {
         return Err(ParseError::FractionPart);
     }
 
-    let result = if fraction_len <= 9 {
-        // Assert: 10^9-1 should always be a valid u32.
-        let result = result
-            * 10u64
-                .checked_pow(9 - fraction_len)
-                .ok_or(ParseError::ImplAssert)?;
-        Some(Fraction::Nanoseconds(result))
-    } else if fraction_len <= 12 {
-        let result = result
-            * 10u64
-                .checked_pow(12 - fraction_len)
-                .ok_or(ParseError::ImplAssert)?;
-        Some(Fraction::Picoseconds(result))
-    } else if fraction_len <= 15 {
-        let result = result
-            * 10u64
-                .checked_pow(15 - fraction_len)
-                .ok_or(ParseError::ImplAssert)?;
-        Some(Fraction::Femtoseconds(result))
-    } else {
-        let result = result / 1_000_000;
-        Some(Fraction::Truncated(result))
-    };
-
-    Ok(result)
+    Ok(Some(Fraction { digits, value }))
 }

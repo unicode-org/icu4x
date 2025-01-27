@@ -197,6 +197,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
             fraction: time
                 .3
                 .map(|f| adjust_fraction_for_unit(f, 3600))
+                .transpose()?
                 .unwrap_or_default(),
         })),
         // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
@@ -206,6 +207,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
             fraction: time
                 .3
                 .map(|f| adjust_fraction_for_unit(f, 60))
+                .transpose()?
                 .unwrap_or_default(),
         })),
         TimeUnit::Second => Ok(Some(TimeDurationRecord::Seconds {
@@ -218,11 +220,13 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
     }
 }
 
-fn adjust_fraction_for_unit(fraction: Fraction, unit: u64) -> Fraction {
-    match fraction {
-        Fraction::Nanoseconds(d) => Fraction::Nanoseconds(unit * d),
-        Fraction::Picoseconds(d) => Fraction::Picoseconds(unit * d),
-        Fraction::Femtoseconds(d) => Fraction::Femtoseconds(unit * d),
-        Fraction::Truncated(d) => Fraction::Truncated(unit * d),
-    }
+fn adjust_fraction_for_unit(fraction: Fraction, unit: u64) -> ParserResult<Fraction> {
+    let value = fraction
+        .value
+        .checked_mul(unit)
+        .ok_or(ParseError::InvalidFractionRange)?;
+    Ok(Fraction {
+        digits: fraction.digits,
+        value,
+    })
 }

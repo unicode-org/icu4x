@@ -251,7 +251,7 @@ impl<'a> IxdtfParser<'a> {
 ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
 ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: Fraction }
 ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction),
-///     None => (0,0,0, Fraction::Nanoseconds(0)),
+///     None => (0,0,0, Fraction::default()),
 /// };
 ///
 /// assert_eq!(result.sign, Sign::Positive);
@@ -262,7 +262,7 @@ impl<'a> IxdtfParser<'a> {
 /// assert_eq!(hours, 2);
 /// assert_eq!(minutes, 10);
 /// assert_eq!(seconds, 30);
-/// assert_eq!(fraction, Fraction::Nanoseconds(0));
+/// assert_eq!(fraction, Fraction { digits: 0, value: 0 });
 /// ```
 #[cfg(feature = "duration")]
 #[derive(Debug)]
@@ -325,13 +325,13 @@ impl<'a> IsoDurationParser<'a> {
     ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
     ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
     ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction),
-    ///     None => (0,0,0,Fraction::Nanoseconds(0)),
+    ///     None => (0,0,0,Fraction::default()),
     /// };
     /// assert!(result.date.is_none());
     /// assert_eq!(hours, 2);
     /// assert_eq!(minutes, 10);
     /// assert_eq!(seconds, 30);
-    /// assert_eq!(fraction, Fraction::Nanoseconds(0));
+    /// assert_eq!(fraction, Fraction { digits: 0, value: 0 });
     /// ```
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)

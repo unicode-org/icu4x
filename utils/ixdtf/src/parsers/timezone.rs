@@ -187,7 +187,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
                 hour,
                 minute: 0,
                 second: 0,
-                fraction: Fraction::Nanoseconds(0),
+                fraction: Fraction::default(),
             },
             false,
         ));
@@ -203,7 +203,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
             hour,
             minute,
             second: 0,
-            fraction: Fraction::Nanoseconds(0),
+            fraction: Fraction::default(),
         },
         true,
     ))

@@ -46,6 +46,8 @@ pub enum ParseError {
     TimeSecond,
     #[displaydoc("Invalid character while parsing fraction part value.")]
     FractionPart,
+    #[displaydoc("Fraction part value exceeds a representable range.")]
+    InvalidFractionRange,
     #[displaydoc("Invalid character while parsing date separator.")]
     DateSeparator,
     #[displaydoc("Invalid character while parsing time separator.")]

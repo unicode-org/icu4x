@@ -122,7 +122,10 @@ impl UtcOffsetRecord {
             hour: 0,
             minute: 0,
             second: 0,
-            fraction: Fraction::Nanoseconds(0),
+            fraction: Fraction {
+                digits: 0,
+                value: 0,
+            },
         }
     }
 }
@@ -144,7 +147,7 @@ impl UtcOffsetRecordOrZ {
                 hour: 0,
                 minute: 0,
                 second: 0,
-                fraction: Fraction::Nanoseconds(0),
+                fraction: Fraction::default(),
             },
         }
     }
@@ -216,21 +219,41 @@ pub enum TimeDurationRecord {
 }
 
 /// A fraction value in nanoseconds or lower value.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // Parsed fraction must be one of the four provided options.
-pub enum Fraction {
-    /// Parsed nanoseconds value (A fraction value from 1-9 digits length)
-    Nanoseconds(u64),
-    /// Parsed picoseconds value (A fraction value from 10-12 digits length)
-    Picoseconds(u64),
-    /// Parsed femtoseconds value (A fraction value from 12-15 digits length)
-    Femtoseconds(u64),
-    /// A parsed value truncated to nanoseconds (A fraction value of 15+ digits length)
-    Truncated(u64), // An unbound fraction value truncated to nanoseconds
+///
+/// # Precision note
+///
+/// `ixdtf` parses a fraction value to a precision of 18 digits of precision, but
+/// preserves the fraction's digit length
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // A fraction is only a value and its digit length.
+pub struct Fraction {
+    // The count of fraction digits, i.e. the fraction's digit length.
+    pub digits: u8,
+    // The parsed fraction value.
+    pub value: u64,
 }
 
-impl Default for Fraction {
-    fn default() -> Self {
-        Self::Nanoseconds(0)
+impl Fraction {
+    /// Returns Some(`u32`) representing the `Fraction` as it's computed
+    /// nanosecond value or `None` if the digits exceeds 9 digits.
+    pub fn to_nanoseconds(&self) -> Option<u32> {
+        if self.digits <= 9 {
+            10u32
+                .checked_pow(9 - u32::from(self.digits))
+                .map(|x| x * self.value as u32)
+        } else {
+            None
+        }
+    }
+
+    /// Returns a `u64` representing the `Fraction` as it's computed
+    /// nanosecond value, truncating any value beyond 9 digits to
+    /// nanoseconds
+    pub fn to_truncated_nanoseconds(&self) -> u64 {
+        if self.digits <= 9 {
+            self.value
+        } else {
+            self.value / 10u64.pow(u32::from(self.digits - 9))
+        }
     }
 }

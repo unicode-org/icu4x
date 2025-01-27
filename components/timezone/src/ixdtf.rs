@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 use ixdtf::{
     parsers::{
         records::{
-            DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
+            DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
             UtcOffsetRecord, UtcOffsetRecordOrZ,
         },
         IxdtfParser,
@@ -42,6 +42,8 @@ pub enum ParseError {
     InconsistentTimeZoneOffsets,
     /// There was an invalid Offset.
     InvalidOffsetError,
+    /// There was an invalid subsecond fraction.
+    InvalidFraction,
     /// The set of time zone fields was not expected for the given type.
     /// For example, if a named time zone was present with offset-only parsing,
     /// or an offset was present with named-time-zone-only parsing.
@@ -326,10 +328,9 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let nanosecond = match self.time.fraction {
-            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
-            _ => Err(IxdtfParseError::FractionPart),
-        }?;
+        let Some(nanosecond) = self.time.fraction.to_nanoseconds() else {
+            return Err(ParseError::InvalidFraction);
+        };
         let time = Time::try_new(
             self.time.hour,
             self.time.minute,
@@ -371,10 +372,9 @@ impl<'a> Intermediate<'a> {
             },
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let nanosecond = match self.time.fraction {
-            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
-            _ => Err(IxdtfParseError::FractionPart),
-        }?;
+        let Some(nanosecond) = self.time.fraction.to_nanoseconds() else {
+            return Err(ParseError::InvalidFraction);
+        };
         let time = Time::try_new(
             self.time.hour,
             self.time.minute,
@@ -397,10 +397,9 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let nanosecond = match self.time.fraction {
-            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
-            _ => Err(IxdtfParseError::FractionPart),
-        }?;
+        let Some(nanosecond) = self.time.fraction.to_nanoseconds() else {
+            return Err(ParseError::InvalidFraction);
+        };
         let time = Time::try_new(
             self.time.hour,
             self.time.minute,
@@ -804,10 +803,9 @@ impl Time {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
-        let nanosecond = match time_record.fraction {
-            Fraction::Nanoseconds(n) => u32::try_from(n).map_err(|_| IxdtfParseError::FractionPart),
-            _ => Err(IxdtfParseError::FractionPart),
-        }?;
+        let Some(nanosecond) = time_record.fraction.to_nanoseconds() else {
+            return Err(ParseError::InvalidFraction);
+        };
         let time = Self::try_new(
             time_record.hour,
             time_record.minute,
