@@ -124,7 +124,7 @@ impl AbstractFs {
             .is_dir()
         {
             Ok(Self::Fs(root.to_path_buf()))
-        } else if root.ends_with(".zip") {
+        } else if root.extension().is_some_and(|ext| ext == "zip") {
             let archive = ZipArchive::new(Cursor::new(std::fs::read(root)?)).map_err(|e| {
                 DataError::custom("Invalid ZIP file")
                     .with_display_context(&e)
@@ -135,7 +135,7 @@ impl AbstractFs {
         } else if root.ends_with(".tar.gz") {
             use std::io::Read;
             let mut data = Vec::new();
-            flate2::read::GzDecoder::new(Cursor::new(std::fs::read(&root)?))
+            flate2::read::GzDecoder::new(Cursor::new(std::fs::read(root)?))
                 .read_to_end(&mut data)?;
 
             let file_list = tar::Archive::new(Cursor::new(&data))
@@ -275,8 +275,8 @@ impl AbstractFs {
                     &tar.read().expect("poison").as_ref().unwrap().archive,
                 )) // init called
                 .entries_with_seek()
-                .and_then(|mut e| {
-                    while let Some(e) = e.next() {
+                .and_then(|e| {
+                    for e in e {
                         let e = e?;
                         if e.path()?.as_os_str() == path {
                             return e.bytes().collect::<Result<Vec<_>, std::io::Error>>();
@@ -397,7 +397,7 @@ impl TzdbCache {
 
                 for line in self
                     .root
-                    .read_to_string(&format!("zone.tab"))?
+                    .read_to_string("zone.tab")?
                     .lines()
                     .map(ToOwned::to_owned)
                     .map(strip_comments)
@@ -451,7 +451,7 @@ impl TzdbCache {
                 for file in tzfiles {
                     lines.extend(
                         self.root
-                            .read_to_string(&file)?
+                            .read_to_string(file)?
                             .lines()
                             .map(ToOwned::to_owned)
                             .map(strip_comments),
