@@ -42,8 +42,8 @@ pub enum ParseError {
     InconsistentTimeZoneOffsets,
     /// There was an invalid Offset.
     InvalidOffsetError,
-    /// There was an invalid subsecond fraction.
-    InvalidFraction,
+    /// Parsed fraction had excessive precision beyond nanosecond.
+    ExcessivePrecision,
     /// The set of time zone fields was not expected for the given type.
     /// For example, if a named time zone was present with offset-only parsing,
     /// or an offset was present with named-time-zone-only parsing.
@@ -328,15 +328,7 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let Some(nanosecond) = self.time.fraction.to_nanoseconds() else {
-            return Err(ParseError::InvalidFraction);
-        };
-        let time = Time::try_new(
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-            nanosecond,
-        )?;
+        let time = Time::try_from_time_record(&self.time)?;
         let offset = match time_zone_id.as_str() {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
@@ -372,15 +364,7 @@ impl<'a> Intermediate<'a> {
             },
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let Some(nanosecond) = self.time.fraction.to_nanoseconds() else {
-            return Err(ParseError::InvalidFraction);
-        };
-        let time = Time::try_new(
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-            nanosecond,
-        )?;
+        let time = Time::try_from_time_record(&self.time)?;
         Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
@@ -397,15 +381,7 @@ impl<'a> Intermediate<'a> {
         };
         let time_zone_id = mapper.iana_bytes_to_bcp47(iana_identifier);
         let date = Date::try_new_iso(self.date.year, self.date.month, self.date.day)?;
-        let Some(nanosecond) = self.time.fraction.to_nanoseconds() else {
-            return Err(ParseError::InvalidFraction);
-        };
-        let time = Time::try_new(
-            self.time.hour,
-            self.time.minute,
-            self.time.second,
-            nanosecond,
-        )?;
+        let time = Time::try_from_time_record(&self.time)?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         let zone_variant = match zone_offset_calculator
             .compute_offsets_from_time_zone(time_zone_id, (date, time))
@@ -803,16 +779,19 @@ impl Time {
 
     fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
+        Self::try_from_time_record(&time_record)
+    }
+
+    fn try_from_time_record(time_record: &TimeRecord) -> Result<Self, ParseError> {
         let Some(nanosecond) = time_record.fraction.to_nanoseconds() else {
-            return Err(ParseError::InvalidFraction);
+            return Err(ParseError::ExcessivePrecision);
         };
-        let time = Self::try_new(
+        Ok(Self::try_new(
             time_record.hour,
             time_record.minute,
             time_record.second,
             nanosecond,
-        )?;
-        Ok(time)
+        )?)
     }
 }
 
