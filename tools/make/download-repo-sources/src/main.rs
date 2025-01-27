@@ -239,9 +239,7 @@ fn main() -> eyre::Result<()> {
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");
-            format!(
-                r#"("{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#
-            )
+            format!(r#"("{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
