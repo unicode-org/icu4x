@@ -391,15 +391,13 @@ fn strip_comments(mut line: String) -> String {
 
 impl TzdbCache {
     pub(crate) fn zone_tab(&self) -> Result<&BTreeMap<String, Region>, DataError> {
-        let singleton_dir = self.root.list("").unwrap().next().unwrap();
-
         self.zone_tab
             .get_or_init(|| {
                 let mut r = BTreeMap::new();
 
                 for line in self
                     .root
-                    .read_to_string(&format!("{singleton_dir}/zone.tab"))?
+                    .read_to_string(&format!("zone.tab"))?
                     .lines()
                     .map(ToOwned::to_owned)
                     .map(strip_comments)

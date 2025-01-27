@@ -240,7 +240,7 @@ fn main() -> eyre::Result<()> {
         .map(|path| {
             let path = path.replace('\\', "/");
             format!(
-                r#"("tz-tag/{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#
+                r#"("{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#
             )
         })
         .collect::<Vec<_>>()
