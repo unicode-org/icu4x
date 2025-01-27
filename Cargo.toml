@@ -265,6 +265,8 @@ write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
 zip = { version = "0.6.0", default-features = false }
+tar = { version = "0.4.43", default-features = false }
+flate2 = { version = "1.0.35", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
