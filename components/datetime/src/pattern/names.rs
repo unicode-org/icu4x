@@ -919,10 +919,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     pub fn include_day_period_names(
         &mut self,
         length: DayPeriodNameLength,
-    ) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<DayPeriodNamesV1Marker>,
-    {
+    ) -> Result<&mut Self, PatternLoadError> {
         self.load_day_period_names(&crate::provider::Baked, length)
     }
 
@@ -987,10 +984,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     pub fn include_weekday_names(
         &mut self,
         length: WeekdayNameLength,
-    ) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<WeekdayNamesV1Marker>,
-    {
+    ) -> Result<&mut Self, PatternLoadError> {
         self.load_weekday_names(&crate::provider::Baked, length)
     }
 
@@ -1096,10 +1090,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::EssentialsV1Marker>,
-    {
+    pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_essentials(&crate::provider::Baked)
     }
 
@@ -1121,7 +1112,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
 
     /// Includes location names for time zone formatting.
     ///
-    /// Important: When performing manual time zone data loading, in addition to the
+    /// Important: When performing manual time zone data loading, in addition to theq
     /// specific time zone format data, also call either:
     ///
     /// - [`TypedDateTimeNames::include_time_zone_essentials`]
@@ -1163,11 +1154,71 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_location_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
-    {
+    pub fn include_time_zone_location_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_location_names(&crate::provider::Baked)
+    }
+
+    /// Loads exemplar city names for time zone formatting.
+    pub fn load_time_zone_exemplar_city_names<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::ExemplarCitiesV1Marker> + ?Sized,
+    {
+        self.inner.load_time_zone_exemplar_city_names(
+            &tz::ExemplarCitiesV1Marker::bind(provider),
+            self.prefs,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes exemplar city names for time zone formatting.
+    ///
+    /// Important: The `VVV` format requires location data in addition to exemplar
+    /// city data. Also call either:
+    ///
+    /// - [`TypedDateTimeNames::include_time_zone_location_names`]
+    /// - [`TypedDateTimeNames::load_time_zone_location_names`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::locale::locale;
+    /// use icu::timezone::ZonedDateTimeParser;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    ///     .unwrap()
+    ///     .zone;
+    ///
+    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///     locale!("en-GB").into(),
+    /// )
+    /// .unwrap();
+    ///
+    /// names.include_time_zone_location_names().unwrap();
+    /// names.include_time_zone_exemplar_city_names().unwrap();
+    ///
+    /// // Try `VVVV`:
+    /// let pattern_str = "'Your time zone is:' VVV";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
+    ///     "Your time zone is: London",
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_exemplar_city_names(&mut self) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_exemplar_city_names(&crate::provider::Baked)
     }
 
     /// Loads generic non-location long time zone names.
@@ -1240,10 +1291,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_generic_long_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericLongV1Marker>,
-    {
+    pub fn include_time_zone_generic_long_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_generic_long_names(&crate::provider::Baked)
     }
 
@@ -1317,10 +1365,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_generic_short_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
-    {
+    pub fn include_time_zone_generic_short_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_generic_short_names(&crate::provider::Baked)
     }
 
@@ -1394,10 +1439,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_specific_long_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzSpecificLongV1Marker>,
-    {
+    pub fn include_time_zone_specific_long_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_specific_long_names(&crate::provider::Baked)
     }
 
@@ -1471,10 +1513,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_specific_short_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzSpecificShortV1Marker>,
-    {
+    pub fn include_time_zone_specific_short_names(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_specific_short_names(&crate::provider::Baked)
     }
 
@@ -1629,6 +1670,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         pattern: &'l DateTimePattern,
     ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
+        crate::provider::Baked:
+            DataProvider<C::YearNamesV1Marker> + DataProvider<C::MonthNamesV1Marker>,
         crate::provider::Baked:
             DataProvider<C::YearNamesV1Marker> + DataProvider<C::MonthNamesV1Marker>,
     {
@@ -1964,7 +2007,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    pub(crate) fn load_time_zone_exemplar_cities_names<P, P2>(
+    pub(crate) fn load_time_zone_exemplar_city_names<P, P2>(
         &mut self,
         provider: &P,
         root_provider: &P2,
@@ -2377,7 +2420,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         locations_root_provider,
                         prefs,
                     )?;
-                    self.load_time_zone_exemplar_cities_names(
+                    self.load_time_zone_exemplar_city_names(
                         exemplar_cities_provider,
                         exemplar_cities_root_provider,
                         prefs,
