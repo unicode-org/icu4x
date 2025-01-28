@@ -112,6 +112,6 @@ props/nfkcinert@1, <singleton>, 6548B, 6519B, 6da7c252e9b8730c
 props/nfkdinert@1, <singleton>, 3530B, 3501B, c59583c38dad3c98
 props/print@1, <singleton>, 4430B, 4401B, d9e1592920896380
 props/sc@1, <singleton>, 25752B, 25697B, 22c8c91d530f8df7
-props/scx@1, <singleton>, 27554B, 27476B, ed41a2aefcf7f044
+props/scx@1, <singleton>, 28200B, 28122B, 820781fec2fedc79
 props/segstart@1, <singleton>, 1406B, 1377B, 430aa62e436e6153
 props/xdigit@1, <singleton>, 482B, 453B, 76fd6f78de08064c
