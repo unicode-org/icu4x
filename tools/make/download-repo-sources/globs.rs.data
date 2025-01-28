@@ -213,5 +213,4 @@ const TZDB_GLOB: &[&str] = &[
     "europe",
     "northamerica",
     "southamerica",
-    "zone.tab",
 ];
