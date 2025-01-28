@@ -1,6 +1,6 @@
 {
   "dedupe_target": [
-    "en",
+    "und",
     null
   ],
   "exemplars": {
@@ -50,7 +50,6 @@
     "pkkhi": "Karaçi",
     "plwaw": "Varşova",
     "ptlis": "Lizbon",
-    "rereu": "Réunion",
     "robuh": "Bükreş",
     "rsbeg": "Belgrad",
     "saruh": "Riyad",

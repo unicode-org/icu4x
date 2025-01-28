@@ -272,15 +272,11 @@ mod tests {
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations_en: DataResponse<LocationsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let locations_root: DataResponse<LocationsV1Marker> =
+            provider.load(Default::default()).unwrap();
         assert_eq!(
             "Pohnpei",
-            locations_en
+            locations_root
                 .payload
                 .get()
                 .locations
@@ -289,7 +285,7 @@ mod tests {
         );
         assert_eq!(
             "Ireland",
-            locations_en
+            locations_root
                 .payload
                 .get()
                 .locations
@@ -303,18 +299,6 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        assert_eq!(
-            locations.payload.get().dedupe_target,
-            (icu::locale::subtags::language!("en"), None)
-        );
-        assert_eq!(
-            None,
-            locations
-                .payload
-                .get()
-                .locations
-                .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
-        );
         assert_eq!(
             "Italie",
             locations

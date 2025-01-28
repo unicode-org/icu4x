@@ -1,6 +1,6 @@
 {
   "dedupe_target": [
-    "en",
+    "und",
     null
   ],
   "locations": {
@@ -49,6 +49,7 @@
     "bebru": "Belgija",
     "bgsof": "Bugarska",
     "bhbah": "Bahrein",
+    "bjptn": "Benin",
     "bmbda": "Bermudi",
     "bnbwn": "Brunej",
     "bolpb": "Bolivija",
@@ -195,7 +196,6 @@
     "macas": "Maroko",
     "mcmon": "Monako",
     "mdkiv": "Moldavija",
-    "metgd": "Crna Gora",
     "mgtnr": "Madagaskar",
     "mhkwa": "Kvadžalejin",
     "mhmaj": "Maršalska Ostrva",
@@ -232,6 +232,8 @@
     "noosl": "Norveška",
     "nzakl": "Novi Zeland",
     "nzcht": "Čatam",
+    "papty": "Panama",
+    "pelim": "Peru",
     "pfgmr": "Gambije",
     "pfnhv": "Markiz",
     "pgpom": "Port Morzbi",
@@ -247,7 +249,6 @@
     "qadoh": "Katar",
     "rereu": "Reinion",
     "robuh": "Rumunija",
-    "rsbeg": "Srbija",
     "ruasf": "Astrakan",
     "ruchita": "Čita",
     "rudyr": "Anadir",
@@ -274,6 +275,7 @@
     "sjlyr": "Svalbard i Jan Majen",
     "skbts": "Slovačka",
     "slfna": "Sijera Leone",
+    "sndkr": "Senegal",
     "somgq": "Somalija",
     "srpbm": "Surinam",
     "ssjub": "Južni Sudan",

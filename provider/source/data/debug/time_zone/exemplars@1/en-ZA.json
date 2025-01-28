@@ -1,11 +1,13 @@
 {
   "dedupe_target": [
-    "en",
+    "und",
     null
   ],
   "exemplars": {
     "knbas": "St Kitts",
+    "unk": "Unknown City",
     "vcsvd": "St Vincent",
-    "vistt": "St Thomas"
+    "vistt": "St Thomas",
+    "vnsgn": "Ho Chi Minh City"
   }
 }

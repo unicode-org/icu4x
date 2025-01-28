@@ -11,7 +11,6 @@ use core::cmp::Ordering;
 use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::subtags::Variants;
 use icu::locale::{langid, LanguageIdentifier};
 use icu::timezone::provider::*;
 use icu::timezone::Time;
@@ -66,45 +65,8 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
-    fn get_dedupe_target(&self, locale: &DataLocale) -> Result<DataLocale, DataError> {
-        let mut dedupe_target = LanguageIdentifier {
-            language: locale.language,
-            script: locale.script,
-            region: locale.region,
-            variants: locale
-                .variant
-                .map(Variants::from_variant)
-                .unwrap_or_default(),
-        };
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut dedupe_target);
-        dedupe_target.language = Default::default();
-        dedupe_target.region = Default::default();
-        dedupe_target.variants = Default::default();
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut dedupe_target);
-        self.cldr()?
-            .extended_locale_expander()?
-            .minimize_favor_script(&mut dedupe_target);
-        let dedupe_target = DataLocale::from(dedupe_target);
-        if !self
-            .cldr()?
-            .dates("gregorian")
-            .file_exists(&dedupe_target, "timeZoneNames.json")?
-            || !self
-                .cldr()?
-                .displaynames()
-                .file_exists(&dedupe_target, "territories.json")?
-        {
-            // The target does not always exist. Currently `nqo` and `csw` have scripts that have likely
-            // languages that are unsupported (`man` and `iu`, respectively).
-            // There's nothing to fall back to, there's no point in deduplicating against `und`, as there
-            // is a script difference.
-            return Ok(locale.clone());
-        }
-        Ok(dedupe_target)
+    fn get_dedupe_target(&self, _locale: &DataLocale) -> Result<DataLocale, DataError> {
+        Ok(Default::default())
     }
 
     #[allow(clippy::type_complexity)]

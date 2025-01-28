@@ -1,19 +1,46 @@
 {
   "dedupe_target": [
-    "en",
+    "und",
     null
   ],
   "locations": {
+    "bjptn": "Benin",
     "casjf": "St John’s",
+    "cfbgf": "Central African Republic",
+    "cgbzv": "Congo - Brazzaville",
+    "cmdla": "Cameroon",
+    "dosdq": "Dominican Republic",
+    "dzalg": "Algeria",
+    "esmad": "Spain",
+    "gfcay": "French Guiana",
+    "gncky": "Guinea",
     "gpmsb": "St Martin",
     "gpsbh": "St Barthélemy",
+    "gqssg": "Equatorial Guinea",
+    "kmyva": "Comoros",
     "knbas": "St Kitts & Nevis",
     "kzaau": "Aktau",
+    "kzksn": "Kostanay",
     "lccas": "St Lucia",
+    "macas": "Morocco",
+    "metgd": "Montenegro",
+    "mrnkc": "Mauritania",
+    "ncnou": "New Caledonia",
+    "papty": "Panama",
+    "pelim": "Peru",
+    "phmnl": "Philippines",
     "pmmqc": "St Pierre & Miquelon",
+    "rereu": "Réunion",
+    "rsbeg": "Serbia",
     "shshn": "St Helena",
+    "sndkr": "Senegal",
+    "sydam": "Syria",
+    "tdndj": "Chad",
+    "tfpfr": "French Southern Territories",
+    "tntun": "Tunisia",
     "vcsvd": "St Vincent & the Grenadines",
-    "vistt": "US Virgin Islands"
+    "vistt": "US Virgin Islands",
+    "wfmau": "Wallis & Futuna"
   },
   "pattern_generic": [
     {
