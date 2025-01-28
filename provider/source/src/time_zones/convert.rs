@@ -523,10 +523,9 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         let mut locations = self.calculate_locations(req)?.0;
 
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?.0;
-            locations.retain(|k, v| und.get(k) != Some(v));
-        }
+        let base = DataProvider::<LocationsRootV1Marker>::load(&self, req)?.payload;
+
+        locations.retain(|k, v| base.get().locations.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -541,21 +540,61 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
     }
 }
 
+impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1Marker>, DataError> {
+        self.check_req::<LocationsV1Marker>(req)?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(LocationsV1 {
+                locations: self
+                    .calculate_locations(Default::default())?
+                    .0
+                    .into_iter()
+                    .collect(),
+                pattern_generic: Default::default(),
+                pattern_standard: Default::default(),
+                pattern_daylight: Default::default(),
+                pattern_partial_location: Default::default(),
+            }),
+        })
+    }
+}
+
 impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
         self.check_req::<ExemplarCitiesV1Marker>(req)?;
 
         let mut exemplars = self.calculate_locations(req)?.1;
 
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?.1;
-            exemplars.retain(|k, v| und.get(k) != Some(v));
-        }
+        let base = DataProvider::<ExemplarCitiesRootV1Marker>::load(&self, req)?.payload;
+
+        exemplars.retain(|k, v| base.get().exemplars.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(ExemplarCitiesV1 {
                 exemplars: exemplars.into_iter().collect(),
+            }),
+        })
+    }
+}
+
+impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<ExemplarCitiesRootV1Marker>, DataError> {
+        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+                exemplars: self
+                    .calculate_locations(Default::default())?
+                    .1
+                    .into_iter()
+                    .collect(),
             }),
         })
     }

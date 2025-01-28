@@ -470,7 +470,9 @@ macro_rules! impl_date_or_calendar_period_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneLocationsRoot = datetime_marker_helper!(@names/zone/locations_root,);
             type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar,);
+            type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -626,7 +628,9 @@ macro_rules! impl_date_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, yes);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneLocationsRoot = datetime_marker_helper!(@names/zone/locations_root,);
             type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar,);
+            type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -793,7 +797,9 @@ macro_rules! impl_time_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod, $($dayperiods_yes)?);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials,);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations,);
+            type ZoneLocationsRoot = datetime_marker_helper!(@names/zone/locations_root,);
             type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplar,);
+            type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
@@ -905,7 +911,9 @@ macro_rules! impl_zone_marker {
             type DayPeriodNames = datetime_marker_helper!(@names/dayperiod,);
             type ZoneEssentials = datetime_marker_helper!(@names/zone/essentials, $($zone_essentials_yes)?);
             type ZoneLocations = datetime_marker_helper!(@names/zone/locations, $($zone_locations_yes)?);
+            type ZoneLocationsRoot = datetime_marker_helper!(@names/zone/locations_root, $($zone_locations_yes)?);
             type ZoneExemplars = datetime_marker_helper!(@names/zone/exemplars, $($zone_exemplars_yes)?);
+            type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplars_root, $($zone_exemplars_yes)?);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
@@ -919,7 +927,9 @@ macro_rules! impl_zone_marker {
             type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
             type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
+            type LocationsRootV1Marker = datetime_marker_helper!(@data/zone/locations_root, $($zone_locations_yes)?);
             type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplars, $($zone_exemplars_yes)?);
+            type ExemplarCitiesRootV1Marker = datetime_marker_helper!(@data/zone/exemplars_root, $($zone_exemplars_yes)?);
             type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
             type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
             type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
