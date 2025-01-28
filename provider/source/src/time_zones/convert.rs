@@ -65,10 +65,6 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
-    fn get_dedupe_target(&self, _locale: &DataLocale) -> Result<DataLocale, DataError> {
-        Ok(Default::default())
-    }
-
     #[allow(clippy::type_complexity)]
     fn calculate_locations(
         &self,
@@ -527,28 +523,14 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         let mut locations = self.calculate_locations(req)?.0;
 
-        let dedupe_target = self.get_dedupe_target(req.id.locale)?;
-
-        if dedupe_target != *req.id.locale {
-            let dedupe_locations = self
-                .calculate_locations(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&dedupe_target),
-                    ..Default::default()
-                })?
-                .0;
-            if locations == dedupe_locations {
-                // Don't deduplicate perfect matches. This is better done by data struct deduplication
-            } else {
-                locations.retain(|k, v| dedupe_locations.get(k).map(|d| d != v).unwrap_or(true));
-            }
+        if *req.id.locale != DataLocale::default() {
+            let und = self.calculate_locations(Default::default())?.0;
+            locations.retain(|k, v| und.get(k) != Some(v));
         }
-
-        debug_assert!(dedupe_target.region.is_none() && dedupe_target.variant.is_none());
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(LocationsV1 {
-                dedupe_target: (dedupe_target.language, dedupe_target.script),
                 locations: locations.into_iter().collect(),
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
@@ -565,28 +547,14 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
 
         let mut exemplars = self.calculate_locations(req)?.1;
 
-        let dedupe_target = self.get_dedupe_target(req.id.locale)?;
-
-        if dedupe_target != *req.id.locale {
-            let dedupe_exemplars = self
-                .calculate_locations(DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(&dedupe_target),
-                    ..Default::default()
-                })?
-                .1;
-            if exemplars == dedupe_exemplars {
-                // Don't deduplicate perfect matches. This is better done by data struct deduplication
-            } else {
-                exemplars.retain(|k, v| dedupe_exemplars.get(k).map(|d| d != v).unwrap_or(true));
-            }
+        if *req.id.locale != DataLocale::default() {
+            let und = self.calculate_locations(Default::default())?.1;
+            exemplars.retain(|k, v| und.get(k) != Some(v));
         }
-
-        debug_assert!(dedupe_target.region.is_none() && dedupe_target.variant.is_none());
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(ExemplarCitiesV1 {
-                dedupe_target: (dedupe_target.language, dedupe_target.script),
                 exemplars: exemplars.into_iter().collect(),
             }),
         })
