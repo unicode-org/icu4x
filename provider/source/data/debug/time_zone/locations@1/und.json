@@ -1,5 +1,36 @@
 {
-  "locations": {},
+  "locations": {
+    "bjptn": "Bénin",
+    "cfbgf": "République centrafricaine",
+    "cgbzv": "Congo-Brazzaville",
+    "cmdla": "Cameroun",
+    "dosdq": "República Dominicana",
+    "dzalg": "Algérie",
+    "esmad": "España",
+    "gfcay": "Guyane française",
+    "gncky": "Guinée",
+    "gpmsb": "Saint-Martin",
+    "gpsbh": "Saint-Barthélemy",
+    "gqssg": "Guinea Ecuatorial",
+    "kmyva": "Comores",
+    "kzksn": "Qostanay",
+    "macas": "Maroc",
+    "metgd": "Crna Gora",
+    "mrnkc": "Mauritanie",
+    "ncnou": "Nouvelle-Calédonie",
+    "papty": "Panamá",
+    "pelim": "Perú",
+    "phmnl": "Pilipinas",
+    "pmmqc": "Saint-Pierre-et-Miquelon",
+    "rereu": "La Réunion",
+    "rsbeg": "Srbija",
+    "sndkr": "Sénégal",
+    "sydam": "Syrie",
+    "tdndj": "Tchad",
+    "tfpfr": "Terres australes françaises",
+    "tntun": "Tunisie",
+    "wfmau": "Wallis-et-Futuna"
+  },
   "pattern_generic": [
     {
       "Placeholder": "Singleton"

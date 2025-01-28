@@ -556,6 +556,11 @@ impl DataExporter for BakedExporter {
         } else {
             let mut stats = Statistics::default();
 
+            let needs_fallback = self.use_internal_fallback
+                && deduplicated_values
+                    .iter()
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_default()));
+
             let mut baked_values = deduplicated_values
                 .into_iter()
                 .map(|(payload, ids)| {
@@ -589,7 +594,7 @@ impl DataExporter for BakedExporter {
 
             self.dependencies.insert("icu_provider_baked");
 
-            let search = if !self.use_internal_fallback || marker.is_singleton {
+            let search = if !needs_fallback {
                 quote! {
                     let metadata = Default::default();
                     let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
