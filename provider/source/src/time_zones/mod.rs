@@ -9,11 +9,13 @@ use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
+use icu::locale::subtags::region;
 use icu::time::provider::*;
 use icu::time::Time;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 use twox_hash::XxHash64;
@@ -147,7 +149,7 @@ impl SourceDataProvider {
                 for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
                     if bcp47_tzid.as_str() == "unk" {
                         // ignore the unknown time zone
-                    } else if Some(true) == bcp47_tzid_data.deprecated {
+                    } else if bcp47_tzid_data.deprecated == Some(true) {
                         // skip
                     } else if let Some(alias) =
                         bcp47_tzid_data.alias.as_ref().filter(|s| !s.is_empty())
@@ -191,7 +193,7 @@ impl SourceDataProvider {
                 for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
                     if bcp47_tzid.as_str() == "unk" {
                         // ignore the unknown time zone
-                    } else if Some(true) == bcp47_tzid_data.deprecated {
+                    } else if bcp47_tzid_data.deprecated == Some(true) {
                         // skip
                     } else if let Some(iana) = &bcp47_tzid_data.iana {
                         canonical_tzids.insert(*bcp47_tzid, iana.to_owned());
@@ -272,28 +274,63 @@ impl SourceDataProvider {
                     .map(|(&region, iana)| (iana, region))
                     .collect::<BTreeMap<_, _>>();
 
-                let bcp47_tzids = self.bcp47_to_canonical_iana_map()?;
+                let bcp47_tzids_resource = &self
+                    .cldr()?
+                    .bcp47()
+                    .read_and_parse::<cldr_serde::time_zones::bcp47_tzid::Resource>(
+                        "timezone.json",
+                    )?
+                    .keyword
+                    .u
+                    .time_zones
+                    .values;
 
-                let zone_tab = self.tzdb()?.zone_tab()?;
-                let mut zones_per_region: BTreeMap<icu::locale::subtags::Region, usize> =
-                    BTreeMap::new();
+                let mut regions_to_zones: BTreeMap<_, BTreeSet<_>> = BTreeMap::new();
 
-                for &region in bcp47_tzids.values().flat_map(|iana| zone_tab.get(iana)) {
-                    *zones_per_region.entry(region).or_default() += 1;
+                for (&bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource {
+                    regions_to_zones
+                        .entry(match bcp47_tzid.0.as_bytes() {
+                            // backfill since this data is not in 47 yet
+                            b"ancur" => region!("CW"),
+                            b"fimhq" => region!("AX"),
+                            b"gpmsb" => region!("MF"),
+                            b"gpsbh" => region!("BL"),
+                            b"gazastrp" | b"hebron" => region!("PS"),
+                            b"jeruslm" => region!("IL"),
+                            _ => {
+                                if bcp47_tzid_data.deprecated == Some(true) {
+                                    continue;
+                                } else if let Some(region) = bcp47_tzid_data.region {
+                                    region
+                                } else if bcp47_tzid.0.len() != 5 {
+                                    // Length-5 ID without override, no region
+                                    continue;
+                                } else {
+                                    bcp47_tzid.0.resize::<2>().as_str().parse().unwrap()
+                                }
+                            }
+                        })
+                        .or_default()
+                        .insert(bcp47_tzid);
                 }
 
-                Ok(bcp47_tzids
+                let single_zone_regions = regions_to_zones
+                    .iter()
+                    .filter_map(|(region, zones)| {
+                        (zones.len() == 1).then_some((zones.first().unwrap(), region))
+                    })
+                    .collect::<BTreeMap<_, _>>();
+
+                Ok(self
+                    .bcp47_to_canonical_iana_map()?
                     .iter()
                     .filter_map(|(bcp47, canonical_iana)| {
                         Some((
                             *bcp47,
-                            primary_zones.get(canonical_iana).copied().or_else(|| {
-                                let region = *zone_tab.get(canonical_iana)?;
-                                if zones_per_region.get(&region).copied().unwrap_or_default() > 1 {
-                                    return None;
-                                }
-                                Some(region)
-                            })?,
+                            primary_zones
+                                .get(canonical_iana)
+                                .copied()
+                                .or_else(|| single_zone_regions.get(bcp47).copied().copied())?,
                         ))
                     })
                     .collect())

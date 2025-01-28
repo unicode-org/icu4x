@@ -280,7 +280,7 @@ impl SourceDataProvider {{
                     [
                         {tzdb_data}
                     ].into_iter().collect(),
-                ), transitions: Default::default(), zone_tab: Default::default() }})),
+                ), transitions: Default::default() }})),
                 ..SourceDataProvider::new_custom()
             }})
             .clone()

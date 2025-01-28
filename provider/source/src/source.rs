@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use elsa::sync::FrozenMap;
-use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::BTreeMap;
@@ -390,55 +389,9 @@ impl AbstractFs {
 pub(crate) struct TzdbCache {
     pub(crate) root: AbstractFs,
     pub(crate) transitions: OnceLock<Result<parse_zoneinfo::table::Table, DataError>>,
-    pub(crate) zone_tab: OnceLock<Result<BTreeMap<String, Region>, DataError>>,
-}
-
-fn strip_comments(mut line: String) -> String {
-    if let Some(pos) = line.find('#') {
-        line.truncate(pos);
-    };
-    line
 }
 
 impl TzdbCache {
-    pub(crate) fn zone_tab(&self) -> Result<&BTreeMap<String, Region>, DataError> {
-        self.zone_tab
-            .get_or_init(|| {
-                let mut r = BTreeMap::new();
-
-                for line in self
-                    .root
-                    .read_to_string("zone.tab")?
-                    .lines()
-                    .map(ToOwned::to_owned)
-                    .map(strip_comments)
-                {
-                    let mut fields = line.split('\t');
-
-                    let Some(country_code) = fields.next() else {
-                        continue;
-                    };
-
-                    let Ok(region) = country_code.parse() else {
-                        continue;
-                    };
-
-                    let Some(_coords) = fields.next() else {
-                        continue;
-                    };
-
-                    let Some(iana) = fields.next() else {
-                        continue;
-                    };
-
-                    r.insert(iana.to_owned(), region);
-                }
-                Ok(r)
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-
     pub(crate) fn transitions(&self) -> Result<&parse_zoneinfo::table::Table, DataError> {
         use parse_zoneinfo::line::{Line, LineParser};
         use parse_zoneinfo::table::TableBuilder;
