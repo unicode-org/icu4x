@@ -97,7 +97,7 @@ pub mod ffi {
             icu::properties::CodePointMapDataBorrowed::get_set_for_value_group,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category_group_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_group_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_general_category_group_with_provider(
             provider: &DataProvider,
@@ -124,7 +124,7 @@ pub mod ffi {
 
         /// Create a set for the `Ascii_Hex_Digit` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::AsciiHexDigit, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ascii_hex_digit_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ascii_hex_digit_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ascii_hex_digit_with_provider(
             provider: &DataProvider,
@@ -148,7 +148,7 @@ pub mod ffi {
 
         /// Create a set for the `Alnum` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Alnum, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "alnum_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "alnum_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_alnum_with_provider(
             provider: &DataProvider,
@@ -172,7 +172,7 @@ pub mod ffi {
 
         /// Create a set for the `Alphabetic` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Alphabetic, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "alphabetic_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "alphabetic_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_alphabetic_with_provider(
             provider: &DataProvider,
@@ -196,7 +196,7 @@ pub mod ffi {
 
         /// Create a set for the `Bidi_Control` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::BidiControl, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_control_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_control_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_control_with_provider(
             provider: &DataProvider,
@@ -220,7 +220,7 @@ pub mod ffi {
 
         /// Create a set for the `Bidi_Mirrored` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::BidiMirrored, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_mirrored_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_mirrored_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_mirrored_with_provider(
             provider: &DataProvider,
@@ -244,7 +244,7 @@ pub mod ffi {
 
         /// Create a set for the `Blank` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Blank, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "blank_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "blank_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_blank_with_provider(
             provider: &DataProvider,
@@ -268,7 +268,7 @@ pub mod ffi {
 
         /// Create a set for the `Cased` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Cased, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "cased_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cased_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_cased_with_provider(
             provider: &DataProvider,
@@ -292,7 +292,7 @@ pub mod ffi {
 
         /// Create a set for the `Case_Ignorable` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::CaseIgnorable, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "case_ignorable_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "case_ignorable_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_case_ignorable_with_provider(
             provider: &DataProvider,
@@ -317,7 +317,7 @@ pub mod ffi {
 
         /// Create a set for the `Full_Composition_Exclusion` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::FullCompositionExclusion, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "full_composition_exclusion_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "full_composition_exclusion_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_full_composition_exclusion_with_provider(
             provider: &DataProvider,
@@ -341,7 +341,7 @@ pub mod ffi {
 
         /// Create a set for the `Changes_When_Casefolded` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenCasefolded, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "changes_when_casefolded_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_casefolded_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_casefolded_with_provider(
             provider: &DataProvider,
@@ -365,7 +365,7 @@ pub mod ffi {
 
         /// Create a set for the `Changes_When_Casemapped` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenCasemapped, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "changes_when_casemapped_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_casemapped_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_casemapped_with_provider(
             provider: &DataProvider,
@@ -390,7 +390,7 @@ pub mod ffi {
 
         /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenNfkcCasefolded, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "changes_when_nfkc_casefolded_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_nfkc_casefolded_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_nfkc_casefolded_with_provider(
             provider: &DataProvider,
@@ -414,7 +414,7 @@ pub mod ffi {
 
         /// Create a set for the `Changes_When_Lowercased` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenLowercased, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "changes_when_lowercased_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_lowercased_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_lowercased_with_provider(
             provider: &DataProvider,
@@ -438,7 +438,7 @@ pub mod ffi {
 
         /// Create a set for the `Changes_When_Titlecased` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenTitlecased, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "changes_when_titlecased_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_titlecased_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_titlecased_with_provider(
             provider: &DataProvider,
@@ -462,7 +462,7 @@ pub mod ffi {
 
         /// Create a set for the `Changes_When_Uppercased` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenUppercased, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "changes_when_uppercased_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "changes_when_uppercased_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_uppercased_with_provider(
             provider: &DataProvider,
@@ -486,7 +486,7 @@ pub mod ffi {
 
         /// Create a set for the `Dash` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Dash, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dash_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dash_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_dash_with_provider(
             provider: &DataProvider,
@@ -510,7 +510,7 @@ pub mod ffi {
 
         /// Create a set for the `Deprecated` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Deprecated, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "deprecated_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "deprecated_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_deprecated_with_provider(
             provider: &DataProvider,
@@ -535,7 +535,7 @@ pub mod ffi {
 
         /// Create a set for the `Default_Ignorable_Code_Point` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::DefaultIgnorableCodePoint, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "default_ignorable_code_point_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "default_ignorable_code_point_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_default_ignorable_code_point_with_provider(
             provider: &DataProvider,
@@ -559,7 +559,7 @@ pub mod ffi {
 
         /// Create a set for the `Diacritic` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Diacritic, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "diacritic_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "diacritic_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_diacritic_with_provider(
             provider: &DataProvider,
@@ -583,7 +583,7 @@ pub mod ffi {
 
         /// Create a set for the `Emoji_Modifier_Base` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::EmojiModifierBase, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "emoji_modifier_base_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_modifier_base_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_modifier_base_with_provider(
             provider: &DataProvider,
@@ -607,7 +607,7 @@ pub mod ffi {
 
         /// Create a set for the `Emoji_Component` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::EmojiComponent, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "emoji_component_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_component_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_component_with_provider(
             provider: &DataProvider,
@@ -631,7 +631,7 @@ pub mod ffi {
 
         /// Create a set for the `Emoji_Modifier` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::EmojiModifier, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "emoji_modifier_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_modifier_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_modifier_with_provider(
             provider: &DataProvider,
@@ -655,7 +655,7 @@ pub mod ffi {
 
         /// Create a set for the `Emoji` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Emoji, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "emoji_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_with_provider(
             provider: &DataProvider,
@@ -679,7 +679,7 @@ pub mod ffi {
 
         /// Create a set for the `Emoji_Presentation` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::EmojiPresentation, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "emoji_presentation_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_presentation_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_presentation_with_provider(
             provider: &DataProvider,
@@ -703,7 +703,7 @@ pub mod ffi {
 
         /// Create a set for the `Extender` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Extender, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extender_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extender_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extender_with_provider(
             provider: &DataProvider,
@@ -727,7 +727,7 @@ pub mod ffi {
 
         /// Create a set for the `Extended_Pictographic` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::ExtendedPictographic, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_pictographic_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_pictographic_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_pictographic_with_provider(
             provider: &DataProvider,
@@ -751,7 +751,7 @@ pub mod ffi {
 
         /// Create a set for the `Graph` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Graph, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "graph_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "graph_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_graph_with_provider(
             provider: &DataProvider,
@@ -775,7 +775,7 @@ pub mod ffi {
 
         /// Create a set for the `Grapheme_Base` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::GraphemeBase, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_base_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_base_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_base_with_provider(
             provider: &DataProvider,
@@ -799,7 +799,7 @@ pub mod ffi {
 
         /// Create a set for the `Grapheme_Extend` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::GraphemeExtend, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_extend_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_extend_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_extend_with_provider(
             provider: &DataProvider,
@@ -823,7 +823,7 @@ pub mod ffi {
 
         /// Create a set for the `Grapheme_Link` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::GraphemeLink, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_link_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_link_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_link_with_provider(
             provider: &DataProvider,
@@ -847,7 +847,7 @@ pub mod ffi {
 
         /// Create a set for the `Hex_Digit` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::HexDigit, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "hex_digit_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hex_digit_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_hex_digit_with_provider(
             provider: &DataProvider,
@@ -871,7 +871,7 @@ pub mod ffi {
 
         /// Create a set for the `Hyphen` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Hyphen, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "hyphen_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hyphen_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_hyphen_with_provider(
             provider: &DataProvider,
@@ -895,7 +895,7 @@ pub mod ffi {
 
         /// Create a set for the `Id_Continue` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::IdContinue, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "id_continue_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "id_continue_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_id_continue_with_provider(
             provider: &DataProvider,
@@ -919,7 +919,7 @@ pub mod ffi {
 
         /// Create a set for the `Ideographic` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Ideographic, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ideographic_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ideographic_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ideographic_with_provider(
             provider: &DataProvider,
@@ -943,7 +943,7 @@ pub mod ffi {
 
         /// Create a set for the `Id_Start` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::IdStart, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "id_start_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "id_start_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_id_start_with_provider(
             provider: &DataProvider,
@@ -967,7 +967,7 @@ pub mod ffi {
 
         /// Create a set for the `Ids_Binary_Operator` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::IdsBinaryOperator, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ids_binary_operator_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ids_binary_operator_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ids_binary_operator_with_provider(
             provider: &DataProvider,
@@ -991,7 +991,7 @@ pub mod ffi {
 
         /// Create a set for the `Ids_Trinary_Operator` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::IdsTrinaryOperator, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "ids_trinary_operator_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ids_trinary_operator_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ids_trinary_operator_with_provider(
             provider: &DataProvider,
@@ -1015,7 +1015,7 @@ pub mod ffi {
 
         /// Create a set for the `Join_Control` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::JoinControl, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "join_control_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "join_control_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_join_control_with_provider(
             provider: &DataProvider,
@@ -1039,7 +1039,7 @@ pub mod ffi {
 
         /// Create a set for the `Logical_Order_Exception` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::LogicalOrderException, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "logical_order_exception_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "logical_order_exception_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_logical_order_exception_with_provider(
             provider: &DataProvider,
@@ -1063,7 +1063,7 @@ pub mod ffi {
 
         /// Create a set for the `Lowercase` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Lowercase, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lowercase_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "lowercase_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_lowercase_with_provider(
             provider: &DataProvider,
@@ -1087,7 +1087,7 @@ pub mod ffi {
 
         /// Create a set for the `Math` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Math, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "math_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "math_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_math_with_provider(
             provider: &DataProvider,
@@ -1111,7 +1111,7 @@ pub mod ffi {
 
         /// Create a set for the `Noncharacter_Code_Point` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::NoncharacterCodePoint, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "noncharacter_code_point_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "noncharacter_code_point_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_noncharacter_code_point_with_provider(
             provider: &DataProvider,
@@ -1135,7 +1135,7 @@ pub mod ffi {
 
         /// Create a set for the `Nfc_Inert` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::NfcInert, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfc_inert_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfc_inert_with_provider(
             provider: &DataProvider,
@@ -1159,7 +1159,7 @@ pub mod ffi {
 
         /// Create a set for the `Nfd_Inert` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::NfdInert, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfd_inert_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfd_inert_with_provider(
             provider: &DataProvider,
@@ -1183,7 +1183,7 @@ pub mod ffi {
 
         /// Create a set for the `Nfkc_Inert` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::NfkcInert, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkc_inert_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfkc_inert_with_provider(
             provider: &DataProvider,
@@ -1207,7 +1207,7 @@ pub mod ffi {
 
         /// Create a set for the `Nfkd_Inert` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::NfkdInert, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "nfkd_inert_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd_inert_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfkd_inert_with_provider(
             provider: &DataProvider,
@@ -1231,7 +1231,7 @@ pub mod ffi {
 
         /// Create a set for the `Pattern_Syntax` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::PatternSyntax, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "pattern_syntax_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "pattern_syntax_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_pattern_syntax_with_provider(
             provider: &DataProvider,
@@ -1255,7 +1255,7 @@ pub mod ffi {
 
         /// Create a set for the `Pattern_White_Space` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::PatternWhiteSpace, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "pattern_white_space_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "pattern_white_space_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_pattern_white_space_with_provider(
             provider: &DataProvider,
@@ -1280,7 +1280,7 @@ pub mod ffi {
 
         /// Create a set for the `Prepended_Concatenation_Mark` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::PrependedConcatenationMark, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "prepended_concatenation_mark_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "prepended_concatenation_mark_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_prepended_concatenation_mark_with_provider(
             provider: &DataProvider,
@@ -1304,7 +1304,7 @@ pub mod ffi {
 
         /// Create a set for the `Print` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Print, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "print_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "print_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_print_with_provider(
             provider: &DataProvider,
@@ -1328,7 +1328,7 @@ pub mod ffi {
 
         /// Create a set for the `Quotation_Mark` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::QuotationMark, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "quotation_mark_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "quotation_mark_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_quotation_mark_with_provider(
             provider: &DataProvider,
@@ -1352,7 +1352,7 @@ pub mod ffi {
 
         /// Create a set for the `Radical` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Radical, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "radical_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "radical_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_radical_with_provider(
             provider: &DataProvider,
@@ -1376,7 +1376,7 @@ pub mod ffi {
 
         /// Create a set for the `Regional_Indicator` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::RegionalIndicator, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "regional_indicator_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "regional_indicator_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_regional_indicator_with_provider(
             provider: &DataProvider,
@@ -1400,7 +1400,7 @@ pub mod ffi {
 
         /// Create a set for the `Soft_Dotted` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::SoftDotted, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "soft_dotted_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "soft_dotted_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_soft_dotted_with_provider(
             provider: &DataProvider,
@@ -1424,7 +1424,7 @@ pub mod ffi {
 
         /// Create a set for the `Segment_Starter` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::SegmentStarter, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "segment_starter_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "segment_starter_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_segment_starter_with_provider(
             provider: &DataProvider,
@@ -1448,7 +1448,7 @@ pub mod ffi {
 
         /// Create a set for the `Case_Sensitive` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::CaseSensitive, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "case_sensitive_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "case_sensitive_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_case_sensitive_with_provider(
             provider: &DataProvider,
@@ -1472,7 +1472,7 @@ pub mod ffi {
 
         /// Create a set for the `Sentence_Terminal` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::SentenceTerminal, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_terminal_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_terminal_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_terminal_with_provider(
             provider: &DataProvider,
@@ -1496,7 +1496,7 @@ pub mod ffi {
 
         /// Create a set for the `Terminal_Punctuation` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::TerminalPunctuation, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "terminal_punctuation_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "terminal_punctuation_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_terminal_punctuation_with_provider(
             provider: &DataProvider,
@@ -1520,7 +1520,7 @@ pub mod ffi {
 
         /// Create a set for the `Unified_Ideograph` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::UnifiedIdeograph, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "unified_ideograph_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "unified_ideograph_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_unified_ideograph_with_provider(
             provider: &DataProvider,
@@ -1544,7 +1544,7 @@ pub mod ffi {
 
         /// Create a set for the `Uppercase` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Uppercase, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "uppercase_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "uppercase_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_uppercase_with_provider(
             provider: &DataProvider,
@@ -1568,7 +1568,7 @@ pub mod ffi {
 
         /// Create a set for the `Variation_Selector` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::VariationSelector, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "variation_selector_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "variation_selector_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_variation_selector_with_provider(
             provider: &DataProvider,
@@ -1592,7 +1592,7 @@ pub mod ffi {
 
         /// Create a set for the `White_Space` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::WhiteSpace, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "white_space_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "white_space_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_white_space_with_provider(
             provider: &DataProvider,
@@ -1616,7 +1616,7 @@ pub mod ffi {
 
         /// Create a set for the `Xdigit` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Xdigit, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "xdigit_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "xdigit_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_xdigit_with_provider(
             provider: &DataProvider,
@@ -1640,7 +1640,7 @@ pub mod ffi {
 
         /// Create a set for the `Xid_Continue` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::XidContinue, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "xid_continue_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "xid_continue_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_xid_continue_with_provider(
             provider: &DataProvider,
@@ -1664,7 +1664,7 @@ pub mod ffi {
 
         /// Create a set for the `Xid_Start` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::XidStart, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "xid_start_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "xid_start_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_xid_start_with_provider(
             provider: &DataProvider,
@@ -1678,7 +1678,7 @@ pub mod ffi {
 
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
-        #[diplomat::attr(auto, named_constructor = "for_ecma262")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262")]
         #[cfg(feature = "compiled_data")]
         pub fn create_for_ecma262(
             property_name: &DiplomatStr,
@@ -1691,7 +1691,7 @@ pub mod ffi {
 
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_ecma262_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_for_ecma262_with_provider(
             provider: &DataProvider,

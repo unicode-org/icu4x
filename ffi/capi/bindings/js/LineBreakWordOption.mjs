@@ -2,10 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html) for more information.
 */
+
+
 export class LineBreakWordOption {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -17,14 +20,14 @@ export class LineBreakWordOption {
     static getAllEntries() {
         return LineBreakWordOption.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return LineBreakWordOption.#objectValues[arguments[1]];
         }
@@ -36,11 +39,15 @@ export class LineBreakWordOption {
         let intVal = LineBreakWordOption.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return LineBreakWordOption.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LineBreakWordOption and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new LineBreakWordOption(value);
     }
 
     get value() {
@@ -59,4 +66,8 @@ export class LineBreakWordOption {
     static Normal = LineBreakWordOption.#objectValues[0];
     static BreakAll = LineBreakWordOption.#objectValues[1];
     static KeepAll = LineBreakWordOption.#objectValues[2];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

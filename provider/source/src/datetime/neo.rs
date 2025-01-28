@@ -18,6 +18,7 @@ use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use writeable::Writeable;
+use zerovec::VarZeroCow;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -183,9 +184,9 @@ impl SourceDataProvider {
             .dates(cldr_cal)
             .list_locales()?
             .flat_map(|locale| {
-                keylengths.iter().map(move |&length| {
-                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
-                })
+                keylengths
+                    .iter()
+                    .map(move |&length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
             })
             .collect())
     }
@@ -334,12 +335,14 @@ fn eras_convert(
                 panic!("Unknown japanese era number {cldr}");
             }
         }
-        Ok(YearNamesV1::VariableEras(
-            out_eras
-                .iter()
-                .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
-                .collect(),
-        ))
+        let keys: Vec<&PotentialUtf8> = out_eras
+            .keys()
+            .map(|k| PotentialUtf8::from_str(k))
+            .collect();
+        let values: Vec<&str> = out_eras.values().copied().collect();
+        let kv = (keys, values);
+        let cow = VarZeroCow::from_encodeable(&kv);
+        Ok(YearNamesV1::VariableEras(cow))
     } else {
         let mut out_eras: Vec<&str> = Vec::new();
         for (index, (cldr, _code)) in map.enumerate() {

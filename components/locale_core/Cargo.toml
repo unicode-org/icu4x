@@ -45,23 +45,16 @@ serde_json = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-std = []
 databake = ["dep:databake"]
 serde = ["dep:serde", "tinystr/serde"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
-bench = ["serde"]
 
 [lib]
 bench = false # This option is required for Benchmark CI
 
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
 [[bench]]
 name = "subtags"
 harness = false
-required-features = ["bench"]
 
 [[bench]]
 name = "langid"
@@ -74,7 +67,6 @@ harness = false
 [[bench]]
 name = "iai_langid"
 harness = false
-required-features = ["bench"]
 
 [[example]]
 name = "filter_langids"

@@ -19,6 +19,7 @@ const Date_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class Date {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -26,7 +27,7 @@ export class Date {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("Date is an Opaque type. You cannot call its constructor.");
             return;
@@ -39,8 +40,9 @@ export class Date {
         if (this.#selfEdge.length === 0) {
             Date_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -89,14 +91,14 @@ export class Date {
         }
     }
 
-    static fromString(v) {
+    static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
+        const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -301,5 +303,9 @@ export class Date {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

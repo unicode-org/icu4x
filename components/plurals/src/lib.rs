@@ -58,7 +58,7 @@
 //! [Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -68,6 +68,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -336,7 +337,7 @@ impl PluralRules {
         provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let locale = DataLocale::from_preferences_locale::<CardinalV1Marker>(prefs.locale_prefs);
+        let locale = CardinalV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self(
             provider
                 .load(DataRequest {
@@ -393,7 +394,7 @@ impl PluralRules {
         provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let locale = DataLocale::from_preferences_locale::<OrdinalV1Marker>(prefs.locale_prefs);
+        let locale = OrdinalV1Marker::make_locale(prefs.locale_preferences);
         Ok(Self(
             provider
                 .load(DataRequest {
@@ -712,8 +713,7 @@ where
         prefs: PluralRulesPreferences,
         rules: R,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<PluralRangesV1Marker>(prefs.locale_prefs);
+        let locale = PluralRangesV1Marker::make_locale(prefs.locale_preferences);
         let ranges = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

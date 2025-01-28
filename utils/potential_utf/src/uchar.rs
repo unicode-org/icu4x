@@ -162,6 +162,30 @@ impl PartialOrd for PotentialCodePoint {
     }
 }
 
+impl PartialEq<char> for PotentialCodePoint {
+    fn eq(&self, other: &char) -> bool {
+        self.eq(&Self::from_char(*other))
+    }
+}
+
+impl PartialOrd<char> for PotentialCodePoint {
+    fn partial_cmp(&self, other: &char) -> Option<Ordering> {
+        self.partial_cmp(&Self::from_char(*other))
+    }
+}
+
+impl PartialEq<PotentialCodePoint> for char {
+    fn eq(&self, other: &PotentialCodePoint) -> bool {
+        PotentialCodePoint::from_char(*self).eq(other)
+    }
+}
+
+impl PartialOrd<PotentialCodePoint> for char {
+    fn partial_cmp(&self, other: &PotentialCodePoint) -> Option<Ordering> {
+        PotentialCodePoint::from_char(*self).partial_cmp(other)
+    }
+}
+
 impl Ord for PotentialCodePoint {
     // custom implementation, as derived Ord would compare lexicographically
     fn cmp(&self, other: &Self) -> Ordering {

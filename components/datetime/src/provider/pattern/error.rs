@@ -30,8 +30,7 @@ pub enum PatternError {
     UnsupportedPluralPivot,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for PatternError {}
+impl core::error::Error for PatternError {}
 
 impl From<fields::Error> for PatternError {
     fn from(input: fields::Error) -> Self {

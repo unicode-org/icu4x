@@ -2,11 +2,11 @@
 
 <!-- cargo-rdme start -->
 
-Types for dealing with dates, times, and custom calendars.
+Types for dealing with dates and custom calendars.
 
 This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
-The [`types`] module has a lot of common types for dealing with dates and times.
+The [`types`] module has a lot of common types for dealing with dates.
 
 [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
 can represent dates for arbitrary calendars.
@@ -14,7 +14,7 @@ can represent dates for arbitrary calendars.
 The [`Iso`] and [`Gregorian`] types are implementations for the ISO and
 Gregorian calendars respectively. Further calendars can be found in the [`cal`] module.
 
-Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
+Most interaction with this crate will be done via the [`Date`] type.
 
 Some of the algorithms implemented here are based on
 Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
@@ -70,27 +70,6 @@ assert_eq!(date_buddhist.month().ordinal, 9);
 assert_eq!(date_buddhist.day_of_month().0, 2);
 ```
 
-Example using `DateTime` object. Similar to `Date` objects, `DateTime` objects
-contain an accessible `Date` object containing information about the day, month,
-year, and calendar type. Additionally, `DateTime` objects contain an accessible
-`Time` object, including granularity of hour, minute, second, and nanosecond.
-
-```rust
-use icu::calendar::{types::IsoWeekday, DateTime, Time};
-
-// Creating ISO date: 1992-09-02 8:59
-let mut datetime_iso = DateTime::try_new_iso(1992, 9, 2, 8, 59, 0)
-    .expect("Failed to initialize ISO DateTime instance.");
-
-assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
-assert_eq!(datetime_iso.date.year().era_year_or_extended(), 1992);
-assert_eq!(datetime_iso.date.month().ordinal, 9);
-assert_eq!(datetime_iso.date.day_of_month().0, 2);
-assert_eq!(datetime_iso.time.hour.number(), 8);
-assert_eq!(datetime_iso.time.minute.number(), 59);
-assert_eq!(datetime_iso.time.second.number(), 0);
-assert_eq!(datetime_iso.time.nanosecond.number(), 0);
-```
 [`ICU4X`]: ../icu/index.html
 
 <!-- cargo-rdme end -->

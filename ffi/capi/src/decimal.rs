@@ -37,7 +37,7 @@ pub mod ffi {
     impl FixedDecimalFormatter {
         /// Creates a new [`FixedDecimalFormatter`], using compiled data
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_grouping_strategy")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_grouping_strategy")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_grouping_strategy(
@@ -57,7 +57,7 @@ pub mod ffi {
 
         /// Creates a new [`FixedDecimalFormatter`], using a particular data source.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_grouping_strategy_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_grouping_strategy_and_provider")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_grouping_strategy_and_provider(

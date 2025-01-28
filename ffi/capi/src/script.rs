@@ -52,7 +52,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,

@@ -39,16 +39,6 @@ impl CldrCache {
                         continue;
                     };
 
-                    if transform == "und-Ethi-t-und-latn-m0-beta_metsehaf-geminate" {
-                        // References an unknown transliterator
-                        continue;
-                    }
-
-                    if transform == "byn-Ethi-t-byn-latn-m0-xaleget" {
-                        // Doesn't parse (backreference error)
-                        continue;
-                    }
-
                     if transform == "Thai-Latin" {
                         // References an unknown transliterator (Any-BreakInternal)
                         continue;
@@ -66,37 +56,15 @@ impl CldrCache {
                             "cldr-transforms/transforms/{}",
                             metadata.rules_file
                         ))?
-                        // Declares a sequence of Unicode sets instead of a Unicode set
+                        // und-Ethi-t-und-latn-m0-beta_metsehaf-geminate has a typo
                         .replace(
-                            "$initialPunct = [:Ps:][:Pi:];",
-                            "$initialPunct = [[:Ps:][:Pi:]];",
+                            "Ethiopic-Latin/BetaMetsehaf",
+                            "Ethiopic-Latin/Beta_Metsehaf",
                         )
-                        // I'm not sure why this errors
-                        .replace("ə̃ {ə̃}+ → ə̃;", "")
-                        // This does not escape the $, so the = is interpreted as a variable name
-                        .replace(r#""$="#, r#""\$="#)
-                        // Any-ASCII does not exist and should probably the Latin-ASCII
-                        .replace("Any-ASCII", "Latin-ASCII")
-                        // Non-canonical property names
-                        .replace("block=", "Block=")
-                        .replace("script=", "Script=")
-                        .replace("case-ignorable:", "Case_Ignorable:")
-                        .replace("cased:", "Cased:")
-                        .replace("ideographic:", "Ideographic:")
-                        // Non-canonical property values
-                        .replace("ccc=above", "ccc=Above")
-                        .replace("ccc=below", "ccc=Below")
-                        .replace("UppercaseLetter:", "Uppercase_Letter:")
-                        .replace("nonspacing mark:", "Nonspacing_Mark:")
-                        .replace("letter:", "Letter:")
-                        .replace("ARABIC:", "Arabic:")
-                        .replace("arabic:", "Arabic:")
-                        .replace("bengali:", "Bengali:")
-                        .replace("greek:", "Greek:")
-                        .replace("han:", "Han:")
-                        .replace("latin:", "Latin:")
-                        .replace("thaana:", "Thaana:")
-                        .replace("thai:", "Thai:");
+                        // This attempts to group the decomposed character, but erroneously uses a context (chr-chr_FONIPA)
+                        .replace("ə̃ {ə̃}+ → ə̃;", "ə̃ ə̃+ → ə̃;")
+                        // Back references don't work in reverse (byn-Ethi-t-byn-latn-m0-xaleget)
+                        .replace("$1 ↔", "$1 ←");
 
                     if matches!(
                         metadata.direction,

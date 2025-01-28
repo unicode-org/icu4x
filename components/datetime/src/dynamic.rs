@@ -28,11 +28,12 @@
 //! Format with the time display depending on a runtime boolean:
 //!
 //! ```
-//! use icu::calendar::DateTime;
+//! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
+//! use icu::timezone::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
@@ -49,7 +50,7 @@
 //!     }
 //! }
 //!
-//! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
+//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 0, 0, 0).unwrap() };
 //!
 //! let results = [true, false]
 //!     .map(get_field_set)
@@ -57,7 +58,7 @@
 //!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
 //!             .unwrap()
 //!     })
-//!     .map(|formatter| formatter.format_any_calendar(&datetime).to_string());
+//!     .map(|formatter| formatter.format(&datetime).to_string());
 //!
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```
@@ -162,8 +163,11 @@ pub enum ZoneFieldSet {
     /// “PT”.
     Vs(fieldsets::Vs),
     /// The location format, as in
-    /// “Los Angeles time”.
+    /// “Los Angeles Time”.
     L(fieldsets::L),
+    /// The exemplar city format, as in
+    /// “Los Angeles.
+    X(fieldsets::X),
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -475,6 +479,7 @@ impl_attrs! {
         V,
         Vs,
         L,
+        X,
     ]
 }
 

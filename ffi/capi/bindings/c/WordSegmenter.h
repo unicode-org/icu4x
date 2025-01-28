@@ -23,9 +23,6 @@
 
 WordSegmenter* icu4x_WordSegmenter_create_auto_mv1(void);
 
-typedef struct icu4x_WordSegmenter_create_auto_with_provider_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_auto_with_provider_mv1_result;
-icu4x_WordSegmenter_create_auto_with_provider_mv1_result icu4x_WordSegmenter_create_auto_with_provider_mv1(const DataProvider* provider);
-
 typedef struct icu4x_WordSegmenter_create_auto_with_content_locale_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_auto_with_content_locale_mv1_result;
 icu4x_WordSegmenter_create_auto_with_content_locale_mv1_result icu4x_WordSegmenter_create_auto_with_content_locale_mv1(const Locale* locale);
 
@@ -34,9 +31,6 @@ icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1_result icu4
 
 WordSegmenter* icu4x_WordSegmenter_create_lstm_mv1(void);
 
-typedef struct icu4x_WordSegmenter_create_lstm_with_provider_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_lstm_with_provider_mv1_result;
-icu4x_WordSegmenter_create_lstm_with_provider_mv1_result icu4x_WordSegmenter_create_lstm_with_provider_mv1(const DataProvider* provider);
-
 typedef struct icu4x_WordSegmenter_create_lstm_with_content_locale_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_lstm_with_content_locale_mv1_result;
 icu4x_WordSegmenter_create_lstm_with_content_locale_mv1_result icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(const Locale* locale);
 
@@ -44,9 +38,6 @@ typedef struct icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_
 icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1(const DataProvider* provider, const Locale* locale);
 
 WordSegmenter* icu4x_WordSegmenter_create_dictionary_mv1(void);
-
-typedef struct icu4x_WordSegmenter_create_dictionary_with_provider_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_with_provider_mv1_result;
-icu4x_WordSegmenter_create_dictionary_with_provider_mv1_result icu4x_WordSegmenter_create_dictionary_with_provider_mv1(const DataProvider* provider);
 
 typedef struct icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1_result {union {WordSegmenter* ok; DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1_result;
 icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1_result icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(const Locale* locale);

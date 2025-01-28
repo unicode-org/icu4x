@@ -36,7 +36,6 @@ fn uniset_bench(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
     {
         let mut group = c.benchmark_group("uniset/contains");
         group.bench_with_input("best", &best_sample, |b, sample| {

@@ -17,6 +17,7 @@ const FixedDecimalFormatter_box_destroy_registry = new FinalizationRegistry((ptr
 });
 
 export class FixedDecimalFormatter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +25,7 @@ export class FixedDecimalFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("FixedDecimalFormatter is an Opaque type. You cannot call its constructor.");
             return;
@@ -37,8 +38,9 @@ export class FixedDecimalFormatter {
         if (this.#selfEdge.length === 0) {
             FixedDecimalFormatter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -126,5 +128,9 @@ export class FixedDecimalFormatter {
         finally {
             write.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

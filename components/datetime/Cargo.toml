@@ -63,14 +63,6 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = [
-    "icu_calendar/std",
-    "icu_decimal/std",
-    "icu_locale_core/std",
-    "icu_plurals/std",
-    "icu_provider/std",
-    "icu_timezone/std",
-]
 serde = [
     "dep:serde",
     "icu_calendar/serde",
@@ -95,11 +87,9 @@ datagen = [
     "icu_plurals/datagen",
     "icu_timezone/datagen",
     "serde",
-    "std",
 ]
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
-bench = ["serde", "datagen", "experimental"]
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
 
 [lib]
@@ -107,8 +97,6 @@ bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
@@ -121,7 +109,7 @@ required-features = ["compiled_data", "serde", "experimental"]
 [[bench]]
 name = "pattern"
 harness = false
-required-features = ["bench", "serde", "experimental"]
+required-features = ["serde", "experimental"]
 
 [[test]]
 name = "datetime"

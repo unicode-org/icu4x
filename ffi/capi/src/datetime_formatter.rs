@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use alloc::sync::Arc;
     use icu_datetime::fieldsets::{T, YMD, YMDT};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
@@ -18,9 +19,8 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use crate::{
-        calendar::ffi::AnyCalendarKind,
+        calendar::ffi::Calendar,
         date::ffi::{Date, IsoDate},
-        datetime::ffi::{DateTime, IsoDateTime},
         errors::ffi::DateTimeFormatError,
         time::ffi::Time,
     };
@@ -29,11 +29,12 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
-    #[diplomat::rust_link(icu::datetime, Mod)]
-    pub struct TimeFormatter(pub icu_datetime::FixedCalendarDateTimeFormatter<(), T>);
+    #[diplomat::rust_link(icu::datetime::TimeFormatter, Typedef)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct, compact)]
+    pub struct TimeFormatter(pub icu_datetime::TimeFormatter<T>);
 
     #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::options::Length, Enum)]
+    #[diplomat::rust_link(icu::datetime::Length, Enum)]
     pub enum DateTimeLength {
         Long,
         Medium,
@@ -42,9 +43,10 @@ pub mod ffi {
 
     impl TimeFormatter {
         /// Creates a new [`TimeFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -58,8 +60,9 @@ pub mod ffi {
         }
 
         /// Creates a new [`TimeFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -78,42 +81,28 @@ pub mod ffi {
         }
 
         /// Formats a [`Time`] to a string.
-        pub fn format_time(&self, value: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format(&self, value: &Time, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
-        }
-
-        /// Formats a [`DateTime`] to a string.
-        pub fn format_datetime(
-            &self,
-            value: &DateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let _infallible = self.0.format(&value.0.time).write_to(write);
-        }
-
-        /// Formats a [`IsoDateTime`] to a string.
-        pub fn format_iso_datetime(
-            &self,
-            value: &IsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let _infallible = self.0.format(&value.0.time).write_to(write);
         }
     }
 
     #[diplomat::opaque]
-    /// An ICU4X TypedDateFormatter object capable of formatting a [`IsoDateTime`] as a string,
+    /// An ICU4X TypedDateFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
     /// using the Gregorian Calendar.
-    #[diplomat::rust_link(icu::datetime, Mod)]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct, compact)]
     pub struct GregorianDateFormatter(
         pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMD>,
     );
 
     impl GregorianDateFormatter {
         /// Creates a new [`GregorianDateFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -127,8 +116,9 @@ pub mod ffi {
         }
 
         /// Creates a new [`GregorianDateFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -147,38 +137,29 @@ pub mod ffi {
         }
 
         /// Formats a [`IsoDate`] to a string.
-        pub fn format_iso_date(
-            &self,
-            value: &IsoDate,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_iso(&self, value: &IsoDate, write: &mut diplomat_runtime::DiplomatWrite) {
             let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _infallible = self.0.format(&greg).write_to(write);
-        }
-        /// Formats a [`IsoDateTime`] to a string.
-        pub fn format_iso_datetime(
-            &self,
-            value: &IsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
 
     #[diplomat::opaque]
-    /// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting a [`IsoDateTime`] as a string,
+    /// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
     /// using the Gregorian Calendar.
-    #[diplomat::rust_link(icu::datetime, Mod)]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
     pub struct GregorianDateTimeFormatter(
         pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDT>,
     );
 
     impl GregorianDateTimeFormatter {
         /// Creates a new [`GregorianDateTimeFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -192,8 +173,9 @@ pub mod ffi {
         }
 
         /// Creates a new [`GregorianDateTimeFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -211,13 +193,19 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`IsoDateTime`] to a string.
-        pub fn format_iso_datetime(
+        /// Formats an [`IsoDate`] and a [`Time`] to a string.
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_iso(
             &self,
-            value: &IsoDateTime,
+            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let greg = icu_calendar::DateTime::new_from_iso(value.0, icu_calendar::Gregorian);
+            let greg = icu_timezone::DateTime {
+                date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
+                time: time.0,
+            };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }
@@ -225,14 +213,16 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X DateFormatter object capable of formatting a [`Date`] as a string,
     /// using some calendar specified at runtime in the locale.
-    #[diplomat::rust_link(icu::datetime, Mod)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct, compact)]
     pub struct DateFormatter(pub icu_datetime::DateTimeFormatter<YMD>);
 
     impl DateFormatter {
         /// Creates a new [`DateFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -246,8 +236,9 @@ pub mod ffi {
         }
 
         /// Creates a new [`DateFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -266,69 +257,52 @@ pub mod ffi {
         }
 
         /// Formats a [`Date`] to a string.
-        pub fn format_date(
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format(
             &self,
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
+            let _infallible = self.0.format(&value.0).write_to(write);
             Ok(())
         }
 
         /// Formats a [`IsoDate`] to a string.
         ///
         /// Will convert to this formatter's calendar first
-        pub fn format_iso_date(
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_iso(
             &self,
             value: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
             let any = value.0.to_any();
-            let _infallible = self.0.format_any_calendar(&any).write_to(write);
-            Ok(())
-        }
-
-        /// Formats a [`DateTime`] to a string.
-        pub fn format_datetime(
-            &self,
-            value: &DateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
-            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
-            Ok(())
-        }
-
-        /// Formats a [`IsoDateTime`] to a string.
-        ///
-        /// Will convert to this formatter's calendar first
-        pub fn format_iso_datetime(
-            &self,
-            value: &IsoDateTime,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
-            let any = value.0.to_any();
-            let _infallible = self.0.format_any_calendar(&any).write_to(write);
+            let _infallible = self.0.format(&any).write_to(write);
             Ok(())
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
-        pub fn calendar_kind(&self) -> AnyCalendarKind {
-            self.0.calendar_kind().into()
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
+        pub fn calendar(&self) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(self.0.calendar().0.clone())))
         }
     }
 
     #[diplomat::opaque]
-    /// An ICU4X DateFormatter object capable of formatting a [`DateTime`] as a string,
+    /// An ICU4X DateFormatter object capable of formatting a [`Date`] and a [`Time`] as a string,
     /// using some calendar specified at runtime in the locale.
-    #[diplomat::rust_link(icu::datetime, Mod)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
     pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<YMDT>);
 
     impl DateTimeFormatter {
         /// Creates a new [`DateTimeFormatter`] using compiled data.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
@@ -342,8 +316,9 @@ pub mod ffi {
         }
 
         /// Creates a new [`DateTimeFormatter`] using a particular data source.
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_length_and_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -360,33 +335,51 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Formats a [`DateTime`] to a string.
-        pub fn format_datetime(
+
+        /// Formats a [`Date`] and a [`Time`] to a string.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format(
             &self,
-            value: &DateTime,
+            date: &Date,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let _infallible = self.0.format_any_calendar(&value.0).write_to(write);
+            let _infallible = self
+                .0
+                .format(&icu_timezone::DateTime {
+                    date: date.0.wrap_calendar_in_ref(),
+                    time: time.0,
+                })
+                .write_to(write);
             Ok(())
         }
 
-        /// Formats a [`IsoDateTime`] to a string.
+        /// Formats an [`IsoDate`] and a [`Time`] to a string.
         ///
         /// Will convert to this formatter's calendar first
-        pub fn format_iso_datetime(
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_iso(
             &self,
-            value: &IsoDateTime,
+            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let any = value.0.to_any();
-            let _infallible = self.0.format_any_calendar(&any).write_to(write);
+            let _infallible = self
+                .0
+                .format(&icu_timezone::DateTime {
+                    date: date.0,
+                    time: time.0,
+                })
+                .write_to(write);
             Ok(())
         }
 
         /// Returns the calendar system used in this formatter.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar_kind, FnInStruct)]
-        pub fn calendar_kind(&self) -> AnyCalendarKind {
-            self.0.calendar_kind().into()
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::calendar, FnInStruct)]
+        pub fn calendar(&self) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(self.0.calendar().0.clone())))
         }
     }
 }

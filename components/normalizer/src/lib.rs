@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -13,6 +13,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -1454,14 +1455,11 @@ macro_rules! normalizer_methods {
         /// is the normalization of the whole input.
         pub fn split_normalized<'a>(&self, text: &'a str) -> (&'a str, &'a str) {
             let up_to = self.is_normalized_up_to(text);
-            if up_to <= text.len() {
-                // not using split_at_checked due to MSRV
-                text.split_at(up_to)
-            } else {
+            text.split_at_checked(up_to).unwrap_or_else(|| {
                 // Internal bug, not even GIGO, never supposed to happen
                 debug_assert!(false);
                 ("", text)
-            }
+            })
         }
 
         /// Return the index a string slice is normalized up to.
@@ -1502,14 +1500,11 @@ macro_rules! normalizer_methods {
         #[cfg(feature = "utf16_iter")]
         pub fn split_normalized_utf16<'a>(&self, text: &'a [u16]) -> (&'a [u16], &'a [u16]) {
             let up_to = self.is_normalized_utf16_up_to(text);
-            if up_to <= text.len() {
-                // not using split_at_checked due to MSRV
-                text.split_at(up_to)
-            } else {
+            text.split_at_checked(up_to).unwrap_or_else(|| {
                 // Internal bug, not even GIGO, never supposed to happen
                 debug_assert!(false);
                 (&[], text)
-            }
+            })
         }
 
         /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
@@ -1559,17 +1554,14 @@ macro_rules! normalizer_methods {
         #[cfg(feature = "utf8_iter")]
         pub fn split_normalized_utf8<'a>(&self, text: &'a [u8]) -> (&'a str, &'a [u8]) {
             let up_to = self.is_normalized_utf8_up_to(text);
-            if up_to <= text.len() {
-                // not using split_at_checked due to MSRV
-                let (head, tail) = text.split_at(up_to);
-                // SAFETY: The normalization check also checks for
-                // UTF-8 well-formedness.
-                (unsafe { core::str::from_utf8_unchecked(head) }, tail)
-            } else {
+            let (head, tail) = text.split_at_checked(up_to).unwrap_or_else(|| {
                 // Internal bug, not even GIGO, never supposed to happen
                 debug_assert!(false);
-                ("", text)
-            }
+                (&[], text)
+            });
+            // SAFETY: The normalization check also checks for
+            // UTF-8 well-formedness.
+            (unsafe { core::str::from_utf8_unchecked(head) }, tail)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to

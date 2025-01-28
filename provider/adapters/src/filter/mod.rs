@@ -174,7 +174,7 @@ where
     P0: ExportableProvider,
     F: Fn(DataIdentifierBorrowed) -> bool + Sync,
 {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         // The predicate only takes DataIdentifier, not DataMarker, so we are not impacted
         self.inner.supported_markers()
     }

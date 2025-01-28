@@ -18,7 +18,7 @@ include!("windows_zones_to_bcp47_map_v1_marker.rs.data");
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.80"]
+        #[clippy::msrv = "1.81"]
         impl $name {
             #[allow(dead_code)]
             pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
@@ -41,14 +41,14 @@ macro_rules! impl_data_provider {
 #[allow(unused_macros)]
 macro_rules! impl_any_provider {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.80"]
+        #[clippy::msrv = "1.81"]
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                match marker.path.hashed() {
-                    h if h == <icu::timezone::provider::names::Bcp47ToIanaMapV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::names::Bcp47ToIanaMapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::timezone::provider::names::IanaToBcp47MapV3Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::names::IanaToBcp47MapV3Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::timezone::provider::ZoneOffsetPeriodV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::ZoneOffsetPeriodV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker as icu_provider::DataMarker>::INFO.path.hashed() => icu_provider::DataProvider::<icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                match marker.id.hashed() {
+                    h if h == <icu::timezone::provider::names::Bcp47ToIanaMapV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::timezone::provider::names::Bcp47ToIanaMapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::timezone::provider::names::IanaToBcp47MapV3Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::timezone::provider::names::IanaToBcp47MapV3Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::timezone::provider::ZoneOffsetPeriodV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::timezone::provider::ZoneOffsetPeriodV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::timezone::provider::windows::WindowsZonesToBcp47MapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
                 }
             }

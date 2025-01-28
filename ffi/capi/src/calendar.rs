@@ -104,7 +104,7 @@ pub mod ffi {
     impl Calendar {
         /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new, FnInEnum)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_locale")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_locale")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_for_locale(locale: &Locale) -> Result<Box<Calendar>, DataError> {
@@ -116,7 +116,7 @@ pub mod ffi {
 
         /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_kind")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind")]
         #[cfg(feature = "compiled_data")]
         pub fn create_for_kind(kind: AnyCalendarKind) -> Result<Box<Calendar>, DataError> {
             Ok(Box::new(Calendar(Arc::new(
@@ -126,7 +126,7 @@ pub mod ffi {
 
         /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new, FnInEnum)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_locale_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_locale_with_provider")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_for_locale_with_provider(
@@ -142,7 +142,7 @@ pub mod ffi {
 
         /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "for_kind_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_for_kind_with_provider(
             provider: &DataProvider,

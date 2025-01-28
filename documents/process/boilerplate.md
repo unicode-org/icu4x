@@ -13,7 +13,7 @@ In order to assert that library crates conform to the ICU4X style guide, the fol
 If the crate has no `std` feature:
 
     // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-    #![cfg_attr(not(test), no_std)]
+    #![cfg_attr(not(any(test, doc)), no_std)]
     #![cfg_attr(
         not(test),
         deny(
@@ -23,6 +23,7 @@ If the crate has no `std` feature:
             clippy::panic,
             clippy::exhaustive_structs,
             clippy::exhaustive_enums,
+            clippy::trivially_copy_pass_by_ref,
             missing_debug_implementations,
         )
     )]
@@ -33,7 +34,7 @@ Not all crates are yet able to be annotated in this way. Annotations may be omit
 If the crate has an `std` feature, specify this in the first line:
 
     // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-    #![cfg_attr(not(any(test, feature = "std")), no_std)]
+    #![cfg_attr(not(any(test, doc)), no_std)]
     #![cfg_attr(
         not(test),
         deny(
@@ -43,6 +44,7 @@ If the crate has an `std` feature, specify this in the first line:
             clippy::panic,
             clippy::exhaustive_structs,
             clippy::exhaustive_enums,
+            clippy::trivially_copy_pass_by_ref,
             missing_debug_implementations,
         )
     )]

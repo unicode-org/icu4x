@@ -58,9 +58,8 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// .unwrap()
 /// // The pattern can depend on the datetime being formatted.
 /// .format(
-///     &Date::try_new_iso(2024, 1, 1)
-///         .unwrap()
-///         .to_calendar(Gregorian),
+///     &Date::try_new_gregorian(2024, 1, 1)
+///         .unwrap(),
 /// )
 /// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
@@ -78,7 +77,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// Check the hour cycle of a resolved pattern:
 ///
 /// ```
-/// use icu::calendar::Time;
+/// use icu::timezone::Time;
 /// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::pattern::DateTimePattern;

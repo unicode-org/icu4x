@@ -15,6 +15,7 @@ const Collator_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class Collator {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,7 +23,7 @@ export class Collator {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("Collator is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,8 +36,9 @@ export class Collator {
         if (this.#selfEdge.length === 0) {
             Collator_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -46,7 +48,7 @@ export class Collator {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -63,12 +65,12 @@ export class Collator {
         }
     }
 
-    static createWithProvider(provider, locale, options) {
+    #defaultConstructor(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Collator_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_Collator_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -114,6 +116,16 @@ export class Collator {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    constructor(provider, locale, options) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

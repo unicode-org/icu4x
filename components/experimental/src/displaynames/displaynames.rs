@@ -65,8 +65,7 @@ impl RegionDisplayNames {
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<RegionDisplayNamesV1Marker>(prefs.locale_prefs);
+        let locale = RegionDisplayNamesV1Marker::make_locale(prefs.locale_preferences);
         let region_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -134,8 +133,7 @@ impl ScriptDisplayNames {
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<ScriptDisplayNamesV1Marker>(prefs.locale_prefs);
+        let locale = ScriptDisplayNamesV1Marker::make_locale(prefs.locale_preferences);
         let script_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -204,8 +202,7 @@ impl VariantDisplayNames {
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<VariantDisplayNamesV1Marker>(prefs.locale_prefs);
+        let locale = VariantDisplayNamesV1Marker::make_locale(prefs.locale_preferences);
         let variant_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -269,8 +266,7 @@ impl LanguageDisplayNames {
         prefs: DisplayNamesPreferences,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<LanguageDisplayNamesV1Marker>(prefs.locale_prefs);
+        let locale = LanguageDisplayNamesV1Marker::make_locale(prefs.locale_preferences);
         let language_data = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -363,8 +359,7 @@ impl LocaleDisplayNamesFormatter {
             + DataProvider<VariantDisplayNamesV1Marker>
             + ?Sized,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<LocaleDisplayNamesV1Marker>(prefs.locale_prefs);
+        let locale = LocaleDisplayNamesV1Marker::make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()

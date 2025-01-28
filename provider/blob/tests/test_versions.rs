@@ -204,4 +204,5 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     }
 }
 
+extern crate alloc;
 icu_provider::export::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);

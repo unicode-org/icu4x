@@ -2,12 +2,15 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** ECMA-402 compatible sign display preference.
 *
 *See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
 */
+
+
 export class FixedDecimalSignDisplay {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -21,14 +24,14 @@ export class FixedDecimalSignDisplay {
     static getAllEntries() {
         return FixedDecimalSignDisplay.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return FixedDecimalSignDisplay.#objectValues[arguments[1]];
         }
@@ -40,11 +43,15 @@ export class FixedDecimalSignDisplay {
         let intVal = FixedDecimalSignDisplay.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return FixedDecimalSignDisplay.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a FixedDecimalSignDisplay and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new FixedDecimalSignDisplay(value);
     }
 
     get value() {
@@ -67,4 +74,8 @@ export class FixedDecimalSignDisplay {
     static Always = FixedDecimalSignDisplay.#objectValues[2];
     static ExceptZero = FixedDecimalSignDisplay.#objectValues[3];
     static Negative = FixedDecimalSignDisplay.#objectValues[4];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

@@ -6,17 +6,26 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 */
-type LineBreakOptions_Obj = {
-    strictness: LineBreakStrictness | null;
-    wordOption: LineBreakWordOption | null;
+type LineBreakOptions_obj = {
+    strictness?: LineBreakStrictness | null;
+    wordOption?: LineBreakWordOption | null;
 };
 
+
+
 export class LineBreakOptions {
-
-    get strictness() : LineBreakStrictness | null;
+    
+    get strictness() : LineBreakStrictness | null; 
     set strictness(value: LineBreakStrictness | null); 
-
-    get wordOption() : LineBreakWordOption | null;
+    
+    get wordOption() : LineBreakWordOption | null; 
     set wordOption(value: LineBreakWordOption | null); 
-    constructor(structObj : LineBreakOptions_Obj);
+    
+    /** Create `LineBreakOptions` from an object that contains all of `LineBreakOptions`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj : LineBreakOptions_obj) : LineBreakOptions;
+    
+
+    constructor(structObj : LineBreakOptions_obj);
 }

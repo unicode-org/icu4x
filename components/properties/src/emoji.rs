@@ -120,13 +120,13 @@ impl EmojiSetDataBorrowed<'_> {
 
     /// Check if the set contains the code point.
     #[inline]
-    pub fn contains(&self, ch: char) -> bool {
+    pub fn contains(self, ch: char) -> bool {
         self.set.contains(ch)
     }
 
     /// See [`Self::contains`].
     #[inline]
-    pub fn contains32(&self, cp: u32) -> bool {
+    pub fn contains32(self, cp: u32) -> bool {
         self.set.contains32(cp)
     }
 }
@@ -144,6 +144,11 @@ impl EmojiSetDataBorrowed<'static> {
 }
 
 /// An Emoji set as defined by [`Unicode Technical Standard #51`](https://unicode.org/reports/tr51/#Emoji_Sets>).
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub trait EmojiSet: crate::private::Sealed {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyUnicodeSetV1<'static>>;

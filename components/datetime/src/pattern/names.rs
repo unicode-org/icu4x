@@ -366,7 +366,7 @@ where
 size_test!(
     TypedDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
-    328
+    312
 );
 
 /// A low-level type that formats datetime patterns with localized names.
@@ -391,13 +391,14 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
+/// use icu::calendar::Date;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::pattern::MonthNameLength;
 /// use icu::datetime::pattern::WeekdayNameLength;
 /// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
+/// use icu::timezone::{DateTime, Time};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -416,7 +417,7 @@ size_test!(
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+/// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::try_new(12, 35, 3, 0).unwrap() };
 /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
@@ -424,14 +425,14 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::{Date, Time};
+/// use icu::calendar::Date;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{TimeZoneInfo, IxdtfParser};
+/// use icu::timezone::{Time, TimeZoneInfo, ZonedDateTimeParser, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -449,7 +450,7 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
 ///
-/// let mut dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
+/// let mut dtz = ZonedDateTimeParser::new().parse("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian).unwrap();
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
@@ -494,14 +495,13 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::O;
 /// use icu::locale::locale;
-/// use icu::timezone::TimeZoneInfo;
+/// use icu::timezone::{DateTime, TimeZoneInfo};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -568,6 +568,9 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
         <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container,
     locations_root: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
     locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
+    exemplars_root:
+        <FSet::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container,
+    exemplars: <FSet::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container,
     mz_generic_long:
         <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container,
     mz_generic_short:
@@ -611,6 +614,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             zone_essentials: FSet2::map_zone_essentials(self.zone_essentials),
             locations_root: FSet2::map_zone_locations(self.locations_root),
             locations: FSet2::map_zone_locations(self.locations),
+            exemplars_root: FSet2::map_zone_exemplars(self.exemplars_root),
+            exemplars: FSet2::map_zone_exemplars(self.exemplars),
             mz_generic_long: FSet2::map_zone_generic_long(self.mz_generic_long),
             mz_generic_short: FSet2::map_zone_generic_short(self.mz_generic_short),
             mz_specific_long: FSet2::map_zone_specific_long(self.mz_specific_long),
@@ -631,6 +636,8 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     zone_essentials: OptionalNames<(), &'l tz::EssentialsV1<'l>>,
     locations_root: OptionalNames<(), &'l tz::LocationsV1<'l>>,
     locations: OptionalNames<(), &'l tz::LocationsV1<'l>>,
+    exemplars_root: OptionalNames<(), &'l tz::ExemplarCitiesV1<'l>>,
+    exemplars: OptionalNames<(), &'l tz::ExemplarCitiesV1<'l>>,
     mz_generic_long: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
     mz_generic_short: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
     mz_specific_long: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
@@ -1012,15 +1019,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1124,11 +1131,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1191,15 +1198,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1268,15 +1275,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1345,15 +1352,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1422,15 +1429,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::timezone::ZonedDateTimeParser;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
+    /// let mut zone_london_winter = ZonedDateTimeParser::new()
+    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
+    /// let mut zone_london_summer = ZonedDateTimeParser::new()
+    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1483,7 +1490,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Time;
+    /// use icu::timezone::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -1540,6 +1547,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             + DataProvider<DayPeriodNamesV1Marker>
             + DataProvider<tz::EssentialsV1Marker>
             + DataProvider<tz::LocationsV1Marker>
+            + DataProvider<tz::ExemplarCitiesV1Marker>
             + DataProvider<tz::MzGenericLongV1Marker>
             + DataProvider<tz::MzGenericShortV1Marker>
             + DataProvider<tz::MzSpecificLongV1Marker>
@@ -1558,6 +1566,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             // TODO: Consider making time zone name loading optional here (lots of data)
             &tz::EssentialsV1Marker::bind(provider),
             &tz::LocationsV1Marker::bind(provider),
+            &tz::ExemplarCitiesV1Marker::bind(provider),
             &tz::MzGenericLongV1Marker::bind(provider),
             &tz::MzGenericShortV1Marker::bind(provider),
             &tz::MzSpecificLongV1Marker::bind(provider),
@@ -1581,11 +1590,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
@@ -1597,7 +1606,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// // Load data for the pattern and format:
     /// let datetime =
-    ///     DateTime::try_new_gregorian(2023, 12, 5, 17, 43, 12).unwrap();
+    ///     DateTime { date: Date::try_new_gregorian(2023, 12, 5).unwrap(), time: Time::try_new(17, 43, 12, 0).unwrap() };
     /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
@@ -1617,6 +1626,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             + DataProvider<WeekdayNamesV1Marker>
             + DataProvider<DayPeriodNamesV1Marker>
             + DataProvider<tz::EssentialsV1Marker>
+            + DataProvider<tz::ExemplarCitiesV1Marker>
             + DataProvider<tz::MzGenericShortV1Marker>,
     {
         let locale = self.prefs;
@@ -1627,6 +1637,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
             &tz::EssentialsV1Marker::bind(&crate::provider::Baked),
             &tz::LocationsV1Marker::bind(&crate::provider::Baked),
+            &tz::ExemplarCitiesV1Marker::bind(&crate::provider::Baked),
             &tz::MzGenericLongV1Marker::bind(&crate::provider::Baked),
             &tz::MzGenericShortV1Marker::bind(&crate::provider::Baked),
             &tz::MzSpecificLongV1Marker::bind(&crate::provider::Baked),
@@ -1654,12 +1665,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Date;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
+    /// use icu::timezone::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated month names:
@@ -1672,7 +1684,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// // Test it with a pattern:
     /// let pattern_str = "MMM d y";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+    /// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::midnight() };
     /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
     ///
     /// // Convert the field set to `CompositeDateTimeFieldSet`:
@@ -1734,6 +1746,14 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 tz::LocationsV1Marker,
                 (),
             >>::Container::new_empty(),
+            exemplars: <FSet::ZoneExemplars as NamesContainer<
+                tz::ExemplarCitiesV1Marker,
+                (),
+            >>::Container::new_empty(),
+            exemplars_root: <FSet::ZoneExemplars as NamesContainer<
+                tz::ExemplarCitiesV1Marker,
+                (),
+            >>::Container::new_empty(),
             mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<
                 tz::MzGenericLongV1Marker,
                 (),
@@ -1768,6 +1788,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             zone_essentials: self.zone_essentials.get().inner,
             locations_root: self.locations_root.get().inner,
             locations: self.locations.get().inner,
+            exemplars_root: self.exemplars_root.get().inner,
+            exemplars: self.exemplars.get().inner,
             mz_generic_long: self.mz_generic_long.get().inner,
             mz_generic_short: self.mz_generic_short.get().inner,
             mz_specific_long: self.mz_specific_long.get().inner,
@@ -1788,7 +1810,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1811,7 +1835,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1834,7 +1860,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1857,7 +1885,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
     {
         let attributes = length.to_attributes();
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
@@ -1877,7 +1907,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     where
         P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Four,
@@ -1902,7 +1934,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     where
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Four,
@@ -1925,11 +1959,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .get_with_variables(variables)
             .unwrap()
             .dedupe_target;
-        let dedupe_locale = DataLocale {
-            language: dedupe_language,
-            script: dedupe_script,
-            ..Default::default()
-        };
+        let dedupe_locale = DataLocale::from((dedupe_language, dedupe_script, None));
         self.locations_root
             .load_put(
                 provider,
@@ -1939,6 +1969,37 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 },
                 variables,
             )
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(())
+    }
+
+    pub(crate) fn load_time_zone_exemplar_cities_names<P>(
+        &mut self,
+        provider: &P,
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<(), PatternLoadError>
+    where
+        P: BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized,
+    {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
+            length: FieldLength::Three,
+        });
+        let variables = ();
+        let req = DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&locale),
+            ..Default::default()
+        };
+        self.exemplars_root
+            .load_put(provider, Default::default(), variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.exemplars
+            .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
@@ -1966,7 +2027,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Four,
@@ -1990,7 +2053,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
@@ -2014,7 +2079,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Four,
@@ -2038,7 +2105,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
@@ -2087,6 +2156,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1Marker> + ?Sized),
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1Marker> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
@@ -2229,6 +2299,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 (FS::TimeZone(TimeZone::Location), One) => {
                     // no data required
                 }
+                // VVV
+                (FS::TimeZone(TimeZone::Location), Three) => {
+                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    self.load_time_zone_exemplar_cities_names(exemplar_cities_provider, prefs)?;
+                }
                 // VVVV
                 (FS::TimeZone(TimeZone::Location), Four) => {
                     numeric_field = Some(field);
@@ -2300,7 +2375,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     }
 }
 
-impl<'data> RawDateTimeNamesBorrowed<'data> {
+impl RawDateTimeNamesBorrowed<'_> {
     pub(crate) fn get_name_for_month(
         &self,
         field_symbol: fields::Month,
@@ -2388,9 +2463,10 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match (year_names, era) {
-            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
-                .get(era_code.0.as_str().into())
-                .ok_or(GetNameForEraError::InvalidEraCode),
+            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => {
+                crate::provider::neo::get_year_name_from_map(era_names, era_code.0.as_str().into())
+                    .ok_or(GetNameForEraError::InvalidEraCode)
+            }
             (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
                 era_names
                     .get(index.into())
@@ -2427,7 +2503,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
-        hour: input::IsoHour,
+        hour: icu_timezone::types::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
@@ -2452,10 +2528,14 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
     pub(crate) essentials: Option<&'a tz::EssentialsV1<'a>>,
-    /// The root location names, e.g. Toronto
+    /// The root location names, e.g. Italy
     pub(crate) locations_root: Option<&'a tz::LocationsV1<'a>>,
-    /// The language specific location names, e.g. Italy
+    /// The language specific location names, e.g. Italia
     pub(crate) locations: Option<&'a tz::LocationsV1<'a>>,
+    /// The root exemplar city names, e.g. Rome
+    pub(crate) exemplars_root: Option<&'a tz::ExemplarCitiesV1<'a>>,
+    /// The language specific exemplar names, e.g. Roma
+    pub(crate) exemplars: Option<&'a tz::ExemplarCitiesV1<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(crate) mz_generic_long: Option<&'a tz::MzGenericV1<'a>>,
     /// The generic short metazone names, e.g. PT
@@ -2474,6 +2554,8 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             essentials: self.zone_essentials.get_option(),
             locations_root: self.locations_root.get_option(),
             locations: self.locations.get_option(),
+            exemplars: self.exemplars.get_option(),
+            exemplars_root: self.exemplars_root.get_option(),
             mz_generic_long: self.mz_generic_long.get_option(),
             mz_generic_short: self.mz_generic_short.get_option(),
             mz_specific_long: self.mz_specific_long.get_option(),

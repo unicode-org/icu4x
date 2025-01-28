@@ -13,7 +13,7 @@ use icu_calendar::cal::{
 };
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
-    AsCalendar, Calendar, DateTime,
+    Calendar,
 };
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
@@ -28,7 +28,7 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{CustomZonedDateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset};
+use icu_timezone::{DateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZonedDateTime};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,
@@ -74,27 +74,36 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 continue;
             }
         };
-        let input_value = mock::parse_gregorian_from_str(&fx.input.value);
-        let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese::new());
-        let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi::new());
-        let input_ethiopian = input_value.to_calendar(Ethiopian::new());
-        let input_ethioaa =
-            input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew);
-        let input_indian = input_value.to_calendar(Indian);
-        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
-        let input_islamic_observational =
-            input_value.to_calendar(IslamicObservational::new_always_calculating());
-        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
+        let input_iso = DateTime::try_from_str(&fx.input.value, Iso).unwrap();
+
+        let input_buddhist = DateTime::try_from_str(&fx.input.value, Buddhist).unwrap();
+        let input_chinese = DateTime::try_from_str(&fx.input.value, Chinese::new()).unwrap();
+        let input_coptic = DateTime::try_from_str(&fx.input.value, Coptic).unwrap();
+        let input_dangi = DateTime::try_from_str(&fx.input.value, Dangi::new()).unwrap();
+        let input_ethiopian = DateTime::try_from_str(&fx.input.value, Ethiopian::new()).unwrap();
+        let input_ethioaa = DateTime::try_from_str(
+            &fx.input.value,
+            Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem),
+        )
+        .unwrap();
+        let input_gregorian = DateTime::try_from_str(&fx.input.value, Gregorian).unwrap();
+        let input_hebrew = DateTime::try_from_str(&fx.input.value, Hebrew).unwrap();
+        let input_indian = DateTime::try_from_str(&fx.input.value, Indian).unwrap();
+        let input_islamic_civil = DateTime::try_from_str(&fx.input.value, IslamicCivil).unwrap();
+        let input_islamic_observational = DateTime::try_from_str(
+            &fx.input.value,
+            IslamicObservational::new_always_calculating(),
+        )
+        .unwrap();
+        let input_islamic_tabular =
+            DateTime::try_from_str(&fx.input.value, IslamicTabular).unwrap();
         let input_islamic_umm_al_qura =
-            input_value.to_calendar(IslamicUmmAlQura::new_always_calculating());
-        let input_iso = input_value.to_calendar(Iso);
-        let input_japanese = input_value.to_calendar(japanese);
-        let input_japanext = input_value.to_calendar(japanext);
-        let input_persian = input_value.to_calendar(Persian);
-        let input_roc = input_value.to_calendar(Roc);
+            DateTime::try_from_str(&fx.input.value, IslamicUmmAlQura::new_always_calculating())
+                .unwrap();
+        let input_japanese = DateTime::try_from_str(&fx.input.value, japanese).unwrap();
+        let input_japanext = DateTime::try_from_str(&fx.input.value, japanext).unwrap();
+        let input_persian = DateTime::try_from_str(&fx.input.value, Persian).unwrap();
+        let input_roc = DateTime::try_from_str(&fx.input.value, Roc).unwrap();
 
         let description = match fx.description {
             Some(description) => {
@@ -243,7 +252,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
             } else {
                 assert_fixture_element(
                     &locale,
-                    &input_value,
+                    &input_gregorian,
                     &input_iso,
                     &output_value,
                     skeleton,
@@ -254,20 +263,18 @@ fn test_fixture(fixture_name: &str, file: &str) {
     }
 }
 
-fn assert_fixture_element<A>(
+fn assert_fixture_element<C>(
     locale: &Locale,
-    input_value: &DateTime<A>,
+    input_value: &DateTime<C>,
     input_iso: &DateTime<Iso>,
     output_value: &TestOutputItem,
     skeleton: CompositeDateTimeFieldSet,
     description: &str,
 ) where
-    A: AsCalendar + Clone,
-    A::Calendar: CldrCalendar,
-    A::Calendar: IntoAnyCalendar,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::YearNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::MonthNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::SkeletaV1Marker>,
+    C: Calendar + CldrCalendar + IntoAnyCalendar + Clone,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::SkeletaV1Marker>,
 {
     assert!(
         input_value.date.calendar().any_calendar_kind().is_some(),
@@ -275,23 +282,23 @@ fn assert_fixture_element<A>(
         input_value.date.calendar().debug_name()
     );
 
-    let input_value = CustomZonedDateTime {
+    let input_value = ZonedDateTime {
         date: input_value.date.clone(),
         time: input_value.time,
         zone: TimeZoneInfo::utc(),
     };
-    let input_iso = CustomZonedDateTime {
+    let input_iso = ZonedDateTime {
         date: input_iso.date,
         time: input_iso.time,
         zone: TimeZoneInfo::utc(),
     };
 
-    let any_input = CustomZonedDateTime {
-        date: input_value.date.to_any(),
+    let any_input = ZonedDateTime {
+        date: input_value.date.clone().to_any(),
         time: input_value.time,
         zone: TimeZoneInfo::utc(),
     };
-    let iso_any_input = CustomZonedDateTime {
+    let iso_any_input = ZonedDateTime {
         date: input_iso.date.to_any(),
         time: input_iso.time,
         zone: TimeZoneInfo::utc(),
@@ -312,7 +319,7 @@ fn assert_fixture_element<A>(
         description
     );
 
-    let actual3 = any_dtf.format_any_calendar(&iso_any_input);
+    let actual3 = any_dtf.format(&iso_any_input);
     assert_writeable_eq!(
         actual3,
         output_value.expectation(),
@@ -379,7 +386,7 @@ fn test_dayperiod_patterns() {
         let locale: Locale = test.locale.parse().unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
-                let datetime = mock::parse_gregorian_from_str(dt_input);
+                let datetime = DateTime::try_from_str(dt_input, Gregorian).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let parsed_pattern =

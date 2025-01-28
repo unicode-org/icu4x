@@ -20,6 +20,7 @@ const CodePointSetData_box_destroy_registry = new FinalizationRegistry((ptr) => 
 });
 
 export class CodePointSetData {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -27,7 +28,7 @@ export class CodePointSetData {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CodePointSetData is an Opaque type. You cannot call its constructor.");
             return;
@@ -40,8 +41,9 @@ export class CodePointSetData {
         if (this.#selfEdge.length === 0) {
             CodePointSetData_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -85,7 +87,7 @@ export class CodePointSetData {
     static createGeneralCategoryGroup(group) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(...group._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, group)._intoFFI(functionCleanupArena, {}));
     
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
@@ -1980,5 +1982,9 @@ export class CodePointSetData {
         
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

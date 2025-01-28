@@ -4,14 +4,19 @@
 
 use core::fmt;
 
-use crate::{scaffold::IntoOption, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-use icu_calendar::{Date, Iso, Time};
+use crate::{scaffold::IntoOption, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_calendar::{Date, Iso};
 
 mod private {
     pub trait Sealed {}
 }
 
 /// Trait encoding a particular data model for time zones.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub trait TimeZoneModel: private::Sealed {
     /// The zone variant, if required for this time zone model.
     type ZoneVariant: IntoOption<ZoneVariant> + fmt::Debug + Copy;
@@ -24,7 +29,7 @@ pub mod models {
     use super::*;
 
     /// A time zone containing a time zone ID and optional offset.
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum Base {}
 
@@ -35,7 +40,7 @@ pub mod models {
     }
 
     /// A time zone containing a time zone ID, optional offset, and local time.
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum AtTime {}
 
@@ -46,7 +51,7 @@ pub mod models {
     }
 
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum Full {}
 

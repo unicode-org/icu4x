@@ -11,16 +11,16 @@ use icu_calendar::{
         ChineseCacheV1Marker, DangiCacheV1Marker, IslamicObservationalCacheV1Marker,
         IslamicUmmAlQuraCacheV1Marker, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker,
     },
-    types::{
-        DayOfMonth, DayOfYearInfo, IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthInfo,
-        NanoSecond, YearInfo,
-    },
-    Date, Iso, Time,
+    types::{DayOfMonth, DayOfYearInfo, IsoWeekday, MonthInfo, YearInfo},
+    Date, Iso,
 };
 use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{
+    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+};
 
 // TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
 
@@ -28,6 +28,11 @@ use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 /// (input types only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the year input field.
     type YearInput: IntoOption<YearInfo>;
@@ -45,6 +50,11 @@ pub trait DateInputMarkers: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
     type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
@@ -60,6 +70,11 @@ pub trait TypedDateDataMarkers<C>: UnstableSealed {
 /// (data markers only).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for date skeleta.
     type Skel: CalMarkers<ErasedPackedPatterns>;
@@ -75,6 +90,11 @@ pub trait DateDataMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type HourInput: IntoOption<IsoHour>;
@@ -94,6 +114,11 @@ pub trait TimeMarkers: UnstableSealed {
 /// (input types and data markers).
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
     type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
@@ -107,6 +132,8 @@ pub trait ZoneMarkers: UnstableSealed {
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting
     type LocationsV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
+    /// Marker for loading exemplar city names for time zone formatting
+    type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
     /// Marker for loading generic long time zone names.
     type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
@@ -123,6 +150,11 @@ pub trait ZoneMarkers: UnstableSealed {
 /// required for datetime formatting.
 ///
 /// This is a sealed trait implemented on field set markers.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Associated types for date formatting.
     ///
@@ -149,13 +181,14 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// The following types implement this trait:
 ///
 /// - [`Date`](icu_calendar::Date)
-/// - [`Time`](icu_calendar::Time)
-/// - [`DateTime`](icu_calendar::DateTime)
-/// - [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+/// - [`Time`](icu_timezone::Time)
+/// - [`DateTime`](icu_timezone::DateTime)
+/// - [`ZonedDateTime`](icu_timezone::ZonedDateTime)
 /// - [`UtcOffset`](icu_timezone::UtcOffset)
 /// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
@@ -204,6 +237,7 @@ where
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker>
@@ -213,6 +247,7 @@ pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeM
     + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+    + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -242,6 +277,7 @@ where
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+        + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -256,6 +292,7 @@ where
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1Marker>>::Chinese>
@@ -313,6 +350,7 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+    + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -389,6 +427,7 @@ where
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+        + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -400,6 +439,7 @@ where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with a fixed calendar.
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarExternalDataMarkers:
     DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
 {
@@ -412,6 +452,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 
 /// Trait to consolidate data provider markers external to this crate
 /// for datetime formatting with any calendar.
+// This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
     DataProvider<ChineseCacheV1Marker>
     + DataProvider<DangiCacheV1Marker>
@@ -475,6 +516,7 @@ impl ZoneMarkers for () {
     type TimeZoneLocalTimeInput = ();
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
+    type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type GenericShortV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
@@ -606,6 +648,9 @@ macro_rules! datetime_marker_helper {
     (@data/zone/locations, yes) => {
         tz::LocationsV1Marker
     };
+    (@data/zone/exemplars, yes) => {
+        tz::ExemplarCitiesV1Marker
+    };
     (@data/zone/generic_long, yes) => {
         tz::MzGenericLongV1Marker
     };
@@ -626,6 +671,9 @@ macro_rules! datetime_marker_helper {
     };
     (@data/zone/locations,) => {
         NeverMarker<tz::LocationsV1<'static>>
+    };
+    (@data/zone/exemplars,) => {
+        NeverMarker<tz::ExemplarCitiesV1<'static>>
     };
     (@data/zone/generic_long,) => {
         NeverMarker<tz::MzGenericV1<'static>>
@@ -659,6 +707,9 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/locations, yes) => {
         tz::LocationsV1Marker
+    };
+    (@names/zone/exemplars, yes) => {
+        tz::ExemplarCitiesV1Marker
     };
     (@names/zone/generic_long, yes) => {
         tz::MzGenericLongV1Marker

@@ -5,7 +5,7 @@
 use alloc::boxed::Box;
 use alloc::collections::BTreeSet;
 use core::fmt::Write;
-use icu_provider::{marker::DataMarkerPathHash, prelude::*};
+use icu_provider::{marker::DataMarkerIdHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -99,7 +99,7 @@ pub(crate) struct BlobSchemaV3<'data, LocaleVecFormat: VarZeroVecFormat> {
     /// Map from marker hash to locale trie.
     /// Weak invariant: should be sorted.
     #[serde(borrow)]
-    pub markers: &'data ZeroSlice<DataMarkerPathHash>,
+    pub markers: &'data ZeroSlice<DataMarkerIdHash>,
     /// Map from locale to buffer index.
     /// Weak invariant: the `usize` values are valid indices into `self.buffers`
     /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
@@ -126,7 +126,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
     pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
         let marker_index = self
             .markers
-            .binary_search(&marker.path.hashed())
+            .binary_search(&marker.id.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
         if marker.is_singleton && !req.id.locale.is_default() {
@@ -169,7 +169,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
     ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         let marker_index = self
             .markers
-            .binary_search(&marker.path.hashed())
+            .binary_search(&marker.id.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?;
         let zerotrie = self

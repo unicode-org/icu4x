@@ -10,14 +10,14 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *iteration will NOT produce a range done=true, in other words `start` and `end` are useful
 *values if and only if `done=false`.
 */
-export class CodePointRangeIteratorResult {
 
+
+export class CodePointRangeIteratorResult {
+    
     get start() : codepoint;
     
-
     get end() : codepoint;
     
-
     get done() : boolean;
     
 }

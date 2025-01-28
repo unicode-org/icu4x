@@ -451,12 +451,7 @@ where
             })
         } else {
             let (second_byte, remainder) = remainder.split_first()?;
-            // TODO in Rust 1.80: use split_at_checked
-            let v_length = *second_byte as usize;
-            if remainder.len() < v_length {
-                return None;
-            }
-            let (v_bytes, remainder) = remainder.split_at(v_length);
+            let (v_bytes, remainder) = remainder.split_at_checked(*second_byte as usize)?;
             Some(PluralElementsUnpackedBytes {
                 lead_byte: *lead_byte,
                 v_bytes,
@@ -824,7 +819,10 @@ where
                     panic!("other value too long to be packed: {self:?}")
                 }
             };
-            let (v_bytes, specials_bytes) = remainder.split_at_mut(*second_byte as usize);
+            #[allow(clippy::unwrap_used)] // for now okay since it is mostly only during datagen
+            let (v_bytes, specials_bytes) = remainder
+                .split_at_mut_checked(*second_byte as usize)
+                .unwrap();
             builder.default.1.encode_var_ule_write(v_bytes);
             EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_write(
                 &specials,

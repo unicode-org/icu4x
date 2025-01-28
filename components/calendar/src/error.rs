@@ -29,6 +29,8 @@ pub enum DateError {
     UnknownMonthCode(MonthCode),
 }
 
+impl core::error::Error for DateError {}
+
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 /// An argument is out of range for its domain.
 #[displaydoc("The {field} = {value} argument is out of range {min}..={max}")]
@@ -43,6 +45,8 @@ pub struct RangeError {
     /// The maximum value (inclusive). This might not be tight.
     pub max: i32,
 }
+
+impl core::error::Error for RangeError {}
 
 impl From<RangeError> for DateError {
     fn from(value: RangeError) -> Self {

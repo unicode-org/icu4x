@@ -21,15 +21,14 @@ const fn skip_before_separator(slice: &[u8]) -> &[u8] {
     let mut end = 0;
 
     #[allow(clippy::indexing_slicing)] // very protected, should optimize out
-    while end < slice.len() && !matches!(slice[end], b'-' | b'_') {
+    while end < slice.len() && !matches!(slice[end], b'-') {
         // Advance until we reach end of slice or a separator.
         end += 1;
     }
 
     // Notice: this slice may be empty for cases like `"en-"` or `"en--US"`
-    // MSRV 1.71/1.79: Use split_at/split_at_unchecked
     // SAFETY: end < slice.len() by while loop
-    unsafe { core::slice::from_raw_parts(slice.as_ptr(), end) }
+    unsafe { slice.split_at_unchecked(end).0 }
 }
 
 // `SubtagIterator` is a helper iterator for [`LanguageIdentifier`] and [`Locale`] parsing.
@@ -66,14 +65,8 @@ impl<'a> SubtagIterator<'a> {
 
         self.current = if result.len() < self.remaining.len() {
             // If there is more after `result`, by construction `current` starts with a separator
-            // MSRV 1.79: Use split_at_unchecked
             // SAFETY: `self.remaining` is strictly longer than `result`
-            self.remaining = unsafe {
-                core::slice::from_raw_parts(
-                    self.remaining.as_ptr().add(result.len() + 1),
-                    self.remaining.len() - (result.len() + 1),
-                )
-            };
+            self.remaining = unsafe { self.remaining.split_at_unchecked(result.len() + 1).1 };
             Some(skip_before_separator(self.remaining))
         } else {
             None
@@ -106,7 +99,7 @@ mod test {
 
     #[test]
     fn subtag_iterator_peek_test() {
-        let slice = "de_at-u-ca-foobar";
+        let slice = "de-at-u-ca-foobar";
         let mut si = SubtagIterator::new(slice.as_bytes());
 
         assert_eq!(si.peek().map(slice_to_str), Some("de"));
@@ -156,7 +149,7 @@ mod test {
         assert_eq!(si.next().map(slice_to_str), Some(""));
         assert_eq!(si.next(), None);
 
-        let slice = "de_at-u-ca-foobar";
+        let slice = "de-at-u-ca-foobar";
         let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(
             si.map(slice_to_str).collect::<Vec<_>>(),

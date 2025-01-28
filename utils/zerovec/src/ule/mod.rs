@@ -445,5 +445,4 @@ impl UleError {
     }
 }
 
-#[cfg(feature = "std")]
-impl ::std::error::Error for UleError {}
+impl core::error::Error for UleError {}

@@ -34,6 +34,7 @@ pub(crate) struct CldrCache {
     pub(crate) transforms: OnceLock<
         Result<std::sync::Mutex<icu::experimental::transliterate::RuleCollection>, DataError>,
     >,
+    pub(crate) tz_caches: crate::time_zones::Caches,
 }
 
 impl CldrCache {
@@ -45,6 +46,7 @@ impl CldrCache {
             modern_japanese_eras: Default::default(),
             #[cfg(feature = "experimental")]
             transforms: Default::default(),
+            tz_caches: Default::default(),
         }
     }
 

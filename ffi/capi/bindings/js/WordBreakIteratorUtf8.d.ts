@@ -5,9 +5,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
 */
+
+
 export class WordBreakIteratorUtf8 {
     
-
     get ffiValue(): pointer;
 
     next(): number;

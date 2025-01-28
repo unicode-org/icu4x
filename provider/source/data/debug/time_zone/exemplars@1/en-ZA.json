@@ -1,0 +1,11 @@
+{
+  "dedupe_target": [
+    "en",
+    null
+  ],
+  "exemplars": {
+    "knbas": "St Kitts",
+    "vcsvd": "St Vincent",
+    "vistt": "St Thomas"
+  }
+}

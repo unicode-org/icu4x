@@ -2,10 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
 */
+
+
 export class LineBreak {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -62,14 +65,14 @@ export class LineBreak {
     static getAllEntries() {
         return LineBreak.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return LineBreak.#objectValues[arguments[1]];
         }
@@ -81,11 +84,15 @@ export class LineBreak {
         let intVal = LineBreak.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return LineBreak.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LineBreak and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new LineBreak(value);
     }
 
     get value() {
@@ -220,5 +227,9 @@ export class LineBreak {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
     }
 }

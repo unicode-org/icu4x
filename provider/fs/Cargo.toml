@@ -22,6 +22,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_provider = { workspace = true, features = ["serde", "std"] }
+icu_provider_registry = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde-json-core = { workspace = true, features = ["std"] }
 
@@ -55,11 +56,6 @@ export = [
     "icu_provider/deserialize_json",
     "icu_provider/deserialize_postcard_1",
 ]
-bench = []
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "provider_fs"

@@ -3,8 +3,9 @@ import { DataProvider } from "./DataProvider.mjs"
 import { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
-import { IsoDateTime } from "./IsoDateTime.mjs"
+import { IsoDate } from "./IsoDate.mjs"
 import { Locale } from "./Locale.mjs"
+import { Time } from "./Time.mjs"
 import { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -12,13 +13,16 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An object capable of formatting a date time with time zone to a string.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Vs.html)
 */
 const GregorianZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GregorianZonedDateTimeFormatter_destroy_mv1(ptr);
 });
 
 export class GregorianZonedDateTimeFormatter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -26,7 +30,7 @@ export class GregorianZonedDateTimeFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GregorianZonedDateTimeFormatter is an Opaque type. You cannot call its constructor.");
             return;
@@ -39,8 +43,9 @@ export class GregorianZonedDateTimeFormatter {
         if (this.#selfEdge.length === 0) {
             GregorianZonedDateTimeFormatter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -81,12 +86,12 @@ export class GregorianZonedDateTimeFormatter {
         }
     }
 
-    formatIsoDatetimeWithCustomTimeZone(datetime, timeZone) {
+    formatIso(date, time, zone) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, datetime.ffiValue, timeZone.ffiValue, write.buffer);
+        const result = wasm.icu4x_GregorianZonedDateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -101,5 +106,9 @@ export class GregorianZonedDateTimeFormatter {
         
             write.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

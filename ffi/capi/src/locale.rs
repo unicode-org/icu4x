@@ -26,47 +26,51 @@ pub mod ffi {
 
     impl LocaleCanonicalizer {
         /// Create a new [`LocaleCanonicalizer`] using compiled data.
-        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_common, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<LocaleCanonicalizer> {
-            Box::new(LocaleCanonicalizer(icu_locale::LocaleCanonicalizer::new()))
+        pub fn create_common() -> Box<LocaleCanonicalizer> {
+            Box::new(LocaleCanonicalizer(
+                icu_locale::LocaleCanonicalizer::new_common(),
+            ))
         }
         /// Create a new [`LocaleCanonicalizer`].
-        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_common, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
+        pub fn create_common_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
             Ok(Box::new(LocaleCanonicalizer(
-                icu_locale::LocaleCanonicalizer::try_new_with_buffer_provider(provider.get()?)?,
+                icu_locale::LocaleCanonicalizer::try_new_common_with_buffer_provider(
+                    provider.get()?,
+                )?,
             )))
         }
         /// Create a new [`LocaleCanonicalizer`] with extended data using compiled data.
-        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_extended, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locale::LocaleCanonicalizer::new_with_expander,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, named_constructor = "extended")]
         #[cfg(feature = "compiled_data")]
         pub fn create_extended() -> Box<LocaleCanonicalizer> {
             Box::new(LocaleCanonicalizer(
-                icu_locale::LocaleCanonicalizer::new_with_expander(
-                    icu_locale::LocaleExpander::new_extended(),
-                ),
+                icu_locale::LocaleCanonicalizer::new_extended(),
             ))
         }
         /// Create a new [`LocaleCanonicalizer`] with extended data.
-        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_with_expander, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[diplomat::rust_link(icu::locale::LocaleCanonicalizer::new_extended, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleCanonicalizer>, DataError> {
-            let expander =
-                icu_locale::LocaleExpander::try_new_with_buffer_provider(provider.get()?)?;
             Ok(Box::new(LocaleCanonicalizer(
-                icu_locale::LocaleCanonicalizer::try_new_with_expander_with_buffer_provider(
+                icu_locale::LocaleCanonicalizer::try_new_extended_with_buffer_provider(
                     provider.get()?,
-                    expander,
                 )?,
             )))
         }
@@ -83,21 +87,21 @@ pub mod ffi {
 
     impl LocaleExpander {
         /// Create a new [`LocaleExpander`] using compiled data.
-        #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locale::LocaleExpander::new_common, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<LocaleExpander> {
-            Box::new(LocaleExpander(icu_locale::LocaleExpander::new()))
+        pub fn create_common() -> Box<LocaleExpander> {
+            Box::new(LocaleExpander(icu_locale::LocaleExpander::new_common()))
         }
-        /// Create a new [`LocaleExpander`] using a particular data source.
-        #[diplomat::rust_link(icu::locale::LocaleExpander::new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        /// Create a new [`LocaleExpander`] using a new_common data source.
+        #[diplomat::rust_link(icu::locale::LocaleExpander::new_common, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
+        pub fn create_common_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
             Ok(Box::new(LocaleExpander(
-                icu_locale::LocaleExpander::try_new_with_buffer_provider(provider.get()?)?,
+                icu_locale::LocaleExpander::try_new_common_with_buffer_provider(provider.get()?)?,
             )))
         }
         /// Create a new [`LocaleExpander`] with extended data using compiled data.
@@ -109,13 +113,13 @@ pub mod ffi {
         }
         /// Create a new [`LocaleExpander`] with extended data using a particular data source.
         #[diplomat::rust_link(icu::locale::LocaleExpander::new_extended, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "extended_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "extended_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<LocaleExpander>, DataError> {
             Ok(Box::new(LocaleExpander(
-                icu_locale::LocaleExpander::try_new_with_buffer_provider(provider.get()?)?,
+                icu_locale::LocaleExpander::try_new_extended_with_buffer_provider(provider.get()?)?,
             )))
         }
         #[diplomat::rust_link(icu::locale::LocaleExpander::maximize, FnInStruct)]

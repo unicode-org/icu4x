@@ -131,7 +131,7 @@ pub mod ffi {
 
         /// Create a map for the `General_Category` property, using a particular data source
         #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_general_category_with_provider(
             provider: &DataProvider,
@@ -153,7 +153,7 @@ pub mod ffi {
 
         /// Create a map for the `Bidi_Class` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_class_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_class_with_provider(
             provider: &DataProvider,
@@ -174,7 +174,7 @@ pub mod ffi {
 
         /// Create a map for the `East_Asian_Width` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_east_asian_width_with_provider(
             provider: &DataProvider,
@@ -196,7 +196,7 @@ pub mod ffi {
         }
         /// Create a map for the `Hangul_Syllable_Type` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "hangul_syllable_type_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
@@ -218,7 +218,7 @@ pub mod ffi {
         }
         /// Create a map for the `Indic_Syllabic_Property` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "indic_syllabic_category_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
@@ -238,7 +238,7 @@ pub mod ffi {
         }
         /// Create a map for the `Line_Break` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "line_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_line_break_with_provider(
             provider: &DataProvider,
@@ -260,7 +260,7 @@ pub mod ffi {
         }
         /// Create a map for the `Grapheme_Cluster_Break` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_cluster_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_cluster_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
@@ -280,7 +280,7 @@ pub mod ffi {
         }
         /// Create a map for the `Word_Break` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "word_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_word_break_with_provider(
             provider: &DataProvider,
@@ -300,7 +300,7 @@ pub mod ffi {
         }
         /// Create a map for the `Sentence_Break` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_break_with_provider(
             provider: &DataProvider,
@@ -321,7 +321,7 @@ pub mod ffi {
 
         /// Create a map for the `Joining_Type` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "joining_type_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "joining_type_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_joining_type_with_provider(
             provider: &DataProvider,
@@ -344,7 +344,7 @@ pub mod ffi {
         }
         /// Create a map for the `Canonical_Combining_Class` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "canonical_combining_class_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "canonical_combining_class_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_canonical_combining_class_with_provider(
             provider: &DataProvider,
@@ -429,7 +429,7 @@ pub mod ffi {
 
         /// Create a map for the `Script` property, using a particular data source.
         #[diplomat::rust_link(icu::properties::props::Script, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "script_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "script_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_script_with_provider(
             provider: &DataProvider,

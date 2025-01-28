@@ -7,6 +7,8 @@ use crate::provider::*;
 #[cfg(feature = "datagen")]
 use alloc::borrow::Cow;
 #[cfg(feature = "datagen")]
+use alloc::string::ToString;
+#[cfg(feature = "datagen")]
 use icu_provider::DataError;
 use writeable::{LengthHint, Writeable};
 

@@ -113,7 +113,7 @@ impl ExportDriver {
                             locale_iter = Some(
                                 fallbacker
                                     .for_config(marker.fallback_config)
-                                    .fallback_for(id.locale.clone()),
+                                    .fallback_for(*id.locale),
                             )
                         }
                     }
@@ -270,10 +270,7 @@ fn select_locales_for_marker<'a>(
         .iter_ids_for_marker(marker)
         .map_err(|e| e.with_marker(marker))?
     {
-        supported_map
-            .entry(id.locale.clone().into_owned())
-            .or_default()
-            .insert(id);
+        supported_map.entry(id.locale).or_default().insert(id);
     }
 
     if !marker.attributes_domain.is_empty() {
@@ -309,11 +306,11 @@ fn select_locales_for_marker<'a>(
                 .unwrap_or_default();
             if include_full && !selected_locales.contains(current_locale) {
                 log::trace!("Including {current_locale}: full locale family: {marker:?}");
-                selected_locales.insert(current_locale.clone());
+                selected_locales.insert(*current_locale);
             }
             if current_locale.language.is_default() && !current_locale.is_default() {
                 log::trace!("Including {current_locale}: und variant: {marker:?}");
-                selected_locales.insert(current_locale.clone());
+                selected_locales.insert(*current_locale);
             }
             let include_ancestors = requested_families
                 .get(current_locale)
@@ -322,7 +319,7 @@ fn select_locales_for_marker<'a>(
                 .unwrap_or(false);
             let mut iter = fallbacker
                 .for_config(marker.fallback_config)
-                .fallback_for(current_locale.clone());
+                .fallback_for(*current_locale);
             loop {
                 // Inherit aux keys and extension keywords from parent locales
                 let parent_locale = iter.get();
@@ -336,13 +333,13 @@ fn select_locales_for_marker<'a>(
                     log::trace!(
                         "Including {current_locale}: descendant of {parent_locale}: {marker:?}"
                     );
-                    selected_locales.insert(current_locale.clone());
+                    selected_locales.insert(*current_locale);
                 }
                 if include_ancestors && !selected_locales.contains(parent_locale) {
                     log::trace!(
                         "Including {parent_locale}: ancestor of {current_locale}: {marker:?}"
                     );
-                    selected_locales.insert(parent_locale.clone());
+                    selected_locales.insert(*parent_locale);
                 }
                 if let Some(parent_ids) = maybe_parent_ids {
                     for morphed_id in parent_ids.iter() {
@@ -351,7 +348,7 @@ fn select_locales_for_marker<'a>(
                             continue;
                         }
                         let mut morphed_id = morphed_id.clone();
-                        *morphed_id.locale.to_mut() = current_locale.clone();
+                        morphed_id.locale = *current_locale;
                         expansion.insert(morphed_id);
                     }
                 }
@@ -394,7 +391,7 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                     )
                 });
         }
-        let mut iter = fallbacker_with_config.fallback_for(id.locale.clone().into_owned());
+        let mut iter = fallbacker_with_config.fallback_for(id.locale);
         loop {
             if !MAXIMAL {
                 // To retain base languages, preemptively step to the
@@ -516,6 +513,7 @@ fn test_collation_filtering() {
         }
     }
 
+    extern crate alloc;
     icu_provider::export::make_exportable_provider!(
         Provider,
         [icu::collator::provider::CollationTailoringV1Marker,]
@@ -581,7 +579,7 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let driver = ExportDriver::new(
-            [DataLocaleFamily::single(cas.language.clone())],
+            [DataLocaleFamily::single(cas.language)],
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new_without_data(),
         )

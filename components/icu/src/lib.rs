@@ -100,17 +100,11 @@
 //!
 //! - `compiled_data` (default): Whether to include compiled data. Without this flag, only constructors with
 //!    explicit `provider` arguments are available.
-//! - `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible.
-//! - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with non-static data.
+//! - `datagen`: Whether to implement functionality that is only required during data generation.
 //! - `logging`: Enables logging through the `log` crate.
 //! - `serde`: Activates `serde` implementations for core library types, such as [`Locale`], as well
-//!    as `*_with_buffer_provider` constructors for explicit data management.
-//!
-//! The following Cargo features are only available on the individual crates, but not on this meta-crate:
-//!
-//! - `datagen`: Whether to implement functionality that is only required during data generation.
-//! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
-//!   when running `cargo bench`.
+//!    as `*_with_buffer_provider` constructors for runtime data management.
+//! - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with runtime data.
 //!
 //! # Experimental modules
 //!
@@ -127,7 +121,7 @@
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -137,6 +131,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]

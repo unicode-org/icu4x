@@ -13,7 +13,7 @@ use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
 use crate::map2d::ZeroMap2dBorrowed;
 use crate::ule::*;
-use crate::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
+use crate::{VarZeroCow, VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
 use core::{mem, ptr};
 use yoke::*;
 
@@ -49,6 +49,34 @@ unsafe impl<'a, T: 'static + AsULE> Yokeable<'a> for ZeroVec<'static, T> {
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
+    #[inline]
+    fn transform(&'a self) -> &'a Self::Output {
+        self
+    }
+    #[inline]
+    fn transform_owned(self) -> Self::Output {
+        self
+    }
+    #[inline]
+    unsafe fn make(from: Self::Output) -> Self {
+        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+        let from = mem::ManuallyDrop::new(from);
+        let ptr: *const Self = (&*from as *const Self::Output).cast();
+        ptr::read(ptr)
+    }
+    #[inline]
+    fn transform_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
+    }
+}
+
+// This impl is similar to the impl on Cow and is safe for the same reasons
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
+unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for VarZeroCow<'static, T> {
+    type Output = VarZeroCow<'a, T>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         self

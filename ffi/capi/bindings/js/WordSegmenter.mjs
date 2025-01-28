@@ -16,6 +16,7 @@ const WordSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class WordSegmenter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +24,7 @@ export class WordSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("WordSegmenter is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,8 +37,9 @@ export class WordSegmenter {
         if (this.#selfEdge.length === 0) {
             WordSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -50,24 +52,6 @@ export class WordSegmenter {
         }
         
         finally {}
-    }
-
-    static createAutoWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_WordSegmenter_create_auto_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createAutoWithContentLocale(locale) {
@@ -116,24 +100,6 @@ export class WordSegmenter {
         finally {}
     }
 
-    static createLstmWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_WordSegmenter_create_lstm_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
-    }
-
     static createLstmWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -178,24 +144,6 @@ export class WordSegmenter {
         }
         
         finally {}
-    }
-
-    static createDictionaryWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_WordSegmenter_create_dictionary_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createDictionaryWithContentLocale(locale) {
@@ -250,5 +198,9 @@ export class WordSegmenter {
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

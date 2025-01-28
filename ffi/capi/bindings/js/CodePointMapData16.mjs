@@ -22,6 +22,7 @@ const CodePointMapData16_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 export class CodePointMapData16 {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -29,7 +30,7 @@ export class CodePointMapData16 {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CodePointMapData16 is an Opaque type. You cannot call its constructor.");
             return;
@@ -42,8 +43,9 @@ export class CodePointMapData16 {
         if (this.#selfEdge.length === 0) {
             CodePointMapData16_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -120,5 +122,9 @@ export class CodePointMapData16 {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

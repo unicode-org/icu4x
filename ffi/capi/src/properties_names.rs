@@ -73,7 +73,7 @@ pub mod ffi {
 
         /// Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::GeneralCategory, Enum)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "general_category_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_general_category_with_provider(
             provider: &DataProvider,
@@ -98,7 +98,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::HangulSyllableType, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "hangul_syllable_type_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
@@ -123,7 +123,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::EastAsianWidth, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "east_asian_width_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_east_asian_width_with_provider(
             provider: &DataProvider,
@@ -149,7 +149,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::BidiClass, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "bidi_class_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_class_with_provider(
             provider: &DataProvider,
@@ -168,7 +168,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "indic_syllabic_category_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
@@ -197,7 +197,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "line_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_line_break_with_provider(
             provider: &DataProvider,
@@ -222,7 +222,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::GraphemeClusterBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "grapheme_cluster_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_cluster_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
@@ -251,7 +251,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "word_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_word_break_with_provider(
             provider: &DataProvider,
@@ -274,7 +274,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::SentenceBreak, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "sentence_break_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_break_with_provider(
             provider: &DataProvider,
@@ -300,7 +300,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Script` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::Script, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "script_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "script_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_script_with_provider(
             provider: &DataProvider,
@@ -373,7 +373,7 @@ pub mod ffi {
         }
         /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,

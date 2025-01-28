@@ -1,5 +1,5 @@
-#ifndef CollatorNumeric_H
-#define CollatorNumeric_H
+#ifndef ZonedDateTime_H
+#define ZonedDateTime_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "CollatorNumeric.d.h"
+#include "ZonedDateTime.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // CollatorNumeric_H
+#endif // ZonedDateTime_H

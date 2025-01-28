@@ -1,5 +1,11 @@
-/** For internal Diplomat use when constructing opaques or structs. */
+/** For internal Diplomat use when constructing opaques or out structs.
+ * This is for when we're handling items that we don't want the user to touch, like an structure that's only meant to be output, or de-referencing a pointer we're handed from WASM.
+ */
 export const internalConstructor = Symbol("constructor");
+/** For internal Diplomat use when accessing a from-fields/from-value constructor that's been overridden by a default constructor.
+ * If we want to pass in arguments without also passing in internalConstructor to avoid triggering some logic we don't want, we use exposeConstructor.
+ */
+export const exposeConstructor = Symbol("exposeConstructor");
 
 export function readString8(wasm, ptr, len) {
     const buf = new Uint8Array(wasm.memory.buffer, ptr, len);

@@ -55,8 +55,7 @@ icu_provider_adapters = { path = "../adapters", default-features = false }
 criterion = { workspace = true }
 
 [features]
-bench = []
-std = ["icu_locale_core/std"]
+std = []
 sync = []
 macros = ["dep:icu_provider_macros"]
 # Enable logging of additional context of data errors

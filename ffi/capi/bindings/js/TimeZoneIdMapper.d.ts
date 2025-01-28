@@ -11,12 +11,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `TimeZoneIdMapper`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapper.html) for more information.
 */
+
+
 export class TimeZoneIdMapper {
     
-
     get ffiValue(): pointer;
-
-    static create(): TimeZoneIdMapper;
 
     static createWithProvider(provider: DataProvider): TimeZoneIdMapper;
 
@@ -27,4 +26,6 @@ export class TimeZoneIdMapper {
     canonicalizeIana(value: string): string | null;
 
     findCanonicalIanaFromBcp47(value: string): string | null;
+
+    constructor();
 }

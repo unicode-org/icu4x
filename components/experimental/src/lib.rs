@@ -11,7 +11,7 @@
 //! crate will eventually stabilize and move to their own top-level components.
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 // No boilerplate, each module has their own
 #![allow(clippy::module_inception)]
 

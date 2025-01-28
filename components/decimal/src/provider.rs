@@ -191,7 +191,7 @@ pub struct DecimalSymbolStrsBuilder<'data> {
     pub numsys: Cow<'data, str>,
 }
 
-impl<'data> DecimalSymbolStrsBuilder<'data> {
+impl DecimalSymbolStrsBuilder<'_> {
     /// Build a [`DecimalSymbolsStrs`]
     pub fn build(&self) -> VarZeroCow<'static, DecimalSymbolsStrs> {
         VarZeroCow::from_encodeable(self)
@@ -244,7 +244,7 @@ pub struct DecimalDigitsV1 {
     pub digits: [char; 10],
 }
 
-impl<'data> DecimalSymbolsV2<'data> {
+impl DecimalSymbolsV2<'_> {
     /// Return (prefix, suffix) for the minus sign
     pub fn minus_sign_affixes(&self) -> (&str, &str) {
         (

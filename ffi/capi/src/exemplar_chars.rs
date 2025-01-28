@@ -52,7 +52,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "main")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "main")]
         #[cfg(feature = "compiled_data")]
         pub fn create_main(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
@@ -67,7 +67,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "main_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "main_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_main_with_provider(
             provider: &DataProvider,
@@ -87,7 +87,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auxiliary")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auxiliary(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
@@ -101,7 +101,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auxiliary_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_auxiliary_with_provider(
             provider: &DataProvider,
@@ -121,7 +121,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "punctuation")]
         #[cfg(feature = "compiled_data")]
         pub fn create_punctuation(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
@@ -135,7 +135,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "punctuation_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_punctuation_with_provider(
             provider: &DataProvider,
@@ -155,7 +155,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numbers")]
         #[cfg(feature = "compiled_data")]
         pub fn create_numbers(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
@@ -170,7 +170,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numbers_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_numbers_with_provider(
             provider: &DataProvider,
@@ -190,7 +190,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "index")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "index")]
         #[cfg(feature = "compiled_data")]
         pub fn create_index(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
@@ -205,7 +205,7 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "index_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "index_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_index_with_provider(
             provider: &DataProvider,

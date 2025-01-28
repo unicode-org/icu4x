@@ -5,34 +5,16 @@
 //! This module contains types and implementations for the Chinese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Chinese, Date, DateTime, Ref};
+//! use icu::calendar::{cal::Chinese, Date};
 //!
 //! let chinese = Chinese::new();
-//! let chinese = Ref(&chinese); // to avoid cloning
-//!
-//! // `Date` type
 //! let chinese_date = Date::try_new_chinese_with_calendar(4660, 6, 6, chinese)
 //!     .expect("Failed to initialize Chinese Date instance.");
 //!
-//! // `DateTime` type
-//! let chinese_datetime =
-//!     DateTime::try_new_chinese_with_calendar(4660, 6, 6, 13, 1, 0, chinese)
-//!         .expect("Failed to initialize Chinese DateTime instance");
-//!
-//! // `Date` checks
 //! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
 //! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
-//!
-//! // `DateTime` checks
-//! assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
-//! assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);
-//! assert_eq!(chinese_datetime.date.month().ordinal, 6);
-//! assert_eq!(chinese_datetime.date.day_of_month().0, 6);
-//! assert_eq!(chinese_datetime.time.hour.number(), 13);
-//! assert_eq!(chinese_datetime.time.minute.number(), 1);
-//! assert_eq!(chinese_datetime.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
@@ -45,7 +27,7 @@ use crate::error::DateError;
 use crate::iso::Iso;
 use crate::provider::chinese_based::ChineseCacheV1Marker;
 use crate::AsCalendar;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -57,7 +39,7 @@ use tinystr::tinystr;
 /// countries particularly in, but not limited to, East Asia. It is often used today to track important
 /// cultural events and holidays like the Chinese Lunar New Year.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in the Chinese calendar.
+/// This type can be used with [`Date`] to represent dates in the Chinese calendar.
 ///
 /// # Months
 ///
@@ -347,46 +329,6 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
             ChineseDateInner(ChineseBasedDateInner(arithmetic?)),
             calendar,
         ))
-    }
-}
-
-impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
-    /// Construct a new Chinese datetime from integers using the
-    /// -2636-based year system
-    ///
-    /// This datetime will not use any precomputed calendrical calculations,
-    /// one that loads such data from a provider will be added in the future (#3933)
-    ///
-    /// ```rust
-    /// use icu::calendar::{cal::Chinese, DateTime};
-    ///
-    /// let chinese = Chinese::new_always_calculating();
-    ///
-    /// let chinese_datetime =
-    ///     DateTime::try_new_chinese_with_calendar(4660, 6, 11, 13, 1, 0, chinese)
-    ///         .expect("Failed to initialize Chinese DateTime instance.");
-    ///
-    /// assert_eq!(chinese_datetime.date.year().era_year_or_extended(), 4660);
-    /// assert_eq!(chinese_datetime.date.year().cyclic().unwrap().get(), 40);
-    /// assert_eq!(chinese_datetime.date.month().ordinal, 6);
-    /// assert_eq!(chinese_datetime.date.day_of_month().0, 11);
-    /// assert_eq!(chinese_datetime.time.hour.number(), 13);
-    /// assert_eq!(chinese_datetime.time.minute.number(), 1);
-    /// assert_eq!(chinese_datetime.time.second.number(), 0);
-    /// ```
-    pub fn try_new_chinese_with_calendar(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-        calendar: A,
-    ) -> Result<DateTime<A>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_chinese_with_calendar(year, month, day, calendar)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

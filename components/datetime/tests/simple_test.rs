@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::cal::Hebrew;
-use icu_calendar::{Date, DateTime, Time};
+use icu_calendar::Date;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
+use icu_timezone::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -68,7 +69,10 @@ const EXPECTED_DATE: &[&str] = &[
 
 #[test]
 fn neo_datetime_lengths() {
-    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(21, 22, 53, 0).unwrap(),
+    };
     let mut expected_iter = EXPECTED_DATETIME.iter();
     for field_set in [
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long()),
@@ -93,7 +97,10 @@ fn neo_datetime_lengths() {
 
 #[test]
 fn neo_date_lengths() {
-    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(21, 22, 53, 0).unwrap(),
+    };
     let mut expected_iter = EXPECTED_DATE.iter();
     for field_set in [
         DateFieldSet::YMDE(fieldsets::YMDE::long()),
@@ -169,8 +176,10 @@ fn overlap_patterns() {
 
 #[test]
 fn hebrew_months() {
-    let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
-    let datetime = datetime.to_calendar(Hebrew);
+    let datetime = DateTime {
+        date: Date::try_new_iso(2011, 4, 3).unwrap().to_calendar(Hebrew),
+        time: Time::try_new(14, 15, 7, 0).unwrap(),
+    };
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), YMD::medium()).unwrap();
 
@@ -181,7 +190,10 @@ fn hebrew_months() {
 
 #[test]
 fn test_5387() {
-    let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 8, 16).unwrap(),
+        time: Time::try_new(14, 15, 16, 0).unwrap(),
+    };
     let formatter_auto = FixedCalendarDateTimeFormatter::try_new(
         locale!("en").into(),
         CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),

@@ -19,6 +19,11 @@ use super::UnstableSealed;
 /// This trait allows for types that contain data for some but not all types of datetime names,
 /// allowing for reduced stack size. For example, a type could contain year and month names but
 /// not weekday, day period, or time zone names.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 #[allow(missing_docs)]
 pub trait DateTimeNamesMarker: UnstableSealed {
     type YearNames: NamesContainer<YearNamesV1Marker, YearNameLength>;
@@ -27,6 +32,7 @@ pub trait DateTimeNamesMarker: UnstableSealed {
     type DayPeriodNames: NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>;
     type ZoneEssentials: NamesContainer<tz::EssentialsV1Marker, ()>;
     type ZoneLocations: NamesContainer<tz::LocationsV1Marker, ()>;
+    type ZoneExemplars: NamesContainer<tz::ExemplarCitiesV1Marker, ()>;
     type ZoneGenericLong: NamesContainer<tz::MzGenericLongV1Marker, ()>;
     type ZoneGenericShort: NamesContainer<tz::MzGenericShortV1Marker, ()>;
     type ZoneSpecificLong: NamesContainer<tz::MzSpecificLongV1Marker, ()>;
@@ -35,6 +41,11 @@ pub trait DateTimeNamesMarker: UnstableSealed {
 }
 
 /// Trait that associates a container for a payload parameterized by the given variables.
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 #[allow(missing_docs)]
 pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
 where
@@ -68,6 +79,7 @@ impl_holder_trait!(WeekdayNamesV1Marker);
 impl_holder_trait!(DayPeriodNamesV1Marker);
 impl_holder_trait!(tz::EssentialsV1Marker);
 impl_holder_trait!(tz::LocationsV1Marker);
+impl_holder_trait!(tz::ExemplarCitiesV1Marker);
 impl_holder_trait!(tz::MzGenericLongV1Marker);
 impl_holder_trait!(tz::MzGenericShortV1Marker);
 impl_holder_trait!(tz::MzSpecificLongV1Marker);
@@ -76,12 +88,16 @@ impl_holder_trait!(tz::MzPeriodV1Marker);
 
 /// An error returned by [`MaybePayload`].
 #[allow(missing_docs)]
-#[derive(Debug)]
+#[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum MaybePayloadError {
+    /// TODO
     TypeTooSpecific,
+    /// TODO
     ConflictingField,
 }
+
+impl core::error::Error for MaybePayloadError {}
 
 impl MaybePayloadError {
     pub(crate) fn into_load_error(self, error_field: ErrorField) -> PatternLoadError {
@@ -96,6 +112,11 @@ impl MaybePayloadError {
 /// a value depending on the type parameter `Variables`.
 ///
 /// Helper trait for [`DateTimeNamesMarker`].
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 #[allow(missing_docs)]
 pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
     fn new_empty() -> Self;
@@ -330,6 +351,7 @@ where
 /// is_trait_implemented::<TimeFieldSet, CompositeFieldSet>();
 /// ```
 #[allow(missing_docs)]
+// This trait is implicitly sealed due to sealed supertraits
 pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
     fn map_year_names(
         other: <M::YearNames as NamesContainer<YearNamesV1Marker, YearNameLength>>::Container,
@@ -349,6 +371,9 @@ pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
     fn map_zone_locations(
         other: <M::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
     ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container;
+    fn map_zone_exemplars(
+        other: <M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container,
+    ) -> <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container;
     fn map_zone_generic_long(
         other: <M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container,
     ) -> <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container;
@@ -374,6 +399,7 @@ where
     <Self::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container: From<<M::DayPeriodNames as NamesContainer<DayPeriodNamesV1Marker, DayPeriodNameLength>>::Container>,
     <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container: From<<M::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container>,
     <Self::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container: From<<M::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container>,
+    <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container: From<<M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container>,
     <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container: From<<M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container>,
     <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container: From<<M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1Marker, ()>>::Container>,
     <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container: From<<M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1Marker, ()>>::Container>,
@@ -402,6 +428,10 @@ where
     }
     #[inline]
     fn map_zone_locations(other: <M::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_exemplars(other: <M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container) -> <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container {
         other.into()
     }
     #[inline]

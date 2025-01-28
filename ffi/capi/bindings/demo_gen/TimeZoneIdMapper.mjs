@@ -3,7 +3,7 @@ export function ianaToBcp47(value) {
     return (function (...args) { return args[0].ianaToBcp47(...args.slice(1)) }).apply(
         null,
         [
-            TimeZoneIdMapper.create.apply(
+            (function (...args) { return new TimeZoneIdMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -16,7 +16,7 @@ export function normalizeIana(value) {
     return (function (...args) { return args[0].normalizeIana(...args.slice(1)) }).apply(
         null,
         [
-            TimeZoneIdMapper.create.apply(
+            (function (...args) { return new TimeZoneIdMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -29,7 +29,7 @@ export function canonicalizeIana(value) {
     return (function (...args) { return args[0].canonicalizeIana(...args.slice(1)) }).apply(
         null,
         [
-            TimeZoneIdMapper.create.apply(
+            (function (...args) { return new TimeZoneIdMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -42,7 +42,7 @@ export function findCanonicalIanaFromBcp47(value) {
     return (function (...args) { return args[0].findCanonicalIanaFromBcp47(...args.slice(1)) }).apply(
         null,
         [
-            TimeZoneIdMapper.create.apply(
+            (function (...args) { return new TimeZoneIdMapper(...args) } ).apply(
                 null,
                 [
                 ]

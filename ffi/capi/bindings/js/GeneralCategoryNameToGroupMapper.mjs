@@ -17,6 +17,7 @@ const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRe
 });
 
 export class GeneralCategoryNameToGroupMapper {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +25,7 @@ export class GeneralCategoryNameToGroupMapper {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GeneralCategoryNameToGroupMapper is an Opaque type. You cannot call its constructor.");
             return;
@@ -37,8 +38,9 @@ export class GeneralCategoryNameToGroupMapper {
         if (this.#selfEdge.length === 0) {
             GeneralCategoryNameToGroupMapper_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -48,18 +50,14 @@ export class GeneralCategoryNameToGroupMapper {
         
         const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
         
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(diplomatReceive.buffer, this.ffiValue, ...nameSlice.splat());
+        const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
         }
     }
 
@@ -68,22 +66,18 @@ export class GeneralCategoryNameToGroupMapper {
         
         const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
         
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 4, 4, false);
-        
-        const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(diplomatReceive.buffer, this.ffiValue, ...nameSlice.splat());
+        const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
     
         try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
         
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
         }
     }
 
-    static create() {
+    #defaultConstructor() {
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
     
         try {
@@ -108,6 +102,16 @@ export class GeneralCategoryNameToGroupMapper {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

@@ -16,6 +16,7 @@ const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) =>
 });
 
 export class SentenceSegmenter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +24,7 @@ export class SentenceSegmenter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("SentenceSegmenter is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,13 +37,14 @@ export class SentenceSegmenter {
         if (this.#selfEdge.length === 0) {
             SentenceSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create() {
+    #defaultConstructor() {
         const result = wasm.icu4x_SentenceSegmenter_create_mv1();
     
         try {
@@ -50,24 +52,6 @@ export class SentenceSegmenter {
         }
         
         finally {}
-    }
-
-    static createWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_SentenceSegmenter_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     static createWithContentLocale(locale) {
@@ -121,6 +105,16 @@ export class SentenceSegmenter {
         
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

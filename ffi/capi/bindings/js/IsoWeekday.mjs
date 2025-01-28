@@ -2,8 +2,10 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
+
 export class IsoWeekday {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -19,14 +21,14 @@ export class IsoWeekday {
     static getAllEntries() {
         return IsoWeekday.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return IsoWeekday.#objectValues[arguments[1]];
         }
@@ -38,11 +40,15 @@ export class IsoWeekday {
         let intVal = IsoWeekday.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return IsoWeekday.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a IsoWeekday and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new IsoWeekday(value);
     }
 
     get value() {
@@ -73,4 +79,8 @@ export class IsoWeekday {
     static Friday = IsoWeekday.#objectValues[5];
     static Saturday = IsoWeekday.#objectValues[6];
     static Sunday = IsoWeekday.#objectValues[7];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

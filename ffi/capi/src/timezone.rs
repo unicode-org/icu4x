@@ -13,7 +13,10 @@ pub mod ffi {
     use icu_timezone::{TimeZoneBcp47Id, UtcOffset, ZoneVariant};
     use tinystr::TinyAsciiStr;
 
-    use crate::{datetime::ffi::IsoDateTime, errors::ffi::TimeZoneInvalidOffsetError};
+    use crate::{
+        date::ffi::IsoDate, datetime::ffi::IsoDateTime, errors::ffi::TimeZoneInvalidOffsetError,
+        time::ffi::Time,
+    };
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::TimeZoneInfo, Struct)]
@@ -21,7 +24,7 @@ pub mod ffi {
         pub(crate) time_zone_id: icu_timezone::TimeZoneBcp47Id,
         pub(crate) offset: Option<icu_timezone::UtcOffset>,
         pub(crate) zone_variant: Option<icu_timezone::ZoneVariant>,
-        pub(crate) local_time: Option<(icu_calendar::Date<icu_calendar::Iso>, icu_calendar::Time)>,
+        pub(crate) local_time: Option<(icu_calendar::Date<icu_calendar::Iso>, icu_timezone::Time)>,
     }
 
     impl TimeZoneInfo {
@@ -256,9 +259,8 @@ pub mod ffi {
 
         /// Sets the `local_time` field.
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::at_time, FnInStruct)]
-        #[diplomat::attr(auto, setter = "local_time")]
-        pub fn set_local_time(&mut self, datetime: &IsoDateTime) {
-            self.local_time = Some((datetime.0.date, datetime.0.time));
+        pub fn set_local_time(&mut self, date: &IsoDate, time: &Time) {
+            self.local_time = Some((date.0, time.0));
         }
 
         /// Clears the `local_time` field.
@@ -269,9 +271,11 @@ pub mod ffi {
         /// Returns a copy of the `local_time` field.
         #[diplomat::rust_link(icu::timezone::TimeZoneInfo::local_time, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn get_local_time(&self) -> Option<Box<IsoDateTime>> {
-            self.local_time
-                .map(|(date, time)| Box::new(IsoDateTime(icu_calendar::DateTime { date, time })))
+        pub fn get_local_time(&self) -> Option<IsoDateTime> {
+            self.local_time.map(|(date, time)| IsoDateTime {
+                date: Box::new(IsoDate(date)),
+                time: Box::new(Time(time)),
+            })
         }
     }
 }
@@ -283,6 +287,17 @@ impl From<icu_timezone::TimeZoneInfo<icu_timezone::models::Base>> for TimeZoneIn
             offset: other.offset(),
             zone_variant: None,
             local_time: None,
+        }
+    }
+}
+
+impl From<icu_timezone::TimeZoneInfo<icu_timezone::models::Full>> for TimeZoneInfo {
+    fn from(other: icu_timezone::TimeZoneInfo<icu_timezone::models::Full>) -> Self {
+        Self {
+            time_zone_id: other.time_zone_id(),
+            offset: other.offset(),
+            zone_variant: Some(other.zone_variant()),
+            local_time: Some(other.local_time()),
         }
     }
 }

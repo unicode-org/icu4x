@@ -165,6 +165,9 @@ impl IntoOption<Alignment> for Alignment {
 
 /// A specification of how to render the year and the era.
 ///
+/// The choices may grow over time; to follow along and offer feedback, see
+/// <https://github.com/unicode-org/icu4x/issues/6010>.
+///
 /// # Examples
 ///
 /// ```
@@ -231,7 +234,7 @@ impl IntoOption<Alignment> for Alignment {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 ///     locale!("en-US").into(),
-///     YMD::short().with_year_style(YearStyle::Always),
+///     YMD::short().with_year_style(YearStyle::WithEra),
 /// )
 /// .unwrap();
 ///
@@ -261,7 +264,7 @@ impl IntoOption<Alignment> for Alignment {
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    serde(rename_all = "lowercase")
+    serde(rename_all = "camelCase")
 )]
 #[non_exhaustive]
 pub enum YearStyle {
@@ -295,8 +298,7 @@ pub enum YearStyle {
     /// - `77 AD`
     /// - `1900 AD`
     /// - `2024 AD`
-    Always,
-    // TODO(#4478): add Hide and Never options once there is data to back them
+    WithEra,
 }
 
 impl IntoOption<YearStyle> for YearStyle {
@@ -317,10 +319,14 @@ impl IntoOption<YearStyle> for YearStyle {
 /// 2. 16:20 (4:20 pm) with 24-hour time
 /// 3. 7:15:01.85 with 24-hour time
 ///
+/// Fractional second digits can be displayed with a fixed precision. If you would like
+/// additional options for fractional second digit display, please leave a comment in
+/// <https://github.com/unicode-org/icu4x/issues/6008>.
+///
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Time;
+/// use icu::timezone::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;
@@ -329,12 +335,11 @@ impl IntoOption<YearStyle> for YearStyle {
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatters = [
-///     TimePrecision::HourPlus,
-///     TimePrecision::HourExact,
-///     TimePrecision::MinutePlus,
-///     TimePrecision::MinuteExact,
-///     TimePrecision::SecondPlus,
-///     TimePrecision::SecondExact(FractionalSecondDigits::F0),
+///     TimePrecision::Hour,
+///     TimePrecision::Minute,
+///     TimePrecision::Second,
+///     TimePrecision::FractionalSecond(FractionalSecondDigits::F2),
+///     TimePrecision::MinuteOptional,
 /// ]
 /// .map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
@@ -347,18 +352,16 @@ impl IntoOption<YearStyle> for YearStyle {
 /// let times = [
 ///     Time::try_new(7, 0, 0, 0).unwrap(),
 ///     Time::try_new(7, 0, 10, 0).unwrap(),
-///     Time::try_new(7, 12, 20, 5).unwrap(),
+///     Time::try_new(7, 12, 20, 543_200_000).unwrap(),
 /// ];
 ///
-/// // TODO(#5782): the Plus variants should render fractional digits
 /// let expected_value_table = [
 ///     // 7:00:00, 7:00:10, 7:12:20.5432
-///     ["7 AM", "7:00:10 AM", "7:12:20 AM"], // HourPlus
-///     ["7 AM", "7 AM", "7 AM"],             // HourExact
-///     ["7:00 AM", "7:00:10 AM", "7:12:20 AM"], // MinutePlus
-///     ["7:00 AM", "7:00 AM", "7:12 AM"],    // MinuteExact
-///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondPlus
-///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondExact
+///     ["7 AM", "7 AM", "7 AM"],                            // Hour
+///     ["7:00 AM", "7:00 AM", "7:12 AM"],                   // Minute
+///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"],          // Second
+///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // FractionalSecond(F2)
+///     ["7 AM", "7 AM", "7:12 AM"],                         // MinuteOptional
 /// ];
 ///
 /// for (expected_value_row, formatter) in
@@ -375,7 +378,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     }
 /// }
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -386,48 +389,33 @@ impl IntoOption<YearStyle> for YearStyle {
 )]
 #[non_exhaustive]
 pub enum TimePrecision {
-    /// Always display the hour. Display smaller fields if they are nonzero.
-    ///
-    /// Examples:
-    ///
-    /// 1. `11 am`
-    /// 2. `16:20`
-    /// 3. `07:15:01.85`
-    HourPlus,
-    /// Always display the hour. Hide all other time fields.
+    /// Display the hour. Hide all other time fields.
     ///
     /// Examples:
     ///
     /// 1. `11 am`
     /// 2. `16h`
     /// 3. `07h`
-    HourExact,
-    /// Always display the hour and minute. Display the second if nonzero.
-    ///
-    /// Examples:
-    ///
-    /// 1. `11:00 am`
-    /// 2. `16:20`
-    /// 3. `07:15:01.85`
-    MinutePlus,
-    /// Always display the hour and minute. Hide the second.
+    Hour,
+    /// Display the hour and minute. Hide the second.
     ///
     /// Examples:
     ///
     /// 1. `11:00 am`
     /// 2. `16:20`
     /// 3. `07:15`
-    MinuteExact,
-    /// Display the hour, minute, and second. Display fractional seconds if nonzero.
+    Minute,
+    /// Display the hour, minute, and second. Hide fractional seconds.
     ///
-    /// This is the default.
+    /// This is currently the default, but the default is subject to change.
     ///
     /// Examples:
     ///
     /// 1. `11:00:00 am`
     /// 2. `16:20:00`
-    /// 3. `07:15:01.85`
-    SecondPlus,
+    /// 3. `07:15:01`
+    #[default]
+    Second,
     /// Display the hour, minute, and second with the given number of
     /// fractional second digits.
     ///
@@ -436,7 +424,15 @@ pub enum TimePrecision {
     /// 1. `11:00:00.0 am`
     /// 2. `16:20:00.0`
     /// 3. `07:15:01.8`
-    SecondExact(FractionalSecondDigits),
+    FractionalSecond(FractionalSecondDigits),
+    /// Display the hour; display the minute if nonzero. Hide the second.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11 am`
+    /// 2. `16:20`
+    /// 3. `07:15`
+    MinuteOptional,
 }
 
 impl IntoOption<TimePrecision> for TimePrecision {
@@ -459,7 +455,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::Time;
+/// use icu::timezone::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;
@@ -469,7 +465,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///     locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::SecondExact(
+///     T::short().with_time_precision(TimePrecision::FractionalSecond(
 ///         FractionalSecondDigits::F2,
 ///     )),
 /// )
@@ -481,36 +477,26 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
-    serde(try_from = "u8", into = "u8")
-)]
 #[non_exhaustive]
 pub enum FractionalSecondDigits {
-    /// Zero fractional digits. This is the default.
-    F0,
     /// One fractional digit (tenths of a second).
-    F1,
+    F1 = 1,
     /// Two fractional digits (hundredths of a second).
-    F2,
+    F2 = 2,
     /// Three fractional digits (thousandths of a second).
-    F3,
+    F3 = 3,
     /// Four fractional digits.
-    F4,
+    F4 = 4,
     /// Five fractional digits.
-    F5,
+    F5 = 5,
     /// Six fractional digits.
-    F6,
+    F6 = 6,
     /// Seven fractional digits.
-    F7,
+    F7 = 7,
     /// Eight fractional digits.
-    F8,
+    F8 = 8,
     /// Nine fractional digits.
-    F9,
+    F9 = 9,
 }
 
 /// An error from constructing [`FractionalSecondDigits`].
@@ -521,11 +507,12 @@ pub enum FractionalSecondError {
     OutOfRange,
 }
 
+impl core::error::Error for FractionalSecondError {}
+
 impl From<FractionalSecondDigits> for u8 {
     fn from(value: FractionalSecondDigits) -> u8 {
         use FractionalSecondDigits::*;
         match value {
-            F0 => 0,
             F1 => 1,
             F2 => 2,
             F3 => 3,
@@ -544,7 +531,6 @@ impl TryFrom<u8> for FractionalSecondDigits {
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         use FractionalSecondDigits::*;
         match value {
-            0 => Ok(F0),
             1 => Ok(F1),
             2 => Ok(F2),
             3 => Ok(F3),

@@ -15,7 +15,7 @@
 #include "CollatorCaseFirst.hpp"
 #include "CollatorCaseLevel.hpp"
 #include "CollatorMaxVariable.hpp"
-#include "CollatorNumeric.hpp"
+#include "CollatorNumericOrdering.hpp"
 #include "CollatorStrength.hpp"
 
 
@@ -48,7 +48,7 @@ inline icu4x::CollatorResolvedOptionsV1 icu4x::CollatorResolvedOptionsV1::FromFF
     /* .case_first = */ icu4x::CollatorCaseFirst::FromFFI(c_struct.case_first),
     /* .max_variable = */ icu4x::CollatorMaxVariable::FromFFI(c_struct.max_variable),
     /* .case_level = */ icu4x::CollatorCaseLevel::FromFFI(c_struct.case_level),
-    /* .numeric = */ icu4x::CollatorNumeric::FromFFI(c_struct.numeric),
+    /* .numeric = */ icu4x::CollatorNumericOrdering::FromFFI(c_struct.numeric),
     /* .backward_second_level = */ icu4x::CollatorBackwardSecondLevel::FromFFI(c_struct.backward_second_level),
   };
 }

@@ -64,6 +64,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
+    #[diplomat::rust_link(icu::timezone::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
     pub enum CalendarParseError {
         Unknown = 0x00,
@@ -80,6 +81,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatterLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
@@ -164,6 +166,20 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
             icu_calendar::ParseError::MissingFields => Self::MissingFields,
             icu_calendar::ParseError::Range(_) => Self::OutOfRange,
             icu_calendar::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+impl From<icu_timezone::ParseError> for CalendarParseError {
+    fn from(e: icu_timezone::ParseError) -> Self {
+        match e {
+            icu_timezone::ParseError::Syntax(_) => Self::InvalidSyntax,
+            icu_timezone::ParseError::MissingFields => Self::MissingFields,
+            icu_timezone::ParseError::Range(_) => Self::OutOfRange,
+            icu_timezone::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            // TODO
             _ => Self::Unknown,
         }
     }

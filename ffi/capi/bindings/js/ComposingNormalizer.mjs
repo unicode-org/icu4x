@@ -12,6 +12,7 @@ const ComposingNormalizer_box_destroy_registry = new FinalizationRegistry((ptr) 
 });
 
 export class ComposingNormalizer {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -19,7 +20,7 @@ export class ComposingNormalizer {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("ComposingNormalizer is an Opaque type. You cannot call its constructor.");
             return;
@@ -32,8 +33,9 @@ export class ComposingNormalizer {
         if (this.#selfEdge.length === 0) {
             ComposingNormalizer_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -143,5 +145,9 @@ export class ComposingNormalizer {
         finally {
             functionCleanupArena.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

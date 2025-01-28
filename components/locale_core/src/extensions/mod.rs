@@ -264,26 +264,31 @@ impl Extensions {
             if subtag.is_empty() {
                 return Err(ParseError::InvalidExtension);
             }
-            match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
-                Some(Ok(ExtensionType::Unicode)) => {
+
+            let &[subtag] = subtag else {
+                return Err(ParseError::InvalidExtension);
+            };
+
+            match ExtensionType::try_from_byte(subtag) {
+                Ok(ExtensionType::Unicode) => {
                     if unicode.is_some() {
                         return Err(ParseError::DuplicatedExtension);
                     }
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
-                Some(Ok(ExtensionType::Transform)) => {
+                Ok(ExtensionType::Transform) => {
                     if transform.is_some() {
                         return Err(ParseError::DuplicatedExtension);
                     }
                     transform = Some(Transform::try_from_iter(iter)?);
                 }
-                Some(Ok(ExtensionType::Private)) => {
+                Ok(ExtensionType::Private) => {
                     if private.is_some() {
                         return Err(ParseError::DuplicatedExtension);
                     }
                     private = Some(Private::try_from_iter(iter)?);
                 }
-                Some(Ok(ExtensionType::Other(ext))) => {
+                Ok(ExtensionType::Other(ext)) => {
                     if other.iter().any(|o: &Other| o.get_ext_byte() == ext) {
                         return Err(ParseError::DuplicatedExtension);
                     }

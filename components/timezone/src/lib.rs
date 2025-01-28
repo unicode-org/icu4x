@@ -58,7 +58,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::{Date, Time};
+//! use icu::calendar::Date;
+//! use icu::timezone::Time;
 //! use icu::timezone::TimeZoneBcp47Id;
 //! use icu::timezone::TimeZoneIdMapper;
 //! use icu::timezone::ZoneVariant;
@@ -83,7 +84,7 @@
 //! ```
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -93,6 +94,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -105,15 +107,15 @@ mod ids;
 pub mod provider;
 pub mod scaffold;
 mod time_zone;
-mod types;
+/// TODO
+pub mod types;
 mod windows_tz;
 mod zone_offset;
-mod zoned_datetime;
 
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
 #[cfg(feature = "ixdtf")]
-pub use self::ixdtf::IxdtfParser;
+pub use self::ixdtf::ZonedDateTimeParser;
 
 pub use error::InvalidOffsetError;
 pub use ids::{
@@ -124,10 +126,9 @@ pub use provider::TimeZoneBcp47Id;
 pub use time_zone::models;
 pub use time_zone::TimeZoneInfo;
 pub use time_zone::TimeZoneModel;
-pub use types::{UtcOffset, ZoneVariant};
+pub use types::{DateTime, Time, UtcOffset, ZoneVariant, ZonedDateTime};
 pub use windows_tz::{WindowsTimeZoneMapper, WindowsTimeZoneMapperBorrowed};
 pub use zone_offset::{ZoneOffsetCalculator, ZoneOffsets};
-pub use zoned_datetime::CustomZonedDateTime;
 
-#[cfg(all(feature = "ixdtf", feature = "compiled_data"))]
+#[cfg(feature = "ixdtf")]
 pub use crate::ixdtf::ParseError;

@@ -89,3 +89,5 @@ pub enum PatternLoadError {
     #[displaydoc("Problem loading data for field {1:?}: {0}")]
     Data(icu_provider::DataError, ErrorField),
 }
+
+impl core::error::Error for PatternLoadError {}

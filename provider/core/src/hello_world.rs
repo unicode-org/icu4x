@@ -51,7 +51,7 @@ impl DynamicDataMarker for HelloWorldV1Marker {
 
 impl DataMarker for HelloWorldV1Marker {
     const INFO: icu_provider::DataMarkerInfo =
-        DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("core/helloworld@1"));
+        DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("core/helloworld@1"));
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -316,7 +316,7 @@ impl HelloWorldFormatter {
     where
         P: DataProvider<HelloWorldV1Marker>,
     {
-        let locale = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_prefs);
+        let locale = HelloWorldV1Marker::make_locale(prefs.locale_preferences);
         let data = provider
             .load(DataRequest {
                 id: crate::request::DataIdentifierBorrowed::for_locale(&locale),

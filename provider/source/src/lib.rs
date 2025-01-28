@@ -104,6 +104,7 @@ macro_rules! cb {
         ], icu_provider::any::AnyMarker);
     }
 }
+extern crate alloc;
 icu_provider_registry::registry!(cb);
 
 icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
@@ -119,7 +120,7 @@ impl SourceDataProvider {
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     /// The latest TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_TZDB_TAG: &'static str = "2024b";
+    pub const LATEST_TESTED_TZDB_TAG: &'static str = "2025a";
 
     /// A provider using the latest data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -269,7 +270,7 @@ impl SourceDataProvider {
         Self {
             tzdb_paths: Some(Arc::new(TzdbCache {
                 root: AbstractFs::new_from_url(format!(
-                    "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
+                    "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
                 )),
                 transitions: Default::default(),
                 zone_tab: Default::default(),
@@ -293,25 +294,25 @@ impl SourceDataProvider {
 
     /// Identifies errors that are due to missing CLDR data.
     pub fn is_missing_cldr_error(mut e: DataError) -> bool {
-        e.marker_path = None;
+        e.marker = None;
         e == Self::MISSING_CLDR_ERROR
     }
 
     /// Identifies errors that are due to missing ICU export data.
     pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
-        e.marker_path = None;
+        e.marker = None;
         e == Self::MISSING_ICUEXPORT_ERROR
     }
 
     /// Identifies errors that are due to missing segmenter LSTM data.
     pub fn is_missing_segmenter_lstm_error(mut e: DataError) -> bool {
-        e.marker_path = None;
+        e.marker = None;
         e == Self::MISSING_SEGMENTER_LSTM_ERROR
     }
 
     /// Identifies errors that are due to missing TZDB data.
     pub fn is_missing_tzdb_error(mut e: DataError) -> bool {
-        e.marker_path = None;
+        e.marker = None;
         e == Self::MISSING_TZDB_ERROR
     }
 

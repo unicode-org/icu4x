@@ -137,4 +137,6 @@ pub mod units_converter;
 #[cfg(feature = "calendar")]
 pub mod week;
 #[cfg(feature = "datetime")]
+pub mod zoned_datetime;
+#[cfg(feature = "datetime")]
 pub mod zoned_formatter;

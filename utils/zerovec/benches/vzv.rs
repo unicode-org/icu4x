@@ -52,20 +52,18 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     {
         char_count_benches(c);
         binary_search_benches(c);
         vzv_precompute_bench(c);
     }
 
-    #[cfg(all(feature = "bench", feature = "serde"))]
+    #[cfg(feature = "serde")]
     {
         serde_benches(c);
     }
 }
 
-#[cfg(feature = "bench")]
 fn char_count_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
@@ -91,7 +89,6 @@ fn char_count_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
 fn binary_search_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, seed) = random_alphanums(2..=20, 500, seed);
@@ -131,7 +128,7 @@ fn binary_search_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench", feature = "serde"))]
+#[cfg(feature = "serde")]
 fn serde_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
@@ -155,7 +152,6 @@ fn serde_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
 // Testing differences between operating on slices with precomputed/non-precomputed indexing info
 fn vzv_precompute_bench(c: &mut Criterion) {
     let seed = 2021;

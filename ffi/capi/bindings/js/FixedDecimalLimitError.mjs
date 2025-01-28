@@ -5,12 +5,27 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
 */
+
+
 export class FixedDecimalLimitError {
-    constructor(structObj) {
+    
+    /** Create `FixedDecimalLimitError` from an object that contains all of `FixedDecimalLimitError`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj) {
+        return new FixedDecimalLimitError(structObj);
+    }
+    
+    #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("FixedDecimalLimitError's constructor takes an object of FixedDecimalLimitError's fields.");
         }
 
+        return this;
     }
 
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
+    }
 }

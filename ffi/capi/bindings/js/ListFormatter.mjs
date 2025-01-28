@@ -14,6 +14,7 @@ const ListFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class ListFormatter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +22,7 @@ export class ListFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("ListFormatter is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,8 +35,9 @@ export class ListFormatter {
         if (this.#selfEdge.length === 0) {
             ListFormatter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -165,5 +167,9 @@ export class ListFormatter {
         
             write.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

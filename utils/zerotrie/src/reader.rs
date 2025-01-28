@@ -323,7 +323,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             if matches!(byte_type, NodeType::Ascii) {
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
                 {
-                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                    b.eq_ignore_ascii_case(c)
                 } else {
                     b == c
                 };
@@ -345,7 +345,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             {
                 let (trie_span, ascii_span);
                 (trie_span, trie) = trie.debug_split_at(x);
-                (ascii_span, ascii) = ascii.maybe_split_at(x)?;
+                (ascii_span, ascii) = ascii.split_at_checked(x)?;
                 if trie_span == ascii_span {
                     // Matched a byte span
                     continue;
@@ -446,7 +446,7 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             NodeType::Ascii => {
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
                 {
-                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                    b.eq_ignore_ascii_case(&c)
                 } else {
                     *b == c
                 };

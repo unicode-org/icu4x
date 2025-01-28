@@ -11,16 +11,17 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
 */
+
+
 export class GeneralCategoryNameToGroupMapper {
     
-
     get ffiValue(): pointer;
 
     getStrict(name: string): GeneralCategoryGroup;
 
     getLoose(name: string): GeneralCategoryGroup;
 
-    static create(): GeneralCategoryNameToGroupMapper;
-
     static createWithProvider(provider: DataProvider): GeneralCategoryNameToGroupMapper;
+
+    constructor();
 }

@@ -473,6 +473,16 @@ where
                 ],
             )?
         }
+        (FieldSymbol::TimeZone(fields::TimeZone::Location), FieldLength::Three) => {
+            perform_timezone_fallback(
+                w,
+                input,
+                datetime_names,
+                fdf,
+                field,
+                &[TimeZoneFormatterUnit::ExemplarCity],
+            )?
+        }
         (FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset), l) => perform_timezone_fallback(
             w,
             input,

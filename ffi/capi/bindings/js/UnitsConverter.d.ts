@@ -8,9 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
 */
+
+
 export class UnitsConverter {
     
-
     get ffiValue(): pointer;
 
     convertNumber(value: number): number;

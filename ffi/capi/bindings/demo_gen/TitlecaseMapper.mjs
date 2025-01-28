@@ -5,7 +5,7 @@ export function titlecaseSegment(s, name, leading_adjustment, trailing_case) {
     return (function (...args) { return args[0].titlecaseSegment(...args.slice(1)) }).apply(
         null,
         [
-            TitlecaseMapper.create.apply(
+            (function (...args) { return new TitlecaseMapper(...args) } ).apply(
                 null,
                 [
                 ]
@@ -18,7 +18,7 @@ export function titlecaseSegment(s, name, leading_adjustment, trailing_case) {
                 ]
             ),
             (function (...args) {
-                return new TitlecaseOptions({
+                return TitlecaseOptions.fromFields({
                     leadingAdjustment: args[0],
                     trailingCase: args[1]});
             }).apply(

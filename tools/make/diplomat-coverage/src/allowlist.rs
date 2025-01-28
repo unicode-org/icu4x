@@ -91,6 +91,8 @@ lazy_static::lazy_static! {
         "AsCalendar",
         "IntoAnyCalendar",
         "GetField",
+        "IntoOption",
+        "DateTimeNamesFrom",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
@@ -121,11 +123,6 @@ lazy_static::lazy_static! {
         // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
 
-        // Largely for use by datetimeformat, not generally useful
-        "icu::calendar::AnyCalendar::convert_any_date",
-        "icu::calendar::AnyCalendar::convert_any_datetime",
-        "icu::calendar::Date::formattable_year",
-
         // Individual calendars: Currently the main entry point is AnyCalendar
         // We have chosen to not do individual calendars (except Iso) over FFI
         // since Diplomat can't do generics. We also support Gregorian *formatter*
@@ -151,30 +148,12 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
         "icu::calendar::Date::try_new_ummalqura_with_calendar",
-        "icu::calendar::DateTime::try_new_buddhist",
-        "icu::calendar::DateTime::try_new_chinese_with_calendar",
-        "icu::calendar::DateTime::try_new_coptic",
-        "icu::calendar::DateTime::try_new_dangi",
-        "icu::calendar::DateTime::try_new_dangi_with_calendar",
-        "icu::calendar::DateTime::try_new_ethiopian",
-        "icu::calendar::DateTime::try_new_gregorian",
-        "icu::calendar::DateTime::try_new_hebrew",
-        "icu::calendar::DateTime::try_new_hebrew_with_calendar",
-        "icu::calendar::DateTime::try_new_indian",
-        "icu::calendar::DateTime::try_new_islamic_civil_with_calendar",
-        "icu::calendar::DateTime::try_new_islamic_tabular_with_calendar",
-        "icu::calendar::DateTime::try_new_japanese_with_calendar",
-        "icu::calendar::DateTime::try_new_japanese_extended_with_calendar",
-        "icu::calendar::DateTime::try_new_julian",
-        "icu::calendar::DateTime::try_new_observational_islamic_with_calendar",
-        "icu::calendar::DateTime::try_new_persian",
-        "icu::calendar::DateTime::try_new_roc",
-        "icu::calendar::DateTime::try_new_ummalqura_with_calendar",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
         "icu::calendar::types::MonthInfo",
         "icu::calendar::types::FormattingEra",
+        "icu::calendar::Date::formattable_year",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::DayOfYearInfo",
@@ -183,12 +162,22 @@ lazy_static::lazy_static! {
         "icu::calendar::types::CyclicYear",
         "icu::calendar::types::YearInfo::cyclic",
         "icu::calendar::types::YearInfo::related_iso",
+        "icu::calendar::types::YearAmbiguity",
+        "icu::calendar::types::YearInfo::year_ambiguity",
 
+        // Strongly calendar-typed datetime methods
+        "icu::datetime::DateTimeFormatter::format_same_calendar",
+        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
+        "icu::datetime::MismatchedCalendarError",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
         "icu::datetime::parts",
         "icu::decimal::parts",
+
+        // Not planned for 2.0: Intermediate Writeable types.
+        "icu::datetime::FormattedDateTime::to_string",
+        "icu::datetime::FormattedDateTime::pattern",
 
         // Not planned for 2.0: Until someone needs them
         "icu::locale::extensions",
@@ -211,18 +200,19 @@ lazy_static::lazy_static! {
 
         // Doesn't make sense to expose through `icu_normalizer`
         "icu::normalizer::uts46::Uts46Mapper",
+        "icu::normalizer::uts46::Uts46MapperBorrowed",
 
         // Not planned for 2.0: we need DiplomatWriteable16
-        "icu::normalizer::ComposingNormalizer::normalize_utf16",
-        "icu::normalizer::ComposingNormalizer::normalize_utf16_to",
-        "icu::normalizer::DecomposingNormalizer::normalize_utf16",
-        "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16_to",
 
         // Not planned for 2.0
         // Can't be exposed till diplomat has input iterators, as well as
         // safety for borrowing input iterators into return types
-        "icu::normalizer::ComposingNormalizer::normalize_iter",
-        "icu::normalizer::DecomposingNormalizer::normalize_iter",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_iter",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_iter",
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
 
@@ -261,6 +251,13 @@ lazy_static::lazy_static! {
         "fixed_decimal::UnsignedFixedDecimal",
         "fixed_decimal::UnsignedRoundingMode",
 
+        // Not planned for 2.0
+        // Lower-level pattern API
+        "icu::datetime::pattern::TypedDateTimeNames",
+
+        // Not planned for 2.0
+        // Serde-specific
+        "icu::datetime::fieldsets::serde",
 
         // Stuff that is experimental
         //
@@ -271,23 +268,9 @@ lazy_static::lazy_static! {
 
         "icu::pattern",
 
-        "icu::datetime::fields::components",
-        "icu::datetime::fieldsets::serde",
-        "icu::datetime::neo_pattern",
-        "icu::datetime::neo_skeleton",
-        "icu::datetime::options::components",
-        "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeWriteError",
-        "icu::datetime::FormattedDateTimePattern",
-        "icu::datetime::pattern::TypedDateTimeNames",
-
         "fixed_decimal::CompactDecimal",
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
-
-        // Experimental API mostly used for provider, components bags, and patterns,
-        // may in the future be exposed for options
-        "icu::datetime::fields",
 
         "icu::plurals::rules",
 
@@ -332,12 +315,18 @@ lazy_static::lazy_static! {
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
+        "icu::timezone::types::ZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::calendar::types::Time",
+        "icu::timezone::types::Time",
+        "icu::timezone::types::DateTime",
+        "icu::timezone::types::UtcOffset",
+        "icu::timezone::types::ZoneVariant",
+        "icu::timezone::types::ZonedDateTime",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -349,8 +338,7 @@ lazy_static::lazy_static! {
         // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
-        "icu::calendar::DateTime::wrap_calendar_in_rc",
-        "icu::calendar::DateTime::wrap_calendar_in_arc",
+        "icu::calendar::Date::wrap_calendar_in_ref",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
@@ -374,17 +362,17 @@ lazy_static::lazy_static! {
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
-        "icu::calendar::types::MonthCode",
         "icu::calendar::types::DayOfMonth",
+        "icu::calendar::types::DayOfWeekInMonth",
+        "icu::calendar::types::Era",
+        "icu::calendar::types::IsoWeekday",
+        "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",
-        "icu::calendar::types::DayOfWeekInMonth",
-        "icu::calendar::types::IsoHour",
-        "icu::calendar::types::IsoMinute",
-        "icu::calendar::types::IsoSecond",
-        "icu::calendar::types::NanoSecond",
-        "icu::calendar::types::IsoWeekday",
-        "icu::calendar::types::Era",
+        "icu::timezone::types::IsoHour",
+        "icu::timezone::types::IsoMinute",
+        "icu::timezone::types::IsoSecond",
+        "icu::timezone::types::NanoSecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.

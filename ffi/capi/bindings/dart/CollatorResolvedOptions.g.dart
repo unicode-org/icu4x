@@ -26,7 +26,7 @@ final class CollatorResolvedOptions {
   final CollatorCaseFirst caseFirst;
   final CollatorMaxVariable maxVariable;
   final CollatorCaseLevel caseLevel;
-  final CollatorNumeric numeric;
+  final CollatorNumericOrdering numeric;
   final CollatorBackwardSecondLevel backwardSecondLevel;
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -41,7 +41,7 @@ final class CollatorResolvedOptions {
     caseFirst = CollatorCaseFirst.values[ffi.caseFirst],
     maxVariable = CollatorMaxVariable.values[ffi.maxVariable],
     caseLevel = CollatorCaseLevel.values[ffi.caseLevel],
-    numeric = CollatorNumeric.values[ffi.numeric],
+    numeric = CollatorNumericOrdering.values[ffi.numeric],
     backwardSecondLevel = CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel];
 
   // ignore: unused_element

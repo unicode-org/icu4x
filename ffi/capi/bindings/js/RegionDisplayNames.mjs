@@ -15,6 +15,7 @@ const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 export class RegionDisplayNames {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,7 +23,7 @@ export class RegionDisplayNames {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("RegionDisplayNames is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,18 +36,19 @@ export class RegionDisplayNames {
         if (this.#selfEdge.length === 0) {
             RegionDisplayNames_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(locale, options) {
+    #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -68,7 +70,7 @@ export class RegionDisplayNames {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -110,6 +112,16 @@ export class RegionDisplayNames {
             diplomatReceive.free();
         
             write.free();
+        }
+    }
+
+    constructor(locale, options) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

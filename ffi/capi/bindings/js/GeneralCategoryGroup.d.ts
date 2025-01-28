@@ -7,15 +7,22 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
 */
-type GeneralCategoryGroup_Obj = {
+type GeneralCategoryGroup_obj = {
     mask: number;
 };
 
-export class GeneralCategoryGroup {
 
-    get mask() : number;
+
+export class GeneralCategoryGroup {
+    
+    get mask() : number; 
     set mask(value: number); 
-    constructor(structObj : GeneralCategoryGroup_Obj);
+    
+    /** Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj : GeneralCategoryGroup_obj) : GeneralCategoryGroup;
+    
 
     contains(val: GeneralCategory): boolean;
 
@@ -25,9 +32,9 @@ export class GeneralCategoryGroup {
 
     static empty(): GeneralCategoryGroup;
 
-    union(other: GeneralCategoryGroup): GeneralCategoryGroup;
+    union(other: GeneralCategoryGroup_obj): GeneralCategoryGroup;
 
-    intersection(other: GeneralCategoryGroup): GeneralCategoryGroup;
+    intersection(other: GeneralCategoryGroup_obj): GeneralCategoryGroup;
 
     static casedLetter(): GeneralCategoryGroup;
 
@@ -44,4 +51,6 @@ export class GeneralCategoryGroup {
     static punctuation(): GeneralCategoryGroup;
 
     static symbol(): GeneralCategoryGroup;
+
+    constructor(structObj : GeneralCategoryGroup_obj);
 }

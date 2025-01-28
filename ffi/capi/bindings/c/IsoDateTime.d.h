@@ -7,12 +7,18 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "IsoDate.d.h"
+#include "Time.d.h"
 
 
 
 
-typedef struct IsoDateTime IsoDateTime;
+typedef struct IsoDateTime {
+  IsoDate* date;
+  Time* time;
+} IsoDateTime;
 
+typedef struct IsoDateTime_option {union { IsoDateTime ok; }; bool is_ok; } IsoDateTime_option;
 
 
 

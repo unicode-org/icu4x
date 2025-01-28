@@ -11,16 +11,17 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `TimeZoneIdMapperWithFastCanonicalization`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html) for more information.
 */
+
+
 export class TimeZoneIdMapperWithFastCanonicalization {
     
-
     get ffiValue(): pointer;
-
-    static create(): TimeZoneIdMapperWithFastCanonicalization;
 
     static createWithProvider(provider: DataProvider): TimeZoneIdMapperWithFastCanonicalization;
 
     canonicalizeIana(value: string): string | null;
 
     canonicalIanaFromBcp47(value: string): string | null;
+
+    constructor();
 }

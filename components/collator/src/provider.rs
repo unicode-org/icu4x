@@ -34,8 +34,8 @@ use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
 use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
+use crate::CaseFirst;
 
-use super::CaseFirst;
 use super::MaxVariable;
 
 #[cfg(feature = "compiled_data")]
@@ -405,56 +405,56 @@ impl CollationMetadataV1 {
     const UPPER_FIRST_MASK: u32 = 1 << 10;
 
     #[inline(always)]
-    pub(crate) fn max_variable(&self) -> MaxVariable {
+    pub(crate) fn max_variable(self) -> MaxVariable {
         // Safe, because the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
         // and we take the two low bits.
         unsafe { core::mem::transmute((self.bits & CollationMetadataV1::MAX_VARIABLE_MASK) as u8) }
     }
 
     #[inline(always)]
-    pub(crate) fn tailored(&self) -> bool {
+    pub(crate) fn tailored(self) -> bool {
         self.bits & CollationMetadataV1::TAILORED_MASK != 0
     }
 
     /// Vietnamese and Ewe
     #[inline(always)]
-    pub(crate) fn tailored_diacritics(&self) -> bool {
+    pub(crate) fn tailored_diacritics(self) -> bool {
         self.bits & CollationMetadataV1::TAILORED_DIACRITICS_MASK != 0
     }
 
     /// Lithuanian
     #[inline(always)]
-    pub(crate) fn lithuanian_dot_above(&self) -> bool {
+    pub(crate) fn lithuanian_dot_above(self) -> bool {
         self.bits & CollationMetadataV1::LITHUANIAN_DOT_ABOVE_MASK != 0
     }
 
     /// Canadian French
     #[inline(always)]
-    pub(crate) fn backward_second_level(&self) -> bool {
+    pub(crate) fn backward_second_level(self) -> bool {
         self.bits & CollationMetadataV1::BACWARD_SECOND_LEVEL_MASK != 0
     }
 
     #[inline(always)]
-    pub(crate) fn reordering(&self) -> bool {
+    pub(crate) fn reordering(self) -> bool {
         self.bits & CollationMetadataV1::REORDERING_MASK != 0
     }
 
     /// Thai
     #[inline(always)]
-    pub(crate) fn alternate_shifted(&self) -> bool {
+    pub(crate) fn alternate_shifted(self) -> bool {
         self.bits & CollationMetadataV1::ALTERNATE_SHIFTED_MASK != 0
     }
 
     #[inline(always)]
-    pub(crate) fn case_first(&self) -> CaseFirst {
+    pub(crate) fn case_first(self) -> CaseFirst {
         if self.bits & CollationMetadataV1::CASE_FIRST_MASK != 0 {
             if self.bits & CollationMetadataV1::UPPER_FIRST_MASK != 0 {
-                CaseFirst::UpperFirst
+                CaseFirst::Upper
             } else {
-                CaseFirst::LowerFirst
+                CaseFirst::Lower
             }
         } else {
-            CaseFirst::Off
+            CaseFirst::False
         }
     }
 }

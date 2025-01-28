@@ -36,8 +36,7 @@ pub enum Error {
     InvalidLength(FieldSymbol),
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for Error {}
+impl core::error::Error for Error {}
 
 /// A field within a date pattern string, also referred to as a date field.
 ///
@@ -60,7 +59,7 @@ pub struct Field {
 
 impl Field {
     #[cfg(feature = "datagen")]
-    pub(crate) fn get_length_type(&self) -> TextOrNumeric {
+    pub(crate) fn get_length_type(self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Era => TextOrNumeric::Text,
             FieldSymbol::Year(year) => year.get_length_type(self.length),

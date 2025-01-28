@@ -434,7 +434,11 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
         match self.store.find(|x| (x as usize) <= 0x07) {
             Some(0) => {
                 // Placeholder
-                let Some(&[lead, trail]) = self.store.as_bytes().get(0..2) else {
+                let Some((&[lead, trail], remainder)) = self
+                    .store
+                    .split_at_checked(2)
+                    .map(|(a, b)| (a.as_bytes(), b))
+                else {
                     return Err(MultiNamedPlaceholderError::InvalidStore);
                 };
                 debug_assert!(lead <= 7);
@@ -442,15 +446,10 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
                     return Err(MultiNamedPlaceholderError::InvalidStore);
                 }
                 let placeholder_len = (lead << 3) + trail;
-                let boundary = (placeholder_len as usize) + 2;
-                // TODO: use .split_at_checked() when available:
-                // https://github.com/rust-lang/rust/issues/119128
-                let Some(placeholder_name) = self.store.get(2..boundary) else {
+                let Some((placeholder_name, remainder)) =
+                    remainder.split_at_checked(placeholder_len as usize)
+                else {
                     return Err(MultiNamedPlaceholderError::InvalidStore);
-                };
-                let Some(remainder) = self.store.get(boundary..) else {
-                    debug_assert!(false, "should be a perfect slice");
-                    return Err(MultiNamedPlaceholderError::Unreachable);
                 };
                 self.store = remainder;
                 Ok(Some(PatternItem::Placeholder(MultiNamedPlaceholderKey(
@@ -459,13 +458,7 @@ impl<'a> MultiNamedPlaceholderPatternIterator<'a> {
             }
             Some(i) => {
                 // Literal
-                // TODO: use .split_at_checked() when available:
-                // https://github.com/rust-lang/rust/issues/119128
-                let Some(literal) = self.store.get(..i) else {
-                    debug_assert!(false, "should be a perfect slice");
-                    return Err(MultiNamedPlaceholderError::Unreachable);
-                };
-                let Some(remainder) = self.store.get(i..) else {
+                let Some((literal, remainder)) = self.store.split_at_checked(i) else {
                     debug_assert!(false, "should be a perfect slice");
                     return Err(MultiNamedPlaceholderError::Unreachable);
                 };

@@ -25,7 +25,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::timezone::ZonedDateTimeParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -35,12 +35,12 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+/// let zdt = ZonedDateTimeParser::new()
+///     .parse_location_only("2024-10-18T15:44[America/Los_Angeles]", formatter.calendar())
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format_any_calendar(&zdt),
+///     formatter.format(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
 /// ```
@@ -52,7 +52,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{Combo, ET, L};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::timezone::{ZonedDateTimeParser, ZonedDateTime};
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -62,10 +62,9 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
-///     .unwrap()
-///     .to_calendar(Gregorian);
+/// let zdt = ZonedDateTimeParser::new()
+///     .parse_location_only("2024-10-18T15:44[America/Los_Angeles]", Gregorian)
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
@@ -80,7 +79,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, Vs, YMD};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::timezone::ZonedDateTimeParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -90,12 +89,12 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
+/// let zdt = ZonedDateTimeParser::new()
+///     .parse_location_only("2024-10-18T15:44[America/Los_Angeles]", formatter.calendar())
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format_any_calendar(&zdt),
+///     formatter.format(&zdt),
 ///     "October 18, 2024 PT"
 /// );
 /// ```
@@ -107,7 +106,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::timezone::{ZonedDateTimeParser, ZonedDateTime};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -116,10 +115,9 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_iso_from_str("2024-10-18T15:44-0700[America/Los_Angeles]")
-///     .unwrap()
-///     .to_calendar(Gregorian);
+/// let zdt = ZonedDateTimeParser::new()
+///     .parse("2024-10-18T15:44-0700[America/Los_Angeles]", Gregorian)
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
@@ -166,6 +164,7 @@ where
     type DayPeriodNames = DT::DayPeriodNames;
     type ZoneEssentials = Z::ZoneEssentials;
     type ZoneLocations = Z::ZoneLocations;
+    type ZoneExemplars = Z::ZoneExemplars;
     type ZoneGenericLong = Z::ZoneGenericLong;
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;

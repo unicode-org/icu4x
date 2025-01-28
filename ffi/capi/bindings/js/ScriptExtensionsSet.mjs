@@ -12,6 +12,7 @@ const ScriptExtensionsSet_box_destroy_registry = new FinalizationRegistry((ptr) 
 });
 
 export class ScriptExtensionsSet {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -20,7 +21,7 @@ export class ScriptExtensionsSet {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("ScriptExtensionsSet is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,8 +37,9 @@ export class ScriptExtensionsSet {
         if (this.#selfEdge.length === 0) {
             ScriptExtensionsSet_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -77,5 +79,9 @@ export class ScriptExtensionsSet {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

@@ -8,9 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
 */
+
+
 export class ScriptWithExtensionsBorrowed {
     
-
     get ffiValue(): pointer;
 
     getScriptVal(ch: codepoint): number;

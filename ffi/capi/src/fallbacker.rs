@@ -79,7 +79,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
@@ -165,7 +165,7 @@ pub mod ffi {
             if current.is_default() {
                 None
             } else {
-                let current = current.clone();
+                let current = *current;
                 self.0.step();
                 Some(Box::new(Locale(current.into_locale())))
             }

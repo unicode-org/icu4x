@@ -8,9 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html) for more information.
 */
+
+
 export class ListFormatter {
     
-
     get ffiValue(): pointer;
 
     static createAndWithLength(locale: Locale, length: ListLength): ListFormatter;

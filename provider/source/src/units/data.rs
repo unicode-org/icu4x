@@ -102,7 +102,7 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1Marker> for SourceDataP
                                     .with_debug_context(&unit)
                             },
                         )?,
-                        locale.clone(),
+                        locale,
                     ));
                 }
             }

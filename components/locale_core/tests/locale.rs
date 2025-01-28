@@ -47,7 +47,7 @@ fn test_locale_parsing() {
 }
 
 #[test]
-fn test_langid_invalid() {
+fn test_locale_invalid() {
     let data = serde_json::from_str(include_str!("fixtures/invalid-extensions.json"))
         .expect("Failed to read a fixture");
 

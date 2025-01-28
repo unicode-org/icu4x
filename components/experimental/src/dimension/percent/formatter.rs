@@ -10,9 +10,8 @@ use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
-use icu_provider::{
-    DataError, DataIdentifierBorrowed, DataLocale, DataPayload, DataProvider, DataRequest,
-};
+
+use icu_provider::prelude::*;
 
 use super::super::provider::percent::PercentEssentialsV1Marker;
 use super::format::FormattedPercent;
@@ -154,8 +153,7 @@ where
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = PercentEssentialsV1Marker::make_locale(prefs.locale_preferences);
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -177,8 +175,7 @@ where
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<PercentEssentialsV1Marker>(prefs.locale_prefs);
+        let locale = PercentEssentialsV1Marker::make_locale(prefs.locale_preferences);
         let essential = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

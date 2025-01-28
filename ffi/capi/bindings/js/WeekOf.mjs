@@ -6,20 +6,23 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
 */
-export class WeekOf {
 
+
+export class WeekOf {
+    
     #week;
+    
     get week()  {
         return this.#week;
     }
     
-
     #unit;
+    
     get unit()  {
         return this.#unit;
     }
     
-    constructor(structObj, internalConstructor) {
+    #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("WeekOf's constructor takes an object of WeekOf's fields.");
         }
@@ -39,6 +42,7 @@ export class WeekOf {
             throw new Error("Missing required field unit.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -53,6 +57,18 @@ export class WeekOf {
         forcePadding
     ) {
         return [this.#week, ...diplomatRuntime.maybePaddingFields(forcePadding, 3 /* x i8 */), this.#unit.ffiValue]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof WeekOf) {
+            return obj;
+        }
+
+        return WeekOf.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -75,12 +91,16 @@ export class WeekOf {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("WeekOf._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const weekDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0];
         structObj.week = weekDeref;
         const unitDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
         structObj.unit = new WeekRelativeUnit(diplomatRuntime.internalConstructor, unitDeref);
 
         return new WeekOf(structObj, internalConstructor);
+    }
+
+    constructor(structObj, internalConstructor) {
+        return this.#internalConstructor(...arguments)
     }
 }

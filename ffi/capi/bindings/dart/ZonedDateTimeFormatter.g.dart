@@ -4,7 +4,9 @@ part of 'lib.g.dart';
 
 /// An object capable of formatting a date time with time zone to a string.
 ///
-/// See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+///
+/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Vs.html)
 final class ZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -29,6 +31,8 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// This function has `date_length` and `time_length` arguments and uses default options
   /// for the time zone.
   ///
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.withLength(Locale locale, DateTimeLength length) {
     final result = _icu4x_ZonedDateTimeFormatter_create_with_length_mv1(locale._ffi, length.index);
@@ -43,6 +47,8 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// This function has `date_length` and `time_length` arguments and uses default options
   /// for the time zone.
   ///
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.withLengthAndProvider(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1(provider._ffi, locale._ffi, length.index);
@@ -52,24 +58,28 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`DateTime`] and [`TimeZoneInfo`] to a string.
+  /// Formats a [`Date`] a [`Time`], and a [`TimeZoneInfo`] to a string.
+  ///
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
-  String formatDatetimeWithCustomTimeZone(DateTime datetime, TimeZoneInfo timeZone) {
+  String format(Date date, Time time, TimeZoneInfo zone) {
     final write = _Write();
-    final result = _icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
+    final result = _icu4x_ZonedDateTimeFormatter_format_mv1(_ffi, date._ffi, time._ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
       throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }
 
-  /// Formats a [`IsoDateTime`] and [`TimeZoneInfo`] to a string.
+  /// Formats an [`IsoDate`] a [`Time`], and a [`TimeZoneInfo`] to a string.
+  ///
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeFormatError] on failure.
-  String formatIsoDatetimeWithCustomTimeZone(IsoDateTime datetime, TimeZoneInfo timeZone) {
+  String formatIso(IsoDate date, Time time, TimeZoneInfo zone) {
     final write = _Write();
-    final result = _icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(_ffi, datetime._ffi, timeZone._ffi, write._ffi);
+    final result = _icu4x_ZonedDateTimeFormatter_format_iso_mv1(_ffi, date._ffi, time._ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
       throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -93,11 +103,11 @@ external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_with_length_mv1
 external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_with_length_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_ZonedDateTimeFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
 
 @meta.RecordUse()
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_iso_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> datetime, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_ZonedDateTimeFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);

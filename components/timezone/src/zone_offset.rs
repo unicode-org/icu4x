@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{ZoneOffsetPeriodV1Marker, EPOCH};
-use crate::{TimeZoneBcp47Id, UtcOffset};
+use crate::{Time, TimeZoneBcp47Id, UtcOffset};
+use icu_calendar::Date;
 use icu_calendar::Iso;
-use icu_calendar::{Date, Time};
 use icu_provider::prelude::*;
 
 /// [`ZoneOffsetCalculator`] uses data from the [data provider] to calculate time zone offsets.
@@ -64,7 +64,8 @@ impl ZoneOffsetCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Date, Time};
+    /// use icu::calendar::Date;
+    /// use icu::timezone::Time;
     /// use icu::timezone::TimeZoneBcp47Id;
     /// use icu::timezone::UtcOffset;
     /// use icu::timezone::ZoneOffsetCalculator;
@@ -112,8 +113,8 @@ impl ZoneOffsetCalculator {
                 let mut offsets = None;
                 let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
                     + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
-                for (minutes, id) in cursor.iter1_copied().rev() {
-                    if minutes_since_epoch_walltime <= i32::from_unaligned(*minutes) {
+                for (minutes, id) in cursor.iter1_copied() {
+                    if minutes_since_epoch_walltime >= i32::from_unaligned(*minutes) {
                         offsets = Some(id);
                     } else {
                         break;
@@ -133,7 +134,7 @@ impl ZoneOffsetCalculator {
 
 /// Represents the different offsets in use for a time zone
 #[non_exhaustive]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct ZoneOffsets {
     /// The standard offset.
     pub standard: UtcOffset,

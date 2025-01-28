@@ -3,22 +3,24 @@ import { DataProvider } from "./DataProvider.mjs"
 import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
 import { IsoDate } from "./IsoDate.mjs"
-import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Locale } from "./Locale.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X TypedDateFormatter object capable of formatting a [`IsoDateTime`] as a string,
+/** An ICU4X TypedDateFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
 *using the Gregorian Calendar.
 *
-*See the [Rust documentation for `datetime`](https://docs.rs/icu/latest/icu/datetime/index.html) for more information.
+*See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+*
+*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html)
 */
 const GregorianDateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GregorianDateFormatter_destroy_mv1(ptr);
 });
 
 export class GregorianDateFormatter {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -26,7 +28,7 @@ export class GregorianDateFormatter {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GregorianDateFormatter is an Opaque type. You cannot call its constructor.");
             return;
@@ -39,8 +41,9 @@ export class GregorianDateFormatter {
         if (this.#selfEdge.length === 0) {
             GregorianDateFormatter_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -81,9 +84,9 @@ export class GregorianDateFormatter {
         }
     }
 
-    formatIsoDate(value) {
+    formatIso(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_GregorianDateFormatter_format_iso_date_mv1(this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_GregorianDateFormatter_format_iso_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
             return write.readString8();
@@ -94,16 +97,7 @@ export class GregorianDateFormatter {
         }
     }
 
-    formatIsoDatetime(value) {
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_GregorianDateFormatter_format_iso_datetime_mv1(this.ffiValue, value.ffiValue, write.buffer);
-    
-        try {
-            return write.readString8();
-        }
-        
-        finally {
-            write.free();
-        }
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }
