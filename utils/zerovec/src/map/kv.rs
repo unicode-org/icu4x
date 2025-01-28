@@ -41,7 +41,7 @@ pub trait ZeroMapKV<'a> {
 }
 
 macro_rules! impl_sized_kv {
-    ($ty:ident) => {
+    ($ty:path) => {
         impl<'a> ZeroMapKV<'a> for $ty {
             type Container = ZeroVec<'a, $ty>;
             type Slice = ZeroSlice<$ty>;
@@ -64,6 +64,9 @@ impl_sized_kv!(i128);
 impl_sized_kv!(char);
 impl_sized_kv!(f32);
 impl_sized_kv!(f64);
+
+impl_sized_kv!(core::num::NonZeroU8);
+impl_sized_kv!(core::num::NonZeroI8);
 
 impl<'a, T> ZeroMapKV<'a> for Option<T>
 where

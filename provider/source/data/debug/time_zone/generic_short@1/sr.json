@@ -1,9 +1,9 @@
 {
   "defaults": {
-    "49": "CET",
-    "50": "EET",
-    "52": "WET",
-    "100": "GMT"
+    "50": "CET",
+    "51": "EET",
+    "53": "WET",
+    "101": "GMT"
   },
   "overrides": {
     "utc": "UTC"

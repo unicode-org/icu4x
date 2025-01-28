@@ -2,1218 +2,1218 @@
   "defaults": [
     [
       [
-        0,
+        1,
         "Standard"
       ],
       "Hora estándar de Acre"
     ],
     [
       [
-        0,
+        1,
         "Daylight"
       ],
       "Hora de verano de Acre"
     ],
     [
       [
-        1,
+        2,
         "Standard"
       ],
       "hora de África central"
     ],
     [
       [
-        2,
+        3,
         "Standard"
       ],
       "hora de África oriental"
     ],
     [
       [
-        3,
+        4,
         "Standard"
       ],
       "hora de Afganistán"
     ],
     [
       [
-        4,
+        5,
         "Standard"
       ],
       "hora de Sudáfrica"
     ],
     [
       [
-        5,
+        6,
         "Standard"
       ],
       "hora estándar de África occidental"
     ],
     [
       [
-        5,
+        6,
         "Daylight"
       ],
       "hora de verano de África occidental"
     ],
     [
       [
-        7,
+        8,
         "Standard"
       ],
       "hora estándar de Alaska"
     ],
     [
       [
-        7,
+        8,
         "Daylight"
       ],
       "hora de verano de Alaska"
     ],
     [
       [
-        8,
+        9,
         "Standard"
       ],
       "hora estándar del Amazonas"
     ],
     [
       [
-        8,
+        9,
         "Daylight"
       ],
       "hora de verano del Amazonas"
     ],
     [
       [
-        9,
+        10,
         "Standard"
       ],
       "hora estándar central"
     ],
     [
       [
-        9,
+        10,
         "Daylight"
       ],
       "hora de verano central"
     ],
     [
       [
-        10,
+        11,
         "Standard"
       ],
       "hora estándar oriental"
     ],
     [
       [
-        10,
+        11,
         "Daylight"
       ],
       "hora de verano oriental"
     ],
     [
       [
-        11,
+        12,
         "Standard"
       ],
       "hora estándar de la montaña"
     ],
     [
       [
-        11,
+        12,
         "Daylight"
       ],
       "hora de verano de la montaña"
     ],
     [
       [
-        12,
+        13,
         "Standard"
       ],
       "hora estándar del Pacífico"
     ],
     [
       [
-        12,
+        13,
         "Daylight"
       ],
       "hora de verano del Pacífico"
     ],
     [
       [
-        13,
+        14,
         "Standard"
       ],
       "hora estándar de Anadyr"
     ],
     [
       [
-        13,
+        14,
         "Daylight"
       ],
       "hora de verano de Anadyr"
     ],
     [
       [
-        14,
+        15,
         "Standard"
       ],
       "hora estándar de Apia"
     ],
     [
       [
-        14,
+        15,
         "Daylight"
       ],
       "horario de verano de Apia"
     ],
     [
       [
-        15,
+        16,
         "Standard"
       ],
       "Hora estándar de Aktau"
     ],
     [
       [
-        15,
+        16,
         "Daylight"
       ],
       "Hora de verano de Aktau"
     ],
     [
       [
-        16,
+        17,
         "Standard"
       ],
       "Hora estándar de Aktobe"
     ],
     [
       [
-        16,
+        17,
         "Daylight"
       ],
       "Hora de verano de Aktobe"
     ],
     [
       [
-        17,
+        18,
         "Standard"
       ],
       "hora estándar de Arabia"
     ],
     [
       [
-        17,
+        18,
         "Daylight"
       ],
       "hora de verano de Arabia"
     ],
     [
       [
-        18,
+        19,
         "Standard"
       ],
       "hora estándar de Argentina"
     ],
     [
       [
-        18,
+        19,
         "Daylight"
       ],
       "hora de verano de Argentina"
     ],
     [
       [
-        20,
+        21,
         "Standard"
       ],
       "hora estándar de Argentina occidental"
     ],
     [
       [
-        20,
+        21,
         "Daylight"
       ],
       "hora de verano de Argentina occidental"
     ],
     [
       [
-        21,
+        22,
         "Standard"
       ],
       "hora estándar del Atlántico"
     ],
     [
       [
-        21,
+        22,
         "Daylight"
       ],
       "hora de verano del Atlántico"
     ],
     [
       [
-        22,
+        23,
         "Standard"
       ],
       "hora estándar de Australia central"
     ],
     [
       [
-        22,
+        23,
         "Daylight"
       ],
       "hora de verano de Australia central"
     ],
     [
       [
-        23,
+        24,
         "Standard"
       ],
       "hora estándar de Australia centroccidental"
     ],
     [
       [
-        23,
+        24,
         "Daylight"
       ],
       "hora de verano de Australia centroccidental"
     ],
     [
       [
-        24,
+        25,
         "Standard"
       ],
       "hora estándar de Australia oriental"
     ],
     [
       [
-        24,
+        25,
         "Daylight"
       ],
       "hora de verano de Australia oriental"
     ],
     [
       [
-        25,
+        26,
         "Standard"
       ],
       "hora estándar de Australia occidental"
     ],
     [
       [
-        25,
+        26,
         "Daylight"
       ],
       "hora de verano de Australia occidental"
     ],
     [
       [
-        27,
+        28,
         "Standard"
       ],
       "hora estándar de las Azores"
     ],
     [
       [
-        27,
+        28,
         "Daylight"
       ],
       "hora de verano de las Azores"
     ],
     [
       [
-        29,
+        30,
         "Standard"
       ],
       "hora de Bután"
     ],
     [
       [
-        30,
+        31,
         "Standard"
       ],
       "hora de Bolivia"
     ],
     [
       [
-        31,
+        32,
         "Standard"
       ],
       "hora estándar de Brasilia"
     ],
     [
       [
-        31,
+        32,
         "Daylight"
       ],
       "hora de verano de Brasilia"
     ],
     [
       [
-        32,
+        33,
         "Standard"
       ],
       "hora de Brunéi"
     ],
     [
       [
-        35,
+        36,
         "Standard"
       ],
       "hora estándar de Chamorro"
     ],
     [
       [
-        37,
+        38,
         "Standard"
       ],
       "hora estándar de Chile"
     ],
     [
       [
-        37,
+        38,
         "Daylight"
       ],
       "hora de verano de Chile"
     ],
     [
       [
-        38,
+        39,
         "Standard"
       ],
       "hora estándar de China"
     ],
     [
       [
-        38,
+        39,
         "Daylight"
       ],
       "hora de verano de China"
     ],
     [
       [
-        39,
+        40,
         "Standard"
       ],
       "hora de la Isla de Navidad"
     ],
     [
       [
-        40,
+        41,
         "Standard"
       ],
       "hora de Islas Cocos"
     ],
     [
       [
-        42,
+        43,
         "Standard"
       ],
       "hora estándar de las islas Cook"
     ],
     [
       [
-        42,
+        43,
         "Daylight"
       ],
       "hora de verano media de las islas Cook"
     ],
     [
       [
-        44,
+        45,
         "Standard"
       ],
       "hora de Davis"
     ],
     [
       [
-        45,
+        46,
         "Standard"
       ],
       "hora de Dumont-d’Urville"
     ],
     [
       [
-        46,
+        47,
         "Daylight"
       ],
       "hora de verano de la Isla de Pascua"
     ],
     [
       [
-        47,
+        48,
         "Standard"
       ],
       "hora de Timor Oriental"
     ],
     [
       [
-        48,
+        49,
         "Standard"
       ],
       "hora de Ecuador"
     ],
     [
       [
-        49,
+        50,
         "Standard"
       ],
       "hora estándar de Europa central"
     ],
     [
       [
-        49,
+        50,
         "Daylight"
       ],
       "hora de verano de Europa central"
     ],
     [
       [
-        50,
+        51,
         "Standard"
       ],
       "hora estándar de Europa del Este"
     ],
     [
       [
-        50,
+        51,
         "Daylight"
       ],
       "hora de verano de Europa del Este"
     ],
     [
       [
-        51,
+        52,
         "Standard"
       ],
       "horario del lejano este de Europa"
     ],
     [
       [
-        52,
+        53,
         "Standard"
       ],
       "hora estándar de Europa del Oeste"
     ],
     [
       [
-        52,
+        53,
         "Daylight"
       ],
       "hora de verano de Europa del Oeste"
     ],
     [
       [
-        53,
+        54,
         "Standard"
       ],
       "hora estándar de las Islas Malvinas"
     ],
     [
       [
-        53,
+        54,
         "Daylight"
       ],
       "hora de verano de las Islas Malvinas"
     ],
     [
       [
-        55,
+        56,
         "Standard"
       ],
       "hora de la Guayana Francesa"
     ],
     [
       [
-        56,
+        57,
         "Standard"
       ],
       "hora de las Tierras Australes y Antárticas Francesas"
     ],
     [
       [
-        57,
+        58,
         "Standard"
       ],
       "hora de Galápagos"
     ],
     [
       [
-        58,
+        59,
         "Standard"
       ],
       "hora de Gambier"
     ],
     [
       [
-        60,
+        61,
         "Standard"
       ],
       "hora de Islas Gilbert"
     ],
     [
       [
-        61,
+        62,
         "Standard"
       ],
       "hora estándar de Groenlandia oriental"
     ],
     [
       [
-        61,
+        62,
         "Daylight"
       ],
       "hora de verano de Groenlandia oriental"
     ],
     [
       [
-        63,
+        64,
         "Standard"
       ],
       "hora estándar de Groenlandia occidental"
     ],
     [
       [
-        63,
+        64,
         "Daylight"
       ],
       "hora de verano de Groenlandia occidental"
     ],
     [
       [
-        64,
+        65,
         "Standard"
       ],
       "Hora estándar de Guam"
     ],
     [
       [
-        65,
+        66,
         "Standard"
       ],
       "hora estándar del Golfo"
     ],
     [
       [
-        66,
+        67,
         "Standard"
       ],
       "hora de Guyana"
     ],
     [
       [
-        67,
+        68,
         "Standard"
       ],
       "hora estándar de Hawái-Aleutianas"
     ],
     [
       [
-        67,
+        68,
         "Daylight"
       ],
       "hora de verano de Hawái-Aleutianas"
     ],
     [
       [
-        70,
+        71,
         "Standard"
       ],
       "hora de Indonesia central"
     ],
     [
       [
-        71,
+        72,
         "Standard"
       ],
       "hora de India"
     ],
     [
       [
-        72,
+        73,
         "Standard"
       ],
       "hora de Indochina"
     ],
     [
       [
-        73,
+        74,
         "Standard"
       ],
       "hora de Indonesia oriental"
     ],
     [
       [
-        74,
+        75,
         "Standard"
       ],
       "hora del océano Índico"
     ],
     [
       [
-        75,
+        76,
         "Standard"
       ],
       "hora de Indonesia occidental"
     ],
     [
       [
-        77,
+        78,
         "Standard"
       ],
       "hora estándar de Irkutsk"
     ],
     [
       [
-        77,
+        78,
         "Daylight"
       ],
       "hora de verano de Irkutsk"
     ],
     [
       [
-        78,
+        79,
         "Standard"
       ],
       "hora estándar de Israel"
     ],
     [
       [
-        78,
+        79,
         "Daylight"
       ],
       "hora de verano de Israel"
     ],
     [
       [
-        80,
+        81,
         "Standard"
       ],
       "hora de Kazajistán oriental"
     ],
     [
       [
-        82,
+        83,
         "Standard"
       ],
       "hora de Kazajistán occidental"
     ],
     [
       [
-        83,
+        84,
         "Standard"
       ],
       "hora de Kazajistán"
     ],
     [
       [
-        84,
+        85,
         "Standard"
       ],
       "hora estándar de Corea"
     ],
     [
       [
-        84,
+        85,
         "Daylight"
       ],
       "hora de verano de Corea"
     ],
     [
       [
-        85,
+        86,
         "Standard"
       ],
       "hora de Kosrae"
     ],
     [
       [
-        86,
+        87,
         "Standard"
       ],
       "hora estándar de Krasnoyarsk"
     ],
     [
       [
-        86,
+        87,
         "Daylight"
       ],
       "hora de verano de Krasnoyarsk"
     ],
     [
       [
-        87,
+        88,
         "Standard"
       ],
       "hora de Kirguistán"
     ],
     [
       [
-        88,
+        89,
         "Standard"
       ],
       "Hora de Sri Lanka"
     ],
     [
       [
-        89,
+        90,
         "Standard"
       ],
       "hora de las Espóradas Ecuatoriales"
     ],
     [
       [
-        91,
+        92,
         "Standard"
       ],
       "Hora estándar de Macao"
     ],
     [
       [
-        91,
+        92,
         "Daylight"
       ],
       "Hora de verano de Macao"
     ],
     [
       [
-        92,
+        93,
         "Standard"
       ],
       "hora estándar de Magadán"
     ],
     [
       [
-        92,
+        93,
         "Daylight"
       ],
       "hora de verano de Magadán"
     ],
     [
       [
-        93,
+        94,
         "Standard"
       ],
       "hora de Islas Marshall"
     ],
     [
       [
-        94,
+        95,
         "Standard"
       ],
       "hora de Malasia"
     ],
     [
       [
-        95,
+        96,
         "Standard"
       ],
       "hora de Maldivas"
     ],
     [
       [
-        96,
+        97,
         "Standard"
       ],
       "hora de Marquesas"
     ],
     [
       [
-        98,
+        99,
         "Standard"
       ],
       "hora de Mawson"
     ],
     [
       [
-        99,
+        100,
         "Standard"
       ],
       "hora estándar del Pacífico de México"
     ],
     [
       [
-        99,
+        100,
         "Daylight"
       ],
       "hora de verano del Pacífico de México"
     ],
     [
       [
-        100,
+        101,
         "Standard"
       ],
       "hora del meridiano de Greenwich"
     ],
     [
       [
-        102,
+        103,
         "Standard"
       ],
       "hora estándar de Moscú"
     ],
     [
       [
-        102,
+        103,
         "Daylight"
       ],
       "hora de verano de Moscú"
     ],
     [
       [
-        103,
+        104,
         "Standard"
       ],
       "hora de Myanmar (Birmania)"
     ],
     [
       [
-        104,
+        105,
         "Standard"
       ],
       "hora de Nauru"
     ],
     [
       [
-        106,
+        107,
         "Standard"
       ],
       "hora de Nepal"
     ],
     [
       [
-        107,
+        108,
         "Standard"
       ],
       "hora estándar de Terranova"
     ],
     [
       [
-        107,
+        108,
         "Daylight"
       ],
       "hora de verano de Terranova"
     ],
     [
       [
-        108,
+        109,
         "Standard"
       ],
       "hora estándar de Nueva Zelanda"
     ],
     [
       [
-        108,
+        109,
         "Daylight"
       ],
       "hora de verano de Nueva Zelanda"
     ],
     [
       [
-        109,
+        110,
         "Standard"
       ],
       "hora de Niue"
     ],
     [
       [
-        110,
+        111,
         "Standard"
       ],
       "Hora de las Islas Marianas del Norte"
     ],
     [
       [
-        111,
+        112,
         "Standard"
       ],
       "hora estándar de la Isla Norfolk"
     ],
     [
       [
-        111,
+        112,
         "Daylight"
       ],
       "hora de verano de la Isla Norfolk"
     ],
     [
       [
-        112,
+        113,
         "Standard"
       ],
       "hora estándar de Fernando de Noronha"
     ],
     [
       [
-        112,
+        113,
         "Daylight"
       ],
       "hora de verano de Fernando de Noronha"
     ],
     [
       [
-        113,
+        114,
         "Standard"
       ],
       "hora estándar de Novosibirsk"
     ],
     [
       [
-        113,
+        114,
         "Daylight"
       ],
       "hora de verano de Novosibirsk"
     ],
     [
       [
-        116,
+        117,
         "Standard"
       ],
       "hora de Palaos"
     ],
     [
       [
-        117,
+        118,
         "Standard"
       ],
       "hora de Papúa Nueva Guinea"
     ],
     [
       [
-        121,
+        122,
         "Standard"
       ],
       "hora de las Islas Fénix"
     ],
     [
       [
-        123,
+        124,
         "Standard"
       ],
       "hora de Pitcairn"
     ],
     [
       [
-        124,
+        125,
         "Standard"
       ],
       "hora de Pohnpei"
     ],
     [
       [
-        125,
+        126,
         "Standard"
       ],
       "hora de Pionyang"
     ],
     [
       [
-        126,
+        127,
         "Standard"
       ],
       "Hora estándar de Qyzylorda"
     ],
     [
       [
-        126,
+        127,
         "Daylight"
       ],
       "Hora de verano de Qyzylorda"
     ],
     [
       [
-        127,
+        128,
         "Standard"
       ],
       "hora de Reunión"
     ],
     [
       [
-        128,
+        129,
         "Standard"
       ],
       "hora de Rothera"
     ],
     [
       [
-        131,
+        132,
         "Standard"
       ],
       "hora estándar de Samoa"
     ],
     [
       [
-        131,
+        132,
         "Daylight"
       ],
       "hora de verano de Samoa"
     ],
     [
       [
-        132,
+        133,
         "Standard"
       ],
       "hora de Seychelles"
     ],
     [
       [
-        133,
+        134,
         "Standard"
       ],
       "hora de Singapur"
     ],
     [
       [
-        134,
+        135,
         "Standard"
       ],
       "hora de Georgia del Sur"
     ],
     [
       [
-        135,
+        136,
         "Standard"
       ],
       "hora de Islas Salomón"
     ],
     [
       [
-        136,
+        137,
         "Standard"
       ],
       "hora de Surinam"
     ],
     [
       [
-        137,
+        138,
         "Standard"
       ],
       "hora de Syowa"
     ],
     [
       [
-        138,
+        139,
         "Standard"
       ],
       "hora de Tahití"
     ],
     [
       [
-        139,
+        140,
         "Standard"
       ],
       "hora estándar de Taipéi"
     ],
     [
       [
-        139,
+        140,
         "Daylight"
       ],
       "hora de verano de Taipéi"
     ],
     [
       [
-        140,
+        141,
         "Standard"
       ],
       "hora de Tayikistán"
     ],
     [
       [
-        141,
+        142,
         "Standard"
       ],
       "hora de Tokelau"
     ],
     [
       [
-        143,
+        144,
         "Standard"
       ],
       "hora de Chuuk"
     ],
     [
       [
-        145,
+        146,
         "Standard"
       ],
       "hora de Tuvalu"
     ],
     [
       [
-        147,
+        148,
         "Standard"
       ],
       "hora estándar de Uzbekistán"
     ],
     [
       [
-        147,
+        148,
         "Daylight"
       ],
       "hora de verano de Uzbekistán"
     ],
     [
       [
-        149,
+        150,
         "Standard"
       ],
       "hora de Venezuela"
     ],
     [
       [
-        150,
+        151,
         "Standard"
       ],
       "hora estándar de Vladivostok"
     ],
     [
       [
-        150,
+        151,
         "Daylight"
       ],
       "hora de verano de Vladivostok"
     ],
     [
       [
-        152,
+        153,
         "Standard"
       ],
       "hora de Vostok"
     ],
     [
       [
-        153,
+        154,
         "Standard"
       ],
       "hora de Isla Wake"
     ],
     [
       [
-        154,
+        155,
         "Standard"
       ],
       "hora de Wallis y Futuna"
     ],
     [
       [
-        155,
+        156,
         "Standard"
       ],
       "hora estándar de Yakutsk"
     ],
     [
       [
-        155,
+        156,
         "Daylight"
       ],
       "hora de verano de Yakutsk"
     ],
     [
       [
-        157,
+        158,
         "Standard"
       ],
       "hora de Yukón"

@@ -150,7 +150,16 @@ impl SourceDataProvider {
                     .meta_zone_ids
                     .0;
 
-                Ok(meta_zone_ids_resource.iter().enumerate().map(|(idx, (_short_id, alias))| (alias.long_id.to_string(), idx as u8)).collect())
+                Ok(meta_zone_ids_resource
+                    .iter()
+                    .enumerate()
+                    .map(|(idx, (_short_id, alias))| {
+                        (
+                            alias.long_id.to_string(),
+                            MetazoneId::new(idx as u8 + 1).unwrap(),
+                        )
+                    })
+                    .collect())
             })
             .as_ref()
             .map_err(|&e| e)
@@ -316,6 +325,7 @@ mod tests {
                 .last()
                 .unwrap()
                 .1
+                 .0
                 .unwrap()
         };
 

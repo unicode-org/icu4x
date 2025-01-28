@@ -2,28 +2,28 @@
   "defaults": [
     [
       [
-        18,
+        19,
         "Standard"
       ],
       "ART"
     ],
     [
       [
-        18,
+        19,
         "Daylight"
       ],
       "ARST"
     ],
     [
       [
-        20,
+        21,
         "Standard"
       ],
       "WART"
     ],
     [
       [
-        20,
+        21,
         "Daylight"
       ],
       "WARST"

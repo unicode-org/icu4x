@@ -2,42 +2,42 @@
   "defaults": [
     [
       [
-        1,
+        2,
         "Standard"
       ],
       "CAT"
     ],
     [
       [
-        2,
+        3,
         "Standard"
       ],
       "EAT"
     ],
     [
       [
-        4,
+        5,
         "Standard"
       ],
       "SAST"
     ],
     [
       [
-        5,
+        6,
         "Standard"
       ],
       "WAT"
     ],
     [
       [
-        5,
+        6,
         "Daylight"
       ],
       "WAST"
     ],
     [
       [
-        100,
+        101,
         "Standard"
       ],
       "GMT"

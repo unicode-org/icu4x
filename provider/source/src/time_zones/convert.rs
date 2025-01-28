@@ -23,6 +23,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use writeable::Writeable;
+use zerovec::ule::NichedOption;
 
 impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
     fn load(
@@ -313,7 +314,11 @@ impl SourceDataProvider {
                                                     + time.minute.number() as i32)
                                         })
                                         .unwrap_or_default(),
-                                    meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                                    NichedOption(
+                                        meta_zone_id_data
+                                            .get(&period.uses_meta_zone.mzone)
+                                            .copied(),
+                                    ),
                                 ))
                             })
                         })

@@ -2,105 +2,105 @@
   "defaults": [
     [
       [
-        7,
+        8,
         "Standard"
       ],
       "AKST"
     ],
     [
       [
-        7,
+        8,
         "Daylight"
       ],
       "AKDT"
     ],
     [
       [
-        9,
+        10,
         "Standard"
       ],
       "CST"
     ],
     [
       [
-        9,
+        10,
         "Daylight"
       ],
       "CDT"
     ],
     [
       [
-        10,
+        11,
         "Standard"
       ],
       "EST"
     ],
     [
       [
-        10,
+        11,
         "Daylight"
       ],
       "EDT"
     ],
     [
       [
-        11,
+        12,
         "Standard"
       ],
       "MST"
     ],
     [
       [
-        11,
+        12,
         "Daylight"
       ],
       "MDT"
     ],
     [
       [
-        12,
+        13,
         "Standard"
       ],
       "PST"
     ],
     [
       [
-        12,
+        13,
         "Daylight"
       ],
       "PDT"
     ],
     [
       [
-        21,
+        22,
         "Standard"
       ],
       "AST"
     ],
     [
       [
-        21,
+        22,
         "Daylight"
       ],
       "ADT"
     ],
     [
       [
-        67,
+        68,
         "Standard"
       ],
       "HAST"
     ],
     [
       [
-        67,
+        68,
         "Daylight"
       ],
       "HADT"
     ],
     [
       [
-        100,
+        101,
         "Standard"
       ],
       "GMT"
