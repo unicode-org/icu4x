@@ -2,7 +2,7 @@
   "defaults": [
     [
       [
-        "gulf",
+        65,
         "Standard"
       ],
       "GST"

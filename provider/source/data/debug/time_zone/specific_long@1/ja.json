@@ -2,1106 +2,1106 @@
   "defaults": [
     [
       [
-        "acre",
+        0,
         "Standard"
       ],
       "アクレ標準時"
     ],
     [
       [
-        "acre",
+        0,
         "Daylight"
       ],
       "アクレ夏時間"
     ],
     [
       [
-        "afce",
+        1,
         "Standard"
       ],
       "中央アフリカ時間"
     ],
     [
       [
-        "afea",
+        2,
         "Standard"
       ],
       "東アフリカ時間"
     ],
     [
       [
-        "afgh",
+        3,
         "Standard"
       ],
       "アフガニスタン時間"
     ],
     [
       [
-        "afso",
+        4,
         "Standard"
       ],
       "南アフリカ標準時"
     ],
     [
       [
-        "afwe",
+        5,
         "Standard"
       ],
       "西アフリカ標準時"
     ],
     [
       [
-        "afwe",
+        5,
         "Daylight"
       ],
       "西アフリカ夏時間"
     ],
     [
       [
-        "alam",
+        6,
         "Standard"
       ],
       "アルトマイ標準時"
     ],
     [
       [
-        "alas",
+        7,
         "Standard"
       ],
       "アラスカ標準時"
     ],
     [
       [
-        "alas",
+        7,
         "Daylight"
       ],
       "アラスカ夏時間"
     ],
     [
       [
-        "amaz",
+        8,
         "Standard"
       ],
       "アマゾン標準時"
     ],
     [
       [
-        "amaz",
+        8,
         "Daylight"
       ],
       "アマゾン夏時間"
     ],
     [
       [
-        "amce",
+        9,
         "Standard"
       ],
       "アメリカ中部標準時"
     ],
     [
       [
-        "amce",
+        9,
         "Daylight"
       ],
       "アメリカ中部夏時間"
     ],
     [
       [
-        "amea",
+        10,
         "Standard"
       ],
       "アメリカ東部標準時"
     ],
     [
       [
-        "amea",
+        10,
         "Daylight"
       ],
       "アメリカ東部夏時間"
     ],
     [
       [
-        "ammo",
+        11,
         "Standard"
       ],
       "アメリカ山地標準時"
     ],
     [
       [
-        "ammo",
+        11,
         "Daylight"
       ],
       "アメリカ山地夏時間"
     ],
     [
       [
-        "ampa",
+        12,
         "Standard"
       ],
       "アメリカ太平洋標準時"
     ],
     [
       [
-        "ampa",
+        12,
         "Daylight"
       ],
       "アメリカ太平洋夏時間"
     ],
     [
       [
-        "apia",
+        14,
         "Standard"
       ],
       "アピア標準時"
     ],
     [
       [
-        "apia",
+        14,
         "Daylight"
       ],
       "アピア夏時間"
     ],
     [
       [
-        "arab",
+        17,
         "Standard"
       ],
       "アラビア標準時"
     ],
     [
       [
-        "arab",
+        17,
         "Daylight"
       ],
       "アラビア夏時間"
     ],
     [
       [
-        "arge",
+        18,
         "Standard"
       ],
       "アルゼンチン標準時"
     ],
     [
       [
-        "arge",
+        18,
         "Daylight"
       ],
       "アルゼンチン夏時間"
     ],
     [
       [
-        "arwe",
+        20,
         "Standard"
       ],
       "西部アルゼンチン標準時"
     ],
     [
       [
-        "arwe",
+        20,
         "Daylight"
       ],
       "西部アルゼンチン夏時間"
     ],
     [
       [
-        "atla",
+        21,
         "Standard"
       ],
       "大西洋標準時"
     ],
     [
       [
-        "atla",
+        21,
         "Daylight"
       ],
       "大西洋夏時間"
     ],
     [
       [
-        "auce",
+        22,
         "Standard"
       ],
       "オーストラリア中部標準時"
     ],
     [
       [
-        "auce",
+        22,
         "Daylight"
       ],
       "オーストラリア中部夏時間"
     ],
     [
       [
-        "aucw",
+        23,
         "Standard"
       ],
       "オーストラリア中西部標準時"
     ],
     [
       [
-        "aucw",
+        23,
         "Daylight"
       ],
       "オーストラリア中西部夏時間"
     ],
     [
       [
-        "auea",
+        24,
         "Standard"
       ],
       "オーストラリア東部標準時"
     ],
     [
       [
-        "auea",
+        24,
         "Daylight"
       ],
       "オーストラリア東部夏時間"
     ],
     [
       [
-        "auwe",
+        25,
         "Standard"
       ],
       "オーストラリア西部標準時"
     ],
     [
       [
-        "auwe",
+        25,
         "Daylight"
       ],
       "オーストラリア西部夏時間"
     ],
     [
       [
-        "bhut",
+        29,
         "Standard"
       ],
       "ブータン時間"
     ],
     [
       [
-        "boli",
+        30,
         "Standard"
       ],
       "ボリビア時間"
     ],
     [
       [
-        "bras",
+        31,
         "Standard"
       ],
       "ブラジリア標準時"
     ],
     [
       [
-        "bras",
+        31,
         "Daylight"
       ],
       "ブラジリア夏時間"
     ],
     [
       [
-        "brun",
+        32,
         "Standard"
       ],
       "ブルネイ・ダルサラーム時間"
     ],
     [
       [
-        "case",
+        33,
         "Standard"
       ],
       "ケイシー基地時間"
     ],
     [
       [
-        "cham",
+        35,
         "Standard"
       ],
       "チャモロ時間"
     ],
     [
       [
-        "chil",
+        37,
         "Standard"
       ],
       "チリ標準時"
     ],
     [
       [
-        "chil",
+        37,
         "Daylight"
       ],
       "チリ夏時間"
     ],
     [
       [
-        "chin",
+        38,
         "Standard"
       ],
       "中国標準時"
     ],
     [
       [
-        "chin",
+        38,
         "Daylight"
       ],
       "中国夏時間"
     ],
     [
       [
-        "chri",
+        39,
         "Standard"
       ],
       "クリスマス島時間"
     ],
     [
       [
-        "coco",
+        40,
         "Standard"
       ],
       "ココス諸島時間"
     ],
     [
       [
-        "davi",
+        44,
         "Standard"
       ],
       "デービス基地時間"
     ],
     [
       [
-        "dumo",
+        45,
         "Standard"
       ],
       "デュモン・デュルヴィル基地時間"
     ],
     [
       [
-        "eati",
+        47,
         "Standard"
       ],
       "東ティモール時間"
     ],
     [
       [
-        "ecua",
+        48,
         "Standard"
       ],
       "エクアドル時間"
     ],
     [
       [
-        "euce",
+        49,
         "Standard"
       ],
       "中央ヨーロッパ標準時"
     ],
     [
       [
-        "euce",
+        49,
         "Daylight"
       ],
       "中央ヨーロッパ夏時間"
     ],
     [
       [
-        "euea",
+        50,
         "Standard"
       ],
       "東ヨーロッパ標準時"
     ],
     [
       [
-        "euea",
+        50,
         "Daylight"
       ],
       "東ヨーロッパ夏時間"
     ],
     [
       [
-        "eufe",
+        51,
         "Standard"
       ],
       "極東ヨーロッパ時間"
     ],
     [
       [
-        "euwe",
+        52,
         "Standard"
       ],
       "西ヨーロッパ標準時"
     ],
     [
       [
-        "euwe",
+        52,
         "Daylight"
       ],
       "西ヨーロッパ夏時間"
     ],
     [
       [
-        "frgu",
+        55,
         "Standard"
       ],
       "仏領ギアナ時間"
     ],
     [
       [
-        "frso",
+        56,
         "Standard"
       ],
       "仏領南方南極時間"
     ],
     [
       [
-        "gala",
+        57,
         "Standard"
       ],
       "ガラパゴス時間"
     ],
     [
       [
-        "gamb",
+        58,
         "Standard"
       ],
       "ガンビエ諸島時間"
     ],
     [
       [
-        "giis",
+        60,
         "Standard"
       ],
       "ギルバート諸島時間"
     ],
     [
       [
-        "grea",
+        61,
         "Standard"
       ],
       "グリーンランド東部標準時"
     ],
     [
       [
-        "grea",
+        61,
         "Daylight"
       ],
       "グリーンランド東部夏時間"
     ],
     [
       [
-        "grwe",
+        63,
         "Standard"
       ],
       "グリーンランド西部標準時"
     ],
     [
       [
-        "grwe",
+        63,
         "Daylight"
       ],
       "グリーンランド西部夏時間"
     ],
     [
       [
-        "guam",
+        64,
         "Standard"
       ],
       "グアム時間"
     ],
     [
       [
-        "gulf",
+        65,
         "Standard"
       ],
       "湾岸標準時"
     ],
     [
       [
-        "guya",
+        66,
         "Standard"
       ],
       "ガイアナ時間"
     ],
     [
       [
-        "haal",
+        67,
         "Standard"
       ],
       "ハワイ・アリューシャン標準時"
     ],
     [
       [
-        "haal",
+        67,
         "Daylight"
       ],
       "ハワイ・アリューシャン夏時間"
     ],
     [
       [
-        "ince",
+        70,
         "Standard"
       ],
       "インドネシア中部時間"
     ],
     [
       [
-        "indi",
+        71,
         "Standard"
       ],
       "インド標準時"
     ],
     [
       [
-        "indo",
+        72,
         "Standard"
       ],
       "インドシナ時間"
     ],
     [
       [
-        "inea",
+        73,
         "Standard"
       ],
       "インドネシア東部時間"
     ],
     [
       [
-        "inoc",
+        74,
         "Standard"
       ],
       "インド洋時間"
     ],
     [
       [
-        "inwe",
+        75,
         "Standard"
       ],
       "インドネシア西部時間"
     ],
     [
       [
-        "irku",
+        77,
         "Standard"
       ],
       "イルクーツク標準時"
     ],
     [
       [
-        "irku",
+        77,
         "Daylight"
       ],
       "イルクーツク夏時間"
     ],
     [
       [
-        "isra",
+        78,
         "Standard"
       ],
       "イスラエル標準時"
     ],
     [
       [
-        "isra",
+        78,
         "Daylight"
       ],
       "イスラエル夏時間"
     ],
     [
       [
-        "kaea",
+        80,
         "Standard"
       ],
       "東カザフスタン時間"
     ],
     [
       [
-        "kamc",
+        81,
         "Standard"
       ],
       "ペトロパブロフスク・カムチャツキー標準時"
     ],
     [
       [
-        "kamc",
+        81,
         "Daylight"
       ],
       "ペトロパブロフスク・カムチャツキー夏時間"
     ],
     [
       [
-        "kawe",
+        82,
         "Standard"
       ],
       "西カザフスタン時間"
     ],
     [
       [
-        "kaza",
+        83,
         "Standard"
       ],
       "カザフスタン時間"
     ],
     [
       [
-        "kore",
+        84,
         "Standard"
       ],
       "韓国標準時"
     ],
     [
       [
-        "kore",
+        84,
         "Daylight"
       ],
       "韓国夏時間"
     ],
     [
       [
-        "kosr",
+        85,
         "Standard"
       ],
       "コスラエ時間"
     ],
     [
       [
-        "kras",
+        86,
         "Standard"
       ],
       "クラスノヤルスク標準時"
     ],
     [
       [
-        "kras",
+        86,
         "Daylight"
       ],
       "クラスノヤルスク夏時間"
     ],
     [
       [
-        "kyrg",
+        87,
         "Standard"
       ],
       "キルギス時間"
     ],
     [
       [
-        "lank",
+        88,
         "Standard"
       ],
       "ランカ時間"
     ],
     [
       [
-        "liis",
+        89,
         "Standard"
       ],
       "ライン諸島時間"
     ],
     [
       [
-        "maga",
+        92,
         "Standard"
       ],
       "マガダン標準時"
     ],
     [
       [
-        "maga",
+        92,
         "Daylight"
       ],
       "マガダン夏時間"
     ],
     [
       [
-        "mais",
+        93,
         "Standard"
       ],
       "マーシャル諸島時間"
     ],
     [
       [
-        "mala",
+        94,
         "Standard"
       ],
       "マレーシア時間"
     ],
     [
       [
-        "mald",
+        95,
         "Standard"
       ],
       "モルディブ時間"
     ],
     [
       [
-        "marq",
+        96,
         "Standard"
       ],
       "マルキーズ時間"
     ],
     [
       [
-        "maws",
+        98,
         "Standard"
       ],
       "モーソン基地時間"
     ],
     [
       [
-        "mepa",
+        99,
         "Standard"
       ],
       "メキシコ太平洋標準時"
     ],
     [
       [
-        "mepa",
+        99,
         "Daylight"
       ],
       "メキシコ太平洋夏時間"
     ],
     [
       [
-        "mgmt",
+        100,
         "Standard"
       ],
       "グリニッジ標準時"
     ],
     [
       [
-        "mosc",
+        102,
         "Standard"
       ],
       "モスクワ標準時"
     ],
     [
       [
-        "mosc",
+        102,
         "Daylight"
       ],
       "モスクワ夏時間"
     ],
     [
       [
-        "myan",
+        103,
         "Standard"
       ],
       "ミャンマー時間"
     ],
     [
       [
-        "naur",
+        104,
         "Standard"
       ],
       "ナウル時間"
     ],
     [
       [
-        "nepa",
+        106,
         "Standard"
       ],
       "ネパール時間"
     ],
     [
       [
-        "newf",
+        107,
         "Standard"
       ],
       "ニューファンドランド標準時"
     ],
     [
       [
-        "newf",
+        107,
         "Daylight"
       ],
       "ニューファンドランド夏時間"
     ],
     [
       [
-        "neze",
+        108,
         "Standard"
       ],
       "ニュージーランド標準時"
     ],
     [
       [
-        "neze",
+        108,
         "Daylight"
       ],
       "ニュージーランド夏時間"
     ],
     [
       [
-        "niue",
+        109,
         "Standard"
       ],
       "ニウエ時間"
     ],
     [
       [
-        "noma",
+        110,
         "Standard"
       ],
       "北マリアナ諸島時間"
     ],
     [
       [
-        "noro",
+        112,
         "Standard"
       ],
       "フェルナンド・デ・ノローニャ標準時"
     ],
     [
       [
-        "noro",
+        112,
         "Daylight"
       ],
       "フェルナンド・デ・ノローニャ夏時間"
     ],
     [
       [
-        "novo",
+        113,
         "Standard"
       ],
       "ノヴォシビルスク標準時"
     ],
     [
       [
-        "novo",
+        113,
         "Daylight"
       ],
       "ノヴォシビルスク夏時間"
     ],
     [
       [
-        "pala",
+        116,
         "Standard"
       ],
       "パラオ時間"
     ],
     [
       [
-        "pang",
+        117,
         "Standard"
       ],
       "パプアニューギニア時間"
     ],
     [
       [
-        "phis",
+        121,
         "Standard"
       ],
       "フェニックス諸島時間"
     ],
     [
       [
-        "pitc",
+        123,
         "Standard"
       ],
       "ピトケアン時間"
     ],
     [
       [
-        "pona",
+        124,
         "Standard"
       ],
       "ポナペ時間"
     ],
     [
       [
-        "pyon",
+        125,
         "Standard"
       ],
       "平壌時間"
     ],
     [
       [
-        "reun",
+        127,
         "Standard"
       ],
       "レユニオン時間"
     ],
     [
       [
-        "roth",
+        128,
         "Standard"
       ],
       "ロゼラ基地時間"
     ],
     [
       [
-        "samo",
+        131,
         "Standard"
       ],
       "サモア標準時"
     ],
     [
       [
-        "samo",
+        131,
         "Daylight"
       ],
       "サモア夏時間"
     ],
     [
       [
-        "seyc",
+        132,
         "Standard"
       ],
       "セーシェル時間"
     ],
     [
       [
-        "soge",
+        134,
         "Standard"
       ],
       "サウスジョージア時間"
     ],
     [
       [
-        "solo",
+        135,
         "Standard"
       ],
       "ソロモン諸島時間"
     ],
     [
       [
-        "suri",
+        136,
         "Standard"
       ],
       "スリナム時間"
     ],
     [
       [
-        "syow",
+        137,
         "Standard"
       ],
       "昭和基地時間"
     ],
     [
       [
-        "tahi",
+        138,
         "Standard"
       ],
       "タヒチ時間"
     ],
     [
       [
-        "taip",
+        139,
         "Standard"
       ],
       "台北標準時"
     ],
     [
       [
-        "taip",
+        139,
         "Daylight"
       ],
       "台北夏時間"
     ],
     [
       [
-        "taji",
+        140,
         "Standard"
       ],
       "タジキスタン時間"
     ],
     [
       [
-        "toke",
+        141,
         "Standard"
       ],
       "トケラウ時間"
     ],
     [
       [
-        "truk",
+        143,
         "Standard"
       ],
       "チューク時間"
     ],
     [
       [
-        "tuva",
+        145,
         "Standard"
       ],
       "ツバル時間"
     ],
     [
       [
-        "uzbe",
+        147,
         "Standard"
       ],
       "ウズベキスタン標準時"
     ],
     [
       [
-        "uzbe",
+        147,
         "Daylight"
       ],
       "ウズベキスタン夏時間"
     ],
     [
       [
-        "vene",
+        149,
         "Standard"
       ],
       "ベネズエラ時間"
     ],
     [
       [
-        "vlad",
+        150,
         "Standard"
       ],
       "ウラジオストク標準時"
     ],
     [
       [
-        "vlad",
+        150,
         "Daylight"
       ],
       "ウラジオストク夏時間"
     ],
     [
       [
-        "vost",
+        152,
         "Standard"
       ],
       "ボストーク基地時間"
     ],
     [
       [
-        "wake",
+        153,
         "Standard"
       ],
       "ウェーク島時間"
     ],
     [
       [
-        "wall",
+        154,
         "Standard"
       ],
       "ウォリス・フツナ時間"
     ],
     [
       [
-        "yaku",
+        155,
         "Standard"
       ],
       "ヤクーツク標準時"
     ],
     [
       [
-        "yaku",
+        155,
         "Daylight"
       ],
       "ヤクーツク夏時間"
     ],
     [
       [
-        "yuko",
+        157,
         "Standard"
       ],
       "ユーコン時間"

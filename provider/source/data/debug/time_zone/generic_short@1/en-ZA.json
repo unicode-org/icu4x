@@ -1,10 +1,10 @@
 {
   "defaults": {
-    "afce": "CAT",
-    "afea": "EAT",
-    "afso": "SAST",
-    "afwe": "WAT",
-    "mgmt": "GMT"
+    "1": "CAT",
+    "2": "EAT",
+    "4": "SAST",
+    "5": "WAT",
+    "100": "GMT"
   },
   "overrides": {
     "utc": "UTC"

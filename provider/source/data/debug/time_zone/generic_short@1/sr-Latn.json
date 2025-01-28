@@ -1,9 +1,9 @@
 {
   "defaults": {
-    "euce": "CET",
-    "euea": "EET",
-    "euwe": "WET",
-    "mgmt": "GMT"
+    "49": "CET",
+    "50": "EET",
+    "52": "WET",
+    "100": "GMT"
   },
   "overrides": {
     "utc": "UTC"

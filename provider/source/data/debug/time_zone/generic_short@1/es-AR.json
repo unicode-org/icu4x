@@ -1,7 +1,7 @@
 {
   "defaults": {
-    "arge": "ART",
-    "arwe": "WART"
+    "18": "ART",
+    "20": "WART"
   },
   "overrides": {
     "utc": "UTC"

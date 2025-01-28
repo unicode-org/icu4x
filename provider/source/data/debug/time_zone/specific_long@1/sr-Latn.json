@@ -2,1288 +2,1288 @@
   "defaults": [
     [
       [
-        "acre",
+        0,
         "Standard"
       ],
       "Akre standardno vreme"
     ],
     [
       [
-        "acre",
+        0,
         "Daylight"
       ],
       "Akre letnje računanje vremena"
     ],
     [
       [
-        "afce",
+        1,
         "Standard"
       ],
       "Centralno-afričko vreme"
     ],
     [
       [
-        "afea",
+        2,
         "Standard"
       ],
       "Istočno-afričko vreme"
     ],
     [
       [
-        "afgh",
+        3,
         "Standard"
       ],
       "Avganistan vreme"
     ],
     [
       [
-        "afso",
+        4,
         "Standard"
       ],
       "Južno-afričko vreme"
     ],
     [
       [
-        "afwe",
+        5,
         "Standard"
       ],
       "Zapadno-afričko standardno vreme"
     ],
     [
       [
-        "afwe",
+        5,
         "Daylight"
       ],
       "Zapadno-afričko letnje vreme"
     ],
     [
       [
-        "alam",
+        6,
         "Standard"
       ],
       "Almati standardno vreme"
     ],
     [
       [
-        "alam",
+        6,
         "Daylight"
       ],
       "Almati letnje računanje vremena"
     ],
     [
       [
-        "alas",
+        7,
         "Standard"
       ],
       "Aljaska, standardno vreme"
     ],
     [
       [
-        "alas",
+        7,
         "Daylight"
       ],
       "Aljaska, letnje vreme"
     ],
     [
       [
-        "amaz",
+        8,
         "Standard"
       ],
       "Amazon, standardno vreme"
     ],
     [
       [
-        "amaz",
+        8,
         "Daylight"
       ],
       "Amazon, letnje vreme"
     ],
     [
       [
-        "amce",
+        9,
         "Standard"
       ],
       "Severnoameričko centralno standardno vreme"
     ],
     [
       [
-        "amce",
+        9,
         "Daylight"
       ],
       "Severnoameričko centralno letnje vreme"
     ],
     [
       [
-        "amea",
+        10,
         "Standard"
       ],
       "Severnoameričko istočno standardno vreme"
     ],
     [
       [
-        "amea",
+        10,
         "Daylight"
       ],
       "Severnoameričko istočno letnje vreme"
     ],
     [
       [
-        "ammo",
+        11,
         "Standard"
       ],
       "Severnoameričko planinsko standardno vreme"
     ],
     [
       [
-        "ammo",
+        11,
         "Daylight"
       ],
       "Severnoameričko planinsko letnje vreme"
     ],
     [
       [
-        "ampa",
+        12,
         "Standard"
       ],
       "Severnoameričko pacifičko standardno vreme"
     ],
     [
       [
-        "ampa",
+        12,
         "Daylight"
       ],
       "Severnoameričko pacifičko letnje vreme"
     ],
     [
       [
-        "anad",
+        13,
         "Standard"
       ],
       "Anadir standardno vreme"
     ],
     [
       [
-        "anad",
+        13,
         "Daylight"
       ],
       "Anadir letnje računanje vremena"
     ],
     [
       [
-        "apia",
+        14,
         "Standard"
       ],
       "Apija, standardno vreme"
     ],
     [
       [
-        "apia",
+        14,
         "Daylight"
       ],
       "Apija, letnje vreme"
     ],
     [
       [
-        "aqta",
+        15,
         "Standard"
       ],
       "Akvatau standardno vreme"
     ],
     [
       [
-        "aqta",
+        15,
         "Daylight"
       ],
       "Akvatau letnje računanje vremena"
     ],
     [
       [
-        "aqto",
+        16,
         "Standard"
       ],
       "Akutobe standardno vreme"
     ],
     [
       [
-        "aqto",
+        16,
         "Daylight"
       ],
       "Akutobe letnje računanje vremena"
     ],
     [
       [
-        "arab",
+        17,
         "Standard"
       ],
       "Arabijsko standardno vreme"
     ],
     [
       [
-        "arab",
+        17,
         "Daylight"
       ],
       "Arabijsko letnje vreme"
     ],
     [
       [
-        "arge",
+        18,
         "Standard"
       ],
       "Argentina, standardno vreme"
     ],
     [
       [
-        "arge",
+        18,
         "Daylight"
       ],
       "Argentina, letnje vreme"
     ],
     [
       [
-        "arwe",
+        20,
         "Standard"
       ],
       "Zapadna Argentina, standardno vreme"
     ],
     [
       [
-        "arwe",
+        20,
         "Daylight"
       ],
       "Zapadna Argentina, letnje vreme"
     ],
     [
       [
-        "atla",
+        21,
         "Standard"
       ],
       "Atlantsko standardno vreme"
     ],
     [
       [
-        "atla",
+        21,
         "Daylight"
       ],
       "Atlantsko letnje vreme"
     ],
     [
       [
-        "auce",
+        22,
         "Standard"
       ],
       "Australijsko centralno standardno vreme"
     ],
     [
       [
-        "auce",
+        22,
         "Daylight"
       ],
       "Australijsko centralno letnje vreme"
     ],
     [
       [
-        "aucw",
+        23,
         "Standard"
       ],
       "Australijsko centralno zapadno standardno vreme"
     ],
     [
       [
-        "aucw",
+        23,
         "Daylight"
       ],
       "Australijsko centralno zapadno letnje vreme"
     ],
     [
       [
-        "auea",
+        24,
         "Standard"
       ],
       "Australijsko istočno standardno vreme"
     ],
     [
       [
-        "auea",
+        24,
         "Daylight"
       ],
       "Australijsko istočno letnje vreme"
     ],
     [
       [
-        "auwe",
+        25,
         "Standard"
       ],
       "Australijsko zapadno standardno vreme"
     ],
     [
       [
-        "auwe",
+        25,
         "Daylight"
       ],
       "Australijsko zapadno letnje vreme"
     ],
     [
       [
-        "bhut",
+        29,
         "Standard"
       ],
       "Butan vreme"
     ],
     [
       [
-        "boli",
+        30,
         "Standard"
       ],
       "Bolivija vreme"
     ],
     [
       [
-        "bras",
+        31,
         "Standard"
       ],
       "Brazilija, standardno vreme"
     ],
     [
       [
-        "bras",
+        31,
         "Daylight"
       ],
       "Brazilija, letnje vreme"
     ],
     [
       [
-        "brun",
+        32,
         "Standard"
       ],
       "Brunej Darusalum vreme"
     ],
     [
       [
-        "cham",
+        35,
         "Standard"
       ],
       "Čamoro vreme"
     ],
     [
       [
-        "chil",
+        37,
         "Standard"
       ],
       "Čile, standardno vreme"
     ],
     [
       [
-        "chil",
+        37,
         "Daylight"
       ],
       "Čile, letnje vreme"
     ],
     [
       [
-        "chin",
+        38,
         "Standard"
       ],
       "Kinesko standardno vreme"
     ],
     [
       [
-        "chin",
+        38,
         "Daylight"
       ],
       "Kina, letnje vreme"
     ],
     [
       [
-        "chri",
+        39,
         "Standard"
       ],
       "Božićno ostrvo vreme"
     ],
     [
       [
-        "coco",
+        40,
         "Standard"
       ],
       "Kokos (Keling) Ostrva vreme"
     ],
     [
       [
-        "cook",
+        42,
         "Standard"
       ],
       "Kukova ostrva, standardno vreme"
     ],
     [
       [
-        "cook",
+        42,
         "Daylight"
       ],
       "Kukova ostrva, polu-letnje vreme"
     ],
     [
       [
-        "davi",
+        44,
         "Standard"
       ],
       "Dejvis vreme"
     ],
     [
       [
-        "dumo",
+        45,
         "Standard"
       ],
       "Dimon d’Urvil vreme"
     ],
     [
       [
-        "east",
+        46,
         "Standard"
       ],
       "Uskršnja ostrva, standardno vreme"
     ],
     [
       [
-        "east",
+        46,
         "Daylight"
       ],
       "Uskršnja ostrva, letnje vreme"
     ],
     [
       [
-        "eati",
+        47,
         "Standard"
       ],
       "Istočni timor vreme"
     ],
     [
       [
-        "ecua",
+        48,
         "Standard"
       ],
       "Ekvador vreme"
     ],
     [
       [
-        "euce",
+        49,
         "Standard"
       ],
       "Srednjeevropsko standardno vreme"
     ],
     [
       [
-        "euce",
+        49,
         "Daylight"
       ],
       "Srednjeevropsko letnje vreme"
     ],
     [
       [
-        "euea",
+        50,
         "Standard"
       ],
       "Istočnoevropsko standardno vreme"
     ],
     [
       [
-        "euea",
+        50,
         "Daylight"
       ],
       "Istočnoevropsko letnje vreme"
     ],
     [
       [
-        "eufe",
+        51,
         "Standard"
       ],
       "Vreme daljeg istoka Evrope"
     ],
     [
       [
-        "euwe",
+        52,
         "Standard"
       ],
       "Zapadnoevropsko standardno vreme"
     ],
     [
       [
-        "euwe",
+        52,
         "Daylight"
       ],
       "Zapadnoevropsko letnje vreme"
     ],
     [
       [
-        "falk",
+        53,
         "Standard"
       ],
       "Folklandska Ostrva, standardno vreme"
     ],
     [
       [
-        "falk",
+        53,
         "Daylight"
       ],
       "Folklandska Ostrva, letnje vreme"
     ],
     [
       [
-        "frgu",
+        55,
         "Standard"
       ],
       "Francuska Gvajana vreme"
     ],
     [
       [
-        "frso",
+        56,
         "Standard"
       ],
       "Francusko južno i antarktičko vreme"
     ],
     [
       [
-        "gala",
+        57,
         "Standard"
       ],
       "Galapagos vreme"
     ],
     [
       [
-        "gamb",
+        58,
         "Standard"
       ],
       "Gambije vreme"
     ],
     [
       [
-        "giis",
+        60,
         "Standard"
       ],
       "Gilbert ostrva vreme"
     ],
     [
       [
-        "grea",
+        61,
         "Standard"
       ],
       "Istočni Grenland, standardno vreme"
     ],
     [
       [
-        "grea",
+        61,
         "Daylight"
       ],
       "Istočni Grenland, letnje vreme"
     ],
     [
       [
-        "grwe",
+        63,
         "Standard"
       ],
       "Zapadni Grenland, standardno vreme"
     ],
     [
       [
-        "grwe",
+        63,
         "Daylight"
       ],
       "Zapadni Grenland, letnje vreme"
     ],
     [
       [
-        "guam",
+        64,
         "Standard"
       ],
       "Guam standardno vreme"
     ],
     [
       [
-        "gulf",
+        65,
         "Standard"
       ],
       "Zalivsko vreme"
     ],
     [
       [
-        "guya",
+        66,
         "Standard"
       ],
       "Gvajana vreme"
     ],
     [
       [
-        "haal",
+        67,
         "Standard"
       ],
       "Havajsko-aleutsko standardno vreme"
     ],
     [
       [
-        "haal",
+        67,
         "Daylight"
       ],
       "Havajsko-aleutsko letnje vreme"
     ],
     [
       [
-        "hoko",
+        68,
         "Standard"
       ],
       "Hong Kong, standardno vreme"
     ],
     [
       [
-        "hoko",
+        68,
         "Daylight"
       ],
       "Hong Kong, letnje vreme"
     ],
     [
       [
-        "ince",
+        70,
         "Standard"
       ],
       "Centralno-indonezijsko vreme"
     ],
     [
       [
-        "indi",
+        71,
         "Standard"
       ],
       "Indijsko standardno vreme"
     ],
     [
       [
-        "indo",
+        72,
         "Standard"
       ],
       "Indokina vreme"
     ],
     [
       [
-        "inea",
+        73,
         "Standard"
       ],
       "Istočno-indonezijsko vreme"
     ],
     [
       [
-        "inoc",
+        74,
         "Standard"
       ],
       "Indijsko okeansko vreme"
     ],
     [
       [
-        "inwe",
+        75,
         "Standard"
       ],
       "Zapadno-indonezijsko vreme"
     ],
     [
       [
-        "irku",
+        77,
         "Standard"
       ],
       "Irkuck, standardno vreme"
     ],
     [
       [
-        "irku",
+        77,
         "Daylight"
       ],
       "Irkuck, letnje vreme"
     ],
     [
       [
-        "isra",
+        78,
         "Standard"
       ],
       "Izraelsko standardno vreme"
     ],
     [
       [
-        "isra",
+        78,
         "Daylight"
       ],
       "Izraelsko letnje vreme"
     ],
     [
       [
-        "japa",
+        79,
         "Standard"
       ],
       "Japansko standardno vreme"
     ],
     [
       [
-        "japa",
+        79,
         "Daylight"
       ],
       "Japansko letnje vreme"
     ],
     [
       [
-        "kaea",
+        80,
         "Standard"
       ],
       "Istočno-kazahstansko vreme"
     ],
     [
       [
-        "kamc",
+        81,
         "Standard"
       ],
       "Petropavlovsko-kamčatsko standardno vreme"
     ],
     [
       [
-        "kamc",
+        81,
         "Daylight"
       ],
       "Petropavlovsko-kamčatsko letnje računanje vremena"
     ],
     [
       [
-        "kawe",
+        82,
         "Standard"
       ],
       "Zapadno-kazahstansko vreme"
     ],
     [
       [
-        "kaza",
+        83,
         "Standard"
       ],
       "Kazahstansko vreme"
     ],
     [
       [
-        "kore",
+        84,
         "Standard"
       ],
       "Korejsko standardno vreme"
     ],
     [
       [
-        "kore",
+        84,
         "Daylight"
       ],
       "Korejsko letnje vreme"
     ],
     [
       [
-        "kosr",
+        85,
         "Standard"
       ],
       "Košre vreme"
     ],
     [
       [
-        "kras",
+        86,
         "Standard"
       ],
       "Krasnojarsk, standardno vreme"
     ],
     [
       [
-        "kras",
+        86,
         "Daylight"
       ],
       "Krasnojarsk, letnje vreme"
     ],
     [
       [
-        "kyrg",
+        87,
         "Standard"
       ],
       "Kirgistan vreme"
     ],
     [
       [
-        "lank",
+        88,
         "Standard"
       ],
       "Šri Lanka vreme"
     ],
     [
       [
-        "liis",
+        89,
         "Standard"
       ],
       "Ostrva Lajn vreme"
     ],
     [
       [
-        "loho",
+        90,
         "Standard"
       ],
       "Lord Hov, standardno vreme"
     ],
     [
       [
-        "loho",
+        90,
         "Daylight"
       ],
       "Lord Hov, letnje vreme"
     ],
     [
       [
-        "maca",
+        91,
         "Standard"
       ],
       "Makao standardno vreme"
     ],
     [
       [
-        "maca",
+        91,
         "Daylight"
       ],
       "Makao letnje računanje vremena"
     ],
     [
       [
-        "maga",
+        92,
         "Standard"
       ],
       "Magadan, standardno vreme"
     ],
     [
       [
-        "maga",
+        92,
         "Daylight"
       ],
       "Magadan, letnje vreme"
     ],
     [
       [
-        "mais",
+        93,
         "Standard"
       ],
       "Maršalska Ostrva vreme"
     ],
     [
       [
-        "mala",
+        94,
         "Standard"
       ],
       "Malezija vreme"
     ],
     [
       [
-        "mald",
+        95,
         "Standard"
       ],
       "Maldivi vreme"
     ],
     [
       [
-        "marq",
+        96,
         "Standard"
       ],
       "Markiz vreme"
     ],
     [
       [
-        "maws",
+        98,
         "Standard"
       ],
       "Moson vreme"
     ],
     [
       [
-        "mepa",
+        99,
         "Standard"
       ],
       "Meksički Pacifik, standardno vreme"
     ],
     [
       [
-        "mepa",
+        99,
         "Daylight"
       ],
       "Meksički Pacifik, letnje vreme"
     ],
     [
       [
-        "mgmt",
+        100,
         "Standard"
       ],
       "Srednje vreme po Griniču"
     ],
     [
       [
-        "mosc",
+        102,
         "Standard"
       ],
       "Moskva, standardno vreme"
     ],
     [
       [
-        "mosc",
+        102,
         "Daylight"
       ],
       "Moskva, letnje vreme"
     ],
     [
       [
-        "myan",
+        103,
         "Standard"
       ],
       "Mijanmar vreme"
     ],
     [
       [
-        "naur",
+        104,
         "Standard"
       ],
       "Nauru vreme"
     ],
     [
       [
-        "nepa",
+        106,
         "Standard"
       ],
       "Nepal vreme"
     ],
     [
       [
-        "newf",
+        107,
         "Standard"
       ],
       "Njufaundlend, standardno vreme"
     ],
     [
       [
-        "newf",
+        107,
         "Daylight"
       ],
       "Njufaundlend, letnje vreme"
     ],
     [
       [
-        "neze",
+        108,
         "Standard"
       ],
       "Novi Zeland, standardno vreme"
     ],
     [
       [
-        "neze",
+        108,
         "Daylight"
       ],
       "Novi Zeland, letnje vreme"
     ],
     [
       [
-        "niue",
+        109,
         "Standard"
       ],
       "Niue vreme"
     ],
     [
       [
-        "noma",
+        110,
         "Standard"
       ],
       "Severna Marijanska Ostrva vreme"
     ],
     [
       [
-        "norf",
+        111,
         "Standard"
       ],
       "Norfolk Ostrvo, standardno vreme"
     ],
     [
       [
-        "norf",
+        111,
         "Daylight"
       ],
       "Norfolk Ostrvo, letnje vreme"
     ],
     [
       [
-        "noro",
+        112,
         "Standard"
       ],
       "Fernando de Noronja, standardno vreme"
     ],
     [
       [
-        "noro",
+        112,
         "Daylight"
       ],
       "Fernando de Noronja, letnje vreme"
     ],
     [
       [
-        "novo",
+        113,
         "Standard"
       ],
       "Novosibirsk, standardno vreme"
     ],
     [
       [
-        "novo",
+        113,
         "Daylight"
       ],
       "Novosibirsk, letnje vreme"
     ],
     [
       [
-        "pala",
+        116,
         "Standard"
       ],
       "Palau vreme"
     ],
     [
       [
-        "pang",
+        117,
         "Standard"
       ],
       "Papua Nova Gvineja vreme"
     ],
     [
       [
-        "phis",
+        121,
         "Standard"
       ],
       "Feniks ostrva vreme"
     ],
     [
       [
-        "pitc",
+        123,
         "Standard"
       ],
       "Pitkern vreme"
     ],
     [
       [
-        "pona",
+        124,
         "Standard"
       ],
       "Ponpej vreme"
     ],
     [
       [
-        "pyon",
+        125,
         "Standard"
       ],
       "Pjongjanško vreme"
     ],
     [
       [
-        "qyzy",
+        126,
         "Standard"
       ],
       "Kizilorda standardno vreme"
     ],
     [
       [
-        "qyzy",
+        126,
         "Daylight"
       ],
       "Kizilorda letnje računanje vremena"
     ],
     [
       [
-        "reun",
+        127,
         "Standard"
       ],
       "Reinion vreme"
     ],
     [
       [
-        "roth",
+        128,
         "Standard"
       ],
       "Rotera vreme"
     ],
     [
       [
-        "sama",
+        130,
         "Standard"
       ],
       "Samara standardno vreme"
     ],
     [
       [
-        "sama",
+        130,
         "Daylight"
       ],
       "Samara letnje računanje vremena"
     ],
     [
       [
-        "samo",
+        131,
         "Standard"
       ],
       "Samoa, standardno vreme"
     ],
     [
       [
-        "samo",
+        131,
         "Daylight"
       ],
       "Samoa, letnje vreme"
     ],
     [
       [
-        "seyc",
+        132,
         "Standard"
       ],
       "Sejšeli vreme"
     ],
     [
       [
-        "soge",
+        134,
         "Standard"
       ],
       "Južna Džordžija vreme"
     ],
     [
       [
-        "solo",
+        135,
         "Standard"
       ],
       "Solomonska Ostrva vreme"
     ],
     [
       [
-        "suri",
+        136,
         "Standard"
       ],
       "Surinam vreme"
     ],
     [
       [
-        "syow",
+        137,
         "Standard"
       ],
       "Šova vreme"
     ],
     [
       [
-        "tahi",
+        138,
         "Standard"
       ],
       "Tahiti vreme"
     ],
     [
       [
-        "taip",
+        139,
         "Standard"
       ],
       "Tajpej, standardno vreme"
     ],
     [
       [
-        "taip",
+        139,
         "Daylight"
       ],
       "Tajpej, letnje vreme"
     ],
     [
       [
-        "taji",
+        140,
         "Standard"
       ],
       "Tadžikistan vreme"
     ],
     [
       [
-        "toke",
+        141,
         "Standard"
       ],
       "Tokelau vreme"
     ],
     [
       [
-        "truk",
+        143,
         "Standard"
       ],
       "Čuuk vreme"
     ],
     [
       [
-        "tuva",
+        145,
         "Standard"
       ],
       "Tuvalu vreme"
     ],
     [
       [
-        "uzbe",
+        147,
         "Standard"
       ],
       "Uzbekistan, standardno vreme"
     ],
     [
       [
-        "uzbe",
+        147,
         "Daylight"
       ],
       "Uzbekistan, letnje vreme"
     ],
     [
       [
-        "vene",
+        149,
         "Standard"
       ],
       "Venecuela vreme"
     ],
     [
       [
-        "vlad",
+        150,
         "Standard"
       ],
       "Vladivostok, standardno vreme"
     ],
     [
       [
-        "vlad",
+        150,
         "Daylight"
       ],
       "Vladivostok, letnje vreme"
     ],
     [
       [
-        "vost",
+        152,
         "Standard"
       ],
       "Vostok vreme"
     ],
     [
       [
-        "wake",
+        153,
         "Standard"
       ],
       "Vejk ostrvo vreme"
     ],
     [
       [
-        "wall",
+        154,
         "Standard"
       ],
       "Valis i Futuna Ostrva vreme"
     ],
     [
       [
-        "yaku",
+        155,
         "Standard"
       ],
       "Jakutsk, standardno vreme"
     ],
     [
       [
-        "yaku",
+        155,
         "Daylight"
       ],
       "Jakutsk, letnje vreme"
     ],
     [
       [
-        "yuko",
+        157,
         "Standard"
       ],
       "Jukon"

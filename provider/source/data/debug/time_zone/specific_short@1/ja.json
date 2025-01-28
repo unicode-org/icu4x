@@ -2,14 +2,14 @@
   "defaults": [
     [
       [
-        "japa",
+        79,
         "Standard"
       ],
       "JST"
     ],
     [
       [
-        "japa",
+        79,
         "Daylight"
       ],
       "JDT"

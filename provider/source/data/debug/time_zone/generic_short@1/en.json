@@ -1,13 +1,13 @@
 {
   "defaults": {
-    "alas": "AKT",
-    "amce": "CT",
-    "amea": "ET",
-    "ammo": "MT",
-    "ampa": "PT",
-    "atla": "AT",
-    "haal": "HAT",
-    "mgmt": "GMT"
+    "7": "AKT",
+    "9": "CT",
+    "10": "ET",
+    "11": "MT",
+    "12": "PT",
+    "21": "AT",
+    "67": "HAT",
+    "100": "GMT"
   },
   "overrides": {
     "ushnl": "HST",

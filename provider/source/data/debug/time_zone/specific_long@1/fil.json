@@ -2,1351 +2,1351 @@
   "defaults": [
     [
       [
-        "afce",
+        1,
         "Standard"
       ],
       "Oras sa Gitnang Africa"
     ],
     [
       [
-        "afea",
+        2,
         "Standard"
       ],
       "Oras sa Silangang Africa"
     ],
     [
       [
-        "afgh",
+        3,
         "Standard"
       ],
       "Oras sa Afghanistan"
     ],
     [
       [
-        "afso",
+        4,
         "Standard"
       ],
       "Oras sa Timog Africa"
     ],
     [
       [
-        "afwe",
+        5,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Africa"
     ],
     [
       [
-        "afwe",
+        5,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Africa"
     ],
     [
       [
-        "alas",
+        7,
         "Standard"
       ],
       "Standard na Oras sa Alaska"
     ],
     [
       [
-        "alas",
+        7,
         "Daylight"
       ],
       "Daylight Time sa Alaska"
     ],
     [
       [
-        "amaz",
+        8,
         "Standard"
       ],
       "Standard na Oras sa Amazon"
     ],
     [
       [
-        "amaz",
+        8,
         "Daylight"
       ],
       "Oras sa Tag-init ng Amazon"
     ],
     [
       [
-        "amce",
+        9,
         "Standard"
       ],
       "Sentral na Standard na Oras sa North America"
     ],
     [
       [
-        "amce",
+        9,
         "Daylight"
       ],
       "Sentral na Daylight na Oras sa North America"
     ],
     [
       [
-        "amea",
+        10,
         "Standard"
       ],
       "Standard na Oras sa Silangan ng Hilangang Amerika"
     ],
     [
       [
-        "amea",
+        10,
         "Daylight"
       ],
       "Daylight na Oras sa Silangan ng Hilagang Amerika"
     ],
     [
       [
-        "ammo",
+        11,
         "Standard"
       ],
       "Standard na Oras sa Bundok sa Hilagang Amerika"
     ],
     [
       [
-        "ammo",
+        11,
         "Daylight"
       ],
       "Daylight na Oras sa Bundok sa Hilagang Amerika"
     ],
     [
       [
-        "ampa",
+        12,
         "Standard"
       ],
       "Standard na Oras sa Pasipiko sa Hilagang Amerika"
     ],
     [
       [
-        "ampa",
+        12,
         "Daylight"
       ],
       "Daylight na Oras sa Pasipiko sa Hilagang Amerika"
     ],
     [
       [
-        "anad",
+        13,
         "Standard"
       ],
       "Standard Time sa Anadyr"
     ],
     [
       [
-        "anad",
+        13,
         "Daylight"
       ],
       "Summer Time sa Anadyr"
     ],
     [
       [
-        "apia",
+        14,
         "Standard"
       ],
       "Standard na Oras sa Apia"
     ],
     [
       [
-        "apia",
+        14,
         "Daylight"
       ],
       "Daylight Time sa Apia"
     ],
     [
       [
-        "arab",
+        17,
         "Standard"
       ],
       "Standard na Oras sa Arabia"
     ],
     [
       [
-        "arab",
+        17,
         "Daylight"
       ],
       "Daylight Time sa Arabia"
     ],
     [
       [
-        "arge",
+        18,
         "Standard"
       ],
       "Standard na Oras sa Argentina"
     ],
     [
       [
-        "arge",
+        18,
         "Daylight"
       ],
       "Oras sa Tag-init ng Argentina"
     ],
     [
       [
-        "arme",
+        19,
         "Daylight"
       ],
       "Oras sa Tag-init ng Armenia"
     ],
     [
       [
-        "arwe",
+        20,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Argentina"
     ],
     [
       [
-        "arwe",
+        20,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Argentina"
     ],
     [
       [
-        "atla",
+        21,
         "Standard"
       ],
       "Standard na Oras sa Atlantiko"
     ],
     [
       [
-        "atla",
+        21,
         "Daylight"
       ],
       "Daylight na Oras sa Atlantiko"
     ],
     [
       [
-        "auce",
+        22,
         "Standard"
       ],
       "Standard na Oras sa Gitnang Australya"
     ],
     [
       [
-        "auce",
+        22,
         "Daylight"
       ],
       "Daylight Time sa Gitnang Australya"
     ],
     [
       [
-        "aucw",
+        23,
         "Standard"
       ],
       "Standard Time ng Gitnang Kanluran ng Australia"
     ],
     [
       [
-        "aucw",
+        23,
         "Daylight"
       ],
       "Daylight Time sa Gitnang Kanlurang Australia"
     ],
     [
       [
-        "auea",
+        24,
         "Standard"
       ],
       "Standard na Oras sa Silangang Australia"
     ],
     [
       [
-        "auea",
+        24,
         "Daylight"
       ],
       "Daylight Time sa Silangang Australia"
     ],
     [
       [
-        "auwe",
+        25,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Australia"
     ],
     [
       [
-        "auwe",
+        25,
         "Daylight"
       ],
       "Daylight Time sa Kanlurang Australia"
     ],
     [
       [
-        "azer",
+        26,
         "Daylight"
       ],
       "Oras sa Tag-init ng Azerbaijan"
     ],
     [
       [
-        "azor",
+        27,
         "Daylight"
       ],
       "Oras sa Tag-init ng Azores"
     ],
     [
       [
-        "bang",
+        28,
         "Daylight"
       ],
       "Oras sa Tag-init ng Bangladesh"
     ],
     [
       [
-        "bhut",
+        29,
         "Standard"
       ],
       "Oras sa Bhutan"
     ],
     [
       [
-        "boli",
+        30,
         "Standard"
       ],
       "Oras sa Bolivia"
     ],
     [
       [
-        "bras",
+        31,
         "Standard"
       ],
       "Standard na Oras sa Brasilia"
     ],
     [
       [
-        "bras",
+        31,
         "Daylight"
       ],
       "Oras sa Tag-init ng Brasilia"
     ],
     [
       [
-        "brun",
+        32,
         "Standard"
       ],
       "Oras sa Brunei Darussalam"
     ],
     [
       [
-        "cave",
+        34,
         "Daylight"
       ],
       "Oras sa Tag-init ng Cape Verde"
     ],
     [
       [
-        "cham",
+        35,
         "Standard"
       ],
       "Standard na Oras sa Chamorro"
     ],
     [
       [
-        "chat",
+        36,
         "Daylight"
       ],
       "Daylight Time sa Chatham"
     ],
     [
       [
-        "chil",
+        37,
         "Standard"
       ],
       "Standard na Oras sa Chile"
     ],
     [
       [
-        "chil",
+        37,
         "Daylight"
       ],
       "Oras sa Tag-init ng Chile"
     ],
     [
       [
-        "chin",
+        38,
         "Standard"
       ],
       "Standard na Oras sa China"
     ],
     [
       [
-        "chin",
+        38,
         "Daylight"
       ],
       "Daylight Time sa China"
     ],
     [
       [
-        "chri",
+        39,
         "Standard"
       ],
       "Oras sa Christmas Island"
     ],
     [
       [
-        "coco",
+        40,
         "Standard"
       ],
       "Oras sa Cocos Islands"
     ],
     [
       [
-        "colo",
+        41,
         "Daylight"
       ],
       "Oras sa Tag-init ng Colombia"
     ],
     [
       [
-        "cook",
+        42,
         "Daylight"
       ],
       "Oras sa Kalahati ng Tag-init ng Cook Islands"
     ],
     [
       [
-        "cuba",
+        43,
         "Daylight"
       ],
       "Daylight na Oras sa Cuba"
     ],
     [
       [
-        "davi",
+        44,
         "Standard"
       ],
       "Oras sa Davis"
     ],
     [
       [
-        "dumo",
+        45,
         "Standard"
       ],
       "Oras sa Dumont-d’Urville"
     ],
     [
       [
-        "east",
+        46,
         "Standard"
       ],
       "Standard na Oras sa Easter Island"
     ],
     [
       [
-        "east",
+        46,
         "Daylight"
       ],
       "Oras sa Tag-init ng Easter Island"
     ],
     [
       [
-        "eati",
+        47,
         "Standard"
       ],
       "Oras sa East Timor"
     ],
     [
       [
-        "ecua",
+        48,
         "Standard"
       ],
       "Oras sa Ecuador"
     ],
     [
       [
-        "euce",
+        49,
         "Standard"
       ],
       "Standard na Oras sa Gitnang Europe"
     ],
     [
       [
-        "euce",
+        49,
         "Daylight"
       ],
       "Oras sa Tag-init ng Gitnang Europe"
     ],
     [
       [
-        "euea",
+        50,
         "Standard"
       ],
       "Standard na Oras sa Silangang Europe"
     ],
     [
       [
-        "euea",
+        50,
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Europe"
     ],
     [
       [
-        "eufe",
+        51,
         "Standard"
       ],
       "Oras sa Pinaka-silangang Europe"
     ],
     [
       [
-        "euwe",
+        52,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Europe"
     ],
     [
       [
-        "euwe",
+        52,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Europe"
     ],
     [
       [
-        "falk",
+        53,
         "Daylight"
       ],
       "Oras sa Tag-init ng Falkland Islands"
     ],
     [
       [
-        "fiji",
+        54,
         "Daylight"
       ],
       "Oras sa Tag-init ng Fiji"
     ],
     [
       [
-        "frgu",
+        55,
         "Standard"
       ],
       "Oras sa French Guiana"
     ],
     [
       [
-        "frso",
+        56,
         "Standard"
       ],
       "Oras sa Katimugang France at Antartiko"
     ],
     [
       [
-        "gala",
+        57,
         "Standard"
       ],
       "Oras sa Galapagos"
     ],
     [
       [
-        "gamb",
+        58,
         "Standard"
       ],
       "Oras sa Gambier"
     ],
     [
       [
-        "geor",
+        59,
         "Daylight"
       ],
       "Oras sa Tag-init ng Georgia"
     ],
     [
       [
-        "giis",
+        60,
         "Standard"
       ],
       "Oras sa Gilbert Islands"
     ],
     [
       [
-        "grea",
+        61,
         "Standard"
       ],
       "Standard na Oras sa Silangang Greenland"
     ],
     [
       [
-        "grea",
+        61,
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Greenland"
     ],
     [
       [
-        "grwe",
+        63,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Greenland"
     ],
     [
       [
-        "grwe",
+        63,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Greenland"
     ],
     [
       [
-        "gulf",
+        65,
         "Standard"
       ],
       "Oras sa Gulf"
     ],
     [
       [
-        "guya",
+        66,
         "Standard"
       ],
       "Oras sa Guyana"
     ],
     [
       [
-        "haal",
+        67,
         "Standard"
       ],
       "Standard na Oras sa Hawaii-Aleutian"
     ],
     [
       [
-        "haal",
+        67,
         "Daylight"
       ],
       "Oras sa Tag-init ng Hawaii-Aleutian"
     ],
     [
       [
-        "hoko",
+        68,
         "Daylight"
       ],
       "Oras sa Tag-init ng Hong Kong"
     ],
     [
       [
-        "hovd",
+        69,
         "Daylight"
       ],
       "Oras sa Tag-init ng Hovd"
     ],
     [
       [
-        "ince",
+        70,
         "Standard"
       ],
       "Oras sa Gitnang Indonesia"
     ],
     [
       [
-        "indi",
+        71,
         "Standard"
       ],
       "Standard na Oras sa India"
     ],
     [
       [
-        "indo",
+        72,
         "Standard"
       ],
       "Oras sa Indochina"
     ],
     [
       [
-        "inea",
+        73,
         "Standard"
       ],
       "Oras sa Silangang Indonesia"
     ],
     [
       [
-        "inoc",
+        74,
         "Standard"
       ],
       "Oras sa Indian Ocean"
     ],
     [
       [
-        "inwe",
+        75,
         "Standard"
       ],
       "Oras sa Kanlurang Indonesia"
     ],
     [
       [
-        "iran",
+        76,
         "Daylight"
       ],
       "Daylight Time sa Iran"
     ],
     [
       [
-        "irku",
+        77,
         "Standard"
       ],
       "Standard na Oras sa Irkutsk"
     ],
     [
       [
-        "irku",
+        77,
         "Daylight"
       ],
       "Oras sa Tag-init ng Irkutsk"
     ],
     [
       [
-        "isra",
+        78,
         "Standard"
       ],
       "Standard na Oras sa Israel"
     ],
     [
       [
-        "isra",
+        78,
         "Daylight"
       ],
       "Daylight Time sa Israel"
     ],
     [
       [
-        "japa",
+        79,
         "Daylight"
       ],
       "Daylight Time sa Japan"
     ],
     [
       [
-        "kaea",
+        80,
         "Standard"
       ],
       "Oras sa Silangang Kazakhstan"
     ],
     [
       [
-        "kamc",
+        81,
         "Standard"
       ],
       "Standard Time sa Petropavlovsk-Kamchatski"
     ],
     [
       [
-        "kamc",
+        81,
         "Daylight"
       ],
       "Summer Time sa Petropavlovsk-Kamchatski"
     ],
     [
       [
-        "kawe",
+        82,
         "Standard"
       ],
       "Oras sa Kanlurang Kazakhstan"
     ],
     [
       [
-        "kaza",
+        83,
         "Standard"
       ],
       "Oras ng Kazakhstan"
     ],
     [
       [
-        "kore",
+        84,
         "Standard"
       ],
       "Standard na Oras sa Korea"
     ],
     [
       [
-        "kore",
+        84,
         "Daylight"
       ],
       "Daylight Time sa Korea"
     ],
     [
       [
-        "kosr",
+        85,
         "Standard"
       ],
       "Oras sa Kosrae"
     ],
     [
       [
-        "kras",
+        86,
         "Standard"
       ],
       "Standard na Oras sa Krasnoyarsk"
     ],
     [
       [
-        "kras",
+        86,
         "Daylight"
       ],
       "Oras sa Tag-init ng Krasnoyarsk"
     ],
     [
       [
-        "kyrg",
+        87,
         "Standard"
       ],
       "Oras sa Kyrgystan"
     ],
     [
       [
-        "liis",
+        89,
         "Standard"
       ],
       "Oras sa Line Islands"
     ],
     [
       [
-        "loho",
+        90,
         "Daylight"
       ],
       "Daylight Time sa Lorde Howe"
     ],
     [
       [
-        "maga",
+        92,
         "Standard"
       ],
       "Standard na Oras sa Magadan"
     ],
     [
       [
-        "maga",
+        92,
         "Daylight"
       ],
       "Oras sa Tag-init ng Magadan"
     ],
     [
       [
-        "mais",
+        93,
         "Standard"
       ],
       "Oras sa Marshall Islands"
     ],
     [
       [
-        "mala",
+        94,
         "Standard"
       ],
       "Oras sa Malaysia"
     ],
     [
       [
-        "mald",
+        95,
         "Standard"
       ],
       "Oras sa Maldives"
     ],
     [
       [
-        "marq",
+        96,
         "Standard"
       ],
       "Oras sa Marquesas"
     ],
     [
       [
-        "maur",
+        97,
         "Daylight"
       ],
       "Oras sa Tag-init ng Mauritius"
     ],
     [
       [
-        "maws",
+        98,
         "Standard"
       ],
       "Oras sa Mawson"
     ],
     [
       [
-        "mepa",
+        99,
         "Standard"
       ],
       "Standard na Oras sa Pasipiko ng Mexico"
     ],
     [
       [
-        "mepa",
+        99,
         "Daylight"
       ],
       "Daylight na Oras sa Pasipiko ng Mexico"
     ],
     [
       [
-        "mgmt",
+        100,
         "Standard"
       ],
       "Greenwich Mean Time"
     ],
     [
       [
-        "mong",
+        101,
         "Standard"
       ],
       "Standard na Oras sa Ulan Bator"
     ],
     [
       [
-        "mong",
+        101,
         "Daylight"
       ],
       "Oras sa Tag-init ng Ulan Bator"
     ],
     [
       [
-        "mosc",
+        102,
         "Standard"
       ],
       "Standard na Oras sa Moscow"
     ],
     [
       [
-        "mosc",
+        102,
         "Daylight"
       ],
       "Oras sa Tag-init ng Moscow"
     ],
     [
       [
-        "myan",
+        103,
         "Standard"
       ],
       "Oras sa Myanmar"
     ],
     [
       [
-        "naur",
+        104,
         "Standard"
       ],
       "Oras sa Nauru"
     ],
     [
       [
-        "neca",
+        105,
         "Daylight"
       ],
       "Oras sa Tag-init ng New Caledonia"
     ],
     [
       [
-        "nepa",
+        106,
         "Standard"
       ],
       "Oras sa Nepal"
     ],
     [
       [
-        "newf",
+        107,
         "Standard"
       ],
       "Standard na Oras sa Newfoundland"
     ],
     [
       [
-        "newf",
+        107,
         "Daylight"
       ],
       "Daylight na Oras sa Newfoundland"
     ],
     [
       [
-        "neze",
+        108,
         "Standard"
       ],
       "Standard na Oras sa New Zealand"
     ],
     [
       [
-        "neze",
+        108,
         "Daylight"
       ],
       "Daylight Time sa New Zealand"
     ],
     [
       [
-        "niue",
+        109,
         "Standard"
       ],
       "Oras sa Niue"
     ],
     [
       [
-        "norf",
+        111,
         "Daylight"
       ],
       "Daylight Time sa Norfolk Island"
     ],
     [
       [
-        "noro",
+        112,
         "Standard"
       ],
       "Standard na Oras sa Fernando de Noronha"
     ],
     [
       [
-        "noro",
+        112,
         "Daylight"
       ],
       "Oras sa Tag-init ng Fernando de Noronha"
     ],
     [
       [
-        "novo",
+        113,
         "Standard"
       ],
       "Standard na Oras sa Novosibirsk"
     ],
     [
       [
-        "novo",
+        113,
         "Daylight"
       ],
       "Oras sa Tag-init ng Novosibirsk"
     ],
     [
       [
-        "omsk",
+        114,
         "Daylight"
       ],
       "Oras sa Tag-init ng Omsk"
     ],
     [
       [
-        "paki",
+        115,
         "Daylight"
       ],
       "Oras sa Tag-init ng Pakistan"
     ],
     [
       [
-        "pala",
+        116,
         "Standard"
       ],
       "Oras sa Palau"
     ],
     [
       [
-        "pang",
+        117,
         "Standard"
       ],
       "Oras sa Papua New Guinea"
     ],
     [
       [
-        "para",
+        118,
         "Daylight"
       ],
       "Oras sa Tag-init ng Paraguay"
     ],
     [
       [
-        "peru",
+        119,
         "Daylight"
       ],
       "Oras sa Tag-init ng Peru"
     ],
     [
       [
-        "phil",
+        120,
         "Daylight"
       ],
       "Oras sa Tag-init ng Pilipinas"
     ],
     [
       [
-        "phis",
+        121,
         "Standard"
       ],
       "Oras sa Phoenix Islands"
     ],
     [
       [
-        "pimi",
+        122,
         "Standard"
       ],
       "Standard na Oras sa Saint Pierre & Miquelon"
     ],
     [
       [
-        "pimi",
+        122,
         "Daylight"
       ],
       "Daylight na Oras sa Saint Pierre & Miquelon"
     ],
     [
       [
-        "pitc",
+        123,
         "Standard"
       ],
       "Oras sa Pitcairn"
     ],
     [
       [
-        "pona",
+        124,
         "Standard"
       ],
       "Oras sa Ponape"
     ],
     [
       [
-        "pyon",
+        125,
         "Standard"
       ],
       "Oras sa Pyongyang"
     ],
     [
       [
-        "reun",
+        127,
         "Standard"
       ],
       "Oras sa Reunion"
     ],
     [
       [
-        "roth",
+        128,
         "Standard"
       ],
       "Oras sa Rothera"
     ],
     [
       [
-        "sakh",
+        129,
         "Daylight"
       ],
       "Oras sa Tag-init ng Sakhalin"
     ],
     [
       [
-        "sama",
+        130,
         "Standard"
       ],
       "Standard Time sa Samara"
     ],
     [
       [
-        "sama",
+        130,
         "Daylight"
       ],
       "Samara Daylight"
     ],
     [
       [
-        "samo",
+        131,
         "Standard"
       ],
       "Standard na Oras sa Samoa"
     ],
     [
       [
-        "samo",
+        131,
         "Daylight"
       ],
       "Daylight Time sa Samoa"
     ],
     [
       [
-        "seyc",
+        132,
         "Standard"
       ],
       "Oras sa Seychelles"
     ],
     [
       [
-        "soge",
+        134,
         "Standard"
       ],
       "Oras sa Timog Georgia"
     ],
     [
       [
-        "solo",
+        135,
         "Standard"
       ],
       "Oras sa Solomon Islands"
     ],
     [
       [
-        "suri",
+        136,
         "Standard"
       ],
       "Oras sa Suriname"
     ],
     [
       [
-        "syow",
+        137,
         "Standard"
       ],
       "Oras sa Syowa"
     ],
     [
       [
-        "tahi",
+        138,
         "Standard"
       ],
       "Oras sa Tahiti"
     ],
     [
       [
-        "taip",
+        139,
         "Standard"
       ],
       "Standard na Oras sa Taipei"
     ],
     [
       [
-        "taip",
+        139,
         "Daylight"
       ],
       "Daylight Time sa Taipei"
     ],
     [
       [
-        "taji",
+        140,
         "Standard"
       ],
       "Oras sa Tajikistan"
     ],
     [
       [
-        "toke",
+        141,
         "Standard"
       ],
       "Oras sa Tokelau"
     ],
     [
       [
-        "tong",
+        142,
         "Daylight"
       ],
       "Oras sa Tag-init ng Tonga"
     ],
     [
       [
-        "truk",
+        143,
         "Standard"
       ],
       "Oras sa Chuuk"
     ],
     [
       [
-        "turk",
+        144,
         "Daylight"
       ],
       "Oras sa Tag-init ng Turkmenistan"
     ],
     [
       [
-        "tuva",
+        145,
         "Standard"
       ],
       "Oras sa Tuvalu"
     ],
     [
       [
-        "urug",
+        146,
         "Daylight"
       ],
       "Oras sa Tag-init ng Uruguay"
     ],
     [
       [
-        "uzbe",
+        147,
         "Standard"
       ],
       "Standard na Oras sa Uzbekistan"
     ],
     [
       [
-        "uzbe",
+        147,
         "Daylight"
       ],
       "Oras sa Tag-init ng Uzbekistan"
     ],
     [
       [
-        "vanu",
+        148,
         "Daylight"
       ],
       "Oras sa Tag-init ng Vanuatu"
     ],
     [
       [
-        "vene",
+        149,
         "Standard"
       ],
       "Oras sa Venezuela"
     ],
     [
       [
-        "vlad",
+        150,
         "Standard"
       ],
       "Standard na Oras sa Vladivostok"
     ],
     [
       [
-        "vlad",
+        150,
         "Daylight"
       ],
       "Oras sa Tag-init ng Vladivostok"
     ],
     [
       [
-        "volg",
+        151,
         "Daylight"
       ],
       "Oras sa Tag-init ng Volgograd"
     ],
     [
       [
-        "vost",
+        152,
         "Standard"
       ],
       "Oras sa Vostok"
     ],
     [
       [
-        "wake",
+        153,
         "Standard"
       ],
       "Oras sa Wake Island"
     ],
     [
       [
-        "wall",
+        154,
         "Standard"
       ],
       "Oras sa Wallis & Futuna"
     ],
     [
       [
-        "yaku",
+        155,
         "Standard"
       ],
       "Standard na Oras sa Yakutsk"
     ],
     [
       [
-        "yaku",
+        155,
         "Daylight"
       ],
       "Oras sa Tag-init ng Yakutsk"
     ],
     [
       [
-        "yeka",
+        156,
         "Daylight"
       ],
       "Oras sa Tag-init ng Yekaterinburg"
     ],
     [
       [
-        "yuko",
+        157,
         "Standard"
       ],
       "Oras sa Yukon"

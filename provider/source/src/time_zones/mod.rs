@@ -150,11 +150,7 @@ impl SourceDataProvider {
                     .meta_zone_ids
                     .0;
 
-                let mut meta_zone_ids = BTreeMap::new();
-                for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
-                    meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
-                }
-                Ok(meta_zone_ids)
+                Ok(meta_zone_ids_resource.iter().enumerate().map(|(idx, (_short_id, alias))| (alias.long_id.to_string(), idx as u8)).collect())
             })
             .as_ref()
             .map_err(|&e| e)
@@ -309,6 +305,20 @@ mod tests {
                 .unwrap()
         );
 
+        let metazone_period = provider.metazone_period().unwrap();
+
+        let metazone_now = |bcp47| {
+            metazone_period
+                .0
+                .get0(&bcp47)
+                .unwrap()
+                .iter1_copied()
+                .last()
+                .unwrap()
+                .1
+                .unwrap()
+        };
+
         let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
@@ -321,7 +331,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&MetazoneId(tinystr!(4, "aucw")))
+                .get(&metazone_now(TimeZoneBcp47Id(tinystr!(8, "aueuc"))))
                 .unwrap()
         );
         assert_eq!(
@@ -346,7 +356,10 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "aucw")), ZoneVariant::Standard))
+                .get(&(
+                    metazone_now(TimeZoneBcp47Id(tinystr!(8, "aueuc"))),
+                    ZoneVariant::Standard
+                ))
                 .unwrap()
         );
         assert_eq!(
@@ -371,7 +384,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&MetazoneId(tinystr!(4, "ampa")))
+                .get(&metazone_now(TimeZoneBcp47Id(tinystr!(8, "uslax"))))
                 .unwrap()
         );
         assert_eq!(
@@ -396,7 +409,10 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&(MetazoneId(tinystr!(4, "ampa")), ZoneVariant::Daylight))
+                .get(&(
+                    metazone_now(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+                    ZoneVariant::Daylight
+                ))
                 .unwrap()
         );
         assert_eq!(
@@ -406,18 +422,6 @@ mod tests {
                 .get()
                 .overrides
                 .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
-                .unwrap()
-        );
-
-        let metazone_period: DataResponse<MetazonePeriodV1Marker> =
-            provider.load(Default::default()).unwrap();
-        assert_eq!(
-            Some(MetazoneId(tinystr!(4, "mgmt"))),
-            metazone_period
-                .payload
-                .get()
-                .0
-                .get_copied_2d(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
                 .unwrap()
         );
     }

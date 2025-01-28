@@ -2,105 +2,105 @@
   "defaults": [
     [
       [
-        "alas",
+        7,
         "Standard"
       ],
       "AKST"
     ],
     [
       [
-        "alas",
+        7,
         "Daylight"
       ],
       "AKDT"
     ],
     [
       [
-        "amce",
+        9,
         "Standard"
       ],
       "CST"
     ],
     [
       [
-        "amce",
+        9,
         "Daylight"
       ],
       "CDT"
     ],
     [
       [
-        "amea",
+        10,
         "Standard"
       ],
       "EST"
     ],
     [
       [
-        "amea",
+        10,
         "Daylight"
       ],
       "EDT"
     ],
     [
       [
-        "ammo",
+        11,
         "Standard"
       ],
       "MST"
     ],
     [
       [
-        "ammo",
+        11,
         "Daylight"
       ],
       "MDT"
     ],
     [
       [
-        "ampa",
+        12,
         "Standard"
       ],
       "PST"
     ],
     [
       [
-        "ampa",
+        12,
         "Daylight"
       ],
       "PDT"
     ],
     [
       [
-        "atla",
+        21,
         "Standard"
       ],
       "AST"
     ],
     [
       [
-        "atla",
+        21,
         "Daylight"
       ],
       "ADT"
     ],
     [
       [
-        "haal",
+        67,
         "Standard"
       ],
       "HAST"
     ],
     [
       [
-        "haal",
+        67,
         "Daylight"
       ],
       "HADT"
     ],
     [
       [
-        "mgmt",
+        100,
         "Standard"
       ],
       "GMT"

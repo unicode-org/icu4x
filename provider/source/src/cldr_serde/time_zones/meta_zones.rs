@@ -7,7 +7,6 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
-use icu::datetime::provider::time_zones::MetazoneId;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -20,7 +19,7 @@ pub(crate) struct MetazoneAliasData {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct MetazoneIds(pub(crate) BTreeMap<MetazoneId, MetazoneAliasData>);
+pub(crate) struct MetazoneIds(pub(crate) BTreeMap<tinystr::TinyAsciiStr<5>, MetazoneAliasData>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct UsesMetazone {

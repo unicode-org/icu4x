@@ -2,42 +2,42 @@
   "defaults": [
     [
       [
-        "afce",
+        1,
         "Standard"
       ],
       "CAT"
     ],
     [
       [
-        "afea",
+        2,
         "Standard"
       ],
       "EAT"
     ],
     [
       [
-        "afso",
+        4,
         "Standard"
       ],
       "SAST"
     ],
     [
       [
-        "afwe",
+        5,
         "Standard"
       ],
       "WAT"
     ],
     [
       [
-        "afwe",
+        5,
         "Daylight"
       ],
       "WAST"
     ],
     [
       [
-        "mgmt",
+        100,
         "Standard"
       ],
       "GMT"
