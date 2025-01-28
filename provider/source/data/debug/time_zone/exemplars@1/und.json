@@ -1,9 +1,5 @@
 {
   "exemplars": {
-    "gpsbh": "St. Barthélemy",
-    "papty": "Panama",
-    "rereu": "Réunion",
-    "unk": "Unknown",
-    "vnsgn": "Ho Chi Minh"
+    "unk": "Unknown"
   }
 }

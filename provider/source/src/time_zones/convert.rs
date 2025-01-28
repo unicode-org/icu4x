@@ -11,7 +11,7 @@ use core::cmp::Ordering;
 use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::{langid, LanguageIdentifier};
+use icu::locale::LanguageIdentifier;
 use icu::timezone::provider::*;
 use icu::timezone::Time;
 use icu::timezone::UtcOffset;
@@ -184,71 +184,19 @@ impl SourceDataProvider {
                 .collect()
         };
 
-        let find_endonym_or_en = |region: icu::locale::subtags::Region| -> Option<&str> {
-            let expander = self.cldr().unwrap().extended_locale_expander().unwrap();
-            let mut langid = LanguageIdentifier {
-                region: Some(region),
-                // `und` is `Latn`
-                script: Some(icu::locale::subtags::script!("Latn")),
-                ..Default::default()
-            };
-            expander.maximize(&mut langid);
-            langid.region = None;
-            expander.minimize(&mut langid);
-            let locale = langid.into();
-
-            // Avoid logging file-not-found errors
-            let regions = &if self
-                .cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(&locale, "territories.json")
-                != Ok(true)
-            {
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &langid!("en").into(),
-                        "territories.json",
-                    )
-                    .ok()?
-            } else {
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &locale,
-                        "territories.json",
-                    )
-                    .ok()?
-            }
-            .main
-            .value
-            .localedisplaynames
-            .regions;
-
-            regions
-                .get(&format!("{region}-alt-short"))
-                .or_else(|| regions.get(region.as_str()))
-                .map(|x| x.as_str())
-        };
-
         let mut locations = BTreeMap::new();
 
         exemplar_cities.retain(|&k, v| {
             if k.0 == "unk" {
                 true
             } else if let Some(region) = primary_zones.get(&k) {
-                let region_name = region_display_names
-                    .get(region)
-                    .copied()
-                    .or_else(|| find_endonym_or_en(*region))
-                    .unwrap_or(region.as_str())
-                    .to_string();
-                let retain = &region_name != v;
-                locations.insert(k, region_name);
-                retain
+                if let Some(region_name) = region_display_names.get(region) {
+                    locations.insert(k, region_name.to_string());
+                    region_name != v
+                } else {
+                    locations.insert(k, v.clone());
+                    false
+                }
             } else {
                 locations.insert(k, v.clone());
                 false
