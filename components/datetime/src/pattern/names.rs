@@ -2030,7 +2030,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
-                    .with_req(tz::MzSpecificLongV1Marker::INFO, req),
+                    .with_req(tz::MzGenericLongV1Marker::INFO, req),
                 error_field,
             ));
         }
@@ -2070,7 +2070,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
-                    .with_req(tz::MzSpecificLongV1Marker::INFO, req),
+                    .with_req(tz::MzGenericShortV1Marker::INFO, req),
                 error_field,
             ));
         }
@@ -2150,7 +2150,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
-                    .with_req(tz::MzSpecificLongV1Marker::INFO, req),
+                    .with_req(tz::MzSpecificShortV1Marker::INFO, req),
                 error_field,
             ));
         }
