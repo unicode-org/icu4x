@@ -269,13 +269,14 @@ impl SourceDataProvider {
             .supplemental
             .meta_zones;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         self.cldr()?
             .tz_caches
             .mz_period
             .get_or_init(|| {
-                Ok(MetazonePeriodV1(
-                    metazones
+                Ok(MetazonePeriodV1 {
+                    checksum,
+                    list: metazones
                         .meta_zone_info
                         .time_zone
                         .0
@@ -323,7 +324,7 @@ impl SourceDataProvider {
                             })
                         })
                         .collect(),
-                ))
+                })
             })
             .as_ref()
             .map_err(|&e| e)
@@ -607,7 +608,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         let reverse_metazones = self.reverse_metazones()?;
         let locations = self.calculate_locations(req)?.0;
 
@@ -640,6 +641,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
                 defaults,
                 overrides,
+                checksum,
             }),
         })
     }
@@ -665,7 +667,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
             .time_zone_names;
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         let reverse_metazones = self.reverse_metazones()?;
         let locations = self.calculate_locations(req)?.0;
 
@@ -712,6 +714,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
                 defaults,
                 overrides,
+                checksum,
             }),
         })
     }
@@ -736,7 +739,7 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
@@ -750,6 +753,7 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
             payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
                 defaults,
                 overrides,
+                checksum,
             }),
         })
     }
@@ -774,7 +778,7 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
             .time_zone_names;
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
@@ -788,6 +792,7 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
                 defaults,
                 overrides,
+                checksum,
             }),
         })
     }

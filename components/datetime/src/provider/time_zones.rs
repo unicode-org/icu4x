@@ -160,6 +160,11 @@ pub struct ExemplarCitiesV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneGenericNamesV1<'data> {
+    /// An XxHash64 checksum of the full metazone names.
+    ///
+    /// The checksum here should match the checksum in [`MetazonePeriodV1`]
+    /// if these were generated from the same data set.
+    pub checksum: u64,
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
@@ -187,6 +192,11 @@ pub struct MetazoneGenericNamesV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneSpecificNamesV1<'data> {
+    /// An XxHash64 checksum of the full metazone names.
+    ///
+    /// The checksum here should match the checksum in [`MetazonePeriodV1`]
+    /// if these were generated from the same data set.
+    pub checksum: u64,
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
@@ -222,9 +232,11 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazonePeriodV1<'data>(
+pub struct MetazonePeriodV1<'data> {
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
     /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
-);
+    pub list: ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
+    /// An XxHash64 checksum of the full metazone names.
+    pub checksum: u64,
+}

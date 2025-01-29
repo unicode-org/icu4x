@@ -5,6 +5,8 @@
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use core::hash::Hash;
+use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
 use icu::timezone::provider::*;
 use icu_locale_core::subtags::Region;
@@ -12,20 +14,23 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::sync::OnceLock;
+use twox_hash::XxHash64;
 
 mod convert;
 mod names;
 mod windows;
 
+type Cache<T> = OnceLock<Result<T, DataError>>;
+
 #[derive(Debug, Default)]
 pub(crate) struct Caches {
-    iana_to_bcp47: OnceLock<Result<BTreeMap<String, TimeZoneBcp47Id>, DataError>>,
-    bcp47_to_canonical_iana: OnceLock<Result<BTreeMap<TimeZoneBcp47Id, String>, DataError>>,
-    metazone_to_short: OnceLock<Result<BTreeMap<String, MetazoneId>, DataError>>,
-    primary_zones: OnceLock<Result<BTreeMap<TimeZoneBcp47Id, Region>, DataError>>,
-    mz_period: OnceLock<Result<MetazonePeriodV1<'static>, DataError>>,
-    offset_period: OnceLock<Result<ZoneOffsetPeriodV1<'static>, DataError>>,
-    reverse_metazones: OnceLock<Result<BTreeMap<MetazoneId, Vec<TimeZoneBcp47Id>>, DataError>>,
+    iana_to_bcp47: Cache<BTreeMap<String, TimeZoneBcp47Id>>,
+    bcp47_to_canonical_iana: Cache<BTreeMap<TimeZoneBcp47Id, String>>,
+    metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
+    primary_zones: Cache<BTreeMap<TimeZoneBcp47Id, Region>>,
+    mz_period: Cache<MetazonePeriodV1<'static>>,
+    offset_period: Cache<ZoneOffsetPeriodV1<'static>>,
+    reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZoneBcp47Id>>>,
 }
 
 impl SourceDataProvider {
@@ -36,7 +41,7 @@ impl SourceDataProvider {
             .get_or_init(|| {
                 let mz_period = self.metazone_period()?;
                 let mut reverse_metazones = BTreeMap::<MetazoneId, Vec<TimeZoneBcp47Id>>::new();
-                for cursor in mz_period.0.iter0() {
+                for cursor in mz_period.list.iter0() {
                     let tz = *cursor.key0();
                     for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
                         reverse_metazones.entry(mz).or_default().push(tz);
@@ -134,7 +139,7 @@ impl SourceDataProvider {
     /// Returns a map from metazone long identifier to metazone BCP-47 ID.
     ///
     /// For example: "America_Central" to "amce"
-    fn metazone_to_short_map(&self) -> Result<&BTreeMap<String, MetazoneId>, DataError> {
+    fn metazone_to_id_map(&self) -> Result<(&BTreeMap<String, MetazoneId>, u64), DataError> {
         self.cldr()?
             .tz_caches
             .metazone_to_short
@@ -150,18 +155,26 @@ impl SourceDataProvider {
                     .meta_zone_ids
                     .0;
 
-                Ok(meta_zone_ids_resource
-                    .iter()
-                    .enumerate()
-                    .map(|(idx, (_short_id, alias))| {
-                        (
-                            alias.long_id.to_string(),
-                            MetazoneId::new(idx as u8 + 1).unwrap(),
-                        )
-                    })
-                    .collect())
+                let mut hash = XxHash64::with_seed(0);
+                meta_zone_ids_resource.len().hash(&mut hash);
+
+                Ok((
+                    meta_zone_ids_resource
+                        .iter()
+                        .enumerate()
+                        .map(|(idx, (_short_id, alias))| {
+                            alias.long_id.hash(&mut hash);
+                            (
+                                alias.long_id.clone(),
+                                MetazoneId::new(idx as u8 + 1).unwrap(),
+                            )
+                        })
+                        .collect(),
+                    hash.finish(),
+                ))
             })
             .as_ref()
+            .map(|(map, checksum)| (map, *checksum))
             .map_err(|&e| e)
     }
 
@@ -318,7 +331,7 @@ mod tests {
 
         let metazone_now = |bcp47| {
             metazone_period
-                .0
+                .list
                 .get0(&bcp47)
                 .unwrap()
                 .iter1_copied()
