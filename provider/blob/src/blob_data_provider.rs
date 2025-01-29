@@ -126,13 +126,16 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let payload = self
+        let payload: Yoke<(&[u8], Option<u64>), Option<Cart>> = self
             .data
-            .try_map_project_cloned(|blob, _| blob.load(marker, req))
-            .map(DataPayload::from_yoked_buffer)?;
+            .try_map_project_cloned(|blob, _| blob.load(marker, req))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
-        Ok(DataResponse { metadata, payload })
+        metadata.checksum = payload.get().1;
+        Ok(DataResponse {
+            metadata,
+            payload: DataPayload::from_yoked_buffer(payload.map_project(|(bytes, _), _| bytes)),
+        })
     }
 }
 

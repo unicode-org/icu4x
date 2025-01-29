@@ -34,7 +34,11 @@ where
             .unwrap();
     }
     exporter
-        .flush(HelloWorldV1Marker::INFO, Default::default())
+        .flush(HelloWorldV1Marker::INFO, {
+            let mut metadata = FlushMetadata::default();
+            metadata.checksum = Some(1234);
+            metadata
+        })
         .unwrap();
     exporter.close().unwrap();
 }
@@ -50,16 +54,19 @@ fn check_hello_world(
                 id: id.as_borrowed(),
                 ..Default::default()
             })
-            .unwrap()
-            .payload;
+            .unwrap();
         let expected_result = hello_world_provider
             .load(DataRequest {
                 id: id.as_borrowed(),
                 ..Default::default()
             })
-            .unwrap()
-            .payload;
-        assert_eq!(blob_result, expected_result, "{:?}", id);
+            .unwrap();
+        assert_eq!(blob_result.payload, expected_result.payload, "{:?}", id);
+        assert_eq!(
+            blob_result.metadata.checksum, expected_result.metadata.checksum,
+            "{:?}",
+            id
+        );
     }
 
     if test_prefix_match {
@@ -135,7 +142,7 @@ fn test_format_bigger() {
     let hash = hasher.finish();
 
     assert_eq!(
-        hash, 2996389886987900285,
+        hash, 378960562326244312,
         "V2Bigger format appears to have changed!"
     );
 

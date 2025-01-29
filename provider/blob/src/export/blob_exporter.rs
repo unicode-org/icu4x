@@ -24,6 +24,7 @@ pub struct BlobExporter<'w> {
     /// Map of marker path hash -> locale byte string -> blob ID
     #[allow(clippy::type_complexity)]
     resources: Mutex<BTreeMap<DataMarkerIdHash, BTreeMap<Vec<u8>, usize>>>,
+    checksums: Mutex<BTreeMap<DataMarkerIdHash, u64>>,
     // All seen markers
     all_markers: Mutex<BTreeSet<DataMarkerIdHash>>,
     /// Map from blob to blob ID
@@ -51,6 +52,7 @@ impl<'w> BlobExporter<'w> {
         Self {
             resources: Default::default(),
             unique_resources: Default::default(),
+            checksums: Default::default(),
             all_markers: Default::default(),
             sink,
         }
@@ -95,7 +97,13 @@ impl DataExporter for BlobExporter<'_> {
         Ok(())
     }
 
-    fn flush(&self, marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        if let Some(checksum) = metadata.checksum {
+            self.checksums
+                .lock()
+                .expect("poison")
+                .insert(marker.id.hashed(), checksum);
+        }
         self.all_markers
             .lock()
             .expect("poison")
@@ -149,24 +157,32 @@ impl BlobExporter<'_> {
 
         let all_markers = self.all_markers.lock().expect("poison");
         let resources = self.resources.lock().expect("poison");
+        let checksums = self.checksums.lock().expect("poison");
 
         let markers: ZeroVec<DataMarkerIdHash> = all_markers.iter().copied().collect();
 
         let locales_vec: Vec<Vec<u8>> = all_markers
             .iter()
-            .map(|marker_path_hash| resources.get(marker_path_hash))
-            .map(|option_sub_map| {
-                if let Some(sub_map) = option_sub_map {
-                    let mut sub_map = sub_map.clone();
-                    sub_map
-                        .iter_mut()
-                        .for_each(|(_, id)| *id = *remap.get(id).expect("in-bound index"));
-                    let zerotrie = ZeroTrieSimpleAscii::try_from(&sub_map).expect("in-bounds");
-                    zerotrie.into_store()
-                } else {
-                    // Key with no locales: insert an empty ZeroTrie
-                    ZeroTrieSimpleAscii::default().into_store()
+            .map(|marker_path_hash| {
+                (
+                    resources.get(marker_path_hash),
+                    checksums.get(marker_path_hash),
+                )
+            })
+            .map(|(option_sub_map, checksum)| {
+                let mut sub_map = BTreeMap::new();
+                if let Some(sub_map_wrong) = option_sub_map {
+                    if let Some(&checksum) = checksum {
+                        // TODO how does this behave on 32-bit platforms?
+                        sub_map.insert(CHECKSUM_KEY, checksum as usize);
+                    }
+                    sub_map.extend(sub_map_wrong.iter().map(|(key, id)| {
+                        (key.as_slice(), *remap.get(id).expect("in-bound index"))
+                    }));
                 }
+                ZeroTrieSimpleAscii::try_from(&sub_map)
+                    .expect("in-bounds")
+                    .into_store()
             })
             .collect();
 

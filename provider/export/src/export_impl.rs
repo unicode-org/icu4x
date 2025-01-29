@@ -72,13 +72,6 @@ impl ExportDriver {
             }
         );
 
-        let mut flush_metadata = FlushMetadata::default();
-        flush_metadata.supports_dry_provider = matches!(
-            deduplication_strategy,
-            DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
-        );
-        let flush_metadata = flush_metadata;
-
         let load_with_fallback = |marker, id: DataIdentifierBorrowed<'_>| {
             log::trace!("Generating marker/locale: {marker:?}/{id}");
             let mut metadata = DataRequestMetadata::default();
@@ -100,7 +93,7 @@ impl ExportDriver {
                                 log::debug!("Falling back to und: {marker:?}/{id}");
                             }
                         }
-                        return Some(Ok(data_response.payload));
+                        return Some(Ok(data_response));
                     }
                     Ok(None) => {
                         if let Some(iter) = locale_iter.as_mut() {
@@ -126,6 +119,12 @@ impl ExportDriver {
             log::trace!("Generating marker {marker:?}");
             let instant1 = Instant::now();
 
+            let mut flush_metadata = FlushMetadata::default();
+            flush_metadata.supports_dry_provider = matches!(
+                deduplication_strategy,
+                DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
+            );
+
             if marker.is_singleton {
                 let supported = provider.iter_ids_for_marker(marker)?;
                 if supported.len() != 1 || !supported.first().unwrap().is_default() {
@@ -135,14 +134,15 @@ impl ExportDriver {
                     .with_marker(marker));
                 }
 
-                let payload = provider
+                let response = provider
                     .load_data(marker, Default::default())
-                    .map_err(|e| e.with_req(marker, Default::default()))?
-                    .payload;
+                    .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let transform_duration = instant1.elapsed();
 
-                sink.flush_singleton(marker, &payload, flush_metadata)
+                flush_metadata.checksum = response.metadata.checksum;
+
+                sink.flush_singleton(marker, &response.payload, flush_metadata)
                     .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let final_duration = instant1.elapsed();
@@ -170,41 +170,47 @@ impl ExportDriver {
                 &fallbacker,
             )?;
 
-            let (slowest_duration, slowest_locale) = match deduplication_strategy {
-                DeduplicationStrategy::Maximal => {
-                    let payloads = locales_to_export
-                        .into_par_iter()
-                        .filter_map(|id| {
-                            let instant2 = Instant::now();
-                            load_with_fallback(marker, id.as_borrowed())
-                                .map(|r| r.map(|payload| (id, (payload, instant2.elapsed()))))
-                        })
-                        .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<true>(marker, &payloads, &fallbacker, sink)?
+            let responses = locales_to_export
+                .into_par_iter()
+                .filter_map(|id| {
+                    let instant2 = Instant::now();
+                    load_with_fallback(marker, id.as_borrowed())
+                        .map(|r| r.map(move |payload| (id, (payload, instant2.elapsed()))))
+                })
+                .collect::<Result<HashMap<_, _>, _>>()?;
+
+            flush_metadata.checksum =
+                responses
+                    .iter()
+                    .try_fold(None, |acc, (id, (response, _))| {
+                        match (acc, response.metadata.checksum) {
+                            (Some(a), Some(b)) if a != b => {
+                                Err(DataError::custom("Mismatched checksums").with_req(
+                                    marker,
+                                    DataRequest {
+                                        id: id.as_borrowed(),
+                                        ..Default::default()
+                                    },
+                                ))
+                            }
+                            (a, b) => Ok(a.or(b)),
+                        }
+                    })?;
+
+            let (slowest_duration, slowest_id) = match deduplication_strategy {
+                DeduplicationStrategy::Maximal | DeduplicationStrategy::RetainBaseLanguages => {
+                    deduplicate_responses(
+                        deduplication_strategy == DeduplicationStrategy::Maximal,
+                        marker,
+                        responses,
+                        &fallbacker,
+                        sink,
+                    )?
                 }
-                DeduplicationStrategy::RetainBaseLanguages => {
-                    let payloads = locales_to_export
-                        .into_par_iter()
-                        .filter_map(|id| {
-                            let instant2 = Instant::now();
-                            load_with_fallback(marker, id.as_borrowed())
-                                .map(|r| r.map(|payload| (id, (payload, instant2.elapsed()))))
-                        })
-                        .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<false>(marker, &payloads, &fallbacker, sink)?
-                }
-                DeduplicationStrategy::None => locales_to_export
-                    .into_par_iter()
-                    .filter_map(|id| {
-                        let instant2 = Instant::now();
-                        let result = load_with_fallback(marker, id.as_borrowed())?;
-                        let result = result
-                            .and_then(|payload| {
-                                sink.put_payload(marker, id.as_borrowed(), &payload)
-                            })
-                            // Note: in Hybrid mode the elapsed time includes sink.put_payload.
-                            // In Runtime mode the elapsed time is only load_with_fallback.
-                            .map(|_| (instant2.elapsed(), id.locale.write_to_string().into_owned()))
+                DeduplicationStrategy::None => responses
+                    .into_iter()
+                    .map(|(id, (response, time))| {
+                        sink.put_payload(marker, id.as_borrowed(), &response.payload)
                             .map_err(|e| {
                                 e.with_req(
                                     marker,
@@ -213,8 +219,8 @@ impl ExportDriver {
                                         ..Default::default()
                                     },
                                 )
-                            });
-                        Some(result)
+                            })
+                            .map(|()| (time, id))
                     })
                     .collect::<Result<Vec<_>, DataError>>()?
                     .into_iter()
@@ -233,8 +239,10 @@ impl ExportDriver {
             if final_duration > Duration::new(0, 500_000_000) {
                 // Print durations if the marker took longer than 500 ms
                 log::info!(
-                    "Generated marker {marker:?} ({}, '{slowest_locale}' in {}, flushed in {})",
+                    "Generated marker {marker:?} ({}, '{}/{}' in {}, flushed in {})",
                     DisplayDuration(final_duration),
+                    slowest_id.locale,
+                    slowest_id.marker_attributes.as_str(),
                     DisplayDuration(slowest_duration),
                     DisplayDuration(flush_duration)
                 );
@@ -369,18 +377,65 @@ fn select_locales_for_marker<'a>(
     Ok(selected_locales)
 }
 
-fn deduplicate_payloads<const MAXIMAL: bool>(
+fn deduplicate_responses<'a>(
+    maximal: bool,
     marker: DataMarkerInfo,
-    payloads: &HashMap<DataIdentifierCow, (DataPayload<ExportMarker>, Duration)>,
+    responses: HashMap<DataIdentifierCow<'a>, (DataResponse<ExportMarker>, Duration)>,
     fallbacker: &LocaleFallbacker,
     sink: &dyn DataExporter,
-) -> Result<Option<(Duration, String)>, DataError> {
+) -> Result<Option<(Duration, DataIdentifierCow<'a>)>, DataError> {
     let fallbacker_with_config = fallbacker.for_config(marker.fallback_config);
-    payloads.iter().try_for_each(|(id, (payload, _duration))| {
-        // Always export `und`. This prevents calling `step` on an empty locale.
-        if id.locale.is_default() {
-            return sink
-                .put_payload(marker, id.as_borrowed(), payload)
+    responses
+        .iter()
+        .try_for_each(|(id, (response, _duration))| {
+            // Always export `und`. This prevents calling `step` on an empty locale.
+            if id.locale.is_default() {
+                return sink
+                    .put_payload(marker, id.as_borrowed(), &response.payload)
+                    .map_err(|e| {
+                        e.with_req(
+                            marker,
+                            DataRequest {
+                                id: id.as_borrowed(),
+                                ..Default::default()
+                            },
+                        )
+                    });
+            }
+            let mut iter = fallbacker_with_config.fallback_for(id.locale);
+            loop {
+                if !maximal {
+                    // To retain base languages, preemptively step to the
+                    // parent locale. This should retain the locale if
+                    // the next parent is `und`.
+                    iter.step();
+                }
+                if iter.get().is_default() {
+                    break;
+                }
+                if maximal {
+                    iter.step();
+                }
+
+                if let Some((inherited_response, _duration)) = responses.get(
+                    &DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        &id.marker_attributes,
+                        iter.get(),
+                    )
+                    .as_cow(),
+                ) {
+                    if inherited_response.payload == response.payload {
+                        // Found a match: don't need to write anything
+                        log::trace!("Deduplicating {id} (inherits from {})", iter.get());
+                        return Ok(());
+                    } else {
+                        // Not a match: we must include this
+                        break;
+                    }
+                }
+            }
+            // Did not find a match: export this payload
+            sink.put_payload(marker, id.as_borrowed(), &response.payload)
                 .map_err(|e| {
                     e.with_req(
                         marker,
@@ -389,62 +444,13 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                             ..Default::default()
                         },
                     )
-                });
-        }
-        let mut iter = fallbacker_with_config.fallback_for(id.locale);
-        loop {
-            if !MAXIMAL {
-                // To retain base languages, preemptively step to the
-                // parent locale. This should retain the locale if
-                // the next parent is `und`.
-                iter.step();
-            }
-            if iter.get().is_default() {
-                break;
-            }
-            if MAXIMAL {
-                iter.step();
-            }
-
-            if let Some((inherited_payload, _duration)) = payloads.get(
-                &DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    &id.marker_attributes,
-                    iter.get(),
-                )
-                .as_cow(),
-            ) {
-                if inherited_payload == payload {
-                    // Found a match: don't need to write anything
-                    log::trace!("Deduplicating {id} (inherits from {})", iter.get());
-                    return Ok(());
-                } else {
-                    // Not a match: we must include this
-                    break;
-                }
-            }
-        }
-        // Did not find a match: export this payload
-        sink.put_payload(marker, id.as_borrowed(), payload)
-            .map_err(|e| {
-                e.with_req(
-                    marker,
-                    DataRequest {
-                        id: id.as_borrowed(),
-                        ..Default::default()
-                    },
-                )
-            })
-    })?;
+                })
+        })?;
 
     // Slowest locale calculation:
-    Ok(payloads
-        .iter()
-        .map(|(id, (_payload, duration))| {
-            (
-                *duration,
-                id.locale.write_to_string().into_owned() + "/" + id.marker_attributes.as_str(),
-            )
-        })
+    Ok(responses
+        .into_iter()
+        .map(|(id, (_response, duration))| (duration, id))
         .max())
 }
 

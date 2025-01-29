@@ -29,6 +29,7 @@ pub(crate) enum BlobSchema<'data> {
 
 // This is a valid separator as `DataLocale` will never produce it.
 pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
+pub(crate) const CHECKSUM_KEY: &[u8] = b"\0";
 
 impl<'data> BlobSchema<'data> {
     pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
@@ -40,7 +41,11 @@ impl<'data> BlobSchema<'data> {
         Ok(blob)
     }
 
-    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
+    pub fn load(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<(&'data [u8], Option<u64>), DataError> {
         match self {
             BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => {
                 unreachable!("Unreachable blob schema")
@@ -123,15 +128,19 @@ impl<LocaleVecFormat: VarZeroVecFormat> Default for BlobSchemaV3<'_, LocaleVecFo
 }
 
 impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecFormat> {
-    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
+    pub fn load(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<(&'data [u8], Option<u64>), DataError> {
+        if marker.is_singleton && !req.id.locale.is_default() {
+            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
+        }
         let marker_index = self
             .markers
             .binary_search(&marker.id.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
-        if marker.is_singleton && !req.id.locale.is_default() {
-            return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
-        }
         let zerotrie = self
             .locales
             .get(marker_index)
@@ -160,7 +169,12 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
             .buffers
             .get(blob_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
-        Ok(buffer)
+        Ok((
+            buffer,
+            ZeroTrieSimpleAscii::from_store(zerotrie)
+                .get(CHECKSUM_KEY)
+                .map(|cs| cs as u64),
+        ))
     }
 
     pub fn iter_ids(
@@ -186,6 +200,8 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
                         DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
                         locale.parse().ok()?,
                     ))
+                } else if s.as_bytes() == CHECKSUM_KEY {
+                    None
                 } else {
                     Some(DataIdentifierCow::from_locale(s.parse().ok()?))
                 }
@@ -206,6 +222,9 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
         let mut seen_max = self.buffers.is_empty();
         for zerotrie in self.locales.iter() {
             for (_locale, idx) in ZeroTrieSimpleAscii::from_store(zerotrie).iter() {
+                if _locale.as_bytes() == CHECKSUM_KEY {
+                    continue;
+                }
                 debug_assert!(idx < self.buffers.len());
                 if idx == 0 {
                     seen_min = true;

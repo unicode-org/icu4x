@@ -159,7 +159,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
                 DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req)
             })?;
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(1234),
             payload: DataPayload::from_static_str(data),
         })
     }

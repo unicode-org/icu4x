@@ -129,7 +129,7 @@ pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
         provider: &P,
         req: DataRequest,
         variables: Variables,
-    ) -> Result<Result<(), DataError>, MaybePayloadError>
+    ) -> Result<Result<DataResponseMetadata, DataError>, MaybePayloadError>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
@@ -199,7 +199,7 @@ where
         provider: &P,
         req: DataRequest,
         variables: Variables,
-    ) -> Result<Result<(), DataError>, MaybePayloadError>
+    ) -> Result<Result<DataResponseMetadata, DataError>, MaybePayloadError>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
@@ -207,7 +207,7 @@ where
         let arg_variables = variables;
         match &self.inner {
             OptionalNames::SingleLength { variables, .. } if arg_variables == *variables => {
-                return Ok(Ok(()));
+                return Ok(Ok(Default::default()));
             }
             OptionalNames::SingleLength { .. } => {
                 return Err(MaybePayloadError::ConflictingField);
@@ -220,7 +220,7 @@ where
                     payload: response.payload,
                     variables: arg_variables,
                 };
-                Ok(Ok(()))
+                Ok(Ok(response.metadata))
             }
             Err(e) => Ok(Err(e)),
         }
@@ -242,7 +242,7 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
         _: &P,
         _: DataRequest,
         _: Variables,
-    ) -> Result<Result<(), DataError>, MaybePayloadError>
+    ) -> Result<Result<DataResponseMetadata, DataError>, MaybePayloadError>
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,

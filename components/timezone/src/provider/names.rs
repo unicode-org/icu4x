@@ -30,6 +30,8 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 ///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
 ///
+/// This markers uses a checksum to ensure consistency with [`Bcp47ToIanaMapV1`].
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
@@ -62,13 +64,13 @@ pub struct IanaToBcp47MapV3<'data> {
     // Note: this is 9739B as `ZeroVec<TimeZoneBcp47Id>` (`ZeroVec<TinyStr8>`)
     // and 9335B as `VarZeroVec<str>`
     pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
-    /// An XxHash64 checksum of [`Self::bcp47_ids`].
-    pub bcp47_ids_checksum: u64,
 }
 
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
+///
+/// This markers uses a checksum to ensure consistency with [`IanaToBcp47MapV3`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -86,11 +88,6 @@ pub struct IanaToBcp47MapV3<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {
-    /// An XxHash64 checksum of [`IanaToBcp47MapV3::bcp47_ids`].
-    ///
-    /// The checksum here should match the checksum in [`IanaToBcp47MapV3`]
-    /// if these were generated from the same data set.
-    pub bcp47_ids_checksum: u64,
     /// The IANA time zone identifier corresponding to the BCP-47 ID in
     /// [`IanaToBcp47MapV3::bcp47_ids`].
     ///
