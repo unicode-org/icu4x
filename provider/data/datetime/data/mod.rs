@@ -13,6 +13,7 @@ include!("time_neo_skeleton_patterns_v1_marker.rs.data");
 include!("dangi_year_names_v1_marker.rs.data");
 include!("dangi_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("islamic_month_names_v1_marker.rs.data");
+include!("exemplar_cities_root_v1_marker.rs.data");
 include!("metazone_generic_names_long_v1_marker.rs.data");
 include!("buddhist_year_names_v1_marker.rs.data");
 include!("chinese_month_names_v1_marker.rs.data");
@@ -42,6 +43,7 @@ include!("islamic_year_names_v1_marker.rs.data");
 include!("glue_pattern_v1_marker.rs.data");
 include!("indian_month_names_v1_marker.rs.data");
 include!("indian_date_neo_skeleton_patterns_v1_marker.rs.data");
+include!("locations_root_v1_marker.rs.data");
 include!("persian_year_names_v1_marker.rs.data");
 include!("japanese_extended_date_neo_skeleton_patterns_v1_marker.rs.data");
 include!("metazone_specific_names_long_v1_marker.rs.data");
@@ -93,6 +95,7 @@ macro_rules! impl_data_provider {
         impl_dangi_year_names_v1_marker!($provider);
         impl_dangi_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_islamic_month_names_v1_marker!($provider);
+        impl_exemplar_cities_root_v1_marker!($provider);
         impl_metazone_generic_names_long_v1_marker!($provider);
         impl_buddhist_year_names_v1_marker!($provider);
         impl_chinese_month_names_v1_marker!($provider);
@@ -122,6 +125,7 @@ macro_rules! impl_data_provider {
         impl_glue_pattern_v1_marker!($provider);
         impl_indian_month_names_v1_marker!($provider);
         impl_indian_date_neo_skeleton_patterns_v1_marker!($provider);
+        impl_locations_root_v1_marker!($provider);
         impl_persian_year_names_v1_marker!($provider);
         impl_japanese_extended_date_neo_skeleton_patterns_v1_marker!($provider);
         impl_metazone_specific_names_long_v1_marker!($provider);
@@ -153,6 +157,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::neo::DangiYearNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::DangiYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::DangiDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::DangiDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::IslamicMonthNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::IslamicMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::time_zones::ExemplarCitiesRootV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::ExemplarCitiesRootV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::BuddhistYearNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::BuddhistYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::ChineseMonthNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::ChineseMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -182,6 +187,7 @@ macro_rules! impl_any_provider {
                     h if h == <icu::datetime::provider::neo::GluePatternV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::GluePatternV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::IndianMonthNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::IndianMonthNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::IndianDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::IndianDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::datetime::provider::time_zones::LocationsRootV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::LocationsRootV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::neo::PersianYearNamesV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::neo::PersianYearNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::JapaneseExtendedDateNeoSkeletonPatternsV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::JapaneseExtendedDateNeoSkeletonPatternsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

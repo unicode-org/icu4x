@@ -249,7 +249,9 @@ macro_rules! impl_iterable_data_provider {
 impl_iterable_data_provider!(
     TimeZoneEssentialsV1Marker,
     LocationsV1Marker,
+    LocationsRootV1Marker,
     ExemplarCitiesV1Marker,
+    ExemplarCitiesRootV1Marker,
     MetazoneGenericNamesLongV1Marker,
     MetazoneGenericNamesShortV1Marker,
     MetazoneSpecificNamesLongV1Marker,
@@ -281,17 +283,24 @@ mod tests {
 
         let provider = SourceDataProvider::new_testing();
 
-        let time_zone_formats: DataResponse<TimeZoneEssentialsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let en = langid!("en").into();
+        let en = DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&en),
+            ..Default::default()
+        };
+
+        let fr = langid!("fr").into();
+        let fr = DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&fr),
+            ..Default::default()
+        };
+
+        let time_zone_formats: DataResponse<TimeZoneEssentialsV1Marker> =
+            provider.load(en).unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations_root: DataResponse<LocationsV1Marker> =
-            provider.load(Default::default()).unwrap();
+        let locations_root: DataResponse<LocationsRootV1Marker> = provider.load(en).unwrap();
         assert_eq!(
             "Pohnpei",
             locations_root
@@ -311,12 +320,7 @@ mod tests {
                 .unwrap()
         );
 
-        let locations: DataResponse<LocationsV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("fr").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let locations: DataResponse<LocationsV1Marker> = provider.load(fr).unwrap();
         assert_eq!(
             "Italie",
             locations
@@ -342,12 +346,8 @@ mod tests {
                 .unwrap()
         };
 
-        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> =
+            provider.load(en).unwrap();
         assert_eq!(
             "Australian Central Western Time",
             generic_names_long
@@ -367,12 +367,8 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1Marker> =
+            provider.load(en).unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
             specific_names_long
@@ -395,12 +391,8 @@ mod tests {
                 .unwrap()
         );
 
-        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1Marker> =
+            provider.load(en).unwrap();
         assert_eq!(
             "PT",
             generic_names_short
@@ -420,12 +412,8 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1Marker> = provider
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap();
+        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1Marker> =
+            provider.load(en).unwrap();
         assert_eq!(
             "PDT",
             specific_names_short

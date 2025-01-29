@@ -132,8 +132,12 @@ pub trait ZoneMarkers: UnstableSealed {
     type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
     /// Marker for loading location names for time zone formatting
     type LocationsV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
+    /// Marker for loading location names for time zone formatting
+    type LocationsRootV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
     type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
+    /// Marker for loading exemplar city names for time zone formatting
+    type ExemplarCitiesRootV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
     /// Marker for loading generic long time zone names.
     type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
     /// Marker for loading generic short time zone names.
@@ -247,7 +251,9 @@ pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeM
     + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+    + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+    + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -277,7 +283,9 @@ where
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+        + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+        + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -350,7 +358,9 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+    + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+    + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -427,7 +437,9 @@ where
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1Marker>
+        + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker>
+        + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1Marker>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1Marker>
@@ -516,7 +528,9 @@ impl ZoneMarkers for () {
     type TimeZoneLocalTimeInput = ();
     type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
     type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
+    type LocationsRootV1Marker = NeverMarker<tz::LocationsV1<'static>>;
     type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
+    type ExemplarCitiesRootV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
     type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type GenericShortV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
     type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
@@ -648,8 +662,14 @@ macro_rules! datetime_marker_helper {
     (@data/zone/locations, yes) => {
         tz::LocationsV1Marker
     };
+    (@data/zone/locations_root, yes) => {
+        tz::LocationsRootV1Marker
+    };
     (@data/zone/exemplars, yes) => {
         tz::ExemplarCitiesV1Marker
+    };
+    (@data/zone/exemplars_root, yes) => {
+        tz::ExemplarCitiesRootV1Marker
     };
     (@data/zone/generic_long, yes) => {
         tz::MzGenericLongV1Marker
@@ -672,7 +692,13 @@ macro_rules! datetime_marker_helper {
     (@data/zone/locations,) => {
         NeverMarker<tz::LocationsV1<'static>>
     };
+    (@data/zone/locations_root,) => {
+        NeverMarker<tz::LocationsV1<'static>>
+    };
     (@data/zone/exemplars,) => {
+        NeverMarker<tz::ExemplarCitiesV1<'static>>
+    };
+    (@data/zone/exemplars_root,) => {
         NeverMarker<tz::ExemplarCitiesV1<'static>>
     };
     (@data/zone/generic_long,) => {
@@ -708,8 +734,14 @@ macro_rules! datetime_marker_helper {
     (@names/zone/locations, yes) => {
         tz::LocationsV1Marker
     };
+    (@names/zone/locations_root, yes) => {
+        tz::LocationsRootV1Marker
+    };
     (@names/zone/exemplars, yes) => {
         tz::ExemplarCitiesV1Marker
+    };
+    (@names/zone/exemplars_root, yes) => {
+        tz::ExemplarCitiesRootV1Marker
     };
     (@names/zone/generic_long, yes) => {
         tz::MzGenericLongV1Marker

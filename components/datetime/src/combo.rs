@@ -164,7 +164,9 @@ where
     type DayPeriodNames = DT::DayPeriodNames;
     type ZoneEssentials = Z::ZoneEssentials;
     type ZoneLocations = Z::ZoneLocations;
+    type ZoneLocationsRoot = Z::ZoneLocationsRoot;
     type ZoneExemplars = Z::ZoneExemplars;
+    type ZoneExemplarsRoot = Z::ZoneExemplarsRoot;
     type ZoneGenericLong = Z::ZoneGenericLong;
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;

@@ -13,8 +13,10 @@ use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant}
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
+    pub(crate) use super::ExemplarCitiesRootV1Marker;
     pub(crate) use super::ExemplarCitiesV1;
     pub(crate) use super::ExemplarCitiesV1Marker;
+    pub(crate) use super::LocationsRootV1Marker;
     pub(crate) use super::LocationsV1;
     pub(crate) use super::LocationsV1Marker;
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
@@ -73,7 +75,10 @@ pub struct TimeZoneEssentialsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(LocationsV1Marker = "time_zone/locations@1")]
+#[icu_provider::data_struct(
+    marker(LocationsV1Marker, "time_zone/locations@1"),
+    marker(LocationsRootV1Marker, "time_zone/locations_root@1")
+)]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
@@ -129,7 +134,10 @@ pub struct LocationsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(ExemplarCitiesV1Marker = "time_zone/exemplars@1")]
+#[icu_provider::data_struct(
+    marker(ExemplarCitiesV1Marker, "time_zone/exemplars@1"),
+    marker(ExemplarCitiesRootV1Marker, "time_zone/exemplars_root@1")
+)]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]

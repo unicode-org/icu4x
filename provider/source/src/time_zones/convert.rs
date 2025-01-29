@@ -11,7 +11,7 @@ use core::cmp::Ordering;
 use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::{langid, LanguageIdentifier};
+use icu::locale::LanguageIdentifier;
 use icu::timezone::provider::*;
 use icu::timezone::Time;
 use icu::timezone::UtcOffset;
@@ -69,7 +69,7 @@ impl SourceDataProvider {
     #[allow(clippy::type_complexity)]
     fn calculate_locations(
         &self,
-        req: DataRequest,
+        locale: &DataLocale,
     ) -> Result<
         (
             BTreeMap<TimeZoneBcp47Id, String>,
@@ -81,7 +81,7 @@ impl SourceDataProvider {
             .cldr()?
             .dates("gregorian")
             .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
+                locale,
                 "timeZoneNames.json",
             )?
             .main
@@ -149,14 +149,14 @@ impl SourceDataProvider {
 
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
-        let region_display_names = if req.id.locale.is_default() {
+        let region_display_names = if locale.is_default() {
             BTreeMap::default()
         } else {
             let regions = &self
                 .cldr()?
                 .displaynames()
                 .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                    req.id.locale,
+                    locale,
                     "territories.json",
                 )?
                 .main
@@ -185,71 +185,19 @@ impl SourceDataProvider {
                 .collect()
         };
 
-        let find_endonym_or_en = |region: icu::locale::subtags::Region| -> Option<&str> {
-            let expander = self.cldr().unwrap().extended_locale_expander().unwrap();
-            let mut langid = LanguageIdentifier {
-                region: Some(region),
-                // `und` is `Latn`
-                script: Some(icu::locale::subtags::script!("Latn")),
-                ..Default::default()
-            };
-            expander.maximize(&mut langid);
-            langid.region = None;
-            expander.minimize(&mut langid);
-            let locale = langid.into();
-
-            // Avoid logging file-not-found errors
-            let regions = &if self
-                .cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(&locale, "territories.json")
-                != Ok(true)
-            {
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &langid!("en").into(),
-                        "territories.json",
-                    )
-                    .ok()?
-            } else {
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &locale,
-                        "territories.json",
-                    )
-                    .ok()?
-            }
-            .main
-            .value
-            .localedisplaynames
-            .regions;
-
-            regions
-                .get(&format!("{region}-alt-short"))
-                .or_else(|| regions.get(region.as_str()))
-                .map(|x| x.as_str())
-        };
-
         let mut locations = BTreeMap::new();
 
         exemplar_cities.retain(|&k, v| {
             if k.0 == "unk" {
                 true
             } else if let Some(region) = primary_zones.get(&k) {
-                let region_name = region_display_names
-                    .get(region)
-                    .copied()
-                    .or_else(|| find_endonym_or_en(*region))
-                    .unwrap_or(region.as_str())
-                    .to_string();
-                let retain = &region_name != v;
-                locations.insert(k, region_name);
-                retain
+                if let Some(region_name) = region_display_names.get(region) {
+                    locations.insert(k, region_name.to_string());
+                    region_name != v
+                } else {
+                    locations.insert(k, v.clone());
+                    false
+                }
             } else {
                 locations.insert(k, v.clone());
                 false
@@ -509,6 +457,39 @@ impl SourceDataProvider {
             .as_ref()
             .map_err(|&e| e)
     }
+
+    fn dedupe_group(&self, locale: DataLocale) -> Result<DataLocale, DataError> {
+        let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        self.cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut group);
+        group.language = Default::default();
+        group.region = Default::default();
+        self.cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut group);
+        self.cldr()?
+            .extended_locale_expander()?
+            .minimize_favor_script(&mut group);
+        let group = DataLocale::from(group);
+        if self
+            .cldr()
+            .unwrap()
+            .displaynames()
+            .file_exists(&group, "territories.json")
+            != Ok(true)
+            || self
+                .cldr()
+                .unwrap()
+                .dates("gregorian")
+                .file_exists(&group, "timeZoneNames.json")
+                != Ok(true)
+        {
+            Ok(locale)
+        } else {
+            Ok(group)
+        }
+    }
 }
 
 impl DataProvider<LocationsV1Marker> for SourceDataProvider {
@@ -527,12 +508,11 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        let mut locations = self.calculate_locations(req)?.0;
+        let mut locations = self.calculate_locations(req.id.locale)?.0;
 
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?.0;
-            locations.retain(|k, v| und.get(k) != Some(v));
-        }
+        let base = DataProvider::<LocationsRootV1Marker>::load(&self, req)?.payload;
+
+        locations.retain(|k, v| base.get().locations.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -547,21 +527,61 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
     }
 }
 
+impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1Marker>, DataError> {
+        self.check_req::<LocationsV1Marker>(req)?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(LocationsV1 {
+                locations: self
+                    .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
+                    .0
+                    .into_iter()
+                    .collect(),
+                pattern_generic: Default::default(),
+                pattern_standard: Default::default(),
+                pattern_daylight: Default::default(),
+                pattern_partial_location: Default::default(),
+            }),
+        })
+    }
+}
+
 impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
         self.check_req::<ExemplarCitiesV1Marker>(req)?;
 
-        let mut exemplars = self.calculate_locations(req)?.1;
+        let mut exemplars = self.calculate_locations(req.id.locale)?.1;
 
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?.1;
-            exemplars.retain(|k, v| und.get(k) != Some(v));
-        }
+        let base = DataProvider::<ExemplarCitiesRootV1Marker>::load(&self, req)?.payload;
+
+        exemplars.retain(|k, v| base.get().exemplars.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(ExemplarCitiesV1 {
                 exemplars: exemplars.into_iter().collect(),
+            }),
+        })
+    }
+}
+
+impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<ExemplarCitiesRootV1Marker>, DataError> {
+        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+                exemplars: self
+                    .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
+                    .1
+                    .into_iter()
+                    .collect(),
             }),
         })
     }
@@ -610,7 +630,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         let reverse_metazones = self.reverse_metazones()?;
-        let locations = self.calculate_locations(req)?.0;
+        let locations = self.calculate_locations(req.id.locale)?.0;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
@@ -669,7 +689,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
         let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         let reverse_metazones = self.reverse_metazones()?;
-        let locations = self.calculate_locations(req)?.0;
+        let locations = self.calculate_locations(req.id.locale)?.0;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
