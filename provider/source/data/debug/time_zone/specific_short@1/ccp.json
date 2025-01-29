@@ -1,8 +1,9 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "indi",
+        72,
         "Standard"
       ],
       "IST"

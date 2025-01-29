@@ -2036,6 +2036,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.load_mz_periods(mz_period_provider, error_field)?;
+        #[allow(clippy::unwrap_used)] // we just loaded them
+        if self
+            .mz_generic_long
+            .get()
+            .inner
+            .get_option()
+            .unwrap()
+            .checksum
+            != self.mz_periods.get().inner.get_option().unwrap().checksum
+        {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
+                    .with_req(tz::MzGenericLongV1Marker::INFO, req),
+                error_field,
+            ));
+        }
         Ok(())
     }
 
@@ -2062,6 +2078,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.load_mz_periods(mz_period_provider, error_field)?;
+        #[allow(clippy::unwrap_used)] // we just loaded them
+        if self
+            .mz_generic_short
+            .get()
+            .inner
+            .get_option()
+            .unwrap()
+            .checksum
+            != self.mz_periods.get().inner.get_option().unwrap().checksum
+        {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
+                    .with_req(tz::MzGenericShortV1Marker::INFO, req),
+                error_field,
+            ));
+        }
         Ok(())
     }
 
@@ -2088,6 +2120,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.load_mz_periods(mz_period_provider, error_field)?;
+        #[allow(clippy::unwrap_used)] // we just loaded them
+        if self
+            .mz_specific_long
+            .get()
+            .inner
+            .get_option()
+            .unwrap()
+            .checksum
+            != self.mz_periods.get().inner.get_option().unwrap().checksum
+        {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
+                    .with_req(tz::MzSpecificLongV1Marker::INFO, req),
+                error_field,
+            ));
+        }
         Ok(())
     }
 
@@ -2114,6 +2162,22 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.load_mz_periods(mz_period_provider, error_field)?;
+        #[allow(clippy::unwrap_used)] // we just loaded them
+        if self
+            .mz_specific_short
+            .get()
+            .inner
+            .get_option()
+            .unwrap()
+            .checksum
+            != self.mz_periods.get().inner.get_option().unwrap().checksum
+        {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
+                    .with_req(tz::MzSpecificShortV1Marker::INFO, req),
+                error_field,
+            ));
+        }
         Ok(())
     }
 

@@ -1,7 +1,8 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": {
-    "arge": "ART",
-    "arwe": "WART"
+    "19": "ART",
+    "21": "WART"
   },
   "overrides": {
     "utc": "UTC"

@@ -1,9 +1,10 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": {
-    "euce": "CET",
-    "euea": "EET",
-    "euwe": "WET",
-    "mgmt": "GMT"
+    "50": "CET",
+    "51": "EET",
+    "53": "WET",
+    "101": "GMT"
   },
   "overrides": {
     "utc": "UTC"

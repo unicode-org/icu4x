@@ -1,43 +1,44 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "afce",
+        2,
         "Standard"
       ],
       "CAT"
     ],
     [
       [
-        "afea",
+        3,
         "Standard"
       ],
       "EAT"
     ],
     [
       [
-        "afso",
+        5,
         "Standard"
       ],
       "SAST"
     ],
     [
       [
-        "afwe",
+        6,
         "Standard"
       ],
       "WAT"
     ],
     [
       [
-        "afwe",
+        6,
         "Daylight"
       ],
       "WAST"
     ],
     [
       [
-        "mgmt",
+        101,
         "Standard"
       ],
       "GMT"

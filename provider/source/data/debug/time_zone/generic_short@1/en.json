@@ -1,13 +1,14 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": {
-    "alas": "AKT",
-    "amce": "CT",
-    "amea": "ET",
-    "ammo": "MT",
-    "ampa": "PT",
-    "atla": "AT",
-    "haal": "HAT",
-    "mgmt": "GMT"
+    "8": "AKT",
+    "10": "CT",
+    "11": "ET",
+    "12": "MT",
+    "13": "PT",
+    "22": "AT",
+    "68": "HAT",
+    "101": "GMT"
   },
   "overrides": {
     "ushnl": "HST",

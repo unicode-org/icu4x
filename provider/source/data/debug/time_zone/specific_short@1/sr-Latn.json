@@ -1,50 +1,51 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "euce",
+        50,
         "Standard"
       ],
       "CET"
     ],
     [
       [
-        "euce",
+        50,
         "Daylight"
       ],
       "CEST"
     ],
     [
       [
-        "euea",
+        51,
         "Standard"
       ],
       "EET"
     ],
     [
       [
-        "euea",
+        51,
         "Daylight"
       ],
       "EEST"
     ],
     [
       [
-        "euwe",
+        53,
         "Standard"
       ],
       "WET"
     ],
     [
       [
-        "euwe",
+        53,
         "Daylight"
       ],
       "WEST"
     ],
     [
       [
-        "mgmt",
+        101,
         "Standard"
       ],
       "GMT"

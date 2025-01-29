@@ -1,6 +1,7 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": {
-    "japa": "JST"
+    "80": "JST"
   },
   "overrides": {
     "utc": "UTC"

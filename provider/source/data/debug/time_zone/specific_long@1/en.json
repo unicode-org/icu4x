@@ -1,1366 +1,1367 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "acre",
+        1,
         "Standard"
       ],
       "Acre Standard Time"
     ],
     [
       [
-        "acre",
+        1,
         "Daylight"
       ],
       "Acre Summer Time"
     ],
     [
       [
-        "afce",
+        2,
         "Standard"
       ],
       "Central Africa Time"
     ],
     [
       [
-        "afea",
+        3,
         "Standard"
       ],
       "East Africa Time"
     ],
     [
       [
-        "afgh",
+        4,
         "Standard"
       ],
       "Afghanistan Time"
     ],
     [
       [
-        "afso",
+        5,
         "Standard"
       ],
       "South Africa Standard Time"
     ],
     [
       [
-        "afwe",
+        6,
         "Standard"
       ],
       "West Africa Standard Time"
     ],
     [
       [
-        "afwe",
+        6,
         "Daylight"
       ],
       "West Africa Summer Time"
     ],
     [
       [
-        "alam",
+        7,
         "Daylight"
       ],
       "Almaty Summer Time"
     ],
     [
       [
-        "alas",
+        8,
         "Standard"
       ],
       "Alaska Standard Time"
     ],
     [
       [
-        "alas",
+        8,
         "Daylight"
       ],
       "Alaska Daylight Time"
     ],
     [
       [
-        "amaz",
+        9,
         "Standard"
       ],
       "Amazon Standard Time"
     ],
     [
       [
-        "amaz",
+        9,
         "Daylight"
       ],
       "Amazon Summer Time"
     ],
     [
       [
-        "amce",
+        10,
         "Standard"
       ],
       "Central Standard Time"
     ],
     [
       [
-        "amce",
+        10,
         "Daylight"
       ],
       "Central Daylight Time"
     ],
     [
       [
-        "amea",
+        11,
         "Standard"
       ],
       "Eastern Standard Time"
     ],
     [
       [
-        "amea",
+        11,
         "Daylight"
       ],
       "Eastern Daylight Time"
     ],
     [
       [
-        "ammo",
+        12,
         "Standard"
       ],
       "Mountain Standard Time"
     ],
     [
       [
-        "ammo",
+        12,
         "Daylight"
       ],
       "Mountain Daylight Time"
     ],
     [
       [
-        "ampa",
+        13,
         "Standard"
       ],
       "Pacific Standard Time"
     ],
     [
       [
-        "ampa",
+        13,
         "Daylight"
       ],
       "Pacific Daylight Time"
     ],
     [
       [
-        "anad",
+        14,
         "Daylight"
       ],
       "Anadyr Summer Time"
     ],
     [
       [
-        "apia",
+        15,
         "Standard"
       ],
       "Apia Standard Time"
     ],
     [
       [
-        "apia",
+        15,
         "Daylight"
       ],
       "Apia Daylight Time"
     ],
     [
       [
-        "aqta",
+        16,
         "Daylight"
       ],
       "Aqtau Summer Time"
     ],
     [
       [
-        "aqto",
+        17,
         "Daylight"
       ],
       "Aqtobe Summer Time"
     ],
     [
       [
-        "arab",
+        18,
         "Standard"
       ],
       "Arabian Standard Time"
     ],
     [
       [
-        "arab",
+        18,
         "Daylight"
       ],
       "Arabian Daylight Time"
     ],
     [
       [
-        "arge",
+        19,
         "Standard"
       ],
       "Argentina Standard Time"
     ],
     [
       [
-        "arge",
+        19,
         "Daylight"
       ],
       "Argentina Summer Time"
     ],
     [
       [
-        "arme",
+        20,
         "Daylight"
       ],
       "Armenia Summer Time"
     ],
     [
       [
-        "arwe",
+        21,
         "Standard"
       ],
       "Western Argentina Standard Time"
     ],
     [
       [
-        "arwe",
+        21,
         "Daylight"
       ],
       "Western Argentina Summer Time"
     ],
     [
       [
-        "atla",
+        22,
         "Standard"
       ],
       "Atlantic Standard Time"
     ],
     [
       [
-        "atla",
+        22,
         "Daylight"
       ],
       "Atlantic Daylight Time"
     ],
     [
       [
-        "auce",
+        23,
         "Standard"
       ],
       "Australian Central Standard Time"
     ],
     [
       [
-        "auce",
+        23,
         "Daylight"
       ],
       "Australian Central Daylight Time"
     ],
     [
       [
-        "aucw",
+        24,
         "Standard"
       ],
       "Australian Central Western Standard Time"
     ],
     [
       [
-        "aucw",
+        24,
         "Daylight"
       ],
       "Australian Central Western Daylight Time"
     ],
     [
       [
-        "auea",
+        25,
         "Standard"
       ],
       "Australian Eastern Standard Time"
     ],
     [
       [
-        "auea",
+        25,
         "Daylight"
       ],
       "Australian Eastern Daylight Time"
     ],
     [
       [
-        "auwe",
+        26,
         "Standard"
       ],
       "Australian Western Standard Time"
     ],
     [
       [
-        "auwe",
+        26,
         "Daylight"
       ],
       "Australian Western Daylight Time"
     ],
     [
       [
-        "azer",
+        27,
         "Daylight"
       ],
       "Azerbaijan Summer Time"
     ],
     [
       [
-        "azor",
+        28,
         "Daylight"
       ],
       "Azores Summer Time"
     ],
     [
       [
-        "bang",
+        29,
         "Daylight"
       ],
       "Bangladesh Summer Time"
     ],
     [
       [
-        "bhut",
+        30,
         "Standard"
       ],
       "Bhutan Time"
     ],
     [
       [
-        "boli",
+        31,
         "Standard"
       ],
       "Bolivia Time"
     ],
     [
       [
-        "bras",
+        32,
         "Standard"
       ],
       "Brasilia Standard Time"
     ],
     [
       [
-        "bras",
+        32,
         "Daylight"
       ],
       "Brasilia Summer Time"
     ],
     [
       [
-        "brun",
+        33,
         "Standard"
       ],
       "Brunei Darussalam Time"
     ],
     [
       [
-        "case",
+        34,
         "Standard"
       ],
       "Casey Time"
     ],
     [
       [
-        "cave",
+        35,
         "Daylight"
       ],
       "Cape Verde Summer Time"
     ],
     [
       [
-        "cham",
+        36,
         "Standard"
       ],
       "Chamorro Standard Time"
     ],
     [
       [
-        "chil",
+        38,
         "Standard"
       ],
       "Chile Standard Time"
     ],
     [
       [
-        "chil",
+        38,
         "Daylight"
       ],
       "Chile Summer Time"
     ],
     [
       [
-        "chin",
+        39,
         "Standard"
       ],
       "China Standard Time"
     ],
     [
       [
-        "chin",
+        39,
         "Daylight"
       ],
       "China Daylight Time"
     ],
     [
       [
-        "chri",
+        40,
         "Standard"
       ],
       "Christmas Island Time"
     ],
     [
       [
-        "coco",
+        41,
         "Standard"
       ],
       "Cocos Islands Time"
     ],
     [
       [
-        "colo",
+        42,
         "Daylight"
       ],
       "Colombia Summer Time"
     ],
     [
       [
-        "cook",
+        43,
         "Daylight"
       ],
       "Cook Islands Half Summer Time"
     ],
     [
       [
-        "davi",
+        45,
         "Standard"
       ],
       "Davis Time"
     ],
     [
       [
-        "dumo",
+        46,
         "Standard"
       ],
       "Dumont-d’Urville Time"
     ],
     [
       [
-        "east",
+        47,
         "Standard"
       ],
       "Easter Island Standard Time"
     ],
     [
       [
-        "east",
+        47,
         "Daylight"
       ],
       "Easter Island Summer Time"
     ],
     [
       [
-        "eati",
+        48,
         "Standard"
       ],
       "East Timor Time"
     ],
     [
       [
-        "ecua",
+        49,
         "Standard"
       ],
       "Ecuador Time"
     ],
     [
       [
-        "euce",
+        50,
         "Standard"
       ],
       "Central European Standard Time"
     ],
     [
       [
-        "euce",
+        50,
         "Daylight"
       ],
       "Central European Summer Time"
     ],
     [
       [
-        "euea",
+        51,
         "Standard"
       ],
       "Eastern European Standard Time"
     ],
     [
       [
-        "euea",
+        51,
         "Daylight"
       ],
       "Eastern European Summer Time"
     ],
     [
       [
-        "eufe",
+        52,
         "Standard"
       ],
       "Further-eastern European Time"
     ],
     [
       [
-        "euwe",
+        53,
         "Standard"
       ],
       "Western European Standard Time"
     ],
     [
       [
-        "euwe",
+        53,
         "Daylight"
       ],
       "Western European Summer Time"
     ],
     [
       [
-        "falk",
+        54,
         "Daylight"
       ],
       "Falkland Islands Summer Time"
     ],
     [
       [
-        "fiji",
+        55,
         "Daylight"
       ],
       "Fiji Summer Time"
     ],
     [
       [
-        "frgu",
+        56,
         "Standard"
       ],
       "French Guiana Time"
     ],
     [
       [
-        "frso",
+        57,
         "Standard"
       ],
       "French Southern & Antarctic Time"
     ],
     [
       [
-        "gala",
+        58,
         "Standard"
       ],
       "Galapagos Time"
     ],
     [
       [
-        "gamb",
+        59,
         "Standard"
       ],
       "Gambier Time"
     ],
     [
       [
-        "geor",
+        60,
         "Daylight"
       ],
       "Georgia Summer Time"
     ],
     [
       [
-        "giis",
+        61,
         "Standard"
       ],
       "Gilbert Islands Time"
     ],
     [
       [
-        "grea",
+        62,
         "Standard"
       ],
       "East Greenland Standard Time"
     ],
     [
       [
-        "grea",
+        62,
         "Daylight"
       ],
       "East Greenland Summer Time"
     ],
     [
       [
-        "gree",
+        63,
         "Standard"
       ],
       "Greenland Standard Time"
     ],
     [
       [
-        "gree",
+        63,
         "Daylight"
       ],
       "Greenland Summer Time"
     ],
     [
       [
-        "grwe",
+        64,
         "Standard"
       ],
       "West Greenland Standard Time"
     ],
     [
       [
-        "grwe",
+        64,
         "Daylight"
       ],
       "West Greenland Summer Time"
     ],
     [
       [
-        "gulf",
+        66,
         "Standard"
       ],
       "Gulf Standard Time"
     ],
     [
       [
-        "guya",
+        67,
         "Standard"
       ],
       "Guyana Time"
     ],
     [
       [
-        "haal",
+        68,
         "Standard"
       ],
       "Hawaii-Aleutian Standard Time"
     ],
     [
       [
-        "haal",
+        68,
         "Daylight"
       ],
       "Hawaii-Aleutian Daylight Time"
     ],
     [
       [
-        "hoko",
+        69,
         "Daylight"
       ],
       "Hong Kong Summer Time"
     ],
     [
       [
-        "hovd",
+        70,
         "Daylight"
       ],
       "Hovd Summer Time"
     ],
     [
       [
-        "ince",
+        71,
         "Standard"
       ],
       "Central Indonesia Time"
     ],
     [
       [
-        "indi",
+        72,
         "Standard"
       ],
       "India Standard Time"
     ],
     [
       [
-        "indo",
+        73,
         "Standard"
       ],
       "Indochina Time"
     ],
     [
       [
-        "inea",
+        74,
         "Standard"
       ],
       "Eastern Indonesia Time"
     ],
     [
       [
-        "inoc",
+        75,
         "Standard"
       ],
       "Indian Ocean Time"
     ],
     [
       [
-        "inwe",
+        76,
         "Standard"
       ],
       "Western Indonesia Time"
     ],
     [
       [
-        "irku",
+        78,
         "Standard"
       ],
       "Irkutsk Standard Time"
     ],
     [
       [
-        "irku",
+        78,
         "Daylight"
       ],
       "Irkutsk Summer Time"
     ],
     [
       [
-        "isra",
+        79,
         "Standard"
       ],
       "Israel Standard Time"
     ],
     [
       [
-        "isra",
+        79,
         "Daylight"
       ],
       "Israel Daylight Time"
     ],
     [
       [
-        "kaea",
+        81,
         "Standard"
       ],
       "East Kazakhstan Time"
     ],
     [
       [
-        "kamc",
+        82,
         "Standard"
       ],
       "Petropavlovsk-Kamchatski Standard Time"
     ],
     [
       [
-        "kamc",
+        82,
         "Daylight"
       ],
       "Petropavlovsk-Kamchatski Summer Time"
     ],
     [
       [
-        "kawe",
+        83,
         "Standard"
       ],
       "West Kazakhstan Time"
     ],
     [
       [
-        "kaza",
+        84,
         "Standard"
       ],
       "Kazakhstan Time"
     ],
     [
       [
-        "kore",
+        85,
         "Standard"
       ],
       "Korean Standard Time"
     ],
     [
       [
-        "kore",
+        85,
         "Daylight"
       ],
       "Korean Daylight Time"
     ],
     [
       [
-        "kosr",
+        86,
         "Standard"
       ],
       "Kosrae Time"
     ],
     [
       [
-        "kras",
+        87,
         "Standard"
       ],
       "Krasnoyarsk Standard Time"
     ],
     [
       [
-        "kras",
+        87,
         "Daylight"
       ],
       "Krasnoyarsk Summer Time"
     ],
     [
       [
-        "kyrg",
+        88,
         "Standard"
       ],
       "Kyrgyzstan Time"
     ],
     [
       [
-        "lank",
+        89,
         "Standard"
       ],
       "Lanka Time"
     ],
     [
       [
-        "liis",
+        90,
         "Standard"
       ],
       "Line Islands Time"
     ],
     [
       [
-        "maca",
+        92,
         "Daylight"
       ],
       "Macao Summer Time"
     ],
     [
       [
-        "maga",
+        93,
         "Standard"
       ],
       "Magadan Standard Time"
     ],
     [
       [
-        "maga",
+        93,
         "Daylight"
       ],
       "Magadan Summer Time"
     ],
     [
       [
-        "mais",
+        94,
         "Standard"
       ],
       "Marshall Islands Time"
     ],
     [
       [
-        "mala",
+        95,
         "Standard"
       ],
       "Malaysia Time"
     ],
     [
       [
-        "mald",
+        96,
         "Standard"
       ],
       "Maldives Time"
     ],
     [
       [
-        "marq",
+        97,
         "Standard"
       ],
       "Marquesas Time"
     ],
     [
       [
-        "maur",
+        98,
         "Daylight"
       ],
       "Mauritius Summer Time"
     ],
     [
       [
-        "maws",
+        99,
         "Standard"
       ],
       "Mawson Time"
     ],
     [
       [
-        "mepa",
+        100,
         "Standard"
       ],
       "Mexican Pacific Standard Time"
     ],
     [
       [
-        "mepa",
+        100,
         "Daylight"
       ],
       "Mexican Pacific Daylight Time"
     ],
     [
       [
-        "mgmt",
+        101,
         "Standard"
       ],
       "Greenwich Mean Time"
     ],
     [
       [
-        "mong",
+        102,
         "Daylight"
       ],
       "Ulaanbaatar Summer Time"
     ],
     [
       [
-        "mosc",
+        103,
         "Standard"
       ],
       "Moscow Standard Time"
     ],
     [
       [
-        "mosc",
+        103,
         "Daylight"
       ],
       "Moscow Summer Time"
     ],
     [
       [
-        "myan",
+        104,
         "Standard"
       ],
       "Myanmar Time"
     ],
     [
       [
-        "naur",
+        105,
         "Standard"
       ],
       "Nauru Time"
     ],
     [
       [
-        "neca",
+        106,
         "Daylight"
       ],
       "New Caledonia Summer Time"
     ],
     [
       [
-        "nepa",
+        107,
         "Standard"
       ],
       "Nepal Time"
     ],
     [
       [
-        "newf",
+        108,
         "Standard"
       ],
       "Newfoundland Standard Time"
     ],
     [
       [
-        "newf",
+        108,
         "Daylight"
       ],
       "Newfoundland Daylight Time"
     ],
     [
       [
-        "neze",
+        109,
         "Standard"
       ],
       "New Zealand Standard Time"
     ],
     [
       [
-        "neze",
+        109,
         "Daylight"
       ],
       "New Zealand Daylight Time"
     ],
     [
       [
-        "niue",
+        110,
         "Standard"
       ],
       "Niue Time"
     ],
     [
       [
-        "noma",
+        111,
         "Standard"
       ],
       "North Mariana Islands Time"
     ],
     [
       [
-        "noro",
+        113,
         "Standard"
       ],
       "Fernando de Noronha Standard Time"
     ],
     [
       [
-        "noro",
+        113,
         "Daylight"
       ],
       "Fernando de Noronha Summer Time"
     ],
     [
       [
-        "novo",
+        114,
         "Standard"
       ],
       "Novosibirsk Standard Time"
     ],
     [
       [
-        "novo",
+        114,
         "Daylight"
       ],
       "Novosibirsk Summer Time"
     ],
     [
       [
-        "omsk",
+        115,
         "Daylight"
       ],
       "Omsk Summer Time"
     ],
     [
       [
-        "paki",
+        116,
         "Daylight"
       ],
       "Pakistan Summer Time"
     ],
     [
       [
-        "pala",
+        117,
         "Standard"
       ],
       "Palau Time"
     ],
     [
       [
-        "pang",
+        118,
         "Standard"
       ],
       "Papua New Guinea Time"
     ],
     [
       [
-        "para",
+        119,
         "Daylight"
       ],
       "Paraguay Summer Time"
     ],
     [
       [
-        "peru",
+        120,
         "Daylight"
       ],
       "Peru Summer Time"
     ],
     [
       [
-        "phil",
+        121,
         "Standard"
       ],
       "Philippine Standard Time"
     ],
     [
       [
-        "phil",
+        121,
         "Daylight"
       ],
       "Philippine Summer Time"
     ],
     [
       [
-        "phis",
+        122,
         "Standard"
       ],
       "Phoenix Islands Time"
     ],
     [
       [
-        "pitc",
+        124,
         "Standard"
       ],
       "Pitcairn Time"
     ],
     [
       [
-        "pona",
+        125,
         "Standard"
       ],
       "Ponape Time"
     ],
     [
       [
-        "pyon",
+        126,
         "Standard"
       ],
       "Pyongyang Time"
     ],
     [
       [
-        "qyzy",
+        127,
         "Daylight"
       ],
       "Qyzylorda Summer Time"
     ],
     [
       [
-        "reun",
+        128,
         "Standard"
       ],
       "Réunion Time"
     ],
     [
       [
-        "roth",
+        129,
         "Standard"
       ],
       "Rothera Time"
     ],
     [
       [
-        "sakh",
+        130,
         "Daylight"
       ],
       "Sakhalin Summer Time"
     ],
     [
       [
-        "sama",
+        131,
         "Daylight"
       ],
       "Samara Summer Time"
     ],
     [
       [
-        "samo",
+        132,
         "Standard"
       ],
       "Samoa Standard Time"
     ],
     [
       [
-        "samo",
+        132,
         "Daylight"
       ],
       "Samoa Daylight Time"
     ],
     [
       [
-        "seyc",
+        133,
         "Standard"
       ],
       "Seychelles Time"
     ],
     [
       [
-        "soge",
+        135,
         "Standard"
       ],
       "South Georgia Time"
     ],
     [
       [
-        "solo",
+        136,
         "Standard"
       ],
       "Solomon Islands Time"
     ],
     [
       [
-        "suri",
+        137,
         "Standard"
       ],
       "Suriname Time"
     ],
     [
       [
-        "syow",
+        138,
         "Standard"
       ],
       "Syowa Time"
     ],
     [
       [
-        "tahi",
+        139,
         "Standard"
       ],
       "Tahiti Time"
     ],
     [
       [
-        "taip",
+        140,
         "Standard"
       ],
       "Taipei Standard Time"
     ],
     [
       [
-        "taip",
+        140,
         "Daylight"
       ],
       "Taipei Daylight Time"
     ],
     [
       [
-        "taji",
+        141,
         "Standard"
       ],
       "Tajikistan Time"
     ],
     [
       [
-        "toke",
+        142,
         "Standard"
       ],
       "Tokelau Time"
     ],
     [
       [
-        "tong",
+        143,
         "Daylight"
       ],
       "Tonga Summer Time"
     ],
     [
       [
-        "truk",
+        144,
         "Standard"
       ],
       "Chuuk Time"
     ],
     [
       [
-        "turk",
+        145,
         "Daylight"
       ],
       "Turkmenistan Summer Time"
     ],
     [
       [
-        "tuva",
+        146,
         "Standard"
       ],
       "Tuvalu Time"
     ],
     [
       [
-        "urug",
+        147,
         "Daylight"
       ],
       "Uruguay Summer Time"
     ],
     [
       [
-        "uzbe",
+        148,
         "Standard"
       ],
       "Uzbekistan Standard Time"
     ],
     [
       [
-        "uzbe",
+        148,
         "Daylight"
       ],
       "Uzbekistan Summer Time"
     ],
     [
       [
-        "vanu",
+        149,
         "Daylight"
       ],
       "Vanuatu Summer Time"
     ],
     [
       [
-        "vene",
+        150,
         "Standard"
       ],
       "Venezuela Time"
     ],
     [
       [
-        "vlad",
+        151,
         "Standard"
       ],
       "Vladivostok Standard Time"
     ],
     [
       [
-        "vlad",
+        151,
         "Daylight"
       ],
       "Vladivostok Summer Time"
     ],
     [
       [
-        "volg",
+        152,
         "Daylight"
       ],
       "Volgograd Summer Time"
     ],
     [
       [
-        "vost",
+        153,
         "Standard"
       ],
       "Vostok Time"
     ],
     [
       [
-        "wake",
+        154,
         "Standard"
       ],
       "Wake Island Time"
     ],
     [
       [
-        "wall",
+        155,
         "Standard"
       ],
       "Wallis & Futuna Time"
     ],
     [
       [
-        "yaku",
+        156,
         "Standard"
       ],
       "Yakutsk Standard Time"
     ],
     [
       [
-        "yaku",
+        156,
         "Daylight"
       ],
       "Yakutsk Summer Time"
     ],
     [
       [
-        "yeka",
+        157,
         "Daylight"
       ],
       "Yekaterinburg Summer Time"
     ],
     [
       [
-        "yuko",
+        158,
         "Standard"
       ],
       "Yukon Time"

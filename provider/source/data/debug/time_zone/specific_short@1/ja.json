@@ -1,15 +1,16 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "japa",
+        80,
         "Standard"
       ],
       "JST"
     ],
     [
       [
-        "japa",
+        80,
         "Daylight"
       ],
       "JDT"

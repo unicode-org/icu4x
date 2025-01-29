@@ -1,29 +1,30 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "arge",
+        19,
         "Standard"
       ],
       "ART"
     ],
     [
       [
-        "arge",
+        19,
         "Daylight"
       ],
       "ARST"
     ],
     [
       [
-        "arwe",
+        21,
         "Standard"
       ],
       "WART"
     ],
     [
       [
-        "arwe",
+        21,
         "Daylight"
       ],
       "WARST"

@@ -1,6 +1,7 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": {
-    "mgmt": "GMT"
+    "101": "GMT"
   },
   "overrides": {
     "utc": "UTC"

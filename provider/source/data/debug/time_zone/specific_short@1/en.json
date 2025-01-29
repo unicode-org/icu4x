@@ -1,106 +1,107 @@
 {
+  "checksum": 1484489054199371178,
   "defaults": [
     [
       [
-        "alas",
+        8,
         "Standard"
       ],
       "AKST"
     ],
     [
       [
-        "alas",
+        8,
         "Daylight"
       ],
       "AKDT"
     ],
     [
       [
-        "amce",
+        10,
         "Standard"
       ],
       "CST"
     ],
     [
       [
-        "amce",
+        10,
         "Daylight"
       ],
       "CDT"
     ],
     [
       [
-        "amea",
+        11,
         "Standard"
       ],
       "EST"
     ],
     [
       [
-        "amea",
+        11,
         "Daylight"
       ],
       "EDT"
     ],
     [
       [
-        "ammo",
+        12,
         "Standard"
       ],
       "MST"
     ],
     [
       [
-        "ammo",
+        12,
         "Daylight"
       ],
       "MDT"
     ],
     [
       [
-        "ampa",
+        13,
         "Standard"
       ],
       "PST"
     ],
     [
       [
-        "ampa",
+        13,
         "Daylight"
       ],
       "PDT"
     ],
     [
       [
-        "atla",
+        22,
         "Standard"
       ],
       "AST"
     ],
     [
       [
-        "atla",
+        22,
         "Daylight"
       ],
       "ADT"
     ],
     [
       [
-        "haal",
+        68,
         "Standard"
       ],
       "HAST"
     ],
     [
       [
-        "haal",
+        68,
         "Daylight"
       ],
       "HADT"
     ],
     [
       [
-        "mgmt",
+        101,
         "Standard"
       ],
       "GMT"
