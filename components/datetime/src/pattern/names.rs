@@ -1112,7 +1112,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
 
     /// Includes location names for time zone formatting.
     ///
-    /// Important: When performing manual time zone data loading, in addition to theq
+    /// Important: When performing manual time zone data loading, in addition to the
     /// specific time zone format data, also call either:
     ///
     /// - [`TypedDateTimeNames::include_time_zone_essentials`]
