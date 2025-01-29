@@ -566,10 +566,11 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     >>::Container,
     zone_essentials:
         <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1Marker, ()>>::Container,
-    locations_root: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
+    locations_root:
+        <FSet::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1Marker, ()>>::Container,
     locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1Marker, ()>>::Container,
     exemplars_root:
-        <FSet::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container,
+        <FSet::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1Marker, ()>>::Container,
     exemplars: <FSet::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1Marker, ()>>::Container,
     mz_generic_long:
         <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1Marker, ()>>::Container,
@@ -612,9 +613,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             weekday_names: FSet2::map_weekday_names(self.weekday_names),
             dayperiod_names: FSet2::map_day_period_names(self.dayperiod_names),
             zone_essentials: FSet2::map_zone_essentials(self.zone_essentials),
-            locations_root: FSet2::map_zone_locations(self.locations_root),
+            locations_root: FSet2::map_zone_locations_root(self.locations_root),
             locations: FSet2::map_zone_locations(self.locations),
-            exemplars_root: FSet2::map_zone_exemplars(self.exemplars_root),
+            exemplars_root: FSet2::map_zone_exemplars_root(self.exemplars_root),
             exemplars: FSet2::map_zone_exemplars(self.exemplars),
             mz_generic_long: FSet2::map_zone_generic_long(self.mz_generic_long),
             mz_generic_short: FSet2::map_zone_generic_short(self.mz_generic_short),
@@ -1108,10 +1109,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::LocationsV1Marker> + ?Sized,
+        P: DataProvider<tz::LocationsV1Marker> + DataProvider<tz::LocationsRootV1Marker> + ?Sized,
     {
-        self.inner
-            .load_time_zone_location_names(&tz::LocationsV1Marker::bind(provider), self.prefs)?;
+        self.inner.load_time_zone_location_names(
+            &tz::LocationsV1Marker::bind(provider),
+            &tz::LocationsRootV1Marker::bind(provider),
+            self.prefs,
+        )?;
         Ok(self)
     }
 
@@ -1547,7 +1551,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             + DataProvider<DayPeriodNamesV1Marker>
             + DataProvider<tz::EssentialsV1Marker>
             + DataProvider<tz::LocationsV1Marker>
+            + DataProvider<tz::LocationsRootV1Marker>
             + DataProvider<tz::ExemplarCitiesV1Marker>
+            + DataProvider<tz::ExemplarCitiesRootV1Marker>
             + DataProvider<tz::MzGenericLongV1Marker>
             + DataProvider<tz::MzGenericShortV1Marker>
             + DataProvider<tz::MzSpecificLongV1Marker>
@@ -1565,7 +1571,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &DayPeriodNamesV1Marker::bind(provider),
             // TODO: Consider making time zone name loading optional here (lots of data)
             &tz::EssentialsV1Marker::bind(provider),
+            &tz::LocationsRootV1Marker::bind(provider),
             &tz::LocationsV1Marker::bind(provider),
+            &tz::ExemplarCitiesRootV1Marker::bind(provider),
             &tz::ExemplarCitiesV1Marker::bind(provider),
             &tz::MzGenericLongV1Marker::bind(provider),
             &tz::MzGenericShortV1Marker::bind(provider),
@@ -1621,13 +1629,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         pattern: &'l DateTimePattern,
     ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
-        crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<tz::EssentialsV1Marker>
-            + DataProvider<tz::ExemplarCitiesV1Marker>
-            + DataProvider<tz::MzGenericShortV1Marker>,
+        crate::provider::Baked:
+            DataProvider<C::YearNamesV1Marker> + DataProvider<C::MonthNamesV1Marker>,
     {
         let locale = self.prefs;
         self.inner.load_for_pattern(
@@ -1637,7 +1640,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
             &tz::EssentialsV1Marker::bind(&crate::provider::Baked),
             &tz::LocationsV1Marker::bind(&crate::provider::Baked),
+            &tz::LocationsRootV1Marker::bind(&crate::provider::Baked),
             &tz::ExemplarCitiesV1Marker::bind(&crate::provider::Baked),
+            &tz::ExemplarCitiesRootV1Marker::bind(&crate::provider::Baked),
             &tz::MzGenericLongV1Marker::bind(&crate::provider::Baked),
             &tz::MzGenericShortV1Marker::bind(&crate::provider::Baked),
             &tz::MzSpecificLongV1Marker::bind(&crate::provider::Baked),
@@ -1738,8 +1743,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 tz::EssentialsV1Marker,
                 (),
             >>::Container::new_empty(),
-            locations_root: <FSet::ZoneLocations as NamesContainer<
-                tz::LocationsV1Marker,
+            locations_root: <FSet::ZoneLocationsRoot as NamesContainer<
+                tz::LocationsRootV1Marker,
                 (),
             >>::Container::new_empty(),
             locations: <FSet::ZoneLocations as NamesContainer<
@@ -1750,8 +1755,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 tz::ExemplarCitiesV1Marker,
                 (),
             >>::Container::new_empty(),
-            exemplars_root: <FSet::ZoneExemplars as NamesContainer<
-                tz::ExemplarCitiesV1Marker,
+            exemplars_root: <FSet::ZoneExemplarsRoot as NamesContainer<
+                tz::ExemplarCitiesRootV1Marker,
                 (),
             >>::Container::new_empty(),
             mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<
@@ -1926,13 +1931,15 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    pub(crate) fn load_time_zone_location_names<P>(
+    pub(crate) fn load_time_zone_location_names<P, P2>(
         &mut self,
         provider: &P,
+        root_provider: &P2,
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
+        P2: BoundDataProvider<tz::LocationsRootV1Marker> + ?Sized,
     {
         let locale = provider
             .bound_marker()
@@ -1947,7 +1954,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             ..Default::default()
         };
         self.locations_root
-            .load_put(provider, Default::default(), variables)
+            .load_put(root_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.locations
@@ -1957,13 +1964,15 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    pub(crate) fn load_time_zone_exemplar_cities_names<P>(
+    pub(crate) fn load_time_zone_exemplar_cities_names<P, P2>(
         &mut self,
         provider: &P,
+        root_provider: &P2,
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError>
     where
         P: BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized,
+        P2: BoundDataProvider<tz::ExemplarCitiesRootV1Marker> + ?Sized,
     {
         let locale = provider
             .bound_marker()
@@ -1978,7 +1987,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             ..Default::default()
         };
         self.exemplars_root
-            .load_put(provider, Default::default(), variables)
+            .load_put(root_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.exemplars
@@ -2139,7 +2148,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1Marker> + ?Sized),
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1Marker> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1Marker> + ?Sized),
         exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1Marker> + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1Marker>
+              + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
@@ -2250,7 +2262,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_period_provider,
                         prefs,
                     )?;
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    self.load_time_zone_location_names(
+                        locations_provider,
+                        locations_root_provider,
+                        prefs,
+                    )?;
                 }
 
                 // v
@@ -2263,7 +2279,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         prefs,
                     )?;
                     // For fallback:
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    self.load_time_zone_location_names(
+                        locations_provider,
+                        locations_root_provider,
+                        prefs,
+                    )?;
                 }
                 // vvvv
                 (FS::TimeZone(TimeZone::GenericNonLocation), Four) => {
@@ -2275,7 +2295,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         prefs,
                     )?;
                     // For fallback:
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    self.load_time_zone_location_names(
+                        locations_provider,
+                        locations_root_provider,
+                        prefs,
+                    )?;
                 }
 
                 // V
@@ -2284,14 +2308,26 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // VVV
                 (FS::TimeZone(TimeZone::Location), Three) => {
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
-                    self.load_time_zone_exemplar_cities_names(exemplar_cities_provider, prefs)?;
+                    self.load_time_zone_location_names(
+                        locations_provider,
+                        locations_root_provider,
+                        prefs,
+                    )?;
+                    self.load_time_zone_exemplar_cities_names(
+                        exemplar_cities_provider,
+                        exemplar_cities_root_provider,
+                        prefs,
+                    )?;
                 }
                 // VVVV
                 (FS::TimeZone(TimeZone::Location), Four) => {
                     numeric_field = Some(field);
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    self.load_time_zone_location_names(
+                        locations_provider,
+                        locations_root_provider,
+                        prefs,
+                    )?;
                 }
 
                 // O, OOOO
