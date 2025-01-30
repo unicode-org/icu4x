@@ -356,6 +356,12 @@ macro_rules! impl_zone_combo_helpers {
             pub fn with_zone_location(self) -> Combo<Self, L> {
                 Combo::new(self, L::new())
             }
+            /// Associates this field set with an exemplar city format time zone, as in
+            /// “Los Angeles”.
+            #[inline]
+            pub fn with_zone_exemplar_city(self) -> Combo<Self, X> {
+                Combo::new(self, X::new())
+            }
         }
         impl_combo_get_field!($type, $composite, $enum, Z);
         impl_combo_get_field!($type, $composite, $enum, Zs);
@@ -1276,7 +1282,6 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_locations = yes,
     zone_specific_long = yes,
-    zone_specific_short = yes,
     metazone_periods = yes,
     input_tzid = yes,
     input_variant = yes,
@@ -1502,7 +1507,6 @@ impl_zone_marker!(
     zone_essentials = yes,
     zone_locations = yes,
     zone_generic_long = yes,
-    zone_generic_short = yes,
     metazone_periods = yes,
     input_tzid = yes,
     input_localtime = yes,

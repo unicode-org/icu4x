@@ -25,6 +25,7 @@ pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
         "z" => ZoneFieldSet::Zs(fieldsets::Zs::new()),
         "OOOO" => ZoneFieldSet::O(fieldsets::O::new()),
         "O" => ZoneFieldSet::Os(fieldsets::Os::new()),
+        "VVV" => ZoneFieldSet::X(fieldsets::X::new()),
         _ => return None,
     })
 }
