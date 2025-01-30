@@ -1164,10 +1164,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::ExemplarCitiesV1Marker> + ?Sized,
+        P: DataProvider<tz::ExemplarCitiesV1Marker>
+            + DataProvider<tz::ExemplarCitiesRootV1Marker>
+            + ?Sized,
     {
         self.inner.load_time_zone_exemplar_city_names(
             &tz::ExemplarCitiesV1Marker::bind(provider),
+            &tz::ExemplarCitiesRootV1Marker::bind(provider),
             self.prefs,
         )?;
         Ok(self)
