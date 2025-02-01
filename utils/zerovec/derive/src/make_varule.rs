@@ -414,7 +414,9 @@ fn make_encode_impl(
             let ty = &field.field.ty;
             let accessor = &field.accessor;
             quote!(
-                #[allow(clippy::indexing_slicing)] // generate_per_field_offsets produces valid indices
+                // generate_per_field_offsets produces valid indices,
+                // and we don't care about panics in Encode impls
+                #[allow(clippy::indexing_slicing)]
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
                 let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
@@ -443,7 +445,10 @@ fn make_encode_impl(
                 debug_assert_eq!(self.encode_var_ule_len(), dst.len());
                 #encoders
 
-                #[allow(clippy::indexing_slicing)] // generate_per_field_offsets produces valid remainder
+
+                // generate_per_field_offsets produces valid remainders,
+                // and we don't care about panics in Encode impls
+                #[allow(clippy::indexing_slicing)]
                 let out = &mut dst[#remaining_offset..];
                 #last_encode_write
             }
