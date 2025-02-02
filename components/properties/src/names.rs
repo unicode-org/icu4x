@@ -365,7 +365,7 @@ impl<T: NamedEnumeratedProperty> core::fmt::Debug for PropertyNamesLong<T> {
 /// [`PropertyNamesLong::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct PropertyNamesLongBorrowed<'a, T: NamedEnumeratedProperty> {
-    map: &'a T::DataStructLong,
+    map: &'a T::DataStructLongBorrowed<'a>,
 }
 
 impl<T: NamedEnumeratedProperty> Clone for PropertyNamesLongBorrowed<'_, T> {
@@ -403,10 +403,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     #[inline]
     pub fn as_borrowed(&self) -> PropertyNamesLongBorrowed<'_, T> {
         PropertyNamesLongBorrowed {
-            map: unsafe {
-                &*(self.map.get() as *const <T::DataStructLong as Yokeable>::Output
-                    as *const T::DataStructLong)
-            },
+            map: T::nep_long_identity(self.map.get()),
         }
     }
 }
@@ -679,19 +676,35 @@ impl PropertyEnumToValueNameLookup for PropertyScriptToIcuScriptMapV1<'_> {
 /// A property whose value names can be represented as strings.
 pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
     #[doc(hidden)]
-    type DataStructLong: 'static + for<'a> Yokeable<'a> + PropertyEnumToValueNameLookup;
+    type DataStructLong: 'static + for<'a> Yokeable<'a, Output = Self::DataStructLongBorrowed<'a>> + PropertyEnumToValueNameLookup;
     #[doc(hidden)]
-    type DataStructShort: 'static + for<'a> Yokeable<'a> + PropertyEnumToValueNameLookup;
+    type DataStructShort: 'static + for<'a> Yokeable<'a, Output = Self::DataStructShortBorrowed<'a>> + PropertyEnumToValueNameLookup;
+    #[doc(hidden)]
+    type DataStructLongBorrowed<'a>: PropertyEnumToValueNameLookup;
+    #[doc(hidden)]
+    type DataStructShortBorrowed<'a>: PropertyEnumToValueNameLookup;
     #[doc(hidden)]
     type DataMarkerLong: DataMarker<DataStruct = Self::DataStructLong>;
     #[doc(hidden)]
     type DataMarkerShort: DataMarker<DataStruct = Self::DataStructShort>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
-    const SINGLETON_LONG: &'static Self::DataStructLong;
+    const SINGLETON_LONG: &'static Self::DataStructLongBorrowed<'static>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
     const SINGLETON_SHORT: &'static Self::DataStructShort;
+
+    // These wouldn't be necessary if Yoke used GATs (#6057)
+    #[doc(hidden)]
+    fn nep_long_identity<'a>(stat: &'a <Self::DataStructLong as Yokeable<'a>>::Output) -> &'a Self::DataStructLongBorrowed<'a>;
+    #[doc(hidden)]
+    fn nep_long_identity_static<'a>(stat: &'static Self::DataStructLongBorrowed<'static>) -> &'static Self::DataStructLong;
+
+    #[doc(hidden)]
+    fn nep_short_identity<'a>(stat: &'a <Self::DataStructShort as Yokeable<'a>>::Output) -> &'a Self::DataStructShortBorrowed<'a>;
+    #[doc(hidden)]
+    fn nep_short_identity_static<'a>(stat: &'static Self::DataStructShortBorrowed<'static>) -> &'static Self::DataStructShort;
+
 }
 
 macro_rules! impl_value_getter {
@@ -714,13 +727,33 @@ macro_rules! impl_value_getter {
             impl NamedEnumeratedProperty for $ty {
                 type DataStructLong = $data_struct_l<'static>;
                 type DataStructShort = $data_struct_s<'static>;
+                type DataStructLongBorrowed<'a> = $data_struct_l<'a>;
+                type DataStructShortBorrowed<'a> = $data_struct_s<'a>;
                 type DataMarkerLong = crate::provider::$marker_e2ln;
                 type DataMarkerShort = crate::provider::$marker_e2sn;
                 #[cfg(feature = "compiled_data")]
                 const SINGLETON_LONG: &'static Self::DataStructLong = crate::provider::Baked::$singleton_e2ln;
                 #[cfg(feature = "compiled_data")]
                 const SINGLETON_SHORT: &'static Self::DataStructShort = crate::provider::Baked::$singleton_e2sn;
+                fn nep_long_identity<'a>(yoked: &'a $data_struct_l<'a>) -> &'a Self::DataStructLongBorrowed<'a> {
+                    yoked
+                }
+
+                fn nep_long_identity_static<'a>(stat: &'static $data_struct_l<'static>) -> &'static $data_struct_l<'static> {
+                    stat
+                }
+
+
+                fn nep_short_identity<'a>(yoked: &'a $data_struct_s<'a>) -> &'a Self::DataStructShortBorrowed<'a> {
+                    yoked
+                }
+                fn nep_short_identity_static<'a>(stat: &'static $data_struct_s<'static>) -> &'static $data_struct_s<'static> {
+                    stat
+                }
+
             }
+
+
         )?
     };
 }
