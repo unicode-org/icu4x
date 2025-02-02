@@ -340,7 +340,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         }
         // Returns data_pos == data_block (offset) +
         //     portion of code_point bit field for last (4th) lookup
-        data_block.wrapping_add(code_point & SMALL_DATA_MASK)
+        w!(data_block + code_point & SMALL_DATA_MASK)
     }
 
     /// Returns the position in the `data` array for the given code point,
