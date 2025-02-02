@@ -138,8 +138,9 @@ impl core::fmt::Display for UnicodeCodePoint {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self.0 {
             s @ 0xD800..=0xDFFF => write!(f, "U+{s:X}"),
-            // SAFETY: c <= char::MAX by construction, and not a surrogate
-            c => write!(f, "{}", unsafe { char::from_u32_unchecked(c) }),
+            // char should be in range by construction but this code is not so performance-sensitive
+            // so we just use the replacement character
+            c => write!(f, "{}", char::from_u32(c).unwrap_or(char::REPLACEMENT_CHARACTER) ),
         }
     }
 }
@@ -230,6 +231,7 @@ impl<'data> CodePointInversionList<'data> {
         }
     }
 
+    /// Safety: no actual safety invariants, however has correctness invariants
     #[doc(hidden)] // databake internal
     pub const unsafe fn from_parts_unchecked(
         inv_list: ZeroVec<'data, PotentialCodePoint>,
