@@ -8,6 +8,7 @@
 const ID_SEPARATOR: u8 = 0x1E;
 
 use icu_provider::prelude::*;
+pub use icu_provider::DynamicDataMarker;
 pub use zerotrie::ZeroTrieSimpleAscii;
 
 #[cfg(feature = "export")]
@@ -22,6 +23,8 @@ pub(crate) fn bake(
 
     let bakes = bakes_to_ids.iter().map(|(bake, _)| bake);
 
+    // Safety invariant upheld: the only values being added to the trie are `baked_index`
+    // values, which come from `bakes`
     let trie = ZeroTrieSimpleAscii::from_iter(bakes_to_ids.iter().enumerate().flat_map(
         |(bake_index, (_, ids))| {
             ids.iter().map(move |id| {
@@ -39,10 +42,15 @@ pub(crate) fn bake(
 
     (
         quote! {
-            icu_provider_baked::zerotrie::Data<#marker_bake> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked:: #baked_trie,
-                values: &[#(#bakes,)*],
+            // Safety invariant upheld: see above
+            icu_provider_baked::zerotrie::Data<#marker_bake> = {
+                const TRIE: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider_baked:: #baked_trie;
+                const VALUES: &'static [<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
+                unsafe {
+                    icu_provider_baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES)
+                }
             }
+
         },
         core::mem::size_of::<Data<icu_provider::hello_world::HelloWorldV1Marker>>()
             + trie.as_borrowed_slice().borrows_size(),
@@ -50,8 +58,22 @@ pub(crate) fn bake(
 }
 
 pub struct Data<M: DataMarker> {
-    pub trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    pub values: &'static [M::DataStruct],
+    // Unsafe invariant: actual values contained MUST be valid indices into `values`
+    trie: ZeroTrieSimpleAscii<&'static [u8]>,
+    values: &'static [M::DataStruct],
+}
+
+impl<M: DataMarker> Data<M> {
+    /// Construct from a trie and values
+    ///
+    /// # Safety
+    /// The actual values contained in the trie must be valid indices into `values`
+    pub const unsafe fn from_trie_and_values_unchecked(
+        trie: ZeroTrieSimpleAscii<&'static [u8]>,
+        values: &'static [M::DataStruct],
+    ) -> Self {
+        Self { trie, values }
+    }
 }
 
 impl<M: DataMarker> super::DataStore<M> for Data<M> {
@@ -77,6 +99,7 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
         } else {
             cursor.take_value()
         }
+        // Safety: Allowed since `i` came from the trie and the field safety invariant
         .map(|i| unsafe { self.values.get_unchecked(i) })
     }
 
