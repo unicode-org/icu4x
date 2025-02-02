@@ -707,7 +707,7 @@ pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
         stat: &'a <Self::DataStructLong as Yokeable<'a>>::Output,
     ) -> &'a Self::DataStructLongBorrowed<'a>;
     #[doc(hidden)]
-    fn nep_long_identity_static<'a>(
+    fn nep_long_identity_static(
         stat: &'static Self::DataStructLongBorrowed<'static>,
     ) -> &'static Self::DataStructLong;
 
@@ -716,7 +716,7 @@ pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
         stat: &'a <Self::DataStructShort as Yokeable<'a>>::Output,
     ) -> &'a Self::DataStructShortBorrowed<'a>;
     #[doc(hidden)]
-    fn nep_short_identity_static<'a>(
+    fn nep_short_identity_static(
         stat: &'static Self::DataStructShortBorrowed<'static>,
     ) -> &'static Self::DataStructShort;
 }
@@ -753,7 +753,7 @@ macro_rules! impl_value_getter {
                     yoked
                 }
 
-                fn nep_long_identity_static<'a>(stat: &'static $data_struct_l<'static>) -> &'static $data_struct_l<'static> {
+                fn nep_long_identity_static(stat: &'static $data_struct_l<'static>) -> &'static $data_struct_l<'static> {
                     stat
                 }
 
@@ -761,7 +761,7 @@ macro_rules! impl_value_getter {
                 fn nep_short_identity<'a>(yoked: &'a $data_struct_s<'a>) -> &'a Self::DataStructShortBorrowed<'a> {
                     yoked
                 }
-                fn nep_short_identity_static<'a>(stat: &'static $data_struct_s<'static>) -> &'static $data_struct_s<'static> {
+                fn nep_short_identity_static(stat: &'static $data_struct_s<'static>) -> &'static $data_struct_s<'static> {
                     stat
                 }
 
