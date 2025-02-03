@@ -207,6 +207,7 @@ where
         let arg_variables = variables;
         match &self.inner {
             OptionalNames::SingleLength { variables, .. } if arg_variables == *variables => {
+                // TODO(#6063): probably not correct
                 return Ok(Ok(Default::default()));
             }
             OptionalNames::SingleLength { .. } => {
