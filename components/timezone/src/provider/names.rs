@@ -41,7 +41,8 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 #[icu_provider::data_struct(marker(
     IanaToBcp47MapV3Marker,
     "time_zone/iana_to_bcp47@3",
-    singleton
+    singleton,
+    has_checksum
 ))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
@@ -81,7 +82,8 @@ pub struct IanaToBcp47MapV3<'data> {
 #[icu_provider::data_struct(marker(
     Bcp47ToIanaMapV1Marker,
     "time_zone/bcp47_to_iana@1",
-    singleton
+    singleton,
+    has_checksum
 ))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
