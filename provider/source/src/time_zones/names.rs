@@ -60,10 +60,9 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
                 })?
                 .convert_store(),
             bcp47_ids,
-            bcp47_ids_checksum,
         };
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),
         })
     }
@@ -88,12 +87,9 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
         let iana_vec: Vec<&String> = bcp2iana.values().collect();
         let canonical_iana_ids = iana_vec.as_slice().into();
 
-        let data_struct = Bcp47ToIanaMapV1 {
-            bcp47_ids_checksum,
-            canonical_iana_ids,
-        };
+        let data_struct = Bcp47ToIanaMapV1 { canonical_iana_ids };
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),
         })
     }

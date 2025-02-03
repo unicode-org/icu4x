@@ -153,14 +153,24 @@ pub struct ExemplarCitiesV1<'data> {
 /// An ICU4X mapping to generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
+/// These markers use a checksum to ensure consistency with [`MetazonePeriodV1`].
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(MetazoneGenericNamesLongV1Marker, "time_zone/generic_long@1"),
-    marker(MetazoneGenericNamesShortV1Marker, "time_zone/generic_short@1")
+    marker(
+        MetazoneGenericNamesLongV1Marker,
+        "time_zone/generic_long@1",
+        has_checksum
+    ),
+    marker(
+        MetazoneGenericNamesShortV1Marker,
+        "time_zone/generic_short@1",
+        has_checksum
+    )
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -168,11 +178,6 @@ pub struct ExemplarCitiesV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneGenericNamesV1<'data> {
-    /// An XxHash64 checksum of the full metazone names.
-    ///
-    /// The checksum here should match the checksum in [`MetazonePeriodV1`]
-    /// if these were generated from the same data set.
-    pub checksum: u64,
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
@@ -185,14 +190,24 @@ pub struct MetazoneGenericNamesV1<'data> {
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
+/// These markers use a checksum to ensure consistency with [`MetazonePeriodV1`].
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(MetazoneSpecificNamesLongV1Marker, "time_zone/specific_long@1"),
-    marker(MetazoneSpecificNamesShortV1Marker, "time_zone/specific_short@1")
+    marker(
+        MetazoneSpecificNamesLongV1Marker,
+        "time_zone/specific_long@1",
+        has_checksum
+    ),
+    marker(
+        MetazoneSpecificNamesShortV1Marker,
+        "time_zone/specific_short@1",
+        has_checksum
+    )
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -200,11 +215,6 @@ pub struct MetazoneGenericNamesV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazoneSpecificNamesV1<'data> {
-    /// An XxHash64 checksum of the full metazone names.
-    ///
-    /// The checksum here should match the checksum in [`MetazonePeriodV1`]
-    /// if these were generated from the same data set.
-    pub checksum: u64,
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
@@ -225,6 +235,8 @@ pub type MetazoneId = core::num::NonZeroU8;
 /// An ICU4X mapping to the metazones at a given period.
 /// See CLDR-JSON metaZones.json for more context.
 ///
+/// This markers uses a checksum to ensure consistency with `Metazone*NamesV1`.
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
@@ -233,7 +245,8 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[icu_provider::data_struct(marker(
     MetazonePeriodV1Marker,
     "time_zone/metazone_period@1",
-    singleton
+    singleton,
+    has_checksum
 ))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -245,6 +258,4 @@ pub struct MetazonePeriodV1<'data> {
     /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub list: ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
-    /// An XxHash64 checksum of the full metazone names.
-    pub checksum: u64,
 }

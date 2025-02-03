@@ -217,13 +217,12 @@ impl SourceDataProvider {
             .supplemental
             .meta_zones;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
+        let (meta_zone_id_data, _checksum) = self.metazone_to_id_map()?;
         self.cldr()?
             .tz_caches
             .mz_period
             .get_or_init(|| {
                 Ok(MetazonePeriodV1 {
-                    checksum,
                     list: metazones
                         .meta_zone_info
                         .time_zone
@@ -591,8 +590,10 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1Marker>, DataError> {
         self.check_req::<MetazonePeriodV1Marker>(req)?;
 
+        let (_, checksum) = self.metazone_to_id_map()?;
+
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
             payload: DataPayload::from_owned(self.metazone_period()?.clone()),
         })
     }
@@ -657,11 +658,10 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
             payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
                 defaults,
                 overrides,
-                checksum,
             }),
         })
     }
@@ -730,11 +730,10 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
                 defaults,
                 overrides,
-                checksum,
             }),
         })
     }
@@ -769,11 +768,10 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
             payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
                 defaults,
                 overrides,
-                checksum,
             }),
         })
     }
@@ -808,11 +806,10 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
             payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
                 defaults,
                 overrides,
-                checksum,
             }),
         })
     }

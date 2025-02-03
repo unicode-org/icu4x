@@ -50,8 +50,10 @@ impl DynamicDataMarker for HelloWorldV1Marker {
 }
 
 impl DataMarker for HelloWorldV1Marker {
-    const INFO: icu_provider::DataMarkerInfo =
-        DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("core/helloworld@1"));
+    const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
+        has_checksum: true,
+        ..DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("core/helloworld@1"))
+    };
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -159,7 +161,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
                 DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req)
             })?;
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(1234),
             payload: DataPayload::from_static_str(data),
         })
     }

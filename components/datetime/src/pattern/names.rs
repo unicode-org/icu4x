@@ -2043,22 +2043,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    fn load_mz_periods<P>(
-        &mut self,
-        provider: &P,
-        error_field: ErrorField,
-    ) -> Result<(), PatternLoadError>
-    where
-        P: BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized,
-    {
-        let variables = ();
-        self.mz_periods
-            .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
-            .map_err(|e| PatternLoadError::Data(e, error_field))?;
-        Ok(())
-    }
-
     pub(crate) fn load_time_zone_generic_long_names(
         &mut self,
         provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
@@ -2077,21 +2061,19 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_generic_long
+        let cs1 = self
+            .mz_generic_long
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
-            .map_err(|e| PatternLoadError::Data(e, error_field))?;
-        self.load_mz_periods(mz_period_provider, error_field)?;
-        #[allow(clippy::unwrap_used)] // we just loaded them
-        if self
-            .mz_generic_long
-            .get()
-            .inner
-            .get_option()
-            .unwrap()
-            .checksum
-            != self.mz_periods.get().inner.get_option().unwrap().checksum
-        {
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        let cs2 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
                     .with_req(tz::MzGenericLongV1Marker::INFO, req),
@@ -2119,21 +2101,19 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_generic_short
+        let cs1 = self
+            .mz_generic_short
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
-            .map_err(|e| PatternLoadError::Data(e, error_field))?;
-        self.load_mz_periods(mz_period_provider, error_field)?;
-        #[allow(clippy::unwrap_used)] // we just loaded them
-        if self
-            .mz_generic_short
-            .get()
-            .inner
-            .get_option()
-            .unwrap()
-            .checksum
-            != self.mz_periods.get().inner.get_option().unwrap().checksum
-        {
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        let cs2 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
                     .with_req(tz::MzGenericShortV1Marker::INFO, req),
@@ -2161,21 +2141,19 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_specific_long
+        let cs1 = self
+            .mz_specific_long
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
-            .map_err(|e| PatternLoadError::Data(e, error_field))?;
-        self.load_mz_periods(mz_period_provider, error_field)?;
-        #[allow(clippy::unwrap_used)] // we just loaded them
-        if self
-            .mz_specific_long
-            .get()
-            .inner
-            .get_option()
-            .unwrap()
-            .checksum
-            != self.mz_periods.get().inner.get_option().unwrap().checksum
-        {
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        let cs2 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
                     .with_req(tz::MzSpecificLongV1Marker::INFO, req),
@@ -2203,21 +2181,19 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_specific_short
+        let cs1 = self
+            .mz_specific_short
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
-            .map_err(|e| PatternLoadError::Data(e, error_field))?;
-        self.load_mz_periods(mz_period_provider, error_field)?;
-        #[allow(clippy::unwrap_used)] // we just loaded them
-        if self
-            .mz_specific_short
-            .get()
-            .inner
-            .get_option()
-            .unwrap()
-            .checksum
-            != self.mz_periods.get().inner.get_option().unwrap().checksum
-        {
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        let cs2 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        if cs1.is_none() || cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1Marker::INFO)
                     .with_req(tz::MzSpecificShortV1Marker::INFO, req),

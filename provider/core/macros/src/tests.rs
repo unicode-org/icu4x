@@ -66,6 +66,7 @@ fn test_data_marker() {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
+                    info.has_checksum = false;
                     info
                 };
             }
@@ -103,6 +104,7 @@ fn test_multi_named_keyed_data_marker() {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
+                    info.has_checksum = false;
                     info
                 };
             }
@@ -116,6 +118,7 @@ fn test_multi_named_keyed_data_marker() {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/baz@1"));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
+                    info.has_checksum = false;
                     info
                 };
             }
@@ -131,7 +134,13 @@ fn test_attributes() {
     check(
         quote![
             FooV1Marker,
-            marker(BarV1Marker, "demo/bar@1", fallback_by = "region", singleton),
+            marker(
+                BarV1Marker,
+                "demo/bar@1",
+                fallback_by = "region",
+                singleton,
+                has_checksum
+            ),
         ],
         quote!(
             pub struct FooV1<'data>;
@@ -152,6 +161,7 @@ fn test_attributes() {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
                     info.is_singleton = true;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::Region;
+                    info.has_checksum = true;
                     info
                 };
             }

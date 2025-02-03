@@ -27,6 +27,18 @@ pub struct DataResponseMetadata {
     pub locale: Option<DataLocale>,
     /// The format of the buffer for buffer-backed data, if known (for example, JSON).
     pub buffer_format: Option<crate::buf::BufferFormat>,
+    /// An optional checksum. This can be used to ensure consistency across different markers.
+    pub checksum: Option<u64>,
+}
+
+impl DataResponseMetadata {
+    /// Sets the checksum.
+    pub fn with_checksum(self, checksum: u64) -> Self {
+        Self {
+            checksum: Some(checksum),
+            ..self
+        }
+    }
 }
 
 /// A container for data payloads returned from a data provider.
@@ -1083,12 +1095,12 @@ where
 #[test]
 fn test_debug() {
     use crate::hello_world::*;
-    use alloc::borrow::Cow;
-    let resp = DataResponse::<HelloWorldV1Marker> {
-        metadata: Default::default(),
-        payload: DataPayload::from_owned(HelloWorldV1 {
-            message: Cow::Borrowed("foo"),
-        }),
-    };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: HelloWorldV1 { message: \"foo\" } }", format!("{resp:?}"));
+    use crate::prelude::*;
+    let resp = HelloWorldProvider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&icu_locale_core::locale!("en").into()),
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234) }, payload: HelloWorldV1 { message: \"Hello World\" } }", format!("{resp:?}"));
 }

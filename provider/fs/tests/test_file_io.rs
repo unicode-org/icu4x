@@ -25,22 +25,21 @@ fn test_provider() {
 
             let expected = HelloWorldProvider
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
-                .payload;
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"));
 
-            let actual: DataPayload<HelloWorldV1Marker> = provider
+            let actual: DataResponse<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
-                .payload;
-            assert_eq!(actual.get(), expected.get());
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"));
+            assert_eq!(actual.payload.get(), expected.payload.get());
+            assert_eq!(actual.metadata.checksum, expected.metadata.checksum);
 
-            let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
+            let actual: DataResponse<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
-                .payload;
-            assert_eq!(actual.get(), expected.get());
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"));
+            assert_eq!(actual.payload.get(), expected.payload.get());
+            assert_eq!(actual.metadata.checksum, expected.metadata.checksum);
         }
     }
 }

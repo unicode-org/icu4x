@@ -468,13 +468,16 @@ impl DataMarkerId {
 #[derive(Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub struct DataMarkerInfo {
-    /// TODO
+    /// The ID of this marker.
     pub id: DataMarkerId,
-    /// TODO
+    /// Whether this data marker only has a single payload, not keyed by a data identifier.
     pub is_singleton: bool,
-    /// TODO
+    /// Whether this data marker uses checksums for integrity purposes.
+    pub has_checksum: bool,
+    /// The fallback to use for this data marker.
     pub fallback_config: LocaleFallbackConfig,
-    /// TODO
+    /// The attributes domain for this data marker. This can be used for filtering marker
+    /// attributes during provider export.
     #[cfg(feature = "export")]
     pub attributes_domain: &'static str,
 }
@@ -504,6 +507,7 @@ impl DataMarkerInfo {
             id,
             fallback_config: LocaleFallbackConfig::default(),
             is_singleton: false,
+            has_checksum: false,
             #[cfg(feature = "export")]
             attributes_domain: "",
         }

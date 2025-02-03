@@ -434,7 +434,7 @@ impl DataExporter for BakedExporter {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
-        _metadata: FlushMetadata,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
@@ -453,6 +453,28 @@ impl DataExporter for BakedExporter {
         .parse::<TokenStream>()
         .unwrap();
 
+        let (checksum_decl, metadata_bake) = if let Some(checksum) = metadata.checksum {
+            let singleton_checksum_ident = format!("{singleton_ident}_CHECKSUM")
+                .parse::<TokenStream>()
+                .unwrap();
+            (
+                quote! {
+                    #[doc(hidden)] // singletons might be used cross-crate
+                    pub const #singleton_checksum_ident: u64 = #checksum;
+                },
+                quote! {
+                    icu_provider::DataResponseMetadata::default().with_checksum(Self::#singleton_checksum_ident)
+                },
+            )
+        } else {
+            (
+                quote!(),
+                quote! {
+                    icu_provider::DataResponseMetadata::default()
+                },
+            )
+        };
+
         let bake = payload.tokenize(&self.dependencies);
 
         let stats = Statistics {
@@ -468,6 +490,7 @@ impl DataExporter for BakedExporter {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)] // singletons might be used cross-crate
                 pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::DataStruct = &#bake;
+                #checksum_decl
             }
 
             #maybe_msrv
@@ -479,7 +502,7 @@ impl DataExporter for BakedExporter {
                     if req.id.locale.is_default() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
-                            metadata: Default::default(),
+                            metadata: #metadata_bake,
                         })
                     } else {
                         Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
@@ -492,7 +515,7 @@ impl DataExporter for BakedExporter {
             impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                 fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                     if req.id.locale.is_default() {
-                        Ok(Default::default())
+                        Ok(#metadata_bake)
                     } else {
                         Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     }
@@ -579,6 +602,16 @@ impl DataExporter for BakedExporter {
 
             stats.lookup_struct_size = lookup_struct_size;
 
+            let metadata_bake = if let Some(checksum) = metadata.checksum {
+                quote! {
+                    icu_provider::DataResponseMetadata::default().with_checksum(#checksum)
+                }
+            } else {
+                quote! {
+                    icu_provider::DataResponseMetadata::default()
+                }
+            };
+
             let data_ident = format!(
                 "DATA_{}",
                 marker_bake
@@ -596,7 +629,7 @@ impl DataExporter for BakedExporter {
 
             let search = if !needs_fallback {
                 quote! {
-                    let metadata = Default::default();
+                    let metadata = #metadata_bake;
                     let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
                         return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     };
@@ -604,7 +637,7 @@ impl DataExporter for BakedExporter {
             } else {
                 self.dependencies.insert("icu_locale/compiled_data");
                 quote! {
-                    let mut metadata = icu_provider::DataResponseMetadata::default();
+                    let mut metadata = #metadata_bake;
 
                     let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
