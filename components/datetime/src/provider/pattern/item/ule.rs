@@ -57,6 +57,8 @@ use zerovec::ule::{AsULE, UleError, ULE};
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
+// This field has many invariants about the data, but the primary safety invariant
+// is that when the discriminant bit is 0, it represents a valid char, bytes interpreted as big-endian.
 pub struct PatternItemULE([u8; 3]);
 
 impl PatternItemULE {
@@ -78,6 +80,7 @@ impl PatternItemULE {
             fields::FieldULE::validate_byte_pair((*value.1, *value.2)).is_ok()
                 && *value.0 == 0b1000_0000
         } else {
+            // This upholds the safety invariant
             char::try_from(u32::from_be_bytes([0x00, *value.0, *value.1, *value.2])).is_ok()
         }
     }
@@ -101,6 +104,7 @@ unsafe impl ULE for PatternItemULE {
         #[allow(clippy::indexing_slicing)] // chunks
         if !bytes
             .chunks(3)
+            // This upholds the safety invariant by checking all invariants
             .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
         {
             return Err(UleError::parse::<Self>());
@@ -135,7 +139,7 @@ impl AsULE for PatternItem {
             let length = fields::FieldLength::from_idx(value[2]).unwrap();
             PatternItem::Field(fields::Field { symbol, length })
         } else {
-            // validated
+            // Safety: From field safety invariant
             PatternItem::Literal(unsafe {
                 char::from_u32_unchecked(u32::from_be_bytes([0x00, value[0], value[1], value[2]]))
             })
@@ -233,7 +237,8 @@ impl GenericPatternItemULE {
                 let pattern_item_ule = PatternItem::Literal(c).to_unaligned();
                 debug_assert_eq!(self.0, pattern_item_ule.0);
             }
-            // Safety: when a Literal, the two ULEs have the same repr,
+            // Safety: The two types are repr(transparent) over [u8; 3].
+            // When a Literal, the two ULEs have the same repr,
             // as shown in the above assertion (and the class docs).
             Ok(unsafe { core::mem::transmute::<&GenericPatternItemULE, &PatternItemULE>(self) })
         }

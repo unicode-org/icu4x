@@ -265,19 +265,27 @@ impl CanonicalDecompositionBorrowed<'_> {
         if lvt >= HANGUL_S_COUNT {
             return self.decompose_non_hangul(c);
         }
+        // Invariant: lvt ≤ HANGUL_S_COUNT = 1172
         let t = lvt % HANGUL_T_COUNT;
+        // Invariant: t ≤ (1172 / HANGUL_T_COUNT = 1172 / 28 = 41)
         if t == 0 {
             let l = lvt / HANGUL_N_COUNT;
+            // Invariant: v ≤ (1172 / HANGUL_N_COUNT = 1172 / 588 ≈ 2)
             let v = (lvt % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-            // Safe because values known to be in range
+            // Invariant: v < (HANGUL_N_COUNT / HANGUL_T_COUNT = 588 / 28 = 21)
             return Decomposed::Expansion(
+                // Safety: HANGUL_*_BASE are 0x1nnn, addding numbers that are 21 and 41
+                // max will keep it in range, less than 0xD800
                 unsafe { char::from_u32_unchecked(HANGUL_L_BASE + l) },
                 unsafe { char::from_u32_unchecked(HANGUL_V_BASE + v) },
             );
         }
         let lv = lvt - t;
+        // Invariant: lvt < 1172
         // Safe because values known to be in range
         Decomposed::Expansion(
+            // Safety: HANGUL_*_BASE are 0x1nnn, addding numbers that are 1172 and 41
+            // max will keep it in range, less than 0xD800
             unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) },
             unsafe { char::from_u32_unchecked(HANGUL_T_BASE + t) },
         )

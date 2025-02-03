@@ -406,8 +406,9 @@ impl CollationMetadataV1 {
 
     #[inline(always)]
     pub(crate) fn max_variable(self) -> MaxVariable {
-        // Safe, because the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
-        // and we take the two low bits.
+        // Safety: the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
+        // and it is repr(u8). MAX_VARIABLE_MASK here ensures our values have most 2 bits, which produces
+        // the same range.
         unsafe { core::mem::transmute((self.bits & CollationMetadataV1::MAX_VARIABLE_MASK) as u8) }
     }
 

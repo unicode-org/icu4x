@@ -51,6 +51,7 @@ use alloc::vec::Vec;
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 pub struct Other {
+    // Safety invariant: must be ASCII
     ext: u8,
     keys: ShortBoxSlice<Subtag>,
 }
@@ -99,6 +100,7 @@ impl Other {
 
     pub(crate) fn from_short_slice_unchecked(ext: u8, keys: ShortBoxSlice<Subtag>) -> Self {
         assert!(ext.is_ascii_alphabetic());
+        // Safety invariant upheld here: ext checked as ASCII above
         Self { ext, keys }
     }
 
@@ -139,6 +141,7 @@ impl Other {
     /// ```
     pub fn get_ext_str(&self) -> &str {
         debug_assert!(self.ext.is_ascii_alphabetic());
+        // Safety: from safety invariant on self.ext (that it is ASCII)
         unsafe { core::str::from_utf8_unchecked(core::slice::from_ref(&self.ext)) }
     }
 
