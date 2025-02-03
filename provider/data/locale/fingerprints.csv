@@ -1,6 +1,6 @@
-locale/aliases@2, <singleton>, 8459B, 8007B, 7bd49e8b1931d4e5
-locale/exemplarchars/auxiliary@1, <lookup>, 802B, 163 identifiers
-locale/exemplarchars/auxiliary@1, <total>, 34053B, 26306B, 144 unique payloads
+locale/aliases@2, <singleton>, 8466B, 8014B, d89c768acbd505a7
+locale/exemplarchars/auxiliary@1, <lookup>, 806B, 164 identifiers
+locale/exemplarchars/auxiliary@1, <total>, 34115B, 26314B, 145 unique payloads
 locale/exemplarchars/auxiliary@1, af, 92B, 38B, ae09150252a2a416
 locale/exemplarchars/auxiliary@1, ak, 134B, 80B, 3590dbafc28c9a16
 locale/exemplarchars/auxiliary@1, ar, 128B, 74B, f1ac97bbcec6caf4
@@ -58,6 +58,7 @@ locale/exemplarchars/auxiliary@1, hi, 68B, 14B, 441d47f4e15d32e4
 locale/exemplarchars/auxiliary@1, hi-Latn, 186B, 132B, bf37d9b7491fa010
 locale/exemplarchars/auxiliary@1, hr, -> bs
 locale/exemplarchars/auxiliary@1, hsb, 272B, 219B, 34172ed38ad3c27d
+locale/exemplarchars/auxiliary@1, ht, 62B, 8B, c74a4ebb13587b6e
 locale/exemplarchars/auxiliary@1, hu, 188B, 135B, d3c92d029bace7f9
 locale/exemplarchars/auxiliary@1, hy, 62B, 8B, 1cba109a3e9961bd
 locale/exemplarchars/auxiliary@1, ia, -> en
@@ -308,8 +309,8 @@ locale/exemplarchars/index@1, za, -> af
 locale/exemplarchars/index@1, zh, -> af
 locale/exemplarchars/index@1, zh-Hant, 1340B, 1287B, 974910b31430c6ca
 locale/exemplarchars/index@1, zu, -> af
-locale/exemplarchars/main@1, <lookup>, 865B, 174 identifiers
-locale/exemplarchars/main@1, <total>, 73387B, 64818B, 159 unique payloads
+locale/exemplarchars/main@1, <lookup>, 869B, 175 identifiers
+locale/exemplarchars/main@1, <total>, 73518B, 64895B, 160 unique payloads
 locale/exemplarchars/main@1, af, 98B, 44B, d73fc42a75b51bdd
 locale/exemplarchars/main@1, ak, 104B, 50B, 75856fb4a06dafbb
 locale/exemplarchars/main@1, am, 176B, 122B, a95d77a59cc8ebc4
@@ -365,6 +366,7 @@ locale/exemplarchars/main@1, he, 62B, 8B, 2d8f49b52cac0ddf
 locale/exemplarchars/main@1, hi, 128B, 74B, d2fb69d32fcc96ee
 locale/exemplarchars/main@1, hr, -> bs
 locale/exemplarchars/main@1, hsb, 125B, 71B, b06fa7c1325a6ca9
+locale/exemplarchars/main@1, ht, 131B, 77B, 6751c528d9a96cb9
 locale/exemplarchars/main@1, hu, 211B, 157B, c043d241aeac4021
 locale/exemplarchars/main@1, hy, 62B, 8B, a7de1236b86139b
 locale/exemplarchars/main@1, ia, -> en
@@ -484,7 +486,7 @@ locale/exemplarchars/main@1, za, -> en
 locale/exemplarchars/main@1, zh, 10346B, 10293B, eaeb380c74d27fe3
 locale/exemplarchars/main@1, zh-Hant, 10862B, 10809B, 6228bf8b8d851e60
 locale/exemplarchars/main@1, zu, 208B, 155B, 153a1bfa1781e39f
-locale/exemplarchars/numbers@1, <lookup>, 465B, 94 identifiers
+locale/exemplarchars/numbers@1, <lookup>, 469B, 95 identifiers
 locale/exemplarchars/numbers@1, <total>, 3120B, 1392B, 32 unique payloads
 locale/exemplarchars/numbers@1, af, 86B, 32B, 7e863eaf847ae93c
 locale/exemplarchars/numbers@1, ar, 110B, 56B, 37da6e5b7a925dd9
@@ -510,6 +512,7 @@ locale/exemplarchars/numbers@1, de-AT, -> af
 locale/exemplarchars/numbers@1, de-CH, 98B, 44B, 6053f135ef46022f
 locale/exemplarchars/numbers@1, de-LI, -> de-CH
 locale/exemplarchars/numbers@1, en-FI, -> af
+locale/exemplarchars/numbers@1, en-NO, -> af
 locale/exemplarchars/numbers@1, en-SE, -> af
 locale/exemplarchars/numbers@1, en-ZA, -> af
 locale/exemplarchars/numbers@1, eo, 86B, 32B, 267d93081e484d00
@@ -580,8 +583,8 @@ locale/exemplarchars/numbers@1, yue, 146B, 92B, 489c004c9c03d756
 locale/exemplarchars/numbers@1, yue-Hans, -> yue
 locale/exemplarchars/numbers@1, zh, -> yue
 locale/exemplarchars/numbers@1, zh-Hant, -> yue
-locale/exemplarchars/punctuation@1, <lookup>, 717B, 157 identifiers
-locale/exemplarchars/punctuation@1, <total>, 12645B, 7898B, 88 unique payloads
+locale/exemplarchars/punctuation@1, <lookup>, 721B, 158 identifiers
+locale/exemplarchars/punctuation@1, <total>, 12779B, 7978B, 89 unique payloads
 locale/exemplarchars/punctuation@1, af, 146B, 92B, 598fb8b71c82bbb8
 locale/exemplarchars/punctuation@1, am, 134B, 80B, ad144f7c484b013d
 locale/exemplarchars/punctuation@1, ar, 140B, 86B, e28cf39e81e6d217
@@ -632,6 +635,7 @@ locale/exemplarchars/punctuation@1, he, 122B, 68B, c56987475c695e6c
 locale/exemplarchars/punctuation@1, hi, 158B, 104B, b25d0fbba42330b5
 locale/exemplarchars/punctuation@1, hr, 140B, 86B, 1f12a6b08032cc15
 locale/exemplarchars/punctuation@1, hsb, -> dsb
+locale/exemplarchars/punctuation@1, ht, 134B, 80B, 3843b38ac26a9e48
 locale/exemplarchars/punctuation@1, hu, 158B, 104B, a3d9164fc9e6b673
 locale/exemplarchars/punctuation@1, hy, 98B, 44B, 82de4dd5a18de939
 locale/exemplarchars/punctuation@1, ia, -> af
@@ -739,8 +743,8 @@ locale/exemplarchars/punctuation@1, yue-Hans, 296B, 243B, 6f5dc7c33d9cb214
 locale/exemplarchars/punctuation@1, za, -> af
 locale/exemplarchars/punctuation@1, zh, -> yue-Hans
 locale/exemplarchars/punctuation@1, zh-Hant, -> yue
-locale/likelysubtags_ext@1, <singleton>, 72358B, 72090B, 68d6065813939015
+locale/likelysubtags_ext@1, <singleton>, 72418B, 72150B, f237b07e0364998
 locale/likelysubtags_l@1, <singleton>, 2330B, 2191B, 85986e5c29062319
-locale/likelysubtags_sr@1, <singleton>, 3264B, 3132B, da2dd95b1c90ffeb
-locale/parents@1, <singleton>, 2637B, 2593B, 1166a5ec9d185213
+locale/likelysubtags_sr@1, <singleton>, 3304B, 3172B, d955ac1bc856facc
+locale/parents@1, <singleton>, 2827B, 2783B, 3c1c3b647a08f3a0
 locale/script_dir@1, <singleton>, 740B, 696B, b43c5a46f6b655d7

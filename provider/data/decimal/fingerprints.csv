@@ -27,7 +27,7 @@ decimal/digits@1, und/telu, 40B, 40B, 4084dfba70dc949
 decimal/digits@1, und/thai, 40B, 40B, 470541c261160c5a
 decimal/digits@1, und/tibt, 40B, 40B, a199e0054f3d55b9
 decimal/digits@1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols@2, <lookup>, 1316B, 252 identifiers
+decimal/symbols@2, <lookup>, 1356B, 263 identifiers
 decimal/symbols@2, <total>, 2363B, 991B, 49 unique payloads
 decimal/symbols@2, af, 47B, 19B, 3e51d5d2bbc1f2d7
 decimal/symbols@2, ar, 52B, 24B, c3d6103c042fed33
@@ -111,14 +111,24 @@ decimal/symbols@2, el, -> ast
 decimal/symbols@2, en-AT, -> ast
 decimal/symbols@2, en-BE, -> ast
 decimal/symbols@2, en-CH, -> de-CH
+decimal/symbols@2, en-CZ, -> af
 decimal/symbols@2, en-DE, -> ast
 decimal/symbols@2, en-DK, -> ast
+decimal/symbols@2, en-ES, -> ast
 decimal/symbols@2, en-FI, -> af
+decimal/symbols@2, en-FR, 48B, 20B, 1bf992c0a6d711d8
+decimal/symbols@2, en-HU, -> af
 decimal/symbols@2, en-ID, -> ast
 decimal/symbols@2, en-IN, -> as/latn
+decimal/symbols@2, en-IT, -> ast
 decimal/symbols@2, en-NL, -> ast
+decimal/symbols@2, en-NO, -> af
+decimal/symbols@2, en-PL, -> ast
+decimal/symbols@2, en-PT, -> af
+decimal/symbols@2, en-RO, -> ast
 decimal/symbols@2, en-SE, -> af
 decimal/symbols@2, en-SI, -> ast
+decimal/symbols@2, en-SK, -> af
 decimal/symbols@2, en-ZA, -> af
 decimal/symbols@2, eo, -> af
 decimal/symbols@2, es, 46B, 18B, 28dd4136886d5f01
@@ -140,7 +150,7 @@ decimal/symbols@2, ff-Adlm, 48B, 20B, c153d250f8687d46
 decimal/symbols@2, ff-Adlm/latn, 48B, 20B, 9f80f00a097ffc5d
 decimal/symbols@2, fi, 49B, 21B, 6bbabd47c5fe3c2c
 decimal/symbols@2, fo, -> eu
-decimal/symbols@2, fr, 48B, 20B, 1bf992c0a6d711d8
+decimal/symbols@2, fr, -> en-FR
 decimal/symbols@2, fr-CA, -> af
 decimal/symbols@2, fr-LU, -> ast
 decimal/symbols@2, fr-MA, -> ast
@@ -153,6 +163,7 @@ decimal/symbols@2, hi, -> as/latn
 decimal/symbols@2, hi/deva, -> brx/deva
 decimal/symbols@2, hr, -> eu
 decimal/symbols@2, hsb, -> ast
+decimal/symbols@2, ht, -> af
 decimal/symbols@2, hu, -> be
 decimal/symbols@2, hy, -> af
 decimal/symbols@2, ia, -> es
@@ -269,7 +280,7 @@ decimal/symbols@2, ur-IN/latn, -> ar
 decimal/symbols@2, ur/arabext, -> ks
 decimal/symbols@2, uz, -> af
 decimal/symbols@2, uz-Cyrl, -> af
-decimal/symbols@2, vec, -> fr
+decimal/symbols@2, vec, -> en-FR
 decimal/symbols@2, vi, -> ast
 decimal/symbols@2, vmw, -> ast
 decimal/symbols@2, wo, -> ast

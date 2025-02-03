@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 1091B for the lookup data structure (217 data identifiers)
-/// * 1117836B[^1] for the actual data (202 unique structs)
+/// * 1117991B[^1] for the actual data (202 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -396,7 +396,7 @@ macro_rules! __impl_region_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0GB\0HK\0MM\0MO\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x06\0\x08\0\x11\0\x18\0\x1D\0BosniaUKHong KongMyanmarMacaoPalestine") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0CC\0GB\0HK\0MM\0MO\0PN\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x06\0\x13\0\x15\0\x1E\0%\0*\x002\0BosniaCocos IslandsUKHong KongMyanmarMacaoPitcairnPalestine") })
                         },
                     },
                     icu::experimental::displaynames::provider::RegionDisplayNamesV1 {
@@ -406,7 +406,7 @@ macro_rules! __impl_region_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0GB\0HK\0MM\0MO\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x06\0\x08\0\x11\0\x18\0\x1D\0BosniaUKHong KongMyanmarMacaoPalestine") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0CC\0GB\0HK\0MM\0MO\0PN\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x06\0\x13\0\x15\0\x1E\0%\0*\x002\0BosniaCocos IslandsUKHong KongMyanmarMacaoPitcairnPalestine") })
                         },
                     },
                     icu::experimental::displaynames::provider::RegionDisplayNamesV1 {
@@ -416,7 +416,7 @@ macro_rules! __impl_region_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0GB\0HK\0MM\0MO\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x06\0\x08\0\x11\0\x18\0\x1D\0BosniaUKHong KongMyanmarMacaoPalestine") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0CC\0GB\0HK\0MM\0MO\0PN\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x06\0\x13\0\x15\0\x1E\0%\0*\x002\0BosniaCocos IslandsUKHong KongMyanmarMacaoPitcairnPalestine") })
                         },
                     },
                     icu::experimental::displaynames::provider::RegionDisplayNamesV1 {
@@ -426,7 +426,7 @@ macro_rules! __impl_region_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0GB\0HK\0MM\0MO\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x06\0\x08\0\x11\0\x18\0\x1D\0BosniaUKHong KongMyanmarMacauPalestine") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0CC\0GB\0HK\0MM\0MO\0PN\0PS\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x06\0\x13\0\x15\0\x1E\0%\0*\x002\0BosniaCocos IslandsUKHong KongMyanmarMacauPitcairnPalestine") })
                         },
                     },
                     icu::experimental::displaynames::provider::RegionDisplayNamesV1 {
@@ -716,7 +716,7 @@ macro_rules! __impl_region_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0GB\0HK\0MM\0MO\0PS\0US\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x06\0\x08\0\x11\0\x18\0\x1D\0&\0BosniaUKHong KongMyanmarMacaoPalestineAmerica") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"BA\0CC\0GB\0HK\0MM\0MO\0PN\0PS\0US\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x06\0\x13\0\x15\0\x1E\0%\0*\x002\0;\0BosniaCocos IslandsUKHong KongMyanmarMacaoPitcairnPalestineAmerica") })
                         },
                     },
                     icu::experimental::displaynames::provider::RegionDisplayNamesV1 {
