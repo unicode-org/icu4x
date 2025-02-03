@@ -173,7 +173,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
             buffer,
             ZeroTrieSimpleAscii::from_store(zerotrie)
                 .get(CHECKSUM_KEY)
-                .map(|cs| cs as u64),
+                .and_then(|cs| Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?))),
         ))
     }
 
@@ -222,9 +222,6 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
         let mut seen_max = self.buffers.is_empty();
         for zerotrie in self.locales.iter() {
             for (_locale, idx) in ZeroTrieSimpleAscii::from_store(zerotrie).iter() {
-                if _locale.as_bytes() == CHECKSUM_KEY {
-                    continue;
-                }
                 debug_assert!(idx < self.buffers.len());
                 if idx == 0 {
                     seen_min = true;

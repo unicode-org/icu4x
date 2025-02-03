@@ -8,6 +8,7 @@
 use crate::blob_schema::*;
 use icu_provider::export::*;
 use icu_provider::{marker::DataMarkerIdHash, prelude::*};
+use zerovec::maps::MutableZeroVecLike;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -153,7 +154,7 @@ impl BlobExporter<'_> {
     }
 
     fn close_internal(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
+        let FinalizedBuffers { mut vzv, remap } = self.finalize_buffers();
 
         let all_markers = self.all_markers.lock().expect("poison");
         let resources = self.resources.lock().expect("poison");
@@ -173,8 +174,8 @@ impl BlobExporter<'_> {
                 let mut sub_map = BTreeMap::new();
                 if let Some(sub_map_wrong) = option_sub_map {
                     if let Some(&checksum) = checksum {
-                        // TODO how does this behave on 32-bit platforms?
-                        sub_map.insert(CHECKSUM_KEY, checksum as usize);
+                        sub_map.insert(CHECKSUM_KEY, vzv.len());
+                        vzv.zvl_push(checksum.to_le_bytes().as_slice());
                     }
                     sub_map.extend(sub_map_wrong.iter().map(|(key, id)| {
                         (key.as_slice(), *remap.get(id).expect("in-bound index"))
