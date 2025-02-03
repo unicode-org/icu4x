@@ -140,7 +140,11 @@ impl core::fmt::Display for UnicodeCodePoint {
             s @ 0xD800..=0xDFFF => write!(f, "U+{s:X}"),
             // char should be in range by construction but this code is not so performance-sensitive
             // so we just use the replacement character
-            c => write!(f, "{}", char::from_u32(c).unwrap_or(char::REPLACEMENT_CHARACTER) ),
+            c => write!(
+                f,
+                "{}",
+                char::from_u32(c).unwrap_or(char::REPLACEMENT_CHARACTER)
+            ),
         }
     }
 }
