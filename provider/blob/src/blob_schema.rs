@@ -29,7 +29,7 @@ pub(crate) enum BlobSchema<'data> {
 
 // This is a valid separator as `DataLocale` will never produce it.
 pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
-pub(crate) const CHECKSUM_KEY: &[u8] = b"\0";
+pub(crate) const CHECKSUM_KEY: &[u8] = b"\0c";
 
 impl<'data> BlobSchema<'data> {
     pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
@@ -173,15 +173,15 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
             buffer,
             marker
                 .has_checksum
-                .then(|| {
-                    ZeroTrieSimpleAscii::from_store(zerotrie)
-                        .get(CHECKSUM_KEY)
-                        .and_then(|cs| {
-                            Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?))
-                        })
-                })
+                .then(|| self.get_checksum(zerotrie))
                 .flatten(),
         ))
+    }
+
+    fn get_checksum(&self, zerotrie: &[u8]) -> Option<u64> {
+        ZeroTrieSimpleAscii::from_store(zerotrie)
+            .get(CHECKSUM_KEY)
+            .and_then(|cs| Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?)))
     }
 
     pub fn iter_ids(
