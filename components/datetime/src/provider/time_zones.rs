@@ -161,8 +161,16 @@ pub struct ExemplarCitiesV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(MetazoneGenericNamesLongV1Marker, "time_zone/generic_long@1"),
-    marker(MetazoneGenericNamesShortV1Marker, "time_zone/generic_short@1")
+    marker(
+        MetazoneGenericNamesLongV1Marker,
+        "time_zone/generic_long@1",
+        has_checksum
+    ),
+    marker(
+        MetazoneGenericNamesShortV1Marker,
+        "time_zone/generic_short@1",
+        has_checksum
+    )
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -190,8 +198,16 @@ pub struct MetazoneGenericNamesV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(MetazoneSpecificNamesLongV1Marker, "time_zone/specific_long@1"),
-    marker(MetazoneSpecificNamesShortV1Marker, "time_zone/specific_short@1")
+    marker(
+        MetazoneSpecificNamesLongV1Marker,
+        "time_zone/specific_long@1",
+        has_checksum
+    ),
+    marker(
+        MetazoneSpecificNamesShortV1Marker,
+        "time_zone/specific_short@1",
+        has_checksum
+    )
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -229,7 +245,8 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[icu_provider::data_struct(marker(
     MetazonePeriodV1Marker,
     "time_zone/metazone_period@1",
-    singleton
+    singleton,
+    has_checksum
 ))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

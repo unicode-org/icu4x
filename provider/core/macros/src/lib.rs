@@ -109,6 +109,7 @@ struct DataStructArg {
     fallback_by: Option<LitStr>,
     attributes_domain: Option<LitStr>,
     singleton: bool,
+    checksum: bool,
 }
 
 impl DataStructArg {
@@ -119,6 +120,7 @@ impl DataStructArg {
             fallback_by: None,
             attributes_domain: None,
             singleton: false,
+            checksum: false,
         }
     }
 }
@@ -151,6 +153,7 @@ impl Parse for DataStructArg {
             let mut fallback_by: Option<LitStr> = None;
             let mut attributes_domain: Option<LitStr> = None;
             let mut singleton = false;
+            let mut checksum = false;
             let punct = content.parse_terminated(DataStructMarkerArg::parse, Token![,])?;
 
             for entry in punct {
@@ -186,6 +189,9 @@ impl Parse for DataStructArg {
                     DataStructMarkerArg::Singleton => {
                         singleton = true;
                     }
+                    DataStructMarkerArg::Checksum => {
+                        checksum = true;
+                    }
                 }
             }
             let marker_name = if let Some(marker_name) = marker_name {
@@ -203,6 +209,7 @@ impl Parse for DataStructArg {
                 fallback_by,
                 attributes_domain,
                 singleton,
+                checksum,
             })
         } else {
             let mut this = DataStructArg::new(path);
@@ -225,6 +232,7 @@ enum DataStructMarkerArg {
     NameValue(Ident, LitStr),
     Lit(LitStr),
     Singleton,
+    Checksum,
 }
 impl Parse for DataStructMarkerArg {
     fn parse(input: ParseStream<'_>) -> parse::Result<Self> {
@@ -245,6 +253,8 @@ impl Parse for DataStructMarkerArg {
                 ))
             } else if path.is_ident("singleton") {
                 Ok(DataStructMarkerArg::Singleton)
+            } else if path.is_ident("has_checksum") {
+                Ok(DataStructMarkerArg::Checksum)
             } else {
                 Ok(DataStructMarkerArg::Path(path))
             }
@@ -287,6 +297,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             fallback_by,
             attributes_domain,
             singleton,
+            checksum,
         } = single_attr;
 
         let docs = if let Some(ref path_lit) = path_lit {
@@ -339,6 +350,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
                         let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(#path_str));
                         info.is_singleton = #singleton;
                         info.fallback_config.priority = #fallback_by_expr;
+                        info.has_checksum = #checksum;
                         #attributes_domain_setter
                         info
                     };
