@@ -61,23 +61,20 @@ impl From<PathBuf> for Options {
 /// A data exporter that writes data to a filesystem hierarchy.
 /// See the module-level docs for an example.
 #[derive(Debug)]
-pub struct FilesystemExporter {
+pub struct FilesystemExporter<Serializer> {
     root: PathBuf,
     manifest: Manifest,
-    serializer: Box<dyn AbstractSerializer + Sync>,
+    serializer: Serializer,
 }
 
-impl FilesystemExporter {
+impl<Serializer: AbstractSerializer> FilesystemExporter<Serializer> {
     /// Creates a new [`FilesystemExporter`] with a [serializer] and [options].
     ///
     /// See the module-level docs for an example.
     ///
     /// [serializer]: crate::export::serializers
     /// [options]: Options
-    pub fn try_new(
-        serializer: Box<dyn AbstractSerializer + Sync>,
-        options: Options,
-    ) -> Result<Self, DataError> {
+    pub fn try_new(serializer: Serializer, options: Options) -> Result<Self, DataError> {
         let result = FilesystemExporter {
             root: options.root,
             manifest: Manifest::for_format(serializer.get_buffer_format())?,
@@ -99,7 +96,7 @@ impl FilesystemExporter {
     }
 }
 
-impl DataExporter for FilesystemExporter {
+impl<Serializer: AbstractSerializer + Sync> DataExporter for FilesystemExporter<Serializer> {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,

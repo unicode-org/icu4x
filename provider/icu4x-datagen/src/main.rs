@@ -263,16 +263,6 @@ impl CollationTable {
     }
 }
 
-// Mirrors crate::FallbackMode
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum Fallback {
-    Auto,
-    Hybrid,
-    Runtime,
-    RuntimeManual,
-    Preresolved,
-}
-
 // Mirrors crate::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Deduplication {
@@ -541,26 +531,33 @@ fn main() -> eyre::Result<()> {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
         }
         #[cfg(feature = "fs_exporter")]
-        Format::Fs => driver.export(&provider, {
+        Format::Fs => {
             use icu_provider_export::fs_exporter::*;
+            let mut options = Options::default();
+            options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
+            if cli.overwrite {
+                options.overwrite = OverwriteOption::RemoveAndReplace
+            }
 
-            FilesystemExporter::try_new(
-                match cli.syntax {
-                    Syntax::Bincode => Box::<serializers::Bincode>::default(),
-                    Syntax::Postcard => Box::<serializers::Postcard>::default(),
-                    Syntax::Json if cli.pretty => Box::new(serializers::Json::pretty()),
-                    Syntax::Json => Box::<serializers::Json>::default(),
-                },
-                {
-                    let mut options = Options::default();
-                    options.root = cli.output.unwrap_or_else(|| PathBuf::from("icu4x_data"));
-                    if cli.overwrite {
-                        options.overwrite = OverwriteOption::RemoveAndReplace
-                    }
-                    options
-                },
-            )?
-        })?,
+            match cli.syntax {
+                Syntax::Bincode => driver.export(
+                    &provider,
+                    FilesystemExporter::try_new(serializers::Bincode::default(), options)?,
+                )?,
+                Syntax::Postcard => driver.export(
+                    &provider,
+                    FilesystemExporter::try_new(serializers::Postcard::default(), options)?,
+                )?,
+                Syntax::Json if cli.pretty => driver.export(
+                    &provider,
+                    FilesystemExporter::try_new(serializers::Json::pretty(), options)?,
+                )?,
+                Syntax::Json => driver.export(
+                    &provider,
+                    FilesystemExporter::try_new(serializers::Json::default(), options)?,
+                )?,
+            }
+        }
         #[cfg(not(feature = "blob_exporter"))]
         Format::Blob => {
             eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature")
