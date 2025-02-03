@@ -49,22 +49,10 @@ impl CldrCache {
                         .read_and_parse_json::<transforms::Resource>(&format!(
                             "cldr-transforms/transforms/{transform}.json"
                         ))?;
-                    let source = self
-                        .serde_cache
-                        .root
-                        .read_to_string(&format!(
-                            "cldr-transforms/transforms/{}",
-                            metadata.rules_file
-                        ))?
-                        // und-Ethi-t-und-latn-m0-beta_metsehaf-geminate has a typo
-                        .replace(
-                            "Ethiopic-Latin/BetaMetsehaf",
-                            "Ethiopic-Latin/Beta_Metsehaf",
-                        )
-                        // This attempts to group the decomposed character, but erroneously uses a context (chr-chr_FONIPA)
-                        .replace("ə̃ {ə̃}+ → ə̃;", "ə̃ ə̃+ → ə̃;")
-                        // Back references don't work in reverse (byn-Ethi-t-byn-latn-m0-xaleget)
-                        .replace("$1 ↔", "$1 ←");
+                    let source = self.serde_cache.root.read_to_string(&format!(
+                        "cldr-transforms/transforms/{}",
+                        metadata.rules_file
+                    ))?;
 
                     if matches!(
                         metadata.direction,
