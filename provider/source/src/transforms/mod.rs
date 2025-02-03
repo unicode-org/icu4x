@@ -101,6 +101,14 @@ impl CldrCache {
                                     .unwrap_or_default()
                                     .split(' ')
                                     .skip(1),
+                            )
+                            .chain(
+                                metadata
+                                    .alias
+                                    .as_deref()
+                                    .unwrap_or_default()
+                                    .split(' ')
+                                    .skip(1),
                             ),
                             false,
                             metadata.visibility == transforms::Visibility::External,
