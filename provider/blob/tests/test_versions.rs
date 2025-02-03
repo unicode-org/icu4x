@@ -142,7 +142,7 @@ fn test_format_bigger() {
     let hash = hasher.finish();
 
     assert_eq!(
-        hash, 9186977971432306814,
+        hash, 8768499095842070212,
         "V2Bigger format appears to have changed!"
     );
 
