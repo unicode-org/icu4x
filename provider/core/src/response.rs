@@ -184,9 +184,9 @@ impl Deref for Cart {
         &self.0
     }
 }
-// Safe because both Rc and Arc are StableDeref, and our impl delegates.
+// Safety: both Rc and Arc are StableDeref, and our impl delegates.
 unsafe impl stable_deref_trait::StableDeref for Cart {}
-// Safe because both Rc and Arc are CloneableCart, and our impl delegates.
+// Safety: both Rc and Arc are CloneableCart, and our impl delegates.
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
@@ -197,7 +197,7 @@ impl Cart {
         F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
         Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(b))
-            // Safe because the cart is only wrapped
+            // Safety: The cart is only wrapped, no data is leaked
             .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)
     }
@@ -700,7 +700,8 @@ where
             DataPayloadInner::StaticRef(r) => {
                 let output: <M2::DataStruct as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData)?;
-                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
+                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable,
+                // and `output` is `'static` so there are no lifetimes to manage for `make()`
                 Yoke::new_owned(unsafe { M2::DataStruct::make(output) })
                     .convert_cart_into_option_pointer()
             }

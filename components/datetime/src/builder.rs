@@ -176,6 +176,9 @@ pub enum ZoneStyle {
     /// The location format, as in
     /// “Los Angeles time”.
     L,
+    /// The exemplar city format, as in
+    /// “Los Angeles”.
+    X,
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
@@ -446,6 +449,7 @@ impl FieldSetBuilder {
             Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
             Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
             Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
+            Some(ZoneStyle::X) => ZoneFieldSet::X(fieldsets::X::take_from_builder(self)),
             Option::None => return Err(BuilderError::InvalidFields),
         };
         Ok(zone_field_set)
@@ -609,6 +613,7 @@ mod tests {
         ZoneStyle::V,
         ZoneStyle::Vs,
         ZoneStyle::L,
+        ZoneStyle::X,
     ];
 
     #[cfg(all(feature = "serde", feature = "experimental"))]

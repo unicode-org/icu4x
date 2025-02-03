@@ -395,6 +395,14 @@ impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
     }
 }
 
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. PluralElementsPackedULE does not include any uninitialized or padding bytes: it is transparent over a VarULE type ([u8])
+//  2. PluralElementsPackedULE is aligned to 1 byte: it is transparent over a VarULE type ([u8])
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
+//  6. `parse_bytes()` is equivalent to `validate_bytes()` followed by `from_bytes_unchecked()`
+//  7. byte equality is semantic equality
 unsafe impl<V> VarULE for PluralElementsPackedULE<V>
 where
     V: VarULE + ?Sized,

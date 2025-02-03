@@ -245,6 +245,7 @@ impl Debug for DataMarkerAttributes {
 pub struct AttributeParseError;
 
 impl DataMarkerAttributes {
+    /// Safety-usable invariant: validated bytes are ASCII only
     const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
         let mut i = 0;
         while i < s.len() {

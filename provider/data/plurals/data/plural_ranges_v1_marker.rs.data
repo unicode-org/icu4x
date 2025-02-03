@@ -16,9 +16,9 @@ macro_rules! __impl_plural_ranges_v1_marker {
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.81"]
         impl $provider {
-            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::plurals::provider::PluralRangesV1Marker> = icu_provider_baked::zerotrie::Data {
-                trie: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\t\x0B\r\x19\x1F!#%')+-02>\xC3fkr\x01\x02\x80\x81\x82g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x81\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x81cm\x80o\x87\xC4dilv\x01\x02\x03\x81\x80\x88\x80\xC2nr\x02d\x89\x80" },
-                values: &[
+            const DATA_PLURAL_RANGES_V1_MARKER: icu_provider_baked::zerotrie::Data<icu::plurals::provider::PluralRangesV1Marker> = {
+                const TRIE: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider_baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD0abcefhiklmnoprsu\t\x0B\r\x19\x1F!#%')+-02>\xC3fkr\x01\x02\x80\x81\x82g\x80a\x80\xC4nstu\x01\x02\x03\x80\x80\x80\x80\xC2ai\x01\x81\x80e\x83a\x80a\x84v\x85k\x86o\x80r\x81cm\x80o\x87\xC4dilv\x01\x02\x03\x81\x80\x88\x80\xC2nr\x02d\x89\x80" };
+                const VALUES: &'static [<icu::plurals::provider::PluralRangesV1Marker as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct] = &[
                     icu::plurals::provider::PluralRangesV1 {
                         ranges: unsafe {
                             #[allow(unused_unsafe)]
@@ -79,7 +79,8 @@ macro_rules! __impl_plural_ranges_v1_marker {
                             zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::ZeroVec::new())
                         },
                     },
-                ],
+                ];
+                unsafe { icu_provider_baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
         #[clippy::msrv = "1.81"]

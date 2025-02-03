@@ -618,6 +618,7 @@ impl FieldSetSerde {
             (Self::ZONE_GENERIC, true, Length::Long) => Some(V(fieldsets::V::new())),
             (Self::ZONE_GENERIC, true, Length::Short) => Some(Vs(fieldsets::Vs::new())),
             (Self::ZONE_LOCATION, _, _) => Some(L(fieldsets::L::new())),
+            (Self::ZONE_EXEMPLAR, _, _) => Some(X(fieldsets::X::new())),
             (_, _, _) => None,
         }
     }
