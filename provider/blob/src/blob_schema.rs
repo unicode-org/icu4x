@@ -171,9 +171,16 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV3<'data, LocaleVecForm
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
         Ok((
             buffer,
-            ZeroTrieSimpleAscii::from_store(zerotrie)
-                .get(CHECKSUM_KEY)
-                .and_then(|cs| Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?))),
+            marker
+                .has_checksum
+                .then(|| {
+                    ZeroTrieSimpleAscii::from_store(zerotrie)
+                        .get(CHECKSUM_KEY)
+                        .and_then(|cs| {
+                            Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?))
+                        })
+                })
+                .flatten(),
         ))
     }
 

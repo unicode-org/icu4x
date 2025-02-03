@@ -140,7 +140,11 @@ impl ExportDriver {
 
                 let transform_duration = instant1.elapsed();
 
-                flush_metadata.checksum = response.metadata.checksum;
+                if marker.has_checksum {
+                    flush_metadata.checksum = response.metadata.checksum;
+                } else if response.metadata.checksum.is_some() {
+                    log::warn!("{marker:?} returns a checksum, but it's not configured to");
+                }
 
                 sink.flush_singleton(marker, &response.payload, flush_metadata)
                     .map_err(|e| e.with_req(marker, Default::default()))?;
@@ -179,23 +183,27 @@ impl ExportDriver {
                 })
                 .collect::<Result<HashMap<_, _>, _>>()?;
 
-            flush_metadata.checksum =
-                responses
-                    .iter()
-                    .try_fold(None, |acc, (id, (response, _))| {
-                        match (acc, response.metadata.checksum) {
-                            (Some(a), Some(b)) if a != b => {
-                                Err(DataError::custom("Mismatched checksums").with_req(
-                                    marker,
-                                    DataRequest {
-                                        id: id.as_borrowed(),
-                                        ..Default::default()
-                                    },
-                                ))
+            if marker.has_checksum {
+                flush_metadata.checksum =
+                    responses
+                        .iter()
+                        .try_fold(None, |acc, (id, (response, _))| {
+                            match (acc, response.metadata.checksum) {
+                                (Some(a), Some(b)) if a != b => {
+                                    Err(DataError::custom("Mismatched checksums").with_req(
+                                        marker,
+                                        DataRequest {
+                                            id: id.as_borrowed(),
+                                            ..Default::default()
+                                        },
+                                    ))
+                                }
+                                (a, b) => Ok(a.or(b)),
                             }
-                            (a, b) => Ok(a.or(b)),
-                        }
-                    })?;
+                        })?;
+            } else if responses.iter().any(|r| r.1 .0.metadata.checksum.is_some()) {
+                log::warn!("{marker:?} returns a checksum, but it's not configured to");
+            }
 
             let (slowest_duration, slowest_id) = match deduplication_strategy {
                 DeduplicationStrategy::Maximal | DeduplicationStrategy::RetainBaseLanguages => {
