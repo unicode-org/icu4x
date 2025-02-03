@@ -8,10 +8,10 @@
 use crate::blob_schema::*;
 use icu_provider::export::*;
 use icu_provider::{marker::DataMarkerIdHash, prelude::*};
-use zerovec::maps::MutableZeroVecLike;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::maps::MutableZeroVecLike;
 use zerovec::vecs::Index32;
 use zerovec::vecs::VarZeroVecOwned;
 use zerovec::VarZeroVec;
