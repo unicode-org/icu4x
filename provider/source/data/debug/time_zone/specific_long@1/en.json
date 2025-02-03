@@ -156,20 +156,6 @@
     ],
     [
       [
-        15,
-        "Standard"
-      ],
-      "Apia Standard Time"
-    ],
-    [
-      [
-        15,
-        "Daylight"
-      ],
-      "Apia Daylight Time"
-    ],
-    [
-      [
         16,
         "Daylight"
       ],
@@ -355,7 +341,7 @@
         33,
         "Standard"
       ],
-      "Brunei Darussalam Time"
+      "Brunei Time"
     ],
     [
       [
@@ -432,7 +418,7 @@
         43,
         "Daylight"
       ],
-      "Cook Islands Half Summer Time"
+      "Cook Islands Summer Time"
     ],
     [
       [
@@ -446,14 +432,7 @@
         46,
         "Standard"
       ],
-      "Dumont-d’Urville Time"
-    ],
-    [
-      [
-        47,
-        "Standard"
-      ],
-      "Easter Island Standard Time"
+      "Dumont d’Urville Time"
     ],
     [
       [
@@ -467,7 +446,7 @@
         48,
         "Standard"
       ],
-      "East Timor Time"
+      "Timor-Leste Time"
     ],
     [
       [
@@ -745,16 +724,9 @@
     [
       [
         82,
-        "Standard"
-      ],
-      "Petropavlovsk-Kamchatski Standard Time"
-    ],
-    [
-      [
-        82,
         "Daylight"
       ],
-      "Petropavlovsk-Kamchatski Summer Time"
+      "Kamchatka Summer Time"
     ],
     [
       [
@@ -825,6 +797,20 @@
         "Standard"
       ],
       "Line Islands Time"
+    ],
+    [
+      [
+        91,
+        "Standard"
+      ],
+      "Lord Howe Standard Time"
+    ],
+    [
+      [
+        91,
+        "Daylight"
+      ],
+      "Lord Howe Daylight Time"
     ],
     [
       [
@@ -999,14 +985,7 @@
         111,
         "Standard"
       ],
-      "North Mariana Islands Time"
-    ],
-    [
-      [
-        113,
-        "Standard"
-      ],
-      "Fernando de Noronha Standard Time"
+      "Northern Mariana Islands Time"
     ],
     [
       [
@@ -1104,14 +1083,14 @@
         125,
         "Standard"
       ],
-      "Ponape Time"
+      "Pohnpei Time"
     ],
     [
       [
         126,
         "Standard"
       ],
-      "Pyongyang Time"
+      "North Korea Time"
     ],
     [
       [
@@ -1153,14 +1132,14 @@
         132,
         "Standard"
       ],
-      "Samoa Standard Time"
+      "American Samoa Standard Time"
     ],
     [
       [
         132,
         "Daylight"
       ],
-      "Samoa Daylight Time"
+      "American Samoa Daylight Time"
     ],
     [
       [
@@ -1203,20 +1182,6 @@
         "Standard"
       ],
       "Tahiti Time"
-    ],
-    [
-      [
-        140,
-        "Standard"
-      ],
-      "Taipei Standard Time"
-    ],
-    [
-      [
-        140,
-        "Daylight"
-      ],
-      "Taipei Daylight Time"
     ],
     [
       [

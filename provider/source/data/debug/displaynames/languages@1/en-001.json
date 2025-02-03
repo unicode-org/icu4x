@@ -125,7 +125,6 @@
     "csw": "Swampy Cree",
     "cu": "Church Slavic",
     "cv": "Chuvash",
-    "cwd": "Woods Cree",
     "cy": "Welsh",
     "da": "Danish",
     "dak": "Dakota",
@@ -215,7 +214,6 @@
     "hak": "Hakka Chinese",
     "haw": "Hawaiian",
     "hax": "Southern Haida",
-    "hdn": "Northern Haida",
     "he": "Hebrew",
     "hi": "Hindi",
     "hif": "Fiji Hindi",
@@ -241,7 +239,6 @@
     "ig": "Igbo",
     "ii": "Sichuan Yi",
     "ik": "Inupiaq",
-    "ike": "Eastern Canadian Inuktitut",
     "ikt": "Western Canadian Inuktitut",
     "ilo": "Iloko",
     "inh": "Ingush",
@@ -425,7 +422,6 @@
     "oj": "Ojibwa",
     "ojb": "Northwestern Ojibwa",
     "ojc": "Central Ojibwa",
-    "ojg": "Eastern Ojibwa",
     "ojs": "Oji-Cree",
     "ojw": "Western Ojibwa",
     "oka": "Okanagan",
@@ -645,6 +641,7 @@
     "az": "Azeri"
   },
   "long_names": {
+    "cr": "Woods Cree",
     "zh": "Mandarin Chinese"
   },
   "menu_names": {
