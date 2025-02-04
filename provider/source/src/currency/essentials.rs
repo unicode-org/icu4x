@@ -47,6 +47,9 @@ fn currency_pattern_selection(
         return Err(DataError::custom("Place holder value must not be empty"));
     }
 
+    // TODO(#6064): Handle the negative sub pattern.
+    let pattern = pattern.split(';').next().unwrap();
+
     let currency_sign = '¤';
     let currency_sign_index = pattern.find(currency_sign).unwrap();
     let first_num_index = pattern.find(['0', '#']).unwrap();
