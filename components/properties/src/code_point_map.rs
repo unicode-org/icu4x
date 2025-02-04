@@ -358,4 +358,9 @@ pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     const NAME: &'static [u8];
     /// The abbreviated name of this property, if it exists, otherwise the name
     const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `CodePointMapData::new().get(ch)`
+    fn for_char(ch: char) -> Self {
+        CodePointMapData::new().get(ch)
+    }
 }
