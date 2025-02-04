@@ -719,30 +719,6 @@ pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
     fn nep_short_identity_static(
         stat: &'static Self::DataStructShortBorrowed<'static>,
     ) -> &'static Self::DataStructShort;
-
-    /// Convenience method for `PropertyParser::new().get_loose(s)`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    #[cfg(feature = "compiled_data")]
-    fn try_from_str(s: &str) -> Option<Self> {
-        PropertyParser::new().get_loose(s)
-    }
-    /// Convenience method for `PropertyNamesLong::new().get(*self).unwrap()`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    #[cfg(feature = "compiled_data")]
-    fn long_name(&self) -> &'static str {
-        PropertyNamesLong::new().get(*self).unwrap_or("unreachable")
-    }
-    /// Convenience method for `PropertyNamesShort::new().get(*self).unwrap()`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    #[cfg(feature = "compiled_data")]
-    fn short_name(&self) -> &'static str {
-        PropertyNamesShort::new()
-            .get(*self)
-            .unwrap_or("unreachable")
-    }
 }
 
 macro_rules! impl_value_getter {
