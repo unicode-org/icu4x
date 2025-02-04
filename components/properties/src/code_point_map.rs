@@ -360,6 +360,9 @@ pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     const SHORT_NAME: &'static [u8];
 
     /// Convenience method for `CodePointMapData::new().get(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
     fn for_char(ch: char) -> Self {
         CodePointMapData::new().get(ch)
     }

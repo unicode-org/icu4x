@@ -224,6 +224,9 @@ pub trait BinaryProperty: crate::private::Sealed + Sized {
     const SHORT_NAME: &'static [u8];
 
     /// Convenience method for `CodePointSetData::new().contains(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
     fn for_char(ch: char) -> bool {
         CodePointSetData::new::<Self>().contains(ch)
     }
