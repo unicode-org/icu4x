@@ -400,6 +400,8 @@ icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
+icu::properties::props::BinaryProperty::for_char#FnInTrait
+icu::properties::props::EnumeratedProperty::for_char#FnInTrait
 icu::timezone::TimeZoneBcp47Iter#Struct
 icu::timezone::TimeZoneBcp47Iter::next#FnInStruct
 icu::timezone::TimeZoneCanonicalIanaIter#Struct
