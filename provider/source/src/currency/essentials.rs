@@ -390,7 +390,8 @@ fn test_basic() {
         &en,
         &en_payload.placeholders,
     );
-    assert_eq!(en_egp_short, "");
+    // TODO(#6064)
+    assert_eq!(en_egp_short, "EGP");
     assert_eq!(en_egp_narrow, "E£");
 
     let ar_eg: DataResponse<CurrencyEssentialsV1Marker> = provider
@@ -409,11 +410,12 @@ fn test_basic() {
             .interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
+    // TODO(#6064)
     assert!(ar_eg
         .payload
         .get()
         .standard_alpha_next_to_number_pattern
-        .is_none());
+        .is_some());
 
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),

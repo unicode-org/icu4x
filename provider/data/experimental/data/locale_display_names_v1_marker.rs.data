@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 1017B for the lookup data structure (207 data identifiers)
-/// * 162283B[^1] for the actual data (174 unique structs)
+/// * 159031B[^1] for the actual data (174 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -26,7 +26,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0B\0Engels (VK)Engels (VSA)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -44,7 +44,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0E\0Ngresi Bor\xC9\x94foAm\xC9\x9Brika Bor\xC9\x94fo") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -84,7 +84,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1D\0\xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x86\xD9\x8A\xD8\xA9 \xD8\xA7\xD9\x84\xD9\x85\xD8\xA8\xD8\xB3\xD8\xB7\xD8\xA9\xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x86\xD9\x8A\xD8\xA9 \xD8\xA7\xD9\x84\xD8\xAA\xD9\x82\xD9\x84\xD9\x8A\xD8\xAF\xD9\x8A\xD8\xA9") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -102,7 +102,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1D\0\xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x86\xD9\x8A\xD8\xA9 \xD8\xA7\xD9\x84\xD9\x85\xD8\xA8\xD8\xB3\xD8\xB7\xD8\xA9\xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x86\xD9\x8A\xD8\xA9 \xD8\xA7\xD9\x84\xD8\xAA\xD9\x82\xD9\x84\xD9\x8A\xD8\xAF\xD9\x8A\xD8\xA9") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -120,7 +120,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1D\0\xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x86\xD9\x8A\xD8\xA9 \xD8\xA7\xD9\x84\xD9\x85\xD8\xA8\xD8\xB3\xD8\xB7\xD8\xA9\xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x86\xD9\x8A\xD8\xA9 \xD8\xA7\xD9\x84\xD8\xAA\xD9\x82\xD9\x84\xD9\x8A\xD8\xAF\xD9\x8A\xD8\xA9") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -156,7 +156,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x12\0chinu simplific\xC3\xA1uchinu tradicional") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -318,7 +318,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0W\0\xE0\xA4\x97\xE0\xA5\x8B\xE0\xA4\xB0\xE0\xA4\xB2\xE0\xA5\x88 \xE0\xA4\x96\xE0\xA4\xBE\xE0\xA4\xB2\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA4\xA8\xE0\xA4\xBE\xE0\xA4\xAF \xE0\xA4\xAE\xE0\xA5\x87\xE0\xA4\xA3\xE0\xA5\x8D\xE0\xA4\xA1\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xBF\xE0\xA4\xA8 \xE0\xA4\x9A\xE0\xA4\xBE\xE0\xA4\x87\xE0\xA4\xA8\xE0\xA5\x80\xE0\xA4\x9C\xE0\xA4\x86\xE0\xA4\xB8\xE0\xA4\xBE\xE0\xA4\xB0-\xE0\xA4\x96\xE0\xA4\xBE\xE0\xA4\xA8\xE0\xA5\x8D\xE0\xA4\xA5\xE0\xA4\xBF\xE0\xA4\xAF\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xBF \xE0\xA4\x9A\xE0\xA4\xBE\xE0\xA4\x87\xE0\xA4\xA8\xE0\xA5\x80\xE0\xA4\x9C") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0zh-Hans") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA4\x97\xE0\xA5\x8B\xE0\xA4\xB0\xE0\xA4\xB2\xE0\xA5\x88 \xE0\xA4\x96\xE0\xA4\xBE\xE0\xA4\xB2\xE0\xA4\xBE\xE0\xA4\xAE\xE0\xA4\xA8\xE0\xA4\xBE\xE0\xA4\xAF \xE0\xA4\xAE\xE0\xA5\x87\xE0\xA4\xA3\xE0\xA5\x8D\xE0\xA4\xA1\xE0\xA4\xBE\xE0\xA4\xB0\xE0\xA4\xBF\xE0\xA4\xA8 \xE0\xA4\x9A\xE0\xA4\xBE\xE0\xA4\x87\xE0\xA4\xA8\xE0\xA5\x80\xE0\xA4\x9C") })
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -422,7 +422,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x10\0angli\xC4\x8Dtina (VB)angli\xC4\x8Dtina (USA)") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0angli\xC4\x8Dtina (VB)") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -440,7 +440,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1A\0\xE1\x90\x8A\xE1\x91\xB2\xE1\x93\x88\xE1\x93\xB0\xE1\x92\xA7\xE1\x90\x8F\xE1\x90\xA3 (GB)\xE1\x90\x8A\xE1\x91\xB2\xE1\x93\x88\xE1\x93\xB0\xE1\x92\xA7\xE1\x90\x8F\xE1\x90\xA3 (US)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -458,7 +458,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1F\0\xD0\xB1\xD1\x80\xD0\xB8\xD1\x82\xD0\xB0\xD0\xBD\xD0\xB8\xD0\xBD \xD0\xB0\xD0\xBA\xD3\x91\xD0\xBB\xD1\x87\xD0\xB0\xD0\xBD\xD0\xB0\xD0\xBC\xD0\xB5\xD1\x80\xD0\xB8\xD0\xBA\xD3\x91\xD0\xBD \xD0\xB0\xD0\xBA\xD3\x91\xD0\xBB\xD1\x87\xD0\xB0\xD0\xBD") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -494,11 +494,11 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0F\0britisk engelskamerikansk engelsk") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x12\0forenklet kinesisktraditionelt kinesisk") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -588,7 +588,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x19\0chin\xC5\xA1\xC4\x87ina (zjadnorjona)chin\xC5\xA1\xC4\x87ina (tradicionalna)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -606,7 +606,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\t\0tsainagbeblema tsainagbe") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -714,7 +714,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x10\0\xC4\x89ina simpligita\xC4\x89ina tradicia") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -800,7 +800,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\r\0Briti ingliseUSA inglise") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0USA inglise") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -836,7 +836,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1F\0\xD8\xA7\xD9\x86\xDA\xAF\xD9\x84\xDB\x8C\xD8\xB3\xDB\x8C \xD8\xA8\xD8\xB1\xDB\x8C\xD8\xAA\xD8\xA7\xD9\x86\xDB\x8C\xD8\xA7\xD8\xA7\xD9\x86\xDA\xAF\xD9\x84\xDB\x8C\xD8\xB3\xDB\x8C \xD8\xA2\xD9\x85\xD8\xB1\xDB\x8C\xDA\xA9\xD8\xA7") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -854,7 +854,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1F\0\xD8\xA7\xD9\x86\xDA\xAF\xD9\x84\xDB\x8C\xD8\xB3\xDB\x8C \xD8\xA8\xD8\xB1\xDB\x8C\xD8\xAA\xD8\xA7\xD9\x86\xDB\x8C\xD8\xA7\xD8\xA7\xD9\x86\xDA\xAF\xD9\x84\xDB\x8C\xD8\xB3\xDB\x8C \xD8\xA2\xD9\x85\xD8\xB1\xDB\x8C\xDA\xA9\xD8\xA7") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -944,7 +944,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x13\0anglais britanniqueanglais am\xC3\xA9ricain") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -980,11 +980,11 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0E\0Britsk IngelskAmerikaansk Ingelsk") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x16\0Ferienf\xC3\xA2ldich SineeskTradisjoneel Sineesk") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1052,7 +1052,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0'\0\xE0\xAA\xAF\xE0\xAB\x81.\xE0\xAA\x95\xE0\xAB\x87. \xE0\xAA\x85\xE0\xAA\x82\xE0\xAA\x97\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x87\xE0\xAA\x9C\xE0\xAB\x80\xE0\xAA\x85\xE0\xAA\xAE\xE0\xAB\x87\xE0\xAA\xB0\xE0\xAA\xBF\xE0\xAA\x95\xE0\xAA\xA8 \xE0\xAA\x85\xE0\xAA\x82\xE0\xAA\x97\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x87\xE0\xAA\x9C\xE0\xAB\x80") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xAA\xAF\xE0\xAB\x81.\xE0\xAA\x95\xE0\xAB\x87. \xE0\xAA\x85\xE0\xAA\x82\xE0\xAA\x97\xE0\xAB\x8D\xE0\xAA\xB0\xE0\xAB\x87\xE0\xAA\x9C\xE0\xAB\x80") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1074,7 +1074,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x17\0Sau\xC6\x99a\xC6\x99a\xC6\x99\xC6\x99en SinanciSinanci na gargajiya") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1106,7 +1106,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0.\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80\xE0\xA4\x85\xE0\xA4\xAE\xE0\xA5\x87\xE0\xA4\xB0\xE0\xA4\xBF\xE0\xA4\x95\xE0\xA5\x80 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1146,7 +1146,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x19\0chin\xC5\xA1\xC4\x87ina (zjednorjena)chin\xC5\xA1\xC4\x87ina (tradicionalna)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1178,7 +1178,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0%\0\xD5\xA2\xD6\x80\xD5\xAB\xD5\xBF\xD5\xA1\xD5\xB6\xD5\xA1\xD5\xAF\xD5\xA1\xD5\xB6 \xD5\xA1\xD5\xB6\xD5\xA3\xD5\xAC\xD5\xA5\xD6\x80\xD5\xA5\xD5\xB6\xD5\xA1\xD5\xB4\xD5\xA5\xD6\x80\xD5\xAB\xD5\xAF\xD5\xB5\xD5\xA1\xD5\xB6 \xD5\xA1\xD5\xB6\xD5\xA3\xD5\xAC\xD5\xA5\xD6\x80\xD5\xA5\xD5\xB6") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1574,7 +1574,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0?\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\xB0\xE0\xA4\xBE\xE0\xA4\x9C\xE0\xA5\x8D\xE0\xA4\xAF\xE0\xA5\x89 \xE0\xA4\xA4\xE0\xA4\xBF \xE0\xA4\x87\xE0\xA4\x82\xE0\xA4\xB0\xE0\xA4\xBE\xE0\xA4\x9C\xE0\xA5\x80\xE0\xA4\x85\xE0\xA4\xAE\xE0\xA5\x87\xE0\xA4\xB0\xE0\xA4\xBF\xE0\xA4\x95\xE0\xA5\x80 \xE0\xA4\x87\xE0\xA4\x82\xE0\xA4\xB0\xE0\xA4\xBE\xE0\xA4\x9C\xE0\xA5\x80") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\xB0\xE0\xA4\xBE\xE0\xA4\x9C\xE0\xA5\x8D\xE0\xA4\xAF\xE0\xA5\x89 \xE0\xA4\xA4\xE0\xA4\xBF \xE0\xA4\x87\xE0\xA4\x82\xE0\xA4\xB0\xE0\xA4\xBE\xE0\xA4\x9C\xE0\xA5\x80") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1632,7 +1632,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\x005\0\xD0\xBA\xD1\x8B\xD1\x82\xD0\xB0\xD0\xB9\xD1\x87\xD0\xB0 (\xD0\xB6\xD3\xA9\xD0\xBD\xD3\xA9\xD0\xBA\xD3\xA9\xD0\xB9\xD0\xBB\xD3\xA9\xD1\x88\xD1\x82\xD2\xAF\xD1\x80\xD2\xAF\xD0\xBB\xD0\xB3\xD3\xA9\xD0\xBD)\xD0\xBA\xD1\x8B\xD1\x82\xD0\xB0\xD0\xB9\xD1\x87\xD0\xB0 (\xD1\x81\xD0\xB0\xD0\xBB\xD1\x82\xD1\x82\xD1\x83\xD1\x83)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1650,7 +1650,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x18\0Chinesesch (vereinfacht)Chinesesch (traditionell)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1700,7 +1700,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0ang\xC4\xBCu (Lielbrit\xC4\x81nija)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1718,7 +1718,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0.\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80\xE0\xA4\x85\xE0\xA4\xAE\xE0\xA5\x87\xE0\xA4\xB0\xE0\xA4\xBF\xE0\xA4\x95\xE0\xA5\x80 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1740,7 +1740,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x10\0Hainamana M\xC4\x81m\xC4\x81Hainamana Tukuiho") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1790,7 +1790,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x19\0\xD0\xB1\xD1\x80\xD0\xB8\xD1\x82\xD0\xB0\xD0\xBD\xD0\xB8-\xD0\xB0\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8\xD0\xB0\xD0\xBC\xD0\xB5\xD1\x80\xD0\xB8\xD0\xBA-\xD0\xB0\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -1866,7 +1866,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x13\0\xC4\x8Aini\xC5\xBC Simplifikat\xC4\x8Aini\xC5\xBC Tradizzjonali") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2222,7 +2222,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0)\0\xD0\xB1\xD1\x80\xD0\xB8\xD1\x82\xD0\xB0\xD0\xBD\xD1\x81\xD0\xBA\xD0\xB8\xD0\xB9 \xD0\xB0\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8\xD0\xB9\xD1\x81\xD0\xBA\xD0\xB8\xD0\xB9\xD0\xB0\xD0\xBC\xD0\xB5\xD1\x80\xD0\xB8\xD0\xBA\xD0\xB0\xD0\xBD\xD1\x81\xD0\xBA\xD0\xB8\xD0\xB9 \xD0\xB0\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8\xD0\xB9\xD1\x81\xD0\xBA\xD0\xB8\xD0\xB9") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2312,7 +2312,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1D\0\xD8\xA8\xD8\xB1\xD8\xB7\xD8\xA7\xD9\x86\xD9\x88\xD9\x8A \xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xD9\x8A\xD8\xB2\xD9\x8A\xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xD9\x8A\xD8\xB2\xD9\x8A (\xD8\xA2\xD9\x85\xD8\xB1\xD9\x8A\xDA\xAA\xD8\xA7)") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xD9\x8A\xD8\xB2\xD9\x8A (\xD8\xA2\xD9\x85\xD8\xB1\xD9\x8A\xDA\xAA\xD8\xA7)") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2366,7 +2366,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x16\0angli\xC4\x8Dtina (britsk\xC3\xA1)angli\xC4\x8Dtina (americk\xC3\xA1)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2528,11 +2528,11 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x11\0brittisk engelskaamerikansk engelska") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x14\0f\xC3\xB6renklad kinesiskatraditionell kinesiska") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2550,7 +2550,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1B\0Kichina (Kilichorahisishwa)Kichina (cha jadi)") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0zh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0Kichina (cha jadi)") })
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2568,7 +2568,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1B\0Kichina (Kilichorahisishwa)Kichina (cha jadi)") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0zh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0Kichina (cha jadi)") })
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2604,7 +2604,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0(\0\xDC\xA8\xDC\x9D\xDC\xA2\xDC\x9D\xDC\xAC (\xDC\xA1\xDC\x90\xDC\xA2\xDC\x95\xDC\x98\xDC\xAA\xDC\x9D\xDC\x90 \xDC\xA6\xDC\xAB\xDC\x9D\xDC\x9B\xDC\x90)\xDC\xA8\xDC\x9D\xDC\xA2\xDC\x90\xDC\x9D\xDC\xAC") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0zh-Hans") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xDC\xA8\xDC\x9D\xDC\xA2\xDC\x9D\xDC\xAC (\xDC\xA1\xDC\x90\xDC\xA2\xDC\x95\xDC\x98\xDC\xAA\xDC\x9D\xDC\x90 \xDC\xA6\xDC\xAB\xDC\x9D\xDC\x9B\xDC\x90)") })
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2708,7 +2708,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1F\0i\xC5\x88lis dili (Be\xC3\xBDik Britani\xC3\xBDa)i\xC5\x88lis dili (AB\xC5\x9E)") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0i\xC5\x88lis dili (AB\xC5\x9E)") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2726,7 +2726,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x12\0lea fakapilit\xC4\x81nialea fakap\xC4\x81langi-\xCA\xBBAmelika") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0lea fakap\xC4\x81langi-\xCA\xBBAmelika") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2780,11 +2780,11 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0#\0\xD8\xA6\xDB\x95\xD9\x86\xDA\xAF\xD9\x84\xD9\x89\xD9\x8A\xDB\x95 \xD8\xA6\xD9\x89\xD9\x86\xDA\xAF\xD9\x84\xD9\x89\xD8\xB2\xDA\x86\xDB\x95\xD8\xA6\xD8\xA7\xD9\x85\xDB\x90\xD8\xB1\xD9\x89\xD9\x83\xD8\xA7 \xD8\xA6\xD9\x89\xD9\x86\xDA\xAF\xD9\x84\xD9\x89\xD8\xB2\xDA\x86\xDB\x95") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x17\0\xD8\xA6\xD8\xA7\xD8\xAF\xD8\xAF\xD9\x89\xD9\x8A \xD8\xAE\xDB\x95\xD9\x86\xDA\x86\xDB\x95\xD9\x85\xDB\x87\xD8\xB1\xDB\x95\xD9\x83\xD9\x83\xDB\x95\xD9\xBE \xD8\xAE\xDB\x95\xD9\x86\xDA\x86\xDB\x95") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2816,7 +2816,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1A\0\xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xDB\x8C\xD8\xB2\xDB\x8C (\xDB\x8C\xD9\x88 \xDA\xA9\xDB\x92)\xD8\xA7\xD9\x85\xD8\xB1\xDB\x8C\xDA\xA9\xDB\x8C \xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xDB\x8C\xD8\xB2\xDB\x8C") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xDB\x8C\xD8\xB2\xDB\x8C (\xDB\x8C\xD9\x88 \xDA\xA9\xDB\x92)") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2834,7 +2834,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x1A\0\xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xDB\x8C\xD8\xB2\xDB\x8C (\xDB\x8C\xD9\x88 \xDA\xA9\xDB\x92)\xD8\xA7\xD9\x85\xD8\xB1\xDB\x8C\xDA\xA9\xDB\x8C \xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xDB\x8C\xD8\xB2\xDB\x8C") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD8\xA7\xD9\x86\xDA\xAF\xD8\xB1\xDB\x8C\xD8\xB2\xDB\x8C (\xDB\x8C\xD9\x88 \xDA\xA9\xDB\x92)") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2870,11 +2870,11 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0#\0\xD0\xB8\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8\xD0\xB7\xD1\x87\xD0\xB0 (\xD0\x91\xD1\x80\xD0\xB8\xD1\x82\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x8F)\xD0\xB8\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8\xD0\xB7\xD1\x87\xD0\xB0 (\xD0\x90\xD2\x9A\xD0\xA8)") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xD0\xB8\xD0\xBD\xD0\xB3\xD0\xBB\xD0\xB8\xD0\xB7\xD1\x87\xD0\xB0 (\xD0\x90\xD2\x9A\xD0\xA8)") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0/\0\xD1\x81\xD0\xBE\xD0\xB4\xD0\xB4\xD0\xB0\xD0\xBB\xD0\xB0\xD1\x88\xD1\x82\xD0\xB8\xD1\x80\xD0\xB8\xD0\xBB\xD0\xB3\xD0\xB0\xD0\xBD \xD1\x85\xD0\xB8\xD1\x82\xD0\xBE\xD0\xB9\xD1\x87\xD0\xB0\xD0\xB0\xD0\xBD\xD1\x8A\xD0\xB0\xD0\xBD\xD0\xB0\xD0\xB2\xD0\xB8\xD0\xB9 \xD1\x85\xD0\xB8\xD1\x82\xD0\xBE\xD0\xB9\xD1\x87\xD0\xB0") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2906,7 +2906,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x11\0Ti\xE1\xBA\xBFng Anh (Anh)Ti\xE1\xBA\xBFng Anh (M\xE1\xBB\xB9)") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2928,7 +2928,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x14\0Sinuwaa bu\xC3\xB1 woyofalSinuwaa bu cosaan") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -2960,7 +2960,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         short_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x05\0en-GBen-US") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\08\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\x86\xE0\xA4\xB2\xE0\xA5\x80 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80\xE0\xA4\x85\xE0\xA4\xAE\xE0\xA4\xB0\xE0\xA4\xBF\xE0\xA4\x95\xE0\xA5\x87 \xE0\xA4\x86\xE0\xA4\xB2\xE0\xA5\x80 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0en-GB") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x01\0\xE0\xA4\xAF\xE0\xA5\x82\xE0\xA5\xB0\xE0\xA4\x95\xE0\xA5\x87\xE0\xA5\xB0 \xE0\xA4\x86\xE0\xA4\xB2\xE0\xA5\x80 \xE0\xA4\x85\xE0\xA4\x82\xE0\xA4\x97\xE0\xA5\x8D\xE0\xA4\xB0\xE0\xA5\x87\xE0\xA4\x9C\xE0\xA4\xBC\xE0\xA5\x80") })
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -3108,7 +3108,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0C\0\xE7\xB0\xA1\xE9\xAB\x94\xE4\xB8\xAD\xE6\x96\x87\xE7\xB9\x81\xE9\xAB\x94\xE4\xB8\xAD\xE6\x96\x87") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]
@@ -3126,7 +3126,7 @@ macro_rules! __impl_locale_display_names_v1_marker {
                         },
                         long_names: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x07\0zh-Hanszh-Hant") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x0C\0\xE7\xB0\xA1\xE9\xAB\x94\xE4\xB8\xAD\xE6\x96\x87\xE7\xB9\x81\xE9\xAB\x94\xE4\xB8\xAD\xE6\x96\x87") })
+                            zerovec::ZeroMap::from_parts_unchecked(zerovec::vecs::VarZeroVec16::new(), zerovec::vecs::VarZeroVec16::new())
                         },
                         menu_names: unsafe {
                             #[allow(unused_unsafe)]

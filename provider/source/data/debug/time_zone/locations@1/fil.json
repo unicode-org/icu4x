@@ -1,7 +1,11 @@
 {
   "locations": {
+    "auldh": "Lord Howe",
+    "aumqi": "Macquarie",
     "basjj": "Bosnia and Herzegovina",
     "cayek": "Makipot na Look ng Rankin",
+    "cccck": "Cocos (Keeling) Islands",
+    "clipc": "Easter",
     "eheai": "Kanlurang Sahara",
     "gblon": "U.K.",
     "gpmsb": "Saint Martin",
@@ -16,9 +20,11 @@
     "mxmid": "Merida",
     "mxpvr": "Bahia Banderas",
     "phmnl": "Pilipinas",
+    "pnpcn": "Pitcairn Islands",
     "ssjub": "Timog Sudan",
     "szqmn": "Swaziland",
-    "uaiev": "Kiev"
+    "uaiev": "Kiev",
+    "umawk": "Wake"
   },
   "pattern_generic": [
     {

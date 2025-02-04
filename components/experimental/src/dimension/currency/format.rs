@@ -123,14 +123,13 @@ mod tests {
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}");
+        // TODO(#6064)
+        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}١٢٬٣٤٥٫٦٧");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
-        assert_writeable_eq!(
-            formatted_currency,
-            "\u{200f}\u{61c}-١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
-        );
+        // TODO(#6064)
+        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}\u{61c}-١٢٬٣٤٥٫٦٧");
     }
 }

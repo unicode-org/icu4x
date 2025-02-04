@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 652B for the lookup data structure (134 data identifiers)
-/// * 8342B[^1] for the actual data (60 unique structs)
+/// * 8332B[^1] for the actual data (60 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -152,7 +152,7 @@ macro_rules! __impl_metazone_generic_names_short_v1_marker {
                     icu::datetime::provider::time_zones::MetazoneGenericNamesV1 {
                         defaults: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x17\x18\x19\x1AB[em") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x08\0\x03\0\x07\0\n\0\r\0\x14\0\x17\0\x1A\0ACTACWTAETAWTGulf STLHTGMTNZT") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x17\x18\x19\x1A[em") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x03\0\x07\0\n\0\r\0\x10\0\x13\0ACTACWTAETAWTLHTGMTNZT") })
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]

@@ -106,6 +106,9 @@
               "Mexico_City": {
                 "exemplarCity": "Ciudad de México"
               },
+              "Noronha": {
+                "exemplarCity": "Fernando de Noronha"
+              },
               "North_Dakota": {
                 "Beulah": {
                   "exemplarCity": "Beulah, Severní Dakota"
@@ -550,7 +553,7 @@
             },
             "Antarctica": {
               "DumontDUrville": {
-                "exemplarCity": "Dumont d’Urville"
+                "exemplarCity": "Dumont-d’Urville"
               }
             },
             "Etc": {

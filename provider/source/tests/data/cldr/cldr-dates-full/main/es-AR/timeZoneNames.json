@@ -157,6 +157,9 @@
               "New_York": {
                 "exemplarCity": "Nueva York"
               },
+              "Noronha": {
+                "exemplarCity": "Fernando de Noronha"
+              },
               "North_Dakota": {
                 "Beulah": {
                   "exemplarCity": "Beulah, Dakota del Norte"
@@ -653,7 +656,7 @@
             },
             "Antarctica": {
               "DumontDUrville": {
-                "exemplarCity": "Dumont d’Urville"
+                "exemplarCity": "Dumont-d’Urville"
               }
             },
             "Etc": {

@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 648B for the lookup data structure (134 data identifiers)
-/// * 10309B[^1] for the actual data (59 unique structs)
+/// * 10298B[^1] for the actual data (59 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -152,7 +152,7 @@ macro_rules! __impl_metazone_specific_names_short_v1_marker {
                     icu::datetime::provider::time_zones::MetazoneSpecificNamesV1 {
                         defaults: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x17\0\x17\x01\x18\0\x18\x01\x19\0\x19\x01\x1A\0\x1A\x01B\0[\0[\x01e\0m\0m\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x0E\0\x04\0\x08\0\r\0\x12\0\x16\0\x1A\0\x1E\0\"\0)\0-\x001\x004\08\0ACSTACDTACWSTACWDTAESTAEDTAWSTAWDTGulf STLHSTLHDTGMTNZSTNZDT") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x17\0\x17\x01\x18\0\x18\x01\x19\0\x19\x01\x1A\0\x1A\x01[\0[\x01e\0m\0m\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\r\0\x04\0\x08\0\r\0\x12\0\x16\0\x1A\0\x1E\0\"\0&\0*\0-\x001\0ACSTACDTACWSTACWDTAESTAEDTAWSTAWDTLHSTLHDTGMTNZSTNZDT") })
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]

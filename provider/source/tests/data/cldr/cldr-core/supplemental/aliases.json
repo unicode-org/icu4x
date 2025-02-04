@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "46"
+      "_cldrVersion": "47"
     },
     "metadata": {
       "alias": {
@@ -278,6 +278,10 @@
           "cld": {
             "_reason": "macrolanguage",
             "_replacement": "syr"
+          },
+          "cls": {
+            "_reason": "macrolanguage",
+            "_replacement": "sa"
           },
           "cmk": {
             "_reason": "deprecated",
@@ -1133,7 +1137,7 @@
           },
           "nbx": {
             "_reason": "deprecated",
-            "_replacement": "ekc"
+            "_replacement": "gll"
           },
           "ncp": {
             "_reason": "deprecated",
