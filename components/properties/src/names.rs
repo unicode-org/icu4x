@@ -739,7 +739,9 @@ pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn short_name(&self) -> &'static str {
-        PropertyNamesShort::new().get(*self).unwrap_or("unreachable")
+        PropertyNamesShort::new()
+            .get(*self)
+            .unwrap_or("unreachable")
     }
 }
 
