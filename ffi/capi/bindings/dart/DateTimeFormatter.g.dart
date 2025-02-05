@@ -25,7 +25,7 @@ final class DateTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
-  factory DateTimeFormatter.dt(Locale locale, DateTimeFieldSetBuilder builder) {
+  factory DateTimeFormatter.fromBuilder(Locale locale, DateTimeFieldSetBuilder builder) {
     final temp = _FinalizedArena();
     final result = _icu4x_DateTimeFormatter_create_from_builder_mv1(locale._ffi, builder._toFfi(temp.arena));
     if (!result.isOk) {

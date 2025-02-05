@@ -95,7 +95,7 @@ pub mod ffi {
     pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<CompositeDateTimeFieldSet>);
 
     impl DateTimeFormatter {
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_builder")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
