@@ -66,14 +66,7 @@ fn test_errors() {
             "{err:?}"
         );
 
-        struct WrongV1;
-        impl DynamicDataMarker for WrongV1 {
-            type DataStruct = HelloWorld<'static>;
-        }
-        impl DataMarker for WrongV1 {
-            const INFO: DataMarkerInfo =
-                DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(WrongV1));
-        }
+        icu_provider::data_marker!(WrongV1, HelloWorld<'static>);
 
         let err: Result<DataResponse<WrongV1>, DataError> =
             provider.as_deserializing().load(Default::default());

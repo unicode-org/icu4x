@@ -479,21 +479,15 @@ pub enum PropertyCodePointMap<'data, T: TrieValue> {
 macro_rules! data_struct_generic {
     ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
         $(
-            #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
-            #[derive(Debug, Default)]
-            #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-            #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
-            pub struct $marker;
-            impl icu_provider::DynamicDataMarker for $marker {
-                type DataStruct = PropertyCodePointMap<'static, $ty>;
-            }
-            impl icu_provider::DataMarker for $marker {
-                const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!($marker));
-                    info.is_singleton = true;
-                    info
-                };
-            }
+            data_marker!(
+                #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(feature = "datagen", derive(databake::Bake))]
+                #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
+                $marker,
+                PropertyCodePointMap<'static, $ty>,
+                is_singleton = true,
+            );
         )+
     }
 }

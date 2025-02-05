@@ -36,16 +36,10 @@ use yoke::Yokeable;
 /// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
 ///
-/// # struct DummyMarkerV1;
-/// # impl DynamicDataMarker for DummyMarkerV1 {
-/// #     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
-/// # }
-/// # impl DataMarker for DummyMarkerV1 {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(DummyMarkerV1));
-/// # }
+/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
 /// // Requests for invalid markers get MissingDataMarker
 /// assert!(matches!(
-///     provider.load_any(DummyMarkerV1::INFO, Default::default()),
+///     provider.load_any(DummyV1::INFO, Default::default()),
 ///     Err(DataError {
 ///         kind: DataErrorKind::MarkerNotFound,
 ///         ..

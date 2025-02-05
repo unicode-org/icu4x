@@ -458,22 +458,12 @@ mod test {
     #[derive(
         Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom,
     )]
-    struct HelloAlt {
+    pub struct HelloAlt {
         #[zerofrom(clone)]
         message: String,
     }
 
-    /// Marker type for [`HelloAlt`].
-    struct HelloAltMarkerV1 {}
-
-    impl DynamicDataMarker for HelloAltMarkerV1 {
-        type DataStruct = HelloAlt;
-    }
-
-    impl DataMarker for HelloAltMarkerV1 {
-        const INFO: DataMarkerInfo =
-            DataMarkerInfo::from_id(crate::marker::data_marker_id!(HelloAltMarkerV1));
-    }
+    data_marker!(HelloAltMarkerV1, HelloAlt);
 
     #[derive(Deserialize, Debug, Clone, Default, PartialEq)]
     struct HelloCombined<'data> {
