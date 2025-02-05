@@ -108,34 +108,9 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 
 impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
     fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let iter = iter.into_iter();
-        let mut container = match iter.size_hint() {
-            (_, Some(upper)) => Self::with_capacity(upper),
-            (lower, None) => Self::with_capacity(lower),
-        };
-
-        for (key, value) in iter {
-            if let Some(last) = container.lm_last() {
-                if last.0 >= &key {
-                    match container.lm_binary_search_by(|k| k.cmp(&key)) {
-                        #[allow(clippy::unwrap_used)] // Index came from binary_search
-                        Ok(found) => {
-                            let _ =
-                                core::mem::replace(container.lm_get_mut(found).unwrap().1, value);
-                        }
-                        Err(ins) => {
-                            container.insert(ins, (key, value));
-                        }
-                    }
-                } else {
-                    container.push((key, value))
-                }
-            } else {
-                container.push((key, value))
-            }
-        }
-
-        container
+        let mut v = Self::new();
+        v.lm_extend(iter);
+        v
     }
 }
 
@@ -173,6 +148,59 @@ impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_extend_start(&mut self, other: Self) {
         self.splice(0..0, other);
+    }
+
+    /// Extends this store with items from an iterator.
+    #[inline]
+    fn lm_extend<I>(&mut self, iter: I)
+    where
+        I: IntoIterator<Item = (K, V)>,
+        K: Ord,
+    {
+        // From HashBrown's implementation:
+        // Keys may be already present or show multiple times in the iterator.
+        // Reserve the entire hint lower bound if the map is empty (e.g. from_iter).
+        // Otherwise reserve half the hint (rounded up), so the map
+        // will only resize twice in the worst case (assuming growth by doubling).
+        let mut iter = iter.into_iter();
+        let (size_hint_lower, _) = iter.size_hint();
+        let reserve = if self.is_empty() {
+            size_hint_lower
+        } else {
+            (size_hint_lower + 1) / 2
+        };
+        self.reserve_exact(reserve);
+
+        // First extend self with the new elements.
+        // Fast path: if all new elements are greater than the previous elements, including existing items.
+        let mut fast_path = true;
+        while let Some((key, value)) = iter.next() {
+            fast_path = self.last().map_or(true, |l| key > l.0);
+            self.push((key, value));
+            if !fast_path {
+                self.extend(iter);
+                break;
+            }
+        }
+
+        if fast_path {
+            return;
+        }
+
+        // Stable sort in order to sort and preserve the order of elements.
+        // This way, if there are elements with the same key we'll keep the last value.
+        self.sort_by(|a, b| a.0.cmp(&b.0));
+        // Then deduplicate elements with the same key by keeping the _last_ value.
+        let mut i = 0;
+        while i < self.len() {
+            #[allow(clippy::indexing_slicing)] // while condition checks if i is in range
+            let Some((head, tail)) = self[i..].split_first() else {
+                break;
+            };
+            let equals = tail.iter().take_while(|t| head.0 == t.0).count();
+            self.drain(i..i + equals);
+            i += 1;
+        }
     }
 }
 

@@ -28,6 +28,7 @@ serde = { workspace = true, optional = true, features = ["alloc"]}
 yoke = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
+rand = { workspace = true }
 bincode = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }

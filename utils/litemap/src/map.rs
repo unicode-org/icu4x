@@ -1201,25 +1201,10 @@ impl_const_get_with_index_for_integer!(isize);
 impl<K, V, S> Extend<(K, V)> for LiteMap<K, V, S>
 where
     K: Ord,
-    S: StoreMut<K, V>,
+    S: StoreIntoIterator<K, V>,
 {
     fn extend<T: IntoIterator<Item = (K, V)>>(&mut self, iter: T) {
-        // From HashBrown's implementation:
-        // Keys may be already present or show multiple times in the iterator.
-        // Reserve the entire hint lower bound if the map is empty.
-        // Otherwise reserve half the hint (rounded up), so the map
-        // will only resize twice in the worst case.
-        let iter = iter.into_iter();
-        let (size_hint_lower, _) = iter.size_hint();
-        let reserve = if self.is_empty() {
-            size_hint_lower
-        } else {
-            (size_hint_lower + 1) / 2
-        };
-        self.reserve(reserve);
-        iter.for_each(move |(k, v)| {
-            self.insert(k, v);
-        });
+        self.values.lm_extend(iter)
     }
 }
 
@@ -1463,6 +1448,18 @@ mod test {
         ]);
 
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn extend2() {
+        let mut map: LiteMap<usize, &str> = LiteMap::new();
+        map.extend(make_13().into_iter());
+        map.extend(make_24().into_iter());
+        map.extend(make_24().into_iter());
+        map.extend(make_46().into_iter());
+        map.extend(make_13().into_iter());
+        map.extend(make_46().into_iter());
+        assert_eq!(map.len(), 5);
     }
 
     fn make_13() -> LiteMap<usize, &'static str> {

@@ -175,6 +175,24 @@ pub trait StoreIntoIterator<K, V>: StoreMut<K, V> {
             self.lm_insert(i, item.0, item.1);
         }
     }
+
+    /// Extends this store with items from an iterator.
+    fn lm_extend<I>(&mut self, other: I)
+    where
+        I: IntoIterator<Item = (K, V)>,
+        K: Ord,
+    {
+        for item in other {
+            match self.lm_binary_search_by(|k| k.cmp(&item.0)) {
+                #[allow(clippy::unwrap_used)]
+                // Index from binary search is an existing occupied index
+                Ok(index) => *self.lm_get_mut(index).unwrap().1 = item.1,
+                #[allow(clippy::unwrap_used)]
+                // Index from binary search is a valid index for insertion
+                Err(index) => self.lm_insert(index, item.0, item.1),
+            }
+        }
+    }
 }
 
 /// A store that can be built from a tuple iterator.
