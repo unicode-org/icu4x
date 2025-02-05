@@ -12,7 +12,6 @@
 #include <icu4x/TimeZoneIdMapperWithFastCanonicalization.hpp>
 #include <icu4x/GregorianZonedDateTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
-#include <icu4x/NeoDateTimeFormatter.hpp>
 #include <icu4x/DateTimeFieldSetBuilder.hpp>
 
 #include <atomic>
@@ -31,7 +30,7 @@ int main() {
     std::unique_ptr<IsoDate> date = IsoDate::create(2022, 07, 11).ok().value();
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_dt = NeoDateTimeFormatter::create_dt(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_dt = DateTimeFormatter::create_dt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
     std::string out = fmt_dt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset DT: " << out;
     if (out != "11, 13:06") {
@@ -40,7 +39,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_mdt = NeoDateTimeFormatter::create_mdt(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_mdt = DateTimeFormatter::create_mdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
     out = fmt_mdt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset MDT: " << out;
     if (out != "11 jul, 13:06") {
@@ -49,7 +48,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_ymdt = NeoDateTimeFormatter::create_ymdt(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto, YearStyle::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_ymdt = DateTimeFormatter::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto, YearStyle::Auto).ok().value();
     out = fmt_ymdt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset YMDT: " << out;
     if (out != "11 jul 2022, 13:06") {
@@ -58,7 +57,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_det = NeoDateTimeFormatter::create_det(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_det = DateTimeFormatter::create_det(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
     out = fmt_det->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset DET: " << out;
     if (out != "lun 11, 13:06") {
@@ -67,7 +66,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_mdet = NeoDateTimeFormatter::create_mdet(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_mdet = DateTimeFormatter::create_mdet(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
     out = fmt_mdet->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset MDET: " << out;
     if (out != "lun, 11 jul, 13:06") {
@@ -76,7 +75,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_ymdet = NeoDateTimeFormatter::create_ymdet(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto, YearStyle::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_ymdet = DateTimeFormatter::create_ymdet(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto, YearStyle::Auto).ok().value();
     out = fmt_ymdet->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset YMDET: " << out;
     if (out != "lun, 11 jul 2022, 13:06") {
@@ -85,7 +84,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateTimeFormatter> fmt_et = NeoDateTimeFormatter::create_et(*locale.get(), NeoDateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_et = DateTimeFormatter::create_et(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, DateTimeAlignment::Auto).ok().value();
     out = fmt_et->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset ET: " << out;
     if (out != "lun, 13:06") {
@@ -95,9 +94,9 @@ int main() {
     std::cout << std::endl;
 
     DateTimeFieldSetBuilder builder;
-    builder.length = std::optional<NeoDateTimeLength>(NeoDateTimeLength::Long);
+    builder.length = std::optional<DateTimeLength>(DateTimeLength::Long);
     builder.date_fields = std::optional<DateFields>(DateFields::YM);
-    std::unique_ptr<NeoDateTimeFormatter> fmt_ym_bld = NeoDateTimeFormatter::create_from_builder(*locale.get(), builder).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_ym_bld = DateTimeFormatter::create_from_builder(*locale.get(), builder).ok().value();
     out = fmt_ym_bld->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset YM in DateTimeFormatter via builder: " << out;
     if (out != "julio de 2022") {
@@ -138,14 +137,6 @@ int main() {
     std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*locale.get()).ok().value();
     std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2020, 10, 5, *cal.get()).ok().value();
     std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
-
-    std::unique_ptr<DateTimeFormatter> any_dtf = DateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Medium).ok().value();
-    out = any_dtf->format(*any_date.get(), *any_time.get()).ok().value();
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "Oct 5, 2 Reiwa, 1:33\u202fPM") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
-    }
 
     std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create();
     std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
