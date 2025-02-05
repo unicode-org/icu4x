@@ -606,15 +606,15 @@ fn main() -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
-                    <$marker>::INFO,
+                    <$marker_ty>::INFO,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    <$emarker>::INFO,
+                    <$emarker_ty>::INFO,
                 )+
             ]
         }
@@ -624,21 +624,21 @@ macro_rules! cb {
             static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
                 [
-                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1::INFO)),
-                    (stringify!(icu_provider::hello_world::HelloWorldV1).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(HelloWorldV1), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        ($path, Some(<$marker>::INFO)),
-                        (stringify!($marker).split("::").last().unwrap().trim(), Some(<$marker>::INFO)),
+                        (stringify!($marker_ty), Some(<$marker_ty>::INFO)),
+                        (stringify!($marker), Some(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        ($epath, Some(<$emarker>::INFO)),
+                        (stringify!($emarker_ty), Some(<$emarker_ty>::INFO)),
                         #[cfg(feature = "experimental")]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), Some(<$emarker>::INFO)),
+                        (stringify!($emarker), Some(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        ($epath, None),
+                        (stringify!($emarker_ty), None),
                         #[cfg(not(feature = "experimental"))]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), None),
+                        (stringify!($emarker), None),
                     )+
 
                 ]
@@ -661,11 +661,11 @@ macro_rules! cb {
             [
                 icu_provider::hello_world::HelloWorldV1,
                 $(
-                    $marker,
+                    $marker_ty,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    $emarker,
+                    $emarker_ty,
                 )+
             ]
         );

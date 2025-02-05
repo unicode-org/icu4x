@@ -72,7 +72,7 @@ fn test_errors() {
         }
         impl DataMarker for WrongV1 {
             const INFO: DataMarkerInfo =
-                DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("nope@1"));
+                DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(WrongV1));
         }
 
         let err: Result<DataResponse<WrongV1>, DataError> =

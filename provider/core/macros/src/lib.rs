@@ -322,7 +322,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
         ));
 
         if let Some(path_lit) = path_lit {
-            let path_str = path_lit.value();
+            let _path_str = path_lit.value();
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => {
@@ -347,7 +347,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             result.extend(quote!(
                 impl icu_provider::DataMarker for #marker_name {
                     const INFO: icu_provider::DataMarkerInfo = {
-                        let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(#path_str));
+                        let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(#marker_name));
                         info.is_singleton = #singleton;
                         info.fallback_config.priority = #fallback_by_expr;
                         info.has_checksum = #checksum;

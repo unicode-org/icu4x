@@ -159,7 +159,11 @@ impl<Y> DataMarker for NeverMarker<Y>
 where
     for<'a> Y: Yokeable<'a>,
 {
-    const INFO: DataMarkerInfo = DataMarkerInfo::from_id(data_marker_id!("_never@1"));
+    const INFO: DataMarkerInfo = DataMarkerInfo::from_id(DataMarkerId {
+        #[cfg(any(feature = "export", debug_assertions))]
+        debug: "NeverMarker",
+        hash: *b"nevermar",
+    });
 }
 
 /// Implements `DataProvider<NeverMarker<Y>>` on a struct.
@@ -324,22 +328,21 @@ impl AsULE for DataMarkerIdHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for DataMarkerIdHash {}
 
-/// The string path of a data marker. For example, "foo@1"
+/// The id of a data marker.
 ///
 /// ```
 /// # use icu_provider::marker::DataMarkerId;
 /// const K: DataMarkerId =
-///     icu_provider::marker::data_marker_id!("foo/bar@1");
+///     icu_provider::marker::data_marker_id!(DataV1);
 /// ```
 ///
-/// The human-readable path string ends with `@` followed by one or more digits (the version
-/// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
+/// The identifier ends with `V` followed by one or more digits (the version number).
 ///
-/// Invalid paths are compile-time errors (as [`data_marker_id!`](crate::marker::data_marker_id) uses `const`).
+/// Invalid identifiers are compile-time errors (as [`data_marker_id!`](crate::marker::data_marker_id) uses `const`).
 ///
 /// ```compile_fail,E0080
 /// # use icu_provider::marker::DataMarkerId;
-/// const K: DataMarkerId = icu_provider::marker::data_marker_id!("foo/../bar@1");
+/// const K: DataMarkerId = icu_provider::marker::data_marker_id!(Data);
 /// ```
 #[derive(Debug, Copy, Clone, Eq)]
 pub struct DataMarkerId {
@@ -384,56 +387,34 @@ impl DataMarkerId {
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
     #[allow(clippy::indexing_slicing)]
-    pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
-        match Self::validate_path_manual_slice(path) {
+    pub const fn construct_internal(name: &'static str) -> Result<Self, (&'static str, usize)> {
+        match Self::validate_marker_name(name) {
             Ok(()) => (),
             Err(e) => return Err(e),
         };
 
-        let hash = fxhash_32(path.as_bytes()).to_le_bytes();
+        let hash = fxhash_32(name.as_bytes()).to_le_bytes();
 
         Ok(Self {
             #[cfg(any(feature = "export", debug_assertions))]
-            debug: path,
+            debug: name,
             hash: [b't', b'd', b'm', b'h', hash[0], hash[1], hash[2], hash[3]],
         })
     }
 
-    const fn validate_path_manual_slice(path: &'static str) -> Result<(), (&'static str, usize)> {
-        // Regex: [a-zA-Z0-9_][a-zA-Z0-9_/]*@[0-9]+
-        enum State {
-            Empty,
-            Body,
-            At,
-            Version,
+    const fn validate_marker_name(path: &'static str) -> Result<(), (&'static str, usize)> {
+        #![allow(clippy::indexing_slicing)]
+        if !path.as_bytes()[path.len() - 1].is_ascii_digit() {
+            return Err(("[0-9]", path.len()));
         }
-        use State::*;
-        let mut i = 0;
-        let mut state = Empty;
-        loop {
-            let byte = if i < path.len() {
-                #[allow(clippy::indexing_slicing)] // protected by debug assertion
-                Some(path.as_bytes()[i])
-            } else {
-                None
-            };
-            state = match (state, byte) {
-                (Empty | Body, Some(b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_')) => Body,
-                (Body, Some(b'/')) => Body,
-                (Body, Some(b'@')) => At,
-                (At | Version, Some(b'0'..=b'9')) => Version,
-                // One of these cases will be hit at the latest when i == end, so the loop converges.
-                (Version, None) => {
-                    return Ok(());
-                }
-
-                (Empty, _) => return Err(("[a-zA-Z0-9_]", i)),
-                (Body, _) => return Err(("[a-zA-z0-9_/@]", i)),
-                (At, _) => return Err(("[0-9]", i)),
-                (Version, _) => return Err(("[0-9]", i)),
-            };
-            i += 1;
+        let mut i = path.len() - 1;
+        while path.as_bytes()[i - 1].is_ascii_digit() {
+            i -= 1;
         }
+        if path.as_bytes()[i - 1] != b'V' {
+            return Err(("V", i));
+        }
+        Ok(())
     }
 
     /// Gets a platform-independent hash of a [`DataMarkerId`].
@@ -447,10 +428,10 @@ impl DataMarkerId {
     /// use icu_provider::marker::DataMarkerIdHash;
     ///
     /// const ID: DataMarkerId =
-    ///     icu_provider::marker::data_marker_id!("foo@1");
+    ///     icu_provider::marker::data_marker_id!(FooMarkerV1);
     /// const ID_HASH: DataMarkerIdHash = ID.hashed();
     ///
-    /// assert_eq!(ID_HASH.to_bytes(), [0xe2, 0xb6, 0x17, 0x71]);
+    /// assert_eq!(ID_HASH.to_bytes(), [66, 225, 223, 59]);
     /// ```
     #[inline]
     pub const fn hashed(self) -> DataMarkerIdHash {
@@ -532,17 +513,17 @@ impl DataMarkerInfo {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// # struct DummyMarker;
-    /// # impl DynamicDataMarker for DummyMarker {
+    /// # struct DummyMarkerV1;
+    /// # impl DynamicDataMarker for DummyMarkerV1 {
     /// #     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
     /// # }
-    /// # impl DataMarker for DummyMarker {
-    /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
+    /// # impl DataMarker for DummyMarkerV1 {
+    /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(DummyMarkerV1));
     /// # }
     ///
     /// assert!(matches!(HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO), Ok(())));
     /// assert!(matches!(
-    ///     HelloWorldV1::INFO.match_marker(DummyMarker::INFO),
+    ///     HelloWorldV1::INFO.match_marker(DummyMarkerV1::INFO),
     ///     Err(DataError {
     ///         kind: DataErrorKind::MarkerNotFound,
     ///         ..
@@ -550,7 +531,7 @@ impl DataMarkerInfo {
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyMarker::INFO).unwrap_err().marker, Some(DummyMarker::INFO.id));
+    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyMarkerV1::INFO).unwrap_err().marker, Some(DummyMarkerV1::INFO.id));
     /// ```
     pub fn match_marker(self, marker: Self) -> Result<(), DataError> {
         if self == marker {
@@ -574,20 +555,13 @@ impl DataMarkerInfo {
 #[doc(hidden)] // macro
 #[macro_export]
 macro_rules! __data_marker_id {
-    ($path:expr) => {{
+    ($name:ident) => {{
         // Force the DataMarkerInfo into a const context
         const X: $crate::marker::DataMarkerId =
-            match $crate::marker::DataMarkerId::construct_internal($path) {
+            match $crate::marker::DataMarkerId::construct_internal(stringify!($name)) {
                 Ok(path) => path,
                 #[allow(clippy::panic)] // Const context
-                Err(_) => panic!(concat!("Invalid path: ", $path)),
-                // TODO Once formatting is const:
-                // Err((expected, index)) => panic!(
-                //     "Invalid resource key {:?}: expected {:?}, found {:?} ",
-                //     $path,
-                //     expected,
-                //     $path.get(index..))
-                // );
+                Err(_) => panic!(concat!("Invalid marker name: ", stringify!($name))),
             };
         X
     }};
@@ -612,100 +586,36 @@ impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataSt
 }
 
 #[test]
-fn test_path_syntax() {
-    // Valid paths:
-    DataMarkerId::construct_internal("hello/world@1").unwrap();
-    DataMarkerId::construct_internal("hello/world/foo@1").unwrap();
-    DataMarkerId::construct_internal("hello/world@999").unwrap();
-    DataMarkerId::construct_internal("hello_world/foo@1").unwrap();
-    DataMarkerId::construct_internal("hello_458/world@1").unwrap();
-    DataMarkerId::construct_internal("hello_world@1").unwrap();
+fn test_marker_syntax() {
+    // Valid markers:
+    DataMarkerId::construct_internal("HelloWorldV1").unwrap();
+    DataMarkerId::construct_internal("HelloWorldFooV1").unwrap();
+    DataMarkerId::construct_internal("HelloWorldV999").unwrap();
+    DataMarkerId::construct_internal("Hello485FooV1").unwrap();
 
     // No version:
     assert_eq!(
-        DataMarkerId::construct_internal("hello/world"),
-        Err(("[a-zA-z0-9_/@]", "hello/world".len()))
+        DataMarkerId::construct_internal("HelloWorld"),
+        Err(("[0-9]", "HelloWorld".len()))
     );
 
     assert_eq!(
-        DataMarkerId::construct_internal("hello/world@"),
-        Err(("[0-9]", "hello/world@".len()))
+        DataMarkerId::construct_internal("HelloWorldV"),
+        Err(("[0-9]", "HelloWorldV".len()))
     );
     assert_eq!(
-        DataMarkerId::construct_internal("hello/world@foo"),
-        Err(("[0-9]", "hello/world@".len()))
+        DataMarkerId::construct_internal("HelloWorldVFoo"),
+        Err(("[0-9]", "HelloWorldVFoo".len()))
     );
     assert_eq!(
-        DataMarkerId::construct_internal("hello/world@1foo"),
-        Err(("[0-9]", "hello/world@1".len()))
-    );
-
-    // Meta no longer accepted:
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[R]"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[u-ca]"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[R][u-ca]"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-
-    // Invalid meta:
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[U]"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[uca]"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[u-"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[u-caa]"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-    assert_eq!(
-        DataMarkerId::construct_internal("foo@1[R"),
-        Err(("[0-9]", "foo@1".len()))
-    );
-
-    // Invalid characters:
-    assert_eq!(
-        DataMarkerId::construct_internal("你好/世界@1"),
-        Err(("[a-zA-Z0-9_]", 0))
+        DataMarkerId::construct_internal("HelloWorldV1Foo"),
+        Err(("[0-9]", "HelloWorldV1Foo".len()))
     );
 }
 
 #[test]
-fn test_path_to_string() {
-    struct TestCase {
-        pub id: DataMarkerId,
-        pub expected: &'static str,
-    }
-
-    for cas in [
-        TestCase {
-            id: data_marker_id!("core/cardinal@1"),
-            expected: "core/cardinal@1",
-        },
-        TestCase {
-            id: data_marker_id!("core/maxlengthsubcatg@1"),
-            expected: "core/maxlengthsubcatg@1",
-        },
-        TestCase {
-            id: data_marker_id!("core/cardinal@65535"),
-            expected: "core/cardinal@65535",
-        },
-    ] {
-        assert_eq!(cas.expected, cas.id.debug);
-    }
+fn test_id_debug() {
+    assert_eq!(data_marker_id!(BarV1).debug, "BarV1");
 }
 
 #[test]
@@ -723,26 +633,9 @@ fn test_hash_word_32() {
 }
 
 #[test]
-fn test_path_hash() {
-    struct TestCase {
-        pub id: DataMarkerId,
-        pub hash: DataMarkerIdHash,
-    }
-
-    for cas in [
-        TestCase {
-            id: data_marker_id!("core/cardinal@1"),
-            hash: DataMarkerIdHash([172, 207, 42, 236]),
-        },
-        TestCase {
-            id: data_marker_id!("core/maxlengthsubcatg@1"),
-            hash: DataMarkerIdHash([193, 6, 79, 61]),
-        },
-        TestCase {
-            id: data_marker_id!("core/cardinal@65535"),
-            hash: DataMarkerIdHash([176, 131, 182, 223]),
-        },
-    ] {
-        assert_eq!(cas.hash, cas.id.hashed(), "{}", cas.id.debug);
-    }
+fn test_id_hash() {
+    assert_eq!(
+        data_marker_id!(BarV1).hashed(),
+        DataMarkerIdHash([49, 234, 95, 212]),
+    );
 }

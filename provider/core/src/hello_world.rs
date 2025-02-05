@@ -52,7 +52,7 @@ impl DynamicDataMarker for HelloWorldV1 {
 impl DataMarker for HelloWorldV1 {
     const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
         has_checksum: true,
-        ..DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("core/helloworld@1"))
+        ..DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(HelloWorldV1))
     };
 }
 

@@ -7,17 +7,17 @@ use std::collections::HashMap;
 use std::sync::OnceLock;
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
         pub(crate) fn get_data_marker_id(marker: DataMarkerId) -> Option<&'static str> {
             static LOOKUP: OnceLock<HashMap<DataMarkerIdHash, &'static str>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
                 [
-                    (data_marker_id!("core/helloworld@1").hashed(), "core/helloworld@1"),
+                    (data_marker_id!(HelloWorldV1).hashed(), "core/helloworld@1"),
                     $(
-                        (data_marker_id!($path).hashed(), $path),
+                        (data_marker_id!($marker).hashed(), $path),
                     )+
                     $(
-                        (data_marker_id!($epath).hashed(), $epath),
+                        (data_marker_id!($emarker).hashed(), $epath),
                     )+
                 ]
                 .into_iter()
@@ -31,8 +31,10 @@ icu_provider_registry::registry!(cb);
 
 #[test]
 fn test_path_to_string() {
+    use icu_provider::hello_world::HelloWorldV1;
+    use icu_provider::prelude::*;
     assert_eq!(
-        get_data_marker_id(data_marker_id!("core/helloworld@1")).unwrap(),
+        get_data_marker_id(HelloWorldV1::INFO.id).unwrap(),
         "core/helloworld@1"
     );
 }

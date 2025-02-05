@@ -1,750 +1,750 @@
-locale/aliases@2, <singleton>, 8466B, 8014B, d89c768acbd505a7
-locale/exemplarchars/auxiliary@1, <lookup>, 806B, 164 identifiers
-locale/exemplarchars/auxiliary@1, <total>, 34115B, 26314B, 145 unique payloads
-locale/exemplarchars/auxiliary@1, af, 92B, 38B, ae09150252a2a416
-locale/exemplarchars/auxiliary@1, ak, 134B, 80B, 3590dbafc28c9a16
-locale/exemplarchars/auxiliary@1, ar, 128B, 74B, f1ac97bbcec6caf4
-locale/exemplarchars/auxiliary@1, ar-MA, 134B, 80B, 4f995e11ac4f417a
-locale/exemplarchars/auxiliary@1, as, 80B, 26B, f67c7a0b260ffd71
-locale/exemplarchars/auxiliary@1, ast, 206B, 153B, 780f438cdcdca814
-locale/exemplarchars/auxiliary@1, az, 62B, 8B, 1dc00b308d600687
-locale/exemplarchars/auxiliary@1, bal-Latn, 62B, 8B, a61c2bea10d514e
-locale/exemplarchars/auxiliary@1, be, 116B, 62B, beacbbed78540a54
-locale/exemplarchars/auxiliary@1, bg, 128B, 74B, cf9bdf1df9ef839c
-locale/exemplarchars/auxiliary@1, bgc, 62B, 8B, 6941ee8c314a93eb
-locale/exemplarchars/auxiliary@1, bho, 74B, 20B, 71b5b471be80581d
-locale/exemplarchars/auxiliary@1, blo, 502B, 450B, e4f1097613eef3af
-locale/exemplarchars/auxiliary@1, bn, 68B, 14B, fadc15acfc6142e7
-locale/exemplarchars/auxiliary@1, br, 176B, 122B, 6ad2434366be6ed2
-locale/exemplarchars/auxiliary@1, brx, 62B, 8B, 3810989ab42aacf2
-locale/exemplarchars/auxiliary@1, bs, 68B, 14B, c397d6c8f79c7390
-locale/exemplarchars/auxiliary@1, ca, 188B, 135B, 46eb8e3b30c93c87
-locale/exemplarchars/auxiliary@1, ceb, 104B, 50B, f35db5521976e660
-locale/exemplarchars/auxiliary@1, cs, 200B, 147B, 3eb621d0bf371071
-locale/exemplarchars/auxiliary@1, csw, 62B, 8B, b28aac99d4acccc8
-locale/exemplarchars/auxiliary@1, cv, 110B, 56B, b0e7b8eaacce8e16
-locale/exemplarchars/auxiliary@1, cy, 176B, 122B, e3f70f31e2a13c38
-locale/exemplarchars/auxiliary@1, da, 122B, 68B, 4bc6f1c62c027200
-locale/exemplarchars/auxiliary@1, de, 170B, 116B, 6220b9c5064acd60
-locale/exemplarchars/auxiliary@1, doi, 80B, 26B, f6c2cc496a58616
-locale/exemplarchars/auxiliary@1, dsb, 260B, 207B, 5cc7ab7e0c7c46c3
-locale/exemplarchars/auxiliary@1, ee, 176B, 122B, e382b145f504f39d
-locale/exemplarchars/auxiliary@1, el, 182B, 128B, cba4f70a8470cde4
-locale/exemplarchars/auxiliary@1, el-polyton, 56B, 2B, 3a6d9523170345d0
-locale/exemplarchars/auxiliary@1, en, 152B, 98B, 6df7c1a9a3165259
-locale/exemplarchars/auxiliary@1, en-ZA, 194B, 141B, bdce8a8f22a03313
-locale/exemplarchars/auxiliary@1, eo, -> bs
-locale/exemplarchars/auxiliary@1, es, 200B, 147B, fc6e5f48f06e6d5e
-locale/exemplarchars/auxiliary@1, et, 122B, 68B, d43a3ae97c8d3baf
-locale/exemplarchars/auxiliary@1, eu, 158B, 104B, c00dc5409c7ba8cc
-locale/exemplarchars/auxiliary@1, fa, 110B, 56B, 1010ba058422d407
-locale/exemplarchars/auxiliary@1, fa-AF, 158B, 104B, 6daee1926b447f39
-locale/exemplarchars/auxiliary@1, ff-Adlm, 62B, 8B, 760fd05896fbf187
-locale/exemplarchars/auxiliary@1, fi, 380B, 327B, 39e18e11ff805e3b
-locale/exemplarchars/auxiliary@1, fil, 86B, 32B, 811f2181881a2c0f
-locale/exemplarchars/auxiliary@1, fo, 80B, 26B, cd77ff7721241ce8
-locale/exemplarchars/auxiliary@1, fr, 158B, 104B, d5b6c75638d1c84c
-locale/exemplarchars/auxiliary@1, fr-CA, 122B, 68B, fd26fbdfd5b35f2c
-locale/exemplarchars/auxiliary@1, fy, 74B, 20B, 56a86d19a370a6a4
-locale/exemplarchars/auxiliary@1, ga, 134B, 80B, 4c9169f575f90f4e
-locale/exemplarchars/auxiliary@1, gaa, 98B, 44B, dd23baf0faa8f2ca
-locale/exemplarchars/auxiliary@1, gd, 266B, 213B, 7b4a5dc8d02a0833
-locale/exemplarchars/auxiliary@1, gl, 188B, 135B, 8bc374588c5c32e
-locale/exemplarchars/auxiliary@1, gu, 68B, 14B, 1b5f4655d68cae5f
-locale/exemplarchars/auxiliary@1, ha, 109B, 55B, 98d2c6f96b1b20f1
-locale/exemplarchars/auxiliary@1, ha-NE, 114B, 60B, c3d415c805e396aa
-locale/exemplarchars/auxiliary@1, he, 98B, 44B, 7207d7c671d33abd
-locale/exemplarchars/auxiliary@1, hi, 68B, 14B, 441d47f4e15d32e4
-locale/exemplarchars/auxiliary@1, hi-Latn, 186B, 132B, bf37d9b7491fa010
-locale/exemplarchars/auxiliary@1, hr, -> bs
-locale/exemplarchars/auxiliary@1, hsb, 272B, 219B, 34172ed38ad3c27d
-locale/exemplarchars/auxiliary@1, ht, 62B, 8B, c74a4ebb13587b6e
-locale/exemplarchars/auxiliary@1, hu, 188B, 135B, d3c92d029bace7f9
-locale/exemplarchars/auxiliary@1, hy, 62B, 8B, 1cba109a3e9961bd
-locale/exemplarchars/auxiliary@1, ia, -> en
-locale/exemplarchars/auxiliary@1, id, -> en
-locale/exemplarchars/auxiliary@1, ie, 192B, 138B, cea3d6a9969bb168
-locale/exemplarchars/auxiliary@1, ig, 199B, 145B, e8497eeb48f60d2f
-locale/exemplarchars/auxiliary@1, ii, 62B, 8B, ca166e9a533c6144
-locale/exemplarchars/auxiliary@1, is, 80B, 26B, e7af430610c5c8c0
-locale/exemplarchars/auxiliary@1, it, 128B, 74B, 3b0f9666cea8cb58
-locale/exemplarchars/auxiliary@1, ja, 506B, 453B, b64d1c9ad1f9ed5b
-locale/exemplarchars/auxiliary@1, jv, 86B, 32B, 86b93dab5644ffd8
-locale/exemplarchars/auxiliary@1, ka, 68B, 14B, 16329f2eb0e013e8
-locale/exemplarchars/auxiliary@1, kea, 209B, 156B, 97e46b0e1772c65b
-locale/exemplarchars/auxiliary@1, kgp, 236B, 183B, d56e9ea2278ad1f6
-locale/exemplarchars/auxiliary@1, km, 92B, 38B, fe839bf242708eab
-locale/exemplarchars/auxiliary@1, kn, 68B, 14B, 198c108919c267dd
-locale/exemplarchars/auxiliary@1, ko, 4448B, 4395B, 8b842dbbc0eade0e
-locale/exemplarchars/auxiliary@1, kok, -> hi
-locale/exemplarchars/auxiliary@1, kok-Latn, 170B, 116B, cca5d854154eebc8
-locale/exemplarchars/auxiliary@1, ks, 86B, 32B, a1b30a2aef8e3f7d
-locale/exemplarchars/auxiliary@1, ks-Deva, -> brx
-locale/exemplarchars/auxiliary@1, ku, 164B, 110B, 48f4cc0622261c57
-locale/exemplarchars/auxiliary@1, ky, 86B, 32B, ec0970fc28e9c4ce
-locale/exemplarchars/auxiliary@1, lb, 188B, 135B, 70a928b31a10731d
-locale/exemplarchars/auxiliary@1, lij, 80B, 26B, 9a0d58688200b527
-locale/exemplarchars/auxiliary@1, lmo, -> en
-locale/exemplarchars/auxiliary@1, lo, 68B, 14B, 634541e26d663ae8
-locale/exemplarchars/auxiliary@1, lt, 277B, 224B, e8aa8c391a1fd644
-locale/exemplarchars/auxiliary@1, lv, 80B, 26B, 2ea375bb87a8f4f8
-locale/exemplarchars/auxiliary@1, mai, 96B, 42B, 95bbfd538ab2a4f3
-locale/exemplarchars/auxiliary@1, mi, 104B, 50B, 8e805e2e66d4d
-locale/exemplarchars/auxiliary@1, mk, 68B, 14B, 85a18daec7993f0a
-locale/exemplarchars/auxiliary@1, ml, 116B, 62B, 7465c74a3b53b9c3
-locale/exemplarchars/auxiliary@1, mn, 80B, 26B, a278be5e126b9822
-locale/exemplarchars/auxiliary@1, mni, -> brx
-locale/exemplarchars/auxiliary@1, mr, 92B, 38B, 955f7d68bfbc271b
-locale/exemplarchars/auxiliary@1, mt, 68B, 14B, ccdbc1bfe4754566
-locale/exemplarchars/auxiliary@1, my, 134B, 80B, c89b7be8058544fc
-locale/exemplarchars/auxiliary@1, nds, 158B, 104B, 377d7b1915872fbd
-locale/exemplarchars/auxiliary@1, nds-NL, 92B, 38B, b3dc74c93ece68e6
-locale/exemplarchars/auxiliary@1, ne, -> hi
-locale/exemplarchars/auxiliary@1, nl, 128B, 74B, 220d7818c48bec7c
-locale/exemplarchars/auxiliary@1, no, 158B, 104B, f4c83c96a5890a4a
-locale/exemplarchars/auxiliary@1, nqo, 62B, 8B, bd9e3bc82554ab16
-locale/exemplarchars/auxiliary@1, nso, 80B, 26B, 2b605d49126d7eed
-locale/exemplarchars/auxiliary@1, oc, 176B, 122B, b69847bb30fb508e
-locale/exemplarchars/auxiliary@1, or, -> brx
-locale/exemplarchars/auxiliary@1, pa, 76B, 22B, 8859acc51fdada1d
-locale/exemplarchars/auxiliary@1, pcm, 118B, 64B, 6be0be5d8005e9a7
-locale/exemplarchars/auxiliary@1, pl, 134B, 80B, 4c1e2addf3d6da11
-locale/exemplarchars/auxiliary@1, ps, 68B, 14B, e1a3ae75a2d109b7
-locale/exemplarchars/auxiliary@1, ps-PK, 62B, 8B, 54c25bf53197b507
-locale/exemplarchars/auxiliary@1, pt, 188B, 135B, 6078d405c74fa70
-locale/exemplarchars/auxiliary@1, qu, 194B, 141B, be5a61a25220ee3
-locale/exemplarchars/auxiliary@1, raj, 74B, 20B, 8217c79bb7f68833
-locale/exemplarchars/auxiliary@1, rm, 182B, 128B, 52a9e36bd57f0492
-locale/exemplarchars/auxiliary@1, ro, 104B, 50B, 27c28dc6e974f2d5
-locale/exemplarchars/auxiliary@1, ru, -> cv
-locale/exemplarchars/auxiliary@1, sa, 86B, 32B, 3140c592bb2cbb52
-locale/exemplarchars/auxiliary@1, sah, 104B, 50B, 63a4fea00d15f4b3
-locale/exemplarchars/auxiliary@1, sc, 146B, 92B, d6580ff326918f58
-locale/exemplarchars/auxiliary@1, sd, 68B, 14B, 1eb306fb90c95356
-locale/exemplarchars/auxiliary@1, sd-Deva, -> brx
-locale/exemplarchars/auxiliary@1, si, 80B, 26B, 3c09f7e1ddac1f5a
-locale/exemplarchars/auxiliary@1, sk, 200B, 147B, a49f72ff39cb55e
-locale/exemplarchars/auxiliary@1, sl, 182B, 128B, 8ba8e97573e8d01
-locale/exemplarchars/auxiliary@1, so, 92B, 38B, 69f6d7dc450acbe2
-locale/exemplarchars/auxiliary@1, sq, -> az
-locale/exemplarchars/auxiliary@1, sr, 86B, 32B, 814ff67f014ffd9b
-locale/exemplarchars/auxiliary@1, sr-Latn, 74B, 20B, 3125e9c7042ee0b8
-locale/exemplarchars/auxiliary@1, st, 80B, 26B, f7ef0c8c6715144f
-locale/exemplarchars/auxiliary@1, su, 158B, 104B, 3d6dbaaeb4bc831f
-locale/exemplarchars/auxiliary@1, sv, 128B, 74B, b6e85b38fae88419
-locale/exemplarchars/auxiliary@1, sw, 74B, 20B, 740058d196c109b1
-locale/exemplarchars/auxiliary@1, sw-CD, 68B, 14B, d3b4c70aab71a0d2
-locale/exemplarchars/auxiliary@1, syr, 80B, 26B, 14fa248db7ae633b
-locale/exemplarchars/auxiliary@1, szl, 248B, 195B, 5f2fb117c9c1f9d4
-locale/exemplarchars/auxiliary@1, ta, -> brx
-locale/exemplarchars/auxiliary@1, te, 68B, 14B, c563be76b4dd5d2a
-locale/exemplarchars/auxiliary@1, tg, 74B, 20B, ed4e80e4896838c6
-locale/exemplarchars/auxiliary@1, th, 62B, 8B, c016c0a522459fd9
-locale/exemplarchars/auxiliary@1, ti, 176B, 122B, 5698cc4e1ce330f1
-locale/exemplarchars/auxiliary@1, tk, 80B, 26B, 9d3fc180a1d25f95
-locale/exemplarchars/auxiliary@1, tn, 86B, 32B, bc7df20e72289094
-locale/exemplarchars/auxiliary@1, to, 188B, 135B, 82695db9a9bd9524
-locale/exemplarchars/auxiliary@1, tr, 164B, 110B, 5651d2656e57217d
-locale/exemplarchars/auxiliary@1, tt, 68B, 14B, 317b26949d06fa09
-locale/exemplarchars/auxiliary@1, ug, 68B, 14B, 5a174a4f53ecb9d2
-locale/exemplarchars/auxiliary@1, uk, 134B, 80B, 6759db25e6f14d30
-locale/exemplarchars/auxiliary@1, und, -> el-polyton
-locale/exemplarchars/auxiliary@1, ur, 134B, 80B, 77bd445e2b3e525a
-locale/exemplarchars/auxiliary@1, uz, 164B, 110B, c0350eee7d9ad235
-locale/exemplarchars/auxiliary@1, uz-Cyrl, -> tg
-locale/exemplarchars/auxiliary@1, vec, 169B, 115B, 273f65a00b08baf8
-locale/exemplarchars/auxiliary@1, vi, 80B, 26B, d79ae4b119f7cbef
-locale/exemplarchars/auxiliary@1, vmw, 80B, 26B, abd31a55de94baa9
-locale/exemplarchars/auxiliary@1, wo, 80B, 26B, c5cb391cacc0914d
-locale/exemplarchars/auxiliary@1, xh, -> en
-locale/exemplarchars/auxiliary@1, xnr, 62B, 8B, 4ffd652e0e38d4a8
-locale/exemplarchars/auxiliary@1, yo, -> tn
-locale/exemplarchars/auxiliary@1, yrl, 224B, 171B, a50e0892df5f7dc0
-locale/exemplarchars/auxiliary@1, yue, 374B, 321B, 72559cf78bbdbcff
-locale/exemplarchars/auxiliary@1, yue-Hans, 374B, 321B, b586017ffccc55b4
-locale/exemplarchars/auxiliary@1, zh, 7934B, 7881B, b3aa6d9c6dc9b5fc
-locale/exemplarchars/auxiliary@1, zh-Hant, 2924B, 2871B, 6c9978e80b4fde3
-locale/exemplarchars/auxiliary@1, zu, -> en
-locale/exemplarchars/index@1, <lookup>, 673B, 142 identifiers
-locale/exemplarchars/index@1, <total>, 12977B, 6987B, 111 unique payloads
-locale/exemplarchars/index@1, af, 62B, 8B, e5424e495f6a6037
-locale/exemplarchars/index@1, ak, 74B, 20B, 5c90d94fee1b7d62
-locale/exemplarchars/index@1, am, 284B, 231B, 363ff8bb95e65821
-locale/exemplarchars/index@1, ar, 80B, 26B, 9215ab4736770b09
-locale/exemplarchars/index@1, as, 116B, 62B, 5ad18c7623385d03
-locale/exemplarchars/index@1, ast, 80B, 26B, e6ae12a6f3a2bf63
-locale/exemplarchars/index@1, az, 104B, 50B, df6e8ec710dacaa5
-locale/exemplarchars/index@1, bal-Latn, 136B, 82B, 482b19550e64eb7d
-locale/exemplarchars/index@1, be, 86B, 32B, 35c7e7bddcbfdb7a
-locale/exemplarchars/index@1, bg, 68B, 14B, 68580a53982dcdd2
-locale/exemplarchars/index@1, bn, 103B, 49B, 42e0d7fa8814aab6
-locale/exemplarchars/index@1, br, 68B, 14B, ef04e7e8c9388ce1
-locale/exemplarchars/index@1, brx, 112B, 58B, b5573787521bd3ca
-locale/exemplarchars/index@1, bs, 99B, 45B, 7ffe3f4a58241964
-locale/exemplarchars/index@1, bs-Cyrl, 80B, 26B, c07a3bf665177b7d
-locale/exemplarchars/index@1, ca, -> af
-locale/exemplarchars/index@1, ceb, -> af
-locale/exemplarchars/index@1, chr, 134B, 80B, b39941b7fcb3312b
-locale/exemplarchars/index@1, cs, 90B, 36B, 6e785ce9a1f368cb
-locale/exemplarchars/index@1, cv, 92B, 38B, 7b1b2291e1d62c7b
-locale/exemplarchars/index@1, cy, 94B, 40B, ffc5d2990ad2a9ae
-locale/exemplarchars/index@1, da, 74B, 20B, 7227bacf2db7c4c1
-locale/exemplarchars/index@1, de, -> af
-locale/exemplarchars/index@1, de-AT, 80B, 26B, e46a7e40271812c2
-locale/exemplarchars/index@1, doi, 98B, 44B, 66a0c462c357dd9d
-locale/exemplarchars/index@1, dsb, 108B, 54B, 95076c5b3434b1fe
-locale/exemplarchars/index@1, ee, 116B, 62B, ea02dcf12d40ac07
-locale/exemplarchars/index@1, el, 68B, 14B, d00af513efb56c0f
-locale/exemplarchars/index@1, en, -> af
-locale/exemplarchars/index@1, eo, 110B, 56B, 7fa28244e742cdc8
-locale/exemplarchars/index@1, es, 68B, 14B, 59b3c4aa44961614
-locale/exemplarchars/index@1, et, 92B, 38B, 9aa5f5131fbfc129
-locale/exemplarchars/index@1, eu, -> af
-locale/exemplarchars/index@1, fa, 122B, 68B, 575cc768e4dfbf22
-locale/exemplarchars/index@1, ff-Adlm, 68B, 14B, 34ad18e4be7193cf
-locale/exemplarchars/index@1, fi, 74B, 20B, f9891d7c4ee36368
-locale/exemplarchars/index@1, fil, 72B, 18B, 742a53f3bd8221d5
-locale/exemplarchars/index@1, fo, 110B, 56B, 319fc584263c58e0
-locale/exemplarchars/index@1, fr, -> af
-locale/exemplarchars/index@1, fy, 74B, 20B, ee742e264d431c8b
-locale/exemplarchars/index@1, ga, -> af
-locale/exemplarchars/index@1, gd, 74B, 20B, 402abb021353710c
-locale/exemplarchars/index@1, gl, -> es
-locale/exemplarchars/index@1, gu, 147B, 93B, e6649be81f3b8439
-locale/exemplarchars/index@1, ha, 104B, 50B, 109f69464f70ad25
-locale/exemplarchars/index@1, ha-NE, 86B, 32B, 7905736e93a50a8b
-locale/exemplarchars/index@1, he, 92B, 38B, 5808003605cd0bc7
-locale/exemplarchars/index@1, hi, 92B, 38B, 6bdc6de195bb1d70
-locale/exemplarchars/index@1, hr, 105B, 51B, 5afc46e63e9edbef
-locale/exemplarchars/index@1, hsb, 101B, 47B, eb3a29822b3433d
-locale/exemplarchars/index@1, hu, 153B, 99B, c5a820e2b7c37484
-locale/exemplarchars/index@1, hy, 62B, 8B, 3bf07c886fb516dc
-locale/exemplarchars/index@1, ia, -> af
-locale/exemplarchars/index@1, id, -> af
-locale/exemplarchars/index@1, ig, 122B, 68B, fbe61d5e435f3a77
-locale/exemplarchars/index@1, ii, 164B, 110B, bc3ce85a6b47f86c
-locale/exemplarchars/index@1, is, 116B, 62B, e0d8d6246994412d
-locale/exemplarchars/index@1, it, -> af
-locale/exemplarchars/index@1, ja, 116B, 62B, 21dac59a5ede0396
-locale/exemplarchars/index@1, jv, 122B, 68B, d581e5aa0a581ed6
-locale/exemplarchars/index@1, ka, 62B, 8B, b3ed207af0bee3e1
-locale/exemplarchars/index@1, kea, 86B, 32B, 46f538d5e7a2feba
-locale/exemplarchars/index@1, kgp, 86B, 32B, 6bcf5b743ab99db
-locale/exemplarchars/index@1, kk, 122B, 68B, f20c4025a344bd46
-locale/exemplarchars/index@1, km, 86B, 32B, ddee49a4474abc51
-locale/exemplarchars/index@1, kn, 98B, 44B, 7c77f09de0552d71
-locale/exemplarchars/index@1, ko, 104B, 50B, 52b71ac5a814d16c
-locale/exemplarchars/index@1, kok, 92B, 38B, ca736a7a1b2d6cc
-locale/exemplarchars/index@1, ku, 92B, 38B, 1e79f17d980d8dd6
-locale/exemplarchars/index@1, ky, 86B, 32B, 6477bc368d8e267a
-locale/exemplarchars/index@1, lb, -> af
-locale/exemplarchars/index@1, lij, -> af
-locale/exemplarchars/index@1, lo, 176B, 122B, 790dfd96968c1f3d
-locale/exemplarchars/index@1, lt, 128B, 74B, 28577b58cfeaefd8
-locale/exemplarchars/index@1, lv, 128B, 74B, e17b44addf99ece4
-locale/exemplarchars/index@1, mai, 178B, 124B, 8b6f68ad08eed783
-locale/exemplarchars/index@1, mi, 104B, 50B, 314df0b7005860b1
-locale/exemplarchars/index@1, mk, 92B, 38B, 75975c2023f8c51d
-locale/exemplarchars/index@1, ml, 80B, 26B, 6b89efc26310df5b
-locale/exemplarchars/index@1, mn, 74B, 20B, 1f5871cc4817d4dc
-locale/exemplarchars/index@1, mr, 128B, 74B, 6bb9f244ba38d0d
-locale/exemplarchars/index@1, ms, -> af
-locale/exemplarchars/index@1, mt, 96B, 42B, 6962dc12fb7d33e1
-locale/exemplarchars/index@1, my, 62B, 8B, ec3efc5e61324833
-locale/exemplarchars/index@1, nds-NL, -> af
-locale/exemplarchars/index@1, ne, -> hi
-locale/exemplarchars/index@1, nl, -> af
-locale/exemplarchars/index@1, no, -> da
-locale/exemplarchars/index@1, om, -> af
-locale/exemplarchars/index@1, or, 103B, 49B, 434c5431bde2b163
-locale/exemplarchars/index@1, pa, 104B, 50B, 6516d8b9dbdc2fc8
-locale/exemplarchars/index@1, pcm, 84B, 30B, 2ed7c869627b86d1
-locale/exemplarchars/index@1, pl, 98B, 44B, 28276cfc5c902f78
-locale/exemplarchars/index@1, prg, 140B, 86B, b704184e57007fb6
-locale/exemplarchars/index@1, ps, 164B, 110B, d1c3e16d2ca5ffdd
-locale/exemplarchars/index@1, pt, -> af
-locale/exemplarchars/index@1, qu, 112B, 58B, a1d8f7b4c83ae6fd
-locale/exemplarchars/index@1, rm, 92B, 38B, 93794cd26b0fd511
-locale/exemplarchars/index@1, ro, 92B, 38B, a3ce94f22555d9c3
-locale/exemplarchars/index@1, ru, 80B, 26B, d46396277f53c6bb
-locale/exemplarchars/index@1, rw, -> af
-locale/exemplarchars/index@1, sa, -> doi
-locale/exemplarchars/index@1, sah, 140B, 86B, f5cf71e868d471f1
-locale/exemplarchars/index@1, sc, 66B, 12B, 626f2c48367b481b
-locale/exemplarchars/index@1, sd, 188B, 134B, 497c9c0dc66c462e
-locale/exemplarchars/index@1, si, 98B, 44B, ce352d26d575b249
-locale/exemplarchars/index@1, sk, 114B, 60B, d9bbd760c8eaf42b
-locale/exemplarchars/index@1, sl, 92B, 38B, ab93002f7e4d5bcd
-locale/exemplarchars/index@1, so, 86B, 32B, bb9470c94130acad
-locale/exemplarchars/index@1, sq, 116B, 62B, 591bca3edb19d7f
-locale/exemplarchars/index@1, sr, -> bs-Cyrl
-locale/exemplarchars/index@1, sr-Latn, -> bs
-locale/exemplarchars/index@1, su, 68B, 14B, 3227f26fc40c3d89
-locale/exemplarchars/index@1, sv, -> fi
-locale/exemplarchars/index@1, sw, -> pcm
-locale/exemplarchars/index@1, syr, 98B, 44B, d8ebf6fc2c9a8cfc
-locale/exemplarchars/index@1, szl, 110B, 56B, a9a532b515fd8ffd
-locale/exemplarchars/index@1, ta, 104B, 50B, 8e0519b8fdb62adc
-locale/exemplarchars/index@1, te, 92B, 38B, bed15d750fd48971
-locale/exemplarchars/index@1, tg, 122B, 68B, cb0603b10f71e0fb
-locale/exemplarchars/index@1, th, 62B, 8B, 95a95092ab5aee04
-locale/exemplarchars/index@1, ti, 302B, 249B, e83dab01dd14a899
-locale/exemplarchars/index@1, tk, 128B, 74B, a94996830bcc7afa
-locale/exemplarchars/index@1, to, 96B, 42B, 26b70d5546904371
-locale/exemplarchars/index@1, tr, 92B, 38B, ed33e6c41f80ce4e
-locale/exemplarchars/index@1, tt, 104B, 50B, c0e54d3d45e5fd80
-locale/exemplarchars/index@1, ug, 212B, 158B, f054e0a2fee6c3eb
-locale/exemplarchars/index@1, uk, 86B, 32B, db98fefd481920fe
-locale/exemplarchars/index@1, und, 56B, 2B, 3a6d9523170345d0
-locale/exemplarchars/index@1, ur, 164B, 110B, 5b6bbc543a1da7e7
-locale/exemplarchars/index@1, uz, 92B, 38B, eef38effe7c87c88
-locale/exemplarchars/index@1, vi, 104B, 50B, 31e7d562786017c6
-locale/exemplarchars/index@1, wo, 68B, 14B, b85629bdc6b9825d
-locale/exemplarchars/index@1, xh, -> af
-locale/exemplarchars/index@1, yo, 86B, 32B, 42051e7de65818b7
-locale/exemplarchars/index@1, yrl, 110B, 56B, 51a1c51230063e45
-locale/exemplarchars/index@1, yue, 200B, 147B, 2dcdb01a88fdc6a7
-locale/exemplarchars/index@1, yue-Hans, -> af
-locale/exemplarchars/index@1, za, -> af
-locale/exemplarchars/index@1, zh, -> af
-locale/exemplarchars/index@1, zh-Hant, 1340B, 1287B, 974910b31430c6ca
-locale/exemplarchars/index@1, zu, -> af
-locale/exemplarchars/main@1, <lookup>, 869B, 175 identifiers
-locale/exemplarchars/main@1, <total>, 73518B, 64895B, 160 unique payloads
-locale/exemplarchars/main@1, af, 98B, 44B, d73fc42a75b51bdd
-locale/exemplarchars/main@1, ak, 104B, 50B, 75856fb4a06dafbb
-locale/exemplarchars/main@1, am, 176B, 122B, a95d77a59cc8ebc4
-locale/exemplarchars/main@1, ar, 74B, 20B, 23ccf9e5949fbd0e
-locale/exemplarchars/main@1, as, 163B, 109B, 400212979f61d23
-locale/exemplarchars/main@1, ast, 128B, 74B, adfab02948997166
-locale/exemplarchars/main@1, az, 110B, 56B, 861648198edfb2c0
-locale/exemplarchars/main@1, bal-Latn, 136B, 82B, e7ebce837c11414c
-locale/exemplarchars/main@1, be, 104B, 50B, d90513a36065a3fc
-locale/exemplarchars/main@1, bg, 74B, 20B, 73d21a421969eb89
-locale/exemplarchars/main@1, bgc, 128B, 74B, 7b1284788919dda3
-locale/exemplarchars/main@1, bho, 122B, 68B, 73d533752edc2b34
-locale/exemplarchars/main@1, blo, 304B, 251B, 62eac5f5e79e929f
-locale/exemplarchars/main@1, bn, 169B, 115B, bf332b30d0124e4
-locale/exemplarchars/main@1, br, 102B, 48B, 402e4c98d77dfcb
-locale/exemplarchars/main@1, brx, 148B, 94B, ad111a6a0b379921
-locale/exemplarchars/main@1, bs, 117B, 63B, f58ed26609290054
-locale/exemplarchars/main@1, bs-Cyrl, 86B, 32B, a9c3438a3ed985a5
-locale/exemplarchars/main@1, ca, 110B, 56B, 7b1806fe97eebaf7
-locale/exemplarchars/main@1, ceb, 98B, 44B, c11fc28d6186ee6f
-locale/exemplarchars/main@1, chr, 68B, 14B, 1952a55450e28e55
-locale/exemplarchars/main@1, cs, 156B, 102B, 6ed6ed9867a89b32
-locale/exemplarchars/main@1, csw, 356B, 303B, c66aae9ed921eddf
-locale/exemplarchars/main@1, cv, 92B, 38B, a66fe790a8df88a2
-locale/exemplarchars/main@1, cy, 196B, 142B, 7d6ada812ecd6c7f
-locale/exemplarchars/main@1, da, 74B, 20B, 5490ba8298f515b4
-locale/exemplarchars/main@1, de, 86B, 32B, 28d7b14aae201f45
-locale/exemplarchars/main@1, de-CH, 80B, 26B, 972b2cba65cb993d
-locale/exemplarchars/main@1, doi, 155B, 101B, 419a11a445f8c711
-locale/exemplarchars/main@1, dsb, 132B, 78B, 597e0b1046df8fec
-locale/exemplarchars/main@1, ee, 218B, 164B, 77b651fcb784d6d3
-locale/exemplarchars/main@1, el, 68B, 14B, a5dc83a2d894a83a
-locale/exemplarchars/main@1, el-polyton, 194B, 141B, d7e1e905d5bf1fe1
-locale/exemplarchars/main@1, en, 62B, 8B, 20ca2173af0f40a2
-locale/exemplarchars/main@1, eo, 110B, 56B, f0865ca5de86b617
-locale/exemplarchars/main@1, es, 104B, 50B, 15f0bbc892a458e
-locale/exemplarchars/main@1, et, 92B, 38B, 6d0d936a104e498d
-locale/exemplarchars/main@1, eu, 74B, 20B, 7930d1b44d59e53c
-locale/exemplarchars/main@1, fa, 134B, 80B, e3a1cbb1a7fd0729
-locale/exemplarchars/main@1, ff-Adlm, 74B, 20B, 526096a4cafd9ad0
-locale/exemplarchars/main@1, fi, 86B, 32B, f74e9d4a35dbecfd
-locale/exemplarchars/main@1, fil, 72B, 18B, f9afb4e52cb4308f
-locale/exemplarchars/main@1, fo, 128B, 74B, c2a53c3e4745b201
-locale/exemplarchars/main@1, fr, 116B, 62B, 4d863733035b9b56
-locale/exemplarchars/main@1, fy, 133B, 79B, ddc0f9b5edb971db
-locale/exemplarchars/main@1, ga, 104B, 50B, 782c16960fb422f5
-locale/exemplarchars/main@1, gaa, 98B, 44B, f75c97cc4ea1f104
-locale/exemplarchars/main@1, gd, 104B, 50B, 7d0b0518e31aa40f
-locale/exemplarchars/main@1, gl, 110B, 56B, ac655d4212f75a57
-locale/exemplarchars/main@1, gu, 134B, 80B, b25cf2315d672015
-locale/exemplarchars/main@1, ha, 118B, 64B, 7072266a7547f728
-locale/exemplarchars/main@1, he, 62B, 8B, 2d8f49b52cac0ddf
-locale/exemplarchars/main@1, hi, 128B, 74B, d2fb69d32fcc96ee
-locale/exemplarchars/main@1, hr, -> bs
-locale/exemplarchars/main@1, hsb, 125B, 71B, b06fa7c1325a6ca9
-locale/exemplarchars/main@1, ht, 131B, 77B, 6751c528d9a96cb9
-locale/exemplarchars/main@1, hu, 211B, 157B, c043d241aeac4021
-locale/exemplarchars/main@1, hy, 62B, 8B, a7de1236b86139b
-locale/exemplarchars/main@1, ia, -> en
-locale/exemplarchars/main@1, id, -> en
-locale/exemplarchars/main@1, ie, 92B, 38B, ea48bc04af4bc0ce
-locale/exemplarchars/main@1, ig, 140B, 86B, 70387cd5c75ebd7
-locale/exemplarchars/main@1, ii, 62B, 8B, ec08431b622271ac
-locale/exemplarchars/main@1, is, 134B, 80B, d8af2b54d60bb43e
-locale/exemplarchars/main@1, it, 92B, 38B, 94835a3e2351db15
-locale/exemplarchars/main@1, ja, 10520B, 10467B, 82187c32e11488c4
-locale/exemplarchars/main@1, jv, 122B, 68B, 96a754f5b0ddd895
-locale/exemplarchars/main@1, ka, 62B, 8B, b3ed207af0bee3e1
-locale/exemplarchars/main@1, kea, 102B, 48B, c7de7a4a569de31
-locale/exemplarchars/main@1, kgp, 134B, 80B, d04afc15540a755b
-locale/exemplarchars/main@1, kk, 122B, 68B, 50fac5a343fcb4d0
-locale/exemplarchars/main@1, km, 120B, 66B, d7b0197e09cb90b8
-locale/exemplarchars/main@1, kn, 122B, 68B, f18a9fb540cde214
-locale/exemplarchars/main@1, ko, 62B, 8B, cff6f1ce07b074fd
-locale/exemplarchars/main@1, kok, 198B, 144B, 796368c7c49f96e9
-locale/exemplarchars/main@1, kok-Latn, 104B, 50B, 16c6ffe13daa4ce3
-locale/exemplarchars/main@1, ks, 188B, 135B, 24c750752c7bda06
-locale/exemplarchars/main@1, ks-Deva, 186B, 132B, 5b0f88a3496aa161
-locale/exemplarchars/main@1, ku, 92B, 38B, fcbb6be9f4d1687c
-locale/exemplarchars/main@1, kxv, 162B, 108B, c3cf105f89279256
-locale/exemplarchars/main@1, kxv-Deva, 234B, 181B, 43a74c2e10a3525
-locale/exemplarchars/main@1, kxv-Orya, 218B, 165B, 878deca3b6a43e41
-locale/exemplarchars/main@1, kxv-Telu, 202B, 149B, e1c629a6a412aabc
-locale/exemplarchars/main@1, ky, 116B, 62B, 7f219cf743510373
-locale/exemplarchars/main@1, lb, 80B, 26B, b38df6c1c104f9a8
-locale/exemplarchars/main@1, lij, 116B, 62B, f7d83e405e140135
-locale/exemplarchars/main@1, lmo, -> en
-locale/exemplarchars/main@1, lo, 158B, 104B, bc55efbf988d861e
-locale/exemplarchars/main@1, lt, 128B, 74B, 58916d4ad0a3e06
-locale/exemplarchars/main@1, lv, 140B, 86B, a1da5395bbaf126d
-locale/exemplarchars/main@1, mai, 168B, 114B, c4d1765733ae5b27
-locale/exemplarchars/main@1, mi, 142B, 88B, 3bb18a89b2d429e2
-locale/exemplarchars/main@1, mk, 98B, 44B, 7eba8966f4beb0ba
-locale/exemplarchars/main@1, ml, 96B, 42B, 36bae5c71f06806f
-locale/exemplarchars/main@1, mn, 80B, 26B, 65ff00b3eab1f12e
-locale/exemplarchars/main@1, mni, 152B, 98B, d89bea2e92b45c08
-locale/exemplarchars/main@1, mr, 150B, 96B, 1e9191acd9fb164c
-locale/exemplarchars/main@1, ms, -> en
-locale/exemplarchars/main@1, mt, 133B, 79B, 2f8605b67556d44a
-locale/exemplarchars/main@1, my, 86B, 32B, d7679fb8c3264e06
-locale/exemplarchars/main@1, nds, 80B, 26B, b96ad58bea2fea25
-locale/exemplarchars/main@1, nds-NL, -> en
-locale/exemplarchars/main@1, ne, -> hi
-locale/exemplarchars/main@1, nl, 133B, 79B, ac6ce939c84b9898
-locale/exemplarchars/main@1, no, 92B, 38B, ae59668fb83894a8
-locale/exemplarchars/main@1, nqo, 68B, 14B, 95c58eda1b6e9607
-locale/exemplarchars/main@1, nso, 98B, 44B, 830ba530ef6f3e0c
-locale/exemplarchars/main@1, oc, 104B, 50B, 9e2d851f40f2907a
-locale/exemplarchars/main@1, om, -> en
-locale/exemplarchars/main@1, or, 161B, 107B, 3f04cf8b47e24f7
-locale/exemplarchars/main@1, pa, 174B, 120B, 8fc980fcda8e7ac2
-locale/exemplarchars/main@1, pcm, 156B, 102B, 5d165e4b5005e50
-locale/exemplarchars/main@1, pl, 134B, 80B, bdb3daa02d955a6c
-locale/exemplarchars/main@1, prg, 140B, 86B, 4a3a775f7ef21af6
-locale/exemplarchars/main@1, ps, 188B, 135B, d800e92e58ac2ae6
-locale/exemplarchars/main@1, ps-PK, 194B, 141B, c650f71e1b88d287
-locale/exemplarchars/main@1, pt, 98B, 44B, 7c8118e8689f4460
-locale/exemplarchars/main@1, qu, 138B, 84B, 8266254fcbb1281
-locale/exemplarchars/main@1, raj, 116B, 62B, 7ca4a88eef4a992
-locale/exemplarchars/main@1, rm, -> it
-locale/exemplarchars/main@1, ro, 92B, 38B, 6603889a4ead8fbe
-locale/exemplarchars/main@1, ru, 68B, 14B, 39495c3737bcc704
-locale/exemplarchars/main@1, rw, -> en
-locale/exemplarchars/main@1, sa, 128B, 74B, 80a449fdb466562d
-locale/exemplarchars/main@1, sah, 140B, 86B, ef5547c0375697a9
-locale/exemplarchars/main@1, sat, 62B, 8B, 48a2875d62e22825
-locale/exemplarchars/main@1, sc, 110B, 56B, 52651c7a24f7f10a
-locale/exemplarchars/main@1, sd, 194B, 140B, 3860d30d4432f9e0
-locale/exemplarchars/main@1, sd-Deva, 134B, 80B, 366d876469a71e0d
-locale/exemplarchars/main@1, si, 134B, 80B, e9548d2f503c3b18
-locale/exemplarchars/main@1, sk, 171B, 117B, b802b3408988ab60
-locale/exemplarchars/main@1, sl, 92B, 38B, ea507318c32220d3
-locale/exemplarchars/main@1, so, 86B, 32B, 7a124a3a2e8e6679
-locale/exemplarchars/main@1, sq, 116B, 62B, 679df903e3df543d
-locale/exemplarchars/main@1, sr, -> bs-Cyrl
-locale/exemplarchars/main@1, sr-Latn, -> bs
-locale/exemplarchars/main@1, st, 80B, 26B, ee1ef7f256a960ff
-locale/exemplarchars/main@1, su, 68B, 14B, 5e2430dae6cc68db
-locale/exemplarchars/main@1, sv, 86B, 32B, ab9bc56a22446222
-locale/exemplarchars/main@1, sw, 84B, 30B, 6eb17616a4250a71
-locale/exemplarchars/main@1, sw-CD, 74B, 20B, 17794af74f63339e
-locale/exemplarchars/main@1, sw-KE, -> en
-locale/exemplarchars/main@1, syr, 74B, 20B, d94a700e49ef0a24
-locale/exemplarchars/main@1, szl, 140B, 86B, fa0b5f0de3fa6381
-locale/exemplarchars/main@1, ta, 140B, 86B, ff38353f8009987a
-locale/exemplarchars/main@1, te, 122B, 68B, 67918d8d1fe43a27
-locale/exemplarchars/main@1, tg, 122B, 68B, c64aa5604531218f
-locale/exemplarchars/main@1, th, 68B, 14B, bce397b2411f8aaf
-locale/exemplarchars/main@1, ti, 206B, 153B, 64d678aad13c3109
-locale/exemplarchars/main@1, tk, 128B, 74B, e4227e38cf3825d2
-locale/exemplarchars/main@1, tn, 98B, 44B, 25ed7a6c7573757d
-locale/exemplarchars/main@1, to, 156B, 102B, 3bd1d89aeab23154
-locale/exemplarchars/main@1, tr, 110B, 56B, e060196b7df5178f
-locale/exemplarchars/main@1, tt, 104B, 50B, b1c94de32605219b
-locale/exemplarchars/main@1, ug, 212B, 158B, f054e0a2fee6c3eb
-locale/exemplarchars/main@1, uk, 98B, 44B, d296cc3c828b957b
-locale/exemplarchars/main@1, und, 56B, 2B, 3a6d9523170345d0
-locale/exemplarchars/main@1, ur, 164B, 110B, 5b6bbc543a1da7e7
-locale/exemplarchars/main@1, uz, 98B, 44B, 869743791dbcd1aa
-locale/exemplarchars/main@1, uz-Cyrl, 110B, 56B, 2a4569327656b660
-locale/exemplarchars/main@1, vec, 116B, 62B, a411ca438f4e5e28
-locale/exemplarchars/main@1, vi, 422B, 369B, 932447e7f4a24806
-locale/exemplarchars/main@1, vmw, 107B, 53B, e1a8100cd516c9ff
-locale/exemplarchars/main@1, wo, 110B, 56B, 433985221915e94c
-locale/exemplarchars/main@1, xh, -> en
-locale/exemplarchars/main@1, xnr, 146B, 92B, 2584e39359184645
-locale/exemplarchars/main@1, yo, 199B, 145B, 66920e52f5eb4709
-locale/exemplarchars/main@1, yo-BJ, 160B, 106B, 783775ba85752164
-locale/exemplarchars/main@1, yrl, 134B, 80B, a2503bd499f54991
-locale/exemplarchars/main@1, yue, 12248B, 12195B, a3fed6bbbe82b2af
-locale/exemplarchars/main@1, yue-Hans, 9950B, 9897B, 5052f9a735d8d463
-locale/exemplarchars/main@1, za, -> en
-locale/exemplarchars/main@1, zh, 10346B, 10293B, eaeb380c74d27fe3
-locale/exemplarchars/main@1, zh-Hant, 10862B, 10809B, 6228bf8b8d851e60
-locale/exemplarchars/main@1, zu, 208B, 155B, 153a1bfa1781e39f
-locale/exemplarchars/numbers@1, <lookup>, 469B, 95 identifiers
-locale/exemplarchars/numbers@1, <total>, 3120B, 1392B, 32 unique payloads
-locale/exemplarchars/numbers@1, af, 86B, 32B, 7e863eaf847ae93c
-locale/exemplarchars/numbers@1, ar, 110B, 56B, 37da6e5b7a925dd9
-locale/exemplarchars/numbers@1, ar-DZ, 92B, 38B, 15e5491d2b25cb36
-locale/exemplarchars/numbers@1, ar-LB, -> ar-DZ
-locale/exemplarchars/numbers@1, ar-LY, -> ar-DZ
-locale/exemplarchars/numbers@1, ar-MA, -> ar-DZ
-locale/exemplarchars/numbers@1, ar-MR, -> ar-DZ
-locale/exemplarchars/numbers@1, ar-SA, 92B, 38B, f246ab7f371b244f
-locale/exemplarchars/numbers@1, ar-SO, -> ar-SA
-locale/exemplarchars/numbers@1, ar-TN, -> ar-DZ
-locale/exemplarchars/numbers@1, as, 92B, 38B, f4290b9b94c56261
-locale/exemplarchars/numbers@1, be, -> af
-locale/exemplarchars/numbers@1, bg, -> af
-locale/exemplarchars/numbers@1, bgc, 92B, 38B, 6021050812c4d6ee
-locale/exemplarchars/numbers@1, bho, -> bgc
-locale/exemplarchars/numbers@1, blo, 107B, 53B, 831e3983f1180d89
-locale/exemplarchars/numbers@1, bn, -> as
-locale/exemplarchars/numbers@1, br, -> af
-locale/exemplarchars/numbers@1, cs, -> af
-locale/exemplarchars/numbers@1, cv, -> af
-locale/exemplarchars/numbers@1, de-AT, -> af
-locale/exemplarchars/numbers@1, de-CH, 98B, 44B, 6053f135ef46022f
-locale/exemplarchars/numbers@1, de-LI, -> de-CH
-locale/exemplarchars/numbers@1, en-FI, -> af
-locale/exemplarchars/numbers@1, en-NO, -> af
-locale/exemplarchars/numbers@1, en-SE, -> af
-locale/exemplarchars/numbers@1, en-ZA, -> af
-locale/exemplarchars/numbers@1, eo, 86B, 32B, 267d93081e484d00
-locale/exemplarchars/numbers@1, es-CR, -> af
-locale/exemplarchars/numbers@1, et, -> eo
-locale/exemplarchars/numbers@1, eu, 92B, 38B, c20d8f17fa83a80f
-locale/exemplarchars/numbers@1, fa, 116B, 62B, 604effcfff596f40
-locale/exemplarchars/numbers@1, ff-Adlm, 62B, 8B, 3d4c164804ec5d19
-locale/exemplarchars/numbers@1, fi, -> eo
-locale/exemplarchars/numbers@1, fo, -> eu
-locale/exemplarchars/numbers@1, fr, 116B, 62B, 90a5a9964592a0a9
-locale/exemplarchars/numbers@1, fr-LU, 86B, 32B, 4ea0d0e05d39624c
-locale/exemplarchars/numbers@1, fr-MA, -> fr-LU
-locale/exemplarchars/numbers@1, he, -> ar-DZ
-locale/exemplarchars/numbers@1, hi, -> bgc
-locale/exemplarchars/numbers@1, hu, -> af
-locale/exemplarchars/numbers@1, hy, -> af
-locale/exemplarchars/numbers@1, ie, 92B, 38B, bca05b90fd17a196
-locale/exemplarchars/numbers@1, ii, 115B, 61B, 24cf93dbfff55f98
-locale/exemplarchars/numbers@1, it-CH, -> de-CH
-locale/exemplarchars/numbers@1, ka, -> af
-locale/exemplarchars/numbers@1, kea, -> af
-locale/exemplarchars/numbers@1, kk, -> af
-locale/exemplarchars/numbers@1, kn, 92B, 38B, e8881550592a1add
-locale/exemplarchars/numbers@1, kok, -> bgc
-locale/exemplarchars/numbers@1, ks, 104B, 50B, b2d302b49a54c547
-locale/exemplarchars/numbers@1, kxv-Deva, 92B, 38B, 2b90a705a8961177
-locale/exemplarchars/numbers@1, kxv-Orya, 92B, 38B, 478481e267188f29
-locale/exemplarchars/numbers@1, kxv-Telu, 92B, 38B, ede7ec2e17f78fa5
-locale/exemplarchars/numbers@1, ky, -> af
-locale/exemplarchars/numbers@1, lij, 110B, 56B, e811eba1e9e8eb23
-locale/exemplarchars/numbers@1, lt, -> eo
-locale/exemplarchars/numbers@1, lv, -> af
-locale/exemplarchars/numbers@1, mni, -> as
-locale/exemplarchars/numbers@1, mr, -> bgc
-locale/exemplarchars/numbers@1, my, 92B, 38B, 2a6d8b4491d8012b
-locale/exemplarchars/numbers@1, ne, -> bgc
-locale/exemplarchars/numbers@1, no, -> eo
-locale/exemplarchars/numbers@1, nqo, 98B, 44B, 1e7b4f215d67045e
-locale/exemplarchars/numbers@1, or, 92B, 38B, 88746f358a55ab33
-locale/exemplarchars/numbers@1, pa, 92B, 38B, 274026f9043f848e
-locale/exemplarchars/numbers@1, pl, -> af
-locale/exemplarchars/numbers@1, prg, -> af
-locale/exemplarchars/numbers@1, ps, 116B, 62B, 79ae7aa1be8f4872
-locale/exemplarchars/numbers@1, pt-PT, -> af
-locale/exemplarchars/numbers@1, raj, -> bgc
-locale/exemplarchars/numbers@1, rm, 98B, 44B, 36b01d34ee3f731f
-locale/exemplarchars/numbers@1, ru, -> af
-locale/exemplarchars/numbers@1, sa, -> bgc
-locale/exemplarchars/numbers@1, sah, -> af
-locale/exemplarchars/numbers@1, sat, 86B, 32B, 1e8aace74421ca78
-locale/exemplarchars/numbers@1, sk, -> af
-locale/exemplarchars/numbers@1, sl, -> eu
-locale/exemplarchars/numbers@1, sq, -> af
-locale/exemplarchars/numbers@1, sv, -> eo
-locale/exemplarchars/numbers@1, syr, -> ar
-locale/exemplarchars/numbers@1, szl, -> af
-locale/exemplarchars/numbers@1, ta, 92B, 38B, 9d8d37594d7d1109
-locale/exemplarchars/numbers@1, te, 92B, 38B, 61b1eda289bde9f3
-locale/exemplarchars/numbers@1, tk, -> af
-locale/exemplarchars/numbers@1, uk, -> af
-locale/exemplarchars/numbers@1, und, -> fr-LU
-locale/exemplarchars/numbers@1, ur, -> ks
-locale/exemplarchars/numbers@1, uz, -> af
-locale/exemplarchars/numbers@1, uz-Cyrl, -> af
-locale/exemplarchars/numbers@1, xnr, -> bgc
-locale/exemplarchars/numbers@1, yue, 146B, 92B, 489c004c9c03d756
-locale/exemplarchars/numbers@1, yue-Hans, -> yue
-locale/exemplarchars/numbers@1, zh, -> yue
-locale/exemplarchars/numbers@1, zh-Hant, -> yue
-locale/exemplarchars/punctuation@1, <lookup>, 721B, 158 identifiers
-locale/exemplarchars/punctuation@1, <total>, 12779B, 7978B, 89 unique payloads
-locale/exemplarchars/punctuation@1, af, 146B, 92B, 598fb8b71c82bbb8
-locale/exemplarchars/punctuation@1, am, 134B, 80B, ad144f7c484b013d
-locale/exemplarchars/punctuation@1, ar, 140B, 86B, e28cf39e81e6d217
-locale/exemplarchars/punctuation@1, as, 152B, 98B, 312c81602d45172b
-locale/exemplarchars/punctuation@1, ast, 164B, 110B, 11519db1150a4bba
-locale/exemplarchars/punctuation@1, az, -> af
-locale/exemplarchars/punctuation@1, bal-Latn, 98B, 44B, 6f2cccdd18a1c05f
-locale/exemplarchars/punctuation@1, be, 110B, 56B, 560e70c83dd7a820
-locale/exemplarchars/punctuation@1, bg, 158B, 104B, ba9257a47143e2bf
-locale/exemplarchars/punctuation@1, bgc, 134B, 80B, 2f10b786bc1d06ba
-locale/exemplarchars/punctuation@1, bho, -> af
-locale/exemplarchars/punctuation@1, blo, 176B, 122B, eb8c29947ef5e53e
-locale/exemplarchars/punctuation@1, bn, -> af
-locale/exemplarchars/punctuation@1, brx, -> af
-locale/exemplarchars/punctuation@1, bs, 140B, 86B, cbea68faec91fa8b
-locale/exemplarchars/punctuation@1, ca, -> ast
-locale/exemplarchars/punctuation@1, ceb, 128B, 74B, a7bdfb18dfececf7
-locale/exemplarchars/punctuation@1, chr, -> af
-locale/exemplarchars/punctuation@1, cs, 152B, 98B, 4b7181c279426ab1
-locale/exemplarchars/punctuation@1, csw, 152B, 98B, 87de7bd33789ac79
-locale/exemplarchars/punctuation@1, cv, 152B, 98B, a7a56b4ad3bbb4a6
-locale/exemplarchars/punctuation@1, cy, -> af
-locale/exemplarchars/punctuation@1, da, 146B, 92B, 7c6ce303dadd549f
-locale/exemplarchars/punctuation@1, de, -> cv
-locale/exemplarchars/punctuation@1, doi, 140B, 86B, c1bab5a7fb5f11fa
-locale/exemplarchars/punctuation@1, dsb, 146B, 92B, 5264a68e6bbb9a9a
-locale/exemplarchars/punctuation@1, ee, 140B, 86B, a8a81a325b08acd5
-locale/exemplarchars/punctuation@1, el, 134B, 80B, ad7d53aad9eb7d0a
-locale/exemplarchars/punctuation@1, en, -> af
-locale/exemplarchars/punctuation@1, eo, 122B, 68B, 143ab633dcf25810
-locale/exemplarchars/punctuation@1, es, -> ast
-locale/exemplarchars/punctuation@1, et, 116B, 62B, 47cdf80058bb2df2
-locale/exemplarchars/punctuation@1, eu, -> af
-locale/exemplarchars/punctuation@1, fa, 140B, 86B, 3f8860a8b68e0dd6
-locale/exemplarchars/punctuation@1, ff-Adlm, 86B, 32B, a1bbc5486305869b
-locale/exemplarchars/punctuation@1, fi, 146B, 92B, ee370aa16c5ab95c
-locale/exemplarchars/punctuation@1, fil, 140B, 86B, e6f2235be8e45439
-locale/exemplarchars/punctuation@1, fo, -> da
-locale/exemplarchars/punctuation@1, fr, 158B, 104B, 3f65e9b56e33d348
-locale/exemplarchars/punctuation@1, fy, -> af
-locale/exemplarchars/punctuation@1, ga, -> af
-locale/exemplarchars/punctuation@1, gaa, -> af
-locale/exemplarchars/punctuation@1, gd, 176B, 122B, 66a6bf116aeb124a
-locale/exemplarchars/punctuation@1, gl, -> ast
-locale/exemplarchars/punctuation@1, gu, -> af
-locale/exemplarchars/punctuation@1, ha, 116B, 62B, 758bc69268f5fa38
-locale/exemplarchars/punctuation@1, he, 122B, 68B, c56987475c695e6c
-locale/exemplarchars/punctuation@1, hi, 158B, 104B, b25d0fbba42330b5
-locale/exemplarchars/punctuation@1, hr, 140B, 86B, 1f12a6b08032cc15
-locale/exemplarchars/punctuation@1, hsb, -> dsb
-locale/exemplarchars/punctuation@1, ht, 134B, 80B, 3843b38ac26a9e48
-locale/exemplarchars/punctuation@1, hu, 158B, 104B, a3d9164fc9e6b673
-locale/exemplarchars/punctuation@1, hy, 98B, 44B, 82de4dd5a18de939
-locale/exemplarchars/punctuation@1, ia, -> af
-locale/exemplarchars/punctuation@1, id, -> af
-locale/exemplarchars/punctuation@1, ie, 152B, 98B, 39d3d7ed79f19083
-locale/exemplarchars/punctuation@1, ig, 110B, 56B, 18b1d7ac7c183be
-locale/exemplarchars/punctuation@1, ii, 302B, 249B, 36647eb6b4e6af2d
-locale/exemplarchars/punctuation@1, is, 158B, 104B, 66d5b1ec6aa1c629
-locale/exemplarchars/punctuation@1, it, 134B, 80B, 49d251e084f0060
-locale/exemplarchars/punctuation@1, ja, 266B, 213B, 8e3ee20a3c169657
-locale/exemplarchars/punctuation@1, ka, 182B, 128B, fe3283914894629b
-locale/exemplarchars/punctuation@1, kea, 152B, 98B, fb1f8cc3b0eb258a
-locale/exemplarchars/punctuation@1, kgp, -> af
-locale/exemplarchars/punctuation@1, kk, 140B, 86B, f8655c05c656bf07
-locale/exemplarchars/punctuation@1, km, 116B, 62B, b14d64a3dd433d6d
-locale/exemplarchars/punctuation@1, kn, -> af
-locale/exemplarchars/punctuation@1, ko, 272B, 219B, 401e6003cb76e7b7
-locale/exemplarchars/punctuation@1, kok, -> af
-locale/exemplarchars/punctuation@1, kok-Latn, -> af
-locale/exemplarchars/punctuation@1, ks, -> af
-locale/exemplarchars/punctuation@1, ks-Deva, -> af
-locale/exemplarchars/punctuation@1, ku, -> af
-locale/exemplarchars/punctuation@1, kxv, -> af
-locale/exemplarchars/punctuation@1, kxv-Deva, -> af
-locale/exemplarchars/punctuation@1, kxv-Orya, -> af
-locale/exemplarchars/punctuation@1, kxv-Telu, -> af
-locale/exemplarchars/punctuation@1, ky, -> cv
-locale/exemplarchars/punctuation@1, lb, -> cv
-locale/exemplarchars/punctuation@1, lij, -> fr
-locale/exemplarchars/punctuation@1, lmo, -> it
-locale/exemplarchars/punctuation@1, lo, -> af
-locale/exemplarchars/punctuation@1, lt, 122B, 68B, 4e7587262c70cb9
-locale/exemplarchars/punctuation@1, lv, 146B, 92B, 70827463eb622e57
-locale/exemplarchars/punctuation@1, mai, 146B, 92B, cd63b70fa35248b4
-locale/exemplarchars/punctuation@1, mk, 134B, 80B, aa7e11052f0131e2
-locale/exemplarchars/punctuation@1, ml, -> af
-locale/exemplarchars/punctuation@1, mn, -> af
-locale/exemplarchars/punctuation@1, mni, -> af
-locale/exemplarchars/punctuation@1, mr, 134B, 80B, 2801844fe920f160
-locale/exemplarchars/punctuation@1, ms, -> af
-locale/exemplarchars/punctuation@1, mt, 110B, 56B, 33e99112300a19f7
-locale/exemplarchars/punctuation@1, my, 128B, 74B, 2b5618a5a032865f
-locale/exemplarchars/punctuation@1, nds, -> cv
-locale/exemplarchars/punctuation@1, nds-NL, -> af
-locale/exemplarchars/punctuation@1, ne, 122B, 68B, 1b6313bebb88bddc
-locale/exemplarchars/punctuation@1, nl, -> af
-locale/exemplarchars/punctuation@1, no, 164B, 110B, dd38d79ef6bcd765
-locale/exemplarchars/punctuation@1, nqo, 62B, 8B, 1854f45eb412f530
-locale/exemplarchars/punctuation@1, oc, 164B, 110B, 34d6b547718eeb84
-locale/exemplarchars/punctuation@1, oc-ES, 158B, 104B, 106bcf8a838d7a3a
-locale/exemplarchars/punctuation@1, om, 134B, 80B, 95ed72b5ad5fb132
-locale/exemplarchars/punctuation@1, or, -> af
-locale/exemplarchars/punctuation@1, pa, 128B, 74B, 7b1db63111353fdc
-locale/exemplarchars/punctuation@1, pcm, -> af
-locale/exemplarchars/punctuation@1, pl, 158B, 104B, b7d5cb1c7077da80
-locale/exemplarchars/punctuation@1, prg, -> lt
-locale/exemplarchars/punctuation@1, ps, 104B, 50B, 5b83aaf4c505062
-locale/exemplarchars/punctuation@1, pt, -> af
-locale/exemplarchars/punctuation@1, pt-PT, 152B, 98B, b3135f0f7cbc8782
-locale/exemplarchars/punctuation@1, qu, -> af
-locale/exemplarchars/punctuation@1, raj, 134B, 80B, 714cd3ef8320b623
-locale/exemplarchars/punctuation@1, ro, 140B, 86B, 2f4e95b2923445e1
-locale/exemplarchars/punctuation@1, ru, -> cv
-locale/exemplarchars/punctuation@1, sa, -> mai
-locale/exemplarchars/punctuation@1, sah, 62B, 8B, 5445398404b3b05a
-locale/exemplarchars/punctuation@1, sc, 158B, 104B, 620308057a4ad970
-locale/exemplarchars/punctuation@1, sd, 110B, 56B, a2e9f328c1743f08
-locale/exemplarchars/punctuation@1, sd-Deva, -> af
-locale/exemplarchars/punctuation@1, si, -> af
-locale/exemplarchars/punctuation@1, sk, -> cs
-locale/exemplarchars/punctuation@1, sl, 128B, 74B, 9efae0185a979022
-locale/exemplarchars/punctuation@1, so, -> af
-locale/exemplarchars/punctuation@1, sq, 158B, 104B, f9bb1d5a7850d384
-locale/exemplarchars/punctuation@1, sr, 128B, 74B, 86f017a605843d44
-locale/exemplarchars/punctuation@1, sr-Latn, 140B, 86B, b5d54d28c532d042
-locale/exemplarchars/punctuation@1, st, -> af
-locale/exemplarchars/punctuation@1, su, -> af
-locale/exemplarchars/punctuation@1, sv, -> af
-locale/exemplarchars/punctuation@1, sw, 98B, 44B, 82e272efc157ddd6
-locale/exemplarchars/punctuation@1, syr, 158B, 104B, b8912893805e4937
-locale/exemplarchars/punctuation@1, szl, -> pl
-locale/exemplarchars/punctuation@1, ta, -> af
-locale/exemplarchars/punctuation@1, te, 110B, 56B, b4daa119ce99c9c8
-locale/exemplarchars/punctuation@1, tg, 159B, 105B, 2bd90817534afdd9
-locale/exemplarchars/punctuation@1, th, 134B, 80B, 99dda0341211085d
-locale/exemplarchars/punctuation@1, tk, 122B, 68B, cf742bf91d57a9f8
-locale/exemplarchars/punctuation@1, tn, -> af
-locale/exemplarchars/punctuation@1, to, -> af
-locale/exemplarchars/punctuation@1, tr, -> af
-locale/exemplarchars/punctuation@1, tt, 140B, 86B, c2d940b97e2cb250
-locale/exemplarchars/punctuation@1, ug, 116B, 62B, 763d4d1e6781030
-locale/exemplarchars/punctuation@1, uk, 146B, 92B, 2fbe8e2870e0eae8
-locale/exemplarchars/punctuation@1, und, 98B, 44B, dfce6df0d863411b
-locale/exemplarchars/punctuation@1, ur, 116B, 62B, aa0365e7bedfc97e
-locale/exemplarchars/punctuation@1, uz, -> af
-locale/exemplarchars/punctuation@1, vec, 152B, 98B, 5a62949b8c94d5ae
-locale/exemplarchars/punctuation@1, vi, -> af
-locale/exemplarchars/punctuation@1, vmw, 134B, 80B, e3fd275b086804d6
-locale/exemplarchars/punctuation@1, xh, -> af
-locale/exemplarchars/punctuation@1, xnr, 116B, 62B, fefb130270a75ea0
-locale/exemplarchars/punctuation@1, yo, 128B, 74B, 9e2d059d59e70b64
-locale/exemplarchars/punctuation@1, yrl, -> ast
-locale/exemplarchars/punctuation@1, yue, 296B, 243B, c253935e7d69dfc0
-locale/exemplarchars/punctuation@1, yue-Hans, 296B, 243B, 6f5dc7c33d9cb214
-locale/exemplarchars/punctuation@1, za, -> af
-locale/exemplarchars/punctuation@1, zh, -> yue-Hans
-locale/exemplarchars/punctuation@1, zh-Hant, -> yue
-locale/likelysubtags_ext@1, <singleton>, 72418B, 72150B, f237b07e0364998
-locale/likelysubtags_l@1, <singleton>, 2330B, 2191B, 85986e5c29062319
-locale/likelysubtags_sr@1, <singleton>, 3304B, 3172B, d955ac1bc856facc
-locale/parents@1, <singleton>, 2827B, 2783B, 3c1c3b647a08f3a0
-locale/script_dir@1, <singleton>, 740B, 696B, b43c5a46f6b655d7
+AliasesV2, <singleton>, 8466B, 8014B, d89c768acbd505a7
+ExemplarCharactersAuxiliaryV1, <lookup>, 806B, 164 identifiers
+ExemplarCharactersAuxiliaryV1, <total>, 34115B, 26314B, 145 unique payloads
+ExemplarCharactersAuxiliaryV1, af, 92B, 38B, ae09150252a2a416
+ExemplarCharactersAuxiliaryV1, ak, 134B, 80B, 3590dbafc28c9a16
+ExemplarCharactersAuxiliaryV1, ar, 128B, 74B, f1ac97bbcec6caf4
+ExemplarCharactersAuxiliaryV1, ar-MA, 134B, 80B, 4f995e11ac4f417a
+ExemplarCharactersAuxiliaryV1, as, 80B, 26B, f67c7a0b260ffd71
+ExemplarCharactersAuxiliaryV1, ast, 206B, 153B, 780f438cdcdca814
+ExemplarCharactersAuxiliaryV1, az, 62B, 8B, 1dc00b308d600687
+ExemplarCharactersAuxiliaryV1, bal-Latn, 62B, 8B, a61c2bea10d514e
+ExemplarCharactersAuxiliaryV1, be, 116B, 62B, beacbbed78540a54
+ExemplarCharactersAuxiliaryV1, bg, 128B, 74B, cf9bdf1df9ef839c
+ExemplarCharactersAuxiliaryV1, bgc, 62B, 8B, 6941ee8c314a93eb
+ExemplarCharactersAuxiliaryV1, bho, 74B, 20B, 71b5b471be80581d
+ExemplarCharactersAuxiliaryV1, blo, 502B, 450B, e4f1097613eef3af
+ExemplarCharactersAuxiliaryV1, bn, 68B, 14B, fadc15acfc6142e7
+ExemplarCharactersAuxiliaryV1, br, 176B, 122B, 6ad2434366be6ed2
+ExemplarCharactersAuxiliaryV1, brx, 62B, 8B, 3810989ab42aacf2
+ExemplarCharactersAuxiliaryV1, bs, 68B, 14B, c397d6c8f79c7390
+ExemplarCharactersAuxiliaryV1, ca, 188B, 135B, 46eb8e3b30c93c87
+ExemplarCharactersAuxiliaryV1, ceb, 104B, 50B, f35db5521976e660
+ExemplarCharactersAuxiliaryV1, cs, 200B, 147B, 3eb621d0bf371071
+ExemplarCharactersAuxiliaryV1, csw, 62B, 8B, b28aac99d4acccc8
+ExemplarCharactersAuxiliaryV1, cv, 110B, 56B, b0e7b8eaacce8e16
+ExemplarCharactersAuxiliaryV1, cy, 176B, 122B, e3f70f31e2a13c38
+ExemplarCharactersAuxiliaryV1, da, 122B, 68B, 4bc6f1c62c027200
+ExemplarCharactersAuxiliaryV1, de, 170B, 116B, 6220b9c5064acd60
+ExemplarCharactersAuxiliaryV1, doi, 80B, 26B, f6c2cc496a58616
+ExemplarCharactersAuxiliaryV1, dsb, 260B, 207B, 5cc7ab7e0c7c46c3
+ExemplarCharactersAuxiliaryV1, ee, 176B, 122B, e382b145f504f39d
+ExemplarCharactersAuxiliaryV1, el, 182B, 128B, cba4f70a8470cde4
+ExemplarCharactersAuxiliaryV1, el-polyton, 56B, 2B, 3a6d9523170345d0
+ExemplarCharactersAuxiliaryV1, en, 152B, 98B, 6df7c1a9a3165259
+ExemplarCharactersAuxiliaryV1, en-ZA, 194B, 141B, bdce8a8f22a03313
+ExemplarCharactersAuxiliaryV1, eo, -> bs
+ExemplarCharactersAuxiliaryV1, es, 200B, 147B, fc6e5f48f06e6d5e
+ExemplarCharactersAuxiliaryV1, et, 122B, 68B, d43a3ae97c8d3baf
+ExemplarCharactersAuxiliaryV1, eu, 158B, 104B, c00dc5409c7ba8cc
+ExemplarCharactersAuxiliaryV1, fa, 110B, 56B, 1010ba058422d407
+ExemplarCharactersAuxiliaryV1, fa-AF, 158B, 104B, 6daee1926b447f39
+ExemplarCharactersAuxiliaryV1, ff-Adlm, 62B, 8B, 760fd05896fbf187
+ExemplarCharactersAuxiliaryV1, fi, 380B, 327B, 39e18e11ff805e3b
+ExemplarCharactersAuxiliaryV1, fil, 86B, 32B, 811f2181881a2c0f
+ExemplarCharactersAuxiliaryV1, fo, 80B, 26B, cd77ff7721241ce8
+ExemplarCharactersAuxiliaryV1, fr, 158B, 104B, d5b6c75638d1c84c
+ExemplarCharactersAuxiliaryV1, fr-CA, 122B, 68B, fd26fbdfd5b35f2c
+ExemplarCharactersAuxiliaryV1, fy, 74B, 20B, 56a86d19a370a6a4
+ExemplarCharactersAuxiliaryV1, ga, 134B, 80B, 4c9169f575f90f4e
+ExemplarCharactersAuxiliaryV1, gaa, 98B, 44B, dd23baf0faa8f2ca
+ExemplarCharactersAuxiliaryV1, gd, 266B, 213B, 7b4a5dc8d02a0833
+ExemplarCharactersAuxiliaryV1, gl, 188B, 135B, 8bc374588c5c32e
+ExemplarCharactersAuxiliaryV1, gu, 68B, 14B, 1b5f4655d68cae5f
+ExemplarCharactersAuxiliaryV1, ha, 109B, 55B, 98d2c6f96b1b20f1
+ExemplarCharactersAuxiliaryV1, ha-NE, 114B, 60B, c3d415c805e396aa
+ExemplarCharactersAuxiliaryV1, he, 98B, 44B, 7207d7c671d33abd
+ExemplarCharactersAuxiliaryV1, hi, 68B, 14B, 441d47f4e15d32e4
+ExemplarCharactersAuxiliaryV1, hi-Latn, 186B, 132B, bf37d9b7491fa010
+ExemplarCharactersAuxiliaryV1, hr, -> bs
+ExemplarCharactersAuxiliaryV1, hsb, 272B, 219B, 34172ed38ad3c27d
+ExemplarCharactersAuxiliaryV1, ht, 62B, 8B, c74a4ebb13587b6e
+ExemplarCharactersAuxiliaryV1, hu, 188B, 135B, d3c92d029bace7f9
+ExemplarCharactersAuxiliaryV1, hy, 62B, 8B, 1cba109a3e9961bd
+ExemplarCharactersAuxiliaryV1, ia, -> en
+ExemplarCharactersAuxiliaryV1, id, -> en
+ExemplarCharactersAuxiliaryV1, ie, 192B, 138B, cea3d6a9969bb168
+ExemplarCharactersAuxiliaryV1, ig, 199B, 145B, e8497eeb48f60d2f
+ExemplarCharactersAuxiliaryV1, ii, 62B, 8B, ca166e9a533c6144
+ExemplarCharactersAuxiliaryV1, is, 80B, 26B, e7af430610c5c8c0
+ExemplarCharactersAuxiliaryV1, it, 128B, 74B, 3b0f9666cea8cb58
+ExemplarCharactersAuxiliaryV1, ja, 506B, 453B, b64d1c9ad1f9ed5b
+ExemplarCharactersAuxiliaryV1, jv, 86B, 32B, 86b93dab5644ffd8
+ExemplarCharactersAuxiliaryV1, ka, 68B, 14B, 16329f2eb0e013e8
+ExemplarCharactersAuxiliaryV1, kea, 209B, 156B, 97e46b0e1772c65b
+ExemplarCharactersAuxiliaryV1, kgp, 236B, 183B, d56e9ea2278ad1f6
+ExemplarCharactersAuxiliaryV1, km, 92B, 38B, fe839bf242708eab
+ExemplarCharactersAuxiliaryV1, kn, 68B, 14B, 198c108919c267dd
+ExemplarCharactersAuxiliaryV1, ko, 4448B, 4395B, 8b842dbbc0eade0e
+ExemplarCharactersAuxiliaryV1, kok, -> hi
+ExemplarCharactersAuxiliaryV1, kok-Latn, 170B, 116B, cca5d854154eebc8
+ExemplarCharactersAuxiliaryV1, ks, 86B, 32B, a1b30a2aef8e3f7d
+ExemplarCharactersAuxiliaryV1, ks-Deva, -> brx
+ExemplarCharactersAuxiliaryV1, ku, 164B, 110B, 48f4cc0622261c57
+ExemplarCharactersAuxiliaryV1, ky, 86B, 32B, ec0970fc28e9c4ce
+ExemplarCharactersAuxiliaryV1, lb, 188B, 135B, 70a928b31a10731d
+ExemplarCharactersAuxiliaryV1, lij, 80B, 26B, 9a0d58688200b527
+ExemplarCharactersAuxiliaryV1, lmo, -> en
+ExemplarCharactersAuxiliaryV1, lo, 68B, 14B, 634541e26d663ae8
+ExemplarCharactersAuxiliaryV1, lt, 277B, 224B, e8aa8c391a1fd644
+ExemplarCharactersAuxiliaryV1, lv, 80B, 26B, 2ea375bb87a8f4f8
+ExemplarCharactersAuxiliaryV1, mai, 96B, 42B, 95bbfd538ab2a4f3
+ExemplarCharactersAuxiliaryV1, mi, 104B, 50B, 8e805e2e66d4d
+ExemplarCharactersAuxiliaryV1, mk, 68B, 14B, 85a18daec7993f0a
+ExemplarCharactersAuxiliaryV1, ml, 116B, 62B, 7465c74a3b53b9c3
+ExemplarCharactersAuxiliaryV1, mn, 80B, 26B, a278be5e126b9822
+ExemplarCharactersAuxiliaryV1, mni, -> brx
+ExemplarCharactersAuxiliaryV1, mr, 92B, 38B, 955f7d68bfbc271b
+ExemplarCharactersAuxiliaryV1, mt, 68B, 14B, ccdbc1bfe4754566
+ExemplarCharactersAuxiliaryV1, my, 134B, 80B, c89b7be8058544fc
+ExemplarCharactersAuxiliaryV1, nds, 158B, 104B, 377d7b1915872fbd
+ExemplarCharactersAuxiliaryV1, nds-NL, 92B, 38B, b3dc74c93ece68e6
+ExemplarCharactersAuxiliaryV1, ne, -> hi
+ExemplarCharactersAuxiliaryV1, nl, 128B, 74B, 220d7818c48bec7c
+ExemplarCharactersAuxiliaryV1, no, 158B, 104B, f4c83c96a5890a4a
+ExemplarCharactersAuxiliaryV1, nqo, 62B, 8B, bd9e3bc82554ab16
+ExemplarCharactersAuxiliaryV1, nso, 80B, 26B, 2b605d49126d7eed
+ExemplarCharactersAuxiliaryV1, oc, 176B, 122B, b69847bb30fb508e
+ExemplarCharactersAuxiliaryV1, or, -> brx
+ExemplarCharactersAuxiliaryV1, pa, 76B, 22B, 8859acc51fdada1d
+ExemplarCharactersAuxiliaryV1, pcm, 118B, 64B, 6be0be5d8005e9a7
+ExemplarCharactersAuxiliaryV1, pl, 134B, 80B, 4c1e2addf3d6da11
+ExemplarCharactersAuxiliaryV1, ps, 68B, 14B, e1a3ae75a2d109b7
+ExemplarCharactersAuxiliaryV1, ps-PK, 62B, 8B, 54c25bf53197b507
+ExemplarCharactersAuxiliaryV1, pt, 188B, 135B, 6078d405c74fa70
+ExemplarCharactersAuxiliaryV1, qu, 194B, 141B, be5a61a25220ee3
+ExemplarCharactersAuxiliaryV1, raj, 74B, 20B, 8217c79bb7f68833
+ExemplarCharactersAuxiliaryV1, rm, 182B, 128B, 52a9e36bd57f0492
+ExemplarCharactersAuxiliaryV1, ro, 104B, 50B, 27c28dc6e974f2d5
+ExemplarCharactersAuxiliaryV1, ru, -> cv
+ExemplarCharactersAuxiliaryV1, sa, 86B, 32B, 3140c592bb2cbb52
+ExemplarCharactersAuxiliaryV1, sah, 104B, 50B, 63a4fea00d15f4b3
+ExemplarCharactersAuxiliaryV1, sc, 146B, 92B, d6580ff326918f58
+ExemplarCharactersAuxiliaryV1, sd, 68B, 14B, 1eb306fb90c95356
+ExemplarCharactersAuxiliaryV1, sd-Deva, -> brx
+ExemplarCharactersAuxiliaryV1, si, 80B, 26B, 3c09f7e1ddac1f5a
+ExemplarCharactersAuxiliaryV1, sk, 200B, 147B, a49f72ff39cb55e
+ExemplarCharactersAuxiliaryV1, sl, 182B, 128B, 8ba8e97573e8d01
+ExemplarCharactersAuxiliaryV1, so, 92B, 38B, 69f6d7dc450acbe2
+ExemplarCharactersAuxiliaryV1, sq, -> az
+ExemplarCharactersAuxiliaryV1, sr, 86B, 32B, 814ff67f014ffd9b
+ExemplarCharactersAuxiliaryV1, sr-Latn, 74B, 20B, 3125e9c7042ee0b8
+ExemplarCharactersAuxiliaryV1, st, 80B, 26B, f7ef0c8c6715144f
+ExemplarCharactersAuxiliaryV1, su, 158B, 104B, 3d6dbaaeb4bc831f
+ExemplarCharactersAuxiliaryV1, sv, 128B, 74B, b6e85b38fae88419
+ExemplarCharactersAuxiliaryV1, sw, 74B, 20B, 740058d196c109b1
+ExemplarCharactersAuxiliaryV1, sw-CD, 68B, 14B, d3b4c70aab71a0d2
+ExemplarCharactersAuxiliaryV1, syr, 80B, 26B, 14fa248db7ae633b
+ExemplarCharactersAuxiliaryV1, szl, 248B, 195B, 5f2fb117c9c1f9d4
+ExemplarCharactersAuxiliaryV1, ta, -> brx
+ExemplarCharactersAuxiliaryV1, te, 68B, 14B, c563be76b4dd5d2a
+ExemplarCharactersAuxiliaryV1, tg, 74B, 20B, ed4e80e4896838c6
+ExemplarCharactersAuxiliaryV1, th, 62B, 8B, c016c0a522459fd9
+ExemplarCharactersAuxiliaryV1, ti, 176B, 122B, 5698cc4e1ce330f1
+ExemplarCharactersAuxiliaryV1, tk, 80B, 26B, 9d3fc180a1d25f95
+ExemplarCharactersAuxiliaryV1, tn, 86B, 32B, bc7df20e72289094
+ExemplarCharactersAuxiliaryV1, to, 188B, 135B, 82695db9a9bd9524
+ExemplarCharactersAuxiliaryV1, tr, 164B, 110B, 5651d2656e57217d
+ExemplarCharactersAuxiliaryV1, tt, 68B, 14B, 317b26949d06fa09
+ExemplarCharactersAuxiliaryV1, ug, 68B, 14B, 5a174a4f53ecb9d2
+ExemplarCharactersAuxiliaryV1, uk, 134B, 80B, 6759db25e6f14d30
+ExemplarCharactersAuxiliaryV1, und, -> el-polyton
+ExemplarCharactersAuxiliaryV1, ur, 134B, 80B, 77bd445e2b3e525a
+ExemplarCharactersAuxiliaryV1, uz, 164B, 110B, c0350eee7d9ad235
+ExemplarCharactersAuxiliaryV1, uz-Cyrl, -> tg
+ExemplarCharactersAuxiliaryV1, vec, 169B, 115B, 273f65a00b08baf8
+ExemplarCharactersAuxiliaryV1, vi, 80B, 26B, d79ae4b119f7cbef
+ExemplarCharactersAuxiliaryV1, vmw, 80B, 26B, abd31a55de94baa9
+ExemplarCharactersAuxiliaryV1, wo, 80B, 26B, c5cb391cacc0914d
+ExemplarCharactersAuxiliaryV1, xh, -> en
+ExemplarCharactersAuxiliaryV1, xnr, 62B, 8B, 4ffd652e0e38d4a8
+ExemplarCharactersAuxiliaryV1, yo, -> tn
+ExemplarCharactersAuxiliaryV1, yrl, 224B, 171B, a50e0892df5f7dc0
+ExemplarCharactersAuxiliaryV1, yue, 374B, 321B, 72559cf78bbdbcff
+ExemplarCharactersAuxiliaryV1, yue-Hans, 374B, 321B, b586017ffccc55b4
+ExemplarCharactersAuxiliaryV1, zh, 7934B, 7881B, b3aa6d9c6dc9b5fc
+ExemplarCharactersAuxiliaryV1, zh-Hant, 2924B, 2871B, 6c9978e80b4fde3
+ExemplarCharactersAuxiliaryV1, zu, -> en
+ExemplarCharactersIndexV1, <lookup>, 673B, 142 identifiers
+ExemplarCharactersIndexV1, <total>, 12977B, 6987B, 111 unique payloads
+ExemplarCharactersIndexV1, af, 62B, 8B, e5424e495f6a6037
+ExemplarCharactersIndexV1, ak, 74B, 20B, 5c90d94fee1b7d62
+ExemplarCharactersIndexV1, am, 284B, 231B, 363ff8bb95e65821
+ExemplarCharactersIndexV1, ar, 80B, 26B, 9215ab4736770b09
+ExemplarCharactersIndexV1, as, 116B, 62B, 5ad18c7623385d03
+ExemplarCharactersIndexV1, ast, 80B, 26B, e6ae12a6f3a2bf63
+ExemplarCharactersIndexV1, az, 104B, 50B, df6e8ec710dacaa5
+ExemplarCharactersIndexV1, bal-Latn, 136B, 82B, 482b19550e64eb7d
+ExemplarCharactersIndexV1, be, 86B, 32B, 35c7e7bddcbfdb7a
+ExemplarCharactersIndexV1, bg, 68B, 14B, 68580a53982dcdd2
+ExemplarCharactersIndexV1, bn, 103B, 49B, 42e0d7fa8814aab6
+ExemplarCharactersIndexV1, br, 68B, 14B, ef04e7e8c9388ce1
+ExemplarCharactersIndexV1, brx, 112B, 58B, b5573787521bd3ca
+ExemplarCharactersIndexV1, bs, 99B, 45B, 7ffe3f4a58241964
+ExemplarCharactersIndexV1, bs-Cyrl, 80B, 26B, c07a3bf665177b7d
+ExemplarCharactersIndexV1, ca, -> af
+ExemplarCharactersIndexV1, ceb, -> af
+ExemplarCharactersIndexV1, chr, 134B, 80B, b39941b7fcb3312b
+ExemplarCharactersIndexV1, cs, 90B, 36B, 6e785ce9a1f368cb
+ExemplarCharactersIndexV1, cv, 92B, 38B, 7b1b2291e1d62c7b
+ExemplarCharactersIndexV1, cy, 94B, 40B, ffc5d2990ad2a9ae
+ExemplarCharactersIndexV1, da, 74B, 20B, 7227bacf2db7c4c1
+ExemplarCharactersIndexV1, de, -> af
+ExemplarCharactersIndexV1, de-AT, 80B, 26B, e46a7e40271812c2
+ExemplarCharactersIndexV1, doi, 98B, 44B, 66a0c462c357dd9d
+ExemplarCharactersIndexV1, dsb, 108B, 54B, 95076c5b3434b1fe
+ExemplarCharactersIndexV1, ee, 116B, 62B, ea02dcf12d40ac07
+ExemplarCharactersIndexV1, el, 68B, 14B, d00af513efb56c0f
+ExemplarCharactersIndexV1, en, -> af
+ExemplarCharactersIndexV1, eo, 110B, 56B, 7fa28244e742cdc8
+ExemplarCharactersIndexV1, es, 68B, 14B, 59b3c4aa44961614
+ExemplarCharactersIndexV1, et, 92B, 38B, 9aa5f5131fbfc129
+ExemplarCharactersIndexV1, eu, -> af
+ExemplarCharactersIndexV1, fa, 122B, 68B, 575cc768e4dfbf22
+ExemplarCharactersIndexV1, ff-Adlm, 68B, 14B, 34ad18e4be7193cf
+ExemplarCharactersIndexV1, fi, 74B, 20B, f9891d7c4ee36368
+ExemplarCharactersIndexV1, fil, 72B, 18B, 742a53f3bd8221d5
+ExemplarCharactersIndexV1, fo, 110B, 56B, 319fc584263c58e0
+ExemplarCharactersIndexV1, fr, -> af
+ExemplarCharactersIndexV1, fy, 74B, 20B, ee742e264d431c8b
+ExemplarCharactersIndexV1, ga, -> af
+ExemplarCharactersIndexV1, gd, 74B, 20B, 402abb021353710c
+ExemplarCharactersIndexV1, gl, -> es
+ExemplarCharactersIndexV1, gu, 147B, 93B, e6649be81f3b8439
+ExemplarCharactersIndexV1, ha, 104B, 50B, 109f69464f70ad25
+ExemplarCharactersIndexV1, ha-NE, 86B, 32B, 7905736e93a50a8b
+ExemplarCharactersIndexV1, he, 92B, 38B, 5808003605cd0bc7
+ExemplarCharactersIndexV1, hi, 92B, 38B, 6bdc6de195bb1d70
+ExemplarCharactersIndexV1, hr, 105B, 51B, 5afc46e63e9edbef
+ExemplarCharactersIndexV1, hsb, 101B, 47B, eb3a29822b3433d
+ExemplarCharactersIndexV1, hu, 153B, 99B, c5a820e2b7c37484
+ExemplarCharactersIndexV1, hy, 62B, 8B, 3bf07c886fb516dc
+ExemplarCharactersIndexV1, ia, -> af
+ExemplarCharactersIndexV1, id, -> af
+ExemplarCharactersIndexV1, ig, 122B, 68B, fbe61d5e435f3a77
+ExemplarCharactersIndexV1, ii, 164B, 110B, bc3ce85a6b47f86c
+ExemplarCharactersIndexV1, is, 116B, 62B, e0d8d6246994412d
+ExemplarCharactersIndexV1, it, -> af
+ExemplarCharactersIndexV1, ja, 116B, 62B, 21dac59a5ede0396
+ExemplarCharactersIndexV1, jv, 122B, 68B, d581e5aa0a581ed6
+ExemplarCharactersIndexV1, ka, 62B, 8B, b3ed207af0bee3e1
+ExemplarCharactersIndexV1, kea, 86B, 32B, 46f538d5e7a2feba
+ExemplarCharactersIndexV1, kgp, 86B, 32B, 6bcf5b743ab99db
+ExemplarCharactersIndexV1, kk, 122B, 68B, f20c4025a344bd46
+ExemplarCharactersIndexV1, km, 86B, 32B, ddee49a4474abc51
+ExemplarCharactersIndexV1, kn, 98B, 44B, 7c77f09de0552d71
+ExemplarCharactersIndexV1, ko, 104B, 50B, 52b71ac5a814d16c
+ExemplarCharactersIndexV1, kok, 92B, 38B, ca736a7a1b2d6cc
+ExemplarCharactersIndexV1, ku, 92B, 38B, 1e79f17d980d8dd6
+ExemplarCharactersIndexV1, ky, 86B, 32B, 6477bc368d8e267a
+ExemplarCharactersIndexV1, lb, -> af
+ExemplarCharactersIndexV1, lij, -> af
+ExemplarCharactersIndexV1, lo, 176B, 122B, 790dfd96968c1f3d
+ExemplarCharactersIndexV1, lt, 128B, 74B, 28577b58cfeaefd8
+ExemplarCharactersIndexV1, lv, 128B, 74B, e17b44addf99ece4
+ExemplarCharactersIndexV1, mai, 178B, 124B, 8b6f68ad08eed783
+ExemplarCharactersIndexV1, mi, 104B, 50B, 314df0b7005860b1
+ExemplarCharactersIndexV1, mk, 92B, 38B, 75975c2023f8c51d
+ExemplarCharactersIndexV1, ml, 80B, 26B, 6b89efc26310df5b
+ExemplarCharactersIndexV1, mn, 74B, 20B, 1f5871cc4817d4dc
+ExemplarCharactersIndexV1, mr, 128B, 74B, 6bb9f244ba38d0d
+ExemplarCharactersIndexV1, ms, -> af
+ExemplarCharactersIndexV1, mt, 96B, 42B, 6962dc12fb7d33e1
+ExemplarCharactersIndexV1, my, 62B, 8B, ec3efc5e61324833
+ExemplarCharactersIndexV1, nds-NL, -> af
+ExemplarCharactersIndexV1, ne, -> hi
+ExemplarCharactersIndexV1, nl, -> af
+ExemplarCharactersIndexV1, no, -> da
+ExemplarCharactersIndexV1, om, -> af
+ExemplarCharactersIndexV1, or, 103B, 49B, 434c5431bde2b163
+ExemplarCharactersIndexV1, pa, 104B, 50B, 6516d8b9dbdc2fc8
+ExemplarCharactersIndexV1, pcm, 84B, 30B, 2ed7c869627b86d1
+ExemplarCharactersIndexV1, pl, 98B, 44B, 28276cfc5c902f78
+ExemplarCharactersIndexV1, prg, 140B, 86B, b704184e57007fb6
+ExemplarCharactersIndexV1, ps, 164B, 110B, d1c3e16d2ca5ffdd
+ExemplarCharactersIndexV1, pt, -> af
+ExemplarCharactersIndexV1, qu, 112B, 58B, a1d8f7b4c83ae6fd
+ExemplarCharactersIndexV1, rm, 92B, 38B, 93794cd26b0fd511
+ExemplarCharactersIndexV1, ro, 92B, 38B, a3ce94f22555d9c3
+ExemplarCharactersIndexV1, ru, 80B, 26B, d46396277f53c6bb
+ExemplarCharactersIndexV1, rw, -> af
+ExemplarCharactersIndexV1, sa, -> doi
+ExemplarCharactersIndexV1, sah, 140B, 86B, f5cf71e868d471f1
+ExemplarCharactersIndexV1, sc, 66B, 12B, 626f2c48367b481b
+ExemplarCharactersIndexV1, sd, 188B, 134B, 497c9c0dc66c462e
+ExemplarCharactersIndexV1, si, 98B, 44B, ce352d26d575b249
+ExemplarCharactersIndexV1, sk, 114B, 60B, d9bbd760c8eaf42b
+ExemplarCharactersIndexV1, sl, 92B, 38B, ab93002f7e4d5bcd
+ExemplarCharactersIndexV1, so, 86B, 32B, bb9470c94130acad
+ExemplarCharactersIndexV1, sq, 116B, 62B, 591bca3edb19d7f
+ExemplarCharactersIndexV1, sr, -> bs-Cyrl
+ExemplarCharactersIndexV1, sr-Latn, -> bs
+ExemplarCharactersIndexV1, su, 68B, 14B, 3227f26fc40c3d89
+ExemplarCharactersIndexV1, sv, -> fi
+ExemplarCharactersIndexV1, sw, -> pcm
+ExemplarCharactersIndexV1, syr, 98B, 44B, d8ebf6fc2c9a8cfc
+ExemplarCharactersIndexV1, szl, 110B, 56B, a9a532b515fd8ffd
+ExemplarCharactersIndexV1, ta, 104B, 50B, 8e0519b8fdb62adc
+ExemplarCharactersIndexV1, te, 92B, 38B, bed15d750fd48971
+ExemplarCharactersIndexV1, tg, 122B, 68B, cb0603b10f71e0fb
+ExemplarCharactersIndexV1, th, 62B, 8B, 95a95092ab5aee04
+ExemplarCharactersIndexV1, ti, 302B, 249B, e83dab01dd14a899
+ExemplarCharactersIndexV1, tk, 128B, 74B, a94996830bcc7afa
+ExemplarCharactersIndexV1, to, 96B, 42B, 26b70d5546904371
+ExemplarCharactersIndexV1, tr, 92B, 38B, ed33e6c41f80ce4e
+ExemplarCharactersIndexV1, tt, 104B, 50B, c0e54d3d45e5fd80
+ExemplarCharactersIndexV1, ug, 212B, 158B, f054e0a2fee6c3eb
+ExemplarCharactersIndexV1, uk, 86B, 32B, db98fefd481920fe
+ExemplarCharactersIndexV1, und, 56B, 2B, 3a6d9523170345d0
+ExemplarCharactersIndexV1, ur, 164B, 110B, 5b6bbc543a1da7e7
+ExemplarCharactersIndexV1, uz, 92B, 38B, eef38effe7c87c88
+ExemplarCharactersIndexV1, vi, 104B, 50B, 31e7d562786017c6
+ExemplarCharactersIndexV1, wo, 68B, 14B, b85629bdc6b9825d
+ExemplarCharactersIndexV1, xh, -> af
+ExemplarCharactersIndexV1, yo, 86B, 32B, 42051e7de65818b7
+ExemplarCharactersIndexV1, yrl, 110B, 56B, 51a1c51230063e45
+ExemplarCharactersIndexV1, yue, 200B, 147B, 2dcdb01a88fdc6a7
+ExemplarCharactersIndexV1, yue-Hans, -> af
+ExemplarCharactersIndexV1, za, -> af
+ExemplarCharactersIndexV1, zh, -> af
+ExemplarCharactersIndexV1, zh-Hant, 1340B, 1287B, 974910b31430c6ca
+ExemplarCharactersIndexV1, zu, -> af
+ExemplarCharactersMainV1, <lookup>, 869B, 175 identifiers
+ExemplarCharactersMainV1, <total>, 73518B, 64895B, 160 unique payloads
+ExemplarCharactersMainV1, af, 98B, 44B, d73fc42a75b51bdd
+ExemplarCharactersMainV1, ak, 104B, 50B, 75856fb4a06dafbb
+ExemplarCharactersMainV1, am, 176B, 122B, a95d77a59cc8ebc4
+ExemplarCharactersMainV1, ar, 74B, 20B, 23ccf9e5949fbd0e
+ExemplarCharactersMainV1, as, 163B, 109B, 400212979f61d23
+ExemplarCharactersMainV1, ast, 128B, 74B, adfab02948997166
+ExemplarCharactersMainV1, az, 110B, 56B, 861648198edfb2c0
+ExemplarCharactersMainV1, bal-Latn, 136B, 82B, e7ebce837c11414c
+ExemplarCharactersMainV1, be, 104B, 50B, d90513a36065a3fc
+ExemplarCharactersMainV1, bg, 74B, 20B, 73d21a421969eb89
+ExemplarCharactersMainV1, bgc, 128B, 74B, 7b1284788919dda3
+ExemplarCharactersMainV1, bho, 122B, 68B, 73d533752edc2b34
+ExemplarCharactersMainV1, blo, 304B, 251B, 62eac5f5e79e929f
+ExemplarCharactersMainV1, bn, 169B, 115B, bf332b30d0124e4
+ExemplarCharactersMainV1, br, 102B, 48B, 402e4c98d77dfcb
+ExemplarCharactersMainV1, brx, 148B, 94B, ad111a6a0b379921
+ExemplarCharactersMainV1, bs, 117B, 63B, f58ed26609290054
+ExemplarCharactersMainV1, bs-Cyrl, 86B, 32B, a9c3438a3ed985a5
+ExemplarCharactersMainV1, ca, 110B, 56B, 7b1806fe97eebaf7
+ExemplarCharactersMainV1, ceb, 98B, 44B, c11fc28d6186ee6f
+ExemplarCharactersMainV1, chr, 68B, 14B, 1952a55450e28e55
+ExemplarCharactersMainV1, cs, 156B, 102B, 6ed6ed9867a89b32
+ExemplarCharactersMainV1, csw, 356B, 303B, c66aae9ed921eddf
+ExemplarCharactersMainV1, cv, 92B, 38B, a66fe790a8df88a2
+ExemplarCharactersMainV1, cy, 196B, 142B, 7d6ada812ecd6c7f
+ExemplarCharactersMainV1, da, 74B, 20B, 5490ba8298f515b4
+ExemplarCharactersMainV1, de, 86B, 32B, 28d7b14aae201f45
+ExemplarCharactersMainV1, de-CH, 80B, 26B, 972b2cba65cb993d
+ExemplarCharactersMainV1, doi, 155B, 101B, 419a11a445f8c711
+ExemplarCharactersMainV1, dsb, 132B, 78B, 597e0b1046df8fec
+ExemplarCharactersMainV1, ee, 218B, 164B, 77b651fcb784d6d3
+ExemplarCharactersMainV1, el, 68B, 14B, a5dc83a2d894a83a
+ExemplarCharactersMainV1, el-polyton, 194B, 141B, d7e1e905d5bf1fe1
+ExemplarCharactersMainV1, en, 62B, 8B, 20ca2173af0f40a2
+ExemplarCharactersMainV1, eo, 110B, 56B, f0865ca5de86b617
+ExemplarCharactersMainV1, es, 104B, 50B, 15f0bbc892a458e
+ExemplarCharactersMainV1, et, 92B, 38B, 6d0d936a104e498d
+ExemplarCharactersMainV1, eu, 74B, 20B, 7930d1b44d59e53c
+ExemplarCharactersMainV1, fa, 134B, 80B, e3a1cbb1a7fd0729
+ExemplarCharactersMainV1, ff-Adlm, 74B, 20B, 526096a4cafd9ad0
+ExemplarCharactersMainV1, fi, 86B, 32B, f74e9d4a35dbecfd
+ExemplarCharactersMainV1, fil, 72B, 18B, f9afb4e52cb4308f
+ExemplarCharactersMainV1, fo, 128B, 74B, c2a53c3e4745b201
+ExemplarCharactersMainV1, fr, 116B, 62B, 4d863733035b9b56
+ExemplarCharactersMainV1, fy, 133B, 79B, ddc0f9b5edb971db
+ExemplarCharactersMainV1, ga, 104B, 50B, 782c16960fb422f5
+ExemplarCharactersMainV1, gaa, 98B, 44B, f75c97cc4ea1f104
+ExemplarCharactersMainV1, gd, 104B, 50B, 7d0b0518e31aa40f
+ExemplarCharactersMainV1, gl, 110B, 56B, ac655d4212f75a57
+ExemplarCharactersMainV1, gu, 134B, 80B, b25cf2315d672015
+ExemplarCharactersMainV1, ha, 118B, 64B, 7072266a7547f728
+ExemplarCharactersMainV1, he, 62B, 8B, 2d8f49b52cac0ddf
+ExemplarCharactersMainV1, hi, 128B, 74B, d2fb69d32fcc96ee
+ExemplarCharactersMainV1, hr, -> bs
+ExemplarCharactersMainV1, hsb, 125B, 71B, b06fa7c1325a6ca9
+ExemplarCharactersMainV1, ht, 131B, 77B, 6751c528d9a96cb9
+ExemplarCharactersMainV1, hu, 211B, 157B, c043d241aeac4021
+ExemplarCharactersMainV1, hy, 62B, 8B, a7de1236b86139b
+ExemplarCharactersMainV1, ia, -> en
+ExemplarCharactersMainV1, id, -> en
+ExemplarCharactersMainV1, ie, 92B, 38B, ea48bc04af4bc0ce
+ExemplarCharactersMainV1, ig, 140B, 86B, 70387cd5c75ebd7
+ExemplarCharactersMainV1, ii, 62B, 8B, ec08431b622271ac
+ExemplarCharactersMainV1, is, 134B, 80B, d8af2b54d60bb43e
+ExemplarCharactersMainV1, it, 92B, 38B, 94835a3e2351db15
+ExemplarCharactersMainV1, ja, 10520B, 10467B, 82187c32e11488c4
+ExemplarCharactersMainV1, jv, 122B, 68B, 96a754f5b0ddd895
+ExemplarCharactersMainV1, ka, 62B, 8B, b3ed207af0bee3e1
+ExemplarCharactersMainV1, kea, 102B, 48B, c7de7a4a569de31
+ExemplarCharactersMainV1, kgp, 134B, 80B, d04afc15540a755b
+ExemplarCharactersMainV1, kk, 122B, 68B, 50fac5a343fcb4d0
+ExemplarCharactersMainV1, km, 120B, 66B, d7b0197e09cb90b8
+ExemplarCharactersMainV1, kn, 122B, 68B, f18a9fb540cde214
+ExemplarCharactersMainV1, ko, 62B, 8B, cff6f1ce07b074fd
+ExemplarCharactersMainV1, kok, 198B, 144B, 796368c7c49f96e9
+ExemplarCharactersMainV1, kok-Latn, 104B, 50B, 16c6ffe13daa4ce3
+ExemplarCharactersMainV1, ks, 188B, 135B, 24c750752c7bda06
+ExemplarCharactersMainV1, ks-Deva, 186B, 132B, 5b0f88a3496aa161
+ExemplarCharactersMainV1, ku, 92B, 38B, fcbb6be9f4d1687c
+ExemplarCharactersMainV1, kxv, 162B, 108B, c3cf105f89279256
+ExemplarCharactersMainV1, kxv-Deva, 234B, 181B, 43a74c2e10a3525
+ExemplarCharactersMainV1, kxv-Orya, 218B, 165B, 878deca3b6a43e41
+ExemplarCharactersMainV1, kxv-Telu, 202B, 149B, e1c629a6a412aabc
+ExemplarCharactersMainV1, ky, 116B, 62B, 7f219cf743510373
+ExemplarCharactersMainV1, lb, 80B, 26B, b38df6c1c104f9a8
+ExemplarCharactersMainV1, lij, 116B, 62B, f7d83e405e140135
+ExemplarCharactersMainV1, lmo, -> en
+ExemplarCharactersMainV1, lo, 158B, 104B, bc55efbf988d861e
+ExemplarCharactersMainV1, lt, 128B, 74B, 58916d4ad0a3e06
+ExemplarCharactersMainV1, lv, 140B, 86B, a1da5395bbaf126d
+ExemplarCharactersMainV1, mai, 168B, 114B, c4d1765733ae5b27
+ExemplarCharactersMainV1, mi, 142B, 88B, 3bb18a89b2d429e2
+ExemplarCharactersMainV1, mk, 98B, 44B, 7eba8966f4beb0ba
+ExemplarCharactersMainV1, ml, 96B, 42B, 36bae5c71f06806f
+ExemplarCharactersMainV1, mn, 80B, 26B, 65ff00b3eab1f12e
+ExemplarCharactersMainV1, mni, 152B, 98B, d89bea2e92b45c08
+ExemplarCharactersMainV1, mr, 150B, 96B, 1e9191acd9fb164c
+ExemplarCharactersMainV1, ms, -> en
+ExemplarCharactersMainV1, mt, 133B, 79B, 2f8605b67556d44a
+ExemplarCharactersMainV1, my, 86B, 32B, d7679fb8c3264e06
+ExemplarCharactersMainV1, nds, 80B, 26B, b96ad58bea2fea25
+ExemplarCharactersMainV1, nds-NL, -> en
+ExemplarCharactersMainV1, ne, -> hi
+ExemplarCharactersMainV1, nl, 133B, 79B, ac6ce939c84b9898
+ExemplarCharactersMainV1, no, 92B, 38B, ae59668fb83894a8
+ExemplarCharactersMainV1, nqo, 68B, 14B, 95c58eda1b6e9607
+ExemplarCharactersMainV1, nso, 98B, 44B, 830ba530ef6f3e0c
+ExemplarCharactersMainV1, oc, 104B, 50B, 9e2d851f40f2907a
+ExemplarCharactersMainV1, om, -> en
+ExemplarCharactersMainV1, or, 161B, 107B, 3f04cf8b47e24f7
+ExemplarCharactersMainV1, pa, 174B, 120B, 8fc980fcda8e7ac2
+ExemplarCharactersMainV1, pcm, 156B, 102B, 5d165e4b5005e50
+ExemplarCharactersMainV1, pl, 134B, 80B, bdb3daa02d955a6c
+ExemplarCharactersMainV1, prg, 140B, 86B, 4a3a775f7ef21af6
+ExemplarCharactersMainV1, ps, 188B, 135B, d800e92e58ac2ae6
+ExemplarCharactersMainV1, ps-PK, 194B, 141B, c650f71e1b88d287
+ExemplarCharactersMainV1, pt, 98B, 44B, 7c8118e8689f4460
+ExemplarCharactersMainV1, qu, 138B, 84B, 8266254fcbb1281
+ExemplarCharactersMainV1, raj, 116B, 62B, 7ca4a88eef4a992
+ExemplarCharactersMainV1, rm, -> it
+ExemplarCharactersMainV1, ro, 92B, 38B, 6603889a4ead8fbe
+ExemplarCharactersMainV1, ru, 68B, 14B, 39495c3737bcc704
+ExemplarCharactersMainV1, rw, -> en
+ExemplarCharactersMainV1, sa, 128B, 74B, 80a449fdb466562d
+ExemplarCharactersMainV1, sah, 140B, 86B, ef5547c0375697a9
+ExemplarCharactersMainV1, sat, 62B, 8B, 48a2875d62e22825
+ExemplarCharactersMainV1, sc, 110B, 56B, 52651c7a24f7f10a
+ExemplarCharactersMainV1, sd, 194B, 140B, 3860d30d4432f9e0
+ExemplarCharactersMainV1, sd-Deva, 134B, 80B, 366d876469a71e0d
+ExemplarCharactersMainV1, si, 134B, 80B, e9548d2f503c3b18
+ExemplarCharactersMainV1, sk, 171B, 117B, b802b3408988ab60
+ExemplarCharactersMainV1, sl, 92B, 38B, ea507318c32220d3
+ExemplarCharactersMainV1, so, 86B, 32B, 7a124a3a2e8e6679
+ExemplarCharactersMainV1, sq, 116B, 62B, 679df903e3df543d
+ExemplarCharactersMainV1, sr, -> bs-Cyrl
+ExemplarCharactersMainV1, sr-Latn, -> bs
+ExemplarCharactersMainV1, st, 80B, 26B, ee1ef7f256a960ff
+ExemplarCharactersMainV1, su, 68B, 14B, 5e2430dae6cc68db
+ExemplarCharactersMainV1, sv, 86B, 32B, ab9bc56a22446222
+ExemplarCharactersMainV1, sw, 84B, 30B, 6eb17616a4250a71
+ExemplarCharactersMainV1, sw-CD, 74B, 20B, 17794af74f63339e
+ExemplarCharactersMainV1, sw-KE, -> en
+ExemplarCharactersMainV1, syr, 74B, 20B, d94a700e49ef0a24
+ExemplarCharactersMainV1, szl, 140B, 86B, fa0b5f0de3fa6381
+ExemplarCharactersMainV1, ta, 140B, 86B, ff38353f8009987a
+ExemplarCharactersMainV1, te, 122B, 68B, 67918d8d1fe43a27
+ExemplarCharactersMainV1, tg, 122B, 68B, c64aa5604531218f
+ExemplarCharactersMainV1, th, 68B, 14B, bce397b2411f8aaf
+ExemplarCharactersMainV1, ti, 206B, 153B, 64d678aad13c3109
+ExemplarCharactersMainV1, tk, 128B, 74B, e4227e38cf3825d2
+ExemplarCharactersMainV1, tn, 98B, 44B, 25ed7a6c7573757d
+ExemplarCharactersMainV1, to, 156B, 102B, 3bd1d89aeab23154
+ExemplarCharactersMainV1, tr, 110B, 56B, e060196b7df5178f
+ExemplarCharactersMainV1, tt, 104B, 50B, b1c94de32605219b
+ExemplarCharactersMainV1, ug, 212B, 158B, f054e0a2fee6c3eb
+ExemplarCharactersMainV1, uk, 98B, 44B, d296cc3c828b957b
+ExemplarCharactersMainV1, und, 56B, 2B, 3a6d9523170345d0
+ExemplarCharactersMainV1, ur, 164B, 110B, 5b6bbc543a1da7e7
+ExemplarCharactersMainV1, uz, 98B, 44B, 869743791dbcd1aa
+ExemplarCharactersMainV1, uz-Cyrl, 110B, 56B, 2a4569327656b660
+ExemplarCharactersMainV1, vec, 116B, 62B, a411ca438f4e5e28
+ExemplarCharactersMainV1, vi, 422B, 369B, 932447e7f4a24806
+ExemplarCharactersMainV1, vmw, 107B, 53B, e1a8100cd516c9ff
+ExemplarCharactersMainV1, wo, 110B, 56B, 433985221915e94c
+ExemplarCharactersMainV1, xh, -> en
+ExemplarCharactersMainV1, xnr, 146B, 92B, 2584e39359184645
+ExemplarCharactersMainV1, yo, 199B, 145B, 66920e52f5eb4709
+ExemplarCharactersMainV1, yo-BJ, 160B, 106B, 783775ba85752164
+ExemplarCharactersMainV1, yrl, 134B, 80B, a2503bd499f54991
+ExemplarCharactersMainV1, yue, 12248B, 12195B, a3fed6bbbe82b2af
+ExemplarCharactersMainV1, yue-Hans, 9950B, 9897B, 5052f9a735d8d463
+ExemplarCharactersMainV1, za, -> en
+ExemplarCharactersMainV1, zh, 10346B, 10293B, eaeb380c74d27fe3
+ExemplarCharactersMainV1, zh-Hant, 10862B, 10809B, 6228bf8b8d851e60
+ExemplarCharactersMainV1, zu, 208B, 155B, 153a1bfa1781e39f
+ExemplarCharactersNumbersV1, <lookup>, 469B, 95 identifiers
+ExemplarCharactersNumbersV1, <total>, 3120B, 1392B, 32 unique payloads
+ExemplarCharactersNumbersV1, af, 86B, 32B, 7e863eaf847ae93c
+ExemplarCharactersNumbersV1, ar, 110B, 56B, 37da6e5b7a925dd9
+ExemplarCharactersNumbersV1, ar-DZ, 92B, 38B, 15e5491d2b25cb36
+ExemplarCharactersNumbersV1, ar-LB, -> ar-DZ
+ExemplarCharactersNumbersV1, ar-LY, -> ar-DZ
+ExemplarCharactersNumbersV1, ar-MA, -> ar-DZ
+ExemplarCharactersNumbersV1, ar-MR, -> ar-DZ
+ExemplarCharactersNumbersV1, ar-SA, 92B, 38B, f246ab7f371b244f
+ExemplarCharactersNumbersV1, ar-SO, -> ar-SA
+ExemplarCharactersNumbersV1, ar-TN, -> ar-DZ
+ExemplarCharactersNumbersV1, as, 92B, 38B, f4290b9b94c56261
+ExemplarCharactersNumbersV1, be, -> af
+ExemplarCharactersNumbersV1, bg, -> af
+ExemplarCharactersNumbersV1, bgc, 92B, 38B, 6021050812c4d6ee
+ExemplarCharactersNumbersV1, bho, -> bgc
+ExemplarCharactersNumbersV1, blo, 107B, 53B, 831e3983f1180d89
+ExemplarCharactersNumbersV1, bn, -> as
+ExemplarCharactersNumbersV1, br, -> af
+ExemplarCharactersNumbersV1, cs, -> af
+ExemplarCharactersNumbersV1, cv, -> af
+ExemplarCharactersNumbersV1, de-AT, -> af
+ExemplarCharactersNumbersV1, de-CH, 98B, 44B, 6053f135ef46022f
+ExemplarCharactersNumbersV1, de-LI, -> de-CH
+ExemplarCharactersNumbersV1, en-FI, -> af
+ExemplarCharactersNumbersV1, en-NO, -> af
+ExemplarCharactersNumbersV1, en-SE, -> af
+ExemplarCharactersNumbersV1, en-ZA, -> af
+ExemplarCharactersNumbersV1, eo, 86B, 32B, 267d93081e484d00
+ExemplarCharactersNumbersV1, es-CR, -> af
+ExemplarCharactersNumbersV1, et, -> eo
+ExemplarCharactersNumbersV1, eu, 92B, 38B, c20d8f17fa83a80f
+ExemplarCharactersNumbersV1, fa, 116B, 62B, 604effcfff596f40
+ExemplarCharactersNumbersV1, ff-Adlm, 62B, 8B, 3d4c164804ec5d19
+ExemplarCharactersNumbersV1, fi, -> eo
+ExemplarCharactersNumbersV1, fo, -> eu
+ExemplarCharactersNumbersV1, fr, 116B, 62B, 90a5a9964592a0a9
+ExemplarCharactersNumbersV1, fr-LU, 86B, 32B, 4ea0d0e05d39624c
+ExemplarCharactersNumbersV1, fr-MA, -> fr-LU
+ExemplarCharactersNumbersV1, he, -> ar-DZ
+ExemplarCharactersNumbersV1, hi, -> bgc
+ExemplarCharactersNumbersV1, hu, -> af
+ExemplarCharactersNumbersV1, hy, -> af
+ExemplarCharactersNumbersV1, ie, 92B, 38B, bca05b90fd17a196
+ExemplarCharactersNumbersV1, ii, 115B, 61B, 24cf93dbfff55f98
+ExemplarCharactersNumbersV1, it-CH, -> de-CH
+ExemplarCharactersNumbersV1, ka, -> af
+ExemplarCharactersNumbersV1, kea, -> af
+ExemplarCharactersNumbersV1, kk, -> af
+ExemplarCharactersNumbersV1, kn, 92B, 38B, e8881550592a1add
+ExemplarCharactersNumbersV1, kok, -> bgc
+ExemplarCharactersNumbersV1, ks, 104B, 50B, b2d302b49a54c547
+ExemplarCharactersNumbersV1, kxv-Deva, 92B, 38B, 2b90a705a8961177
+ExemplarCharactersNumbersV1, kxv-Orya, 92B, 38B, 478481e267188f29
+ExemplarCharactersNumbersV1, kxv-Telu, 92B, 38B, ede7ec2e17f78fa5
+ExemplarCharactersNumbersV1, ky, -> af
+ExemplarCharactersNumbersV1, lij, 110B, 56B, e811eba1e9e8eb23
+ExemplarCharactersNumbersV1, lt, -> eo
+ExemplarCharactersNumbersV1, lv, -> af
+ExemplarCharactersNumbersV1, mni, -> as
+ExemplarCharactersNumbersV1, mr, -> bgc
+ExemplarCharactersNumbersV1, my, 92B, 38B, 2a6d8b4491d8012b
+ExemplarCharactersNumbersV1, ne, -> bgc
+ExemplarCharactersNumbersV1, no, -> eo
+ExemplarCharactersNumbersV1, nqo, 98B, 44B, 1e7b4f215d67045e
+ExemplarCharactersNumbersV1, or, 92B, 38B, 88746f358a55ab33
+ExemplarCharactersNumbersV1, pa, 92B, 38B, 274026f9043f848e
+ExemplarCharactersNumbersV1, pl, -> af
+ExemplarCharactersNumbersV1, prg, -> af
+ExemplarCharactersNumbersV1, ps, 116B, 62B, 79ae7aa1be8f4872
+ExemplarCharactersNumbersV1, pt-PT, -> af
+ExemplarCharactersNumbersV1, raj, -> bgc
+ExemplarCharactersNumbersV1, rm, 98B, 44B, 36b01d34ee3f731f
+ExemplarCharactersNumbersV1, ru, -> af
+ExemplarCharactersNumbersV1, sa, -> bgc
+ExemplarCharactersNumbersV1, sah, -> af
+ExemplarCharactersNumbersV1, sat, 86B, 32B, 1e8aace74421ca78
+ExemplarCharactersNumbersV1, sk, -> af
+ExemplarCharactersNumbersV1, sl, -> eu
+ExemplarCharactersNumbersV1, sq, -> af
+ExemplarCharactersNumbersV1, sv, -> eo
+ExemplarCharactersNumbersV1, syr, -> ar
+ExemplarCharactersNumbersV1, szl, -> af
+ExemplarCharactersNumbersV1, ta, 92B, 38B, 9d8d37594d7d1109
+ExemplarCharactersNumbersV1, te, 92B, 38B, 61b1eda289bde9f3
+ExemplarCharactersNumbersV1, tk, -> af
+ExemplarCharactersNumbersV1, uk, -> af
+ExemplarCharactersNumbersV1, und, -> fr-LU
+ExemplarCharactersNumbersV1, ur, -> ks
+ExemplarCharactersNumbersV1, uz, -> af
+ExemplarCharactersNumbersV1, uz-Cyrl, -> af
+ExemplarCharactersNumbersV1, xnr, -> bgc
+ExemplarCharactersNumbersV1, yue, 146B, 92B, 489c004c9c03d756
+ExemplarCharactersNumbersV1, yue-Hans, -> yue
+ExemplarCharactersNumbersV1, zh, -> yue
+ExemplarCharactersNumbersV1, zh-Hant, -> yue
+ExemplarCharactersPunctuationV1, <lookup>, 721B, 158 identifiers
+ExemplarCharactersPunctuationV1, <total>, 12779B, 7978B, 89 unique payloads
+ExemplarCharactersPunctuationV1, af, 146B, 92B, 598fb8b71c82bbb8
+ExemplarCharactersPunctuationV1, am, 134B, 80B, ad144f7c484b013d
+ExemplarCharactersPunctuationV1, ar, 140B, 86B, e28cf39e81e6d217
+ExemplarCharactersPunctuationV1, as, 152B, 98B, 312c81602d45172b
+ExemplarCharactersPunctuationV1, ast, 164B, 110B, 11519db1150a4bba
+ExemplarCharactersPunctuationV1, az, -> af
+ExemplarCharactersPunctuationV1, bal-Latn, 98B, 44B, 6f2cccdd18a1c05f
+ExemplarCharactersPunctuationV1, be, 110B, 56B, 560e70c83dd7a820
+ExemplarCharactersPunctuationV1, bg, 158B, 104B, ba9257a47143e2bf
+ExemplarCharactersPunctuationV1, bgc, 134B, 80B, 2f10b786bc1d06ba
+ExemplarCharactersPunctuationV1, bho, -> af
+ExemplarCharactersPunctuationV1, blo, 176B, 122B, eb8c29947ef5e53e
+ExemplarCharactersPunctuationV1, bn, -> af
+ExemplarCharactersPunctuationV1, brx, -> af
+ExemplarCharactersPunctuationV1, bs, 140B, 86B, cbea68faec91fa8b
+ExemplarCharactersPunctuationV1, ca, -> ast
+ExemplarCharactersPunctuationV1, ceb, 128B, 74B, a7bdfb18dfececf7
+ExemplarCharactersPunctuationV1, chr, -> af
+ExemplarCharactersPunctuationV1, cs, 152B, 98B, 4b7181c279426ab1
+ExemplarCharactersPunctuationV1, csw, 152B, 98B, 87de7bd33789ac79
+ExemplarCharactersPunctuationV1, cv, 152B, 98B, a7a56b4ad3bbb4a6
+ExemplarCharactersPunctuationV1, cy, -> af
+ExemplarCharactersPunctuationV1, da, 146B, 92B, 7c6ce303dadd549f
+ExemplarCharactersPunctuationV1, de, -> cv
+ExemplarCharactersPunctuationV1, doi, 140B, 86B, c1bab5a7fb5f11fa
+ExemplarCharactersPunctuationV1, dsb, 146B, 92B, 5264a68e6bbb9a9a
+ExemplarCharactersPunctuationV1, ee, 140B, 86B, a8a81a325b08acd5
+ExemplarCharactersPunctuationV1, el, 134B, 80B, ad7d53aad9eb7d0a
+ExemplarCharactersPunctuationV1, en, -> af
+ExemplarCharactersPunctuationV1, eo, 122B, 68B, 143ab633dcf25810
+ExemplarCharactersPunctuationV1, es, -> ast
+ExemplarCharactersPunctuationV1, et, 116B, 62B, 47cdf80058bb2df2
+ExemplarCharactersPunctuationV1, eu, -> af
+ExemplarCharactersPunctuationV1, fa, 140B, 86B, 3f8860a8b68e0dd6
+ExemplarCharactersPunctuationV1, ff-Adlm, 86B, 32B, a1bbc5486305869b
+ExemplarCharactersPunctuationV1, fi, 146B, 92B, ee370aa16c5ab95c
+ExemplarCharactersPunctuationV1, fil, 140B, 86B, e6f2235be8e45439
+ExemplarCharactersPunctuationV1, fo, -> da
+ExemplarCharactersPunctuationV1, fr, 158B, 104B, 3f65e9b56e33d348
+ExemplarCharactersPunctuationV1, fy, -> af
+ExemplarCharactersPunctuationV1, ga, -> af
+ExemplarCharactersPunctuationV1, gaa, -> af
+ExemplarCharactersPunctuationV1, gd, 176B, 122B, 66a6bf116aeb124a
+ExemplarCharactersPunctuationV1, gl, -> ast
+ExemplarCharactersPunctuationV1, gu, -> af
+ExemplarCharactersPunctuationV1, ha, 116B, 62B, 758bc69268f5fa38
+ExemplarCharactersPunctuationV1, he, 122B, 68B, c56987475c695e6c
+ExemplarCharactersPunctuationV1, hi, 158B, 104B, b25d0fbba42330b5
+ExemplarCharactersPunctuationV1, hr, 140B, 86B, 1f12a6b08032cc15
+ExemplarCharactersPunctuationV1, hsb, -> dsb
+ExemplarCharactersPunctuationV1, ht, 134B, 80B, 3843b38ac26a9e48
+ExemplarCharactersPunctuationV1, hu, 158B, 104B, a3d9164fc9e6b673
+ExemplarCharactersPunctuationV1, hy, 98B, 44B, 82de4dd5a18de939
+ExemplarCharactersPunctuationV1, ia, -> af
+ExemplarCharactersPunctuationV1, id, -> af
+ExemplarCharactersPunctuationV1, ie, 152B, 98B, 39d3d7ed79f19083
+ExemplarCharactersPunctuationV1, ig, 110B, 56B, 18b1d7ac7c183be
+ExemplarCharactersPunctuationV1, ii, 302B, 249B, 36647eb6b4e6af2d
+ExemplarCharactersPunctuationV1, is, 158B, 104B, 66d5b1ec6aa1c629
+ExemplarCharactersPunctuationV1, it, 134B, 80B, 49d251e084f0060
+ExemplarCharactersPunctuationV1, ja, 266B, 213B, 8e3ee20a3c169657
+ExemplarCharactersPunctuationV1, ka, 182B, 128B, fe3283914894629b
+ExemplarCharactersPunctuationV1, kea, 152B, 98B, fb1f8cc3b0eb258a
+ExemplarCharactersPunctuationV1, kgp, -> af
+ExemplarCharactersPunctuationV1, kk, 140B, 86B, f8655c05c656bf07
+ExemplarCharactersPunctuationV1, km, 116B, 62B, b14d64a3dd433d6d
+ExemplarCharactersPunctuationV1, kn, -> af
+ExemplarCharactersPunctuationV1, ko, 272B, 219B, 401e6003cb76e7b7
+ExemplarCharactersPunctuationV1, kok, -> af
+ExemplarCharactersPunctuationV1, kok-Latn, -> af
+ExemplarCharactersPunctuationV1, ks, -> af
+ExemplarCharactersPunctuationV1, ks-Deva, -> af
+ExemplarCharactersPunctuationV1, ku, -> af
+ExemplarCharactersPunctuationV1, kxv, -> af
+ExemplarCharactersPunctuationV1, kxv-Deva, -> af
+ExemplarCharactersPunctuationV1, kxv-Orya, -> af
+ExemplarCharactersPunctuationV1, kxv-Telu, -> af
+ExemplarCharactersPunctuationV1, ky, -> cv
+ExemplarCharactersPunctuationV1, lb, -> cv
+ExemplarCharactersPunctuationV1, lij, -> fr
+ExemplarCharactersPunctuationV1, lmo, -> it
+ExemplarCharactersPunctuationV1, lo, -> af
+ExemplarCharactersPunctuationV1, lt, 122B, 68B, 4e7587262c70cb9
+ExemplarCharactersPunctuationV1, lv, 146B, 92B, 70827463eb622e57
+ExemplarCharactersPunctuationV1, mai, 146B, 92B, cd63b70fa35248b4
+ExemplarCharactersPunctuationV1, mk, 134B, 80B, aa7e11052f0131e2
+ExemplarCharactersPunctuationV1, ml, -> af
+ExemplarCharactersPunctuationV1, mn, -> af
+ExemplarCharactersPunctuationV1, mni, -> af
+ExemplarCharactersPunctuationV1, mr, 134B, 80B, 2801844fe920f160
+ExemplarCharactersPunctuationV1, ms, -> af
+ExemplarCharactersPunctuationV1, mt, 110B, 56B, 33e99112300a19f7
+ExemplarCharactersPunctuationV1, my, 128B, 74B, 2b5618a5a032865f
+ExemplarCharactersPunctuationV1, nds, -> cv
+ExemplarCharactersPunctuationV1, nds-NL, -> af
+ExemplarCharactersPunctuationV1, ne, 122B, 68B, 1b6313bebb88bddc
+ExemplarCharactersPunctuationV1, nl, -> af
+ExemplarCharactersPunctuationV1, no, 164B, 110B, dd38d79ef6bcd765
+ExemplarCharactersPunctuationV1, nqo, 62B, 8B, 1854f45eb412f530
+ExemplarCharactersPunctuationV1, oc, 164B, 110B, 34d6b547718eeb84
+ExemplarCharactersPunctuationV1, oc-ES, 158B, 104B, 106bcf8a838d7a3a
+ExemplarCharactersPunctuationV1, om, 134B, 80B, 95ed72b5ad5fb132
+ExemplarCharactersPunctuationV1, or, -> af
+ExemplarCharactersPunctuationV1, pa, 128B, 74B, 7b1db63111353fdc
+ExemplarCharactersPunctuationV1, pcm, -> af
+ExemplarCharactersPunctuationV1, pl, 158B, 104B, b7d5cb1c7077da80
+ExemplarCharactersPunctuationV1, prg, -> lt
+ExemplarCharactersPunctuationV1, ps, 104B, 50B, 5b83aaf4c505062
+ExemplarCharactersPunctuationV1, pt, -> af
+ExemplarCharactersPunctuationV1, pt-PT, 152B, 98B, b3135f0f7cbc8782
+ExemplarCharactersPunctuationV1, qu, -> af
+ExemplarCharactersPunctuationV1, raj, 134B, 80B, 714cd3ef8320b623
+ExemplarCharactersPunctuationV1, ro, 140B, 86B, 2f4e95b2923445e1
+ExemplarCharactersPunctuationV1, ru, -> cv
+ExemplarCharactersPunctuationV1, sa, -> mai
+ExemplarCharactersPunctuationV1, sah, 62B, 8B, 5445398404b3b05a
+ExemplarCharactersPunctuationV1, sc, 158B, 104B, 620308057a4ad970
+ExemplarCharactersPunctuationV1, sd, 110B, 56B, a2e9f328c1743f08
+ExemplarCharactersPunctuationV1, sd-Deva, -> af
+ExemplarCharactersPunctuationV1, si, -> af
+ExemplarCharactersPunctuationV1, sk, -> cs
+ExemplarCharactersPunctuationV1, sl, 128B, 74B, 9efae0185a979022
+ExemplarCharactersPunctuationV1, so, -> af
+ExemplarCharactersPunctuationV1, sq, 158B, 104B, f9bb1d5a7850d384
+ExemplarCharactersPunctuationV1, sr, 128B, 74B, 86f017a605843d44
+ExemplarCharactersPunctuationV1, sr-Latn, 140B, 86B, b5d54d28c532d042
+ExemplarCharactersPunctuationV1, st, -> af
+ExemplarCharactersPunctuationV1, su, -> af
+ExemplarCharactersPunctuationV1, sv, -> af
+ExemplarCharactersPunctuationV1, sw, 98B, 44B, 82e272efc157ddd6
+ExemplarCharactersPunctuationV1, syr, 158B, 104B, b8912893805e4937
+ExemplarCharactersPunctuationV1, szl, -> pl
+ExemplarCharactersPunctuationV1, ta, -> af
+ExemplarCharactersPunctuationV1, te, 110B, 56B, b4daa119ce99c9c8
+ExemplarCharactersPunctuationV1, tg, 159B, 105B, 2bd90817534afdd9
+ExemplarCharactersPunctuationV1, th, 134B, 80B, 99dda0341211085d
+ExemplarCharactersPunctuationV1, tk, 122B, 68B, cf742bf91d57a9f8
+ExemplarCharactersPunctuationV1, tn, -> af
+ExemplarCharactersPunctuationV1, to, -> af
+ExemplarCharactersPunctuationV1, tr, -> af
+ExemplarCharactersPunctuationV1, tt, 140B, 86B, c2d940b97e2cb250
+ExemplarCharactersPunctuationV1, ug, 116B, 62B, 763d4d1e6781030
+ExemplarCharactersPunctuationV1, uk, 146B, 92B, 2fbe8e2870e0eae8
+ExemplarCharactersPunctuationV1, und, 98B, 44B, dfce6df0d863411b
+ExemplarCharactersPunctuationV1, ur, 116B, 62B, aa0365e7bedfc97e
+ExemplarCharactersPunctuationV1, uz, -> af
+ExemplarCharactersPunctuationV1, vec, 152B, 98B, 5a62949b8c94d5ae
+ExemplarCharactersPunctuationV1, vi, -> af
+ExemplarCharactersPunctuationV1, vmw, 134B, 80B, e3fd275b086804d6
+ExemplarCharactersPunctuationV1, xh, -> af
+ExemplarCharactersPunctuationV1, xnr, 116B, 62B, fefb130270a75ea0
+ExemplarCharactersPunctuationV1, yo, 128B, 74B, 9e2d059d59e70b64
+ExemplarCharactersPunctuationV1, yrl, -> ast
+ExemplarCharactersPunctuationV1, yue, 296B, 243B, c253935e7d69dfc0
+ExemplarCharactersPunctuationV1, yue-Hans, 296B, 243B, 6f5dc7c33d9cb214
+ExemplarCharactersPunctuationV1, za, -> af
+ExemplarCharactersPunctuationV1, zh, -> yue-Hans
+ExemplarCharactersPunctuationV1, zh-Hant, -> yue
+LikelySubtagsExtendedV1, <singleton>, 72418B, 72150B, f237b07e0364998
+LikelySubtagsForLanguageV1, <singleton>, 2330B, 2191B, 85986e5c29062319
+LikelySubtagsForScriptRegionV1, <singleton>, 3304B, 3172B, d955ac1bc856facc
+ParentsV1, <singleton>, 2827B, 2783B, 3c1c3b647a08f3a0
+ScriptDirectionV1, <singleton>, 740B, 696B, b43c5a46f6b655d7

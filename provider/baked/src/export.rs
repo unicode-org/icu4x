@@ -812,15 +812,15 @@ impl DataExporter for BakedExporter {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
             if marker.id == icu_provider::hello_world::HelloWorldV1::INFO.id {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1);
             }
 
             $(
-                if marker.id == icu_provider::marker::data_marker_id!($path) {
-                    return stringify!($marker)
+                if marker.id == icu_provider::marker::data_marker_id!($marker) {
+                    return stringify!($marker_ty)
                         .replace("icu :: ", "icu_")
                         .parse()
                         .unwrap();
@@ -828,8 +828,8 @@ macro_rules! cb {
             )+
 
             $(
-                if marker.id == icu_provider::marker::data_marker_id!($epath) {
-                    return stringify!($emarker)
+                if marker.id == icu_provider::marker::data_marker_id!($emarker) {
+                    return stringify!($emarker_ty)
                         .replace("icu :: ", "icu_")
                         .parse()
                         .unwrap();

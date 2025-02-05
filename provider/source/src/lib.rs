@@ -91,16 +91,16 @@ pub struct SourceDataProvider {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
         icu_provider::export::make_exportable_provider!(SourceDataProvider, [
-            $($marker,)+
-            $(#[cfg(feature = "experimental")] $emarker,)+
+            $($marker_ty,)+
+            $(#[cfg(feature = "experimental")] $emarker_ty,)+
         ]);
 
         #[cfg(test)]
         icu_provider::dynutil::impl_dynamic_data_provider!(SourceDataProvider, [
-            $($marker,)+
-            $(#[cfg(feature = "experimental")] $emarker,)+
+            $($marker_ty,)+
+            $(#[cfg(feature = "experimental")] $emarker_ty,)+
         ], icu_provider::any::AnyMarker);
     }
 }
