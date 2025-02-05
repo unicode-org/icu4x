@@ -41,20 +41,13 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-/// Marker type for [`HelloWorld`].
-#[derive(Debug)]
-pub struct HelloWorldV1;
-
-impl DynamicDataMarker for HelloWorldV1 {
-    type DataStruct = HelloWorld<'static>;
-}
-
-impl DataMarker for HelloWorldV1 {
-    const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
-        has_checksum: true,
-        ..DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(HelloWorldV1))
-    };
-}
+data_marker!(
+    /// Marker type for [`HelloWorld`].
+    #[derive(Debug)]
+    HelloWorldV1,
+    HelloWorld<'static>,
+    has_checksum = true,
+);
 
 /// A data provider returning Hello World strings in different languages.
 ///

@@ -328,22 +328,10 @@ impl AsULE for DataMarkerIdHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for DataMarkerIdHash {}
 
-/// The id of a data marker.
+/// The ID of a data marker.
 ///
-/// ```
-/// # use icu_provider::marker::DataMarkerId;
-/// const K: DataMarkerId =
-///     icu_provider::marker::data_marker_id!(DataV1);
-/// ```
-///
-/// The identifier ends with `V` followed by one or more digits (the version number).
-///
-/// Invalid identifiers are compile-time errors (as [`data_marker_id!`](crate::marker::data_marker_id) uses `const`).
-///
-/// ```compile_fail,E0080
-/// # use icu_provider::marker::DataMarkerId;
-/// const K: DataMarkerId = icu_provider::marker::data_marker_id!(Data);
-/// ```
+/// This is generally a [`DataMarkerIdHash`]. If debug assertions or the `export` Cargo feature
+/// are enabled, this also contains a human-readable string for an improved `Debug` implementation.
 #[derive(Debug, Copy, Clone, Eq)]
 pub struct DataMarkerId {
     /// The human-readable path string ends with `@` followed by one or more digits (the version
@@ -424,14 +412,11 @@ impl DataMarkerId {
     /// # Example
     ///
     /// ```
-    /// use icu_provider::marker::DataMarkerId;
-    /// use icu_provider::marker::DataMarkerIdHash;
+    /// use icu_provider::prelude::*;
     ///
-    /// const ID: DataMarkerId =
-    ///     icu_provider::marker::data_marker_id!(FooMarkerV1);
-    /// const ID_HASH: DataMarkerIdHash = ID.hashed();
+    /// icu_provider::data_marker!(FooV1, &'static str);
     ///
-    /// assert_eq!(ID_HASH.to_bytes(), [66, 225, 223, 59]);
+    /// assert_eq!(FooV1::INFO.id.hashed().to_bytes(), [198, 217, 86, 48]);
     /// ```
     #[inline]
     pub const fn hashed(self) -> DataMarkerIdHash {
@@ -513,17 +498,12 @@ impl DataMarkerInfo {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// # struct DummyMarkerV1;
-    /// # impl DynamicDataMarker for DummyMarkerV1 {
-    /// #     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
-    /// # }
-    /// # impl DataMarker for DummyMarkerV1 {
-    /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(DummyMarkerV1));
-    /// # }
+    ///
+    /// icu_provider::data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
     ///
     /// assert!(matches!(HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO), Ok(())));
     /// assert!(matches!(
-    ///     HelloWorldV1::INFO.match_marker(DummyMarkerV1::INFO),
+    ///     HelloWorldV1::INFO.match_marker(DummyV1::INFO),
     ///     Err(DataError {
     ///         kind: DataErrorKind::MarkerNotFound,
     ///         ..
@@ -531,7 +511,7 @@ impl DataMarkerInfo {
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyMarkerV1::INFO).unwrap_err().marker, Some(DummyMarkerV1::INFO.id));
+    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyV1::INFO).unwrap_err().marker, Some(DummyV1::INFO.id));
     /// ```
     pub fn match_marker(self, marker: Self) -> Result<(), DataError> {
         if self == marker {
@@ -568,6 +548,45 @@ macro_rules! __data_marker_id {
 }
 #[doc(inline)]
 pub use __data_marker_id as data_marker_id;
+
+/// Creates a data marker.
+///
+/// # Examples
+///
+/// ```
+/// icu_provider::data_marker!(DummyV1, &'static str);
+/// ```
+///
+/// The identifier needs to end with a `V` followed by one or more digits (the version number).
+///
+/// Invalid identifiers are compile-time errors (as [`data_marker!`](crate::marker::data_marker) uses `const`).
+///
+/// ```compile_fail,E0080
+/// icu_provider::data_marker!(Dummy, &'static str);
+/// ```
+#[macro_export]
+#[doc(hidden)] // macro
+macro_rules! __data_marker {
+    ($(#[$doc:meta])* $name:ident, $struct:ty $(, $info_field:ident = $info_val:expr)* $(,)?) => {
+        $(#[$doc])*
+        pub struct $name;
+        impl $crate::DynamicDataMarker for $name {
+            type DataStruct = $struct;
+        }
+        impl $crate::DataMarker for $name {
+            const INFO: $crate::DataMarkerInfo = {
+                #[allow(unused_mut)]
+                let mut info = $crate::DataMarkerInfo::from_id($crate::marker::data_marker_id!($name));
+                $(
+                    info.$info_field = $info_val;
+                )*
+                info
+            };
+        }
+    }
+}
+#[doc(inline)]
+pub use __data_marker as data_marker;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
