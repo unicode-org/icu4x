@@ -61,6 +61,25 @@ void main() {
 
     var locale = Locale.fromString('de');
 
+    var builder = DateTimeFieldSetBuilder(
+      dateFields: DateFields.mde,
+      length: DateTimeLength.short,
+      timePrecision: TimePrecision.minute,
+      zoneStyle: null,
+      alignment: null,
+      yearStyle: null,
+    );
+
+    expect(
+        DateTimeFormatter.fromBuilder(locale, builder)
+            .formatIso(zonedDateTime.date, zonedDateTime.time),
+        'Mi., 15.01., 14:32');
+
+    expect(
+        DateTimeFormatter.mdet(locale, DateTimeLength.short, TimePrecision.minute, DateTimeAlignment.auto)
+            .formatIso(zonedDateTime.date, zonedDateTime.time),
+        'Mi., 15.01., 14:32');
+
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long)
             .formatIso(zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
