@@ -51,7 +51,6 @@ part 'DateTime.g.dart';
 part 'DateTimeAlignment.g.dart';
 part 'DateTimeFieldSetBuilder.g.dart';
 part 'DateTimeFormatError.g.dart';
-part 'DateTimeFormatter.g.dart';
 part 'DateTimeFormatterBuildOrLoadError.g.dart';
 part 'DateTimeFormatterLoadError.g.dart';
 part 'DateTimeLength.g.dart';

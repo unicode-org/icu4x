@@ -66,8 +66,6 @@ export { IsoDate } from "./IsoDate"
 
 export { DateFormatter } from "./DateFormatter"
 
-export { DateTimeFormatter } from "./DateTimeFormatter"
-
 export { GregorianDateFormatter } from "./GregorianDateFormatter"
 
 export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter"

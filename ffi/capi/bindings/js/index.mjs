@@ -64,8 +64,6 @@ export { IsoDate } from "./IsoDate.mjs"
 
 export { DateFormatter } from "./DateFormatter.mjs"
 
-export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
-
 export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
 
 export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter.mjs"
