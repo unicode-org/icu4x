@@ -636,6 +636,6 @@ fn test_hash_word_32() {
 fn test_id_hash() {
     assert_eq!(
         data_marker_id!(BarV1).hashed(),
-        DataMarkerIdHash([49, 234, 95, 212]),
+        DataMarkerIdHash([212, 77, 158, 241]),
     );
 }

@@ -619,26 +619,26 @@ macro_rules! cb {
             ]
         }
 
-        fn marker_lookup() -> &'static HashMap<&'static str, Option<DataMarkerInfo>> {
+        fn marker_lookup() -> &'static HashMap<String, Option<DataMarkerInfo>> {
             use std::sync::OnceLock;
-            static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
+            static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
                 [
-                    (stringify!(icu_provider::hello_world::HelloWorldV1), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
-                    (stringify!(HelloWorldV1), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        (stringify!($marker_ty), Some(<$marker_ty>::INFO)),
-                        (stringify!($marker), Some(<$marker_ty>::INFO)),
+                        (stringify!($marker_ty).replace(' ', ""), Some(<$marker_ty>::INFO)),
+                        (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        (stringify!($emarker_ty), Some(<$emarker_ty>::INFO)),
+                        (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
                         #[cfg(feature = "experimental")]
-                        (stringify!($emarker), Some(<$emarker_ty>::INFO)),
+                        (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (stringify!($emarker_ty), None),
+                        (stringify!($emarker_ty).replace(' ', ""), None),
                         #[cfg(not(feature = "experimental"))]
-                        (stringify!($emarker), None),
+                        (stringify!($emarker).into(), None),
                     )+
 
                 ]
@@ -650,7 +650,7 @@ macro_rules! cb {
         #[test]
         fn test_lookup() {
             assert_eq!(marker_lookup().get("AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
-            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
+            assert_eq!(marker_lookup().get("icu::list::provider::AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 
