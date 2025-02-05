@@ -26,8 +26,8 @@ use zerovec::ZeroVec;
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
 #[icu_provider::data_struct(
-    marker(ChineseCacheV1Marker, "calendar/chinesecache@1", singleton),
-    marker(DangiCacheV1Marker, "calendar/dangicache@1", singleton)
+    marker(ChineseCacheV1, "calendar/chinesecache@1", singleton),
+    marker(DangiCacheV1, "calendar/dangicache@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

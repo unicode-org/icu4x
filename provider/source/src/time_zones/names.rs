@@ -74,8 +74,8 @@ impl crate::IterableDataProviderCached<IanaToBcp47MapV3Marker> for SourceDataPro
     }
 }
 
-impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
+impl DataProvider<Bcp47ToIanaMapV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1>, DataError> {
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
@@ -95,7 +95,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

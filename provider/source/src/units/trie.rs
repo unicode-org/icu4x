@@ -7,13 +7,13 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde;
 use crate::cldr_serde::units::info::ConvertUnit;
 use crate::SourceDataProvider;
-use icu::experimental::measure::provider::trie::{UnitsTrie, UnitsTrieV1Marker};
+use icu::experimental::measure::provider::trie::{UnitsTrie, UnitsTrieV1};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 
-impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsTrieV1Marker>, DataError> {
-        self.check_req::<UnitsTrieV1Marker>(_req)?;
+impl DataProvider<UnitsTrieV1> for SourceDataProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsTrieV1>, DataError> {
+        self.check_req::<UnitsTrieV1>(_req)?;
 
         // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
         let units_data: &cldr_serde::units::info::Resource = self
@@ -52,7 +52,7 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsTrieV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -60,13 +60,13 @@ impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider
 
 #[test]
 fn test_basic() {
-    use icu::experimental::units::provider::UnitsInfoV1Marker;
+    use icu::experimental::units::provider::UnitsInfoV1;
     use icu::locale::langid;
     use icu_provider::prelude::*;
 
     let provider = SourceDataProvider::new_testing();
 
-    let und_trie: DataResponse<UnitsTrieV1Marker> = provider
+    let und_trie: DataResponse<UnitsTrieV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()
@@ -76,7 +76,7 @@ fn test_basic() {
     let units_info = und_trie.payload.get().to_owned();
     let trie = &units_info.trie;
 
-    let und_info: DataResponse<UnitsInfoV1Marker> = provider
+    let und_info: DataResponse<UnitsInfoV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()

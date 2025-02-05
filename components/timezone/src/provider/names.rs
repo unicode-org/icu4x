@@ -80,7 +80,7 @@ pub struct IanaToBcp47Map<'data> {
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
-    Bcp47ToIanaMapV1Marker,
+    Bcp47ToIanaMapV1,
     "time_zone/bcp47_to_iana@1",
     singleton,
     has_checksum

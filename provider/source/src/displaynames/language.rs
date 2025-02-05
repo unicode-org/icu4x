@@ -12,12 +12,12 @@ use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<LanguageDisplayNamesV1Marker> for SourceDataProvider {
+impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
-        self.check_req::<LanguageDisplayNamesV1Marker>(req)?;
+    ) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
+        self.check_req::<LanguageDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
@@ -30,12 +30,12 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for SourceDataProvider {
         })
     }
 }
-impl DataProvider<LocaleDisplayNamesV1Marker> for SourceDataProvider {
+impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
-        self.check_req::<LocaleDisplayNamesV1Marker>(req)?;
+    ) -> Result<DataResponse<LocaleDisplayNamesV1>, DataError> {
+        self.check_req::<LocaleDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self
             .cldr()?
@@ -49,7 +49,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<LanguageDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -68,7 +68,7 @@ impl IterableDataProviderCached<LanguageDisplayNamesV1Marker> for SourceDataProv
     }
 }
 
-impl IterableDataProviderCached<LocaleDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<LocaleDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -205,7 +205,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -226,7 +226,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -247,7 +247,7 @@ mod tests {
     fn test_basic_lang_long_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -268,7 +268,7 @@ mod tests {
     fn test_basic_lang_menu_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -289,7 +289,7 @@ mod tests {
     fn test_basic_locale_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
+        let data: DataPayload<LocaleDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()

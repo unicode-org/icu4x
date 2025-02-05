@@ -159,56 +159,56 @@ macro_rules! collation_provider {
 }
 
 collation_provider!(
-    (CollationDiacriticsV1Marker, CollationDiacritics, "_dia",),
-    (CollationJamoV1Marker, CollationJamo, "_jamo",),
-    (CollationMetadataV1Marker, CollationMetadata, "_meta",),
-    (CollationReorderingV1Marker, CollationReordering, "_reord",),
+    (CollationDiacriticsV1, CollationDiacritics, "_dia",),
+    (CollationJamoV1, CollationJamo, "_jamo",),
+    (CollationMetadataV1, CollationMetadata, "_meta",),
+    (CollationReorderingV1, CollationReordering, "_reord",),
     (
-        CollationSpecialPrimariesV1Marker,
+        CollationSpecialPrimariesV1,
         CollationSpecialPrimaries,
         "_prim",
     ),
 );
 
-impl DataProvider<CollationRootV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationRootV1Marker>, DataError> {
-        self.check_req::<CollationRootV1Marker>(req)?;
+impl DataProvider<CollationRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationRootV1>, DataError> {
+        self.check_req::<CollationRootV1>(req)?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
                 self.load_toml::<collator_serde::CollationData>(Default::default(), "_data")
-                    .map_err(|e| e.with_req(CollationRootV1Marker::INFO, req))?
+                    .map_err(|e| e.with_req(CollationRootV1::INFO, req))?
                     .try_into()?,
             ),
         })
     }
 }
 
-impl IterableDataProviderCached<CollationRootV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<CollationTailoringV1Marker> for SourceDataProvider {
+impl DataProvider<CollationTailoringV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<CollationTailoringV1Marker>, DataError> {
-        self.check_req::<CollationTailoringV1Marker>(req)?;
+    ) -> Result<DataResponse<CollationTailoringV1>, DataError> {
+        self.check_req::<CollationTailoringV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
                 self.load_toml::<collator_serde::CollationData>(req.id, "_data")
                     .and_then(TryInto::try_into)
-                    .map_err(|e| e.with_req(<CollationTailoringV1Marker>::INFO, req))?,
+                    .map_err(|e| e.with_req(<CollationTailoringV1>::INFO, req))?,
             ),
         })
     }
 }
 
-impl IterableDataProviderCached<CollationTailoringV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CollationTailoringV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .list_ids("_data")?

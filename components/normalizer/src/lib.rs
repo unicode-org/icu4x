@@ -94,9 +94,9 @@ use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use provider::CanonicalCompositionsV1Marker;
-use provider::CanonicalDecompositionTablesV1Marker;
-use provider::CompatibilityDecompositionTablesV1Marker;
+use provider::CanonicalCompositionsV1;
+use provider::CanonicalDecompositionTablesV1;
+use provider::CompatibilityDecompositionTablesV1;
 use provider::DecompositionTables;
 use smallvec::SmallVec;
 #[cfg(feature = "utf16_iter")]
@@ -2053,8 +2053,8 @@ impl DecomposingNormalizerBorrowed<'_> {
 #[derive(Debug)]
 pub struct DecomposingNormalizer {
     decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
-    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-    supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
+    tables: DataPayload<CanonicalDecompositionTablesV1>,
+    supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1>>,
     decomposition_passthrough_bound: u8, // never above 0xC0
     composition_passthrough_bound: u16,  // never above 0x0300
 }
@@ -2096,12 +2096,12 @@ impl DecomposingNormalizer {
     pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV2Marker> =
             provider.load(Default::default())?.payload;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+        let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
@@ -2112,7 +2112,7 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
+                .with_marker(CanonicalDecompositionTablesV1::INFO));
         }
 
         let cap = decompositions.get().passthrough_cap;
@@ -2158,15 +2158,15 @@ impl DecomposingNormalizer {
     pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CompatibilityDecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
             + ?Sized,
     {
         let decompositions: DataPayload<CompatibilityDecompositionDataV2Marker> =
             provider.load(Default::default())?.payload;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+        let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
-        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len()
@@ -2182,7 +2182,7 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
+                .with_marker(CanonicalDecompositionTablesV1::INFO));
         }
 
         let cap = decompositions.get().passthrough_cap;
@@ -2222,16 +2222,16 @@ impl DecomposingNormalizer {
     pub(crate) fn try_new_uts46_decomposed_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<Uts46DecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1
             + ?Sized,
     {
         let decompositions: DataPayload<Uts46DecompositionDataV2Marker> =
             provider.load(Default::default())?.payload;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+        let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
-        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len()
@@ -2247,7 +2247,7 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
+                .with_marker(CanonicalDecompositionTablesV1::INFO));
         }
 
         let cap = decompositions.get().passthrough_cap;
@@ -2637,7 +2637,7 @@ impl ComposingNormalizerBorrowed<'_> {
 #[derive(Debug)]
 pub struct ComposingNormalizer {
     decomposing_normalizer: DecomposingNormalizer,
-    canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
+    canonical_compositions: DataPayload<CanonicalCompositionsV1>,
 }
 
 impl ComposingNormalizer {
@@ -2674,13 +2674,13 @@ impl ComposingNormalizer {
     pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1> =
             provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
@@ -2714,14 +2714,14 @@ impl ComposingNormalizer {
     pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CompatibilityDecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1> =
             provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
@@ -2734,16 +2734,16 @@ impl ComposingNormalizer {
     pub(crate) fn try_new_uts46_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<Uts46DecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let decomposing_normalizer =
             DecomposingNormalizer::try_new_uts46_decomposed_unstable(provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1> =
             provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {

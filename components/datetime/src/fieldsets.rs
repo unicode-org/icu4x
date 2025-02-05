@@ -493,22 +493,22 @@ macro_rules! impl_date_or_calendar_period_marker {
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
-            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $($years_yes)?);
-            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $($months_yes)?);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
+            type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
+            type YearNamesV1 = datetime_marker_helper!(@years/typed, $($years_yes)?);
+            type MonthNamesV1 = datetime_marker_helper!(@months/typed, $($months_yes)?);
+            type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type {
             type Skel = datetime_marker_helper!(@calmarkers, yes);
             type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
             type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
+            type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = Self;
             type T = ();
             type Z = ();
-            type GluePatternV1Marker = datetime_marker_helper!(@glue,);
+            type GluePatternV1 = datetime_marker_helper!(@glue,);
         }
     };
 }
@@ -651,21 +651,21 @@ macro_rules! impl_date_marker {
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {
-            type DateSkeletonPatternsV1Marker = datetime_marker_helper!(@dates/typed, yes);
-            type YearNamesV1Marker = datetime_marker_helper!(@years/typed, $($years_yes)?);
-            type MonthNamesV1Marker = datetime_marker_helper!(@months/typed, $($months_yes)?);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
+            type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
+            type YearNamesV1 = datetime_marker_helper!(@years/typed, $($years_yes)?);
+            type MonthNamesV1 = datetime_marker_helper!(@months/typed, $($months_yes)?);
+            type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl DateDataMarkers for $type_time {
             type Skel = datetime_marker_helper!(@calmarkers, yes);
             type Year = datetime_marker_helper!(@calmarkers, $($years_yes)?);
             type Month = datetime_marker_helper!(@calmarkers, $($months_yes)?);
-            type WeekdayNamesV1Marker = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
+            type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl TimeMarkers for $type_time {
             // TODO: Consider making dayperiods optional again
-            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, yes);
-            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
+            type DayPeriodNamesV1 = datetime_marker_helper!(@dayperiods, yes);
+            type TimeSkeletonPatternsV1 = datetime_marker_helper!(@times, yes);
             type HourInput = datetime_marker_helper!(@input/hour, yes);
             type MinuteInput = datetime_marker_helper!(@input/minute, yes);
             type SecondInput = datetime_marker_helper!(@input/second, yes);
@@ -675,7 +675,7 @@ macro_rules! impl_date_marker {
             type D = Self;
             type T = Self;
             type Z = ();
-            type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
+            type GluePatternV1 = datetime_marker_helper!(@glue, yes);
         }
         impl_composite!($type_time, DateTime, DateAndTimeFieldSet);
         impl $type_time {
@@ -813,8 +813,8 @@ macro_rules! impl_time_marker {
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
         }
         impl TimeMarkers for $type {
-            type DayPeriodNamesV1Marker = datetime_marker_helper!(@dayperiods, $($dayperiods_yes)?);
-            type TimeSkeletonPatternsV1Marker = datetime_marker_helper!(@times, yes);
+            type DayPeriodNamesV1 = datetime_marker_helper!(@dayperiods, $($dayperiods_yes)?);
+            type TimeSkeletonPatternsV1 = datetime_marker_helper!(@times, yes);
             type HourInput = datetime_marker_helper!(@input/hour, $($hour_yes)?);
             type MinuteInput = datetime_marker_helper!(@input/minute, $($minute_yes)?);
             type SecondInput = datetime_marker_helper!(@input/second, $($second_yes)?);
@@ -824,7 +824,7 @@ macro_rules! impl_time_marker {
             type D = ();
             type T = Self;
             type Z = ();
-            type GluePatternV1Marker = datetime_marker_helper!(@glue,);
+            type GluePatternV1 = datetime_marker_helper!(@glue,);
         }
         impl_composite!($type, Time, TimeFieldSet);
     };
@@ -931,22 +931,22 @@ macro_rules! impl_zone_marker {
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
             type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
-            type EssentialsV1Marker = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
-            type LocationsV1Marker = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
-            type LocationsRootV1Marker = datetime_marker_helper!(@data/zone/locations_root, $($zone_locations_yes)?);
-            type ExemplarCitiesV1Marker = datetime_marker_helper!(@data/zone/exemplars, $($zone_exemplars_yes)?);
-            type ExemplarCitiesRootV1Marker = datetime_marker_helper!(@data/zone/exemplars_root, $($zone_exemplars_yes)?);
-            type GenericLongV1Marker = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
-            type GenericShortV1Marker = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
-            type SpecificLongV1Marker = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
-            type SpecificShortV1Marker = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
-            type MetazonePeriodV1Marker = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
+            type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
+            type LocationsV1 = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
+            type LocationsRootV1 = datetime_marker_helper!(@data/zone/locations_root, $($zone_locations_yes)?);
+            type ExemplarCitiesV1 = datetime_marker_helper!(@data/zone/exemplars, $($zone_exemplars_yes)?);
+            type ExemplarCitiesRootV1 = datetime_marker_helper!(@data/zone/exemplars_root, $($zone_exemplars_yes)?);
+            type GenericLongV1 = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
+            type GenericShortV1 = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
+            type SpecificLongV1 = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
+            type SpecificShortV1 = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
+            type MetazonePeriodV1 = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = ();
             type T = ();
             type Z = Self;
-            type GluePatternV1Marker = datetime_marker_helper!(@glue,);
+            type GluePatternV1 = datetime_marker_helper!(@glue,);
         }
         impl_composite!($type, Zone, ZoneFieldSet);
         impl $type {

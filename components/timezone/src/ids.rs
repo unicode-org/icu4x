@@ -13,7 +13,7 @@ use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
     provider::names::{
-        Bcp47ToIanaMap, Bcp47ToIanaMapV1Marker, IanaToBcp47Map, IanaToBcp47MapV3Marker,
+        Bcp47ToIanaMap, Bcp47ToIanaMapV1, IanaToBcp47Map, IanaToBcp47MapV3Marker,
         NON_REGION_CITY_PREFIX,
     },
     TimeZoneBcp47Id,
@@ -557,7 +557,7 @@ impl Iterator for TimeZoneBcp47Iter<'_> {
 #[derive(Debug, Clone)]
 pub struct TimeZoneIdMapperWithFastCanonicalization<I> {
     inner: I,
-    data: DataPayload<Bcp47ToIanaMapV1Marker>,
+    data: DataPayload<Bcp47ToIanaMapV1>,
 }
 
 impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
@@ -587,7 +587,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<IanaToBcp47MapV3Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV3Marker> + DataProvider<Bcp47ToIanaMapV1> + ?Sized,
     {
         let mapper = TimeZoneIdMapper::try_new_unstable(provider)?;
         Self::try_new_with_mapper_unstable(provider, mapper)
@@ -613,7 +613,7 @@ where
         {
             return Err(
                 DataErrorKind::InconsistentData(IanaToBcp47MapV3Marker::INFO)
-                    .with_marker(Bcp47ToIanaMapV1Marker::INFO),
+                    .with_marker(Bcp47ToIanaMapV1::INFO),
             );
         }
         Ok(Self {
@@ -637,13 +637,13 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, mapper: I) -> Result<Self, DataError>
     where
-        P: DataProvider<IanaToBcp47MapV3Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV3Marker> + DataProvider<Bcp47ToIanaMapV1> + ?Sized,
     {
         let response = provider.load(Default::default())?;
         if Some(mapper.as_ref().checksum) != response.metadata.checksum {
             return Err(
                 DataErrorKind::InconsistentData(IanaToBcp47MapV3Marker::INFO)
-                    .with_marker(Bcp47ToIanaMapV1Marker::INFO),
+                    .with_marker(Bcp47ToIanaMapV1::INFO),
             );
         }
         Ok(Self {

@@ -25,7 +25,7 @@ use crate::chinese_based::{
 };
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::provider::chinese_based::ChineseCacheV1Marker;
+use crate::provider::chinese_based::ChineseCacheV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use core::cmp::Ordering;
@@ -83,7 +83,7 @@ use tinystr::tinystr;
 /// going to be perfect.
 #[derive(Clone, Debug, Default)]
 pub struct Chinese {
-    data: Option<DataPayload<ChineseCacheV1Marker>>,
+    data: Option<DataPayload<ChineseCacheV1>>,
 }
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
@@ -146,7 +146,7 @@ impl Chinese {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<ChineseCacheV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<ChineseCacheV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {

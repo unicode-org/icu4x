@@ -711,12 +711,12 @@ impl AnyCalendar {
         kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::JapaneseErasV1Marker>
-            + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
-            + DataProvider<crate::provider::ChineseCacheV1Marker>
-            + DataProvider<crate::provider::DangiCacheV1Marker>
-            + DataProvider<crate::provider::IslamicObservationalCacheV1Marker>
-            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
+        P: DataProvider<crate::provider::JapaneseErasV1>
+            + DataProvider<crate::provider::JapaneseExtendedErasV1>
+            + DataProvider<crate::provider::ChineseCacheV1>
+            + DataProvider<crate::provider::DangiCacheV1>
+            + DataProvider<crate::provider::IslamicObservationalCacheV1>
+            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1>
             + ?Sized,
     {
         Ok(match kind {
@@ -785,12 +785,12 @@ impl AnyCalendar {
         prefs: AnyCalendarPreferences,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::JapaneseErasV1Marker>
-            + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
-            + DataProvider<crate::provider::ChineseCacheV1Marker>
-            + DataProvider<crate::provider::DangiCacheV1Marker>
-            + DataProvider<crate::provider::IslamicObservationalCacheV1Marker>
-            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
+        P: DataProvider<crate::provider::JapaneseErasV1>
+            + DataProvider<crate::provider::JapaneseExtendedErasV1>
+            + DataProvider<crate::provider::ChineseCacheV1>
+            + DataProvider<crate::provider::DangiCacheV1>
+            + DataProvider<crate::provider::IslamicObservationalCacheV1>
+            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1>
             + ?Sized,
     {
         let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);

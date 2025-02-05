@@ -5,8 +5,8 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::locale::langid;
-use icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker;
-use icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker;
+use icu::segmenter::provider::DictionaryForWordLineExtendedV1;
+use icu::segmenter::provider::DictionaryForWordOnlyAutoV1;
 use icu::segmenter::provider::UCharDictionaryBreakData;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -66,8 +66,8 @@ macro_rules! implement {
     };
 }
 
-implement!(DictionaryForWordOnlyAutoV1Marker, ["cjdict"]);
+implement!(DictionaryForWordOnlyAutoV1, ["cjdict"]);
 implement!(
-    DictionaryForWordLineExtendedV1Marker,
+    DictionaryForWordLineExtendedV1,
     ["khmerdict", "laodict", "burmesedict", "thaidict"]
 );

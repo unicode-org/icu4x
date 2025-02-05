@@ -25,7 +25,7 @@ fn blob_version_bench(c: &mut Criterion) {
             for id in black_box(&locales).iter() {
                 black_box(&provider)
                     .load_data(
-                        HelloWorldV1Marker::INFO,
+                        HelloWorldV1::INFO,
                         DataRequest {
                             id: id.as_borrowed(),
                             ..Default::default()

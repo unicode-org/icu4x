@@ -291,7 +291,7 @@ impl<'a> ScriptExtensionsSet<'a> {
 /// ```
 #[derive(Debug)]
 pub struct ScriptWithExtensions {
-    data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
+    data: DataPayload<ScriptWithExtensionsPropertyV1>,
 }
 
 /// A borrowed wrapper around script extension data, returned by
@@ -326,7 +326,7 @@ impl ScriptWithExtensions {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
+        provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1> + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(ScriptWithExtensions::from_data(
             provider.load(Default::default())?.payload,
@@ -347,7 +347,7 @@ impl ScriptWithExtensions {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_script_with_extensions_unstable()`] instead
-    pub(crate) fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1Marker>) -> Self {
+    pub(crate) fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1>) -> Self {
         Self { data }
     }
 }

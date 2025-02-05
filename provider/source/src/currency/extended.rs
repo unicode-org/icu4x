@@ -9,12 +9,12 @@ use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
+impl DataProvider<CurrencyExtendedDataV1> for crate::SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<CurrencyExtendedDataV1Marker>, DataError> {
-        self.check_req::<CurrencyExtendedDataV1Marker>(req)?;
+    ) -> Result<DataResponse<CurrencyExtendedDataV1>, DataError> {
+        self.check_req::<CurrencyExtendedDataV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
@@ -51,7 +51,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CurrencyExtendedDataV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CurrencyExtendedDataV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
@@ -89,7 +89,7 @@ fn test_basic() {
     use icu::locale::langid;
     use icu::plurals::PluralRules;
     let provider = SourceDataProvider::new_testing();
-    let en: DataPayload<CurrencyExtendedDataV1Marker> = provider
+    let en: DataPayload<CurrencyExtendedDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
@@ -106,7 +106,7 @@ fn test_basic() {
         "US dollars"
     );
 
-    let fr: DataPayload<CurrencyExtendedDataV1Marker> = provider
+    let fr: DataPayload<CurrencyExtendedDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),

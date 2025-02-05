@@ -4,12 +4,12 @@
 
 use fixed_decimal::{Sign, SignedFixedDecimal};
 use icu_decimal::{
-    options::FixedDecimalFormatterOptions, provider::DecimalDigitsV1Marker,
+    options::FixedDecimalFormatterOptions, provider::DecimalDigitsV1,
     provider::DecimalSymbolsV2Marker, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
-use icu_plurals::{provider::CardinalV1Marker, PluralRules};
+use icu_plurals::{provider::CardinalV1, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
@@ -178,9 +178,9 @@ macro_rules! constructor {
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError>
         where
-            D: DataProvider<CardinalV1Marker>
+            D: DataProvider<CardinalV1>
                 + DataProvider<$marker>
-                + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker>
+                + DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1>
                 + ?Sized,
         {
             let locale = <$marker>::make_locale(prefs.locale_preferences);
@@ -213,168 +213,168 @@ impl RelativeTimeFormatter {
         try_new_long_second,
         try_new_long_second_with_any_provider,
         try_new_long_second_with_buffer_provider,
-        LongSecondRelativeTimeFormatDataV1Marker
+        LongSecondRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_minute_unstable,
         try_new_long_minute,
         try_new_long_minute_with_any_provider,
         try_new_long_minute_with_buffer_provider,
-        LongMinuteRelativeTimeFormatDataV1Marker
+        LongMinuteRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_hour_unstable,
         try_new_long_hour,
         try_new_long_hour_with_any_provider,
         try_new_long_hour_with_buffer_provider,
-        LongHourRelativeTimeFormatDataV1Marker
+        LongHourRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_day_unstable,
         try_new_long_day,
         try_new_long_day_with_any_provider,
         try_new_long_day_with_buffer_provider,
-        LongDayRelativeTimeFormatDataV1Marker
+        LongDayRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_week_unstable,
         try_new_long_week,
         try_new_long_week_with_any_provider,
         try_new_long_week_with_buffer_provider,
-        LongWeekRelativeTimeFormatDataV1Marker
+        LongWeekRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_month_unstable,
         try_new_long_month,
         try_new_long_month_with_any_provider,
         try_new_long_month_with_buffer_provider,
-        LongMonthRelativeTimeFormatDataV1Marker
+        LongMonthRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_quarter_unstable,
         try_new_long_quarter,
         try_new_long_quarter_with_any_provider,
         try_new_long_quarter_with_buffer_provider,
-        LongQuarterRelativeTimeFormatDataV1Marker
+        LongQuarterRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_long_year_unstable,
         try_new_long_year,
         try_new_long_year_with_any_provider,
         try_new_long_year_with_buffer_provider,
-        LongYearRelativeTimeFormatDataV1Marker
+        LongYearRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_second_unstable,
         try_new_short_second,
         try_new_short_second_with_any_provider,
         try_new_short_second_with_buffer_provider,
-        ShortSecondRelativeTimeFormatDataV1Marker
+        ShortSecondRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_minute_unstable,
         try_new_short_minute,
         try_new_short_minute_with_any_provider,
         try_new_short_minute_with_buffer_provider,
-        ShortMinuteRelativeTimeFormatDataV1Marker
+        ShortMinuteRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_hour_unstable,
         try_new_short_hour,
         try_new_short_hour_with_any_provider,
         try_new_short_hour_with_buffer_provider,
-        ShortHourRelativeTimeFormatDataV1Marker
+        ShortHourRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_day_unstable,
         try_new_short_day,
         try_new_short_day_with_any_provider,
         try_new_short_day_with_buffer_provider,
-        ShortDayRelativeTimeFormatDataV1Marker
+        ShortDayRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_week_unstable,
         try_new_short_week,
         try_new_short_week_with_any_provider,
         try_new_short_week_with_buffer_provider,
-        ShortWeekRelativeTimeFormatDataV1Marker
+        ShortWeekRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_month_unstable,
         try_new_short_month,
         try_new_short_month_with_any_provider,
         try_new_short_month_with_buffer_provider,
-        ShortMonthRelativeTimeFormatDataV1Marker
+        ShortMonthRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_quarter_unstable,
         try_new_short_quarter,
         try_new_short_quarter_with_any_provider,
         try_new_short_quarter_with_buffer_provider,
-        ShortQuarterRelativeTimeFormatDataV1Marker
+        ShortQuarterRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_short_year_unstable,
         try_new_short_year,
         try_new_short_year_with_any_provider,
         try_new_short_year_with_buffer_provider,
-        ShortYearRelativeTimeFormatDataV1Marker
+        ShortYearRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_second_unstable,
         try_new_narrow_second,
         try_new_narrow_second_with_any_provider,
         try_new_narrow_second_with_buffer_provider,
-        NarrowSecondRelativeTimeFormatDataV1Marker
+        NarrowSecondRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_minute_unstable,
         try_new_narrow_minute,
         try_new_narrow_minute_with_any_provider,
         try_new_narrow_minute_with_buffer_provider,
-        NarrowMinuteRelativeTimeFormatDataV1Marker
+        NarrowMinuteRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_hour_unstable,
         try_new_narrow_hour,
         try_new_narrow_hour_with_any_provider,
         try_new_narrow_hour_with_buffer_provider,
-        NarrowHourRelativeTimeFormatDataV1Marker
+        NarrowHourRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_day_unstable,
         try_new_narrow_day,
         try_new_narrow_day_with_any_provider,
         try_new_narrow_day_with_buffer_provider,
-        NarrowDayRelativeTimeFormatDataV1Marker
+        NarrowDayRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_week_unstable,
         try_new_narrow_week,
         try_new_narrow_week_with_any_provider,
         try_new_narrow_week_with_buffer_provider,
-        NarrowWeekRelativeTimeFormatDataV1Marker
+        NarrowWeekRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_month_unstable,
         try_new_narrow_month,
         try_new_narrow_month_with_any_provider,
         try_new_narrow_month_with_buffer_provider,
-        NarrowMonthRelativeTimeFormatDataV1Marker
+        NarrowMonthRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_quarter_unstable,
         try_new_narrow_quarter,
         try_new_narrow_quarter_with_any_provider,
         try_new_narrow_quarter_with_buffer_provider,
-        NarrowQuarterRelativeTimeFormatDataV1Marker
+        NarrowQuarterRelativeTimeFormatDataV1
     );
     constructor!(
         try_new_narrow_year_unstable,
         try_new_narrow_year,
         try_new_narrow_year_with_any_provider,
         try_new_narrow_year_with_buffer_provider,
-        NarrowYearRelativeTimeFormatDataV1Marker
+        NarrowYearRelativeTimeFormatDataV1
     );
 
     /// Format a `value` according to the locale and formatting options of

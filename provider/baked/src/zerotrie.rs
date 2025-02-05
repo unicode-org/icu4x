@@ -52,7 +52,7 @@ pub(crate) fn bake(
             }
 
         },
-        core::mem::size_of::<Data<icu_provider::hello_world::HelloWorldV1Marker>>()
+        core::mem::size_of::<Data<icu_provider::hello_world::HelloWorldV1>>()
             + trie.as_borrowed_slice().borrows_size(),
     )
 }

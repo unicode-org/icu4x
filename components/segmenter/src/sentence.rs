@@ -118,7 +118,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 #[derive(Debug)]
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV2Marker>,
-    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1Marker>>,
+    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1>>,
 }
 
 impl SentenceSegmenter {
@@ -156,7 +156,7 @@ impl SentenceSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV2Marker>
-            + DataProvider<SentenceBreakDataOverrideV1Marker>
+            + DataProvider<SentenceBreakDataOverrideV1>
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;

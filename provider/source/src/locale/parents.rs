@@ -12,9 +12,9 @@ use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
 
-impl DataProvider<ParentsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ParentsV1Marker>, DataError> {
-        self.check_req::<ParentsV1Marker>(req)?;
+impl DataProvider<ParentsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ParentsV1>, DataError> {
+        self.check_req::<ParentsV1>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .cldr()?
             .core()
@@ -28,7 +28,7 @@ impl DataProvider<ParentsV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ParentsV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<ParentsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -71,7 +71,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let parents: DataResponse<ParentsV1Marker> = provider.load(Default::default()).unwrap();
+    let parents: DataResponse<ParentsV1> = provider.load(Default::default()).unwrap();
 
     assert_eq!(
         parents

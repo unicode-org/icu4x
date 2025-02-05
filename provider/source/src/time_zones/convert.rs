@@ -25,12 +25,12 @@ use std::collections::BTreeSet;
 use writeable::Writeable;
 use zerovec::ule::NichedOption;
 
-impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
+impl DataProvider<TimeZoneEssentialsV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<TimeZoneEssentialsV1Marker>, DataError> {
-        self.check_req::<TimeZoneEssentialsV1Marker>(req)?;
+    ) -> Result<DataResponse<TimeZoneEssentialsV1>, DataError> {
+        self.check_req::<TimeZoneEssentialsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -491,9 +491,9 @@ impl SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
+impl DataProvider<LocationsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1>, DataError> {
+        self.check_req::<LocationsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -509,7 +509,7 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         let mut locations = self.calculate_locations(req.id.locale)?.0;
 
-        let base = DataProvider::<LocationsRootV1Marker>::load(&self, req)?.payload;
+        let base = DataProvider::<LocationsRootV1>::load(&self, req)?.payload;
 
         locations.retain(|k, v| base.get().locations.get(k) != Some(v));
 
@@ -526,9 +526,9 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
+impl DataProvider<LocationsRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1>, DataError> {
+        self.check_req::<LocationsV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -547,13 +547,13 @@ impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+impl DataProvider<ExemplarCitiesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1>, DataError> {
+        self.check_req::<ExemplarCitiesV1>(req)?;
 
         let mut exemplars = self.calculate_locations(req.id.locale)?.1;
 
-        let base = DataProvider::<ExemplarCitiesRootV1Marker>::load(&self, req)?.payload;
+        let base = DataProvider::<ExemplarCitiesRootV1>::load(&self, req)?.payload;
 
         exemplars.retain(|k, v| base.get().exemplars.get(k) != Some(v));
 
@@ -566,12 +566,12 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
+impl DataProvider<ExemplarCitiesRootV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<ExemplarCitiesRootV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+    ) -> Result<DataResponse<ExemplarCitiesRootV1>, DataError> {
+        self.check_req::<ExemplarCitiesV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -586,9 +586,9 @@ impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1Marker>, DataError> {
-        self.check_req::<MetazonePeriodV1Marker>(req)?;
+impl DataProvider<MetazonePeriodV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1>, DataError> {
+        self.check_req::<MetazonePeriodV1>(req)?;
 
         let (_, checksum) = self.metazone_to_id_map()?;
 
@@ -599,9 +599,9 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1Marker>, DataError> {
-        self.check_req::<ZoneOffsetPeriodV1Marker>(req)?;
+impl DataProvider<ZoneOffsetPeriodV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1>, DataError> {
+        self.check_req::<ZoneOffsetPeriodV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -610,12 +610,12 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneGenericNamesLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesLongV1Marker>, DataError> {
-        self.check_req::<MetazoneGenericNamesLongV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneGenericNamesLongV1>, DataError> {
+        self.check_req::<MetazoneGenericNamesLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -667,12 +667,12 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1Marker>, DataError> {
-        self.check_req::<MetazoneSpecificNamesLongV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1>, DataError> {
+        self.check_req::<MetazoneSpecificNamesLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -739,12 +739,12 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneGenericNamesShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesShortV1Marker>, DataError> {
-        self.check_req::<MetazoneGenericNamesShortV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneGenericNamesShortV1>, DataError> {
+        self.check_req::<MetazoneGenericNamesShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -776,12 +776,12 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
         })
     }
 }
-impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneSpecificNamesShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1Marker>, DataError> {
-        self.check_req::<MetazoneSpecificNamesShortV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1>, DataError> {
+        self.check_req::<MetazoneSpecificNamesShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?

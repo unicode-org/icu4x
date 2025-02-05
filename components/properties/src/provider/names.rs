@@ -82,12 +82,12 @@ pub struct PropertyValueNameToEnumMap<'data> {
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(
     marker(
-        CanonicalCombiningClassValueToLongNameV1Marker,
+        CanonicalCombiningClassValueToLongNameV1,
         "propnames/to/long/sparse/ccc@1",
         singleton
     ),
     marker(
-        CanonicalCombiningClassValueToShortNameV1Marker,
+        CanonicalCombiningClassValueToShortNameV1,
         "propnames/to/short/sparse/ccc@1",
         singleton
     )
@@ -113,107 +113,107 @@ pub struct PropertyEnumToValueNameSparseMap<'data> {
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(
     marker(
-        BidiClassValueToLongNameV1Marker,
+        BidiClassValueToLongNameV1,
         "propnames/to/long/linear/bc@1",
         singleton
     ),
     marker(
-        BidiClassValueToShortNameV1Marker,
+        BidiClassValueToShortNameV1,
         "propnames/to/short/linear/bc@1",
         singleton
     ),
     marker(
-        EastAsianWidthValueToLongNameV1Marker,
+        EastAsianWidthValueToLongNameV1,
         "propnames/to/long/linear/ea@1",
         singleton
     ),
     marker(
-        EastAsianWidthValueToShortNameV1Marker,
+        EastAsianWidthValueToShortNameV1,
         "propnames/to/short/linear/ea@1",
         singleton
     ),
     marker(
-        GeneralCategoryValueToLongNameV1Marker,
+        GeneralCategoryValueToLongNameV1,
         "propnames/to/long/linear/gc@1",
         singleton
     ),
     marker(
-        GeneralCategoryValueToShortNameV1Marker,
+        GeneralCategoryValueToShortNameV1,
         "propnames/to/short/linear/gc@1",
         singleton
     ),
     marker(
-        GraphemeClusterBreakValueToLongNameV1Marker,
+        GraphemeClusterBreakValueToLongNameV1,
         "propnames/to/long/linear/GCB@1",
         singleton
     ),
     marker(
-        GraphemeClusterBreakValueToShortNameV1Marker,
+        GraphemeClusterBreakValueToShortNameV1,
         "propnames/to/short/linear/GCB@1",
         singleton
     ),
     marker(
-        HangulSyllableTypeValueToLongNameV1Marker,
+        HangulSyllableTypeValueToLongNameV1,
         "propnames/to/long/linear/hst@1",
         singleton
     ),
     marker(
-        HangulSyllableTypeValueToShortNameV1Marker,
+        HangulSyllableTypeValueToShortNameV1,
         "propnames/to/short/linear/hst@1",
         singleton
     ),
     marker(
-        IndicSyllabicCategoryValueToLongNameV1Marker,
+        IndicSyllabicCategoryValueToLongNameV1,
         "propnames/to/long/linear/InSC@1",
         singleton
     ),
     marker(
-        IndicSyllabicCategoryValueToShortNameV1Marker,
+        IndicSyllabicCategoryValueToShortNameV1,
         "propnames/to/short/linear/InSC@1",
         singleton
     ),
     marker(
-        JoiningTypeValueToLongNameV1Marker,
+        JoiningTypeValueToLongNameV1,
         "propnames/to/long/linear/jt@1",
         singleton
     ),
     marker(
-        JoiningTypeValueToShortNameV1Marker,
+        JoiningTypeValueToShortNameV1,
         "propnames/to/short/linear/jt@1",
         singleton
     ),
     marker(
-        LineBreakValueToLongNameV1Marker,
+        LineBreakValueToLongNameV1,
         "propnames/to/long/linear/lb@1",
         singleton
     ),
     marker(
-        LineBreakValueToShortNameV1Marker,
+        LineBreakValueToShortNameV1,
         "propnames/to/short/linear/lb@1",
         singleton
     ),
     marker(
-        ScriptValueToLongNameV1Marker,
+        ScriptValueToLongNameV1,
         "propnames/to/long/linear/sc@1",
         singleton
     ),
     marker(
-        SentenceBreakValueToLongNameV1Marker,
+        SentenceBreakValueToLongNameV1,
         "propnames/to/long/linear/SB@1",
         singleton
     ),
     marker(
-        SentenceBreakValueToShortNameV1Marker,
+        SentenceBreakValueToShortNameV1,
         "propnames/to/short/linear/SB@1",
         singleton
     ),
     marker(
-        WordBreakValueToLongNameV1Marker,
+        WordBreakValueToLongNameV1,
         "propnames/to/long/linear/WB@1",
         singleton
     ),
     marker(
-        WordBreakValueToShortNameV1Marker,
+        WordBreakValueToShortNameV1,
         "propnames/to/short/linear/WB@1",
         singleton
     )
@@ -239,7 +239,7 @@ pub struct PropertyEnumToValueNameLinearMap<'data> {
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
-    ScriptValueToShortNameV1Marker,
+    ScriptValueToShortNameV1,
     "propnames/to/short/linear4/sc@1",
     singleton
 ))]

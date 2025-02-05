@@ -70,14 +70,14 @@ impl DataResponseMetadata {
 ///
 /// # Examples
 ///
-/// Basic usage, using the `HelloWorldV1Marker` marker:
+/// Basic usage, using the `HelloWorldV1` marker:
 ///
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorld {
+/// let payload = DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
 ///     message: Cow::Borrowed("Demo"),
 /// });
 ///
@@ -101,7 +101,7 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 /// use icu_provider::prelude::*;
 /// use icu_provider::DataPayloadOr;
 ///
-/// let response: DataResponse<HelloWorldV1Marker> = HelloWorldProvider
+/// let response: DataResponse<HelloWorldV1> = HelloWorldProvider
 ///     .load(DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
@@ -109,8 +109,8 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///     .expect("Loading should succeed");
 ///
 /// let payload_some =
-///     DataPayloadOr::<HelloWorldV1Marker, ()>::from_payload(response.payload);
-/// let payload_none = DataPayloadOr::<HelloWorldV1Marker, ()>::from_other(());
+///     DataPayloadOr::<HelloWorldV1, ()>::from_payload(response.payload);
+/// let payload_none = DataPayloadOr::<HelloWorldV1, ()>::from_other(());
 ///
 /// assert_eq!(
 ///     payload_some.get(),
@@ -246,7 +246,7 @@ where
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let resp1: DataPayload<HelloWorldV1Marker> = todo!();
+/// let resp1: DataPayload<HelloWorldV1> = todo!();
 /// let resp2 = resp1.clone();
 /// ```
 impl<M> Clone for DataPayload<M>
@@ -324,22 +324,22 @@ where
 #[test]
 fn test_clone_eq() {
     use crate::hello_world::*;
-    let p1 = DataPayload::<HelloWorldV1Marker>::from_static_str("Demo");
+    let p1 = DataPayload::<HelloWorldV1>::from_static_str("Demo");
     #[allow(clippy::redundant_clone)]
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 
-    let p1 = DataPayloadOr::<HelloWorldV1Marker, usize>::from_payload(p1);
+    let p1 = DataPayloadOr::<HelloWorldV1, usize>::from_payload(p1);
     #[allow(clippy::redundant_clone)]
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 
-    let p3 = DataPayloadOr::<HelloWorldV1Marker, usize>::from_other(555);
+    let p3 = DataPayloadOr::<HelloWorldV1, usize>::from_other(555);
     #[allow(clippy::redundant_clone)]
     let p4 = p3.clone();
     assert_eq!(p3, p4);
 
-    let p5 = DataPayloadOr::<HelloWorldV1Marker, usize>::from_other(666);
+    let p5 = DataPayloadOr::<HelloWorldV1, usize>::from_other(666);
     assert_ne!(p3, p5);
     assert_ne!(p4, p5);
 
@@ -371,7 +371,7 @@ where
     /// };
     ///
     /// let payload =
-    ///     DataPayload::<HelloWorldV1Marker>::from_owned(local_struct.clone());
+    ///     DataPayload::<HelloWorldV1>::from_owned(local_struct.clone());
     ///
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
@@ -400,11 +400,11 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     ///
     /// let mut payload =
-    ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
+    ///     DataPayload::<HelloWorldV1>::from_static_str("Hello");
     ///
     /// payload.with_mut(|s| s.message.to_mut().push_str(" World"));
     ///
@@ -414,11 +414,11 @@ where
     /// To transfer data from the context into the data struct, use the `move` keyword:
     ///
     /// ```
-    /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     ///
     /// let mut payload =
-    ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
+    ///     DataPayload::<HelloWorldV1>::from_static_str("Hello");
     ///
     /// let suffix = " World";
     /// payload.with_mut(move |s| s.message.to_mut().push_str(suffix));
@@ -450,10 +450,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Demo");
+    /// let payload = DataPayload::<HelloWorldV1>::from_static_str("Demo");
     ///
     /// assert_eq!("Demo", payload.get().message);
     /// ```
@@ -508,7 +508,7 @@ where
     ///     type DataStruct = Cow<'static, str>;
     /// }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorld {
+    /// let p1: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
     ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
@@ -555,7 +555,7 @@ where
     /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> =
+    /// let p1: DataPayload<HelloWorldV1> =
     ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Hello World"),
     ///     });
@@ -607,7 +607,7 @@ where
     /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> =
+    /// let p1: DataPayload<HelloWorldV1> =
     ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Hello World"),
     ///     });
@@ -663,7 +663,7 @@ where
     /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> =
+    /// let p1: DataPayload<HelloWorldV1> =
     ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Hello World"),
     ///     });
@@ -724,13 +724,13 @@ where
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///
-    /// struct CustomHelloWorldV1Marker;
-    /// impl DynamicDataMarker for CustomHelloWorldV1Marker {
+    /// struct CustomHelloWorldV1;
+    /// impl DynamicDataMarker for CustomHelloWorldV1 {
     ///     type DataStruct = HelloWorld<'static>;
     /// }
     ///
-    /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
-    /// let custom: DataPayload<CustomHelloWorldV1Marker> = hello_world.cast();
+    /// let hello_world: DataPayload<HelloWorldV1> = todo!();
+    /// let custom: DataPayload<CustomHelloWorldV1> = hello_world.cast();
     /// ```
     #[inline]
     pub fn cast<M2>(self) -> DataPayload<M2>
@@ -789,12 +789,12 @@ where
     /// where
     ///     M: DataMarker,
     ///     P0: DataProvider<M>,
-    ///     P1: DataProvider<HelloWorldV1Marker>,
+    ///     P1: DataProvider<HelloWorldV1>,
     /// {
     ///     #[inline]
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-    ///         if TypeId::of::<HelloWorldV1Marker>() == TypeId::of::<M>() {
-    ///             let response = DataProvider::<HelloWorldV1Marker>::load(
+    ///         if TypeId::of::<HelloWorldV1>() == TypeId::of::<M>() {
+    ///             let response = DataProvider::<HelloWorldV1>::load(
     ///                 &self.hello_world_provider,
     ///                 req,
     ///             )?;
@@ -868,7 +868,7 @@ where
     ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
     ///         let mut res = self.inner.load(req)?;
     ///         let mut cast_result =
-    ///             res.payload.dynamic_cast_mut::<HelloWorldV1Marker>();
+    ///             res.payload.dynamic_cast_mut::<HelloWorldV1>();
     ///         if let Ok(ref mut concrete_payload) = cast_result {
     ///             // Add an emoji to the hello world message
     ///             concrete_payload.with_mut(|data| {
@@ -1076,7 +1076,7 @@ where
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let resp1: DataResponse<HelloWorldV1Marker> = todo!();
+/// let resp1: DataResponse<HelloWorldV1> = todo!();
 /// let resp2 = resp1.clone();
 /// ```
 impl<M> Clone for DataResponse<M>

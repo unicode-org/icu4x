@@ -23,7 +23,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::islamic::{
-    IslamicCache, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
+    IslamicCache, IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1,
     PackedIslamicYearInfo,
 };
 use crate::Iso;
@@ -61,7 +61,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
 pub struct IslamicObservational {
-    data: Option<DataPayload<IslamicObservationalCacheV1Marker>>,
+    data: Option<DataPayload<IslamicObservationalCacheV1>>,
 }
 
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
@@ -90,7 +90,7 @@ pub struct IslamicCivil;
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
 pub struct IslamicUmmAlQura {
-    data: Option<DataPayload<IslamicUmmAlQuraCacheV1Marker>>,
+    data: Option<DataPayload<IslamicUmmAlQuraCacheV1>>,
 }
 
 /// A Tabular version of the Arithmetical Islamic Calendar
@@ -132,7 +132,7 @@ impl IslamicObservational {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<IslamicObservationalCacheV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<IslamicObservationalCacheV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
@@ -178,7 +178,7 @@ impl IslamicUmmAlQura {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<IslamicUmmAlQuraCacheV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<IslamicUmmAlQuraCacheV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {

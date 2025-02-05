@@ -27,7 +27,7 @@ use super::TimeZoneBcp47Id;
 /// </div>
 #[derive(PartialEq, Debug, Clone)]
 #[icu_provider::data_struct(marker(
-    WindowsZonesToBcp47MapV1Marker,
+    WindowsZonesToBcp47MapV1,
     "time_zone/windows_zones_to_bcp47@1",
     singleton
 ))]

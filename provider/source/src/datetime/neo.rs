@@ -658,7 +658,7 @@ macro_rules! impl_pattern_datagen {
 
 // Weekdays
 impl_symbols_datagen!(
-    WeekdayNamesV1Marker,
+    WeekdayNamesV1,
     "gregory",
     FULL_KEY_LENGTHS,
     weekday_convert
@@ -666,7 +666,7 @@ impl_symbols_datagen!(
 
 // Dayperiods
 impl_symbols_datagen!(
-    DayPeriodNamesV1Marker,
+    DayPeriodNamesV1,
     "gregory",
     NORMAL_KEY_LENGTHS,
     dayperiods_convert
@@ -674,79 +674,79 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearNamesV1Marker,
+    BuddhistYearNamesV1,
     "buddhist",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearNamesV1Marker,
+    ChineseYearNamesV1,
     "chinese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearNamesV1Marker,
+    CopticYearNamesV1,
     "coptic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    DangiYearNamesV1Marker,
+    DangiYearNamesV1,
     "dangi",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    EthiopianYearNamesV1Marker,
+    EthiopianYearNamesV1,
     "ethiopic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearNamesV1Marker,
+    GregorianYearNamesV1,
     "gregory",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearNamesV1Marker,
+    HebrewYearNamesV1,
     "hebrew",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearNamesV1Marker,
+    IndianYearNamesV1,
     "indian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearNamesV1Marker,
+    IslamicYearNamesV1,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearNamesV1Marker,
+    JapaneseYearNamesV1,
     "japanese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearNamesV1Marker,
+    JapaneseExtendedYearNamesV1,
     "japanext",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearNamesV1Marker,
+    PersianYearNamesV1,
     "persian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    RocYearNamesV1Marker,
+    RocYearNamesV1,
     "roc",
     YEARS_KEY_LENGTHS,
     years_convert
@@ -754,79 +754,79 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthNamesV1Marker,
+    BuddhistMonthNamesV1,
     "buddhist",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthNamesV1Marker,
+    ChineseMonthNamesV1,
     "chinese",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthNamesV1Marker,
+    CopticMonthNamesV1,
     "coptic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthNamesV1Marker,
+    DangiMonthNamesV1,
     "dangi",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthNamesV1Marker,
+    EthiopianMonthNamesV1,
     "ethiopic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthNamesV1Marker,
+    GregorianMonthNamesV1,
     "gregory",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthNamesV1Marker,
+    HebrewMonthNamesV1,
     "hebrew",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthNamesV1Marker,
+    IndianMonthNamesV1,
     "indian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthNamesV1Marker,
+    IslamicMonthNamesV1,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthNamesV1Marker,
+    JapaneseMonthNamesV1,
     "japanese",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthNamesV1Marker,
+    JapaneseExtendedMonthNamesV1,
     "japanext",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthNamesV1Marker,
+    PersianMonthNamesV1,
     "persian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    RocMonthNamesV1Marker,
+    RocMonthNamesV1,
     "roc",
     NORMAL_KEY_LENGTHS,
     months_convert
@@ -837,7 +837,7 @@ impl_symbols_datagen!(
 // systems, but CLDR has some instances where the glue patterns differ, such
 // as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
-    GluePatternV1Marker,
+    GluePatternV1,
     "gregory",
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert

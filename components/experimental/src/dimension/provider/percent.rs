@@ -26,7 +26,7 @@ use icu_pattern::{DoublePlaceholder, SinglePlaceholder};
 /// </div>
 pub use crate::provider::Baked;
 
-#[icu_provider::data_struct(PercentEssentialsV1Marker = "percent/essentials@1")]
+#[icu_provider::data_struct(PercentEssentialsV1 = "percent/essentials@1")]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::percent))]

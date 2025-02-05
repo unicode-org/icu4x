@@ -13,22 +13,22 @@ use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant}
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
-    pub(crate) use super::ExemplarCitiesRootV1Marker;
+    pub(crate) use super::ExemplarCitiesRootV1;
     pub(crate) use super::ExemplarCities;
-    pub(crate) use super::ExemplarCitiesV1Marker;
-    pub(crate) use super::LocationsRootV1Marker;
+    pub(crate) use super::ExemplarCitiesV1;
+    pub(crate) use super::LocationsRootV1;
     pub(crate) use super::Locations;
-    pub(crate) use super::LocationsV1Marker;
-    pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
-    pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
+    pub(crate) use super::LocationsV1;
+    pub(crate) use super::MetazoneGenericNamesLongV1 as MzGenericLongV1;
+    pub(crate) use super::MetazoneGenericNamesShortV1 as MzGenericShortV1;
     pub(crate) use super::MetazoneGenericNames as MzGeneric;
     pub(crate) use super::MetazonePeriod as MzPeriod;
-    pub(crate) use super::MetazonePeriodV1Marker as MzPeriodV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
+    pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
+    pub(crate) use super::MetazoneSpecificNamesLongV1 as MzSpecificLongV1;
+    pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
     pub(crate) use super::MetazoneSpecificNames as MzSpecific;
     pub(crate) use super::TimeZoneEssentials as Essentials;
-    pub(crate) use super::TimeZoneEssentialsV1Marker as EssentialsV1Marker;
+    pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
@@ -40,7 +40,7 @@ pub(crate) mod tz {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(TimeZoneEssentialsV1Marker = "time_zone/essentials@1")]
+#[icu_provider::data_struct(TimeZoneEssentialsV1 = "time_zone/essentials@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
@@ -76,8 +76,8 @@ pub struct TimeZoneEssentials<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(LocationsV1Marker, "time_zone/locations@1"),
-    marker(LocationsRootV1Marker, "time_zone/locations_root@1")
+    marker(LocationsV1, "time_zone/locations@1"),
+    marker(LocationsRootV1, "time_zone/locations_root@1")
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -135,8 +135,8 @@ pub struct Locations<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(ExemplarCitiesV1Marker, "time_zone/exemplars@1"),
-    marker(ExemplarCitiesRootV1Marker, "time_zone/exemplars_root@1")
+    marker(ExemplarCitiesV1, "time_zone/exemplars@1"),
+    marker(ExemplarCitiesRootV1, "time_zone/exemplars_root@1")
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -162,12 +162,12 @@ pub struct ExemplarCities<'data> {
 /// </div>
 #[icu_provider::data_struct(
     marker(
-        MetazoneGenericNamesLongV1Marker,
+        MetazoneGenericNamesLongV1,
         "time_zone/generic_long@1",
         has_checksum
     ),
     marker(
-        MetazoneGenericNamesShortV1Marker,
+        MetazoneGenericNamesShortV1,
         "time_zone/generic_short@1",
         has_checksum
     )
@@ -199,12 +199,12 @@ pub struct MetazoneGenericNames<'data> {
 /// </div>
 #[icu_provider::data_struct(
     marker(
-        MetazoneSpecificNamesLongV1Marker,
+        MetazoneSpecificNamesLongV1,
         "time_zone/specific_long@1",
         has_checksum
     ),
     marker(
-        MetazoneSpecificNamesShortV1Marker,
+        MetazoneSpecificNamesShortV1,
         "time_zone/specific_short@1",
         has_checksum
     )
@@ -243,7 +243,7 @@ pub type MetazoneId = core::num::NonZeroU8;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    MetazonePeriodV1Marker,
+    MetazonePeriodV1,
     "time_zone/metazone_period@1",
     singleton,
     has_checksum

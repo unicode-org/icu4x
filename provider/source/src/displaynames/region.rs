@@ -11,12 +11,12 @@ use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<RegionDisplayNamesV1Marker> for SourceDataProvider {
+impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
-        self.check_req::<RegionDisplayNamesV1Marker>(req)?;
+    ) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
+        self.check_req::<RegionDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::region::Resource = self
             .cldr()?
@@ -32,7 +32,7 @@ impl DataProvider<RegionDisplayNamesV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<RegionDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<RegionDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -93,7 +93,7 @@ mod tests {
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
+        let data: DataPayload<RegionDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -114,7 +114,7 @@ mod tests {
     fn test_basic_short_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
+        let data: DataPayload<RegionDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()

@@ -347,7 +347,7 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataResponse<LstmForWordLineAutoV1Marker> = crate::provider::Baked
+        let lstm: DataResponse<LstmForWordLineAutoV1> = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic(

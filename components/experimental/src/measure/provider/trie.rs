@@ -30,7 +30,7 @@ pub use crate::provider::Baked;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(UnitsTrieV1Marker, "units/trie@1", singleton))]
+#[icu_provider::data_struct(marker(UnitsTrieV1, "units/trie@1", singleton))]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::trie))]

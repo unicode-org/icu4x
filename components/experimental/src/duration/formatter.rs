@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::units::UnitsDisplayNameV1Marker;
+use crate::dimension::provider::units::UnitsDisplayNameV1;
 use crate::dimension::units::formatter::{UnitsFormatter, UnitsFormatterPreferences};
 use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 use crate::duration::options::FieldStyle;
@@ -13,7 +13,7 @@ use super::validated_options::Unit;
 use super::{provider, Duration};
 
 pub use super::validated_options::ValidatedDurationFormatterOptions;
-use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2Marker};
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_list::{ListFormatter, ListFormatterPreferences, ListLength};
 use icu_locale_core::preferences::{
@@ -57,7 +57,7 @@ prefs_convert!(DurationFormatterPreferences, ListFormatterPreferences);
 pub struct DurationFormatter {
     /// Options for configuring the formatter.
     pub(crate) options: ValidatedDurationFormatterOptions,
-    pub(crate) digital: DataPayload<provider::DigitalDurationDataV1Marker>,
+    pub(crate) digital: DataPayload<provider::DigitalDurationDataV1>,
     pub(crate) unit: DurationUnitFormatter,
     pub(crate) list: ListFormatter,
     pub(crate) fdf: FixedDecimalFormatter,
@@ -137,10 +137,10 @@ impl DurationUnitFormatter {
 
     fn try_new_unstable<
         D: ?Sized
-            + DataProvider<UnitsDisplayNameV1Marker>
+            + DataProvider<UnitsDisplayNameV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::CardinalV1>,
     >(
         provider: &D,
         prefs: DurationFormatterPreferences,
@@ -214,7 +214,7 @@ impl DurationFormatter {
         prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider::DigitalDurationDataV1Marker::make_locale(prefs.locale_preferences);
+        let locale = provider::DigitalDurationDataV1::make_locale(prefs.locale_preferences);
         let digital = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -233,11 +233,11 @@ impl DurationFormatter {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
-        D: DataProvider<provider::DigitalDurationDataV1Marker>
-            + DataProvider<UnitsDisplayNameV1Marker>
+        D: DataProvider<provider::DigitalDurationDataV1>
+            + DataProvider<UnitsDisplayNameV1>
             + DataProvider<DecimalSymbolsV2Marker>
-            + DataProvider<DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>
+            + DataProvider<DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::CardinalV1>
             + DataProvider<icu_list::provider::UnitListV2Marker>
             + ?Sized,
     >(
@@ -245,7 +245,7 @@ impl DurationFormatter {
         prefs: DurationFormatterPreferences,
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider::DigitalDurationDataV1Marker::make_locale(prefs.locale_preferences);
+        let locale = provider::DigitalDurationDataV1::make_locale(prefs.locale_preferences);
         let digital = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

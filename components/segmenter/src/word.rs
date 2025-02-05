@@ -186,7 +186,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV2Marker>,
     complex: ComplexPayloads,
-    payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1Marker>>,
+    payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1>>,
 }
 
 impl WordSegmenter {
@@ -250,9 +250,9 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<WordBreakDataOverrideV1>
+            + DataProvider<DictionaryForWordOnlyAutoV1>
+            + DataProvider<LstmForWordLineAutoV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
@@ -344,8 +344,8 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<WordBreakDataOverrideV1>
+            + DataProvider<LstmForWordLineAutoV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
@@ -429,9 +429,9 @@ impl WordSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + DataProvider<WordBreakDataOverrideV1>
+            + DataProvider<DictionaryForWordOnlyAutoV1>
+            + DataProvider<DictionaryForWordLineExtendedV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {

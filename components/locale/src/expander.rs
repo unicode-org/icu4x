@@ -64,9 +64,9 @@ use crate::TransformResult;
 /// [UTS #35: Likely Subtags]: https://www.unicode.org/reports/tr35/#Likely_Subtags
 #[derive(Debug, Clone)]
 pub struct LocaleExpander {
-    likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1Marker>,
-    likely_subtags_sr: DataPayload<LikelySubtagsForScriptRegionV1Marker>,
-    likely_subtags_ext: Option<DataPayload<LikelySubtagsExtendedV1Marker>>,
+    likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1>,
+    likely_subtags_sr: DataPayload<LikelySubtagsForScriptRegionV1>,
+    likely_subtags_ext: Option<DataPayload<LikelySubtagsExtendedV1>>,
 }
 
 struct LocaleExpanderBorrowed<'a> {
@@ -245,8 +245,8 @@ impl LocaleExpander {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+        P: DataProvider<LikelySubtagsForLanguageV1>
+            + DataProvider<LikelySubtagsForScriptRegionV1>
             + ?Sized,
     {
         let likely_subtags_l = provider.load(Default::default())?.payload;
@@ -296,9 +296,9 @@ impl LocaleExpander {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
-            + DataProvider<LikelySubtagsExtendedV1Marker>
+        P: DataProvider<LikelySubtagsForLanguageV1>
+            + DataProvider<LikelySubtagsForScriptRegionV1>
+            + DataProvider<LikelySubtagsExtendedV1>
             + ?Sized,
     {
         let likely_subtags_l = provider.load(Default::default())?.payload;

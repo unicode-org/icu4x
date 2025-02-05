@@ -18,7 +18,7 @@ use zerovec::ZeroMap;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CaseMapUnfoldV1Marker, "props/casemap_unfold@1", singleton))]
+#[icu_provider::data_struct(marker(CaseMapUnfoldV1, "props/casemap_unfold@1", singleton))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]

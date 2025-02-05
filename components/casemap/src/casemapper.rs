@@ -5,7 +5,7 @@
 use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::data::MappingKind;
 use crate::provider::CaseMap;
-use crate::provider::CaseMapV1Marker;
+use crate::provider::CaseMapV1;
 use crate::set::ClosureSink;
 use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
 use alloc::string::String;
@@ -35,7 +35,7 @@ use writeable::Writeable;
 /// ```
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
-    pub(crate) data: DataPayload<CaseMapV1Marker>,
+    pub(crate) data: DataPayload<CaseMapV1>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -92,7 +92,7 @@ impl CaseMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1> + ?Sized,
     {
         let data = provider.load(Default::default())?.payload;
         Ok(Self { data })

@@ -493,8 +493,8 @@ mod test {
         hello_alt: HelloAlt,
     }
 
-    impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
-        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1> for DataWarehouse {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: DataPayload::from_owned(self.hello_v1.clone()),
@@ -502,7 +502,7 @@ mod test {
         }
     }
 
-    crate::dynutil::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
+    crate::dynutil::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1,], AnyMarker);
 
     /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
     #[derive(Debug)]
@@ -516,8 +516,8 @@ mod test {
         }
     }
 
-    impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
-        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1> for DataProvider2 {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: DataPayload::from_owned(self.data.hello_v1.clone()),
@@ -536,7 +536,7 @@ mod test {
 
     crate::dynutil::impl_dynamic_data_provider!(
         DataProvider2,
-        [HelloWorldV1Marker, HelloAltMarker,],
+        [HelloWorldV1, HelloAltMarker,],
         AnyMarker
     );
 
@@ -557,9 +557,9 @@ mod test {
         }
     }
 
-    fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
+    fn get_payload_v1<P: DataProvider<HelloWorldV1> + ?Sized>(
         provider: &P,
-    ) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataPayload<HelloWorldV1>, DataError> {
         provider.load(Default::default()).map(|r| r.payload)
     }
 
@@ -598,7 +598,7 @@ mod test {
     fn test_warehouse_owned_dyn_generic() {
         let warehouse = get_warehouse(DATA);
         let hello_data =
-            get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
+            get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1>).unwrap();
         assert!(matches!(
             hello_data.get(),
             HelloWorld {
@@ -659,7 +659,7 @@ mod test {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
         let hello_data =
-            get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
+            get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1>).unwrap();
         assert!(matches!(
             hello_data.get(),
             HelloWorld {
@@ -681,7 +681,7 @@ mod test {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
         // Request is for v2, but type argument is for v1
-        let response: Result<DataResponse<HelloWorldV1Marker>, DataError> = AnyProvider::load_any(
+        let response: Result<DataResponse<HelloWorldV1>, DataError> = AnyProvider::load_any(
             &provider.as_any_provider(),
             HELLO_ALT_KEY,
             Default::default(),
@@ -699,9 +699,9 @@ mod test {
 
     fn check_v1_v2<P>(d: &P)
     where
-        P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
+        P: DataProvider<HelloWorldV1> + DataProvider<HelloAltMarker> + ?Sized,
     {
-        let v1: DataPayload<HelloWorldV1Marker> = d.load(Default::default()).unwrap().payload;
+        let v1: DataPayload<HelloWorldV1> = d.load(Default::default()).unwrap().payload;
         let v2: DataPayload<HelloAltMarker> = d.load(Default::default()).unwrap().payload;
         if v1.get().message == v2.get().message {
             panic!()

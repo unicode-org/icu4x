@@ -59,14 +59,14 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    DictionaryForWordLineExtendedV1Marker::INFO,
-    DictionaryForWordOnlyAutoV1Marker::INFO,
+    DictionaryForWordLineExtendedV1::INFO,
+    DictionaryForWordOnlyAutoV1::INFO,
     GraphemeClusterBreakDataV2Marker::INFO,
     LineBreakDataV2Marker::INFO,
-    LstmForWordLineAutoV1Marker::INFO,
-    SentenceBreakDataOverrideV1Marker::INFO,
+    LstmForWordLineAutoV1::INFO,
+    SentenceBreakDataOverrideV1::INFO,
     SentenceBreakDataV2Marker::INFO,
-    WordBreakDataOverrideV1Marker::INFO,
+    WordBreakDataOverrideV1::INFO,
     WordBreakDataV2Marker::INFO,
 ];
 
@@ -127,12 +127,12 @@ pub struct RuleBreakData<'data> {
 /// </div>
 #[icu_provider::data_struct(
     marker(
-        DictionaryForWordOnlyAutoV1Marker,
+        DictionaryForWordOnlyAutoV1,
         "segmenter/dictionary/w_auto@1",
         attributes_domain = "segmenter"
     ),
     marker(
-        DictionaryForWordLineExtendedV1Marker,
+        DictionaryForWordLineExtendedV1,
         "segmenter/dictionary/wl_ext@1",
         attributes_domain = "segmenter"
     )
@@ -147,16 +147,16 @@ pub struct UCharDictionaryBreakData<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-pub(crate) struct UCharDictionaryBreakDataV1Marker;
+pub(crate) struct UCharDictionaryBreakDataV1;
 
-impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
+impl DynamicDataMarker for UCharDictionaryBreakDataV1 {
     type DataStruct = UCharDictionaryBreakData<'static>;
 }
 
 /// codepoint trie data that the difference by specific locale
 #[icu_provider::data_struct(
-    marker(SentenceBreakDataOverrideV1Marker, "segmenter/sentence/override@1",),
-    marker(WordBreakDataOverrideV1Marker, "segmenter/word/override@1")
+    marker(SentenceBreakDataOverrideV1, "segmenter/sentence/override@1",),
+    marker(WordBreakDataOverrideV1, "segmenter/word/override@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(

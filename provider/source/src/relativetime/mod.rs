@@ -18,61 +18,61 @@ pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>
 fn marker_filters() -> &'static HashMap<DataMarkerInfo, &'static str> {
     MARKER_FILTERS.get_or_init(|| {
         [
-            (LongSecondRelativeTimeFormatDataV1Marker::INFO, "second"),
+            (LongSecondRelativeTimeFormatDataV1::INFO, "second"),
             (
-                ShortSecondRelativeTimeFormatDataV1Marker::INFO,
+                ShortSecondRelativeTimeFormatDataV1::INFO,
                 "second-short",
             ),
             (
-                NarrowSecondRelativeTimeFormatDataV1Marker::INFO,
+                NarrowSecondRelativeTimeFormatDataV1::INFO,
                 "second-narrow",
             ),
-            (LongMinuteRelativeTimeFormatDataV1Marker::INFO, "minute"),
+            (LongMinuteRelativeTimeFormatDataV1::INFO, "minute"),
             (
-                ShortMinuteRelativeTimeFormatDataV1Marker::INFO,
+                ShortMinuteRelativeTimeFormatDataV1::INFO,
                 "minute-short",
             ),
             (
-                NarrowMinuteRelativeTimeFormatDataV1Marker::INFO,
+                NarrowMinuteRelativeTimeFormatDataV1::INFO,
                 "minute-narrow",
             ),
-            (LongHourRelativeTimeFormatDataV1Marker::INFO, "hour"),
-            (ShortHourRelativeTimeFormatDataV1Marker::INFO, "hour-short"),
+            (LongHourRelativeTimeFormatDataV1::INFO, "hour"),
+            (ShortHourRelativeTimeFormatDataV1::INFO, "hour-short"),
             (
-                NarrowHourRelativeTimeFormatDataV1Marker::INFO,
+                NarrowHourRelativeTimeFormatDataV1::INFO,
                 "hour-narrow",
             ),
-            (LongDayRelativeTimeFormatDataV1Marker::INFO, "day"),
-            (ShortDayRelativeTimeFormatDataV1Marker::INFO, "day-short"),
-            (NarrowDayRelativeTimeFormatDataV1Marker::INFO, "day-narrow"),
-            (LongWeekRelativeTimeFormatDataV1Marker::INFO, "week"),
-            (ShortWeekRelativeTimeFormatDataV1Marker::INFO, "week-short"),
+            (LongDayRelativeTimeFormatDataV1::INFO, "day"),
+            (ShortDayRelativeTimeFormatDataV1::INFO, "day-short"),
+            (NarrowDayRelativeTimeFormatDataV1::INFO, "day-narrow"),
+            (LongWeekRelativeTimeFormatDataV1::INFO, "week"),
+            (ShortWeekRelativeTimeFormatDataV1::INFO, "week-short"),
             (
-                NarrowWeekRelativeTimeFormatDataV1Marker::INFO,
+                NarrowWeekRelativeTimeFormatDataV1::INFO,
                 "week-narrow",
             ),
-            (LongMonthRelativeTimeFormatDataV1Marker::INFO, "month"),
+            (LongMonthRelativeTimeFormatDataV1::INFO, "month"),
             (
-                ShortMonthRelativeTimeFormatDataV1Marker::INFO,
+                ShortMonthRelativeTimeFormatDataV1::INFO,
                 "month-short",
             ),
             (
-                NarrowMonthRelativeTimeFormatDataV1Marker::INFO,
+                NarrowMonthRelativeTimeFormatDataV1::INFO,
                 "month-narrow",
             ),
-            (LongQuarterRelativeTimeFormatDataV1Marker::INFO, "quarter"),
+            (LongQuarterRelativeTimeFormatDataV1::INFO, "quarter"),
             (
-                ShortQuarterRelativeTimeFormatDataV1Marker::INFO,
+                ShortQuarterRelativeTimeFormatDataV1::INFO,
                 "quarter-short",
             ),
             (
-                NarrowQuarterRelativeTimeFormatDataV1Marker::INFO,
+                NarrowQuarterRelativeTimeFormatDataV1::INFO,
                 "quarter-narrow",
             ),
-            (LongYearRelativeTimeFormatDataV1Marker::INFO, "year"),
-            (ShortYearRelativeTimeFormatDataV1Marker::INFO, "year-short"),
+            (LongYearRelativeTimeFormatDataV1::INFO, "year"),
+            (ShortYearRelativeTimeFormatDataV1::INFO, "year-short"),
             (
-                NarrowYearRelativeTimeFormatDataV1Marker::INFO,
+                NarrowYearRelativeTimeFormatDataV1::INFO,
                 "year-narrow",
             ),
         ]
@@ -142,30 +142,30 @@ impl From<&cldr_serde::date_fields::PluralRulesPattern>
 }
 
 make_data_provider!(
-    LongSecondRelativeTimeFormatDataV1Marker,
-    ShortSecondRelativeTimeFormatDataV1Marker,
-    NarrowSecondRelativeTimeFormatDataV1Marker,
-    LongMinuteRelativeTimeFormatDataV1Marker,
-    ShortMinuteRelativeTimeFormatDataV1Marker,
-    NarrowMinuteRelativeTimeFormatDataV1Marker,
-    LongHourRelativeTimeFormatDataV1Marker,
-    ShortHourRelativeTimeFormatDataV1Marker,
-    NarrowHourRelativeTimeFormatDataV1Marker,
-    LongDayRelativeTimeFormatDataV1Marker,
-    ShortDayRelativeTimeFormatDataV1Marker,
-    NarrowDayRelativeTimeFormatDataV1Marker,
-    LongWeekRelativeTimeFormatDataV1Marker,
-    ShortWeekRelativeTimeFormatDataV1Marker,
-    NarrowWeekRelativeTimeFormatDataV1Marker,
-    LongMonthRelativeTimeFormatDataV1Marker,
-    ShortMonthRelativeTimeFormatDataV1Marker,
-    NarrowMonthRelativeTimeFormatDataV1Marker,
-    LongQuarterRelativeTimeFormatDataV1Marker,
-    ShortQuarterRelativeTimeFormatDataV1Marker,
-    NarrowQuarterRelativeTimeFormatDataV1Marker,
-    LongYearRelativeTimeFormatDataV1Marker,
-    ShortYearRelativeTimeFormatDataV1Marker,
-    NarrowYearRelativeTimeFormatDataV1Marker,
+    LongSecondRelativeTimeFormatDataV1,
+    ShortSecondRelativeTimeFormatDataV1,
+    NarrowSecondRelativeTimeFormatDataV1,
+    LongMinuteRelativeTimeFormatDataV1,
+    ShortMinuteRelativeTimeFormatDataV1,
+    NarrowMinuteRelativeTimeFormatDataV1,
+    LongHourRelativeTimeFormatDataV1,
+    ShortHourRelativeTimeFormatDataV1,
+    NarrowHourRelativeTimeFormatDataV1,
+    LongDayRelativeTimeFormatDataV1,
+    ShortDayRelativeTimeFormatDataV1,
+    NarrowDayRelativeTimeFormatDataV1,
+    LongWeekRelativeTimeFormatDataV1,
+    ShortWeekRelativeTimeFormatDataV1,
+    NarrowWeekRelativeTimeFormatDataV1,
+    LongMonthRelativeTimeFormatDataV1,
+    ShortMonthRelativeTimeFormatDataV1,
+    NarrowMonthRelativeTimeFormatDataV1,
+    LongQuarterRelativeTimeFormatDataV1,
+    ShortQuarterRelativeTimeFormatDataV1,
+    NarrowQuarterRelativeTimeFormatDataV1,
+    LongYearRelativeTimeFormatDataV1,
+    ShortYearRelativeTimeFormatDataV1,
+    NarrowYearRelativeTimeFormatDataV1,
 );
 
 #[cfg(test)]
@@ -178,7 +178,7 @@ mod tests {
     #[test]
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
+        let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
@@ -205,7 +205,7 @@ mod tests {
     #[test]
     fn test_singular_sub_pattern() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
+        let data: DataPayload<LongYearRelativeTimeFormatDataV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("ar").into()),
                 ..Default::default()

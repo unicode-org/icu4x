@@ -34,7 +34,7 @@ type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 /// </div>
 pub use crate::provider::Baked;
 
-#[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
+#[icu_provider::data_struct(RegionDisplayNamesV1 = "displaynames/regions@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -50,7 +50,7 @@ pub struct RegionDisplayNames<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
 
-#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
+#[icu_provider::data_struct(LanguageDisplayNamesV1 = "displaynames/languages@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -72,7 +72,7 @@ pub struct LanguageDisplayNames<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLanguage, str>,
 }
 
-#[icu_provider::data_struct(ScriptDisplayNamesV1Marker = "displaynames/scripts@1")]
+#[icu_provider::data_struct(ScriptDisplayNamesV1 = "displaynames/scripts@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -88,7 +88,7 @@ pub struct ScriptDisplayNames<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedScript, str>,
 }
 
-#[icu_provider::data_struct(LocaleDisplayNamesV1Marker = "displaynames/locales@1")]
+#[icu_provider::data_struct(LocaleDisplayNamesV1 = "displaynames/locales@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -110,7 +110,7 @@ pub struct LocaleDisplayNames<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLocale, str>,
 }
 
-#[icu_provider::data_struct(VariantDisplayNamesV1Marker = "displaynames/variants@1")]
+#[icu_provider::data_struct(VariantDisplayNamesV1 = "displaynames/variants@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

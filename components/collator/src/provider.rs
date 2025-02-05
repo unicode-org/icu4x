@@ -71,13 +71,13 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CollationRootV1Marker::INFO,
-    CollationTailoringV1Marker::INFO,
-    CollationDiacriticsV1Marker::INFO,
-    CollationJamoV1Marker::INFO,
-    CollationMetadataV1Marker::INFO,
-    CollationReorderingV1Marker::INFO,
-    CollationSpecialPrimariesV1Marker::INFO,
+    CollationRootV1::INFO,
+    CollationTailoringV1::INFO,
+    CollationDiacriticsV1::INFO,
+    CollationJamoV1::INFO,
+    CollationMetadataV1::INFO,
+    CollationReorderingV1::INFO,
+    CollationSpecialPrimariesV1::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =
@@ -117,9 +117,9 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(CollationRootV1Marker, "collator/root@1", singleton),
+    marker(CollationRootV1, "collator/root@1", singleton),
     marker(
-        CollationTailoringV1Marker,
+        CollationTailoringV1,
         "collator/tailoring@1",
         fallback_by = "script",
         attributes_domain = "collator",
@@ -236,7 +236,7 @@ impl<'data> CollationData<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationDiacriticsV1Marker,
+    CollationDiacriticsV1,
     "collator/dia@1",
     fallback_by = "script",
     attributes_domain = "collator",
@@ -261,7 +261,7 @@ pub struct CollationDiacritics<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CollationJamoV1Marker, "collator/jamo@1", singleton))]
+#[icu_provider::data_struct(marker(CollationJamoV1, "collator/jamo@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
@@ -281,7 +281,7 @@ pub struct CollationJamo<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationReorderingV1Marker,
+    CollationReorderingV1,
     "collator/reord@1",
     fallback_by = "script",
     attributes_domain = "collator",
@@ -371,7 +371,7 @@ impl CollationReordering<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationMetadataV1Marker,
+    CollationMetadataV1,
     "collator/meta@1",
     fallback_by = "script",
     attributes_domain = "collator",
@@ -468,7 +468,7 @@ impl CollationMetadata {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationSpecialPrimariesV1Marker,
+    CollationSpecialPrimariesV1,
     "collator/prim@1",
     singleton
 ))]

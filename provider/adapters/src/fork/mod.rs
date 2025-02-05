@@ -82,7 +82,7 @@ use predicates::MarkerNotFoundPredicate;
 ///
 /// let provider = forking_provider.as_deserializing();
 ///
-/// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
+/// let german_hello_world: DataResponse<HelloWorldV1> = provider
 ///     .load(DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
@@ -114,7 +114,7 @@ use predicates::MarkerNotFoundPredicate;
 ///     .with_filter(|id| id.locale.language == language!("de")),
 /// );
 ///
-/// let provider: &dyn DataProvider<HelloWorldV1Marker> =
+/// let provider: &dyn DataProvider<HelloWorldV1> =
 ///     &forking_provider.as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
@@ -185,7 +185,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 ///     ],
 /// );
 ///
-/// let provider: &dyn DataProvider<HelloWorldV1Marker> =
+/// let provider: &dyn DataProvider<HelloWorldV1> =
 ///     &forking_provider.as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds

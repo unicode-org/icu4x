@@ -165,7 +165,7 @@ fn test_grouper() {
                     ..DecimalSymbols::new_en_for_testing()
                 },
             );
-            let provider_digits = FixedProvider::<DecimalDigitsV1Marker>::from_owned(
+            let provider_digits = FixedProvider::<DecimalDigitsV1>::from_owned(
                 crate::provider::DecimalDigits {
                     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
                 },

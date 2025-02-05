@@ -64,10 +64,10 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CardinalV1Marker::INFO,
-    OrdinalV1Marker::INFO,
+    CardinalV1::INFO,
+    OrdinalV1::INFO,
     #[cfg(feature = "experimental")]
-    PluralRangesV1Marker::INFO,
+    PluralRangesV1::INFO,
 ];
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
@@ -81,8 +81,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    CardinalV1Marker = "plurals/cardinal@1",
-    OrdinalV1Marker = "plurals/ordinal@1"
+    CardinalV1 = "plurals/cardinal@1",
+    OrdinalV1 = "plurals/ordinal@1"
 )]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -312,7 +312,7 @@ mod ranges {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    #[icu_provider::data_struct(PluralRangesV1Marker = "plurals/ranges@1")]
+    #[icu_provider::data_struct(PluralRangesV1 = "plurals/ranges@1")]
     #[derive(Clone, PartialEq, Debug)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]

@@ -36,7 +36,7 @@ macro_rules! cb {
             use crate as icu;
             let lookup =
                 [
-                    (icu_provider::marker::data_marker_id!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (icu_provider::marker::data_marker_id!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
                         (icu_provider::marker::data_marker_id!($path).hashed().to_bytes(), Ok(<$marker>::INFO)),
                     )+
@@ -76,14 +76,14 @@ fn test_markers_for_bin() {
     assert_eq!(
         markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
         [
-            crate::datetime::provider::neo::DayPeriodNamesV1Marker::INFO,
-            crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
-            crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
-            crate::datetime::provider::neo::GluePatternV1Marker::INFO,
-            crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
-            crate::datetime::provider::TimeNeoSkeletonPatternsV1Marker::INFO,
+            crate::datetime::provider::neo::DayPeriodNamesV1::INFO,
+            crate::datetime::provider::neo::GregorianMonthNamesV1::INFO,
+            crate::datetime::provider::neo::GregorianYearNamesV1::INFO,
+            crate::datetime::provider::neo::GluePatternV1::INFO,
+            crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1::INFO,
+            crate::datetime::provider::TimeNeoSkeletonPatternsV1::INFO,
             crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
-            crate::decimal::provider::DecimalDigitsV1Marker::INFO,
+            crate::decimal::provider::DecimalDigitsV1::INFO,
         ]
         .into_iter()
         .collect(),

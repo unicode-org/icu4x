@@ -10,8 +10,8 @@ use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
 use crate::dimension::provider::{
-    currency_patterns::CurrencyPatternsDataV1Marker,
-    extended_currency::CurrencyExtendedDataV1Marker,
+    currency_patterns::CurrencyPatternsDataV1,
+    extended_currency::CurrencyExtendedDataV1,
 };
 
 use super::{
@@ -29,10 +29,10 @@ extern crate alloc;
 /// Read more about the options in the [`super::options`] module.
 pub struct LongCurrencyFormatter {
     /// Extended data for the currency formatter.
-    extended: DataPayload<CurrencyExtendedDataV1Marker>,
+    extended: DataPayload<CurrencyExtendedDataV1>,
 
     /// Formatting patterns for each currency plural category.
-    patterns: DataPayload<CurrencyPatternsDataV1Marker>,
+    patterns: DataPayload<CurrencyPatternsDataV1>,
 
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
@@ -63,7 +63,7 @@ impl LongCurrencyFormatter {
         prefs: CurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
-        let locale = CurrencyPatternsDataV1Marker::make_locale(prefs.locale_preferences);
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
             (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
@@ -106,13 +106,13 @@ impl LongCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
-            + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
+            + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1>
+            + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::CardinalV1>,
     {
-        let locale = CurrencyPatternsDataV1Marker::make_locale(prefs.locale_preferences);
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

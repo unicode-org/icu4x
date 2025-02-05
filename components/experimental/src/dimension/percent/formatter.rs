@@ -13,7 +13,7 @@ use icu_locale_core::preferences::{
 
 use icu_provider::prelude::*;
 
-use super::super::provider::percent::PercentEssentialsV1Marker;
+use super::super::provider::percent::PercentEssentialsV1;
 use super::format::FormattedPercent;
 use super::options::PercentFormatterOptions;
 
@@ -43,7 +43,7 @@ prefs_convert!(
 ///   1. Rendering in the locale's percent system.
 pub struct PercentFormatter<R> {
     /// Essential data for the percent formatter.
-    essential: DataPayload<PercentEssentialsV1Marker>,
+    essential: DataPayload<PercentEssentialsV1>,
 
     /// Options bag for the percent formatter to determine the behavior of the formatter.
     options: PercentFormatterOptions,
@@ -94,9 +94,9 @@ impl PercentFormatter<FixedDecimalFormatter> {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>
+            + DataProvider<super::super::provider::percent::PercentEssentialsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
@@ -153,7 +153,7 @@ where
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = PercentEssentialsV1Marker::make_locale(prefs.locale_preferences);
+        let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -170,12 +170,12 @@ where
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_fixed_decimal_formatter_unstable(
-        provider: &(impl DataProvider<PercentEssentialsV1Marker> + ?Sized),
+        provider: &(impl DataProvider<PercentEssentialsV1> + ?Sized),
         prefs: PercentFormatterPreferences,
         fixed_decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = PercentEssentialsV1Marker::make_locale(prefs.locale_preferences);
+        let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
         let essential = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

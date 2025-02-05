@@ -14,7 +14,7 @@ use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
 /// Currency Extended  data struct.
-#[icu_provider::data_struct(marker(CurrencyPatternsDataV1Marker, "currency/patterns@1"))]
+#[icu_provider::data_struct(marker(CurrencyPatternsDataV1, "currency/patterns@1"))]
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

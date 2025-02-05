@@ -138,8 +138,8 @@ impl DataExporter for ZeroCopyCheckExporter {
         macro_rules! cb {
             ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
                 ((allocated, deallocated), payload_after) = match marker {
-                    k if k == icu_provider::hello_world::HelloWorldV1Marker::INFO => {
-                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                    k if k == icu_provider::hello_world::HelloWorldV1::INFO => {
+                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                         (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                     }
                     $(

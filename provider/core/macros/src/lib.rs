@@ -64,24 +64,24 @@ mod tests;
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(
-///     FooV1Marker,
-///     BarV1Marker = "demo/bar@1",
-///     marker(BazV1Marker, "demo/baz@1", fallback_by = "region",)
+///     FooV1,
+///     BarV1 = "demo/bar@1",
+///     marker(BazV1, "demo/baz@1", fallback_by = "region",)
 /// )]
 /// pub struct Foo<'data> {
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// // Note: FooV1Marker implements `DynamicDataMarker` but not `DataMarker`.
+/// // Note: FooV1 implements `DynamicDataMarker` but not `DataMarker`.
 /// // The other two implement `DataMarker`.
 ///
 /// assert_eq!(
-///     BarV1Marker::INFO.fallback_config.priority,
+///     BarV1::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Language
 /// );
 ///
 /// assert_eq!(
-///     BazV1Marker::INFO.fallback_config.priority,
+///     BazV1::INFO.fallback_config.priority,
 ///     LocaleFallbackPriority::Region
 /// );
 /// ```

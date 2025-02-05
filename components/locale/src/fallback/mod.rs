@@ -57,8 +57,8 @@ mod algorithms;
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
-    likely_subtags: DataPayload<LikelySubtagsForLanguageV1Marker>,
-    parents: DataPayload<ParentsV1Marker>,
+    likely_subtags: DataPayload<LikelySubtagsForLanguageV1>,
+    parents: DataPayload<ParentsV1>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
@@ -129,7 +129,7 @@ impl LocaleFallbacker {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1Marker> + DataProvider<ParentsV1Marker> + ?Sized,
+        P: DataProvider<LikelySubtagsForLanguageV1> + DataProvider<ParentsV1> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;

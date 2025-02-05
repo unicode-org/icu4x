@@ -24,7 +24,7 @@ pub use crate::provider::Baked;
 
 /// Currency Extended  data struct.
 #[icu_provider::data_struct(marker(
-    CurrencyExtendedDataV1Marker,
+    CurrencyExtendedDataV1,
     "currency/extended@1",
     attributes_domain = "currency",
 ))]

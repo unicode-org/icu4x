@@ -127,7 +127,7 @@ impl DataPayload<BufferMarker> {
     /// let buffer: &[u8] = br#"{"message":"Hallo Welt"}"#;
     ///
     /// let buffer_payload = DataPayload::from_owned(buffer);
-    /// let payload: DataPayload<HelloWorldV1Marker> = buffer_payload
+    /// let payload: DataPayload<HelloWorldV1> = buffer_payload
     ///     .into_deserialized(BufferFormat::Json)
     ///     .expect("Deserialization successful");
     ///

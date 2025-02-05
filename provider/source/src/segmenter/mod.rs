@@ -864,12 +864,12 @@ implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
 implement!(WordBreakDataV2Marker, "segmenter/word.toml");
 implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
 implement_override!(
-    WordBreakDataOverrideV1Marker,
+    WordBreakDataOverrideV1,
     "segmenter/word.toml",
     ["fi", "sv"]
 );
 implement_override!(
-    SentenceBreakDataOverrideV1Marker,
+    SentenceBreakDataOverrideV1,
     "segmenter/sentence.toml",
     ["el"]
 );
@@ -924,7 +924,7 @@ mod tests {
     #[should_panic]
     fn missing_locale_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<SentenceBreakDataOverrideV1Marker> = provider
+        let response: DataResponse<SentenceBreakDataOverrideV1> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         response.payload.get();

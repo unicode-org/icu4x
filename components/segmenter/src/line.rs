@@ -418,7 +418,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
@@ -468,7 +468,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
@@ -525,7 +525,7 @@ impl LineSegmenter {
     ) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV2Marker>
-            + DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {

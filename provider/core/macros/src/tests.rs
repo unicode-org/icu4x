@@ -29,16 +29,16 @@ fn test_basic() {
 
 #[test]
 fn test_dyn_data_marker() {
-    // #[data_struct(FooV1Marker)]
+    // #[data_struct(FooV1)]
     check(
-        quote!(FooV1Marker),
+        quote!(FooV1),
         quote!(
             pub struct Foo;
         ),
         quote!(
             #[doc = "Marker type for [`Foo`]"]
-            pub struct FooV1Marker;
-            impl icu_provider::DynamicDataMarker for FooV1Marker {
+            pub struct FooV1;
+            impl icu_provider::DynamicDataMarker for FooV1 {
                 type DataStruct = Foo;
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
@@ -49,19 +49,19 @@ fn test_dyn_data_marker() {
 
 #[test]
 fn test_data_marker() {
-    // #[data_struct(BarV1Marker = "demo/bar@1")]
+    // #[data_struct(BarV1 = "demo/bar@1")]
     check(
-        quote!(BarV1Marker = "demo/bar@1"),
+        quote!(BarV1 = "demo/bar@1"),
         quote!(
             pub struct Foo;
         ),
         quote!(
             #[doc = "Marker type for [`Foo`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
-            pub struct BarV1Marker;
-            impl icu_provider::DynamicDataMarker for BarV1Marker {
+            pub struct BarV1;
+            impl icu_provider::DynamicDataMarker for BarV1 {
                 type DataStruct = Foo;
             }
-            impl icu_provider::DataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1 {
                 const INFO: icu_provider::DataMarkerInfo = {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
                     info.is_singleton = false;
@@ -78,28 +78,28 @@ fn test_data_marker() {
 
 #[test]
 fn test_multi_named_keyed_data_marker() {
-    // #[data_struct(FooV1Marker, BarV1Marker = "demo/bar@1", BazV1Marker = "demo/baz@1")]
+    // #[data_struct(FooV1, BarV1 = "demo/bar@1", BazV1 = "demo/baz@1")]
     check(
         quote![
-            FooV1Marker,
-            BarV1Marker = "demo/bar@1",
-            BazV1Marker = "demo/baz@1",
+            FooV1,
+            BarV1 = "demo/bar@1",
+            BazV1 = "demo/baz@1",
         ],
         quote!(
             pub struct Foo<'data>;
         ),
         quote!(
             #[doc = "Marker type for [`Foo`]"]
-            pub struct FooV1Marker;
-            impl icu_provider::DynamicDataMarker for FooV1Marker {
+            pub struct FooV1;
+            impl icu_provider::DynamicDataMarker for FooV1 {
                 type DataStruct = Foo<'static>;
             }
             #[doc = "Marker type for [`Foo`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
-            pub struct BarV1Marker;
-            impl icu_provider::DynamicDataMarker for BarV1Marker {
+            pub struct BarV1;
+            impl icu_provider::DynamicDataMarker for BarV1 {
                 type DataStruct = Foo<'static>;
             }
-            impl icu_provider::DataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1 {
                 const INFO: icu_provider::DataMarkerInfo = {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
                     info.is_singleton = false;
@@ -109,11 +109,11 @@ fn test_multi_named_keyed_data_marker() {
                 };
             }
             #[doc = "Marker type for [`Foo`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)"]
-            pub struct BazV1Marker;
-            impl icu_provider::DynamicDataMarker for BazV1Marker {
+            pub struct BazV1;
+            impl icu_provider::DynamicDataMarker for BazV1 {
                 type DataStruct = Foo<'static>;
             }
-            impl icu_provider::DataMarker for BazV1Marker {
+            impl icu_provider::DataMarker for BazV1 {
                 const INFO: icu_provider::DataMarkerInfo =  {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/baz@1"));
                     info.is_singleton = false;
@@ -130,12 +130,12 @@ fn test_multi_named_keyed_data_marker() {
 
 #[test]
 fn test_attributes() {
-    // #[data_struct(FooV1Marker, marker(BarV1Marker, "demo/bar@1", fallback_by = "region", extension_kw = "ca"))]
+    // #[data_struct(FooV1, marker(BarV1, "demo/bar@1", fallback_by = "region", extension_kw = "ca"))]
     check(
         quote![
-            FooV1Marker,
+            FooV1,
             marker(
-                BarV1Marker,
+                BarV1,
                 "demo/bar@1",
                 fallback_by = "region",
                 singleton,
@@ -147,16 +147,16 @@ fn test_attributes() {
         ),
         quote!(
             #[doc = "Marker type for [`Foo`]"]
-            pub struct FooV1Marker;
-            impl icu_provider::DynamicDataMarker for FooV1Marker {
+            pub struct FooV1;
+            impl icu_provider::DynamicDataMarker for FooV1 {
                 type DataStruct = Foo<'static>;
             }
             #[doc = "Marker type for [`Foo`]: \"demo/bar@1\"\n\n- Fallback priority: region"]
-            pub struct BarV1Marker;
-            impl icu_provider::DynamicDataMarker for BarV1Marker {
+            pub struct BarV1;
+            impl icu_provider::DynamicDataMarker for BarV1 {
                 type DataStruct = Foo<'static>;
             }
-            impl icu_provider::DataMarker for BarV1Marker {
+            impl icu_provider::DataMarker for BarV1 {
                 const INFO: icu_provider::DataMarkerInfo = {
                     let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
                     info.is_singleton = true;

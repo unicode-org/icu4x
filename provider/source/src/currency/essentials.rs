@@ -78,12 +78,12 @@ fn currency_pattern_selection(
     )
 }
 
-impl DataProvider<CurrencyEssentialsV1Marker> for SourceDataProvider {
+impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
-        self.check_req::<CurrencyEssentialsV1Marker>(req)?;
+    ) -> Result<DataResponse<CurrencyEssentialsV1>, DataError> {
+        self.check_req::<CurrencyEssentialsV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
@@ -104,7 +104,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -310,7 +310,7 @@ fn test_basic() {
 
     fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
-        locale: &DataResponse<CurrencyEssentialsV1Marker>,
+        locale: &DataResponse<CurrencyEssentialsV1>,
         placeholders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatternConfig {
@@ -351,7 +351,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let en: DataResponse<CurrencyEssentialsV1Marker> = provider
+    let en: DataResponse<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
@@ -394,7 +394,7 @@ fn test_basic() {
     assert_eq!(en_egp_short, "EGP");
     assert_eq!(en_egp_narrow, "E£");
 
-    let ar_eg: DataResponse<CurrencyEssentialsV1Marker> = provider
+    let ar_eg: DataResponse<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
             ..Default::default()

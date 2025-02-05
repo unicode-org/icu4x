@@ -24,7 +24,7 @@ use yoke::Yokeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let provider =
-///     FixedProvider::<HelloWorldV1Marker>::from_static(&HelloWorld {
+///     FixedProvider::<HelloWorldV1>::from_static(&HelloWorld {
 ///         message: Cow::Borrowed("custom hello world"),
 ///     });
 ///
@@ -38,7 +38,7 @@ use yoke::Yokeable;
 ///
 /// # struct DummyMarker;
 /// # impl DynamicDataMarker for DummyMarker {
-/// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
+/// #     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
 /// # }
 /// # impl DataMarker for DummyMarker {
 /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));

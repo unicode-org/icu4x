@@ -51,11 +51,11 @@ macro_rules! exemplar_chars_impls {
     };
 }
 
-exemplar_chars_impls!(ExemplarCharactersMainV1Marker, main);
-exemplar_chars_impls!(ExemplarCharactersAuxiliaryV1Marker, auxiliary);
-exemplar_chars_impls!(ExemplarCharactersPunctuationV1Marker, punctuation);
-exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
-exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
+exemplar_chars_impls!(ExemplarCharactersMainV1, main);
+exemplar_chars_impls!(ExemplarCharactersAuxiliaryV1, auxiliary);
+exemplar_chars_impls!(ExemplarCharactersPunctuationV1, punctuation);
+exemplar_chars_impls!(ExemplarCharactersNumbersV1, numbers);
+exemplar_chars_impls!(ExemplarCharactersIndexV1, index);
 
 fn string_to_prop_unicodeset(s: &str) -> ExemplarCharactersData<'static> {
     ExemplarCharactersData(CodePointInversionListAndStringList::from_iter(

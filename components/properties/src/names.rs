@@ -775,16 +775,16 @@ macro_rules! impl_value_getter {
 impl_value_getter! {
     impl BidiClass {
         BidiClassNameToValueV2Marker / SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / BidiClassValueToShortNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / BidiClassValueToLongNameV1Marker / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / BidiClassValueToShortNameV1 / SINGLETON_BIDI_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / BidiClassValueToLongNameV1 / SINGLETON_BIDI_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl GeneralCategory {
         GeneralCategoryNameToValueV2Marker / SINGLETON_GENERAL_CATEGORY_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / GeneralCategoryValueToShortNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / GeneralCategoryValueToLongNameV1Marker / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / GeneralCategoryValueToShortNameV1 / SINGLETON_GENERAL_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / GeneralCategoryValueToLongNameV1 / SINGLETON_GENERAL_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
@@ -797,79 +797,79 @@ impl_value_getter! {
 impl_value_getter! {
     impl Script {
         ScriptNameToValueV2Marker / SINGLETON_SCRIPT_NAME_TO_VALUE_V2_MARKER;
-        PropertyScriptToIcuScriptMap / ScriptValueToShortNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / ScriptValueToLongNameV1Marker / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyScriptToIcuScriptMap / ScriptValueToShortNameV1 / SINGLETON_SCRIPT_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / ScriptValueToLongNameV1 / SINGLETON_SCRIPT_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
    impl HangulSyllableType {
         HangulSyllableTypeNameToValueV2Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / HangulSyllableTypeValueToShortNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / HangulSyllableTypeValueToLongNameV1Marker / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / HangulSyllableTypeValueToShortNameV1 / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / HangulSyllableTypeValueToLongNameV1 / SINGLETON_HANGUL_SYLLABLE_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl EastAsianWidth {
         EastAsianWidthNameToValueV2Marker / SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / EastAsianWidthValueToShortNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / EastAsianWidthValueToLongNameV1Marker / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / EastAsianWidthValueToShortNameV1 / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / EastAsianWidthValueToLongNameV1 / SINGLETON_EAST_ASIAN_WIDTH_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl LineBreak {
         LineBreakNameToValueV2Marker / SINGLETON_LINE_BREAK_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / LineBreakValueToShortNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / LineBreakValueToLongNameV1Marker / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / LineBreakValueToShortNameV1 / SINGLETON_LINE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / LineBreakValueToLongNameV1 / SINGLETON_LINE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl GraphemeClusterBreak {
         GraphemeClusterBreakNameToValueV2Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / GraphemeClusterBreakValueToShortNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / GraphemeClusterBreakValueToLongNameV1Marker / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / GraphemeClusterBreakValueToShortNameV1 / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / GraphemeClusterBreakValueToLongNameV1 / SINGLETON_GRAPHEME_CLUSTER_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl WordBreak {
         WordBreakNameToValueV2Marker / SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / WordBreakValueToShortNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / WordBreakValueToLongNameV1Marker / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / WordBreakValueToShortNameV1 / SINGLETON_WORD_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / WordBreakValueToLongNameV1 / SINGLETON_WORD_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl SentenceBreak {
         SentenceBreakNameToValueV2Marker / SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / SentenceBreakValueToShortNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / SentenceBreakValueToLongNameV1Marker / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / SentenceBreakValueToShortNameV1 / SINGLETON_SENTENCE_BREAK_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / SentenceBreakValueToLongNameV1 / SINGLETON_SENTENCE_BREAK_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl CanonicalCombiningClass {
         CanonicalCombiningClassNameToValueV2Marker / SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameSparseMap / CanonicalCombiningClassValueToShortNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameSparseMap / CanonicalCombiningClassValueToLongNameV1Marker / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameSparseMap / CanonicalCombiningClassValueToShortNameV1 / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameSparseMap / CanonicalCombiningClassValueToLongNameV1 / SINGLETON_CANONICAL_COMBINING_CLASS_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl IndicSyllabicCategory {
         IndicSyllabicCategoryNameToValueV2Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / IndicSyllabicCategoryValueToShortNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / IndicSyllabicCategoryValueToLongNameV1Marker / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / IndicSyllabicCategoryValueToShortNameV1 / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / IndicSyllabicCategoryValueToLongNameV1 / SINGLETON_INDIC_SYLLABIC_CATEGORY_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }
 
 impl_value_getter! {
     impl JoiningType {
         JoiningTypeNameToValueV2Marker / SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER;
-        PropertyEnumToValueNameLinearMap / JoiningTypeValueToShortNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
-        PropertyEnumToValueNameLinearMap / JoiningTypeValueToLongNameV1Marker / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / JoiningTypeValueToShortNameV1 / SINGLETON_JOINING_TYPE_VALUE_TO_SHORT_NAME_V1_MARKER;
+        PropertyEnumToValueNameLinearMap / JoiningTypeValueToLongNameV1 / SINGLETON_JOINING_TYPE_VALUE_TO_LONG_NAME_V1_MARKER;
     }
 }

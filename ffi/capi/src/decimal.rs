@@ -112,7 +112,7 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalDigits, DecimalDigitsV1Marker, DecimalSymbolStrsBuilder, DecimalSymbols,
+                DecimalDigits, DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols,
                 DecimalSymbolsV2Marker, GroupingSizes,
             };
             let mut new_digits = ['\0'; 10];
@@ -151,7 +151,7 @@ pub mod ffi {
                     grouping_sizes,
                 });
             let provider_digits =
-                FixedProvider::<DecimalDigitsV1Marker>::from_owned(DecimalDigits { digits });
+                FixedProvider::<DecimalDigitsV1>::from_owned(DecimalDigits { digits });
             let provider = ForkByMarkerProvider::new(provider_symbols, provider_digits);
             Ok(Box::new(FixedDecimalFormatter(
                 icu_decimal::FixedDecimalFormatter::try_new_unstable(

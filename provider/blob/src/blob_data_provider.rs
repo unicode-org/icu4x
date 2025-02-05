@@ -168,7 +168,7 @@ mod test {
     use icu_provider::export::*;
     use icu_provider::hello_world::*;
 
-    #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
+    #[icu_provider::data_struct(marker(HelloSingletonV1, "hello/singleton@1", singleton))]
     #[derive(Clone, Copy)]
     pub struct HelloSingleton;
 
@@ -180,7 +180,7 @@ mod test {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
             exporter
-                .flush(HelloWorldV1Marker::INFO, Default::default())
+                .flush(HelloWorldV1::INFO, Default::default())
                 .unwrap();
 
             exporter.close().unwrap();
@@ -190,7 +190,7 @@ mod test {
 
         assert!(
             matches!(
-                provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
+                provider.load_data(HelloWorldV1::INFO, Default::default()),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..
@@ -208,7 +208,7 @@ mod test {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
             exporter
-                .flush(HelloSingletonV1Marker::INFO, Default::default())
+                .flush(HelloSingletonV1::INFO, Default::default())
                 .unwrap();
 
             exporter.close().unwrap();
@@ -219,7 +219,7 @@ mod test {
         assert!(
             matches!(
                 provider.load_data(
-                    HelloSingletonV1Marker::INFO,
+                    HelloSingletonV1::INFO,
                     DataRequest {
                         id: DataIdentifierBorrowed::for_locale(
                             &icu_locale_core::langid!("de").into()
@@ -237,7 +237,7 @@ mod test {
 
         assert!(
             matches!(
-                provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
+                provider.load_data(HelloSingletonV1::INFO, Default::default()),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..

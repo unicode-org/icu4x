@@ -7,7 +7,7 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::locale::langid;
 use icu::segmenter::provider::{
-    LstmDataFloat32, LstmData, LstmForWordLineAutoV1Marker, LstmMatrix1, LstmMatrix2,
+    LstmDataFloat32, LstmData, LstmForWordLineAutoV1, LstmMatrix1, LstmMatrix2,
     LstmMatrix3, ModelType,
 };
 use icu_provider::prelude::*;
@@ -185,12 +185,12 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
-impl DataProvider<LstmForWordLineAutoV1Marker> for SourceDataProvider {
+impl DataProvider<LstmForWordLineAutoV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
-        self.check_req::<LstmForWordLineAutoV1Marker>(req)?;
+    ) -> Result<DataResponse<LstmForWordLineAutoV1>, DataError> {
+        self.check_req::<LstmForWordLineAutoV1>(req)?;
 
         let lstm_data = self
             .segmenter_lstm()?
@@ -209,7 +209,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<LstmForWordLineAutoV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<LstmForWordLineAutoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         const SUPPORTED: [&DataMarkerAttributes; 4] = [
             DataMarkerAttributes::from_str_or_panic("Burmese_codepoints_exclusive_model4_heavy"),
@@ -240,7 +240,7 @@ mod tests {
             .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
             .unwrap();
         let provider = ForkByMarkerProvider::new(
-            FixedProvider::<LstmForWordLineAutoV1Marker>::from_owned(
+            FixedProvider::<LstmForWordLineAutoV1>::from_owned(
                 raw_data.try_convert().unwrap(),
             ),
             provider.as_any_provider(),

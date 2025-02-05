@@ -17,8 +17,8 @@
 
 pub mod chinese_based;
 pub mod islamic;
-pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
-pub use islamic::{IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker};
+pub use chinese_based::{ChineseCacheV1, DangiCacheV1};
+pub use islamic::{IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1};
 
 use crate::types::IsoWeekday;
 use icu_provider::prelude::*;
@@ -57,12 +57,12 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    ChineseCacheV1Marker::INFO,
-    DangiCacheV1Marker::INFO,
-    IslamicObservationalCacheV1Marker::INFO,
-    IslamicUmmAlQuraCacheV1Marker::INFO,
-    JapaneseErasV1Marker::INFO,
-    JapaneseExtendedErasV1Marker::INFO,
+    ChineseCacheV1::INFO,
+    DangiCacheV1::INFO,
+    IslamicObservationalCacheV1::INFO,
+    IslamicUmmAlQuraCacheV1::INFO,
+    JapaneseErasV1::INFO,
+    JapaneseExtendedErasV1::INFO,
     WeekDataV2Marker::INFO,
 ];
 
@@ -100,8 +100,8 @@ pub struct EraStartDate {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(JapaneseErasV1Marker, "calendar/japanese@1", singleton),
-    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
+    marker(JapaneseErasV1, "calendar/japanese@1", singleton),
+    marker(JapaneseExtendedErasV1, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

@@ -151,15 +151,15 @@ normalization_data_provider!(CompatibilityDecompositionDataV2Marker, "nfkd");
 
 normalization_data_provider!(Uts46DecompositionDataV2Marker, "uts46d");
 
-normalization_tables_provider!(CanonicalDecompositionTablesV1Marker, "nfdex");
+normalization_tables_provider!(CanonicalDecompositionTablesV1, "nfdex");
 
-normalization_tables_provider!(CompatibilityDecompositionTablesV1Marker, "nfkdex");
+normalization_tables_provider!(CompatibilityDecompositionTablesV1, "nfkdex");
 
 // No uts46dex, because that data is also in nfkdex.
 
-normalization_canonical_compositions_provider!(CanonicalCompositionsV1Marker, "compositions");
+normalization_canonical_compositions_provider!(CanonicalCompositionsV1, "compositions");
 
 normalization_non_recursive_decomposition_supplement_provider!(
-    NonRecursiveDecompositionSupplementV1Marker,
+    NonRecursiveDecompositionSupplementV1,
     "decompositionex"
 );

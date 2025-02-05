@@ -18,14 +18,14 @@ impl SourceDataProvider {
         &self,
         marker: DataMarkerInfo,
     ) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        if marker == CardinalV1Marker::INFO {
+        if marker == CardinalV1::INFO {
             self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
                 .as_ref()
-        } else if marker == OrdinalV1Marker::INFO {
+        } else if marker == OrdinalV1::INFO {
             self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
@@ -84,8 +84,8 @@ macro_rules! implement {
     };
 }
 
-implement!(CardinalV1Marker);
-implement!(OrdinalV1Marker);
+implement!(CardinalV1);
+implement!(OrdinalV1);
 
 impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> {
     fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
@@ -104,9 +104,9 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> 
     }
 }
 
-impl DataProvider<PluralRangesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
-        self.check_req::<PluralRangesV1Marker>(req)?;
+impl DataProvider<PluralRangesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1>, DataError> {
+        self.check_req::<PluralRangesV1>(req)?;
         if req.id.locale.is_default() {
             Ok(DataResponse {
                 metadata: Default::default(),
@@ -132,7 +132,7 @@ impl DataProvider<PluralRangesV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<PluralRangesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<PluralRangesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .get_plural_ranges()?
@@ -186,7 +186,7 @@ fn test_basic() {
     let provider = SourceDataProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: DataResponse<CardinalV1Marker> = provider
+    let cs_rules: DataResponse<CardinalV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("cs").into()).as_borrowed(),
             ..Default::default()
@@ -216,7 +216,7 @@ fn test_ranges() {
     let provider = SourceDataProvider::new_testing();
 
     // locale 'sl' seems to have a lot of interesting cases.
-    let plural_ranges: DataResponse<PluralRangesV1Marker> = provider
+    let plural_ranges: DataResponse<PluralRangesV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("sl").into()).as_borrowed(),
             ..Default::default()

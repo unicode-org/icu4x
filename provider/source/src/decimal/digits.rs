@@ -8,9 +8,9 @@ use icu::decimal::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl DataProvider<DecimalDigitsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalDigitsV1Marker>, DataError> {
-        self.check_req::<DecimalDigitsV1Marker>(req)?;
+impl DataProvider<DecimalDigitsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalDigitsV1>, DataError> {
+        self.check_req::<DecimalDigitsV1>(req)?;
 
         let nsname = req.id.marker_attributes.as_str();
 
@@ -29,7 +29,7 @@ impl DataProvider<DecimalDigitsV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<DecimalDigitsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalDigitsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_used_numbers()
     }

@@ -321,14 +321,14 @@ mod tests {
 
     #[test]
     fn test_adapter_months_numeric() {
-        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<GregorianDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
+        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -347,14 +347,14 @@ mod tests {
 
     #[test]
     fn test_adapter_months_map() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
+        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -373,14 +373,14 @@ mod tests {
 
     #[test]
     fn test_adapter_weekdays_abbreviated() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
+        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -399,14 +399,14 @@ mod tests {
 
     #[test]
     fn test_adapter_weekdays_short() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
+        let neo_weekdays_short: DataPayload<WeekdayNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("6s"),
@@ -425,14 +425,14 @@ mod tests {
 
     #[test]
     fn test_adapter_dayperiods() {
-        let symbols: DataPayload<TimeSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<TimeSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
+        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3s"),

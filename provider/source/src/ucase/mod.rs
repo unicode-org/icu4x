@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use crate::SourceDataProvider;
-use icu::casemap::provider::{CaseMapUnfold, CaseMapUnfoldV1Marker, CaseMap, CaseMapV1Marker};
+use icu::casemap::provider::{CaseMapUnfold, CaseMapUnfoldV1, CaseMap, CaseMapV1};
 use icu::collections::codepointtrie::toml::CodePointDataSlice;
 use icu::collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
@@ -15,9 +15,9 @@ use std::convert::TryFrom;
 
 mod ucase_serde;
 
-impl DataProvider<CaseMapV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1Marker>, DataError> {
-        self.check_req::<CaseMapV1Marker>(req)?;
+impl DataProvider<CaseMapV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
+        self.check_req::<CaseMapV1>(req)?;
         let toml = &self
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
@@ -48,15 +48,15 @@ impl DataProvider<CaseMapV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CaseMapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CaseMapV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<CaseMapUnfoldV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapUnfoldV1Marker>, DataError> {
-        self.check_req::<CaseMapUnfoldV1Marker>(req)?;
+impl DataProvider<CaseMapUnfoldV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapUnfoldV1>, DataError> {
+        self.check_req::<CaseMapUnfoldV1>(req)?;
         let toml = &self
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
@@ -75,7 +75,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CaseMapUnfoldV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CaseMapUnfoldV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

@@ -25,12 +25,12 @@ use zerovec::ZeroVec;
 /// operations.
 #[icu_provider::data_struct(
     marker(
-        IslamicObservationalCacheV1Marker,
+        IslamicObservationalCacheV1,
         "calendar/islamicobservationalcache@1",
         singleton
     ),
     marker(
-        IslamicUmmAlQuraCacheV1Marker,
+        IslamicUmmAlQuraCacheV1,
         "calendar/islamicummalquracache@1",
         singleton
     )

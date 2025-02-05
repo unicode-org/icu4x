@@ -52,12 +52,12 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CanonicalCompositionsV1Marker::INFO,
+    CanonicalCompositionsV1::INFO,
     CanonicalDecompositionDataV2Marker::INFO,
-    CanonicalDecompositionTablesV1Marker::INFO,
+    CanonicalDecompositionTablesV1::INFO,
     CompatibilityDecompositionDataV2Marker::INFO,
-    CompatibilityDecompositionTablesV1Marker::INFO,
-    NonRecursiveDecompositionSupplementV1Marker::INFO,
+    CompatibilityDecompositionTablesV1::INFO,
+    NonRecursiveDecompositionSupplementV1::INFO,
     Uts46DecompositionDataV2Marker::INFO,
 ];
 
@@ -96,9 +96,9 @@ pub struct DecompositionData<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(CanonicalDecompositionTablesV1Marker, "normalizer/nfdex@1", singleton),
+    marker(CanonicalDecompositionTablesV1, "normalizer/nfdex@1", singleton),
     marker(
-        CompatibilityDecompositionTablesV1Marker,
+        CompatibilityDecompositionTablesV1,
         "normalizer/nfkdex@1",
         singleton
     )
@@ -124,7 +124,7 @@ pub struct DecompositionTables<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CanonicalCompositionsV1Marker, "normalizer/comp@1", singleton))]
+#[icu_provider::data_struct(marker(CanonicalCompositionsV1, "normalizer/comp@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
@@ -146,7 +146,7 @@ pub struct CanonicalCompositions<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    NonRecursiveDecompositionSupplementV1Marker,
+    NonRecursiveDecompositionSupplementV1,
     "normalizer/decomp@1",
     singleton
 ))]

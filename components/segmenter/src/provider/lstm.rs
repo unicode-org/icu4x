@@ -356,7 +356,7 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    LstmForWordLineAutoV1Marker,
+    LstmForWordLineAutoV1,
     "segmenter/lstm/wl_auto@1",
     attributes_domain = "segmenter"
 ))]

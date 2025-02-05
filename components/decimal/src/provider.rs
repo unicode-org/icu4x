@@ -16,13 +16,13 @@
 //!
 //! ## Get the resolved numbering system
 //!
-//! In a constructor call, the _last_ request for [`DecimalDigitsV1Marker`]
+//! In a constructor call, the _last_ request for [`DecimalDigitsV1`]
 //! contains the resolved numbering system as its attribute:
 //!
 //! ```
 //! use icu_provider::prelude::*;
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::decimal::provider::DecimalDigitsV1Marker;
+//! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::locale::locale;
 //! use std::any::TypeId;
 //! use std::cell::RefCell;
@@ -38,7 +38,7 @@
 //!     P: DataProvider<M>,
 //! {
 //!     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-//!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1Marker>() {
+//!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1>() {
 //!             *self.numbering_system.try_borrow_mut().unwrap() = Some(req.id.marker_attributes.to_owned());
 //!         }
 //!         self.inner.load(req)
@@ -112,7 +112,7 @@ const _: () = {
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDigitsV1Marker::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDigitsV1::INFO];
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
@@ -230,7 +230,7 @@ pub struct DecimalSymbols<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    DecimalDigitsV1Marker,
+    DecimalDigitsV1,
     "decimal/digits@1",
     attributes_domain = "numbering_system"
 ))]

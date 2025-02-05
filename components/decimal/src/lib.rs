@@ -146,7 +146,7 @@ define_preferences!(
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV2Marker>,
-    digits: DataPayload<provider::DecimalDigitsV1Marker>,
+    digits: DataPayload<provider::DecimalDigitsV1>,
 }
 
 impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
@@ -164,7 +164,7 @@ impl FixedDecimalFormatter {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::DecimalSymbolsV2Marker>
-            + DataProvider<provider::DecimalDigitsV1Marker>
+            + DataProvider<provider::DecimalDigitsV1>
             + ?Sized,
     >(
         provider: &D,

@@ -54,8 +54,8 @@
 //! #   ($p:ty) => {
 //! #     use icu_provider::prelude::*;
 //! #     use icu_provider::hello_world::*;
-//! #     impl DataProvider<HelloWorldV1Marker> for $p {
-//! #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+//! #     impl DataProvider<HelloWorldV1> for $p {
+//! #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
 //! #         HelloWorldProvider.load(req)
 //! #       }
 //! #     }
@@ -814,8 +814,8 @@ impl DataExporter for BakedExporter {
 macro_rules! cb {
     ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
-            if marker.id == icu_provider::hello_world::HelloWorldV1Marker::INFO.id {
-                return databake::quote!(icu_provider::hello_world::HelloWorldV1Marker);
+            if marker.id == icu_provider::hello_world::HelloWorldV1::INFO.id {
+                return databake::quote!(icu_provider::hello_world::HelloWorldV1);
             }
 
             $(

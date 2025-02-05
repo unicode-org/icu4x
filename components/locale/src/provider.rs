@@ -53,16 +53,16 @@ const _: () = {
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     AliasesV2Marker::INFO,
-    ExemplarCharactersAuxiliaryV1Marker::INFO,
-    ExemplarCharactersIndexV1Marker::INFO,
-    ExemplarCharactersMainV1Marker::INFO,
-    ExemplarCharactersNumbersV1Marker::INFO,
-    ExemplarCharactersPunctuationV1Marker::INFO,
-    LikelySubtagsExtendedV1Marker::INFO,
-    LikelySubtagsForLanguageV1Marker::INFO,
-    LikelySubtagsForScriptRegionV1Marker::INFO,
-    ParentsV1Marker::INFO,
-    ScriptDirectionV1Marker::INFO,
+    ExemplarCharactersAuxiliaryV1::INFO,
+    ExemplarCharactersIndexV1::INFO,
+    ExemplarCharactersMainV1::INFO,
+    ExemplarCharactersNumbersV1::INFO,
+    ExemplarCharactersPunctuationV1::INFO,
+    LikelySubtagsExtendedV1::INFO,
+    LikelySubtagsForLanguageV1::INFO,
+    LikelySubtagsForScriptRegionV1::INFO,
+    ParentsV1::INFO,
+    ScriptDirectionV1::INFO,
 ];
 
 use alloc::borrow::Cow;
@@ -211,7 +211,7 @@ pub struct Aliases<'data> {
 }
 
 #[icu_provider::data_struct(marker(
-    LikelySubtagsForLanguageV1Marker,
+    LikelySubtagsForLanguageV1,
     "locale/likelysubtags_l@1",
     singleton
 ))]
@@ -257,7 +257,7 @@ pub struct LikelySubtagsForLanguage<'data> {
 }
 
 #[icu_provider::data_struct(marker(
-    LikelySubtagsForScriptRegionV1Marker,
+    LikelySubtagsForScriptRegionV1,
     "locale/likelysubtags_sr@1",
     singleton
 ))]
@@ -301,7 +301,7 @@ pub struct LikelySubtagsForScriptRegion<'data> {
 }
 
 #[icu_provider::data_struct(marker(
-    LikelySubtagsExtendedV1Marker,
+    LikelySubtagsExtendedV1,
     "locale/likelysubtags_ext@1",
     singleton
 ))]
@@ -340,7 +340,7 @@ pub struct LikelySubtagsExtended<'data> {
 }
 
 /// Locale fallback rules derived from CLDR parent locales data.
-#[icu_provider::data_struct(marker(ParentsV1Marker, "locale/parents@1", singleton))]
+#[icu_provider::data_struct(marker(ParentsV1, "locale/parents@1", singleton))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
@@ -353,7 +353,7 @@ pub struct Parents<'data> {
     pub parents: ZeroMap<'data, PotentialUtf8, (Language, Option<Script>, Option<Region>)>,
 }
 
-#[icu_provider::data_struct(marker(ScriptDirectionV1Marker, "locale/script_dir@1", singleton))]
+#[icu_provider::data_struct(marker(ScriptDirectionV1, "locale/script_dir@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
@@ -384,14 +384,14 @@ pub struct ScriptDirection<'data> {
 /// </div>
 #[icu_provider::data_struct(
     marker(
-        ExemplarCharactersAuxiliaryV1Marker,
+        ExemplarCharactersAuxiliaryV1,
         "locale/exemplarchars/auxiliary@1"
     ),
-    marker(ExemplarCharactersIndexV1Marker, "locale/exemplarchars/index@1"),
-    marker(ExemplarCharactersMainV1Marker, "locale/exemplarchars/main@1"),
-    marker(ExemplarCharactersNumbersV1Marker, "locale/exemplarchars/numbers@1"),
+    marker(ExemplarCharactersIndexV1, "locale/exemplarchars/index@1"),
+    marker(ExemplarCharactersMainV1, "locale/exemplarchars/main@1"),
+    marker(ExemplarCharactersNumbersV1, "locale/exemplarchars/numbers@1"),
     marker(
-        ExemplarCharactersPunctuationV1Marker,
+        ExemplarCharactersPunctuationV1,
         "locale/exemplarchars/punctuation@1"
     )
 )]

@@ -182,5 +182,5 @@ where
     type D = DT::D;
     type T = DT::T;
     type Z = Z::Z;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
+    type GluePatternV1 = datetime_marker_helper!(@glue, yes);
 }

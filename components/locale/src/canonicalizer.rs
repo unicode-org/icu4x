@@ -220,8 +220,8 @@ impl LocaleCanonicalizer<LocaleExpander> {
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
-            + DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + DataProvider<LikelySubtagsForLanguageV1>
+            + DataProvider<LikelySubtagsForScriptRegionV1>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_common_unstable(provider)?;
@@ -253,9 +253,9 @@ impl LocaleCanonicalizer<LocaleExpander> {
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2Marker>
-            + DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
-            + DataProvider<LikelySubtagsExtendedV1Marker>
+            + DataProvider<LikelySubtagsForLanguageV1>
+            + DataProvider<LikelySubtagsForScriptRegionV1>
+            + DataProvider<LikelySubtagsExtendedV1>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_extended_unstable(provider)?;

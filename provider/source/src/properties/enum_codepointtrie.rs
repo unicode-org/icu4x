@@ -413,110 +413,110 @@ impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2Marker>
 
 expand!(
     (
-        CanonicalCombiningClassV1Marker,
+        CanonicalCombiningClassV1,
         CanonicalCombiningClassNameToValueV2Marker,
         (
-            sparse: CanonicalCombiningClassValueToShortNameV1Marker,
-            CanonicalCombiningClassValueToLongNameV1Marker
+            sparse: CanonicalCombiningClassValueToShortNameV1,
+            CanonicalCombiningClassValueToLongNameV1
         ),
         "ccc"
     ),
     (
-        GeneralCategoryV1Marker,
+        GeneralCategoryV1,
         GeneralCategoryNameToValueV2Marker,
         (
-            linear: GeneralCategoryValueToShortNameV1Marker,
-            GeneralCategoryValueToLongNameV1Marker
+            linear: GeneralCategoryValueToShortNameV1,
+            GeneralCategoryValueToLongNameV1
         ),
         "gc"
     ),
     (
-        BidiClassV1Marker,
+        BidiClassV1,
         BidiClassNameToValueV2Marker,
         (
-            linear: BidiClassValueToShortNameV1Marker,
-            BidiClassValueToLongNameV1Marker
+            linear: BidiClassValueToShortNameV1,
+            BidiClassValueToLongNameV1
         ),
         "bc"
     ),
     (
-        ScriptV1Marker,
+        ScriptV1,
         ScriptNameToValueV2Marker,
         (
-            linear4: ScriptValueToShortNameV1Marker,
-            ScriptValueToLongNameV1Marker
+            linear4: ScriptValueToShortNameV1,
+            ScriptValueToLongNameV1
         ),
         "sc"
     ),
     (
-        HangulSyllableTypeV1Marker,
+        HangulSyllableTypeV1,
         HangulSyllableTypeNameToValueV2Marker,
         (
-            linear: HangulSyllableTypeValueToShortNameV1Marker,
-            HangulSyllableTypeValueToLongNameV1Marker
+            linear: HangulSyllableTypeValueToShortNameV1,
+            HangulSyllableTypeValueToLongNameV1
         ),
         "hst"
     ),
     (
-        EastAsianWidthV1Marker,
+        EastAsianWidthV1,
         EastAsianWidthNameToValueV2Marker,
         (
-            linear: EastAsianWidthValueToShortNameV1Marker,
-            EastAsianWidthValueToLongNameV1Marker
+            linear: EastAsianWidthValueToShortNameV1,
+            EastAsianWidthValueToLongNameV1
         ),
         "ea"
     ),
     (
-        IndicSyllabicCategoryV1Marker,
+        IndicSyllabicCategoryV1,
         IndicSyllabicCategoryNameToValueV2Marker,
         (
-            linear: IndicSyllabicCategoryValueToShortNameV1Marker,
-            IndicSyllabicCategoryValueToLongNameV1Marker
+            linear: IndicSyllabicCategoryValueToShortNameV1,
+            IndicSyllabicCategoryValueToLongNameV1
         ),
         "InSC"
     ),
     (
-        LineBreakV1Marker,
+        LineBreakV1,
         LineBreakNameToValueV2Marker,
         (
-            linear: LineBreakValueToShortNameV1Marker,
-            LineBreakValueToLongNameV1Marker
+            linear: LineBreakValueToShortNameV1,
+            LineBreakValueToLongNameV1
         ),
         "lb"
     ),
     (
-        GraphemeClusterBreakV1Marker,
+        GraphemeClusterBreakV1,
         GraphemeClusterBreakNameToValueV2Marker,
         (
-            linear: GraphemeClusterBreakValueToShortNameV1Marker,
-            GraphemeClusterBreakValueToLongNameV1Marker
+            linear: GraphemeClusterBreakValueToShortNameV1,
+            GraphemeClusterBreakValueToLongNameV1
         ),
         "GCB"
     ),
     (
-        WordBreakV1Marker,
+        WordBreakV1,
         WordBreakNameToValueV2Marker,
         (
-            linear: WordBreakValueToShortNameV1Marker,
-            WordBreakValueToLongNameV1Marker
+            linear: WordBreakValueToShortNameV1,
+            WordBreakValueToLongNameV1
         ),
         "WB"
     ),
     (
-        SentenceBreakV1Marker,
+        SentenceBreakV1,
         SentenceBreakNameToValueV2Marker,
         (
-            linear: SentenceBreakValueToShortNameV1Marker,
-            SentenceBreakValueToLongNameV1Marker
+            linear: SentenceBreakValueToShortNameV1,
+            SentenceBreakValueToLongNameV1
         ),
         "SB"
     ),
     (
-        JoiningTypeV1Marker,
+        JoiningTypeV1,
         JoiningTypeNameToValueV2Marker,
         (
-            linear: JoiningTypeValueToShortNameV1Marker,
-            JoiningTypeValueToLongNameV1Marker
+            linear: JoiningTypeValueToShortNameV1,
+            JoiningTypeValueToLongNameV1
         ),
         "jt"
     ),

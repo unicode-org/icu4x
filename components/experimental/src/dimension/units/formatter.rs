@@ -15,7 +15,7 @@ use icu_provider::DataPayload;
 
 use super::format::FormattedUnit;
 use super::options::{UnitsFormatterOptions, Width};
-use crate::dimension::provider::units::UnitsDisplayNameV1Marker;
+use crate::dimension::provider::units::UnitsDisplayNameV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
@@ -52,9 +52,9 @@ pub struct UnitsFormatter {
     _options: UnitsFormatterOptions,
 
     // /// Essential data for the units formatter.
-    // essential: DataPayload<UnitsEssentialsV1Marker>,
+    // essential: DataPayload<UnitsEssentialsV1>,
     /// Display name for the units.
-    display_name: DataPayload<UnitsDisplayNameV1Marker>,
+    display_name: DataPayload<UnitsDisplayNameV1>,
 
     /// A [`FixedDecimalFormatter`] to format the unit value.
     fixed_decimal_formatter: FixedDecimalFormatter,
@@ -100,7 +100,7 @@ impl UnitsFormatter {
         unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = UnitsDisplayNameV1Marker::make_locale(prefs.locale_preferences);
+        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
             (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
@@ -140,12 +140,12 @@ impl UnitsFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::units::UnitsDisplayNameV1Marker>
+            + DataProvider<super::super::provider::units::UnitsDisplayNameV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::CardinalV1>,
     {
-        let locale = UnitsDisplayNameV1Marker::make_locale(prefs.locale_preferences);
+        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

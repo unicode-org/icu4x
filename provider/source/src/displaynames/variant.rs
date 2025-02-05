@@ -11,12 +11,12 @@ use icu::locale::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<VariantDisplayNamesV1Marker> for SourceDataProvider {
+impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<VariantDisplayNamesV1Marker>, DataError> {
-        self.check_req::<VariantDisplayNamesV1Marker>(req)?;
+    ) -> Result<DataResponse<VariantDisplayNamesV1>, DataError> {
+        self.check_req::<VariantDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::variant::Resource = self
             .cldr()?
@@ -32,7 +32,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<VariantDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -88,7 +88,7 @@ mod tests {
     fn test_basic_variant_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<VariantDisplayNamesV1Marker> = provider
+        let data: DataPayload<VariantDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()

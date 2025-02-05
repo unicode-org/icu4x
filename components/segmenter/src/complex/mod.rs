@@ -16,18 +16,18 @@ mod lstm;
 use lstm::*;
 
 #[cfg(not(feature = "lstm"))]
-type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1Marker>, core::convert::Infallible>;
+type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1>, core::convert::Infallible>;
 #[cfg(not(feature = "lstm"))]
 type DictOrLstmBorrowed<'a> =
-    Result<&'a DataPayload<UCharDictionaryBreakDataV1Marker>, &'a core::convert::Infallible>;
+    Result<&'a DataPayload<UCharDictionaryBreakDataV1>, &'a core::convert::Infallible>;
 
 #[cfg(feature = "lstm")]
 type DictOrLstm =
-    Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataPayload<LstmForWordLineAutoV1Marker>>;
+    Result<DataPayload<UCharDictionaryBreakDataV1>, DataPayload<LstmForWordLineAutoV1>>;
 #[cfg(feature = "lstm")]
 type DictOrLstmBorrowed<'a> = Result<
-    &'a DataPayload<UCharDictionaryBreakDataV1Marker>,
-    &'a DataPayload<LstmForWordLineAutoV1Marker>,
+    &'a DataPayload<UCharDictionaryBreakDataV1>,
+    &'a DataPayload<LstmForWordLineAutoV1>,
 >;
 
 #[derive(Debug)]
@@ -37,7 +37,7 @@ pub(crate) struct ComplexPayloads {
     km: Option<DictOrLstm>,
     lo: Option<DictOrLstm>,
     th: Option<DictOrLstm>,
-    ja: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    ja: Option<DataPayload<UCharDictionaryBreakDataV1>>,
 }
 
 #[cfg(feature = "lstm")]
@@ -92,19 +92,19 @@ impl ComplexPayloads {
             grapheme: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
-            my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, MY_LSTM)
+            my: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, KM_LSTM)
+            km: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, KM_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, LO_LSTM)
+            lo: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, LO_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, TH_LSTM)
+            th: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, TH_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
@@ -116,21 +116,21 @@ impl ComplexPayloads {
     pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV2Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.payload,
-            my: try_load::<LstmForWordLineAutoV1Marker, D>(provider, MY_LSTM)?
+            my: try_load::<LstmForWordLineAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, D>(provider, KM_LSTM)?
+            km: try_load::<LstmForWordLineAutoV1, D>(provider, KM_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, D>(provider, LO_LSTM)?
+            lo: try_load::<LstmForWordLineAutoV1, D>(provider, LO_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, D>(provider, TH_LSTM)?
+            th: try_load::<LstmForWordLineAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
             ja: None,
@@ -145,35 +145,35 @@ impl ComplexPayloads {
             grapheme: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
-            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            my: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 MY_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            km: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 KM_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            lo: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 LO_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            th: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 TH_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(&crate::provider::Baked, CJ_DICT)
+            ja: try_load::<DictionaryForWordOnlyAutoV1, _>(&crate::provider::Baked, CJ_DICT)
                 .unwrap()
                 .map(DataPayload::cast),
         }
@@ -182,25 +182,25 @@ impl ComplexPayloads {
     pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV2Marker>
-            + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1>
+            + DataProvider<DictionaryForWordOnlyAutoV1>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.payload,
-            my: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, MY_DICT)?
+            my: try_load::<DictionaryForWordLineExtendedV1, D>(provider, MY_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            km: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, KM_DICT)?
+            km: try_load::<DictionaryForWordLineExtendedV1, D>(provider, KM_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            lo: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, LO_DICT)?
+            lo: try_load::<DictionaryForWordLineExtendedV1, D>(provider, LO_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            th: try_load::<DictionaryForWordLineExtendedV1Marker, D>(provider, TH_DICT)?
+            th: try_load::<DictionaryForWordLineExtendedV1, D>(provider, TH_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, CJ_DICT)?
+            ja: try_load::<DictionaryForWordOnlyAutoV1, D>(provider, CJ_DICT)?
                 .map(DataPayload::cast),
         })
     }
@@ -214,23 +214,23 @@ impl ComplexPayloads {
             grapheme: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
-            my: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, MY_LSTM)
+            my: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, KM_LSTM)
+            km: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, KM_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, LO_LSTM)
+            lo: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, LO_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, _>(&crate::provider::Baked, TH_LSTM)
+            th: try_load::<LstmForWordLineAutoV1, _>(&crate::provider::Baked, TH_LSTM)
                 .unwrap()
                 .map(DataPayload::cast)
                 .map(Err),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, _>(&crate::provider::Baked, CJ_DICT)
+            ja: try_load::<DictionaryForWordOnlyAutoV1, _>(&crate::provider::Baked, CJ_DICT)
                 .unwrap()
                 .map(DataPayload::cast),
         }
@@ -240,25 +240,25 @@ impl ComplexPayloads {
     pub(crate) fn try_new_auto<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV2Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1>
+            + DataProvider<DictionaryForWordOnlyAutoV1>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.payload,
-            my: try_load::<LstmForWordLineAutoV1Marker, D>(provider, MY_LSTM)?
+            my: try_load::<LstmForWordLineAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            km: try_load::<LstmForWordLineAutoV1Marker, D>(provider, KM_LSTM)?
+            km: try_load::<LstmForWordLineAutoV1, D>(provider, KM_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            lo: try_load::<LstmForWordLineAutoV1Marker, D>(provider, LO_LSTM)?
+            lo: try_load::<LstmForWordLineAutoV1, D>(provider, LO_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            th: try_load::<LstmForWordLineAutoV1Marker, D>(provider, TH_LSTM)?
+            th: try_load::<LstmForWordLineAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            ja: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, CJ_DICT)?
+            ja: try_load::<DictionaryForWordOnlyAutoV1, D>(provider, CJ_DICT)?
                 .map(DataPayload::cast),
         })
     }
@@ -271,28 +271,28 @@ impl ComplexPayloads {
             grapheme: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
             ),
-            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            my: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 MY_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            km: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 KM_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            lo: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 LO_DICT,
             )
             .unwrap()
             .map(DataPayload::cast)
             .map(Ok),
-            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+            th: try_load::<DictionaryForWordLineExtendedV1, _>(
                 &crate::provider::Baked,
                 TH_DICT,
             )
@@ -305,22 +305,22 @@ impl ComplexPayloads {
 
     pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<DictionaryForWordLineExtendedV1Marker>
+        D: DataProvider<DictionaryForWordLineExtendedV1>
             + DataProvider<GraphemeClusterBreakDataV2Marker>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.payload,
-            my: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, MY_DICT)?
+            my: try_load::<DictionaryForWordLineExtendedV1, _>(provider, MY_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            km: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, KM_DICT)?
+            km: try_load::<DictionaryForWordLineExtendedV1, _>(provider, KM_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            lo: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, LO_DICT)?
+            lo: try_load::<DictionaryForWordLineExtendedV1, _>(provider, LO_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            th: try_load::<DictionaryForWordLineExtendedV1Marker, _>(provider, TH_DICT)?
+            th: try_load::<DictionaryForWordLineExtendedV1, _>(provider, TH_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
             ja: None,

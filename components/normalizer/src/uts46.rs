@@ -8,9 +8,9 @@
 //! This is meant to be used as a building block of an UTS 46
 //! implementation, such as the `idna` crate.
 
-use crate::CanonicalCompositionsV1Marker;
-use crate::CanonicalDecompositionTablesV1Marker;
-use crate::CompatibilityDecompositionTablesV1Marker;
+use crate::CanonicalCompositionsV1;
+use crate::CanonicalDecompositionTablesV1;
+use crate::CompatibilityDecompositionTablesV1;
 use crate::ComposingNormalizer;
 use crate::ComposingNormalizerBorrowed;
 use crate::Uts46DecompositionDataV2Marker;
@@ -164,10 +164,10 @@ impl Uts46Mapper {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<Uts46DecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;

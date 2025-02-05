@@ -13,11 +13,11 @@ use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
-impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
+impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<CurrencyPatternsDataV1Marker>, DataError> {
+    ) -> Result<DataResponse<CurrencyPatternsDataV1>, DataError> {
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
@@ -79,7 +79,7 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<CurrencyPatternsDataV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -96,7 +96,7 @@ fn test_basic() {
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
-    let en: DataPayload<CurrencyPatternsDataV1Marker> = provider
+    let en: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
@@ -129,7 +129,7 @@ fn test_basic() {
         "2 USD"
     );
 
-    let ar: DataPayload<CurrencyPatternsDataV1Marker> = provider
+    let ar: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
@@ -160,7 +160,7 @@ fn test_basic() {
         "2 USD"
     );
 
-    let jp: DataPayload<CurrencyPatternsDataV1Marker> = provider
+    let jp: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),

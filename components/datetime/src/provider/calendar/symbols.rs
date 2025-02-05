@@ -26,19 +26,19 @@ size_test!(DateSymbols, date_symbols_v1_size, 3792);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistDateSymbolsV1Marker, "datetime/buddhist/datesymbols@1"),
-    marker(ChineseDateSymbolsV1Marker, "datetime/chinese/datesymbols@1"),
-    marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),
-    marker(DangiDateSymbolsV1Marker, "datetime/dangi/datesymbols@1"),
-    marker(EthiopianDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1"),
-    marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
-    marker(HebrewDateSymbolsV1Marker, "datetime/hebrew/datesymbols@1"),
-    marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
-    marker(IslamicDateSymbolsV1Marker, "datetime/islamic/datesymbols@1"),
-    marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
-    marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
-    marker(PersianDateSymbolsV1Marker, "datetime/persian/datesymbols@1"),
-    marker(RocDateSymbolsV1Marker, "datetime/roc/datesymbols@1")
+    marker(BuddhistDateSymbolsV1, "datetime/buddhist/datesymbols@1"),
+    marker(ChineseDateSymbolsV1, "datetime/chinese/datesymbols@1"),
+    marker(CopticDateSymbolsV1, "datetime/coptic/datesymbols@1"),
+    marker(DangiDateSymbolsV1, "datetime/dangi/datesymbols@1"),
+    marker(EthiopianDateSymbolsV1, "datetime/ethiopic/datesymbols@1"),
+    marker(GregorianDateSymbolsV1, "datetime/gregory/datesymbols@1"),
+    marker(HebrewDateSymbolsV1, "datetime/hebrew/datesymbols@1"),
+    marker(IndianDateSymbolsV1, "datetime/indian/datesymbols@1"),
+    marker(IslamicDateSymbolsV1, "datetime/islamic/datesymbols@1"),
+    marker(JapaneseDateSymbolsV1, "datetime/japanese/datesymbols@1"),
+    marker(JapaneseExtendedDateSymbolsV1, "datetime/japanext/datesymbols@1"),
+    marker(PersianDateSymbolsV1, "datetime/persian/datesymbols@1"),
+    marker(RocDateSymbolsV1, "datetime/roc/datesymbols@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -69,7 +69,7 @@ size_test!(TimeSymbols, time_symbols_v1_size, 768);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
+#[icu_provider::data_struct(marker(TimeSymbolsV1, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]

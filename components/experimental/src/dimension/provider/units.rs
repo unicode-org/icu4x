@@ -14,7 +14,7 @@ use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
 #[icu_provider::data_struct(marker(
-    UnitsDisplayNameV1Marker,
+    UnitsDisplayNameV1,
     "units/displaynames@1",
     attributes_domain = "units"
 ))]

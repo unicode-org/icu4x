@@ -35,7 +35,7 @@ pub use crate::provider::Baked;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
+#[icu_provider::data_struct(CurrencyEssentialsV1 = "currency/essentials@1")]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

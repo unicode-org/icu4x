@@ -13,8 +13,8 @@ use zerovec::VarZeroVec;
 use crate::cldr_serde::personnames::person_name_format_json_struct::Resource;
 use crate::IterableDataProviderCached;
 
-impl DataProvider<PersonNamesFormatV1Marker> for crate::SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1Marker>, DataError> {
+impl DataProvider<PersonNamesFormatV1> for crate::SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PersonNamesFormatV1>, DataError> {
         let data: &Resource = self
             .cldr()?
             .personnames()
@@ -30,7 +30,7 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<PersonNamesFormatV1Marker> for crate::SourceDataProvider {
+impl IterableDataProviderCached<PersonNamesFormatV1> for crate::SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -158,7 +158,7 @@ mod tests {
     fn test_initial_pattern() -> Result<(), DataError> {
         let provider = crate::SourceDataProvider::new_testing();
 
-        let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
+        let data_payload: DataPayload<PersonNamesFormatV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -181,7 +181,7 @@ mod tests {
     fn test_have_pattern() -> Result<(), DataError> {
         let provider = crate::SourceDataProvider::new_testing();
 
-        let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
+        let data_payload: DataPayload<PersonNamesFormatV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -229,7 +229,7 @@ mod tests {
     fn test_have_pattern_multi_formality() -> Result<(), DataError> {
         let provider = crate::SourceDataProvider::new_testing();
 
-        let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
+        let data_payload: DataPayload<PersonNamesFormatV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("es").into()),
                 ..Default::default()

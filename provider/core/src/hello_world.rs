@@ -43,13 +43,13 @@ impl Default for HelloWorld<'_> {
 
 /// Marker type for [`HelloWorld`].
 #[derive(Debug)]
-pub struct HelloWorldV1Marker;
+pub struct HelloWorldV1;
 
-impl DynamicDataMarker for HelloWorldV1Marker {
+impl DynamicDataMarker for HelloWorldV1 {
     type DataStruct = HelloWorld<'static>;
 }
 
-impl DataMarker for HelloWorldV1Marker {
+impl DataMarker for HelloWorldV1 {
     const INFO: icu_provider::DataMarkerInfo = DataMarkerInfo {
         has_checksum: true,
         ..DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("core/helloworld@1"))
@@ -67,7 +67,7 @@ impl DataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataResponse<HelloWorldV1Marker> =
+/// let german_hello_world: DataResponse<HelloWorldV1> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
@@ -85,7 +85,7 @@ impl DataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let reverse_hello_world: DataResponse<HelloWorldV1Marker> =
+/// let reverse_hello_world: DataResponse<HelloWorldV1> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
 ///             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -147,8 +147,8 @@ impl HelloWorldProvider {
     }
 }
 
-impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+impl DataProvider<HelloWorldV1> for HelloWorldProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
         #[allow(clippy::indexing_slicing)] // binary_search
         let data = Self::DATA
             .iter()
@@ -158,7 +158,7 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
             })
             .map(|(_, _, v)| v)
             .ok_or_else(|| {
-                DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req)
+                DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req)
             })?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(1234),
@@ -167,15 +167,15 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
-impl DryDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+impl DryDataProvider<HelloWorldV1> for HelloWorldProvider {
     fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
         self.load(req).map(|r| r.metadata)
     }
 }
 
-impl DataPayload<HelloWorldV1Marker> {
-    /// Make a [`DataPayload`]`<`[`HelloWorldV1Marker`]`>` from a static string slice.
-    pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1Marker> {
+impl DataPayload<HelloWorldV1> {
+    /// Make a [`DataPayload`]`<`[`HelloWorldV1`]`>` from a static string slice.
+    pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1> {
         DataPayload::from_owned(HelloWorld {
             message: Cow::Borrowed(s),
         })
@@ -184,7 +184,7 @@ impl DataPayload<HelloWorldV1Marker> {
 
 icu_provider::dynutil::impl_dynamic_data_provider!(
     HelloWorldProvider,
-    [HelloWorldV1Marker,],
+    [HelloWorldV1,],
     AnyMarker
 );
 
@@ -202,7 +202,7 @@ icu_provider::dynutil::impl_dynamic_data_provider!(
 ///
 /// let german_hello_world = HelloWorldProvider
 ///     .into_json_provider()
-///     .load_data(HelloWorldV1Marker::INFO, DataRequest {
+///     .load_data(HelloWorldV1::INFO, DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
 ///     })
@@ -219,7 +219,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        marker.match_marker(HelloWorldV1Marker::INFO)?;
+        marker.match_marker(HelloWorldV1::INFO)?;
         let result = HelloWorldProvider.load(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
@@ -237,7 +237,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
     }
 }
 
-impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+impl IterableDataProvider<HelloWorldV1> for HelloWorldProvider {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         #[allow(clippy::unwrap_used)] // hello-world
         Ok(Self::DATA
@@ -253,7 +253,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 }
 
 #[cfg(feature = "export")]
-icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+icu_provider::export::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1,]);
 
 define_preferences!(
     /// Hello World Preferences.
@@ -282,7 +282,7 @@ define_preferences!(
 /// ```
 #[derive(Debug)]
 pub struct HelloWorldFormatter {
-    data: DataPayload<HelloWorldV1Marker>,
+    data: DataPayload<HelloWorldV1>,
 }
 
 /// A formatted hello world message. Implements [`Writeable`].
@@ -316,9 +316,9 @@ impl HelloWorldFormatter {
         prefs: HelloWorldFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<HelloWorldV1Marker>,
+        P: DataProvider<HelloWorldV1>,
     {
-        let locale = HelloWorldV1Marker::make_locale(prefs.locale_preferences);
+        let locale = HelloWorldV1::make_locale(prefs.locale_preferences);
         let data = provider
             .load(DataRequest {
                 id: crate::request::DataIdentifierBorrowed::for_locale(&locale),

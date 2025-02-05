@@ -395,14 +395,14 @@ fn test_check_req() {
     use icu_provider::hello_world::*;
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl DataProvider<HelloWorldV1Marker> for SourceDataProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1> for SourceDataProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
             HelloWorldProvider.load(req)
         }
     }
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl crate::IterableDataProviderCached<HelloWorldV1Marker> for SourceDataProvider {
+    impl crate::IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
         }
@@ -410,13 +410,13 @@ fn test_check_req() {
 
     let provider = SourceDataProvider::new_testing();
     assert!(provider
-        .check_req::<HelloWorldV1Marker>(DataRequest {
+        .check_req::<HelloWorldV1>(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("fi").into()),
             ..Default::default()
         })
         .is_ok());
     assert!(provider
-        .check_req::<HelloWorldV1Marker>(DataRequest {
+        .check_req::<HelloWorldV1>(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("arc").into()),
             ..Default::default()
         })

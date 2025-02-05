@@ -53,10 +53,10 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    names::Bcp47ToIanaMapV1Marker::INFO,
+    names::Bcp47ToIanaMapV1::INFO,
     names::IanaToBcp47MapV3Marker::INFO,
-    windows::WindowsZonesToBcp47MapV1Marker::INFO,
-    ZoneOffsetPeriodV1Marker::INFO,
+    windows::WindowsZonesToBcp47MapV1::INFO,
+    ZoneOffsetPeriodV1::INFO,
 ];
 
 /// TimeZone ID in BCP47 format
@@ -129,7 +129,7 @@ pub const EPOCH: RataDie = RataDie::new(719163);
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    ZoneOffsetPeriodV1Marker,
+    ZoneOffsetPeriodV1,
     "time_zone/offset_period@1",
     singleton
 ))]

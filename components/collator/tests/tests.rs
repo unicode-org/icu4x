@@ -1446,10 +1446,10 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1Marker>::load(
+        DataProvider::<CollationTailoringV1>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
                     prefs.locale_preferences
                 ))
                 .as_borrowed(),
@@ -1469,10 +1469,10 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1Marker>::load(
+        DataProvider::<CollationTailoringV1>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
                     prefs.locale_preferences
                 ))
                 .as_borrowed(),
@@ -1492,10 +1492,10 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1Marker>::load(
+        DataProvider::<CollationTailoringV1>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(CollationTailoringV1Marker::make_locale(
+                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
                     prefs.locale_preferences
                 ))
                 .as_borrowed(),

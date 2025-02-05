@@ -18,9 +18,9 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
-impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
-        self.check_req::<PercentEssentialsV1Marker>(req)?;
+impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1>, DataError> {
+        self.check_req::<PercentEssentialsV1>(req)?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -36,7 +36,7 @@ impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<PercentEssentialsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<PercentEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -229,7 +229,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let en: DataResponse<PercentEssentialsV1Marker> = provider
+    let en: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("en").into()).as_borrowed(),
             ..Default::default()
@@ -241,7 +241,7 @@ fn test_basic() {
     assert_writeable_eq!(en_pattern.unsigned_pattern.interpolate(["123"]), "123%");
     assert_writeable_eq!(en_pattern.signed_pattern.interpolate(["123", "+"]), "+123%");
 
-    let tr: DataResponse<PercentEssentialsV1Marker> = provider
+    let tr: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("tr").into()).as_borrowed(),
             ..Default::default()
@@ -253,7 +253,7 @@ fn test_basic() {
     assert_writeable_eq!(tr_pattern.unsigned_pattern.interpolate(["345"]), "%345");
     assert_writeable_eq!(tr_pattern.signed_pattern.interpolate(["345", "+"]), "+%345");
 
-    let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
+    let ar_eg: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()

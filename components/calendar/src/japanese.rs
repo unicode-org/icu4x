@@ -26,7 +26,7 @@
 
 use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::provider::{EraStartDate, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
+use crate::provider::{EraStartDate, JapaneseErasV1, JapaneseExtendedErasV1};
 use crate::types::Era;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 use icu_provider::prelude::*;
@@ -52,7 +52,7 @@ use tinystr::{tinystr, TinyStr16};
 ///
 /// Future eras will also be added to this type when they are decided.
 ///
-/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1Marker`]
+/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1`]
 /// data (`calendar/japanese@1`).
 ///
 /// # Month codes
@@ -60,7 +60,7 @@ use tinystr::{tinystr, TinyStr16};
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
-    eras: DataPayload<JapaneseErasV1Marker>,
+    eras: DataPayload<JapaneseErasV1>,
 }
 
 /// The [Japanese Calendar] (with historical eras)
@@ -82,7 +82,7 @@ pub struct Japanese {
 /// are used for dates before the first known era era.
 ///
 ///
-/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseExtendedErasV1Marker`]
+/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseExtendedErasV1`]
 /// data (`calendar/japanext@1`).
 #[derive(Clone, Debug, Default)]
 pub struct JapaneseExtended(Japanese);
@@ -120,7 +120,7 @@ impl Japanese {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<JapaneseErasV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
@@ -178,7 +178,7 @@ impl JapaneseExtended {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self(Japanese {

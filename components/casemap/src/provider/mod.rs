@@ -56,9 +56,9 @@ const _: () = {
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1Marker::INFO, CaseMapV1Marker::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1::INFO, CaseMapV1::INFO];
 
-pub use self::unfold::{CaseMapUnfold, CaseMapUnfoldV1Marker};
+pub use self::unfold::{CaseMapUnfold, CaseMapUnfoldV1};
 
 /// This type contains all of the casemapping data
 ///
@@ -71,7 +71,7 @@ pub use self::unfold::{CaseMapUnfold, CaseMapUnfoldV1Marker};
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CaseMapV1Marker, "props/casemap@1", singleton))]
+#[icu_provider::data_struct(marker(CaseMapV1, "props/casemap@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]

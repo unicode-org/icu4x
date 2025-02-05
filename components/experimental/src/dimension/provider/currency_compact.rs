@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 /// Currency Compact  data struct.
-#[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
+#[icu_provider::data_struct(marker(ShortCurrencyCompactV1, "currency/compact@1"))]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

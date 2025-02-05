@@ -11,12 +11,12 @@ use icu::locale::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<ScriptDisplayNamesV1Marker> for SourceDataProvider {
+impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
-        self.check_req::<ScriptDisplayNamesV1Marker>(req)?;
+    ) -> Result<DataResponse<ScriptDisplayNamesV1>, DataError> {
+        self.check_req::<ScriptDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::script::Resource = self
             .cldr()?
@@ -32,7 +32,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<ScriptDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -98,7 +98,7 @@ mod tests {
     fn test_basic_script_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
+        let data: DataPayload<ScriptDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -119,7 +119,7 @@ mod tests {
     fn test_basic_script_short_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
+        let data: DataPayload<ScriptDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
