@@ -123,10 +123,10 @@ impl DataExporter for FilesystemExporter {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_id(marker.id) else {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
         };
-        let mut path_buf = self.root.join(path);
+        let mut path_buf = self.root.join(component).join(marker_name);
         if !id.marker_attributes.is_empty() {
             path_buf.push(id.marker_attributes.as_str());
         }
@@ -148,10 +148,10 @@ impl DataExporter for FilesystemExporter {
     }
 
     fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_id(marker.id) else {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
         };
-        let path_buf = self.root.join(path);
+        let path_buf = self.root.join(component).join(marker_name);
 
         if !path_buf.exists() {
             fs::create_dir_all(&path_buf)
@@ -173,10 +173,10 @@ impl DataExporter for FilesystemExporter {
         payload: &DataPayload<ExportMarker>,
         metadata: FlushMetadata,
     ) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_id(marker.id) else {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
         };
-        let path_buf = self.root.join(path);
+        let path_buf = self.root.join(component).join(marker_name);
 
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = path_buf.parent().unwrap();

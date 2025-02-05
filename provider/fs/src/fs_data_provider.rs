@@ -69,10 +69,10 @@ impl FsDataProvider {
         if marker.is_singleton && !req.id.locale.is_default() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
-        let Some(path) = get_data_marker_id(marker.id) else {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         };
-        let mut path = self.root.join(path);
+        let mut path = self.root.join(component).join(marker_name);
         if !path.exists() {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }

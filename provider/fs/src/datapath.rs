@@ -8,22 +8,22 @@ use std::sync::OnceLock;
 
 macro_rules! cb {
     ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
-        pub(crate) fn get_data_marker_id(marker: DataMarkerId) -> Option<&'static str> {
-            static LOOKUP: OnceLock<HashMap<DataMarkerIdHash, &'static str>> = OnceLock::new();
+        pub(crate) fn get_data_marker_id(marker: DataMarkerId) -> Option<(&'static str, &'static str)> {
+            static LOOKUP: OnceLock<HashMap<DataMarkerIdHash, (&'static str, &'static str)>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
                 [
-                    (data_marker_id!(HelloWorldV1).hashed(), "core/helloworld@1"),
+                    (data_marker_id!(HelloWorldV1).hashed(), ("core", "HelloWorldV1")),
                     $(
-                        (data_marker_id!($marker).hashed(), $path),
+                        (data_marker_id!($marker).hashed(), (stringify!($marker_ty).split(" :: ").skip(1).next().unwrap(), stringify!($marker))),
                     )+
                     $(
-                        (data_marker_id!($emarker).hashed(), $epath),
+                        (data_marker_id!($emarker).hashed(), (stringify!($emarker_ty).split(" :: ").skip(1).next().unwrap(), stringify!($emarker))),
                     )+
                 ]
                 .into_iter()
                 .collect()
             });
-            lookup.get(&marker.hashed()).map(|v| &**v)
+            lookup.get(&marker.hashed()).map(|v| *v)
         }
     }
 }
@@ -35,6 +35,6 @@ fn test_path_to_string() {
     use icu_provider::prelude::*;
     assert_eq!(
         get_data_marker_id(HelloWorldV1::INFO.id).unwrap(),
-        "core/helloworld@1"
+        ("core", "HelloWorldV1")
     );
 }
