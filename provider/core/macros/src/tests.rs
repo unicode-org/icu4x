@@ -63,7 +63,7 @@ fn test_data_marker() {
             }
             impl icu_provider::DataMarker for BarV1 {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(BarV1));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
                     info.has_checksum = false;
@@ -97,7 +97,7 @@ fn test_multi_named_keyed_data_marker() {
             }
             impl icu_provider::DataMarker for BarV1 {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(BarV1));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
                     info.has_checksum = false;
@@ -111,7 +111,7 @@ fn test_multi_named_keyed_data_marker() {
             }
             impl icu_provider::DataMarker for BazV1 {
                 const INFO: icu_provider::DataMarkerInfo =  {
-                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/baz@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(BazV1));
                     info.is_singleton = false;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::default();
                     info.has_checksum = false;
@@ -154,7 +154,7 @@ fn test_attributes() {
             }
             impl icu_provider::DataMarker for BarV1 {
                 const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("demo/bar@1"));
+                    let mut info = icu_provider::DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(BarV1));
                     info.is_singleton = true;
                     info.fallback_config.priority = icu_provider::fallback::LocaleFallbackPriority::Region;
                     info.has_checksum = true;

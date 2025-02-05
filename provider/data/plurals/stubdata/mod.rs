@@ -1,6 +1,6 @@
 // @generated
-include!("plural_ranges_v1.rs.data");
 include!("ordinal_v1.rs.data");
+include!("plural_ranges_v1.rs.data");
 include!("cardinal_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -31,8 +31,8 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_plural_ranges_v1!($provider);
         impl_ordinal_v1!($provider);
+        impl_plural_ranges_v1!($provider);
         impl_cardinal_v1!($provider);
     };
 }
@@ -43,8 +43,8 @@ macro_rules! impl_any_provider {
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.id.hashed() {
-                    h if h == <icu::plurals::provider::PluralRangesV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::plurals::provider::PluralRangesV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::OrdinalV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::plurals::provider::OrdinalV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::plurals::provider::PluralRangesV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::plurals::provider::PluralRangesV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::plurals::provider::CardinalV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::plurals::provider::CardinalV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
                 }

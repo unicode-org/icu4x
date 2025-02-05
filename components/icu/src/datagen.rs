@@ -8,7 +8,7 @@ use alloc::collections::{BTreeMap, BTreeSet};
 use icu_provider::prelude::*;
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
         ///
         /// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
@@ -36,15 +36,15 @@ macro_rules! cb {
             use crate as icu;
             let lookup =
                 [
-                    (icu_provider::marker::data_marker_id!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (icu_provider::marker::data_marker_id!(HelloWorldV1).hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        (icu_provider::marker::data_marker_id!($path).hashed().to_bytes(), Ok(<$marker>::INFO)),
+                        (icu_provider::marker::data_marker_id!($marker).hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        (icu_provider::marker::data_marker_id!($epath).hashed().to_bytes(), Ok(<$emarker>::INFO)),
+                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (icu_provider::marker::data_marker_id!($epath).hashed().to_bytes(), Err($epath)),
+                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
                 ]

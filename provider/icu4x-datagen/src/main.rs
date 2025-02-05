@@ -606,39 +606,39 @@ fn main() -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
-                    <$marker>::INFO,
+                    <$marker_ty>::INFO,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    <$emarker>::INFO,
+                    <$emarker_ty>::INFO,
                 )+
             ]
         }
 
-        fn marker_lookup() -> &'static HashMap<&'static str, Option<DataMarkerInfo>> {
+        fn marker_lookup() -> &'static HashMap<String, Option<DataMarkerInfo>> {
             use std::sync::OnceLock;
-            static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
+            static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
                 [
-                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1::INFO)),
-                    (stringify!(icu_provider::hello_world::HelloWorldV1).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        ($path, Some(<$marker>::INFO)),
-                        (stringify!($marker).split("::").last().unwrap().trim(), Some(<$marker>::INFO)),
+                        (stringify!($marker_ty).replace(' ', ""), Some(<$marker_ty>::INFO)),
+                        (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        ($epath, Some(<$emarker>::INFO)),
+                        (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
                         #[cfg(feature = "experimental")]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), Some(<$emarker>::INFO)),
+                        (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        ($epath, None),
+                        (stringify!($emarker_ty).replace(' ', ""), None),
                         #[cfg(not(feature = "experimental"))]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), None),
+                        (stringify!($emarker).into(), None),
                     )+
 
                 ]
@@ -650,7 +650,7 @@ macro_rules! cb {
         #[test]
         fn test_lookup() {
             assert_eq!(marker_lookup().get("AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
-            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
+            assert_eq!(marker_lookup().get("icu::list::provider::AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 
@@ -661,11 +661,11 @@ macro_rules! cb {
             [
                 icu_provider::hello_world::HelloWorldV1,
                 $(
-                    $marker,
+                    $marker_ty,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    $emarker,
+                    $emarker_ty,
                 )+
             ]
         );

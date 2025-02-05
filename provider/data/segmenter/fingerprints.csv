@@ -1,26 +1,26 @@
-segmenter/dictionary/w_auto@1, <lookup>, 43B, 1 identifiers
-segmenter/dictionary/w_auto@1, <total>, 2007134B, 2007113B, 1 unique payloads
-segmenter/dictionary/w_auto@1, und/cjdict, 2007134B, 2007113B, f7552d2848b39b0d
-segmenter/dictionary/wl_ext@1, <lookup>, 79B, 4 identifiers
-segmenter/dictionary/wl_ext@1, <total>, 1773172B, 1773088B, 4 unique payloads
-segmenter/dictionary/wl_ext@1, und/burmesedict, 457288B, 457267B, d442d2a58499319b
-segmenter/dictionary/wl_ext@1, und/khmerdict, 798398B, 798377B, e1da910a05c02674
-segmenter/dictionary/wl_ext@1, und/laodict, 292484B, 292463B, 13c58c252d049c90
-segmenter/dictionary/wl_ext@1, und/thaidict, 225002B, 224981B, f2d574736bb1a754
-segmenter/grapheme@2, <singleton>, 9836B, 9730B, 48b8793855ce3f6f
-segmenter/line@2, <singleton>, 19872B, 19767B, 765afed5083e597f
-segmenter/lstm/wl_auto@1, <lookup>, 199B, 4 identifiers
-segmenter/lstm/wl_auto@1, <total>, 310517B, 309331B, 4 unique payloads
-segmenter/lstm/wl_auto@1, und/Burmese_codepoints_exclusive_model4_heavy, 91365B, 91070B, 6e46dc061672ffe5
-segmenter/lstm/wl_auto@1, und/Khmer_codepoints_exclusive_model4_heavy, 74665B, 74368B, cc6fe9f66fed196d
-segmenter/lstm/wl_auto@1, und/Lao_codepoints_exclusive_model4_heavy, 72160B, 71863B, 3f52a4025c7d618f
-segmenter/lstm/wl_auto@1, und/Thai_codepoints_exclusive_model4_heavy, 72327B, 72030B, 4486b38238d7c651
-segmenter/sentence/override@1, <lookup>, 35B, 1 identifiers
-segmenter/sentence/override@1, <total>, 332B, 273B, 1 unique payloads
-segmenter/sentence/override@1, el, 332B, 273B, 745d858a06d47385
-segmenter/sentence@2, <singleton>, 14528B, 14422B, da95c51c93946d95
-segmenter/word/override@1, <lookup>, 40B, 2 identifiers
-segmenter/word/override@1, <total>, 556B, 496B, 1 unique payloads
-segmenter/word/override@1, fi, 556B, 496B, e523305ca615559e
-segmenter/word/override@1, sv, -> fi
-segmenter/word@2, <singleton>, 14768B, 14663B, ca0e9def272a3e47
+DictionaryForWordLineExtendedV1, <lookup>, 79B, 4 identifiers
+DictionaryForWordLineExtendedV1, <total>, 1773172B, 1773088B, 4 unique payloads
+DictionaryForWordLineExtendedV1, und/burmesedict, 457288B, 457267B, d442d2a58499319b
+DictionaryForWordLineExtendedV1, und/khmerdict, 798398B, 798377B, e1da910a05c02674
+DictionaryForWordLineExtendedV1, und/laodict, 292484B, 292463B, 13c58c252d049c90
+DictionaryForWordLineExtendedV1, und/thaidict, 225002B, 224981B, f2d574736bb1a754
+DictionaryForWordOnlyAutoV1, <lookup>, 43B, 1 identifiers
+DictionaryForWordOnlyAutoV1, <total>, 2007134B, 2007113B, 1 unique payloads
+DictionaryForWordOnlyAutoV1, und/cjdict, 2007134B, 2007113B, f7552d2848b39b0d
+GraphemeClusterBreakDataV2, <singleton>, 9836B, 9730B, 48b8793855ce3f6f
+LineBreakDataV2, <singleton>, 19872B, 19767B, 765afed5083e597f
+LstmForWordLineAutoV1, <lookup>, 199B, 4 identifiers
+LstmForWordLineAutoV1, <total>, 310517B, 309331B, 4 unique payloads
+LstmForWordLineAutoV1, und/Burmese_codepoints_exclusive_model4_heavy, 91365B, 91070B, 6e46dc061672ffe5
+LstmForWordLineAutoV1, und/Khmer_codepoints_exclusive_model4_heavy, 74665B, 74368B, cc6fe9f66fed196d
+LstmForWordLineAutoV1, und/Lao_codepoints_exclusive_model4_heavy, 72160B, 71863B, 3f52a4025c7d618f
+LstmForWordLineAutoV1, und/Thai_codepoints_exclusive_model4_heavy, 72327B, 72030B, 4486b38238d7c651
+SentenceBreakDataOverrideV1, <lookup>, 35B, 1 identifiers
+SentenceBreakDataOverrideV1, <total>, 332B, 273B, 1 unique payloads
+SentenceBreakDataOverrideV1, el, 332B, 273B, 745d858a06d47385
+SentenceBreakDataV2, <singleton>, 14528B, 14422B, da95c51c93946d95
+WordBreakDataOverrideV1, <lookup>, 40B, 2 identifiers
+WordBreakDataOverrideV1, <total>, 556B, 496B, 1 unique payloads
+WordBreakDataOverrideV1, fi, 556B, 496B, e523305ca615559e
+WordBreakDataOverrideV1, sv, -> fi
+WordBreakDataV2, <singleton>, 14768B, 14663B, ca0e9def272a3e47

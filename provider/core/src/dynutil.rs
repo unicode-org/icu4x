@@ -118,16 +118,16 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 ///     ..Default::default()
 /// }).unwrap();
 ///
-/// # struct DummyMarker;
-/// # impl DynamicDataMarker for DummyMarker {
+/// # struct DummyMarkerV1;
+/// # impl DynamicDataMarker for DummyMarkerV1 {
 /// #     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
 /// # }
-/// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
+/// # impl DataMarker for DummyMarkerV1 {
+/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(DummyMarkerV1));
 /// # }
 /// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
-///     HelloWorldProvider.load_data(DummyMarker::INFO, DataRequest {
+///     HelloWorldProvider.load_data(DummyMarkerV1::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap_err().kind,
@@ -169,14 +169,14 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// }).unwrap();
 ///
 /// // Because of the wildcard, any marker actually works:
-/// struct DummyMarker;
-/// impl DynamicDataMarker for DummyMarker {
+/// struct DummyMarkerV1;
+/// impl DynamicDataMarker for DummyMarkerV1 {
 ///     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
 /// }
-/// impl DataMarker for DummyMarker {
-///     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
+/// impl DataMarker for DummyMarkerV1 {
+///     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!(DummyMarkerV1));
 /// }
-/// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, DataRequest {
+/// HelloWorldProvider.as_any_provider().load_any(DummyMarkerV1::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap();

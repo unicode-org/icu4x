@@ -1,4 +1,4 @@
-time_zone/bcp47_to_iana@1, <singleton>, 7622B, 7600B, 35e1d2b320b41234
-time_zone/iana_to_bcp47@3, <singleton>, 9543B, 9500B, 7218ae639c063764
-time_zone/offset_period@1, <singleton>, 13386B, 13298B, 5a86f6d10f3bf38a
-time_zone/windows_zones_to_bcp47@1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd
+Bcp47ToIanaMapV1, <singleton>, 7622B, 7600B, 35e1d2b320b41234
+IanaToBcp47MapV3, <singleton>, 9543B, 9500B, 7218ae639c063764
+WindowsZonesToBcp47MapV1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd
+ZoneOffsetPeriodV1, <singleton>, 13386B, 13298B, 5a86f6d10f3bf38a

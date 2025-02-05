@@ -454,10 +454,6 @@ mod test {
     // This tests DataProvider borrow semantics with a dummy data provider based on a
     // JSON string. It also exercises most of the data provider code paths.
 
-    /// Key for HelloAlt, used for testing mismatched types
-    const HELLO_ALT_KEY: DataMarkerInfo =
-        DataMarkerInfo::from_id(crate::marker::data_marker_id!("core/helloalt1@1"));
-
     /// A data struct serialization-compatible with HelloWorld used for testing mismatched types
     #[derive(
         Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom,
@@ -468,14 +464,15 @@ mod test {
     }
 
     /// Marker type for [`HelloAlt`].
-    struct HelloAltMarker {}
+    struct HelloAltMarkerV1 {}
 
-    impl DynamicDataMarker for HelloAltMarker {
+    impl DynamicDataMarker for HelloAltMarkerV1 {
         type DataStruct = HelloAlt;
     }
 
-    impl DataMarker for HelloAltMarker {
-        const INFO: DataMarkerInfo = HELLO_ALT_KEY;
+    impl DataMarker for HelloAltMarkerV1 {
+        const INFO: DataMarkerInfo =
+            DataMarkerInfo::from_id(crate::marker::data_marker_id!(HelloAltMarkerV1));
     }
 
     #[derive(Deserialize, Debug, Clone, Default, PartialEq)]
@@ -525,8 +522,8 @@ mod test {
         }
     }
 
-    impl DataProvider<HelloAltMarker> for DataProvider2 {
-        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
+    impl DataProvider<HelloAltMarkerV1> for DataProvider2 {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloAltMarkerV1>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: DataPayload::from_owned(self.data.hello_alt.clone()),
@@ -536,7 +533,7 @@ mod test {
 
     crate::dynutil::impl_dynamic_data_provider!(
         DataProvider2,
-        [HelloWorldV1, HelloAltMarker,],
+        [HelloWorldV1, HelloAltMarkerV1,],
         AnyMarker
     );
 
@@ -563,9 +560,9 @@ mod test {
         provider.load(Default::default()).map(|r| r.payload)
     }
 
-    fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
+    fn get_payload_alt<P: DataProvider<HelloAltMarkerV1> + ?Sized>(
         provider: &P,
-    ) -> Result<DataPayload<HelloAltMarker>, DataError> {
+    ) -> Result<DataPayload<HelloAltMarkerV1>, DataError> {
         provider.load(Default::default()).map(|r| r.payload)
     }
 
@@ -670,7 +667,7 @@ mod test {
     fn test_provider2_dyn_generic_alt() {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
-        let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarker>).unwrap();
+        let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarkerV1>).unwrap();
         assert!(matches!(hello_data.get(), HelloAlt { .. }));
     }
 
@@ -681,7 +678,7 @@ mod test {
         // Request is for v2, but type argument is for v1
         let response: Result<DataResponse<HelloWorldV1>, DataError> = AnyProvider::load_any(
             &provider.as_any_provider(),
-            HELLO_ALT_KEY,
+            HelloAltMarkerV1::INFO,
             Default::default(),
         )
         .unwrap()
@@ -697,10 +694,10 @@ mod test {
 
     fn check_v1_v2<P>(d: &P)
     where
-        P: DataProvider<HelloWorldV1> + DataProvider<HelloAltMarker> + ?Sized,
+        P: DataProvider<HelloWorldV1> + DataProvider<HelloAltMarkerV1> + ?Sized,
     {
         let v1: DataPayload<HelloWorldV1> = d.load(Default::default()).unwrap().payload;
-        let v2: DataPayload<HelloAltMarker> = d.load(Default::default()).unwrap().payload;
+        let v2: DataPayload<HelloAltMarkerV1> = d.load(Default::default()).unwrap().payload;
         if v1.get().message == v2.get().message {
             panic!()
         }

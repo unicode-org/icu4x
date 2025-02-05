@@ -1,177 +1,177 @@
-plurals/cardinal@1, <lookup>, 457B, 110 identifiers
-plurals/cardinal@1, <total>, 6910B, 3077B, 34 unique payloads
-plurals/cardinal@1, af, 135B, 21B, aba9719df257b5da
-plurals/cardinal@1, ak, 135B, 21B, 4842967deaecb34e
-plurals/cardinal@1, am, 150B, 36B, 2fc19d84ee21c7c5
-plurals/cardinal@1, ar, 195B, 85B, 32ecf3467be27628
-plurals/cardinal@1, as, -> am
-plurals/cardinal@1, ast, 150B, 36B, 4761a00e13927b81
-plurals/cardinal@1, az, -> af
-plurals/cardinal@1, be, 225B, 113B, 5744696efb1d2f1b
-plurals/cardinal@1, bg, -> af
-plurals/cardinal@1, bho, -> ak
-plurals/cardinal@1, blo, 150B, 37B, 8c060008b41ef869
-plurals/cardinal@1, bn, -> am
-plurals/cardinal@1, br, 296B, 185B, fc0c2febde2127da
-plurals/cardinal@1, brx, -> af
-plurals/cardinal@1, bs, 270B, 157B, 31542f816625a097
-plurals/cardinal@1, ca, 225B, 112B, c5c596e8934e45fb
-plurals/cardinal@1, ceb, 258B, 145B, a3a1e6ccc63b89c
-plurals/cardinal@1, chr, -> af
-plurals/cardinal@1, cs, 195B, 83B, 112902597d69f2c4
-plurals/cardinal@1, csw, -> ak
-plurals/cardinal@1, cy, 195B, 85B, a2dd7452fe4bae42
-plurals/cardinal@1, da, 173B, 59B, b3acb6b0f29c0b46
-plurals/cardinal@1, de, -> ast
-plurals/cardinal@1, doi, -> am
-plurals/cardinal@1, dsb, 255B, 143B, 2b36e81f37ae056e
-plurals/cardinal@1, ee, -> af
-plurals/cardinal@1, el, -> af
-plurals/cardinal@1, en, -> ast
-plurals/cardinal@1, eo, -> af
-plurals/cardinal@1, es, 210B, 97B, 3f8a82678afd6dc
-plurals/cardinal@1, et, -> ast
-plurals/cardinal@1, eu, -> af
-plurals/cardinal@1, fa, -> am
-plurals/cardinal@1, fi, -> ast
-plurals/cardinal@1, fil, -> ceb
-plurals/cardinal@1, fo, -> af
-plurals/cardinal@1, fr, 218B, 105B, ec2bf5798a6bb5b3
-plurals/cardinal@1, fy, -> ast
-plurals/cardinal@1, ga, 180B, 69B, c8819f8ac3011256
-plurals/cardinal@1, gd, 189B, 77B, 5082f15aa6bdc89f
-plurals/cardinal@1, gl, -> ast
-plurals/cardinal@1, gu, -> am
-plurals/cardinal@1, ha, -> af
-plurals/cardinal@1, he, 210B, 97B, d04d905c4c753abd
-plurals/cardinal@1, hi, -> am
-plurals/cardinal@1, hr, -> bs
-plurals/cardinal@1, hsb, -> dsb
-plurals/cardinal@1, hu, -> af
-plurals/cardinal@1, hy, 143B, 29B, e6ce06b5df17238d
-plurals/cardinal@1, ia, -> ast
-plurals/cardinal@1, is, 195B, 81B, a9d61dd1edba313f
-plurals/cardinal@1, it, -> ca
-plurals/cardinal@1, ka, -> af
-plurals/cardinal@1, kk, -> af
-plurals/cardinal@1, kn, -> am
-plurals/cardinal@1, ks, -> af
-plurals/cardinal@1, ku, -> af
-plurals/cardinal@1, ky, -> af
-plurals/cardinal@1, lb, -> af
-plurals/cardinal@1, lij, -> ast
-plurals/cardinal@1, lt, 195B, 83B, b6fa29fde2093dee
-plurals/cardinal@1, lv, 285B, 172B, cb3f3b805b796f53
-plurals/cardinal@1, mk, 195B, 81B, 73b6baa03dde2fcc
-plurals/cardinal@1, ml, -> af
-plurals/cardinal@1, mn, -> af
-plurals/cardinal@1, mr, -> af
-plurals/cardinal@1, mt, 195B, 84B, a87c0d8fff05f6a2
-plurals/cardinal@1, ne, -> af
-plurals/cardinal@1, nl, -> ast
-plurals/cardinal@1, no, -> af
-plurals/cardinal@1, nso, -> ak
-plurals/cardinal@1, om, -> af
-plurals/cardinal@1, or, -> af
-plurals/cardinal@1, pa, -> ak
-plurals/cardinal@1, pcm, -> am
-plurals/cardinal@1, pl, 300B, 188B, e7bd214cb5268762
-plurals/cardinal@1, prg, -> lv
-plurals/cardinal@1, ps, -> af
-plurals/cardinal@1, pt, 210B, 97B, 17d22114bdf762a5
-plurals/cardinal@1, pt-PT, -> ca
-plurals/cardinal@1, rm, -> af
-plurals/cardinal@1, ro, 210B, 97B, f6a1c4d5529bf243
-plurals/cardinal@1, ru, 300B, 188B, 699f10f971badc2b
-plurals/cardinal@1, sat, 150B, 37B, c500971b2bbf57b1
-plurals/cardinal@1, sc, -> ast
-plurals/cardinal@1, sd, -> af
-plurals/cardinal@1, si, 173B, 59B, 4562ad4490b213ca
-plurals/cardinal@1, sk, -> cs
-plurals/cardinal@1, sl, 225B, 113B, c92a8f8820a50f70
-plurals/cardinal@1, so, -> af
-plurals/cardinal@1, sq, -> af
-plurals/cardinal@1, sr, -> bs
-plurals/cardinal@1, st, -> af
-plurals/cardinal@1, sv, -> ast
-plurals/cardinal@1, sw, -> ast
-plurals/cardinal@1, syr, -> af
-plurals/cardinal@1, ta, -> af
-plurals/cardinal@1, te, -> af
-plurals/cardinal@1, ti, -> ak
-plurals/cardinal@1, tk, -> af
-plurals/cardinal@1, tn, -> af
-plurals/cardinal@1, tr, -> af
-plurals/cardinal@1, ug, -> af
-plurals/cardinal@1, uk, -> ru
-plurals/cardinal@1, und, 120B, 5B, fd5d54cb7ad1d0d8
-plurals/cardinal@1, ur, -> ast
-plurals/cardinal@1, uz, -> af
-plurals/cardinal@1, vec, -> ca
-plurals/cardinal@1, xh, -> af
-plurals/cardinal@1, zu, -> am
-plurals/ordinal@1, <lookup>, 180B, 35 identifiers
-plurals/ordinal@1, <total>, 4417B, 1709B, 24 unique payloads
-plurals/ordinal@1, as, 228B, 117B, 3221161baea5577e
-plurals/ordinal@1, az, 369B, 257B, 3e8d21acf9a0aaf5
-plurals/ordinal@1, be, 166B, 52B, f56a7d564c0b9595
-plurals/ordinal@1, blo, 197B, 85B, b8beac72e03c8bd5
-plurals/ordinal@1, bn, -> as
-plurals/ordinal@1, ca, 173B, 61B, cdeb9d9523af85af
-plurals/ordinal@1, cy, 235B, 125B, 1f06e13363f8e5c
-plurals/ordinal@1, en, 210B, 98B, f2ce5ed60ab994fe
-plurals/ordinal@1, fil, 135B, 21B, aba9719df257b5da
-plurals/ordinal@1, fr, -> fil
-plurals/ordinal@1, ga, -> fil
-plurals/ordinal@1, gd, 189B, 77B, a9a107ebeae1f416
-plurals/ordinal@1, gu, 188B, 77B, e8e5a6796698f4
-plurals/ordinal@1, hi, -> gu
-plurals/ordinal@1, hu, 143B, 29B, 33f8d96dcc94f138
-plurals/ordinal@1, hy, -> fil
-plurals/ordinal@1, it, 159B, 45B, 568a9ac3860058d9
-plurals/ordinal@1, ka, 189B, 76B, 447ae103d4db06a2
-plurals/ordinal@1, kk, 180B, 66B, 68f9a4ad9bb900ec
-plurals/ordinal@1, lij, 159B, 45B, cac8f97db9e0507c
-plurals/ordinal@1, lo, -> fil
-plurals/ordinal@1, mk, 226B, 114B, b42af1f92db35975
-plurals/ordinal@1, mr, 173B, 61B, 26c2f97c6c00c3cc
-plurals/ordinal@1, ms, -> fil
-plurals/ordinal@1, ne, 135B, 21B, 49bb9c63b9916527
-plurals/ordinal@1, or, 204B, 93B, 532183a9700be6f0
-plurals/ordinal@1, ro, -> fil
-plurals/ordinal@1, sc, -> it
-plurals/ordinal@1, sq, 165B, 52B, e0bb45aa319b98c3
-plurals/ordinal@1, sv, 166B, 52B, e169134bf70de652
-plurals/ordinal@1, tk, 158B, 44B, dd0651d3f6a74381
-plurals/ordinal@1, uk, 150B, 36B, 854d4e03c246475e
-plurals/ordinal@1, und, 120B, 5B, fd5d54cb7ad1d0d8
-plurals/ordinal@1, vec, -> it
-plurals/ordinal@1, vi, -> fil
-plurals/ranges@1, <lookup>, 133B, 26 identifiers
-plurals/ranges@1, <total>, 524B, 64B, 10 unique payloads
-plurals/ranges@1, af, 50B, 4B, b13da4e5718e6e33
-plurals/ranges@1, ak, 50B, 4B, 64f93a355ae802c9
-plurals/ranges@1, ar, 58B, 12B, acdc60e8ef6a9005
-plurals/ranges@1, bg, -> af
-plurals/ranges@1, ca, -> af
-plurals/ranges@1, en, -> af
-plurals/ranges@1, es, -> af
-plurals/ranges@1, et, -> af
-plurals/ranges@1, eu, -> af
-plurals/ranges@1, fa, -> ak
-plurals/ranges@1, fi, -> af
-plurals/ranges@1, he, 54B, 8B, 8e788ea76832afed
-plurals/ranges@1, ia, -> af
-plurals/ranges@1, ka, 52B, 6B, cd5f08b151e40f4a
-plurals/ranges@1, lv, 54B, 8B, 5052f668daf1efd6
-plurals/ranges@1, mk, 52B, 6B, 7ddbfa2ae45670db
-plurals/ranges@1, no, -> af
-plurals/ranges@1, or, -> ak
-plurals/ranges@1, pcm, -> af
-plurals/ranges@1, ro, 50B, 4B, e1c66d3ac5206700
-plurals/ranges@1, sd, -> ak
-plurals/ranges@1, si, -> af
-plurals/ranges@1, sl, 56B, 10B, adb2afaf65b6452d
-plurals/ranges@1, sv, -> af
-plurals/ranges@1, und, 48B, 2B, 3a6d9523170345d0
-plurals/ranges@1, ur, -> af
+CardinalV1, <lookup>, 457B, 110 identifiers
+CardinalV1, <total>, 6910B, 3077B, 34 unique payloads
+CardinalV1, af, 135B, 21B, aba9719df257b5da
+CardinalV1, ak, 135B, 21B, 4842967deaecb34e
+CardinalV1, am, 150B, 36B, 2fc19d84ee21c7c5
+CardinalV1, ar, 195B, 85B, 32ecf3467be27628
+CardinalV1, as, -> am
+CardinalV1, ast, 150B, 36B, 4761a00e13927b81
+CardinalV1, az, -> af
+CardinalV1, be, 225B, 113B, 5744696efb1d2f1b
+CardinalV1, bg, -> af
+CardinalV1, bho, -> ak
+CardinalV1, blo, 150B, 37B, 8c060008b41ef869
+CardinalV1, bn, -> am
+CardinalV1, br, 296B, 185B, fc0c2febde2127da
+CardinalV1, brx, -> af
+CardinalV1, bs, 270B, 157B, 31542f816625a097
+CardinalV1, ca, 225B, 112B, c5c596e8934e45fb
+CardinalV1, ceb, 258B, 145B, a3a1e6ccc63b89c
+CardinalV1, chr, -> af
+CardinalV1, cs, 195B, 83B, 112902597d69f2c4
+CardinalV1, csw, -> ak
+CardinalV1, cy, 195B, 85B, a2dd7452fe4bae42
+CardinalV1, da, 173B, 59B, b3acb6b0f29c0b46
+CardinalV1, de, -> ast
+CardinalV1, doi, -> am
+CardinalV1, dsb, 255B, 143B, 2b36e81f37ae056e
+CardinalV1, ee, -> af
+CardinalV1, el, -> af
+CardinalV1, en, -> ast
+CardinalV1, eo, -> af
+CardinalV1, es, 210B, 97B, 3f8a82678afd6dc
+CardinalV1, et, -> ast
+CardinalV1, eu, -> af
+CardinalV1, fa, -> am
+CardinalV1, fi, -> ast
+CardinalV1, fil, -> ceb
+CardinalV1, fo, -> af
+CardinalV1, fr, 218B, 105B, ec2bf5798a6bb5b3
+CardinalV1, fy, -> ast
+CardinalV1, ga, 180B, 69B, c8819f8ac3011256
+CardinalV1, gd, 189B, 77B, 5082f15aa6bdc89f
+CardinalV1, gl, -> ast
+CardinalV1, gu, -> am
+CardinalV1, ha, -> af
+CardinalV1, he, 210B, 97B, d04d905c4c753abd
+CardinalV1, hi, -> am
+CardinalV1, hr, -> bs
+CardinalV1, hsb, -> dsb
+CardinalV1, hu, -> af
+CardinalV1, hy, 143B, 29B, e6ce06b5df17238d
+CardinalV1, ia, -> ast
+CardinalV1, is, 195B, 81B, a9d61dd1edba313f
+CardinalV1, it, -> ca
+CardinalV1, ka, -> af
+CardinalV1, kk, -> af
+CardinalV1, kn, -> am
+CardinalV1, ks, -> af
+CardinalV1, ku, -> af
+CardinalV1, ky, -> af
+CardinalV1, lb, -> af
+CardinalV1, lij, -> ast
+CardinalV1, lt, 195B, 83B, b6fa29fde2093dee
+CardinalV1, lv, 285B, 172B, cb3f3b805b796f53
+CardinalV1, mk, 195B, 81B, 73b6baa03dde2fcc
+CardinalV1, ml, -> af
+CardinalV1, mn, -> af
+CardinalV1, mr, -> af
+CardinalV1, mt, 195B, 84B, a87c0d8fff05f6a2
+CardinalV1, ne, -> af
+CardinalV1, nl, -> ast
+CardinalV1, no, -> af
+CardinalV1, nso, -> ak
+CardinalV1, om, -> af
+CardinalV1, or, -> af
+CardinalV1, pa, -> ak
+CardinalV1, pcm, -> am
+CardinalV1, pl, 300B, 188B, e7bd214cb5268762
+CardinalV1, prg, -> lv
+CardinalV1, ps, -> af
+CardinalV1, pt, 210B, 97B, 17d22114bdf762a5
+CardinalV1, pt-PT, -> ca
+CardinalV1, rm, -> af
+CardinalV1, ro, 210B, 97B, f6a1c4d5529bf243
+CardinalV1, ru, 300B, 188B, 699f10f971badc2b
+CardinalV1, sat, 150B, 37B, c500971b2bbf57b1
+CardinalV1, sc, -> ast
+CardinalV1, sd, -> af
+CardinalV1, si, 173B, 59B, 4562ad4490b213ca
+CardinalV1, sk, -> cs
+CardinalV1, sl, 225B, 113B, c92a8f8820a50f70
+CardinalV1, so, -> af
+CardinalV1, sq, -> af
+CardinalV1, sr, -> bs
+CardinalV1, st, -> af
+CardinalV1, sv, -> ast
+CardinalV1, sw, -> ast
+CardinalV1, syr, -> af
+CardinalV1, ta, -> af
+CardinalV1, te, -> af
+CardinalV1, ti, -> ak
+CardinalV1, tk, -> af
+CardinalV1, tn, -> af
+CardinalV1, tr, -> af
+CardinalV1, ug, -> af
+CardinalV1, uk, -> ru
+CardinalV1, und, 120B, 5B, fd5d54cb7ad1d0d8
+CardinalV1, ur, -> ast
+CardinalV1, uz, -> af
+CardinalV1, vec, -> ca
+CardinalV1, xh, -> af
+CardinalV1, zu, -> am
+OrdinalV1, <lookup>, 180B, 35 identifiers
+OrdinalV1, <total>, 4417B, 1709B, 24 unique payloads
+OrdinalV1, as, 228B, 117B, 3221161baea5577e
+OrdinalV1, az, 369B, 257B, 3e8d21acf9a0aaf5
+OrdinalV1, be, 166B, 52B, f56a7d564c0b9595
+OrdinalV1, blo, 197B, 85B, b8beac72e03c8bd5
+OrdinalV1, bn, -> as
+OrdinalV1, ca, 173B, 61B, cdeb9d9523af85af
+OrdinalV1, cy, 235B, 125B, 1f06e13363f8e5c
+OrdinalV1, en, 210B, 98B, f2ce5ed60ab994fe
+OrdinalV1, fil, 135B, 21B, aba9719df257b5da
+OrdinalV1, fr, -> fil
+OrdinalV1, ga, -> fil
+OrdinalV1, gd, 189B, 77B, a9a107ebeae1f416
+OrdinalV1, gu, 188B, 77B, e8e5a6796698f4
+OrdinalV1, hi, -> gu
+OrdinalV1, hu, 143B, 29B, 33f8d96dcc94f138
+OrdinalV1, hy, -> fil
+OrdinalV1, it, 159B, 45B, 568a9ac3860058d9
+OrdinalV1, ka, 189B, 76B, 447ae103d4db06a2
+OrdinalV1, kk, 180B, 66B, 68f9a4ad9bb900ec
+OrdinalV1, lij, 159B, 45B, cac8f97db9e0507c
+OrdinalV1, lo, -> fil
+OrdinalV1, mk, 226B, 114B, b42af1f92db35975
+OrdinalV1, mr, 173B, 61B, 26c2f97c6c00c3cc
+OrdinalV1, ms, -> fil
+OrdinalV1, ne, 135B, 21B, 49bb9c63b9916527
+OrdinalV1, or, 204B, 93B, 532183a9700be6f0
+OrdinalV1, ro, -> fil
+OrdinalV1, sc, -> it
+OrdinalV1, sq, 165B, 52B, e0bb45aa319b98c3
+OrdinalV1, sv, 166B, 52B, e169134bf70de652
+OrdinalV1, tk, 158B, 44B, dd0651d3f6a74381
+OrdinalV1, uk, 150B, 36B, 854d4e03c246475e
+OrdinalV1, und, 120B, 5B, fd5d54cb7ad1d0d8
+OrdinalV1, vec, -> it
+OrdinalV1, vi, -> fil
+PluralRangesV1, <lookup>, 133B, 26 identifiers
+PluralRangesV1, <total>, 524B, 64B, 10 unique payloads
+PluralRangesV1, af, 50B, 4B, b13da4e5718e6e33
+PluralRangesV1, ak, 50B, 4B, 64f93a355ae802c9
+PluralRangesV1, ar, 58B, 12B, acdc60e8ef6a9005
+PluralRangesV1, bg, -> af
+PluralRangesV1, ca, -> af
+PluralRangesV1, en, -> af
+PluralRangesV1, es, -> af
+PluralRangesV1, et, -> af
+PluralRangesV1, eu, -> af
+PluralRangesV1, fa, -> ak
+PluralRangesV1, fi, -> af
+PluralRangesV1, he, 54B, 8B, 8e788ea76832afed
+PluralRangesV1, ia, -> af
+PluralRangesV1, ka, 52B, 6B, cd5f08b151e40f4a
+PluralRangesV1, lv, 54B, 8B, 5052f668daf1efd6
+PluralRangesV1, mk, 52B, 6B, 7ddbfa2ae45670db
+PluralRangesV1, no, -> af
+PluralRangesV1, or, -> ak
+PluralRangesV1, pcm, -> af
+PluralRangesV1, ro, 50B, 4B, e1c66d3ac5206700
+PluralRangesV1, sd, -> ak
+PluralRangesV1, si, -> af
+PluralRangesV1, sl, 56B, 10B, adb2afaf65b6452d
+PluralRangesV1, sv, -> af
+PluralRangesV1, und, 48B, 2B, 3a6d9523170345d0
+PluralRangesV1, ur, -> af
