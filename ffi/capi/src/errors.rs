@@ -295,6 +295,13 @@ impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterBuildOr
 }
 
 #[cfg(feature = "datetime")]
+impl From<icu_provider::DataError> for DateTimeFormatterBuildOrLoadError {
+    fn from(e: icu_provider::DataError) -> Self {
+        DateTimeFormatterLoadError::from(e).into()
+    }
+}
+
+#[cfg(feature = "datetime")]
 impl From<icu_datetime::DateTimeWriteError> for DateTimeFormatError {
     fn from(value: icu_datetime::DateTimeWriteError) -> Self {
         match value {

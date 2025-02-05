@@ -13,8 +13,10 @@ pub mod ffi {
     use icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet;
     use writeable::Writeable;
 
-    use crate::{date::ffi::IsoDate, time::ffi::Time, datetime_formatter::ffi::DateTimeLength};
+    use crate::{date::ffi::IsoDate, datetime_formatter::ffi::DateTimeLength, time::ffi::Time};
 
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
         errors::ffi::{DateTimeFormatterBuildOrLoadError, DateTimeFormatterLoadError},
@@ -111,6 +113,26 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_builder_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DateTimeFormatter::try_new, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_from_builder_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            builder: DateTimeFieldSetBuilder,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterBuildOrLoadError> {
+            let prefs = (&locale.0).into();
+            let builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
+            let options = builder.build_composite_datetime()?;
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
+        }
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
         #[cfg(feature = "compiled_data")]
@@ -129,6 +151,30 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_dt_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::DT::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
+            )))
+        }
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
         #[cfg(feature = "compiled_data")]
@@ -144,6 +190,30 @@ pub mod ffi {
                 .with_time_precision(time_precision.into());
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_mdt_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::MDT::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
             )))
         }
 
@@ -167,6 +237,32 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ymdt_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+            year_style: YearStyle,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::YMDT::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into())
+                .with_year_style(year_style.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
+            )))
+        }
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
         #[cfg(feature = "compiled_data")]
@@ -185,6 +281,30 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_det_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::DET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
+            )))
+        }
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
         #[cfg(feature = "compiled_data")]
@@ -200,6 +320,30 @@ pub mod ffi {
                 .with_time_precision(time_precision.into());
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_mdet_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::MDET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
             )))
         }
 
@@ -223,6 +367,32 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_ymdet_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+            year_style: YearStyle,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::YMDET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into())
+                .with_year_style(year_style.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
+            )))
+        }
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
         #[cfg(feature = "compiled_data")]
@@ -238,6 +408,30 @@ pub mod ffi {
                 .with_time_precision(time_precision.into());
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+            )))
+        }
+
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_et_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: DateTimeLength,
+            time_precision: TimePrecision,
+            alignment: DateTimeAlignment,
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let options = icu_datetime::fieldsets::ET::with_length(length.into())
+                .with_alignment(alignment.into())
+                .with_time_precision(time_precision.into());
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?
+                .with_fset(),
             )))
         }
 

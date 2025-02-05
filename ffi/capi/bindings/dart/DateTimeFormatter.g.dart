@@ -34,11 +34,34 @@ final class DateTimeFormatter implements ffi.Finalizable {
     return DateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DateTimeFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
+  factory DateTimeFormatter.fromBuilderWithProvider(DataProvider provider, Locale locale, DateTimeFieldSetBuilder builder) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(provider._ffi, locale._ffi, builder._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatter.dt(Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
     final result = _icu4x_DateTimeFormatter_create_dt_mv1(locale._ffi, length.index, timePrecision.index, alignment.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.dtWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
+    final result = _icu4x_DateTimeFormatter_create_dt_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -56,11 +79,33 @@ final class DateTimeFormatter implements ffi.Finalizable {
     return DateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `MDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.mdtWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
+    final result = _icu4x_DateTimeFormatter_create_mdt_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatter.ymdt(Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment, YearStyle yearStyle) {
     final result = _icu4x_DateTimeFormatter_create_ymdt_mv1(locale._ffi, length.index, timePrecision.index, alignment.index, yearStyle.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.ymdtWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment, YearStyle yearStyle) {
+    final result = _icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index, yearStyle.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -78,11 +123,33 @@ final class DateTimeFormatter implements ffi.Finalizable {
     return DateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `DET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.detWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
+    final result = _icu4x_DateTimeFormatter_create_det_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatter.mdet(Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
     final result = _icu4x_DateTimeFormatter_create_mdet_mv1(locale._ffi, length.index, timePrecision.index, alignment.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.mdetWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
+    final result = _icu4x_DateTimeFormatter_create_mdet_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -100,11 +167,33 @@ final class DateTimeFormatter implements ffi.Finalizable {
     return DateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.ymdetWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment, YearStyle yearStyle) {
+    final result = _icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index, yearStyle.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatter.et(Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
     final result = _icu4x_DateTimeFormatter_create_et_mv1(locale._ffi, length.index, timePrecision.index, alignment.index);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return DateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory DateTimeFormatter.etWithProvider(DataProvider provider, Locale locale, DateTimeLength length, TimePrecision timePrecision, DateTimeAlignment alignment) {
+    final result = _icu4x_DateTimeFormatter_create_et_with_provider_mv1(provider._ffi, locale._ffi, length.index, timePrecision.index, alignment.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -130,9 +219,19 @@ external void _icu4x_DateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_from_builder_mv1(ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
 
 @meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
+
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_dt_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_dt_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_dt_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_dt_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_mdt_mv1')
@@ -140,9 +239,19 @@ external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_dt_mv1(ffi.Pointer<f
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_mdt_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
 
 @meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_mdt_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_mdt_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
+
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_ymdt_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_ymdt_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment, int yearStyle);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment, int yearStyle);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_det_mv1')
@@ -150,9 +259,19 @@ external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_ymdt_mv1(ffi.Pointer
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_det_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
 
 @meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_det_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_det_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
+
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_mdet_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_mdet_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_mdet_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_mdet_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_ymdet_mv1')
@@ -160,9 +279,19 @@ external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_mdet_mv1(ffi.Pointer
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_ymdet_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment, int yearStyle);
 
 @meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment, int yearStyle);
+
+@meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_et_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_et_mv1(ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_et_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_et_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length, int timePrecision, int alignment);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_format_iso_mv1')

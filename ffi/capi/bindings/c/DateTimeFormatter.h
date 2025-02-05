@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "DataProvider.d.h"
 #include "DateTimeAlignment.d.h"
 #include "DateTimeFieldSetBuilder.d.h"
 #include "DateTimeFormatterBuildOrLoadError.d.h"
@@ -28,26 +29,50 @@
 typedef struct icu4x_DateTimeFormatter_create_from_builder_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_mv1_result;
 icu4x_DateTimeFormatter_create_from_builder_mv1_result icu4x_DateTimeFormatter_create_from_builder_mv1(const Locale* locale, DateTimeFieldSetBuilder builder);
 
+typedef struct icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeFieldSetBuilder builder);
+
 typedef struct icu4x_DateTimeFormatter_create_dt_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_dt_mv1_result;
 icu4x_DateTimeFormatter_create_dt_mv1_result icu4x_DateTimeFormatter_create_dt_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
+
+typedef struct icu4x_DateTimeFormatter_create_dt_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_dt_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_dt_with_provider_mv1_result icu4x_DateTimeFormatter_create_dt_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
 
 typedef struct icu4x_DateTimeFormatter_create_mdt_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdt_mv1_result;
 icu4x_DateTimeFormatter_create_mdt_mv1_result icu4x_DateTimeFormatter_create_mdt_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
 
+typedef struct icu4x_DateTimeFormatter_create_mdt_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdt_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_mdt_with_provider_mv1_result icu4x_DateTimeFormatter_create_mdt_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
+
 typedef struct icu4x_DateTimeFormatter_create_ymdt_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdt_mv1_result;
 icu4x_DateTimeFormatter_create_ymdt_mv1_result icu4x_DateTimeFormatter_create_ymdt_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment, YearStyle year_style);
+
+typedef struct icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1_result icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment, YearStyle year_style);
 
 typedef struct icu4x_DateTimeFormatter_create_det_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_det_mv1_result;
 icu4x_DateTimeFormatter_create_det_mv1_result icu4x_DateTimeFormatter_create_det_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
 
+typedef struct icu4x_DateTimeFormatter_create_det_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_det_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_det_with_provider_mv1_result icu4x_DateTimeFormatter_create_det_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
+
 typedef struct icu4x_DateTimeFormatter_create_mdet_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdet_mv1_result;
 icu4x_DateTimeFormatter_create_mdet_mv1_result icu4x_DateTimeFormatter_create_mdet_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
+
+typedef struct icu4x_DateTimeFormatter_create_mdet_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdet_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_mdet_with_provider_mv1_result icu4x_DateTimeFormatter_create_mdet_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
 
 typedef struct icu4x_DateTimeFormatter_create_ymdet_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdet_mv1_result;
 icu4x_DateTimeFormatter_create_ymdet_mv1_result icu4x_DateTimeFormatter_create_ymdet_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment, YearStyle year_style);
 
+typedef struct icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1_result icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment, YearStyle year_style);
+
 typedef struct icu4x_DateTimeFormatter_create_et_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_mv1_result;
 icu4x_DateTimeFormatter_create_et_mv1_result icu4x_DateTimeFormatter_create_et_mv1(const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
+
+typedef struct icu4x_DateTimeFormatter_create_et_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_with_provider_mv1_result;
+icu4x_DateTimeFormatter_create_et_with_provider_mv1_result icu4x_DateTimeFormatter_create_et_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length, TimePrecision time_precision, DateTimeAlignment alignment);
 
 void icu4x_DateTimeFormatter_format_iso_mv1(const DateTimeFormatter* self, const IsoDate* date, const Time* time, DiplomatWrite* write);
 

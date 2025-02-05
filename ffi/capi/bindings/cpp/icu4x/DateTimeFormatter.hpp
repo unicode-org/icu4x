@@ -10,6 +10,7 @@
 #include <memory>
 #include <optional>
 #include "../diplomat_runtime.hpp"
+#include "DataProvider.hpp"
 #include "DateTimeAlignment.hpp"
 #include "DateTimeFieldSetBuilder.hpp"
 #include "DateTimeFormatterBuildOrLoadError.hpp"
@@ -29,26 +30,50 @@ namespace capi {
     typedef struct icu4x_DateTimeFormatter_create_from_builder_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_mv1_result;
     icu4x_DateTimeFormatter_create_from_builder_mv1_result icu4x_DateTimeFormatter_create_from_builder_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
     
+    typedef struct icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
+    
     typedef struct icu4x_DateTimeFormatter_create_dt_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_dt_mv1_result;
     icu4x_DateTimeFormatter_create_dt_mv1_result icu4x_DateTimeFormatter_create_dt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
+    
+    typedef struct icu4x_DateTimeFormatter_create_dt_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_dt_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_dt_with_provider_mv1_result icu4x_DateTimeFormatter_create_dt_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
     
     typedef struct icu4x_DateTimeFormatter_create_mdt_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdt_mv1_result;
     icu4x_DateTimeFormatter_create_mdt_mv1_result icu4x_DateTimeFormatter_create_mdt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
     
+    typedef struct icu4x_DateTimeFormatter_create_mdt_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdt_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_mdt_with_provider_mv1_result icu4x_DateTimeFormatter_create_mdt_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
+    
     typedef struct icu4x_DateTimeFormatter_create_ymdt_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdt_mv1_result;
     icu4x_DateTimeFormatter_create_ymdt_mv1_result icu4x_DateTimeFormatter_create_ymdt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment, icu4x::capi::YearStyle year_style);
+    
+    typedef struct icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1_result icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment, icu4x::capi::YearStyle year_style);
     
     typedef struct icu4x_DateTimeFormatter_create_det_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_det_mv1_result;
     icu4x_DateTimeFormatter_create_det_mv1_result icu4x_DateTimeFormatter_create_det_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
     
+    typedef struct icu4x_DateTimeFormatter_create_det_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_det_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_det_with_provider_mv1_result icu4x_DateTimeFormatter_create_det_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
+    
     typedef struct icu4x_DateTimeFormatter_create_mdet_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdet_mv1_result;
     icu4x_DateTimeFormatter_create_mdet_mv1_result icu4x_DateTimeFormatter_create_mdet_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
+    
+    typedef struct icu4x_DateTimeFormatter_create_mdet_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_mdet_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_mdet_with_provider_mv1_result icu4x_DateTimeFormatter_create_mdet_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
     
     typedef struct icu4x_DateTimeFormatter_create_ymdet_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdet_mv1_result;
     icu4x_DateTimeFormatter_create_ymdet_mv1_result icu4x_DateTimeFormatter_create_ymdet_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment, icu4x::capi::YearStyle year_style);
     
+    typedef struct icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1_result icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment, icu4x::capi::YearStyle year_style);
+    
     typedef struct icu4x_DateTimeFormatter_create_et_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_mv1_result;
     icu4x_DateTimeFormatter_create_et_mv1_result icu4x_DateTimeFormatter_create_et_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
+    
+    typedef struct icu4x_DateTimeFormatter_create_et_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_with_provider_mv1_result;
+    icu4x_DateTimeFormatter_create_et_with_provider_mv1_result icu4x_DateTimeFormatter_create_et_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length, icu4x::capi::TimePrecision time_precision, icu4x::capi::DateTimeAlignment alignment);
     
     void icu4x_DateTimeFormatter_format_iso_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
     
@@ -65,6 +90,13 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTi
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
 }
 
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::DateTimeFormatter::create_from_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
+
 inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_dt(const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
   auto result = icu4x::capi::icu4x_DateTimeFormatter_create_dt_mv1(locale.AsFFI(),
     length.AsFFI(),
@@ -73,8 +105,26 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTi
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_dt_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_dt_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
 inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_mdt(const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
   auto result = icu4x::capi::icu4x_DateTimeFormatter_create_mdt_mv1(locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_mdt_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_mdt_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
     length.AsFFI(),
     time_precision.AsFFI(),
     alignment.AsFFI());
@@ -90,6 +140,16 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTi
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_ymdt_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment, icu4x::YearStyle year_style) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_ymdt_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI(),
+    year_style.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
 inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_det(const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
   auto result = icu4x::capi::icu4x_DateTimeFormatter_create_det_mv1(locale.AsFFI(),
     length.AsFFI(),
@@ -98,8 +158,26 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTi
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_det_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_det_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
 inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_mdet(const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
   auto result = icu4x::capi::icu4x_DateTimeFormatter_create_mdet_mv1(locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_mdet_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_mdet_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
     length.AsFFI(),
     time_precision.AsFFI(),
     alignment.AsFFI());
@@ -115,8 +193,27 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTi
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_ymdet_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment, icu4x::YearStyle year_style) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_ymdet_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI(),
+    year_style.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
 inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_et(const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
   auto result = icu4x::capi::icu4x_DateTimeFormatter_create_et_mv1(locale.AsFFI(),
+    length.AsFFI(),
+    time_precision.AsFFI(),
+    alignment.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_et_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length, icu4x::TimePrecision time_precision, icu4x::DateTimeAlignment alignment) {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_et_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
     length.AsFFI(),
     time_precision.AsFFI(),
     alignment.AsFFI());
