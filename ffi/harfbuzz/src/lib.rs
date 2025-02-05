@@ -41,13 +41,12 @@ use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
-    CanonicalCompositionsV1, CanonicalDecompositionDataV2Marker,
-    CanonicalDecompositionTablesV1, NonRecursiveDecompositionSupplementV1,
+    CanonicalCompositionsV1, CanonicalDecompositionDataV2, CanonicalDecompositionTablesV1,
+    NonRecursiveDecompositionSupplementV1,
 };
 use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
 use icu_properties::provider::{
-    BidiMirroringGlyphV1, GeneralCategoryV1, ScriptV1,
-    ScriptValueToShortNameV1,
+    BidiMirroringGlyphV1, GeneralCategoryV1, ScriptV1, ScriptValueToShortNameV1,
 };
 use icu_properties::{CodePointMapData, PropertyNamesShort};
 use icu_provider::prelude::*;
@@ -221,7 +220,7 @@ impl CombiningClassData {
     /// Construct a new [`CombiningClassData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2Marker> + ?Sized,
+        D: DataProvider<CanonicalDecompositionDataV2> + ?Sized,
     {
         let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
 
@@ -398,7 +397,7 @@ impl DecomposeData {
     /// Construct a new [`DecomposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2Marker>
+        D: DataProvider<CanonicalDecompositionDataV2>
             + DataProvider<NonRecursiveDecompositionSupplementV1>
             + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,

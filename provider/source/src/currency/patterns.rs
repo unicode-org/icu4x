@@ -14,10 +14,7 @@ use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
 impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyPatternsDataV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyPatternsDataV1>, DataError> {
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()

@@ -1,5 +1,5 @@
 // @generated
-include!("week_data_v2_marker.rs.data");
+include!("week_data_v2.rs.data");
 include!("japanese_eras_v1.rs.data");
 include!("islamic_observational_cache_v1.rs.data");
 include!("dangi_cache_v1.rs.data");
@@ -35,7 +35,7 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_week_data_v2_marker!($provider);
+        impl_week_data_v2!($provider);
         impl_japanese_eras_v1!($provider);
         impl_islamic_observational_cache_v1!($provider);
         impl_dangi_cache_v1!($provider);
@@ -51,7 +51,7 @@ macro_rules! impl_any_provider {
         impl icu_provider::any::AnyProvider for $provider {
             fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match marker.id.hashed() {
-                    h if h == <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV2Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::calendar::provider::WeekDataV2 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV2>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::JapaneseErasV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseErasV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::IslamicObservationalCacheV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::IslamicObservationalCacheV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::calendar::provider::DangiCacheV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::DangiCacheV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),

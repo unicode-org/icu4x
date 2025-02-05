@@ -157,9 +157,7 @@ impl DataProvider<HelloWorldV1> for HelloWorldProvider {
                     && *a == req.id.marker_attributes.as_str()
             })
             .map(|(_, _, v)| v)
-            .ok_or_else(|| {
-                DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req)
-            })?;
+            .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(1234),
             payload: DataPayload::from_static_str(data),
@@ -182,11 +180,7 @@ impl DataPayload<HelloWorldV1> {
     }
 }
 
-icu_provider::dynutil::impl_dynamic_data_provider!(
-    HelloWorldProvider,
-    [HelloWorldV1,],
-    AnyMarker
-);
+icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1,], AnyMarker);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.

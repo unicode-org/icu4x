@@ -10,10 +10,7 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl DataProvider<CurrencyExtendedDataV1> for crate::SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyExtendedDataV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyExtendedDataV1>, DataError> {
         self.check_req::<CurrencyExtendedDataV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =

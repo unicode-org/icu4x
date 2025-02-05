@@ -271,23 +271,17 @@ mod tests {
     #[test]
     fn test_export_marker_partial_eq() {
         let payload1: DataPayload<ExportMarker> =
-            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(
-                HelloWorld {
-                    message: "abc".into(),
-                },
-            ));
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
+                message: "abc".into(),
+            }));
         let payload2: DataPayload<ExportMarker> =
-            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(
-                HelloWorld {
-                    message: "abc".into(),
-                },
-            ));
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
+                message: "abc".into(),
+            }));
         let payload3: DataPayload<ExportMarker> =
-            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(
-                HelloWorld {
-                    message: "def".into(),
-                },
-            ));
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
+                message: "def".into(),
+            }));
 
         assert_eq!(payload1, payload2);
         assert_eq!(payload2, payload1);

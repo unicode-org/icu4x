@@ -13,10 +13,7 @@ use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
 
 impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LanguageDisplayNamesV1>, DataError> {
         self.check_req::<LanguageDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self
@@ -31,10 +28,7 @@ impl DataProvider<LanguageDisplayNamesV1> for SourceDataProvider {
     }
 }
 impl DataProvider<LocaleDisplayNamesV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LocaleDisplayNamesV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleDisplayNamesV1>, DataError> {
         self.check_req::<LocaleDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::language::Resource = self

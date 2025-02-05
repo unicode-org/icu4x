@@ -9,10 +9,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
-pub(crate) fn convert_dates(
-    other: &cldr_serde::ca::Dates,
-    calendar: &str,
-) -> DateSymbols<'static> {
+pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
     let eras = if let Some(ref eras) = other.eras {
         convert_eras(eras, calendar)
     } else {

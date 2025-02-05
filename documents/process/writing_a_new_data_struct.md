@@ -163,11 +163,11 @@ The above example is an abridged definition of the Serde structure corresponding
 [*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
 
 ```rust,compile_fail
-impl DataProvider<FooV1Marker> for SourceDataProvider {
+impl DataProvider<FooV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<FooV1Marker>, DataError> {
+    ) -> Result<DataResponse<FooV1>, DataError> {
         // Use the data inside self and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
@@ -175,7 +175,7 @@ impl DataProvider<FooV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<FooV1> for SourceDataProvider {
     fn iter_locales_cached(
         &self,
     ) -> Result<HashSet<DataLocale>, DataError> {
@@ -189,7 +189,7 @@ impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
 ```rust,compile_fail
 registry!(
     // ...
-    icu::foo::provider::FooV1Marker = "foo/bar@1",
+    icu::foo::provider::FooV1 = "foo/bar@1",
     // ...
 )
 ```

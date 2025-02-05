@@ -13,20 +13,20 @@ use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant}
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
-    pub(crate) use super::ExemplarCitiesRootV1;
     pub(crate) use super::ExemplarCities;
+    pub(crate) use super::ExemplarCitiesRootV1;
     pub(crate) use super::ExemplarCitiesV1;
-    pub(crate) use super::LocationsRootV1;
     pub(crate) use super::Locations;
+    pub(crate) use super::LocationsRootV1;
     pub(crate) use super::LocationsV1;
+    pub(crate) use super::MetazoneGenericNames as MzGeneric;
     pub(crate) use super::MetazoneGenericNamesLongV1 as MzGenericLongV1;
     pub(crate) use super::MetazoneGenericNamesShortV1 as MzGenericShortV1;
-    pub(crate) use super::MetazoneGenericNames as MzGeneric;
     pub(crate) use super::MetazonePeriod as MzPeriod;
     pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
+    pub(crate) use super::MetazoneSpecificNames as MzSpecific;
     pub(crate) use super::MetazoneSpecificNamesLongV1 as MzSpecificLongV1;
     pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
-    pub(crate) use super::MetazoneSpecificNames as MzSpecific;
     pub(crate) use super::TimeZoneEssentials as Essentials;
     pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
 }
@@ -161,16 +161,8 @@ pub struct ExemplarCities<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(
-        MetazoneGenericNamesLongV1,
-        "time_zone/generic_long@1",
-        has_checksum
-    ),
-    marker(
-        MetazoneGenericNamesShortV1,
-        "time_zone/generic_short@1",
-        has_checksum
-    )
+    marker(MetazoneGenericNamesLongV1, "time_zone/generic_long@1", has_checksum),
+    marker(MetazoneGenericNamesShortV1, "time_zone/generic_short@1", has_checksum)
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -198,11 +190,7 @@ pub struct MetazoneGenericNames<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(
-        MetazoneSpecificNamesLongV1,
-        "time_zone/specific_long@1",
-        has_checksum
-    ),
+    marker(MetazoneSpecificNamesLongV1, "time_zone/specific_long@1", has_checksum),
     marker(
         MetazoneSpecificNamesShortV1,
         "time_zone/specific_short@1",

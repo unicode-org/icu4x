@@ -95,7 +95,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<super::super::provider::percent::PercentEssentialsV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(

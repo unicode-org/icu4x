@@ -24,7 +24,7 @@ const REPR_INFO_SIZE: usize = core::mem::size_of::<BinReprInfo>();
 
 /// The value of the magic word appearing in the header.
 ///
-/// All versions as of [`FormatVersion::_0`] share the same value.
+/// All versions as of [`FormatVersion::V3_0`] share the same value.
 const MAGIC_WORD: &[u8; 2] = &[0xda, 0x27];
 
 /// The size of the characters used in representations of string resources.
@@ -209,7 +209,7 @@ impl Serializer {
     ) -> Result<Vec<u8>, BinarySerializerError> {
         // For now, we hardcode the format version value and do not support
         // writing pool bundles.
-        let format_version = FormatVersion::_0;
+        let format_version = FormatVersion::V2_0;
         let write_pool_bundle_checksum = false;
 
         let mut serializer = Self::new(format_version);
@@ -223,16 +223,16 @@ impl Serializer {
         // important for creating resource offsets.
         let index_field_count = match format_version {
             // Format version 1.0 does not include an index.
-            FormatVersion::_0 => 0,
+            FormatVersion::V1_0 => 0,
             // Format version 1.1 specifies the index, with fields `field_count`
             // through `largest_table_entry_count`.
-            FormatVersion::_1 => 5,
+            FormatVersion::V1_1 => 5,
             // Format version 1.2 adds the `bundle_attributes` field.
-            FormatVersion::_2 | FormatVersion::_3 => 6,
+            FormatVersion::V1_2 | FormatVersion::V1_3 => 6,
             // Format version 2.0 adds the `data_16_bit_end` field and, if the
             // bundle is either a pool bundle or uses a pool bundle, the
             // `pool_checksum` field.
-            FormatVersion::_0 | FormatVersion::_0 => {
+            FormatVersion::V2_0 | FormatVersion::V3_0 => {
                 if write_pool_bundle_checksum {
                     8
                 } else {
@@ -576,7 +576,7 @@ impl Serializer {
                 // data. Add resource descriptors to allow 32-bit collections to
                 // address them.
                 resource.descriptor = Some(ResDescriptor::new(
-                    ResourceReprType::String,
+                    ResourceReprType::StringV2,
                     string_offset,
                 ));
 
@@ -921,7 +921,7 @@ fn get_total_string_size(string: &str) -> Result<usize, BinarySerializerError> {
 /// character, while longer strings are marked with one to three UTF-16 low
 /// surrogates to indicate length.`
 ///
-/// For more details, see [`ResourceReprType::String`].
+/// For more details, see [`ResourceReprType::StringV2`].
 fn get_string_length_marker_size(string: &str) -> Result<usize, BinarySerializerError> {
     let length = match string.chars().count() {
         0..=40 => 0,
@@ -1049,7 +1049,7 @@ struct BinResBundle<'a> {
     /// Details of the final layout of the bundle as well as attributes for
     /// resolving resources.
     ///
-    /// The index is present from [`FormatVersion::_1`] on.
+    /// The index is present from [`FormatVersion::V1_1`] on.
     index: BinIndex,
 
     /// A block of strings representing keys in table resources.
@@ -1060,11 +1060,11 @@ struct BinResBundle<'a> {
 
     /// A block of 16-bit data containing 16-bit resources.
     ///
-    /// This block is present from [`FormatVersion::_0`] on.
+    /// This block is present from [`FormatVersion::V2_0`] on.
     ///
     /// 16-bit resources consist of UTF-16 string resources and collections
     /// which contain only 16-bit string resources. See
-    /// [`ResourceReprType::String`], [`ResourceReprType::Array16`], and
+    /// [`ResourceReprType::StringV2`], [`ResourceReprType::Array16`], and
     /// [`ResourceReprType::Table16`] for details on representation.
     data_16_bit: &'a [u8],
 
@@ -1187,12 +1187,12 @@ impl TryFrom<BinIndex> for Vec<u8> {
 impl From<FormatVersion> for [u8; 4] {
     fn from(value: FormatVersion) -> [u8; 4] {
         match value {
-            FormatVersion::_0 => [1, 0, 0, 0],
-            FormatVersion::_1 => [1, 1, 0, 0],
-            FormatVersion::_2 => [1, 2, 0, 0],
-            FormatVersion::_3 => [1, 3, 0, 0],
-            FormatVersion::_0 => [2, 0, 0, 0],
-            FormatVersion::_0 => [3, 0, 0, 0],
+            FormatVersion::V1_0 => [1, 0, 0, 0],
+            FormatVersion::V1_1 => [1, 1, 0, 0],
+            FormatVersion::V1_2 => [1, 2, 0, 0],
+            FormatVersion::V1_3 => [1, 3, 0, 0],
+            FormatVersion::V2_0 => [2, 0, 0, 0],
+            FormatVersion::V3_0 => [3, 0, 0, 0],
         }
     }
 }

@@ -18,25 +18,22 @@
 pub mod names;
 
 pub use names::{
-    BidiClassNameToValueV2Marker, BidiClassValueToLongNameV1,
-    BidiClassValueToShortNameV1, CanonicalCombiningClassNameToValueV2Marker,
-    CanonicalCombiningClassValueToLongNameV1,
-    CanonicalCombiningClassValueToShortNameV1, EastAsianWidthNameToValueV2Marker,
+    BidiClassNameToValueV2, BidiClassValueToLongNameV1, BidiClassValueToShortNameV1,
+    CanonicalCombiningClassNameToValueV2, CanonicalCombiningClassValueToLongNameV1,
+    CanonicalCombiningClassValueToShortNameV1, EastAsianWidthNameToValueV2,
     EastAsianWidthValueToLongNameV1, EastAsianWidthValueToShortNameV1,
-    GeneralCategoryMaskNameToValueV2Marker, GeneralCategoryNameToValueV2Marker,
+    GeneralCategoryMaskNameToValueV2, GeneralCategoryNameToValueV2,
     GeneralCategoryValueToLongNameV1, GeneralCategoryValueToShortNameV1,
-    GraphemeClusterBreakNameToValueV2Marker, GraphemeClusterBreakValueToLongNameV1,
-    GraphemeClusterBreakValueToShortNameV1, HangulSyllableTypeNameToValueV2Marker,
+    GraphemeClusterBreakNameToValueV2, GraphemeClusterBreakValueToLongNameV1,
+    GraphemeClusterBreakValueToShortNameV1, HangulSyllableTypeNameToValueV2,
     HangulSyllableTypeValueToLongNameV1, HangulSyllableTypeValueToShortNameV1,
-    IndicSyllabicCategoryNameToValueV2Marker, IndicSyllabicCategoryValueToLongNameV1,
-    IndicSyllabicCategoryValueToShortNameV1, JoiningTypeNameToValueV2Marker,
-    JoiningTypeValueToLongNameV1, JoiningTypeValueToShortNameV1,
-    LineBreakNameToValueV2Marker, LineBreakValueToLongNameV1,
-    LineBreakValueToShortNameV1, ScriptNameToValueV2Marker, ScriptValueToLongNameV1,
-    ScriptValueToShortNameV1, SentenceBreakNameToValueV2Marker,
-    SentenceBreakValueToLongNameV1, SentenceBreakValueToShortNameV1,
-    WordBreakNameToValueV2Marker, WordBreakValueToLongNameV1,
-    WordBreakValueToShortNameV1,
+    IndicSyllabicCategoryNameToValueV2, IndicSyllabicCategoryValueToLongNameV1,
+    IndicSyllabicCategoryValueToShortNameV1, JoiningTypeNameToValueV2,
+    JoiningTypeValueToLongNameV1, JoiningTypeValueToShortNameV1, LineBreakNameToValueV2,
+    LineBreakValueToLongNameV1, LineBreakValueToShortNameV1, ScriptNameToValueV2,
+    ScriptValueToLongNameV1, ScriptValueToShortNameV1, SentenceBreakNameToValueV2,
+    SentenceBreakValueToLongNameV1, SentenceBreakValueToShortNameV1, WordBreakNameToValueV2,
+    WordBreakValueToLongNameV1, WordBreakValueToShortNameV1,
 };
 
 use crate::bidi::BidiMirroringGlyph;
@@ -70,123 +67,123 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_alnum_v1_marker!(Baked);
-    impl_alphabetic_v1_marker!(Baked);
-    impl_ascii_hex_digit_v1_marker!(Baked);
-    impl_basic_emoji_v1_marker!(Baked);
-    impl_bidi_class_name_to_value_v2_marker!(Baked);
-    impl_bidi_class_v1_marker!(Baked);
-    impl_bidi_class_value_to_long_name_v1_marker!(Baked);
-    impl_bidi_class_value_to_short_name_v1_marker!(Baked);
-    impl_bidi_control_v1_marker!(Baked);
-    impl_bidi_mirrored_v1_marker!(Baked);
-    impl_bidi_mirroring_glyph_v1_marker!(Baked);
-    impl_blank_v1_marker!(Baked);
-    impl_canonical_combining_class_name_to_value_v2_marker!(Baked);
-    impl_canonical_combining_class_v1_marker!(Baked);
-    impl_canonical_combining_class_value_to_long_name_v1_marker!(Baked);
-    impl_canonical_combining_class_value_to_short_name_v1_marker!(Baked);
-    impl_case_ignorable_v1_marker!(Baked);
-    impl_case_sensitive_v1_marker!(Baked);
-    impl_cased_v1_marker!(Baked);
-    impl_changes_when_casefolded_v1_marker!(Baked);
-    impl_changes_when_casemapped_v1_marker!(Baked);
-    impl_changes_when_lowercased_v1_marker!(Baked);
-    impl_changes_when_nfkc_casefolded_v1_marker!(Baked);
-    impl_changes_when_titlecased_v1_marker!(Baked);
-    impl_changes_when_uppercased_v1_marker!(Baked);
-    impl_dash_v1_marker!(Baked);
-    impl_default_ignorable_code_point_v1_marker!(Baked);
-    impl_deprecated_v1_marker!(Baked);
-    impl_diacritic_v1_marker!(Baked);
-    impl_east_asian_width_name_to_value_v2_marker!(Baked);
-    impl_east_asian_width_v1_marker!(Baked);
-    impl_east_asian_width_value_to_long_name_v1_marker!(Baked);
-    impl_east_asian_width_value_to_short_name_v1_marker!(Baked);
-    impl_emoji_component_v1_marker!(Baked);
-    impl_emoji_modifier_base_v1_marker!(Baked);
-    impl_emoji_modifier_v1_marker!(Baked);
-    impl_emoji_presentation_v1_marker!(Baked);
-    impl_emoji_v1_marker!(Baked);
-    impl_extended_pictographic_v1_marker!(Baked);
-    impl_extender_v1_marker!(Baked);
-    impl_full_composition_exclusion_v1_marker!(Baked);
-    impl_general_category_mask_name_to_value_v2_marker!(Baked);
-    impl_general_category_name_to_value_v2_marker!(Baked);
-    impl_general_category_v1_marker!(Baked);
-    impl_general_category_value_to_long_name_v1_marker!(Baked);
-    impl_general_category_value_to_short_name_v1_marker!(Baked);
-    impl_graph_v1_marker!(Baked);
-    impl_grapheme_base_v1_marker!(Baked);
-    impl_grapheme_cluster_break_name_to_value_v2_marker!(Baked);
-    impl_grapheme_cluster_break_v1_marker!(Baked);
-    impl_grapheme_cluster_break_value_to_long_name_v1_marker!(Baked);
-    impl_grapheme_cluster_break_value_to_short_name_v1_marker!(Baked);
-    impl_grapheme_extend_v1_marker!(Baked);
-    impl_grapheme_link_v1_marker!(Baked);
-    impl_hangul_syllable_type_name_to_value_v2_marker!(Baked);
-    impl_hangul_syllable_type_v1_marker!(Baked);
-    impl_hangul_syllable_type_value_to_long_name_v1_marker!(Baked);
-    impl_hangul_syllable_type_value_to_short_name_v1_marker!(Baked);
-    impl_hex_digit_v1_marker!(Baked);
-    impl_hyphen_v1_marker!(Baked);
-    impl_id_continue_v1_marker!(Baked);
-    impl_id_start_v1_marker!(Baked);
-    impl_ideographic_v1_marker!(Baked);
-    impl_ids_binary_operator_v1_marker!(Baked);
-    impl_ids_trinary_operator_v1_marker!(Baked);
-    impl_indic_syllabic_category_name_to_value_v2_marker!(Baked);
-    impl_indic_syllabic_category_v1_marker!(Baked);
-    impl_indic_syllabic_category_value_to_long_name_v1_marker!(Baked);
-    impl_indic_syllabic_category_value_to_short_name_v1_marker!(Baked);
-    impl_join_control_v1_marker!(Baked);
-    impl_joining_type_name_to_value_v2_marker!(Baked);
-    impl_joining_type_v1_marker!(Baked);
-    impl_joining_type_value_to_long_name_v1_marker!(Baked);
-    impl_joining_type_value_to_short_name_v1_marker!(Baked);
-    impl_line_break_name_to_value_v2_marker!(Baked);
-    impl_line_break_v1_marker!(Baked);
-    impl_line_break_value_to_long_name_v1_marker!(Baked);
-    impl_line_break_value_to_short_name_v1_marker!(Baked);
-    impl_logical_order_exception_v1_marker!(Baked);
-    impl_lowercase_v1_marker!(Baked);
-    impl_math_v1_marker!(Baked);
-    impl_nfc_inert_v1_marker!(Baked);
-    impl_nfd_inert_v1_marker!(Baked);
-    impl_nfkc_inert_v1_marker!(Baked);
-    impl_nfkd_inert_v1_marker!(Baked);
-    impl_noncharacter_code_point_v1_marker!(Baked);
-    impl_pattern_syntax_v1_marker!(Baked);
-    impl_pattern_white_space_v1_marker!(Baked);
-    impl_prepended_concatenation_mark_v1_marker!(Baked);
-    impl_print_v1_marker!(Baked);
-    impl_quotation_mark_v1_marker!(Baked);
-    impl_radical_v1_marker!(Baked);
-    impl_regional_indicator_v1_marker!(Baked);
-    impl_script_name_to_value_v2_marker!(Baked);
-    impl_script_v1_marker!(Baked);
-    impl_script_value_to_long_name_v1_marker!(Baked);
-    impl_script_value_to_short_name_v1_marker!(Baked);
-    impl_script_with_extensions_property_v1_marker!(Baked);
-    impl_segment_starter_v1_marker!(Baked);
-    impl_sentence_break_name_to_value_v2_marker!(Baked);
-    impl_sentence_break_v1_marker!(Baked);
-    impl_sentence_break_value_to_long_name_v1_marker!(Baked);
-    impl_sentence_break_value_to_short_name_v1_marker!(Baked);
-    impl_sentence_terminal_v1_marker!(Baked);
-    impl_soft_dotted_v1_marker!(Baked);
-    impl_terminal_punctuation_v1_marker!(Baked);
-    impl_unified_ideograph_v1_marker!(Baked);
-    impl_uppercase_v1_marker!(Baked);
-    impl_variation_selector_v1_marker!(Baked);
-    impl_white_space_v1_marker!(Baked);
-    impl_word_break_name_to_value_v2_marker!(Baked);
-    impl_word_break_v1_marker!(Baked);
-    impl_word_break_value_to_long_name_v1_marker!(Baked);
-    impl_word_break_value_to_short_name_v1_marker!(Baked);
-    impl_xdigit_v1_marker!(Baked);
-    impl_xid_continue_v1_marker!(Baked);
-    impl_xid_start_v1_marker!(Baked);
+    impl_alnum_v1!(Baked);
+    impl_alphabetic_v1!(Baked);
+    impl_ascii_hex_digit_v1!(Baked);
+    impl_basic_emoji_v1!(Baked);
+    impl_bidi_class_name_to_value_v2!(Baked);
+    impl_bidi_class_v1!(Baked);
+    impl_bidi_class_value_to_long_name_v1!(Baked);
+    impl_bidi_class_value_to_short_name_v1!(Baked);
+    impl_bidi_control_v1!(Baked);
+    impl_bidi_mirrored_v1!(Baked);
+    impl_bidi_mirroring_glyph_v1!(Baked);
+    impl_blank_v1!(Baked);
+    impl_canonical_combining_class_name_to_value_v2!(Baked);
+    impl_canonical_combining_class_v1!(Baked);
+    impl_canonical_combining_class_value_to_long_name_v1!(Baked);
+    impl_canonical_combining_class_value_to_short_name_v1!(Baked);
+    impl_case_ignorable_v1!(Baked);
+    impl_case_sensitive_v1!(Baked);
+    impl_cased_v1!(Baked);
+    impl_changes_when_casefolded_v1!(Baked);
+    impl_changes_when_casemapped_v1!(Baked);
+    impl_changes_when_lowercased_v1!(Baked);
+    impl_changes_when_nfkc_casefolded_v1!(Baked);
+    impl_changes_when_titlecased_v1!(Baked);
+    impl_changes_when_uppercased_v1!(Baked);
+    impl_dash_v1!(Baked);
+    impl_default_ignorable_code_point_v1!(Baked);
+    impl_deprecated_v1!(Baked);
+    impl_diacritic_v1!(Baked);
+    impl_east_asian_width_name_to_value_v2!(Baked);
+    impl_east_asian_width_v1!(Baked);
+    impl_east_asian_width_value_to_long_name_v1!(Baked);
+    impl_east_asian_width_value_to_short_name_v1!(Baked);
+    impl_emoji_component_v1!(Baked);
+    impl_emoji_modifier_base_v1!(Baked);
+    impl_emoji_modifier_v1!(Baked);
+    impl_emoji_presentation_v1!(Baked);
+    impl_emoji_v1!(Baked);
+    impl_extended_pictographic_v1!(Baked);
+    impl_extender_v1!(Baked);
+    impl_full_composition_exclusion_v1!(Baked);
+    impl_general_category_mask_name_to_value_v2!(Baked);
+    impl_general_category_name_to_value_v2!(Baked);
+    impl_general_category_v1!(Baked);
+    impl_general_category_value_to_long_name_v1!(Baked);
+    impl_general_category_value_to_short_name_v1!(Baked);
+    impl_graph_v1!(Baked);
+    impl_grapheme_base_v1!(Baked);
+    impl_grapheme_cluster_break_name_to_value_v2!(Baked);
+    impl_grapheme_cluster_break_v1!(Baked);
+    impl_grapheme_cluster_break_value_to_long_name_v1!(Baked);
+    impl_grapheme_cluster_break_value_to_short_name_v1!(Baked);
+    impl_grapheme_extend_v1!(Baked);
+    impl_grapheme_link_v1!(Baked);
+    impl_hangul_syllable_type_name_to_value_v2!(Baked);
+    impl_hangul_syllable_type_v1!(Baked);
+    impl_hangul_syllable_type_value_to_long_name_v1!(Baked);
+    impl_hangul_syllable_type_value_to_short_name_v1!(Baked);
+    impl_hex_digit_v1!(Baked);
+    impl_hyphen_v1!(Baked);
+    impl_id_continue_v1!(Baked);
+    impl_id_start_v1!(Baked);
+    impl_ideographic_v1!(Baked);
+    impl_ids_binary_operator_v1!(Baked);
+    impl_ids_trinary_operator_v1!(Baked);
+    impl_indic_syllabic_category_name_to_value_v2!(Baked);
+    impl_indic_syllabic_category_v1!(Baked);
+    impl_indic_syllabic_category_value_to_long_name_v1!(Baked);
+    impl_indic_syllabic_category_value_to_short_name_v1!(Baked);
+    impl_join_control_v1!(Baked);
+    impl_joining_type_name_to_value_v2!(Baked);
+    impl_joining_type_v1!(Baked);
+    impl_joining_type_value_to_long_name_v1!(Baked);
+    impl_joining_type_value_to_short_name_v1!(Baked);
+    impl_line_break_name_to_value_v2!(Baked);
+    impl_line_break_v1!(Baked);
+    impl_line_break_value_to_long_name_v1!(Baked);
+    impl_line_break_value_to_short_name_v1!(Baked);
+    impl_logical_order_exception_v1!(Baked);
+    impl_lowercase_v1!(Baked);
+    impl_math_v1!(Baked);
+    impl_nfc_inert_v1!(Baked);
+    impl_nfd_inert_v1!(Baked);
+    impl_nfkc_inert_v1!(Baked);
+    impl_nfkd_inert_v1!(Baked);
+    impl_noncharacter_code_point_v1!(Baked);
+    impl_pattern_syntax_v1!(Baked);
+    impl_pattern_white_space_v1!(Baked);
+    impl_prepended_concatenation_mark_v1!(Baked);
+    impl_print_v1!(Baked);
+    impl_quotation_mark_v1!(Baked);
+    impl_radical_v1!(Baked);
+    impl_regional_indicator_v1!(Baked);
+    impl_script_name_to_value_v2!(Baked);
+    impl_script_v1!(Baked);
+    impl_script_value_to_long_name_v1!(Baked);
+    impl_script_value_to_short_name_v1!(Baked);
+    impl_script_with_extensions_property_v1!(Baked);
+    impl_segment_starter_v1!(Baked);
+    impl_sentence_break_name_to_value_v2!(Baked);
+    impl_sentence_break_v1!(Baked);
+    impl_sentence_break_value_to_long_name_v1!(Baked);
+    impl_sentence_break_value_to_short_name_v1!(Baked);
+    impl_sentence_terminal_v1!(Baked);
+    impl_soft_dotted_v1!(Baked);
+    impl_terminal_punctuation_v1!(Baked);
+    impl_unified_ideograph_v1!(Baked);
+    impl_uppercase_v1!(Baked);
+    impl_variation_selector_v1!(Baked);
+    impl_white_space_v1!(Baked);
+    impl_word_break_name_to_value_v2!(Baked);
+    impl_word_break_v1!(Baked);
+    impl_word_break_value_to_long_name_v1!(Baked);
+    impl_word_break_value_to_short_name_v1!(Baked);
+    impl_xdigit_v1!(Baked);
+    impl_xid_continue_v1!(Baked);
+    impl_xid_start_v1!(Baked);
 };
 
 /// All data keys in this module.
@@ -260,52 +257,52 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     XdigitV1::INFO,
     XidContinueV1::INFO,
     XidStartV1::INFO,
-    BidiClassNameToValueV2Marker::INFO,
+    BidiClassNameToValueV2::INFO,
     BidiClassV1::INFO,
     BidiClassValueToLongNameV1::INFO,
     BidiClassValueToShortNameV1::INFO,
-    CanonicalCombiningClassNameToValueV2Marker::INFO,
+    CanonicalCombiningClassNameToValueV2::INFO,
     CanonicalCombiningClassV1::INFO,
     CanonicalCombiningClassValueToLongNameV1::INFO,
     CanonicalCombiningClassValueToShortNameV1::INFO,
-    EastAsianWidthNameToValueV2Marker::INFO,
+    EastAsianWidthNameToValueV2::INFO,
     EastAsianWidthV1::INFO,
     EastAsianWidthValueToLongNameV1::INFO,
     EastAsianWidthValueToShortNameV1::INFO,
-    GeneralCategoryMaskNameToValueV2Marker::INFO,
-    GeneralCategoryNameToValueV2Marker::INFO,
+    GeneralCategoryMaskNameToValueV2::INFO,
+    GeneralCategoryNameToValueV2::INFO,
     GeneralCategoryV1::INFO,
     GeneralCategoryValueToLongNameV1::INFO,
     GeneralCategoryValueToShortNameV1::INFO,
-    GraphemeClusterBreakNameToValueV2Marker::INFO,
+    GraphemeClusterBreakNameToValueV2::INFO,
     GraphemeClusterBreakV1::INFO,
     GraphemeClusterBreakValueToLongNameV1::INFO,
     GraphemeClusterBreakValueToShortNameV1::INFO,
-    HangulSyllableTypeNameToValueV2Marker::INFO,
+    HangulSyllableTypeNameToValueV2::INFO,
     HangulSyllableTypeV1::INFO,
     HangulSyllableTypeValueToLongNameV1::INFO,
     HangulSyllableTypeValueToShortNameV1::INFO,
-    IndicSyllabicCategoryNameToValueV2Marker::INFO,
+    IndicSyllabicCategoryNameToValueV2::INFO,
     IndicSyllabicCategoryV1::INFO,
     IndicSyllabicCategoryValueToLongNameV1::INFO,
     IndicSyllabicCategoryValueToShortNameV1::INFO,
-    JoiningTypeNameToValueV2Marker::INFO,
+    JoiningTypeNameToValueV2::INFO,
     JoiningTypeV1::INFO,
     JoiningTypeValueToLongNameV1::INFO,
     JoiningTypeValueToShortNameV1::INFO,
-    LineBreakNameToValueV2Marker::INFO,
+    LineBreakNameToValueV2::INFO,
     LineBreakV1::INFO,
     LineBreakValueToLongNameV1::INFO,
     LineBreakValueToShortNameV1::INFO,
-    ScriptNameToValueV2Marker::INFO,
+    ScriptNameToValueV2::INFO,
     ScriptV1::INFO,
     ScriptValueToLongNameV1::INFO,
     ScriptValueToShortNameV1::INFO,
-    SentenceBreakNameToValueV2Marker::INFO,
+    SentenceBreakNameToValueV2::INFO,
     SentenceBreakV1::INFO,
     SentenceBreakValueToLongNameV1::INFO,
     SentenceBreakValueToShortNameV1::INFO,
-    WordBreakNameToValueV2Marker::INFO,
+    WordBreakNameToValueV2::INFO,
     WordBreakV1::INFO,
     WordBreakValueToLongNameV1::INFO,
     WordBreakValueToShortNameV1::INFO,
@@ -512,16 +509,8 @@ data_struct_generic!(
     ),
     marker(EastAsianWidthV1, EastAsianWidth, "props/ea@1"),
     marker(GeneralCategoryV1, GeneralCategory, "props/gc@1"),
-    marker(
-        GraphemeClusterBreakV1,
-        GraphemeClusterBreak,
-        "props/GCB@1"
-    ),
-    marker(
-        HangulSyllableTypeV1,
-        HangulSyllableType,
-        "props/hst@1"
-    ),
+    marker(GraphemeClusterBreakV1, GraphemeClusterBreak, "props/GCB@1"),
+    marker(HangulSyllableTypeV1, HangulSyllableType, "props/hst@1"),
     marker(
         IndicSyllabicCategoryV1,
         IndicSyllabicCategory,
@@ -532,11 +521,7 @@ data_struct_generic!(
     marker(ScriptV1, Script, "props/sc@1"),
     marker(SentenceBreakV1, SentenceBreak, "props/SB@1"),
     marker(WordBreakV1, WordBreak, "props/WB@1"),
-    marker(
-        BidiMirroringGlyphV1,
-        BidiMirroringGlyph,
-        "props/Bidi_G@1"
-    ),
+    marker(BidiMirroringGlyphV1, BidiMirroringGlyph, "props/Bidi_G@1"),
 );
 
 // See CodePointMapData for documentation of these functions
@@ -683,11 +668,7 @@ impl<'data> PropertyUnicodeSet<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    ScriptWithExtensionsPropertyV1,
-    "props/scx@1",
-    singleton
-))]
+#[icu_provider::data_struct(marker(ScriptWithExtensionsPropertyV1, "props/scx@1", singleton))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]

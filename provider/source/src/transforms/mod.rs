@@ -151,10 +151,7 @@ impl CldrCache {
 }
 
 impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
         self.check_req::<TransliteratorRulesV1>(req)?;
         self.cldr()?
             .transforms()?

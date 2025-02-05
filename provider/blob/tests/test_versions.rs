@@ -43,10 +43,7 @@ where
     exporter.close().unwrap();
 }
 
-fn check_hello_world(
-    blob_provider: impl DataProvider<HelloWorldV1>,
-    test_prefix_match: bool,
-) {
+fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1>, test_prefix_match: bool) {
     let hello_world_provider = HelloWorldProvider;
     for id in hello_world_provider.iter_ids().unwrap() {
         let blob_result = blob_provider

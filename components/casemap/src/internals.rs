@@ -12,7 +12,7 @@ use crate::greek_to_me::{
 };
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
-use crate::provider::{CaseMapUnfold, CaseMap};
+use crate::provider::{CaseMap, CaseMapUnfold};
 use crate::set::ClosureSink;
 use crate::titlecase::TrailingCase;
 use core::fmt;

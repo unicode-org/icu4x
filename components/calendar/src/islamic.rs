@@ -23,8 +23,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::islamic::{
-    IslamicCache, IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1,
-    PackedIslamicYearInfo,
+    IslamicCache, IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1, PackedIslamicYearInfo,
 };
 use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -117,7 +116,7 @@ impl IslamicObservational {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ISLAMIC_OBSERVATIONAL_CACHE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_ISLAMIC_OBSERVATIONAL_CACHE_V1,
             )),
         }
     }
@@ -163,7 +162,7 @@ impl IslamicUmmAlQura {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ISLAMIC_UMM_AL_QURA_CACHE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_ISLAMIC_UMM_AL_QURA_CACHE_V1,
             )),
         }
     }

@@ -195,7 +195,7 @@ impl RuleCollection {
             + DataProvider<ExtenderV1>
             + DataProvider<GraphemeBaseV1>
             + DataProvider<GraphemeClusterBreakV1>
-            + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
+            + DataProvider<GraphemeClusterBreakNameToValueV2>
             + DataProvider<GraphemeExtendV1>
             + DataProvider<HexDigitV1>
             + DataProvider<IdsBinaryOperatorV1>
@@ -214,7 +214,7 @@ impl RuleCollection {
             + DataProvider<RadicalV1>
             + DataProvider<RegionalIndicatorV1>
             + DataProvider<SentenceBreakV1>
-            + DataProvider<SentenceBreakNameToValueV2Marker>
+            + DataProvider<SentenceBreakNameToValueV2>
             + DataProvider<SentenceTerminalV1>
             + DataProvider<SoftDottedV1>
             + DataProvider<TerminalPunctuationV1>
@@ -223,17 +223,17 @@ impl RuleCollection {
             + DataProvider<VariationSelectorV1>
             + DataProvider<WhiteSpaceV1>
             + DataProvider<WordBreakV1>
-            + DataProvider<WordBreakNameToValueV2Marker>
+            + DataProvider<WordBreakNameToValueV2>
             + DataProvider<XidContinueV1>
-            + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
+            + DataProvider<GeneralCategoryMaskNameToValueV2>
             + DataProvider<GeneralCategoryV1>
-            + DataProvider<ScriptNameToValueV2Marker>
+            + DataProvider<ScriptNameToValueV2>
             + DataProvider<ScriptV1>
             + DataProvider<ScriptWithExtensionsPropertyV1>
             + DataProvider<XidStartV1>,
         NP: ?Sized
-            + DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
+            + DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>,
@@ -268,7 +268,7 @@ where
         + DataProvider<BidiControlV1>
         + DataProvider<BidiMirroredV1>
         + DataProvider<CanonicalCombiningClassV1>
-        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2>
         + DataProvider<CaseIgnorableV1>
         + DataProvider<CasedV1>
         + DataProvider<ChangesWhenCasefoldedV1>
@@ -290,7 +290,7 @@ where
         + DataProvider<ExtenderV1>
         + DataProvider<GraphemeBaseV1>
         + DataProvider<GraphemeClusterBreakV1>
-        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2>
         + DataProvider<GraphemeExtendV1>
         + DataProvider<HexDigitV1>
         + DataProvider<IdsBinaryOperatorV1>
@@ -309,7 +309,7 @@ where
         + DataProvider<RadicalV1>
         + DataProvider<RegionalIndicatorV1>
         + DataProvider<SentenceBreakV1>
-        + DataProvider<SentenceBreakNameToValueV2Marker>
+        + DataProvider<SentenceBreakNameToValueV2>
         + DataProvider<SentenceTerminalV1>
         + DataProvider<SoftDottedV1>
         + DataProvider<TerminalPunctuationV1>
@@ -318,20 +318,17 @@ where
         + DataProvider<VariationSelectorV1>
         + DataProvider<WhiteSpaceV1>
         + DataProvider<WordBreakV1>
-        + DataProvider<WordBreakNameToValueV2Marker>
+        + DataProvider<WordBreakNameToValueV2>
         + DataProvider<XidContinueV1>
-        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2>
         + DataProvider<GeneralCategoryV1>
-        + DataProvider<ScriptNameToValueV2Marker>
+        + DataProvider<ScriptNameToValueV2>
         + DataProvider<ScriptV1>
         + DataProvider<ScriptWithExtensionsPropertyV1>
         + DataProvider<XidStartV1>,
     NP: ?Sized,
 {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
 
         if let Some(response) = exclusive_data.1.get(req.id.marker_attributes.as_str()) {
@@ -342,8 +339,9 @@ where
             let Some((source, reverse, visible)) =
                 exclusive_data.0.remove(req.id.marker_attributes as &str)
             else {
-                return Err(DataErrorKind::IdentifierNotFound
-                    .with_req(TransliteratorRulesV1::INFO, req));
+                return Err(
+                    DataErrorKind::IdentifierNotFound.with_req(TransliteratorRulesV1::INFO, req)
+                );
             };
 
             let rules = parse::Parser::run(
@@ -414,16 +412,15 @@ macro_rules! redirect {
 }
 
 redirect!(
-    CanonicalDecompositionDataV2Marker,
-    CompatibilityDecompositionDataV2Marker,
+    CanonicalDecompositionDataV2,
+    CompatibilityDecompositionDataV2,
     CanonicalDecompositionTablesV1,
     CompatibilityDecompositionTablesV1,
     CanonicalCompositionsV1
 );
 
 #[cfg(feature = "datagen")]
-impl<PP, NP> IterableDataProvider<TransliteratorRulesV1>
-    for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP> IterableDataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP>
 where
     PP: ?Sized
         + DataProvider<AsciiHexDigitV1>
@@ -431,7 +428,7 @@ where
         + DataProvider<BidiControlV1>
         + DataProvider<BidiMirroredV1>
         + DataProvider<CanonicalCombiningClassV1>
-        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2>
         + DataProvider<CaseIgnorableV1>
         + DataProvider<CasedV1>
         + DataProvider<ChangesWhenCasefoldedV1>
@@ -453,7 +450,7 @@ where
         + DataProvider<ExtenderV1>
         + DataProvider<GraphemeBaseV1>
         + DataProvider<GraphemeClusterBreakV1>
-        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2>
         + DataProvider<GraphemeExtendV1>
         + DataProvider<HexDigitV1>
         + DataProvider<IdsBinaryOperatorV1>
@@ -472,7 +469,7 @@ where
         + DataProvider<RadicalV1>
         + DataProvider<RegionalIndicatorV1>
         + DataProvider<SentenceBreakV1>
-        + DataProvider<SentenceBreakNameToValueV2Marker>
+        + DataProvider<SentenceBreakNameToValueV2>
         + DataProvider<SentenceTerminalV1>
         + DataProvider<SoftDottedV1>
         + DataProvider<TerminalPunctuationV1>
@@ -481,11 +478,11 @@ where
         + DataProvider<VariationSelectorV1>
         + DataProvider<WhiteSpaceV1>
         + DataProvider<WordBreakV1>
-        + DataProvider<WordBreakNameToValueV2Marker>
+        + DataProvider<WordBreakNameToValueV2>
         + DataProvider<XidContinueV1>
-        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2>
         + DataProvider<GeneralCategoryV1>
-        + DataProvider<ScriptNameToValueV2Marker>
+        + DataProvider<ScriptNameToValueV2>
         + DataProvider<ScriptV1>
         + DataProvider<ScriptWithExtensionsPropertyV1>
         + DataProvider<XidStartV1>,

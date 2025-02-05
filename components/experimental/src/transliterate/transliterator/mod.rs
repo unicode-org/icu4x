@@ -7,9 +7,7 @@ mod hardcoded;
 mod replaceable;
 
 use crate::transliterate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
-use crate::transliterate::provider::{
-    RuleBasedTransliterator, Segment, TransliteratorRulesV1,
-};
+use crate::transliterate::provider::{RuleBasedTransliterator, Segment, TransliteratorRulesV1};
 use crate::transliterate::transliterator::hardcoded::Case;
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
@@ -52,7 +50,7 @@ struct ComposingTransliterator(ComposingNormalizer);
 impl ComposingTransliterator {
     fn try_nfc<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV2Marker>
+        P: DataProvider<CanonicalDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
@@ -64,7 +62,7 @@ impl ComposingTransliterator {
 
     fn try_nfkc<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CompatibilityDecompositionDataV2Marker>
+        P: DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>
@@ -91,7 +89,7 @@ struct DecomposingTransliterator(DecomposingNormalizer);
 impl DecomposingTransliterator {
     fn try_nfd<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV2Marker>
+        P: DataProvider<CanonicalDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
@@ -102,7 +100,7 @@ impl DecomposingTransliterator {
 
     fn try_nfkd<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CompatibilityDecompositionDataV2Marker>
+        P: DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + ?Sized,
@@ -280,8 +278,8 @@ impl Transliterator {
     ) -> Result<Self, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>
@@ -392,8 +390,8 @@ impl Transliterator {
     ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>
@@ -416,8 +414,8 @@ impl Transliterator {
     ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>
@@ -452,8 +450,8 @@ impl Transliterator {
     ) -> Result<DataPayload<TransliteratorRulesV1>, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>
@@ -501,8 +499,8 @@ impl Transliterator {
         normalizer_provider: &P,
     ) -> Option<Result<InternalTransliterator, DataError>>
     where
-        P: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
+        P: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             + DataProvider<CanonicalCompositionsV1>

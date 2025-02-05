@@ -13,10 +13,7 @@ use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 
 impl DataProvider<LikelySubtagsExtendedV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError> {
         self.check_req::<LikelySubtagsExtendedV1>(req)?;
         let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
@@ -69,9 +66,7 @@ impl DataProvider<LikelySubtagsForScriptRegionV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1>
-    for SourceDataProvider
-{
+impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

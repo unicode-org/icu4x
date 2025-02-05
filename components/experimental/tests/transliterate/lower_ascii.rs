@@ -6,8 +6,8 @@ use core::any::TypeId;
 
 use icu::casemap::CaseMapper;
 use icu_experimental::transliterate::{
-    provider::TransliteratorRulesV1, CustomTransliterator, RuleCollection,
-    RuleCollectionProvider, Transliterator,
+    provider::TransliteratorRulesV1, CustomTransliterator, RuleCollection, RuleCollectionProvider,
+    Transliterator,
 };
 use icu_locale::LanguageIdentifier;
 use icu_provider::prelude::*;

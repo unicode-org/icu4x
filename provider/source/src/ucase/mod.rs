@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use crate::SourceDataProvider;
-use icu::casemap::provider::{CaseMapUnfold, CaseMapUnfoldV1, CaseMap, CaseMapV1};
+use icu::casemap::provider::{CaseMap, CaseMapUnfold, CaseMapUnfoldV1, CaseMapV1};
 use icu::collections::codepointtrie::toml::CodePointDataSlice;
 use icu::collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;

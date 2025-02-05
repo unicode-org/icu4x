@@ -250,21 +250,13 @@ impl_data_provider!(
     |dates, _| DateLengths::from(dates),
     "buddhist"
 );
-impl_data_provider!(
-    BuddhistDateSymbolsV1,
-    symbols::convert_dates,
-    "buddhist"
-);
+impl_data_provider!(BuddhistDateSymbolsV1, symbols::convert_dates, "buddhist");
 impl_data_provider!(
     ChineseDateLengthsV1,
     |dates, _| DateLengths::from(dates),
     "chinese"
 );
-impl_data_provider!(
-    ChineseDateSymbolsV1,
-    symbols::convert_dates,
-    "chinese"
-);
+impl_data_provider!(ChineseDateSymbolsV1, symbols::convert_dates, "chinese");
 impl_data_provider!(
     CopticDateLengthsV1,
     |dates, _| DateLengths::from(dates),
@@ -282,21 +274,13 @@ impl_data_provider!(
     |dates, _| DateLengths::from(dates),
     "ethiopic"
 );
-impl_data_provider!(
-    EthiopianDateSymbolsV1,
-    symbols::convert_dates,
-    "ethiopic"
-);
+impl_data_provider!(EthiopianDateSymbolsV1, symbols::convert_dates, "ethiopic");
 impl_data_provider!(
     GregorianDateLengthsV1,
     |dates, _| DateLengths::from(dates),
     "gregory"
 );
-impl_data_provider!(
-    GregorianDateSymbolsV1,
-    symbols::convert_dates,
-    "gregory"
-);
+impl_data_provider!(GregorianDateSymbolsV1, symbols::convert_dates, "gregory");
 impl_data_provider!(
     HebrewDateLengthsV1,
     |dates, _| DateLengths::from(dates),
@@ -314,21 +298,13 @@ impl_data_provider!(
     |dates, _| DateLengths::from(dates),
     "islamicc"
 );
-impl_data_provider!(
-    IslamicDateSymbolsV1,
-    symbols::convert_dates,
-    "islamicc"
-);
+impl_data_provider!(IslamicDateSymbolsV1, symbols::convert_dates, "islamicc");
 impl_data_provider!(
     JapaneseDateLengthsV1,
     |dates, _| DateLengths::from(dates),
     "japanese"
 );
-impl_data_provider!(
-    JapaneseDateSymbolsV1,
-    symbols::convert_dates,
-    "japanese"
-);
+impl_data_provider!(JapaneseDateSymbolsV1, symbols::convert_dates, "japanese");
 impl_data_provider!(
     JapaneseExtendedDateLengthsV1,
     |dates, _| DateLengths::from(dates),
@@ -344,16 +320,8 @@ impl_data_provider!(
     |dates, _| DateLengths::from(dates),
     "persian"
 );
-impl_data_provider!(
-    PersianDateSymbolsV1,
-    symbols::convert_dates,
-    "persian"
-);
-impl_data_provider!(
-    RocDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
-    "roc"
-);
+impl_data_provider!(PersianDateSymbolsV1, symbols::convert_dates, "persian");
+impl_data_provider!(RocDateLengthsV1, |dates, _| DateLengths::from(dates), "roc");
 impl_data_provider!(RocDateSymbolsV1, symbols::convert_dates, "roc");
 
 impl_data_provider!(
@@ -417,7 +385,7 @@ mod test {
                     .expect("Failed to create pattern")
                     .into()
             ),
-            skeletons.get(&Skeleton::try_from("M").expect("Failed to create Skeleton"))
+            skeletons.get(&SkeletonData::try_from("M").expect("Failed to create Skeleton"))
         );
 
         let mut expected = PluralPattern::new(
@@ -434,7 +402,7 @@ mod test {
         );
         assert_eq!(
             Some(&expected.into()),
-            skeletons.get(&Skeleton::try_from("yw").expect("Failed to create Skeleton"))
+            skeletons.get(&SkeletonData::try_from("yw").expect("Failed to create Skeleton"))
         );
     }
 

@@ -22,21 +22,21 @@ const _: () = {
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);
-    impl_collation_root_v1_marker!(TestingProvider);
-    impl_collation_tailoring_v1_marker!(TestingProvider);
-    impl_collation_diacritics_v1_marker!(TestingProvider);
-    impl_collation_jamo_v1_marker!(TestingProvider);
-    impl_collation_metadata_v1_marker!(TestingProvider);
-    impl_collation_special_primaries_v1_marker!(TestingProvider);
-    impl_collation_reordering_v1_marker!(TestingProvider);
+    impl_collation_root_v1!(TestingProvider);
+    impl_collation_tailoring_v1!(TestingProvider);
+    impl_collation_diacritics_v1!(TestingProvider);
+    impl_collation_jamo_v1!(TestingProvider);
+    impl_collation_metadata_v1!(TestingProvider);
+    impl_collation_special_primaries_v1!(TestingProvider);
+    impl_collation_reordering_v1!(TestingProvider);
 
-    icu_normalizer_data::impl_canonical_compositions_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_non_recursive_decomposition_supplement_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_data_v2_marker!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_tables_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_data_v2_marker!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_tables_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_uts46_decomposition_data_v2_marker!(TestingProvider);
+    icu_normalizer_data::impl_canonical_compositions_v1!(TestingProvider);
+    icu_normalizer_data::impl_non_recursive_decomposition_supplement_v1!(TestingProvider);
+    icu_normalizer_data::impl_canonical_decomposition_data_v2!(TestingProvider);
+    icu_normalizer_data::impl_canonical_decomposition_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_compatibility_decomposition_data_v2!(TestingProvider);
+    icu_normalizer_data::impl_compatibility_decomposition_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_uts46_decomposition_data_v2!(TestingProvider);
 };
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;

@@ -13,7 +13,7 @@ use super::validated_options::Unit;
 use super::{provider, Duration};
 
 pub use super::validated_options::ValidatedDurationFormatterOptions;
-use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2Marker};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
 use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
 use icu_list::{ListFormatter, ListFormatterPreferences, ListLength};
 use icu_locale_core::preferences::{
@@ -138,7 +138,7 @@ impl DurationUnitFormatter {
     fn try_new_unstable<
         D: ?Sized
             + DataProvider<UnitsDisplayNameV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::CardinalV1>,
     >(
@@ -235,10 +235,10 @@ impl DurationFormatter {
     pub fn try_new_unstable<
         D: DataProvider<provider::DigitalDurationDataV1>
             + DataProvider<UnitsDisplayNameV1>
-            + DataProvider<DecimalSymbolsV2Marker>
+            + DataProvider<DecimalSymbolsV2>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::CardinalV1>
-            + DataProvider<icu_list::provider::UnitListV2Marker>
+            + DataProvider<icu_list::provider::UnitListV2>
             + ?Sized,
     >(
         provider: &D,

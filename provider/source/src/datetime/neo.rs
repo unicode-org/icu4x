@@ -657,12 +657,7 @@ macro_rules! impl_pattern_datagen {
 }
 
 // Weekdays
-impl_symbols_datagen!(
-    WeekdayNamesV1,
-    "gregory",
-    FULL_KEY_LENGTHS,
-    weekday_convert
-);
+impl_symbols_datagen!(WeekdayNamesV1, "gregory", FULL_KEY_LENGTHS, weekday_convert);
 
 // Dayperiods
 impl_symbols_datagen!(
@@ -691,12 +686,7 @@ impl_symbols_datagen!(
     YEARS_KEY_LENGTHS,
     years_convert
 );
-impl_symbols_datagen!(
-    DangiYearNamesV1,
-    "dangi",
-    YEARS_KEY_LENGTHS,
-    years_convert
-);
+impl_symbols_datagen!(DangiYearNamesV1, "dangi", YEARS_KEY_LENGTHS, years_convert);
 impl_symbols_datagen!(
     EthiopianYearNamesV1,
     "ethiopic",
@@ -745,12 +735,7 @@ impl_symbols_datagen!(
     YEARS_KEY_LENGTHS,
     years_convert
 );
-impl_symbols_datagen!(
-    RocYearNamesV1,
-    "roc",
-    YEARS_KEY_LENGTHS,
-    years_convert
-);
+impl_symbols_datagen!(RocYearNamesV1, "roc", YEARS_KEY_LENGTHS, years_convert);
 
 // Months
 impl_symbols_datagen!(
@@ -825,12 +810,7 @@ impl_symbols_datagen!(
     NORMAL_KEY_LENGTHS,
     months_convert
 );
-impl_symbols_datagen!(
-    RocMonthNamesV1,
-    "roc",
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
+impl_symbols_datagen!(RocMonthNamesV1, "roc", NORMAL_KEY_LENGTHS, months_convert);
 
 // Datetime patterns
 // TODO: This is modeled with glue patterns that are the same across calendar

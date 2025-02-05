@@ -191,7 +191,7 @@ impl BlobExporter<'_> {
             if let Ok(locales_vzv) =
                 VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
             {
-                let blob = BlobSchema::V003(BlobSchema {
+                let blob = BlobSchema::V003(BlobSchemaV1 {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
@@ -205,7 +205,7 @@ impl BlobExporter<'_> {
                 let locales_vzv =
                     VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
                         .expect("Locales vector does not fit in Index32 buffer!");
-                let blob = BlobSchema::V003Bigger(BlobSchema {
+                let blob = BlobSchema::V003Bigger(BlobSchemaV1 {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,

@@ -59,13 +59,13 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_collation_root_v1_marker!(Baked);
-    impl_collation_tailoring_v1_marker!(Baked);
-    impl_collation_diacritics_v1_marker!(Baked);
-    impl_collation_jamo_v1_marker!(Baked);
-    impl_collation_metadata_v1_marker!(Baked);
-    impl_collation_special_primaries_v1_marker!(Baked);
-    impl_collation_reordering_v1_marker!(Baked);
+    impl_collation_root_v1!(Baked);
+    impl_collation_tailoring_v1!(Baked);
+    impl_collation_diacritics_v1!(Baked);
+    impl_collation_jamo_v1!(Baked);
+    impl_collation_metadata_v1!(Baked);
+    impl_collation_special_primaries_v1!(Baked);
+    impl_collation_reordering_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -467,11 +467,7 @@ impl CollationMetadata {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationSpecialPrimariesV1,
-    "collator/prim@1",
-    singleton
-))]
+#[icu_provider::data_struct(marker(CollationSpecialPrimariesV1, "collator/prim@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]

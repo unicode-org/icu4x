@@ -35,24 +35,24 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_aliases_v2_marker!(Baked);
-    impl_likely_subtags_extended_v1_marker!(Baked);
-    impl_likely_subtags_for_language_v1_marker!(Baked);
-    impl_likely_subtags_for_script_region_v1_marker!(Baked);
-    impl_parents_v1_marker!(Baked);
-    impl_script_direction_v1_marker!(Baked);
+    impl_aliases_v2!(Baked);
+    impl_likely_subtags_extended_v1!(Baked);
+    impl_likely_subtags_for_language_v1!(Baked);
+    impl_likely_subtags_for_script_region_v1!(Baked);
+    impl_parents_v1!(Baked);
+    impl_script_direction_v1!(Baked);
 
-    impl_exemplar_characters_auxiliary_v1_marker!(Baked);
-    impl_exemplar_characters_index_v1_marker!(Baked);
-    impl_exemplar_characters_main_v1_marker!(Baked);
-    impl_exemplar_characters_numbers_v1_marker!(Baked);
-    impl_exemplar_characters_punctuation_v1_marker!(Baked);
+    impl_exemplar_characters_auxiliary_v1!(Baked);
+    impl_exemplar_characters_index_v1!(Baked);
+    impl_exemplar_characters_main_v1!(Baked);
+    impl_exemplar_characters_numbers_v1!(Baked);
+    impl_exemplar_characters_punctuation_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    AliasesV2Marker::INFO,
+    AliasesV2::INFO,
     ExemplarCharactersAuxiliaryV1::INFO,
     ExemplarCharactersIndexV1::INFO,
     ExemplarCharactersMainV1::INFO,
@@ -137,7 +137,7 @@ pub struct LanguageStrStrPair<'a>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );
 
-#[icu_provider::data_struct(marker(AliasesV2Marker, "locale/aliases@2", singleton))]
+#[icu_provider::data_struct(marker(AliasesV2, "locale/aliases@2", singleton))]
 #[derive(PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
@@ -383,17 +383,11 @@ pub struct ScriptDirection<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(
-        ExemplarCharactersAuxiliaryV1,
-        "locale/exemplarchars/auxiliary@1"
-    ),
+    marker(ExemplarCharactersAuxiliaryV1, "locale/exemplarchars/auxiliary@1"),
     marker(ExemplarCharactersIndexV1, "locale/exemplarchars/index@1"),
     marker(ExemplarCharactersMainV1, "locale/exemplarchars/main@1"),
     marker(ExemplarCharactersNumbersV1, "locale/exemplarchars/numbers@1"),
-    marker(
-        ExemplarCharactersPunctuationV1,
-        "locale/exemplarchars/punctuation@1"
-    )
+    marker(ExemplarCharactersPunctuationV1, "locale/exemplarchars/punctuation@1")
 )]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(

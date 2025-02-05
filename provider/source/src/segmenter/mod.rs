@@ -859,15 +859,11 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
         .clone()
 }
 
-implement!(LineBreakDataV2Marker, "segmenter/line.toml");
-implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
-implement!(WordBreakDataV2Marker, "segmenter/word.toml");
-implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
-implement_override!(
-    WordBreakDataOverrideV1,
-    "segmenter/word.toml",
-    ["fi", "sv"]
-);
+implement!(LineBreakDataV2, "segmenter/line.toml");
+implement!(GraphemeClusterBreakDataV2, "segmenter/grapheme.toml");
+implement!(WordBreakDataV2, "segmenter/word.toml");
+implement!(SentenceBreakDataV2, "segmenter/sentence.toml");
+implement_override!(WordBreakDataOverrideV1, "segmenter/word.toml", ["fi", "sv"]);
 implement_override!(
     SentenceBreakDataOverrideV1,
     "segmenter/sentence.toml",
@@ -881,7 +877,7 @@ mod tests {
     #[test]
     fn load_grapheme_cluster_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<GraphemeClusterBreakDataV2Marker> = provider
+        let response: DataResponse<GraphemeClusterBreakDataV2> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         assert_eq!(
@@ -894,7 +890,7 @@ mod tests {
     #[test]
     fn load_line_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<LineBreakDataV2Marker> = provider
+        let response: DataResponse<LineBreakDataV2> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();

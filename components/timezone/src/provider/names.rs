@@ -39,7 +39,7 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 /// </div>
 #[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
-    IanaToBcp47MapV3Marker,
+    IanaToBcp47MapV3,
     "time_zone/iana_to_bcp47@3",
     singleton,
     has_checksum

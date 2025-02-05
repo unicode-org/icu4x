@@ -5,9 +5,7 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::properties::props::Script;
-use icu::properties::provider::{
-    ScriptWithExtensionsProperty, ScriptWithExtensionsPropertyV1,
-};
+use icu::properties::provider::{ScriptWithExtensionsProperty, ScriptWithExtensionsPropertyV1};
 use icu::properties::script::ScriptWithExt;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -60,9 +58,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1>
-    for SourceDataProvider
-{
+impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

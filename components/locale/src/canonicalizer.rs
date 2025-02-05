@@ -39,7 +39,7 @@ use tinystr::TinyAsciiStr;
 #[derive(Debug)]
 pub struct LocaleCanonicalizer<Expander = LocaleExpander> {
     /// Data to support canonicalization.
-    aliases: DataPayload<AliasesV2Marker>,
+    aliases: DataPayload<AliasesV2>,
     /// Likely subtags implementation for delegation.
     expander: Expander,
 }
@@ -163,7 +163,7 @@ fn uts35_replacement<'a, I>(
 #[inline]
 fn uts35_check_language_rules(
     langid: &mut LanguageIdentifier,
-    alias_data: &DataPayload<AliasesV2Marker>,
+    alias_data: &DataPayload<AliasesV2>,
 ) -> TransformResult {
     if !langid.language.is_default() {
         let lang: TinyAsciiStr<3> = langid.language.into();
@@ -219,7 +219,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2Marker>
+        P: DataProvider<AliasesV2>
             + DataProvider<LikelySubtagsForLanguageV1>
             + DataProvider<LikelySubtagsForScriptRegionV1>
             + ?Sized,
@@ -252,7 +252,7 @@ impl LocaleCanonicalizer<LocaleExpander> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2Marker>
+        P: DataProvider<AliasesV2>
             + DataProvider<LikelySubtagsForLanguageV1>
             + DataProvider<LikelySubtagsForScriptRegionV1>
             + DataProvider<LikelySubtagsExtendedV1>
@@ -272,9 +272,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: Expander) -> Self {
         Self {
-            aliases: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER,
-            ),
+            aliases: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_ALIASES_V2),
             expander,
         }
     }
@@ -285,9 +283,9 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
         expander: Expander,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2Marker> + ?Sized,
+        P: DataProvider<AliasesV2> + ?Sized,
     {
-        let aliases: DataPayload<AliasesV2Marker> = provider.load(Default::default())?.payload;
+        let aliases: DataPayload<AliasesV2> = provider.load(Default::default())?.payload;
 
         Ok(Self { aliases, expander })
     }

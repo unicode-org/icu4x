@@ -123,7 +123,7 @@ impl Dangi {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_DANGI_CACHE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_DANGI_CACHE_V1,
             )),
         }
     }

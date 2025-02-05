@@ -106,13 +106,13 @@ const _: () = {
         pub use icu_decimal_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_decimal_symbols_v2_marker!(Baked);
-    impl_decimal_digits_v1_marker!(Baked);
+    impl_decimal_symbols_v2!(Baked);
+    impl_decimal_digits_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDigitsV1::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2::INFO, DecimalDigitsV1::INFO];
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
@@ -205,7 +205,7 @@ impl DecimalSymbolStrsBuilder<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@2")]
+#[icu_provider::data_struct(DecimalSymbolsV2 = "decimal/symbols@2")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

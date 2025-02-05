@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{names::IanaToBcp47MapV3Marker, ZoneOffsetPeriodV1},
+    provider::{names::IanaToBcp47MapV3, ZoneOffsetPeriodV1},
     time_zone::models,
     DateTime, InvalidOffsetError, Time, TimeZoneBcp47Id, TimeZoneIdMapper,
     TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneOffsets,
@@ -163,7 +163,7 @@ impl ZonedDateTimeParser {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: ?Sized + DataProvider<ZoneOffsetPeriodV1> + DataProvider<IanaToBcp47MapV3Marker>,
+        P: ?Sized + DataProvider<ZoneOffsetPeriodV1> + DataProvider<IanaToBcp47MapV3>,
     {
         Ok(Self {
             mapper: TimeZoneIdMapper::try_new_unstable(provider)?,

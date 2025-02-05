@@ -12,10 +12,7 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
 impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
         self.check_req::<RegionDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::region::Resource = self
@@ -25,9 +22,9 @@ impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(RegionDisplayNames::try_from(data).map_err(
-                |e| DataError::custom("data for RegionDisplayNames").with_display_context(&e),
-            )?),
+            payload: DataPayload::from_owned(RegionDisplayNames::try_from(data).map_err(|e| {
+                DataError::custom("data for RegionDisplayNames").with_display_context(&e)
+            })?),
         })
     }
 }

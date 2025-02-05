@@ -96,7 +96,7 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         WindowsTimeZoneMapperBorrowed {
-            data: crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
+            data: crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1,
         }
     }
 

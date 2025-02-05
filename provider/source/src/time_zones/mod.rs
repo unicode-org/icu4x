@@ -295,8 +295,7 @@ mod tests {
             ..Default::default()
         };
 
-        let time_zone_formats: DataResponse<TimeZoneEssentialsV1> =
-            provider.load(en).unwrap();
+        let time_zone_formats: DataResponse<TimeZoneEssentialsV1> = provider.load(en).unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 

@@ -82,7 +82,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
             ));
         }
 
-        if header.repr_info.format_version != FormatVersion::_0 {
+        if header.repr_info.format_version != FormatVersion::V2_0 {
             // Support for other versions can be added at a later time, but for
             // now we can only deal with 2.0.
             return Err(BinaryDeserializerError::unsupported_format(
@@ -102,7 +102,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
             ..(index.keys_end as usize) * core::mem::size_of::<u32>(),
         )?;
 
-        let data_16_bit = if header.repr_info.format_version < FormatVersion::_0 {
+        let data_16_bit = if header.repr_info.format_version < FormatVersion::V2_0 {
             // The 16-bit data area was not introduced until format version 2.0.
             None
         } else if let Some(data_16_bit_end) = index.data_16_bit_end {
@@ -190,7 +190,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
     {
         let descriptor = self.peek_next_resource_descriptor()?;
         match descriptor.resource_type() {
-            ResourceReprType::_String | ResourceReprType::String => {
+            ResourceReprType::_String | ResourceReprType::StringV2 => {
                 self.deserialize_string(visitor)
             }
             ResourceReprType::Binary => self.deserialize_bytes(visitor),
@@ -322,7 +322,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
         let descriptor = self.get_next_resource_descriptor()?;
         match descriptor.resource_type() {
             ResourceReprType::_String => todo!(),
-            ResourceReprType::String => {
+            ResourceReprType::StringV2 => {
                 if let Some(data_16_bit) = self.data_16_bit {
                     if descriptor.is_empty() {
                         return visitor.visit_str("");
@@ -333,7 +333,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
                     de.deserialize_string(visitor)
                 } else {
                     Err(BinaryDeserializerError::invalid_data(
-                        "String resource without 16-bit data block",
+                        "StringV2 resource without 16-bit data block",
                     ))
                 }
             }
@@ -378,7 +378,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
 
                 get_subslice(input, ..(length as usize) * core::mem::size_of::<u32>())?
             }
-            ResourceReprType::String => {
+            ResourceReprType::StringV2 => {
                 // String resources are stored as UTF-16 strings in the bundle's
                 // native endian. In situations where treatment as strings may
                 // not be needed or performance would benefit from lazy
@@ -395,7 +395,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
                     get_subslice(input, ..length * core::mem::size_of::<u16>())?
                 } else {
                     return Err(BinaryDeserializerError::invalid_data(
-                        "String resource without 16-bit data block",
+                        "StringV2 resource without 16-bit data block",
                     ));
                 }
             }
@@ -500,7 +500,7 @@ impl<'de> de::Deserializer<'de> for &mut ResourceTreeDeserializer<'de> {
                     result
                 } else {
                     Err(BinaryDeserializerError::invalid_data(
-                        "String resource with no 16-bit data",
+                        "StringV2 resource with no 16-bit data",
                     ))
                 }
             }
@@ -855,7 +855,7 @@ impl<'de> de::MapAccess<'de> for TableMapAccess<'de, '_> {
 
 /// The `Resource16BitDeserializer` struct processes resources which are a part
 /// of the 16-bit data block of the resource bundle. A resource will be in the
-/// 16-bit data block if and only if it is a `String`.
+/// 16-bit data block if and only if it is a `StringV2`.
 pub struct Resource16BitDeserializer<'de> {
     input: &'de [u8],
 }
@@ -902,7 +902,7 @@ impl<'de> de::Deserializer<'de> for Resource16BitDeserializer<'de> {
         V: de::Visitor<'de>,
     {
         // The only type which can be wholly represented in the 16-bit data
-        // block is `String`.
+        // block is `StringV2`.
         self.deserialize_string(visitor)
     }
 
@@ -916,7 +916,7 @@ impl<'de> de::Deserializer<'de> for Resource16BitDeserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        // Because `String` is stored as UTF-16, we can't borrow it as a
+        // Because `StringV2` is stored as UTF-16, we can't borrow it as a
         // `&str`. If zero-copy is desired, an appropriate data structure such
         // as `ZeroVec` will be needed.
         visitor.visit_string(self.read_string_v2()?)
@@ -926,7 +926,7 @@ impl<'de> de::Deserializer<'de> for Resource16BitDeserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        // `String` is a contiguous sequence of native-endian `u16`, so we can
+        // `StringV2` is a contiguous sequence of native-endian `u16`, so we can
         // zero-copy deserialize it if the visitor supports it.
         let (length, input) = get_length_and_start_of_utf16_string(self.input)?;
         let bytes = get_subslice(input, 0..length * core::mem::size_of::<u16>())?;
@@ -1208,12 +1208,12 @@ impl TryFrom<&[u8]> for FormatVersion {
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let value = match value {
-            [1, 0, 0, 0] => FormatVersion::_0,
-            [1, 1, 0, 0] => FormatVersion::_1,
-            [1, 2, 0, 0] => FormatVersion::_2,
-            [1, 3, 0, 0] => FormatVersion::_3,
-            [2, 0, 0, 0] => FormatVersion::_0,
-            [3, 0, 0, 0] => FormatVersion::_0,
+            [1, 0, 0, 0] => FormatVersion::V1_0,
+            [1, 1, 0, 0] => FormatVersion::V1_1,
+            [1, 2, 0, 0] => FormatVersion::V1_2,
+            [1, 3, 0, 0] => FormatVersion::V1_3,
+            [2, 0, 0, 0] => FormatVersion::V2_0,
+            [3, 0, 0, 0] => FormatVersion::V3_0,
             _ => {
                 return Err(BinaryDeserializerError::invalid_data(
                     "unrecognized format version",

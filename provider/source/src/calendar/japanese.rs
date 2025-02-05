@@ -113,10 +113,7 @@ impl DataProvider<JapaneseErasV1> for SourceDataProvider {
 }
 
 impl DataProvider<JapaneseExtendedErasV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<JapaneseExtendedErasV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseExtendedErasV1>, DataError> {
         self.check_req::<JapaneseExtendedErasV1>(req)?;
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {

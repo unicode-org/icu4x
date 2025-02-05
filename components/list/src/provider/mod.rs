@@ -41,18 +41,14 @@ const _: () = {
         pub use icu_list_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_and_list_v2_marker!(Baked);
-    impl_or_list_v2_marker!(Baked);
-    impl_unit_list_v2_marker!(Baked);
+    impl_and_list_v2!(Baked);
+    impl_or_list_v2!(Baked);
+    impl_unit_list_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[
-    AndListV2Marker::INFO,
-    OrListV2Marker::INFO,
-    UnitListV2Marker::INFO,
-];
+pub const MARKERS: &[DataMarkerInfo] = &[AndListV2::INFO, OrListV2::INFO, UnitListV2::INFO];
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///
@@ -62,9 +58,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    AndListV2Marker = "list/and@2",
-    OrListV2Marker = "list/or@2",
-    UnitListV2Marker = "list/unit@2"
+    AndListV2 = "list/and@2",
+    OrListV2 = "list/or@2",
+    UnitListV2 = "list/unit@2"
 )]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

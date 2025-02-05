@@ -224,10 +224,10 @@ impl LocaleExpander {
     pub const fn new_common() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1,
             ),
             likely_subtags_sr: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1,
             ),
             likely_subtags_ext: None,
         }
@@ -273,13 +273,13 @@ impl LocaleExpander {
     pub const fn new_extended() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1,
             ),
             likely_subtags_sr: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1,
             ),
             likely_subtags_ext: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1_MARKER,
+                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1,
             )),
         }
     }

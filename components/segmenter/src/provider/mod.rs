@@ -44,16 +44,16 @@ const _: () = {
         pub use icu_segmenter_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_dictionary_for_word_only_auto_v1_marker!(Baked);
-    impl_dictionary_for_word_line_extended_v1_marker!(Baked);
-    impl_grapheme_cluster_break_data_v2_marker!(Baked);
-    impl_line_break_data_v2_marker!(Baked);
+    impl_dictionary_for_word_only_auto_v1!(Baked);
+    impl_dictionary_for_word_line_extended_v1!(Baked);
+    impl_grapheme_cluster_break_data_v2!(Baked);
+    impl_line_break_data_v2!(Baked);
     #[cfg(feature = "lstm")]
-    impl_lstm_for_word_line_auto_v1_marker!(Baked);
-    impl_sentence_break_data_override_v1_marker!(Baked);
-    impl_sentence_break_data_v2_marker!(Baked);
-    impl_word_break_data_override_v1_marker!(Baked);
-    impl_word_break_data_v2_marker!(Baked);
+    impl_lstm_for_word_line_auto_v1!(Baked);
+    impl_sentence_break_data_override_v1!(Baked);
+    impl_sentence_break_data_v2!(Baked);
+    impl_word_break_data_override_v1!(Baked);
+    impl_word_break_data_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -61,13 +61,13 @@ const _: () = {
 pub const MARKERS: &[DataMarkerInfo] = &[
     DictionaryForWordLineExtendedV1::INFO,
     DictionaryForWordOnlyAutoV1::INFO,
-    GraphemeClusterBreakDataV2Marker::INFO,
-    LineBreakDataV2Marker::INFO,
+    GraphemeClusterBreakDataV2::INFO,
+    LineBreakDataV2::INFO,
     LstmForWordLineAutoV1::INFO,
     SentenceBreakDataOverrideV1::INFO,
-    SentenceBreakDataV2Marker::INFO,
+    SentenceBreakDataV2::INFO,
     WordBreakDataOverrideV1::INFO,
-    WordBreakDataV2Marker::INFO,
+    WordBreakDataV2::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
@@ -78,10 +78,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(LineBreakDataV2Marker, "segmenter/line@2", singleton),
-    marker(WordBreakDataV2Marker, "segmenter/word@2", singleton),
-    marker(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme@2", singleton),
-    marker(SentenceBreakDataV2Marker, "segmenter/sentence@2", singleton)
+    marker(LineBreakDataV2, "segmenter/line@2", singleton),
+    marker(WordBreakDataV2, "segmenter/word@2", singleton),
+    marker(GraphemeClusterBreakDataV2, "segmenter/grapheme@2", singleton),
+    marker(SentenceBreakDataV2, "segmenter/sentence@2", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

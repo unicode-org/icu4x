@@ -373,15 +373,15 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV2Marker> for SourceDataProvider {
+impl DataProvider<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV2Marker>, DataError> {
+    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV2>, DataError> {
         use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
-        self.check_req::<GeneralCategoryMaskNameToValueV2Marker>(req)?;
+        self.check_req::<GeneralCategoryMaskNameToValueV2>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
@@ -402,9 +402,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV2Marker> for SourceDataProvider
     }
 }
 
-impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2Marker>
-    for SourceDataProvider
-{
+impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(HashSet::from_iter([Default::default()]))
@@ -414,7 +412,7 @@ impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2Marker>
 expand!(
     (
         CanonicalCombiningClassV1,
-        CanonicalCombiningClassNameToValueV2Marker,
+        CanonicalCombiningClassNameToValueV2,
         (
             sparse: CanonicalCombiningClassValueToShortNameV1,
             CanonicalCombiningClassValueToLongNameV1
@@ -423,7 +421,7 @@ expand!(
     ),
     (
         GeneralCategoryV1,
-        GeneralCategoryNameToValueV2Marker,
+        GeneralCategoryNameToValueV2,
         (
             linear: GeneralCategoryValueToShortNameV1,
             GeneralCategoryValueToLongNameV1
@@ -432,7 +430,7 @@ expand!(
     ),
     (
         BidiClassV1,
-        BidiClassNameToValueV2Marker,
+        BidiClassNameToValueV2,
         (
             linear: BidiClassValueToShortNameV1,
             BidiClassValueToLongNameV1
@@ -441,7 +439,7 @@ expand!(
     ),
     (
         ScriptV1,
-        ScriptNameToValueV2Marker,
+        ScriptNameToValueV2,
         (
             linear4: ScriptValueToShortNameV1,
             ScriptValueToLongNameV1
@@ -450,7 +448,7 @@ expand!(
     ),
     (
         HangulSyllableTypeV1,
-        HangulSyllableTypeNameToValueV2Marker,
+        HangulSyllableTypeNameToValueV2,
         (
             linear: HangulSyllableTypeValueToShortNameV1,
             HangulSyllableTypeValueToLongNameV1
@@ -459,7 +457,7 @@ expand!(
     ),
     (
         EastAsianWidthV1,
-        EastAsianWidthNameToValueV2Marker,
+        EastAsianWidthNameToValueV2,
         (
             linear: EastAsianWidthValueToShortNameV1,
             EastAsianWidthValueToLongNameV1
@@ -468,7 +466,7 @@ expand!(
     ),
     (
         IndicSyllabicCategoryV1,
-        IndicSyllabicCategoryNameToValueV2Marker,
+        IndicSyllabicCategoryNameToValueV2,
         (
             linear: IndicSyllabicCategoryValueToShortNameV1,
             IndicSyllabicCategoryValueToLongNameV1
@@ -477,7 +475,7 @@ expand!(
     ),
     (
         LineBreakV1,
-        LineBreakNameToValueV2Marker,
+        LineBreakNameToValueV2,
         (
             linear: LineBreakValueToShortNameV1,
             LineBreakValueToLongNameV1
@@ -486,7 +484,7 @@ expand!(
     ),
     (
         GraphemeClusterBreakV1,
-        GraphemeClusterBreakNameToValueV2Marker,
+        GraphemeClusterBreakNameToValueV2,
         (
             linear: GraphemeClusterBreakValueToShortNameV1,
             GraphemeClusterBreakValueToLongNameV1
@@ -495,7 +493,7 @@ expand!(
     ),
     (
         WordBreakV1,
-        WordBreakNameToValueV2Marker,
+        WordBreakNameToValueV2,
         (
             linear: WordBreakValueToShortNameV1,
             WordBreakValueToLongNameV1
@@ -504,7 +502,7 @@ expand!(
     ),
     (
         SentenceBreakV1,
-        SentenceBreakNameToValueV2Marker,
+        SentenceBreakNameToValueV2,
         (
             linear: SentenceBreakValueToShortNameV1,
             SentenceBreakValueToLongNameV1
@@ -513,7 +511,7 @@ expand!(
     ),
     (
         JoiningTypeV1,
-        JoiningTypeNameToValueV2Marker,
+        JoiningTypeNameToValueV2,
         (
             linear: JoiningTypeValueToShortNameV1,
             JoiningTypeValueToLongNameV1

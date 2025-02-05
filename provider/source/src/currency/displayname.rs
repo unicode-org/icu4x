@@ -10,10 +10,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 
 impl DataProvider<CurrencyDisplaynameV1> for crate::SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyDisplaynameV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyDisplaynameV1>, DataError> {
         self.check_req::<CurrencyDisplaynameV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =

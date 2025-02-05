@@ -16,7 +16,7 @@ use crate::char_from_u32;
 use crate::in_inclusive_range;
 use crate::provider::CanonicalCompositions;
 use crate::provider::CanonicalCompositionsV1;
-use crate::provider::CanonicalDecompositionDataV2Marker;
+use crate::provider::CanonicalDecompositionDataV2;
 use crate::provider::CanonicalDecompositionTablesV1;
 use crate::provider::DecompositionData;
 use crate::provider::DecompositionTables;
@@ -75,8 +75,7 @@ impl CanonicalCompositionBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            canonical_compositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
+            canonical_compositions: crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1,
         }
     }
 }
@@ -222,10 +221,10 @@ impl CanonicalDecompositionBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -233,11 +232,10 @@ impl CanonicalDecompositionBorrowed<'static> {
         );
 
         Self {
-            decompositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2_MARKER,
-            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
+            decompositions: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2,
+            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1,
             non_recursive:
-                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
+                crate::provider::Baked::SINGLETON_NON_RECURSIVE_DECOMPOSITION_SUPPLEMENT_V1,
         }
     }
 }
@@ -443,7 +441,7 @@ impl CanonicalDecompositionBorrowed<'_> {
 /// glyph-availability-guided custom normalizer.
 #[derive(Debug)]
 pub struct CanonicalDecomposition {
-    decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
+    decompositions: DataPayload<CanonicalDecompositionDataV2>,
     tables: DataPayload<CanonicalDecompositionTablesV1>,
     non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1>,
 }
@@ -489,12 +487,12 @@ impl CanonicalDecomposition {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2Marker>
+        D: DataProvider<CanonicalDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<NonRecursiveDecompositionSupplementV1>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV2Marker> =
+        let decompositions: DataPayload<CanonicalDecompositionDataV2> =
             provider.load(Default::default())?.payload;
         let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
@@ -564,8 +562,7 @@ impl CanonicalCombiningClassMapBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         CanonicalCombiningClassMapBorrowed {
-            decompositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2_MARKER,
+            decompositions: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2,
         }
     }
 }
@@ -621,7 +618,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
 #[derive(Debug)]
 pub struct CanonicalCombiningClassMap {
     /// The data trie
-    decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
+    decompositions: DataPayload<CanonicalDecompositionDataV2>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -662,9 +659,9 @@ impl CanonicalCombiningClassMap {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2Marker> + ?Sized,
+        D: DataProvider<CanonicalDecompositionDataV2> + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV2Marker> =
+        let decompositions: DataPayload<CanonicalDecompositionDataV2> =
             provider.load(Default::default())?.payload;
         Ok(CanonicalCombiningClassMap { decompositions })
     }

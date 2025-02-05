@@ -24,7 +24,7 @@ use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
-use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2Marker};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
 use icu_decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 
@@ -556,24 +556,18 @@ pub struct TypedDateTimeNames<
 
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     year_names: <FSet::YearNames as NamesContainer<YearNamesV1, YearNameLength>>::Container,
-    month_names:
-        <FSet::MonthNames as NamesContainer<MonthNamesV1, MonthNameLength>>::Container,
+    month_names: <FSet::MonthNames as NamesContainer<MonthNamesV1, MonthNameLength>>::Container,
     weekday_names:
         <FSet::WeekdayNames as NamesContainer<WeekdayNamesV1, WeekdayNameLength>>::Container,
-    dayperiod_names: <FSet::DayPeriodNames as NamesContainer<
-        DayPeriodNamesV1,
-        DayPeriodNameLength,
-    >>::Container,
-    zone_essentials:
-        <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
-    locations_root:
-        <FSet::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
+    dayperiod_names:
+        <FSet::DayPeriodNames as NamesContainer<DayPeriodNamesV1, DayPeriodNameLength>>::Container,
+    zone_essentials: <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
+    locations_root: <FSet::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
     locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container,
     exemplars_root:
         <FSet::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container,
     exemplars: <FSet::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container,
-    mz_generic_long:
-        <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
+    mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
     mz_generic_short:
         <FSet::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
     mz_specific_long:
@@ -672,7 +666,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1> + ?Sized,
+        P: DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1> + ?Sized,
     {
         let mut names = Self {
             prefs,
@@ -1164,9 +1158,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::ExemplarCitiesV1>
-            + DataProvider<tz::ExemplarCitiesRootV1>
-            + ?Sized,
+        P: DataProvider<tz::ExemplarCitiesV1> + DataProvider<tz::ExemplarCitiesRootV1> + ?Sized,
     {
         self.inner.load_time_zone_exemplar_city_names(
             &tz::ExemplarCitiesV1::bind(provider),
@@ -1526,7 +1518,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     #[inline]
     pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1> + ?Sized,
+        P: DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1> + ?Sized,
     {
         self.inner
             .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider), self.prefs)?;
@@ -1603,7 +1595,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             + DataProvider<tz::MzSpecificLongV1>
             + DataProvider<tz::MzSpecificShortV1>
             + DataProvider<tz::MzPeriodV1>
-            + DataProvider<DecimalSymbolsV2Marker>
+            + DataProvider<DecimalSymbolsV2>
             + DataProvider<DecimalDigitsV1>
             + ?Sized,
     {
@@ -1673,10 +1665,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         pattern: &'l DateTimePattern,
     ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
-        crate::provider::Baked:
-            DataProvider<C::YearNamesV1> + DataProvider<C::MonthNamesV1>,
-        crate::provider::Baked:
-            DataProvider<C::YearNamesV1> + DataProvider<C::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<C::YearNamesV1> + DataProvider<C::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<C::YearNamesV1> + DataProvider<C::MonthNamesV1>,
     {
         let locale = self.prefs;
         self.inner.load_for_pattern(
@@ -2236,8 +2226,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1> + ?Sized),
-        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1>
-              + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
@@ -2572,11 +2561,9 @@ impl RawDateTimeNamesBorrowed<'_> {
                 crate::provider::neo::get_year_name_from_map(era_names, era_code.0.as_str().into())
                     .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            (YearNames::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
-                era_names
-                    .get(index.into())
-                    .ok_or(GetNameForEraError::InvalidEraCode)
-            }
+            (YearNames::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => era_names
+                .get(index.into())
+                .ok_or(GetNameForEraError::InvalidEraCode),
             _ => Err(GetNameForEraError::InvalidEraCode),
         }
     }

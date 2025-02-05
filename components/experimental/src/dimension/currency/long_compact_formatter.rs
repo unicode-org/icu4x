@@ -13,8 +13,7 @@ use crate::{
     compactdecimal::CompactDecimalFormatterOptions,
     compactdecimal::CompactDecimalFormatterPreferences,
     dimension::provider::{
-        currency_patterns::CurrencyPatternsDataV1,
-        extended_currency::CurrencyExtendedDataV1,
+        currency_patterns::CurrencyPatternsDataV1, extended_currency::CurrencyExtendedDataV1,
     },
 };
 use icu_locale_core::preferences::{
@@ -132,11 +131,9 @@ impl LongCompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<
-                crate::dimension::provider::extended_currency::CurrencyExtendedDataV1,
-            > + DataProvider<
-                crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1,
-            > + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<crate::dimension::provider::extended_currency::CurrencyExtendedDataV1>
+            + DataProvider<crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::CardinalV1>
             + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1>,

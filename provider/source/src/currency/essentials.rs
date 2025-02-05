@@ -79,10 +79,7 @@ fn currency_pattern_selection(
 }
 
 impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyEssentialsV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsV1>, DataError> {
         self.check_req::<CurrencyEssentialsV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =

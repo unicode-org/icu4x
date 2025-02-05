@@ -10,8 +10,7 @@ use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
 use crate::dimension::provider::{
-    currency_patterns::CurrencyPatternsDataV1,
-    extended_currency::CurrencyExtendedDataV1,
+    currency_patterns::CurrencyPatternsDataV1, extended_currency::CurrencyExtendedDataV1,
 };
 
 use super::{
@@ -108,7 +107,7 @@ impl LongCurrencyFormatter {
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1>
             + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::CardinalV1>,
     {

@@ -40,25 +40,25 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_canonical_compositions_v1_marker!(Baked);
-    impl_non_recursive_decomposition_supplement_v1_marker!(Baked);
-    impl_canonical_decomposition_data_v2_marker!(Baked);
-    impl_canonical_decomposition_tables_v1_marker!(Baked);
-    impl_compatibility_decomposition_data_v2_marker!(Baked);
-    impl_compatibility_decomposition_tables_v1_marker!(Baked);
-    impl_uts46_decomposition_data_v2_marker!(Baked);
+    impl_canonical_compositions_v1!(Baked);
+    impl_non_recursive_decomposition_supplement_v1!(Baked);
+    impl_canonical_decomposition_data_v2!(Baked);
+    impl_canonical_decomposition_tables_v1!(Baked);
+    impl_compatibility_decomposition_data_v2!(Baked);
+    impl_compatibility_decomposition_tables_v1!(Baked);
+    impl_uts46_decomposition_data_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     CanonicalCompositionsV1::INFO,
-    CanonicalDecompositionDataV2Marker::INFO,
+    CanonicalDecompositionDataV2::INFO,
     CanonicalDecompositionTablesV1::INFO,
-    CompatibilityDecompositionDataV2Marker::INFO,
+    CompatibilityDecompositionDataV2::INFO,
     CompatibilityDecompositionTablesV1::INFO,
     NonRecursiveDecompositionSupplementV1::INFO,
-    Uts46DecompositionDataV2Marker::INFO,
+    Uts46DecompositionDataV2::INFO,
 ];
 
 /// Decomposition data
@@ -69,9 +69,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(CanonicalDecompositionDataV2Marker, "normalizer/nfd@2", singleton),
-    marker(CompatibilityDecompositionDataV2Marker, "normalizer/nfkd@2", singleton),
-    marker(Uts46DecompositionDataV2Marker, "normalizer/uts46d@2", singleton)
+    marker(CanonicalDecompositionDataV2, "normalizer/nfd@2", singleton),
+    marker(CompatibilityDecompositionDataV2, "normalizer/nfkd@2", singleton),
+    marker(Uts46DecompositionDataV2, "normalizer/uts46d@2", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -97,11 +97,7 @@ pub struct DecompositionData<'data> {
 /// </div>
 #[icu_provider::data_struct(
     marker(CanonicalDecompositionTablesV1, "normalizer/nfdex@1", singleton),
-    marker(
-        CompatibilityDecompositionTablesV1,
-        "normalizer/nfkdex@1",
-        singleton
-    )
+    marker(CompatibilityDecompositionTablesV1, "normalizer/nfkdex@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

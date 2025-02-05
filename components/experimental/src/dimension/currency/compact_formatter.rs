@@ -132,7 +132,7 @@ impl CompactCurrencyFormatter {
             + DataProvider<crate::dimension::provider::currency::CurrencyEssentialsV1>
             + DataProvider<crate::dimension::provider::currency_compact::ShortCurrencyCompactV1>
             + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::CardinalV1>,
     {

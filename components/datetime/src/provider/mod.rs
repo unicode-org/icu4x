@@ -26,8 +26,7 @@ pub mod time_zones;
 
 pub use packed_pattern::*;
 
-pub(crate) type ErasedPackedPatterns =
-    icu_provider::marker::ErasedMarker<PackedPatterns<'static>>;
+pub(crate) type ErasedPackedPatterns = icu_provider::marker::ErasedMarker<PackedPatterns<'static>>;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -50,63 +49,63 @@ const _: () = {
     }
     make_provider!(Baked);
 
-    impl_locations_v1_marker!(Baked);
-    impl_locations_root_v1_marker!(Baked);
-    impl_exemplar_cities_v1_marker!(Baked);
-    impl_exemplar_cities_root_v1_marker!(Baked);
-    impl_metazone_generic_names_long_v1_marker!(Baked);
-    impl_metazone_generic_names_short_v1_marker!(Baked);
-    impl_metazone_period_v1_marker!(Baked);
-    impl_metazone_specific_names_long_v1_marker!(Baked);
-    impl_metazone_specific_names_short_v1_marker!(Baked);
-    impl_time_zone_essentials_v1_marker!(Baked);
+    impl_locations_v1!(Baked);
+    impl_locations_root_v1!(Baked);
+    impl_exemplar_cities_v1!(Baked);
+    impl_exemplar_cities_root_v1!(Baked);
+    impl_metazone_generic_names_long_v1!(Baked);
+    impl_metazone_generic_names_short_v1!(Baked);
+    impl_metazone_period_v1!(Baked);
+    impl_metazone_specific_names_long_v1!(Baked);
+    impl_metazone_specific_names_short_v1!(Baked);
+    impl_time_zone_essentials_v1!(Baked);
 
-    impl_weekday_names_v1_marker!(Baked);
-    impl_day_period_names_v1_marker!(Baked);
-    impl_glue_pattern_v1_marker!(Baked);
-    impl_time_neo_skeleton_patterns_v1_marker!(Baked);
+    impl_weekday_names_v1!(Baked);
+    impl_day_period_names_v1!(Baked);
+    impl_glue_pattern_v1!(Baked);
+    impl_time_neo_skeleton_patterns_v1!(Baked);
 
-    impl_buddhist_year_names_v1_marker!(Baked);
-    impl_chinese_year_names_v1_marker!(Baked);
-    impl_coptic_year_names_v1_marker!(Baked);
-    impl_dangi_year_names_v1_marker!(Baked);
-    impl_ethiopian_year_names_v1_marker!(Baked);
-    impl_gregorian_year_names_v1_marker!(Baked);
-    impl_hebrew_year_names_v1_marker!(Baked);
-    impl_indian_year_names_v1_marker!(Baked);
-    impl_islamic_year_names_v1_marker!(Baked);
-    impl_japanese_year_names_v1_marker!(Baked);
-    impl_japanese_extended_year_names_v1_marker!(Baked);
-    impl_persian_year_names_v1_marker!(Baked);
-    impl_roc_year_names_v1_marker!(Baked);
+    impl_buddhist_year_names_v1!(Baked);
+    impl_chinese_year_names_v1!(Baked);
+    impl_coptic_year_names_v1!(Baked);
+    impl_dangi_year_names_v1!(Baked);
+    impl_ethiopian_year_names_v1!(Baked);
+    impl_gregorian_year_names_v1!(Baked);
+    impl_hebrew_year_names_v1!(Baked);
+    impl_indian_year_names_v1!(Baked);
+    impl_islamic_year_names_v1!(Baked);
+    impl_japanese_year_names_v1!(Baked);
+    impl_japanese_extended_year_names_v1!(Baked);
+    impl_persian_year_names_v1!(Baked);
+    impl_roc_year_names_v1!(Baked);
 
-    impl_buddhist_month_names_v1_marker!(Baked);
-    impl_chinese_month_names_v1_marker!(Baked);
-    impl_coptic_month_names_v1_marker!(Baked);
-    impl_dangi_month_names_v1_marker!(Baked);
-    impl_ethiopian_month_names_v1_marker!(Baked);
-    impl_gregorian_month_names_v1_marker!(Baked);
-    impl_hebrew_month_names_v1_marker!(Baked);
-    impl_indian_month_names_v1_marker!(Baked);
-    impl_islamic_month_names_v1_marker!(Baked);
-    impl_japanese_month_names_v1_marker!(Baked);
-    impl_japanese_extended_month_names_v1_marker!(Baked);
-    impl_persian_month_names_v1_marker!(Baked);
-    impl_roc_month_names_v1_marker!(Baked);
+    impl_buddhist_month_names_v1!(Baked);
+    impl_chinese_month_names_v1!(Baked);
+    impl_coptic_month_names_v1!(Baked);
+    impl_dangi_month_names_v1!(Baked);
+    impl_ethiopian_month_names_v1!(Baked);
+    impl_gregorian_month_names_v1!(Baked);
+    impl_hebrew_month_names_v1!(Baked);
+    impl_indian_month_names_v1!(Baked);
+    impl_islamic_month_names_v1!(Baked);
+    impl_japanese_month_names_v1!(Baked);
+    impl_japanese_extended_month_names_v1!(Baked);
+    impl_persian_month_names_v1!(Baked);
+    impl_roc_month_names_v1!(Baked);
 
-    impl_buddhist_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_chinese_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_coptic_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_dangi_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_ethiopian_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_gregorian_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_hebrew_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_indian_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_islamic_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_japanese_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_japanese_extended_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_persian_date_neo_skeleton_patterns_v1_marker!(Baked);
-    impl_roc_date_neo_skeleton_patterns_v1_marker!(Baked);
+    impl_buddhist_date_neo_skeleton_patterns_v1!(Baked);
+    impl_chinese_date_neo_skeleton_patterns_v1!(Baked);
+    impl_coptic_date_neo_skeleton_patterns_v1!(Baked);
+    impl_dangi_date_neo_skeleton_patterns_v1!(Baked);
+    impl_ethiopian_date_neo_skeleton_patterns_v1!(Baked);
+    impl_gregorian_date_neo_skeleton_patterns_v1!(Baked);
+    impl_hebrew_date_neo_skeleton_patterns_v1!(Baked);
+    impl_indian_date_neo_skeleton_patterns_v1!(Baked);
+    impl_islamic_date_neo_skeleton_patterns_v1!(Baked);
+    impl_japanese_date_neo_skeleton_patterns_v1!(Baked);
+    impl_japanese_extended_date_neo_skeleton_patterns_v1!(Baked);
+    impl_persian_date_neo_skeleton_patterns_v1!(Baked);
+    impl_roc_date_neo_skeleton_patterns_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]

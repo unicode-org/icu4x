@@ -30,10 +30,7 @@ impl SourceDataProvider {
 // features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
 impl DataProvider<BidiMirroringGlyphV1> for SourceDataProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<BidiMirroringGlyphV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<BidiMirroringGlyphV1>, DataError> {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::CodePointTrie;
         use icu::collections::codepointtrie::TrieType;
@@ -104,10 +101,7 @@ impl DataProvider<BidiMirroringGlyphV1> for SourceDataProvider {
     }
 
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<BidiMirroringGlyphV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<BidiMirroringGlyphV1>, DataError> {
         self.check_req::<BidiMirroringGlyphV1>(req)?;
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",

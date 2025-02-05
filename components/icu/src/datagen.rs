@@ -25,8 +25,8 @@ macro_rules! cb {
         /// assert_eq!(
         ///     icu::markers_for_bin(&std::fs::read(Path::new("target/release/my-app"))?)?,
         ///     std::collections::BTreeSet::from_iter([
-        ///         icu::list::provider::AndListV2Marker::INFO,
-        ///         icu::list::provider::OrListV2Marker::INFO,
+        ///         icu::list::provider::AndListV2::INFO,
+        ///         icu::list::provider::OrListV2::INFO,
         ///     ]),
         /// );
         /// # Ok(())
@@ -82,7 +82,7 @@ fn test_markers_for_bin() {
             crate::datetime::provider::neo::GluePatternV1::INFO,
             crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1::INFO,
             crate::datetime::provider::TimeNeoSkeletonPatternsV1::INFO,
-            crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
+            crate::decimal::provider::DecimalSymbolsV2::INFO,
             crate::decimal::provider::DecimalDigitsV1::INFO,
         ]
         .into_iter()

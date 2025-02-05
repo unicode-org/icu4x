@@ -374,10 +374,7 @@ fn gen_date_components(
 }
 
 impl DataProvider<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeNeoSkeletonPatternsV1>, DataError> {
         self.load_neo_skeletons_key(req, Either::Right("generic"), gen_time_components)
     }
 }

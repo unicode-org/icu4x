@@ -159,17 +159,15 @@ fn test_grouper() {
                 dec.multiply_pow10((i as i16) + 3);
                 dec
             };
-            let provider_symbols = FixedProvider::<DecimalSymbolsV2Marker>::from_owned(
-                crate::provider::DecimalSymbols {
+            let provider_symbols =
+                FixedProvider::<DecimalSymbolsV2>::from_owned(crate::provider::DecimalSymbols {
                     grouping_sizes: cas.sizes,
                     ..DecimalSymbols::new_en_for_testing()
-                },
-            );
-            let provider_digits = FixedProvider::<DecimalDigitsV1>::from_owned(
-                crate::provider::DecimalDigits {
+                });
+            let provider_digits =
+                FixedProvider::<DecimalDigitsV1>::from_owned(crate::provider::DecimalDigits {
                     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-                },
-            );
+                });
             let provider = ForkByMarkerProvider::new(provider_symbols, provider_digits);
             let options = options::FixedDecimalFormatterOptions {
                 grouping_strategy: cas.strategy,

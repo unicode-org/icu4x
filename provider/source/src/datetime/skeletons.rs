@@ -84,7 +84,7 @@ mod test {
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
     use icu::datetime::{
-        provider::calendar::{DateLengths, DateSkeletonPatterns, Skeleton},
+        provider::calendar::{DateLengths, DateSkeletonPatterns, SkeletonData},
         provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::pattern::{reference, runtime},
     };
@@ -218,7 +218,7 @@ mod test {
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
-            Skeleton::try_from("EEEE").unwrap(),
+            SkeletonData::try_from("EEEE").unwrap(),
             runtime::Pattern::from_str("weekday EEEE").unwrap().into(),
         );
         let skeletons = DateSkeletonPatterns(skeletons);

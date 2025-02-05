@@ -55,10 +55,10 @@ const _: () = {
     }
 
     make_provider!(Baked);
-    impl_cardinal_v1_marker!(Baked);
-    impl_ordinal_v1_marker!(Baked);
+    impl_cardinal_v1!(Baked);
+    impl_ordinal_v1!(Baked);
     #[cfg(feature = "experimental")]
-    impl_plural_ranges_v1_marker!(Baked);
+    impl_plural_ranges_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -80,10 +80,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    CardinalV1 = "plurals/cardinal@1",
-    OrdinalV1 = "plurals/ordinal@1"
-)]
+#[icu_provider::data_struct(CardinalV1 = "plurals/cardinal@1", OrdinalV1 = "plurals/ordinal@1")]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]

@@ -13,7 +13,7 @@ use crate::CanonicalDecompositionTablesV1;
 use crate::CompatibilityDecompositionTablesV1;
 use crate::ComposingNormalizer;
 use crate::ComposingNormalizerBorrowed;
-use crate::Uts46DecompositionDataV2Marker;
+use crate::Uts46DecompositionDataV2;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
 
@@ -163,7 +163,7 @@ impl Uts46Mapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<Uts46DecompositionDataV2Marker>
+        D: DataProvider<Uts46DecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + DataProvider<CompatibilityDecompositionTablesV1>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1

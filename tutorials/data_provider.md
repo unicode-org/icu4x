@@ -30,10 +30,10 @@ let mut provider = MultiForkByErrorProvider::new_with_predicate(
 // Pretend we're loading these from the network or somewhere.
 struct SingleLocaleProvider(DataLocale);
 
-impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+impl DataProvider<HelloWorldV1> for SingleLocaleProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
         if *req.id.locale != self.0 {
-            return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req));
+            return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req));
         }
         HelloWorldProvider.load(req)
     }
@@ -47,7 +47,7 @@ let mut get_hello_world_formatter = |prefs: HelloWorldFormatterPreferences| {
     }
 
     // We failed to create the formatter. Load more data for the language and try creating the formatter a second time.
-    let loc = HelloWorldV1Marker::make_locale(prefs.locale_preferences);
+    let loc = HelloWorldV1::make_locale(prefs.locale_preferences);
     provider.push(SingleLocaleProvider(loc));
     HelloWorldFormatter::try_new_unstable(&provider, prefs)
         .expect("Language data should now be available")
@@ -265,7 +265,7 @@ To add custom data markers to your baked data or postcard file, create a forking
 
 ```rust
 use icu::locale::locale;
-use icu::plurals::provider::CardinalV1Marker;
+use icu::plurals::provider::CardinalV1;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
@@ -318,7 +318,7 @@ ExportDriver::new(
     DeduplicationStrategy::None.into(),
     LocaleFallbacker::try_new_unstable(&icu4x_source_provider).unwrap(),
 )
-.with_markers([CardinalV1Marker::INFO, CustomMarker::INFO])
+.with_markers([CardinalV1::INFO, CustomMarker::INFO])
 .export(
     &ForkByMarkerProvider::new(icu4x_source_provider, custom_source_provider),
     BlobExporter::new_with_sink(Box::new(&mut buffer)),
@@ -333,7 +333,7 @@ let req = DataRequest {
     metadata: Default::default(),
 };
 
-assert!(blob_provider.load_data(CardinalV1Marker::INFO, req).is_ok());
+assert!(blob_provider.load_data(CardinalV1::INFO, req).is_ok());
 assert!(blob_provider.load_data(CustomMarker::INFO, req).is_ok());
 ```
 
@@ -364,10 +364,10 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.inner.load(req)?;
-        // Whichever locale gets loaded for `HelloWorldV1Marker::INFO` will be the one
+        // Whichever locale gets loaded for `HelloWorldV1::INFO` will be the one
         // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
         // one key, this is a useful distinction for most other formatters.
-        if M::INFO == HelloWorldV1Marker::INFO {
+        if M::INFO == HelloWorldV1::INFO {
             let mut w = self.resolved_locale.write().expect("poison");
             *w = res.metadata.locale.take();
         }

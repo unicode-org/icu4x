@@ -58,9 +58,7 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
-            ),
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
         }
     }
 

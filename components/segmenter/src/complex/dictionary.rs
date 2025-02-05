@@ -206,7 +206,7 @@ mod tests {
         let word_segmenter = WordSegmenter::new_dictionary(Default::default());
         let dict_segmenter = DictionarySegmenter::new(
             response.payload.get(),
-            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2,
         );
 
         // Match case

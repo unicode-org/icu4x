@@ -104,9 +104,7 @@ impl Japanese {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            eras: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_JAPANESE_ERAS_V1_MARKER,
-            ),
+            eras: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_JAPANESE_ERAS_V1),
         }
     }
 
@@ -163,7 +161,7 @@ impl JapaneseExtended {
     pub const fn new() -> Self {
         Self(Japanese {
             eras: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_JAPANESE_EXTENDED_ERAS_V1_MARKER,
+                crate::provider::Baked::SINGLETON_JAPANESE_EXTENDED_ERAS_V1,
             ),
         })
     }

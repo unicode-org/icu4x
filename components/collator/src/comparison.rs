@@ -32,7 +32,7 @@ use crate::{
 };
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_normalizer::provider::CanonicalDecompositionDataV2Marker;
+use icu_normalizer::provider::CanonicalDecompositionDataV2;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
@@ -181,9 +181,7 @@ impl LocaleSpecificDataHolder {
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationReorderingV1::INFO)
-                );
+                return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
             }
         }
 
@@ -203,9 +201,7 @@ impl LocaleSpecificDataHolder {
             // Vietnamese and Ewe load a full-length alternative table and the rest use
             // the default one.
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO)
-                );
+                return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
             }
         } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
             return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
@@ -248,7 +244,7 @@ pub struct Collator {
     diacritics: DataPayload<CollationDiacriticsV1>,
     options: CollatorOptionsBitField,
     reordering: Option<DataPayload<CollationReorderingV1>>,
-    decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
+    decompositions: DataPayload<CanonicalDecompositionDataV2>,
     tables: DataPayload<CanonicalDecompositionTablesV1>,
     lithuanian_dot_above: bool,
 }
@@ -304,7 +300,7 @@ impl Collator {
             + DataProvider<CollationJamoV1>
             + DataProvider<CollationMetadataV1>
             + DataProvider<CollationReorderingV1>
-            + DataProvider<CanonicalDecompositionDataV2Marker>
+            + DataProvider<CanonicalDecompositionDataV2>
             + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
@@ -324,13 +320,10 @@ impl Collator {
     fn try_new_unstable_internal<D>(
         provider: &D,
         root: DataPayload<CollationRootV1>,
-        decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
+        decompositions: DataPayload<CanonicalDecompositionDataV2>,
         tables: DataPayload<CanonicalDecompositionTablesV1>,
         jamo: DataPayload<CollationJamoV1>,
-        special_primaries: impl FnOnce() -> Result<
-            DataPayload<CollationSpecialPrimariesV1>,
-            DataError,
-        >,
+        special_primaries: impl FnOnce() -> Result<DataPayload<CollationSpecialPrimariesV1>, DataError>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
@@ -358,8 +351,9 @@ impl Collator {
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(DataError::custom("invalid")
-                    .with_marker(CollationSpecialPrimariesV1::INFO));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
+                );
             }
             Some(special_primaries)
         } else {
@@ -409,11 +403,10 @@ impl CollatorBorrowed<'static> {
 
         let provider = &crate::provider::Baked;
         let decompositions =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2_MARKER;
-        let tables =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER;
-        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER;
-        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
+            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2;
+        let tables = icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1;
+        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
+        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
 
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
@@ -428,12 +421,13 @@ impl CollatorBorrowed<'static> {
             || locale_dependent.merged_options.numeric()
         {
             let special_primaries =
-                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER;
+                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(DataError::custom("invalid")
-                    .with_marker(CollationSpecialPrimariesV1::INFO));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
+                );
             }
             Some(special_primaries)
         } else {

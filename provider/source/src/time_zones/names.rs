@@ -13,8 +13,8 @@ use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{ZeroSlice, ZeroVec};
 
-impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3Marker>, DataError> {
+impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
 
         // Sort and deduplicate the BCP-47 IDs:
@@ -68,7 +68,7 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<IanaToBcp47MapV3Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<IanaToBcp47MapV3> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

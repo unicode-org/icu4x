@@ -377,7 +377,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 #[derive(Debug)]
 pub struct LineSegmenter {
     options: ResolvedLineBreakOptions,
-    payload: DataPayload<LineBreakDataV2Marker>,
+    payload: DataPayload<LineBreakDataV2>,
     complex: ComplexPayloads,
 }
 
@@ -417,9 +417,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV2Marker>
+        D: DataProvider<LineBreakDataV2>
             + DataProvider<LstmForWordLineAutoV1>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Self::try_new_lstm_unstable(provider, options)
@@ -442,7 +442,7 @@ impl LineSegmenter {
         Self {
             options: options.into(),
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_lstm(),
         }
@@ -467,9 +467,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV2Marker>
+        D: DataProvider<LineBreakDataV2>
             + DataProvider<LstmForWordLineAutoV1>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -495,7 +495,7 @@ impl LineSegmenter {
         Self {
             options: options.into(),
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2,
             ),
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
@@ -524,9 +524,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV2Marker>
+        D: DataProvider<LineBreakDataV2>
             + DataProvider<DictionaryForWordLineExtendedV1>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -1316,12 +1316,10 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload = DataProvider::<LineBreakDataV2Marker>::load(
-            &crate::provider::Baked,
-            Default::default(),
-        )
-        .expect("Loading should succeed!")
-        .payload;
+        let payload =
+            DataProvider::<LineBreakDataV2>::load(&crate::provider::Baked, Default::default())
+                .expect("Loading should succeed!")
+                .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1350,12 +1348,10 @@ mod tests {
     #[test]
     #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let payload = DataProvider::<LineBreakDataV2Marker>::load(
-            &crate::provider::Baked,
-            Default::default(),
-        )
-        .expect("Loading should succeed!")
-        .payload;
+        let payload =
+            DataProvider::<LineBreakDataV2>::load(&crate::provider::Baked, Default::default())
+                .expect("Loading should succeed!")
+                .payload;
         let lb_data: &RuleBreakData = payload.get();
 
         let is_break = |left, right| {

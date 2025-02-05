@@ -7,8 +7,8 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::locale::langid;
 use icu::segmenter::provider::{
-    LstmDataFloat32, LstmData, LstmForWordLineAutoV1, LstmMatrix1, LstmMatrix2,
-    LstmMatrix3, ModelType,
+    LstmData, LstmDataFloat32, LstmForWordLineAutoV1, LstmMatrix1, LstmMatrix2, LstmMatrix3,
+    ModelType,
 };
 use icu_provider::prelude::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
@@ -186,10 +186,7 @@ convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
 impl DataProvider<LstmForWordLineAutoV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<LstmForWordLineAutoV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LstmForWordLineAutoV1>, DataError> {
         self.check_req::<LstmForWordLineAutoV1>(req)?;
 
         let lstm_data = self
@@ -240,9 +237,7 @@ mod tests {
             .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
             .unwrap();
         let provider = ForkByMarkerProvider::new(
-            FixedProvider::<LstmForWordLineAutoV1>::from_owned(
-                raw_data.try_convert().unwrap(),
-            ),
+            FixedProvider::<LstmForWordLineAutoV1>::from_owned(raw_data.try_convert().unwrap()),
             provider.as_any_provider(),
         );
 

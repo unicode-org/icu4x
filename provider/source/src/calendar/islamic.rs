@@ -42,10 +42,7 @@ impl crate::IterableDataProviderCached<IslamicObservationalCacheV1> for SourceDa
 }
 
 impl DataProvider<IslamicUmmAlQuraCacheV1> for crate::SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<IslamicUmmAlQuraCacheV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<IslamicUmmAlQuraCacheV1>, DataError> {
         self.check_req::<IslamicUmmAlQuraCacheV1>(req)?;
         let cache = load::<SaudiIslamicMarker>();
         Ok(DataResponse {

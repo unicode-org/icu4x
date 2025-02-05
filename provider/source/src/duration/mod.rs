@@ -71,10 +71,7 @@ fn strip_separated_padded_characters<'s, const N: usize>(
 
 #[cfg(feature = "experimental")]
 impl DataProvider<DigitalDurationDataV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<DigitalDurationDataV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DigitalDurationDataV1>, DataError> {
         let (
             hm_hour_pad,
             hm_min_pad,

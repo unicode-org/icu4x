@@ -7,8 +7,7 @@
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
-    LikelySubtagsExtendedV1, LikelySubtagsForLanguageV1,
-    LikelySubtagsForScriptRegionV1,
+    LikelySubtagsExtendedV1, LikelySubtagsForLanguageV1, LikelySubtagsForScriptRegionV1,
 };
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;

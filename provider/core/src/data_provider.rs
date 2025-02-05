@@ -597,8 +597,7 @@ mod test {
     #[test]
     fn test_warehouse_owned_dyn_generic() {
         let warehouse = get_warehouse(DATA);
-        let hello_data =
-            get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1>).unwrap();
+        let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1>).unwrap();
         assert!(matches!(
             hello_data.get(),
             HelloWorld {
@@ -658,8 +657,7 @@ mod test {
     fn test_provider2_dyn_generic() {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
-        let hello_data =
-            get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1>).unwrap();
+        let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1>).unwrap();
         assert!(matches!(
             hello_data.get(),
             HelloWorld {

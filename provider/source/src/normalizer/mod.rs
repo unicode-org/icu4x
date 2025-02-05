@@ -145,11 +145,11 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
     };
 }
 
-normalization_data_provider!(CanonicalDecompositionDataV2Marker, "nfd");
+normalization_data_provider!(CanonicalDecompositionDataV2, "nfd");
 
-normalization_data_provider!(CompatibilityDecompositionDataV2Marker, "nfkd");
+normalization_data_provider!(CompatibilityDecompositionDataV2, "nfkd");
 
-normalization_data_provider!(Uts46DecompositionDataV2Marker, "uts46d");
+normalization_data_provider!(Uts46DecompositionDataV2, "uts46d");
 
 normalization_tables_provider!(CanonicalDecompositionTablesV1, "nfdex");
 

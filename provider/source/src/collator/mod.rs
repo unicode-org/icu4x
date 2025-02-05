@@ -191,10 +191,7 @@ impl IterableDataProviderCached<CollationRootV1> for SourceDataProvider {
 }
 
 impl DataProvider<CollationTailoringV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CollationTailoringV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CollationTailoringV1>, DataError> {
         self.check_req::<CollationTailoringV1>(req)?;
 
         Ok(DataResponse {

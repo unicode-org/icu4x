@@ -80,11 +80,7 @@ fn test_data_marker() {
 fn test_multi_named_keyed_data_marker() {
     // #[data_struct(FooV1, BarV1 = "demo/bar@1", BazV1 = "demo/baz@1")]
     check(
-        quote![
-            FooV1,
-            BarV1 = "demo/bar@1",
-            BazV1 = "demo/baz@1",
-        ],
+        quote![FooV1, BarV1 = "demo/bar@1", BazV1 = "demo/baz@1",],
         quote!(
             pub struct Foo<'data>;
         ),

@@ -14,10 +14,7 @@ use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
 impl DataProvider<WindowsZonesToBcp47MapV1> for SourceDataProvider {
-    fn load(
-        &self,
-        _: DataRequest,
-    ) -> Result<DataResponse<WindowsZonesToBcp47MapV1>, DataError> {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<WindowsZonesToBcp47MapV1>, DataError> {
         let resource: &cldr_serde::time_zones::windows_zones::WindowsResource = self
             .cldr()?
             .core()

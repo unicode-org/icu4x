@@ -26,10 +26,7 @@ use writeable::Writeable;
 use zerovec::ule::NichedOption;
 
 impl DataProvider<TimeZoneEssentialsV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeZoneEssentialsV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeZoneEssentialsV1>, DataError> {
         self.check_req::<TimeZoneEssentialsV1>(req)?;
 
         let time_zone_names = &self
@@ -567,10 +564,7 @@ impl DataProvider<ExemplarCitiesV1> for SourceDataProvider {
 }
 
 impl DataProvider<ExemplarCitiesRootV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ExemplarCitiesRootV1>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesRootV1>, DataError> {
         self.check_req::<ExemplarCitiesV1>(req)?;
 
         Ok(DataResponse {

@@ -148,14 +148,12 @@ pub mod test {
     }
 
     pub fn test_patterns_lengths() -> ListFormatterPatterns<'static> {
-        ListFormatterPatterns::try_new("{0}1{1}", "{0}12{1}", "{0}12{1}34", "{0}123{1}456")
-            .unwrap()
+        ListFormatterPatterns::try_new("{0}1{1}", "{0}12{1}", "{0}12{1}34", "{0}123{1}456").unwrap()
     }
 
     pub fn test_patterns_conditional() -> ListFormatterPatterns<'static> {
         let mut patterns =
-            ListFormatterPatterns::try_new("{0}: {1}", "{0}, {1}", "{0}. {1}", "{0}. {1}")
-                .unwrap();
+            ListFormatterPatterns::try_new("{0}: {1}", "{0}, {1}", "{0}. {1}", "{0}. {1}").unwrap();
         patterns.end.special_case = Some(SpecialCasePattern {
             condition: SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
             pattern: ListJoinerPattern::try_from_str("{0} :o {1}", false, false).unwrap(),

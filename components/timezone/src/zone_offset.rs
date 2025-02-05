@@ -34,7 +34,7 @@ impl ZoneOffsetCalculator {
     pub const fn new() -> Self {
         ZoneOffsetCalculator {
             offset_period: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
+                crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1,
             ),
         }
     }

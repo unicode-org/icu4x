@@ -93,8 +93,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatterns<
 
 impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 =
-            patterns::GenericLengthPatterns::from(&other.datetime_formats);
+        let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
 
         Self {
             date: (&other.date_formats).into(),
@@ -105,8 +104,7 @@ impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
 
 impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 =
-            patterns::GenericLengthPatterns::from(&other.datetime_formats);
+        let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
 
         let pattern_str_full = other.time_formats.full.get_pattern();

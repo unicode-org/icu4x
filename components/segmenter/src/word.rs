@@ -184,7 +184,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
-    payload: DataPayload<WordBreakDataV2Marker>,
+    payload: DataPayload<WordBreakDataV2>,
     complex: ComplexPayloads,
     payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1>>,
 }
@@ -223,7 +223,7 @@ impl WordSegmenter {
     pub fn new_auto(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_auto(),
             payload_locale_override: None,
@@ -249,11 +249,11 @@ impl WordSegmenter {
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV2Marker>
+        D: DataProvider<WordBreakDataV2>
             + DataProvider<WordBreakDataOverrideV1>
             + DataProvider<DictionaryForWordOnlyAutoV1>
             + DataProvider<LstmForWordLineAutoV1>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -317,7 +317,7 @@ impl WordSegmenter {
     pub fn new_lstm(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_lstm(),
             payload_locale_override: None,
@@ -343,10 +343,10 @@ impl WordSegmenter {
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV2Marker>
+        D: DataProvider<WordBreakDataV2>
             + DataProvider<WordBreakDataOverrideV1>
             + DataProvider<LstmForWordLineAutoV1>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -404,7 +404,7 @@ impl WordSegmenter {
     pub fn new_dictionary(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_dict(),
             payload_locale_override: None,
@@ -428,11 +428,11 @@ impl WordSegmenter {
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV2Marker>
+        D: DataProvider<WordBreakDataV2>
             + DataProvider<WordBreakDataOverrideV1>
             + DataProvider<DictionaryForWordOnlyAutoV1>
             + DataProvider<DictionaryForWordLineExtendedV1>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {

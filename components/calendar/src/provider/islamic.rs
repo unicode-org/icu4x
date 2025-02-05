@@ -29,11 +29,7 @@ use zerovec::ZeroVec;
         "calendar/islamicobservationalcache@1",
         singleton
     ),
-    marker(
-        IslamicUmmAlQuraCacheV1,
-        "calendar/islamicummalquracache@1",
-        singleton
-    )
+    marker(IslamicUmmAlQuraCacheV1, "calendar/islamicummalquracache@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

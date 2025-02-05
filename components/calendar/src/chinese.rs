@@ -131,7 +131,7 @@ impl Chinese {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CHINESE_CACHE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_CHINESE_CACHE_V1,
             )),
         }
     }

@@ -19,62 +19,32 @@ fn marker_filters() -> &'static HashMap<DataMarkerInfo, &'static str> {
     MARKER_FILTERS.get_or_init(|| {
         [
             (LongSecondRelativeTimeFormatDataV1::INFO, "second"),
-            (
-                ShortSecondRelativeTimeFormatDataV1::INFO,
-                "second-short",
-            ),
-            (
-                NarrowSecondRelativeTimeFormatDataV1::INFO,
-                "second-narrow",
-            ),
+            (ShortSecondRelativeTimeFormatDataV1::INFO, "second-short"),
+            (NarrowSecondRelativeTimeFormatDataV1::INFO, "second-narrow"),
             (LongMinuteRelativeTimeFormatDataV1::INFO, "minute"),
-            (
-                ShortMinuteRelativeTimeFormatDataV1::INFO,
-                "minute-short",
-            ),
-            (
-                NarrowMinuteRelativeTimeFormatDataV1::INFO,
-                "minute-narrow",
-            ),
+            (ShortMinuteRelativeTimeFormatDataV1::INFO, "minute-short"),
+            (NarrowMinuteRelativeTimeFormatDataV1::INFO, "minute-narrow"),
             (LongHourRelativeTimeFormatDataV1::INFO, "hour"),
             (ShortHourRelativeTimeFormatDataV1::INFO, "hour-short"),
-            (
-                NarrowHourRelativeTimeFormatDataV1::INFO,
-                "hour-narrow",
-            ),
+            (NarrowHourRelativeTimeFormatDataV1::INFO, "hour-narrow"),
             (LongDayRelativeTimeFormatDataV1::INFO, "day"),
             (ShortDayRelativeTimeFormatDataV1::INFO, "day-short"),
             (NarrowDayRelativeTimeFormatDataV1::INFO, "day-narrow"),
             (LongWeekRelativeTimeFormatDataV1::INFO, "week"),
             (ShortWeekRelativeTimeFormatDataV1::INFO, "week-short"),
-            (
-                NarrowWeekRelativeTimeFormatDataV1::INFO,
-                "week-narrow",
-            ),
+            (NarrowWeekRelativeTimeFormatDataV1::INFO, "week-narrow"),
             (LongMonthRelativeTimeFormatDataV1::INFO, "month"),
-            (
-                ShortMonthRelativeTimeFormatDataV1::INFO,
-                "month-short",
-            ),
-            (
-                NarrowMonthRelativeTimeFormatDataV1::INFO,
-                "month-narrow",
-            ),
+            (ShortMonthRelativeTimeFormatDataV1::INFO, "month-short"),
+            (NarrowMonthRelativeTimeFormatDataV1::INFO, "month-narrow"),
             (LongQuarterRelativeTimeFormatDataV1::INFO, "quarter"),
-            (
-                ShortQuarterRelativeTimeFormatDataV1::INFO,
-                "quarter-short",
-            ),
+            (ShortQuarterRelativeTimeFormatDataV1::INFO, "quarter-short"),
             (
                 NarrowQuarterRelativeTimeFormatDataV1::INFO,
                 "quarter-narrow",
             ),
             (LongYearRelativeTimeFormatDataV1::INFO, "year"),
             (ShortYearRelativeTimeFormatDataV1::INFO, "year-short"),
-            (
-                NarrowYearRelativeTimeFormatDataV1::INFO,
-                "year-narrow",
-            ),
+            (NarrowYearRelativeTimeFormatDataV1::INFO, "year-narrow"),
         ]
         .into_iter()
         .collect()

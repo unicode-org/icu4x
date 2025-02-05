@@ -45,13 +45,13 @@ const _: () = {
         pub use icu_calendar_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_chinese_cache_v1_marker!(Baked);
-    impl_dangi_cache_v1_marker!(Baked);
-    impl_islamic_observational_cache_v1_marker!(Baked);
-    impl_islamic_umm_al_qura_cache_v1_marker!(Baked);
-    impl_japanese_eras_v1_marker!(Baked);
-    impl_japanese_extended_eras_v1_marker!(Baked);
-    impl_week_data_v2_marker!(Baked);
+    impl_chinese_cache_v1!(Baked);
+    impl_dangi_cache_v1!(Baked);
+    impl_islamic_observational_cache_v1!(Baked);
+    impl_islamic_umm_al_qura_cache_v1!(Baked);
+    impl_japanese_eras_v1!(Baked);
+    impl_japanese_extended_eras_v1!(Baked);
+    impl_week_data_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -63,7 +63,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     IslamicUmmAlQuraCacheV1::INFO,
     JapaneseErasV1::INFO,
     JapaneseExtendedErasV1::INFO,
-    WeekDataV2Marker::INFO,
+    WeekDataV2::INFO,
 ];
 
 /// The date at which an era started
@@ -121,11 +121,7 @@ pub struct JapaneseEras<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    WeekDataV2Marker,
-    "datetime/week_data@2",
-    fallback_by = "region"
-))]
+#[icu_provider::data_struct(marker(WeekDataV2, "datetime/week_data@2", fallback_by = "region"))]
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]

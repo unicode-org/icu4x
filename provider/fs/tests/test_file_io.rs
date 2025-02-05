@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::langid;
-use icu_provider::hello_world::{HelloWorldProvider, HelloWorld, HelloWorldV1};
+use icu_provider::hello_world::{HelloWorld, HelloWorldProvider, HelloWorldV1};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 

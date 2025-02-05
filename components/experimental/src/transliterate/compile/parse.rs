@@ -267,7 +267,7 @@ where
         + DataProvider<BidiControlV1>
         + DataProvider<BidiMirroredV1>
         + DataProvider<CanonicalCombiningClassV1>
-        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
+        + DataProvider<CanonicalCombiningClassNameToValueV2>
         + DataProvider<CaseIgnorableV1>
         + DataProvider<CasedV1>
         + DataProvider<ChangesWhenCasefoldedV1>
@@ -289,7 +289,7 @@ where
         + DataProvider<ExtenderV1>
         + DataProvider<GraphemeBaseV1>
         + DataProvider<GraphemeClusterBreakV1>
-        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV2>
         + DataProvider<GraphemeExtendV1>
         + DataProvider<HexDigitV1>
         + DataProvider<IdsBinaryOperatorV1>
@@ -308,7 +308,7 @@ where
         + DataProvider<RadicalV1>
         + DataProvider<RegionalIndicatorV1>
         + DataProvider<SentenceBreakV1>
-        + DataProvider<SentenceBreakNameToValueV2Marker>
+        + DataProvider<SentenceBreakNameToValueV2>
         + DataProvider<SentenceTerminalV1>
         + DataProvider<SoftDottedV1>
         + DataProvider<TerminalPunctuationV1>
@@ -317,11 +317,11 @@ where
         + DataProvider<VariationSelectorV1>
         + DataProvider<WhiteSpaceV1>
         + DataProvider<WordBreakV1>
-        + DataProvider<WordBreakNameToValueV2Marker>
+        + DataProvider<WordBreakNameToValueV2>
         + DataProvider<XidContinueV1>
-        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV2>
         + DataProvider<GeneralCategoryV1>
-        + DataProvider<ScriptNameToValueV2Marker>
+        + DataProvider<ScriptNameToValueV2>
         + DataProvider<ScriptV1>
         + DataProvider<ScriptWithExtensionsPropertyV1>
         + DataProvider<XidStartV1>,
