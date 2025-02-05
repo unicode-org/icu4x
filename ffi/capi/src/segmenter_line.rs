@@ -38,7 +38,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "LineBreakOptions")]
-    pub struct LineBreakOptions {
+    pub struct LineBreakOptionsV2 {
         pub strictness: DiplomatOption<LineBreakStrictness>,
         pub word_option: DiplomatOption<LineBreakWordOption>,
     }
@@ -108,7 +108,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_options_v2(
             content_locale: Option<&Locale>,
-            options: LineBreakOptions,
+            options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
@@ -126,7 +126,7 @@ pub mod ffi {
         pub fn create_auto_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
-            options: LineBreakOptions,
+            options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
@@ -147,7 +147,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_lstm_with_options_v2(
             content_locale: Option<&Locale>,
-            options: LineBreakOptions,
+            options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
@@ -166,7 +166,7 @@ pub mod ffi {
         pub fn create_lstm_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
-            options: LineBreakOptions,
+            options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
@@ -187,7 +187,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary_with_options_v2(
             content_locale: Option<&Locale>,
-            options: LineBreakOptions,
+            options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
@@ -206,7 +206,7 @@ pub mod ffi {
         pub fn create_dictionary_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
-            options: LineBreakOptions,
+            options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
@@ -307,8 +307,8 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::LineBreakOptions> for icu_segmenter::LineBreakOptions<'_> {
-    fn from(other: ffi::LineBreakOptions) -> Self {
+impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions<'_> {
+    fn from(other: ffi::LineBreakOptionsV2) -> Self {
         let mut options = icu_segmenter::LineBreakOptions::default();
         options.strictness = other
             .strictness

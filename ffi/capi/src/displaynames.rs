@@ -30,7 +30,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
-    pub struct DisplayNamesOptions {
+    pub struct DisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: DiplomatOption<DisplayNamesStyle>,
         /// The fallback return when the system does not have the
@@ -72,7 +72,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_v1(
             locale: &Locale,
-            options: DisplayNamesOptions,
+            options: DisplayNamesOptionsV1,
         ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
@@ -93,7 +93,7 @@ pub mod ffi {
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            options: DisplayNamesOptions,
+            options: DisplayNamesOptionsV1,
         ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
@@ -123,7 +123,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_v1(
             locale: &Locale,
-            options: DisplayNamesOptions,
+            options: DisplayNamesOptionsV1,
         ) -> Result<Box<RegionDisplayNames>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
@@ -141,7 +141,7 @@ pub mod ffi {
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            options: DisplayNamesOptions,
+            options: DisplayNamesOptionsV1,
         ) -> Result<Box<RegionDisplayNames>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
@@ -175,9 +175,9 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::DisplayNamesOptions> for icu_experimental::displaynames::DisplayNamesOptions {
+impl From<ffi::DisplayNamesOptionsV1> for icu_experimental::displaynames::DisplayNamesOptions {
     fn from(
-        other: ffi::DisplayNamesOptions,
+        other: ffi::DisplayNamesOptionsV1,
     ) -> icu_experimental::displaynames::DisplayNamesOptions {
         let mut options = icu_experimental::displaynames::DisplayNamesOptions::default();
         options.style = other.style.into_converted_option();

@@ -22,7 +22,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::default, FnInStruct, hidden)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorOptions")]
-    pub struct CollatorOptions {
+    pub struct CollatorOptionsV1 {
         pub strength: DiplomatOption<CollatorStrength>,
         pub alternate_handling: DiplomatOption<CollatorAlternateHandling>,
         pub max_variable: DiplomatOption<CollatorMaxVariable>,
@@ -36,7 +36,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
     #[diplomat::out]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "CollatorResolvedOptions")]
-    pub struct CollatorResolvedOptions {
+    pub struct CollatorResolvedOptionsV1 {
         pub strength: CollatorStrength,
         pub alternate_handling: CollatorAlternateHandling,
         pub case_first: CollatorCaseFirst,
@@ -116,7 +116,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_v1(
             locale: &Locale,
-            options: CollatorOptions,
+            options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
             Ok(Box::new(Collator(
                 icu_collator::Collator::try_new((&locale.0).into(), options.into())?
@@ -134,7 +134,7 @@ pub mod ffi {
         pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            options: CollatorOptions,
+            options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
             let options = options.into();
             Ok(Box::new(Collator(
@@ -178,14 +178,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::collator::CollatorBorrowed::resolved_options, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
-        pub fn resolved_options_v1(&self) -> CollatorResolvedOptions {
+        pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.as_borrowed().resolved_options().into()
         }
     }
 }
 
-impl From<ffi::CollatorOptions> for icu_collator::CollatorOptions {
-    fn from(options: ffi::CollatorOptions) -> icu_collator::CollatorOptions {
+impl From<ffi::CollatorOptionsV1> for icu_collator::CollatorOptions {
+    fn from(options: ffi::CollatorOptionsV1) -> icu_collator::CollatorOptions {
         let mut result = icu_collator::CollatorOptions::default();
         result.strength = options.strength.into_converted_option();
         result.alternate_handling = options.alternate_handling.into_converted_option();
@@ -197,8 +197,8 @@ impl From<ffi::CollatorOptions> for icu_collator::CollatorOptions {
     }
 }
 
-impl From<icu_collator::ResolvedCollatorOptions> for ffi::CollatorResolvedOptions {
-    fn from(options: icu_collator::ResolvedCollatorOptions) -> ffi::CollatorResolvedOptions {
+impl From<icu_collator::ResolvedCollatorOptions> for ffi::CollatorResolvedOptionsV1 {
+    fn from(options: icu_collator::ResolvedCollatorOptions) -> ffi::CollatorResolvedOptionsV1 {
         Self {
             strength: options.strength.into(),
             alternate_handling: options.alternate_handling.into(),
