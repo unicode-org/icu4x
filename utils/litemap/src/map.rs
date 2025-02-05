@@ -7,6 +7,7 @@ use alloc::borrow::Borrow;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
+use core::fmt::Debug;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
@@ -1197,6 +1198,201 @@ impl_const_get_with_index_for_integer!(i64);
 impl_const_get_with_index_for_integer!(i128);
 impl_const_get_with_index_for_integer!(isize);
 
+impl<K, V, S> Extend<(K, V)> for LiteMap<K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    fn extend<T: IntoIterator<Item = (K, V)>>(&mut self, iter: T) {
+        // From HashBrown's implementation:
+        // Keys may be already present or show multiple times in the iterator.
+        // Reserve the entire hint lower bound if the map is empty.
+        // Otherwise reserve half the hint (rounded up), so the map
+        // will only resize twice in the worst case.
+        let iter = iter.into_iter();
+        let (size_hint_lower, _) = iter.size_hint();
+        let reserve = if self.is_empty() {
+            size_hint_lower
+        } else {
+            (size_hint_lower + 1) / 2
+        };
+        self.reserve(reserve);
+        iter.for_each(move |(k, v)| {
+            self.insert(k, v);
+        });
+    }
+}
+
+/// An entry in a `LiteMap`, which may be either occupied or vacant.
+#[allow(clippy::exhaustive_enums)]
+pub enum Entry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    Occupied(OccupiedEntry<'a, K, V, S>),
+    Vacant(VacantEntry<'a, K, V, S>),
+}
+
+impl<'a, K, V, S> Debug for Entry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Occupied(arg0) => f.debug_tuple("Occupied").field(arg0).finish(),
+            Self::Vacant(arg0) => f.debug_tuple("Vacant").field(arg0).finish(),
+        }
+    }
+}
+
+/// A view into an occupied entry in a `LiteMap`.
+pub struct OccupiedEntry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    map: &'a mut LiteMap<K, V, S>,
+    index: usize,
+}
+
+impl<'a, K, V, S> Debug for OccupiedEntry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("OccupiedEntry")
+            .field("index", &self.index)
+            .finish()
+    }
+}
+
+/// A view into a vacant entry in a `LiteMap`.
+pub struct VacantEntry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    map: &'a mut LiteMap<K, V, S>,
+    key: K,
+    index: usize,
+}
+
+impl<'a, K, V, S> Debug for VacantEntry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("VacantEntry")
+            .field("index", &self.index)
+            .finish()
+    }
+}
+
+impl<'a, K, V, S> Entry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    /// Ensures a value is in the entry by inserting the default value if empty,
+    /// and returns a mutable reference to the value in the entry.
+    pub fn or_insert(self, default: V) -> &'a mut V {
+        match self {
+            Entry::Occupied(entry) => entry.into_mut(),
+            Entry::Vacant(entry) => entry.insert(default),
+        }
+    }
+
+    /// Ensures a value is in the entry by inserting the result of the default function if empty,
+    /// and returns a mutable reference to the value in the entry.
+    pub fn or_insert_with<F: FnOnce() -> V>(self, default: F) -> &'a mut V {
+        match self {
+            Entry::Occupied(entry) => entry.into_mut(),
+            Entry::Vacant(entry) => entry.insert(default()),
+        }
+    }
+}
+
+impl<'a, K, V, S> OccupiedEntry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    /// Gets a reference to the key in the entry.
+    pub fn key(&self) -> &K {
+        #[allow(clippy::unwrap_used)] // index is valid while we have a reference to the map
+        self.map.values.lm_get(self.index).unwrap().0
+    }
+
+    /// Gets a reference to the value in the entry.
+    pub fn get(&self) -> &V {
+        #[allow(clippy::unwrap_used)] // index is valid while we have a reference to the map
+        self.map.values.lm_get(self.index).unwrap().1
+    }
+
+    /// Gets a mutable reference to the value in the entry.
+    pub fn get_mut(&mut self) -> &mut V {
+        #[allow(clippy::unwrap_used)] // index is valid while we have a reference to the map
+        self.map.values.lm_get_mut(self.index).unwrap().1
+    }
+
+    /// Converts the entry into a mutable reference to the value in the entry with a lifetime bound to the map.
+    pub fn into_mut(self) -> &'a mut V {
+        #[allow(clippy::unwrap_used)] // index is valid while we have a reference to the map
+        self.map.values.lm_get_mut(self.index).unwrap().1
+    }
+
+    /// Sets the value of the entry, and returns the entry's old value.
+    pub fn insert(&mut self, value: V) -> V {
+        mem::replace(self.get_mut(), value)
+    }
+
+    /// Takes the value out of the entry, and returns it.
+    pub fn remove(self) -> V {
+        self.map.values.lm_remove(self.index).1
+    }
+}
+
+impl<'a, K, V, S> VacantEntry<'a, K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    /// Gets a reference to the key that would be used when inserting a value through the `VacantEntry`.
+    pub fn key(&self) -> &K {
+        &self.key
+    }
+
+    /// Sets the value of the entry with the `VacantEntry`'s key, and returns a mutable reference to it.
+    pub fn insert(self, value: V) -> &'a mut V {
+        self.map.values.lm_insert(self.index, self.key, value);
+        // index is valid insert index while we have a reference to the map and we just inserted it above
+        #[allow(clippy::unwrap_used)]
+        self.map.values.lm_get_mut(self.index).unwrap().1
+    }
+}
+
+impl<K, V, S> LiteMap<K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    /// Gets the entry for the given key in the map for in-place manipulation.
+    pub fn entry(&mut self, key: K) -> Entry<K, V, S> {
+        match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
+            Ok(index) => Entry::Occupied(OccupiedEntry { map: self, index }),
+            Err(index) => Entry::Vacant(VacantEntry {
+                map: self,
+                key,
+                index,
+            }),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -1222,6 +1418,28 @@ mod test {
 
         assert_eq!(expected, actual);
     }
+
+    #[test]
+    fn extend() {
+        let mut expected: LiteMap<i32, &str> = LiteMap::with_capacity(4);
+        expected.insert(1, "updated-one");
+        expected.insert(2, "original-two");
+        expected.insert(3, "original-three");
+        expected.insert(4, "updated-four");
+
+        let mut actual: LiteMap<i32, &str> = LiteMap::new();
+        actual.insert(1, "original-one");
+        actual.extend([
+            (2, "original-two"),
+            (4, "original-four"),
+            (4, "updated-four"),
+            (1, "updated-one"),
+            (3, "original-three"),
+        ]);
+
+        assert_eq!(expected, actual);
+    }
+
     fn make_13() -> LiteMap<usize, &'static str> {
         let mut result = LiteMap::new();
         result.insert(1, "one");
@@ -1306,5 +1524,52 @@ mod test {
             assert_eq!(r, i);
         }
         assert!(reference.is_empty());
+    }
+
+    #[test]
+    fn entry_insert() {
+        let mut map: LiteMap<i32, &str> = LiteMap::new();
+        assert!(matches!(map.entry(1), Entry::Vacant(_)));
+        map.entry(1).or_insert("one");
+        assert!(matches!(map.entry(1), Entry::Occupied(_)));
+        assert_eq!(map.get(&1), Some(&"one"));
+    }
+
+    #[test]
+    fn entry_insert_with() {
+        let mut map: LiteMap<i32, &str> = LiteMap::new();
+        assert!(matches!(map.entry(1), Entry::Vacant(_)));
+        map.entry(1).or_insert_with(|| "one");
+        assert!(matches!(map.entry(1), Entry::Occupied(_)));
+        assert_eq!(map.get(&1), Some(&"one"));
+    }
+
+    #[test]
+    fn entry_vacant_insert() {
+        let mut map: LiteMap<i32, &str> = LiteMap::new();
+        if let Entry::Vacant(entry) = map.entry(1) {
+            entry.insert("one");
+        }
+        assert_eq!(map.get(&1), Some(&"one"));
+    }
+
+    #[test]
+    fn entry_occupied_get_mut() {
+        let mut map: LiteMap<i32, &str> = LiteMap::new();
+        map.insert(1, "one");
+        if let Entry::Occupied(mut entry) = map.entry(1) {
+            *entry.get_mut() = "uno";
+        }
+        assert_eq!(map.get(&1), Some(&"uno"));
+    }
+
+    #[test]
+    fn entry_occupied_remove() {
+        let mut map: LiteMap<i32, &str> = LiteMap::new();
+        map.insert(1, "one");
+        if let Entry::Occupied(entry) = map.entry(1) {
+            entry.remove();
+        }
+        assert_eq!(map.get(&1), None);
     }
 }

@@ -7,13 +7,17 @@
 //! `litemap` is a crate providing [`LiteMap`], a highly simplistic "flat" key-value map
 //! based off of a single sorted vector.
 //!
-//! The goal of this crate is to provide a map that is good enough for small
+//! The main goal of this crate is to provide a map that is good enough for small
 //! sizes, and does not carry the binary size impact of [`HashMap`](std::collections::HashMap)
 //! or [`BTreeMap`](alloc::collections::BTreeMap).
 //!
+//! The flat nature of [`LiteMap`] allows it to be pre-allocated and sized more finely than
+//! [`std::collections::BTreeMap`] so it also has a smaller memory footprint for small collections.
+//!
 //! If binary size is not a concern, [`std::collections::BTreeMap`] may be a better choice
 //! for your use case. It behaves very similarly to [`LiteMap`] for less than 12 elements,
-//! and upgrades itself gracefully for larger inputs.
+//! and upgrades itself gracefully for larger inputs. For larger inputs mutating [`LiteMap`]
+//! in random or reverse order might be slower than [`std::collections::BTreeMap`].
 //!
 //! ## Pluggable Backends
 //!
@@ -65,4 +69,4 @@ pub mod store;
 #[cfg(any(test, feature = "testing"))]
 pub mod testing;
 
-pub use map::LiteMap;
+pub use map::{Entry, LiteMap, OccupiedEntry, VacantEntry};
