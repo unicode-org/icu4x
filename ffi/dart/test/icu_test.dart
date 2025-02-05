@@ -61,14 +61,10 @@ void main() {
 
     var locale = Locale.fromString('de');
 
-    var builder = DateTimeFieldSetBuilder(
-      dateFields: DateFields.mde,
-      length: DateTimeLength.short,
-      timePrecision: TimePrecision.minute,
-      zoneStyle: null,
-      alignment: null,
-      yearStyle: null,
-    );
+    var builder = DateTimeFieldSetBuilder()
+      ..dateFields = DateFields.mde
+      ..length = DateTimeLength.short
+      ..timePrecision = TimePrecision.minute;
 
     expect(
         DateTimeFormatter.fromBuilder(locale, builder)

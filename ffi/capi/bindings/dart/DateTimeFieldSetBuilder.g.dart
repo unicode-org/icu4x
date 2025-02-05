@@ -20,7 +20,7 @@ final class DateTimeFieldSetBuilder {
   DateTimeAlignment? alignment;
   YearStyle? yearStyle;
 
-  DateTimeFieldSetBuilder({required this.length, required this.dateFields, required this.timePrecision, required this.zoneStyle, required this.alignment, required this.yearStyle});
+  DateTimeFieldSetBuilder({this.length, this.dateFields, this.timePrecision, this.zoneStyle, this.alignment, this.yearStyle});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from

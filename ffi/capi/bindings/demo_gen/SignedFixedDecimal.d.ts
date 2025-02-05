@@ -1,2 +1,2 @@
 import { SignedFixedDecimal } from "icu4x"
-export function toString(f: number, magnitude: number);
+export function toString(signedFixedDecimalF: number, signedFixedDecimalMagnitude: number);

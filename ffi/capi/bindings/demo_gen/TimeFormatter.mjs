@@ -1,31 +1,16 @@
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
 import { TimeFormatter } from "icu4x"
-export function format(name, length, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
-        null,
-        [
-            TimeFormatter.createWithLength.apply(
-                null,
-                [
-                    Locale.fromString.apply(
-                        null,
-                        [
-                            name
-                        ]
-                    ),
-                    length
-                ]
-            ),
-            (function (...args) { return new Time(...args) } ).apply(
-                null,
-                [
-                    hour,
-                    minute,
-                    second,
-                    nanosecond
-                ]
-            )
-        ]
-    );
+export function format(timeFormatterLocaleName, timeFormatterLength, valueHour, valueMinute, valueSecond, valueNanosecond) {
+    
+    let timeFormatterLocale = Locale.fromString(timeFormatterLocaleName);
+    
+    let timeFormatter = TimeFormatter.createWithLength(timeFormatterLocale,timeFormatterLength);
+    
+    let value = new Time(valueHour,valueMinute,valueSecond,valueNanosecond);
+    
+    let out = timeFormatter.format(value);
+    
+
+    return out;
 }
