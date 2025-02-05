@@ -812,7 +812,7 @@ impl DataExporter for BakedExporter {
 }
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
             if marker.id == icu_provider::hello_world::HelloWorldV1::INFO.id {
                 return databake::quote!(icu_provider::hello_world::HelloWorldV1);

@@ -8,7 +8,7 @@ use alloc::collections::{BTreeMap, BTreeSet};
 use icu_provider::prelude::*;
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
         ///
         /// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,

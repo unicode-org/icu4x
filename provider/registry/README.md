@@ -8,7 +8,7 @@ This is modeled as a macro that accepts a callback macro of the shape:
 
 ```rust
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         // Do something for each marker, or each experimental marker
     };
 }

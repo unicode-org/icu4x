@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::OnceLock;
 
 macro_rules! cb {
-    ($($marker_ty:ty:$marker:ident = $path:literal,)+ #[experimental] $($emarker_ty:ty:$emarker:ident = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         pub(crate) fn get_data_marker_id(marker: DataMarkerId) -> Option<(&'static str, &'static str)> {
             static LOOKUP: OnceLock<HashMap<DataMarkerIdHash, (&'static str, &'static str)>> = OnceLock::new();
             let lookup = LOOKUP.get_or_init(|| {
