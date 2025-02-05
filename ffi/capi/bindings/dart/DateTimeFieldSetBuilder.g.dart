@@ -13,7 +13,7 @@ final class _DateTimeFieldSetBuilderFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `FieldSetBuilder`](https://docs.rs/icu/latest/icu/datetime/builder/enum.FieldSetBuilder.html) for more information.
 final class DateTimeFieldSetBuilder {
-  NeoDateTimeLength? length;
+  DateTimeLength? length;
   DateFields? dateFields;
   TimePrecision? timePrecision;
   ZoneStyle? zoneStyle;
@@ -29,7 +29,7 @@ final class DateTimeFieldSetBuilder {
   // should handle this when constructing edge arrays.
   // ignore: unused_element
   DateTimeFieldSetBuilder._fromFfi(_DateTimeFieldSetBuilderFfi ffi) :
-    length = ffi.length.isOk ? NeoDateTimeLength.values[ffi.length.union.ok] : null,
+    length = ffi.length.isOk ? DateTimeLength.values[ffi.length.union.ok] : null,
     dateFields = ffi.dateFields.isOk ? DateFields.values[ffi.dateFields.union.ok] : null,
     timePrecision = ffi.timePrecision.isOk ? TimePrecision.values[ffi.timePrecision.union.ok] : null,
     zoneStyle = ffi.zoneStyle.isOk ? ZoneStyle.values[ffi.zoneStyle.union.ok] : null,
@@ -39,7 +39,7 @@ final class DateTimeFieldSetBuilder {
   // ignore: unused_element
   _DateTimeFieldSetBuilderFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_DateTimeFieldSetBuilderFfi>();
-    NeoDateTimeLength? length = this.length;
+    DateTimeLength? length = this.length;
     struct.length = length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err();
     DateFields? dateFields = this.dateFields;
     struct.dateFields = dateFields != null ? _ResultInt32Void.ok(dateFields.index) : _ResultInt32Void.err();

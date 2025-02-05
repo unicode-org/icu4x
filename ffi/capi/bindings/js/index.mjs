@@ -98,7 +98,7 @@ export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
 
-export { NeoDateTimeFormatter } from "./NeoDateTimeFormatter.mjs"
+export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
 
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
@@ -261,8 +261,6 @@ export { LocaleDirection } from "./LocaleDirection.mjs"
 export { DateFields } from "./DateFields.mjs"
 
 export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
-
-export { NeoDateTimeLength } from "./NeoDateTimeLength.mjs"
 
 export { TimePrecision } from "./TimePrecision.mjs"
 

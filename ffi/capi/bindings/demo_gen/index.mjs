@@ -21,8 +21,8 @@ import * as ListFormatterDemo from "./ListFormatter.mjs";
 export * as ListFormatterDemo from "./ListFormatter.mjs";
 import * as LocaleDemo from "./Locale.mjs";
 export * as LocaleDemo from "./Locale.mjs";
-import * as NeoDateTimeFormatterDemo from "./NeoDateTimeFormatter.mjs";
-export * as NeoDateTimeFormatterDemo from "./NeoDateTimeFormatter.mjs";
+import * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
+export * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
 import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
@@ -671,10 +671,10 @@ let termini = Object.assign({
         ]
     },
 
-    "NeoDateTimeFormatter.formatIso": {
-        func: NeoDateTimeFormatterDemo.formatIso,
+    "DateTimeFormatter.formatIso": {
+        func: DateTimeFormatterDemo.formatIso,
         // For avoiding webpacking minifying issues:
-        funcName: "NeoDateTimeFormatter.formatIso",
+        funcName: "DateTimeFormatter.formatIso",
         parameters: [
             
             {
@@ -685,7 +685,7 @@ let termini = Object.assign({
             
             {
                 name: "Self:Builder:Length",
-                type: "NeoDateTimeLength",
+                type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             

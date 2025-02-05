@@ -12,7 +12,7 @@
 #include "../diplomat_runtime.hpp"
 #include "DateFields.hpp"
 #include "DateTimeAlignment.hpp"
-#include "NeoDateTimeLength.hpp"
+#include "DateTimeLength.hpp"
 #include "TimePrecision.hpp"
 #include "YearStyle.hpp"
 #include "ZoneStyle.hpp"
@@ -30,7 +30,7 @@ namespace capi {
 
 inline icu4x::capi::DateTimeFieldSetBuilder icu4x::DateTimeFieldSetBuilder::AsFFI() const {
   return icu4x::capi::DateTimeFieldSetBuilder {
-    /* .length = */ length.has_value() ? (icu4x::capi::NeoDateTimeLength_option{ { length.value().AsFFI() }, true }) : (icu4x::capi::NeoDateTimeLength_option{ {}, false }),
+    /* .length = */ length.has_value() ? (icu4x::capi::DateTimeLength_option{ { length.value().AsFFI() }, true }) : (icu4x::capi::DateTimeLength_option{ {}, false }),
     /* .date_fields = */ date_fields.has_value() ? (icu4x::capi::DateFields_option{ { date_fields.value().AsFFI() }, true }) : (icu4x::capi::DateFields_option{ {}, false }),
     /* .time_precision = */ time_precision.has_value() ? (icu4x::capi::TimePrecision_option{ { time_precision.value().AsFFI() }, true }) : (icu4x::capi::TimePrecision_option{ {}, false }),
     /* .zone_style = */ zone_style.has_value() ? (icu4x::capi::ZoneStyle_option{ { zone_style.value().AsFFI() }, true }) : (icu4x::capi::ZoneStyle_option{ {}, false }),
@@ -41,7 +41,7 @@ inline icu4x::capi::DateTimeFieldSetBuilder icu4x::DateTimeFieldSetBuilder::AsFF
 
 inline icu4x::DateTimeFieldSetBuilder icu4x::DateTimeFieldSetBuilder::FromFFI(icu4x::capi::DateTimeFieldSetBuilder c_struct) {
   return icu4x::DateTimeFieldSetBuilder {
-    /* .length = */ c_struct.length.is_ok ? std::optional(icu4x::NeoDateTimeLength::FromFFI(c_struct.length.ok)) : std::nullopt,
+    /* .length = */ c_struct.length.is_ok ? std::optional(icu4x::DateTimeLength::FromFFI(c_struct.length.ok)) : std::nullopt,
     /* .date_fields = */ c_struct.date_fields.is_ok ? std::optional(icu4x::DateFields::FromFFI(c_struct.date_fields.ok)) : std::nullopt,
     /* .time_precision = */ c_struct.time_precision.is_ok ? std::optional(icu4x::TimePrecision::FromFFI(c_struct.time_precision.ok)) : std::nullopt,
     /* .zone_style = */ c_struct.zone_style.is_ok ? std::optional(icu4x::ZoneStyle::FromFFI(c_struct.zone_style.ok)) : std::nullopt,

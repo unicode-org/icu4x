@@ -100,7 +100,7 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
-export { NeoDateTimeFormatter } from "./NeoDateTimeFormatter"
+export { DateTimeFormatter } from "./DateTimeFormatter"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
@@ -263,8 +263,6 @@ export { LocaleDirection } from "./LocaleDirection"
 export { DateFields } from "./DateFields"
 
 export { DateTimeAlignment } from "./DateTimeAlignment"
-
-export { NeoDateTimeLength } from "./NeoDateTimeLength"
 
 export { TimePrecision } from "./TimePrecision"
 

@@ -13,21 +13,13 @@ pub mod ffi {
     use icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet;
     use writeable::Writeable;
 
-    use crate::{date::ffi::IsoDate, time::ffi::Time};
+    use crate::{date::ffi::IsoDate, time::ffi::Time, datetime_formatter::ffi::DateTimeLength};
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
         errors::ffi::{DateTimeFormatterBuildOrLoadError, DateTimeFormatterLoadError},
         locale_core::ffi::Locale,
     };
-
-    #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::Length, Enum)]
-    pub enum NeoDateTimeLength {
-        Long,
-        Medium,
-        Short,
-    }
 
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
@@ -90,7 +82,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::datetime::builder::FieldSetBuilder, Enum)]
     pub struct DateTimeFieldSetBuilder {
-        pub length: DiplomatOption<NeoDateTimeLength>,
+        pub length: DiplomatOption<DateTimeLength>,
         pub date_fields: DiplomatOption<DateFields>,
         pub time_precision: DiplomatOption<TimePrecision>,
         pub zone_style: DiplomatOption<ZoneStyle>,
@@ -100,9 +92,9 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct NeoDateTimeFormatter(pub icu_datetime::DateTimeFormatter<CompositeDateTimeFieldSet>);
+    pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<CompositeDateTimeFieldSet>);
 
-    impl NeoDateTimeFormatter {
+    impl DateTimeFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::demo(default_constructor)]
@@ -110,11 +102,11 @@ pub mod ffi {
         pub fn create_from_builder(
             locale: &Locale,
             builder: DateTimeFieldSetBuilder,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterBuildOrLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterBuildOrLoadError> {
             let prefs = (&locale.0).into();
             let builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
             let options = builder.build_composite_datetime()?;
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
             )))
         }
@@ -124,15 +116,15 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_dt(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::DT::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }
@@ -142,15 +134,15 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_mdt(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::MDT::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }
@@ -160,17 +152,17 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdt(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
             year_style: YearStyle,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::YMDT::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into())
                 .with_year_style(year_style.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }
@@ -180,15 +172,15 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_det(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::DET::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }
@@ -198,15 +190,15 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_mdet(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::MDET::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }
@@ -216,17 +208,17 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdet(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
             year_style: YearStyle,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::YMDET::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into())
                 .with_year_style(year_style.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }
@@ -236,15 +228,15 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_et(
             locale: &Locale,
-            length: NeoDateTimeLength,
+            length: DateTimeLength,
             time_precision: TimePrecision,
             alignment: DateTimeAlignment,
-        ) -> Result<Box<NeoDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = icu_datetime::fieldsets::ET::with_length(length.into())
                 .with_alignment(alignment.into())
                 .with_time_precision(time_precision.into());
-            Ok(Box::new(NeoDateTimeFormatter(
+            Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
         }

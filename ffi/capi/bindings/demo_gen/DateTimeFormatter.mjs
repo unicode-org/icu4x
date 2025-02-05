@@ -1,13 +1,13 @@
 import { DateTimeFieldSetBuilder } from "icu4x"
+import { DateTimeFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
-import { NeoDateTimeFormatter } from "icu4x"
 import { Time } from "icu4x"
 export function formatIso(name, length, date_fields, time_precision, zone_style, alignment, year_style, year, month, day, hour, minute, second, nanosecond) {
     return (function (...args) { return args[0].formatIso(...args.slice(1)) }).apply(
         null,
         [
-            NeoDateTimeFormatter.createFromBuilder.apply(
+            DateTimeFormatter.createFromBuilder.apply(
                 null,
                 [
                     Locale.fromString.apply(

@@ -9,7 +9,7 @@
 
 #include "DateFields.d.h"
 #include "DateTimeAlignment.d.h"
-#include "NeoDateTimeLength.d.h"
+#include "DateTimeLength.d.h"
 #include "TimePrecision.d.h"
 #include "YearStyle.d.h"
 #include "ZoneStyle.d.h"
@@ -18,7 +18,7 @@
 
 
 typedef struct DateTimeFieldSetBuilder {
-  NeoDateTimeLength_option length;
+  DateTimeLength_option length;
   DateFields_option date_fields;
   TimePrecision_option time_precision;
   ZoneStyle_option zone_style;
