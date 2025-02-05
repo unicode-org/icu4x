@@ -5,11 +5,11 @@
 use std::collections::HashSet;
 
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
-use calendar::patterns::GenericLengthPatternsV1;
+use calendar::patterns::GenericLengthPatterns;
 use either::Either;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
-use icu::datetime::provider::calendar::{DateSkeletonPatternsV1, TimeLengthsV1};
+use icu::datetime::provider::calendar::{DateSkeletonPatterns, TimeLengths};
 use icu::datetime::provider::fields::components;
 use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::PatternPlurals;
@@ -33,7 +33,7 @@ impl SourceDataProvider {
         ) -> components::Bag,
     ) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
+        M: DataMarker<DataStruct = PackedPatterns<'static>>,
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
@@ -61,13 +61,13 @@ impl SourceDataProvider {
             &DataMarkerAttributes,
             &cldr_serde::ca::Dates,
         ) -> components::Bag,
-    ) -> Result<PackedPatternsV1<'static>, DataError> {
+    ) -> Result<PackedPatterns<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
-        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengthsV1::from(&data);
+        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
+        let time_lengths_v1 = TimeLengths::from(&data);
         let skeleton_patterns =
-            DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
+            DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
         fn expand_pp_to_pe(
             pp: PatternPlurals,
@@ -373,16 +373,13 @@ fn gen_date_components(
     filtered_components
 }
 
-impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
+impl DataProvider<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeNeoSkeletonPatternsV1>, DataError> {
         self.load_neo_skeletons_key(req, Either::Right("generic"), gen_time_components)
     }
 }
 
-impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.neo_time_skeleton_supported_locales()
     }
@@ -408,26 +405,26 @@ macro_rules! impl_neo_skeleton_datagen {
     };
 }
 
-impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1Marker, "buddhist");
-impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1Marker, "chinese");
-impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1Marker, "coptic");
-impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1Marker, "dangi");
-impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1Marker, "ethiopic");
-impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1Marker, "gregory");
-impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1Marker, "hebrew");
-impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1Marker, "indian");
-impl_neo_skeleton_datagen!(IslamicDateNeoSkeletonPatternsV1Marker, "islamic");
-impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1Marker, "japanese");
-impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "japanext");
-impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1Marker, "persian");
-impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1Marker, "roc");
+impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1, "buddhist");
+impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1, "chinese");
+impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1, "coptic");
+impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1, "dangi");
+impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1, "ethiopic");
+impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1, "gregory");
+impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, "hebrew");
+impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, "indian");
+impl_neo_skeleton_datagen!(IslamicDateNeoSkeletonPatternsV1, "islamic");
+impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1, "japanese");
+impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1, "japanext");
+impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1, "persian");
+impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1, "roc");
 
 #[test]
 fn test_en_year_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ym0d"),
@@ -471,7 +468,7 @@ fn test_en_hour_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<TimeNeoSkeletonPatternsV1Marker> = provider
+    let payload: DataPayload<TimeNeoSkeletonPatternsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("j"),
@@ -509,7 +506,7 @@ fn test_en_overlap_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ej"),
@@ -574,9 +571,9 @@ mod date_skeleton_consistency_tests {
 
     #[derive(Copy, Clone)]
     struct TestCaseFixedArgs<'a> {
-        skeleton_patterns: &'a DateSkeletonPatternsV1<'a>,
+        skeleton_patterns: &'a DateSkeletonPatterns<'a>,
         preferred_hour_cycle: CoarseHourCycle,
-        length_combinations_v1: &'a GenericLengthPatternsV1<'a>,
+        length_combinations_v1: &'a GenericLengthPatterns<'a>,
         cldr_cal: &'a str,
         locale: &'a DataLocale,
         skeleton_pattern_set: &'a HashSet<String>,
@@ -725,10 +722,10 @@ mod date_skeleton_consistency_tests {
         let data = provider
             .get_datetime_resources(locale, Either::Right(cldr_cal))
             .unwrap();
-        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengthsV1::from(&data);
+        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
+        let time_lengths_v1 = TimeLengths::from(&data);
         let skeleton_patterns =
-            DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
+            DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         let skeleton_pattern_set = data
             .datetime_formats
             .available_formats

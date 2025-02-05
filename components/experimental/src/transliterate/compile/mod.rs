@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transliterate::provider::TransliteratorRulesV1Marker;
+use crate::transliterate::provider::TransliteratorRulesV1;
 
 use alloc::collections::BTreeMap;
 use alloc::format;
@@ -99,7 +99,7 @@ pub struct RuleCollection {
     // these two maps need to lock together
     data: RefCell<(
         BTreeMap<String, (String, bool, bool)>, // marker-attributes -> source/reverse/visible
-        BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
+        BTreeMap<String, Result<DataResponse<TransliteratorRulesV1>, DataError>>, // cache
     )>,
 }
 
@@ -170,73 +170,73 @@ impl RuleCollection {
     ) -> Result<RuleCollectionProvider<'a, PP, NP>, DataError>
     where
         PP: ?Sized
-            + DataProvider<AsciiHexDigitV1Marker>
-            + DataProvider<AlphabeticV1Marker>
-            + DataProvider<BidiControlV1Marker>
-            + DataProvider<BidiMirroredV1Marker>
-            + DataProvider<CaseIgnorableV1Marker>
-            + DataProvider<CasedV1Marker>
-            + DataProvider<ChangesWhenCasefoldedV1Marker>
-            + DataProvider<ChangesWhenCasemappedV1Marker>
-            + DataProvider<ChangesWhenLowercasedV1Marker>
-            + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-            + DataProvider<ChangesWhenTitlecasedV1Marker>
-            + DataProvider<ChangesWhenUppercasedV1Marker>
-            + DataProvider<DashV1Marker>
-            + DataProvider<DefaultIgnorableCodePointV1Marker>
-            + DataProvider<DeprecatedV1Marker>
-            + DataProvider<DiacriticV1Marker>
-            + DataProvider<EmojiV1Marker>
-            + DataProvider<EmojiComponentV1Marker>
-            + DataProvider<EmojiModifierV1Marker>
-            + DataProvider<EmojiModifierBaseV1Marker>
-            + DataProvider<EmojiPresentationV1Marker>
-            + DataProvider<ExtendedPictographicV1Marker>
-            + DataProvider<ExtenderV1Marker>
-            + DataProvider<GraphemeBaseV1Marker>
-            + DataProvider<GraphemeClusterBreakV1Marker>
-            + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
-            + DataProvider<GraphemeExtendV1Marker>
-            + DataProvider<HexDigitV1Marker>
-            + DataProvider<IdsBinaryOperatorV1Marker>
-            + DataProvider<IdsTrinaryOperatorV1Marker>
-            + DataProvider<IdContinueV1Marker>
-            + DataProvider<IdStartV1Marker>
-            + DataProvider<IdeographicV1Marker>
-            + DataProvider<JoinControlV1Marker>
-            + DataProvider<LogicalOrderExceptionV1Marker>
-            + DataProvider<LowercaseV1Marker>
-            + DataProvider<MathV1Marker>
-            + DataProvider<NoncharacterCodePointV1Marker>
-            + DataProvider<PatternSyntaxV1Marker>
-            + DataProvider<PatternWhiteSpaceV1Marker>
-            + DataProvider<QuotationMarkV1Marker>
-            + DataProvider<RadicalV1Marker>
-            + DataProvider<RegionalIndicatorV1Marker>
-            + DataProvider<SentenceBreakV1Marker>
-            + DataProvider<SentenceBreakNameToValueV2Marker>
-            + DataProvider<SentenceTerminalV1Marker>
-            + DataProvider<SoftDottedV1Marker>
-            + DataProvider<TerminalPunctuationV1Marker>
-            + DataProvider<UnifiedIdeographV1Marker>
-            + DataProvider<UppercaseV1Marker>
-            + DataProvider<VariationSelectorV1Marker>
-            + DataProvider<WhiteSpaceV1Marker>
-            + DataProvider<WordBreakV1Marker>
-            + DataProvider<WordBreakNameToValueV2Marker>
-            + DataProvider<XidContinueV1Marker>
-            + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
-            + DataProvider<GeneralCategoryV1Marker>
-            + DataProvider<ScriptNameToValueV2Marker>
-            + DataProvider<ScriptV1Marker>
-            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-            + DataProvider<XidStartV1Marker>,
+            + DataProvider<AsciiHexDigitV1>
+            + DataProvider<AlphabeticV1>
+            + DataProvider<BidiControlV1>
+            + DataProvider<BidiMirroredV1>
+            + DataProvider<CaseIgnorableV1>
+            + DataProvider<CasedV1>
+            + DataProvider<ChangesWhenCasefoldedV1>
+            + DataProvider<ChangesWhenCasemappedV1>
+            + DataProvider<ChangesWhenLowercasedV1>
+            + DataProvider<ChangesWhenNfkcCasefoldedV1>
+            + DataProvider<ChangesWhenTitlecasedV1>
+            + DataProvider<ChangesWhenUppercasedV1>
+            + DataProvider<DashV1>
+            + DataProvider<DefaultIgnorableCodePointV1>
+            + DataProvider<DeprecatedV1>
+            + DataProvider<DiacriticV1>
+            + DataProvider<EmojiV1>
+            + DataProvider<EmojiComponentV1>
+            + DataProvider<EmojiModifierV1>
+            + DataProvider<EmojiModifierBaseV1>
+            + DataProvider<EmojiPresentationV1>
+            + DataProvider<ExtendedPictographicV1>
+            + DataProvider<ExtenderV1>
+            + DataProvider<GraphemeBaseV1>
+            + DataProvider<GraphemeClusterBreakV1>
+            + DataProvider<GraphemeClusterBreakNameToValueV2>
+            + DataProvider<GraphemeExtendV1>
+            + DataProvider<HexDigitV1>
+            + DataProvider<IdsBinaryOperatorV1>
+            + DataProvider<IdsTrinaryOperatorV1>
+            + DataProvider<IdContinueV1>
+            + DataProvider<IdStartV1>
+            + DataProvider<IdeographicV1>
+            + DataProvider<JoinControlV1>
+            + DataProvider<LogicalOrderExceptionV1>
+            + DataProvider<LowercaseV1>
+            + DataProvider<MathV1>
+            + DataProvider<NoncharacterCodePointV1>
+            + DataProvider<PatternSyntaxV1>
+            + DataProvider<PatternWhiteSpaceV1>
+            + DataProvider<QuotationMarkV1>
+            + DataProvider<RadicalV1>
+            + DataProvider<RegionalIndicatorV1>
+            + DataProvider<SentenceBreakV1>
+            + DataProvider<SentenceBreakNameToValueV2>
+            + DataProvider<SentenceTerminalV1>
+            + DataProvider<SoftDottedV1>
+            + DataProvider<TerminalPunctuationV1>
+            + DataProvider<UnifiedIdeographV1>
+            + DataProvider<UppercaseV1>
+            + DataProvider<VariationSelectorV1>
+            + DataProvider<WhiteSpaceV1>
+            + DataProvider<WordBreakV1>
+            + DataProvider<WordBreakNameToValueV2>
+            + DataProvider<XidContinueV1>
+            + DataProvider<GeneralCategoryMaskNameToValueV2>
+            + DataProvider<GeneralCategoryV1>
+            + DataProvider<ScriptNameToValueV2>
+            + DataProvider<ScriptV1>
+            + DataProvider<ScriptWithExtensionsPropertyV1>
+            + DataProvider<XidStartV1>,
         NP: ?Sized
-            + DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CompatibilityDecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>,
+            + DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>,
     {
         Ok(RuleCollectionProvider {
             collection: self,
@@ -260,90 +260,88 @@ pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     pat_ws: CodePointSetData,
 }
 
-impl<PP, NP> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP> DataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP>
 where
     PP: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CanonicalCombiningClassV1Marker>
-        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV2Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV2Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV2Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
+        + DataProvider<AsciiHexDigitV1>
+        + DataProvider<AlphabeticV1>
+        + DataProvider<BidiControlV1>
+        + DataProvider<BidiMirroredV1>
+        + DataProvider<CanonicalCombiningClassV1>
+        + DataProvider<CanonicalCombiningClassNameToValueV2>
+        + DataProvider<CaseIgnorableV1>
+        + DataProvider<CasedV1>
+        + DataProvider<ChangesWhenCasefoldedV1>
+        + DataProvider<ChangesWhenCasemappedV1>
+        + DataProvider<ChangesWhenLowercasedV1>
+        + DataProvider<ChangesWhenNfkcCasefoldedV1>
+        + DataProvider<ChangesWhenTitlecasedV1>
+        + DataProvider<ChangesWhenUppercasedV1>
+        + DataProvider<DashV1>
+        + DataProvider<DefaultIgnorableCodePointV1>
+        + DataProvider<DeprecatedV1>
+        + DataProvider<DiacriticV1>
+        + DataProvider<EmojiV1>
+        + DataProvider<EmojiComponentV1>
+        + DataProvider<EmojiModifierV1>
+        + DataProvider<EmojiModifierBaseV1>
+        + DataProvider<EmojiPresentationV1>
+        + DataProvider<ExtendedPictographicV1>
+        + DataProvider<ExtenderV1>
+        + DataProvider<GraphemeBaseV1>
+        + DataProvider<GraphemeClusterBreakV1>
+        + DataProvider<GraphemeClusterBreakNameToValueV2>
+        + DataProvider<GraphemeExtendV1>
+        + DataProvider<HexDigitV1>
+        + DataProvider<IdsBinaryOperatorV1>
+        + DataProvider<IdsTrinaryOperatorV1>
+        + DataProvider<IdContinueV1>
+        + DataProvider<IdStartV1>
+        + DataProvider<IdeographicV1>
+        + DataProvider<JoinControlV1>
+        + DataProvider<LogicalOrderExceptionV1>
+        + DataProvider<LowercaseV1>
+        + DataProvider<MathV1>
+        + DataProvider<NoncharacterCodePointV1>
+        + DataProvider<PatternSyntaxV1>
+        + DataProvider<PatternWhiteSpaceV1>
+        + DataProvider<QuotationMarkV1>
+        + DataProvider<RadicalV1>
+        + DataProvider<RegionalIndicatorV1>
+        + DataProvider<SentenceBreakV1>
+        + DataProvider<SentenceBreakNameToValueV2>
+        + DataProvider<SentenceTerminalV1>
+        + DataProvider<SoftDottedV1>
+        + DataProvider<TerminalPunctuationV1>
+        + DataProvider<UnifiedIdeographV1>
+        + DataProvider<UppercaseV1>
+        + DataProvider<VariationSelectorV1>
+        + DataProvider<WhiteSpaceV1>
+        + DataProvider<WordBreakV1>
+        + DataProvider<WordBreakNameToValueV2>
+        + DataProvider<XidContinueV1>
+        + DataProvider<GeneralCategoryMaskNameToValueV2>
+        + DataProvider<GeneralCategoryV1>
+        + DataProvider<ScriptNameToValueV2>
+        + DataProvider<ScriptV1>
+        + DataProvider<ScriptWithExtensionsPropertyV1>
+        + DataProvider<XidStartV1>,
     NP: ?Sized,
 {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
 
         if let Some(response) = exclusive_data.1.get(req.id.marker_attributes.as_str()) {
             return response.clone();
         };
 
-        let result = || -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+        let result = || -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
             let Some((source, reverse, visible)) =
                 exclusive_data.0.remove(req.id.marker_attributes as &str)
             else {
-                return Err(DataErrorKind::IdentifierNotFound
-                    .with_req(TransliteratorRulesV1Marker::INFO, req));
+                return Err(
+                    DataErrorKind::IdentifierNotFound.with_req(TransliteratorRulesV1::INFO, req)
+                );
             };
 
             let rules = parse::Parser::run(
@@ -355,7 +353,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::INFO, req)
+                    .with_req(TransliteratorRulesV1::INFO, req)
             })?;
 
             let pass1 = pass1::Pass1::run(
@@ -368,7 +366,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::INFO, req)
+                    .with_req(TransliteratorRulesV1::INFO, req)
             })?;
 
             let mut transliterator = pass2::Pass2::run(
@@ -382,7 +380,7 @@ where
             )
             .map_err(|e| {
                 e.explain(&source)
-                    .with_req(TransliteratorRulesV1Marker::INFO, req)
+                    .with_req(TransliteratorRulesV1::INFO, req)
             })?;
 
             transliterator.visibility = visible;
@@ -414,81 +412,80 @@ macro_rules! redirect {
 }
 
 redirect!(
-    CanonicalDecompositionDataV2Marker,
-    CompatibilityDecompositionDataV2Marker,
-    CanonicalDecompositionTablesV1Marker,
-    CompatibilityDecompositionTablesV1Marker,
-    CanonicalCompositionsV1Marker
+    CanonicalDecompositionDataV2,
+    CompatibilityDecompositionDataV2,
+    CanonicalDecompositionTablesV1,
+    CompatibilityDecompositionTablesV1,
+    CanonicalCompositionsV1
 );
 
 #[cfg(feature = "datagen")]
-impl<PP, NP> IterableDataProvider<TransliteratorRulesV1Marker>
-    for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP> IterableDataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP>
 where
     PP: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CanonicalCombiningClassV1Marker>
-        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV2Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV2Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV2Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
+        + DataProvider<AsciiHexDigitV1>
+        + DataProvider<AlphabeticV1>
+        + DataProvider<BidiControlV1>
+        + DataProvider<BidiMirroredV1>
+        + DataProvider<CanonicalCombiningClassV1>
+        + DataProvider<CanonicalCombiningClassNameToValueV2>
+        + DataProvider<CaseIgnorableV1>
+        + DataProvider<CasedV1>
+        + DataProvider<ChangesWhenCasefoldedV1>
+        + DataProvider<ChangesWhenCasemappedV1>
+        + DataProvider<ChangesWhenLowercasedV1>
+        + DataProvider<ChangesWhenNfkcCasefoldedV1>
+        + DataProvider<ChangesWhenTitlecasedV1>
+        + DataProvider<ChangesWhenUppercasedV1>
+        + DataProvider<DashV1>
+        + DataProvider<DefaultIgnorableCodePointV1>
+        + DataProvider<DeprecatedV1>
+        + DataProvider<DiacriticV1>
+        + DataProvider<EmojiV1>
+        + DataProvider<EmojiComponentV1>
+        + DataProvider<EmojiModifierV1>
+        + DataProvider<EmojiModifierBaseV1>
+        + DataProvider<EmojiPresentationV1>
+        + DataProvider<ExtendedPictographicV1>
+        + DataProvider<ExtenderV1>
+        + DataProvider<GraphemeBaseV1>
+        + DataProvider<GraphemeClusterBreakV1>
+        + DataProvider<GraphemeClusterBreakNameToValueV2>
+        + DataProvider<GraphemeExtendV1>
+        + DataProvider<HexDigitV1>
+        + DataProvider<IdsBinaryOperatorV1>
+        + DataProvider<IdsTrinaryOperatorV1>
+        + DataProvider<IdContinueV1>
+        + DataProvider<IdStartV1>
+        + DataProvider<IdeographicV1>
+        + DataProvider<JoinControlV1>
+        + DataProvider<LogicalOrderExceptionV1>
+        + DataProvider<LowercaseV1>
+        + DataProvider<MathV1>
+        + DataProvider<NoncharacterCodePointV1>
+        + DataProvider<PatternSyntaxV1>
+        + DataProvider<PatternWhiteSpaceV1>
+        + DataProvider<QuotationMarkV1>
+        + DataProvider<RadicalV1>
+        + DataProvider<RegionalIndicatorV1>
+        + DataProvider<SentenceBreakV1>
+        + DataProvider<SentenceBreakNameToValueV2>
+        + DataProvider<SentenceTerminalV1>
+        + DataProvider<SoftDottedV1>
+        + DataProvider<TerminalPunctuationV1>
+        + DataProvider<UnifiedIdeographV1>
+        + DataProvider<UppercaseV1>
+        + DataProvider<VariationSelectorV1>
+        + DataProvider<WhiteSpaceV1>
+        + DataProvider<WordBreakV1>
+        + DataProvider<WordBreakNameToValueV2>
+        + DataProvider<XidContinueV1>
+        + DataProvider<GeneralCategoryMaskNameToValueV2>
+        + DataProvider<GeneralCategoryV1>
+        + DataProvider<ScriptNameToValueV2>
+        + DataProvider<ScriptV1>
+        + DataProvider<ScriptWithExtensionsPropertyV1>
+        + DataProvider<XidStartV1>,
     NP: ?Sized,
 {
     fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
@@ -666,7 +663,7 @@ mod tests {
             true,
         );
 
-        let forward: DataResponse<TransliteratorRulesV1Marker> = collection
+        let forward: DataResponse<TransliteratorRulesV1> = collection
             .as_provider()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
@@ -676,7 +673,7 @@ mod tests {
             })
             .unwrap();
 
-        let reverse: DataResponse<TransliteratorRulesV1Marker> = collection
+        let reverse: DataResponse<TransliteratorRulesV1> = collection
             .as_provider()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(

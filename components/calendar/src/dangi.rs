@@ -25,7 +25,7 @@ use crate::chinese_based::{
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
 use crate::error::DateError;
-use crate::provider::chinese_based::DangiCacheV1Marker;
+use crate::provider::chinese_based::DangiCacheV1;
 use crate::AsCalendar;
 use crate::{chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
 use core::cmp::Ordering;
@@ -75,7 +75,7 @@ use tinystr::tinystr;
 /// as leap month codes `"M01L" - "M12L"`.
 #[derive(Clone, Debug, Default)]
 pub struct Dangi {
-    data: Option<DataPayload<DangiCacheV1Marker>>,
+    data: Option<DataPayload<DangiCacheV1>>,
 }
 
 /// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
@@ -123,7 +123,7 @@ impl Dangi {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_DANGI_CACHE_V1_MARKER,
+                crate::provider::Baked::SINGLETON_DANGI_CACHE_V1,
             )),
         }
     }
@@ -138,7 +138,7 @@ impl Dangi {
     ]);
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<DangiCacheV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<DangiCacheV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {

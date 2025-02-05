@@ -4,8 +4,8 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::data::MappingKind;
+use crate::provider::CaseMap;
 use crate::provider::CaseMapV1;
-use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
 use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
 use alloc::string::String;
@@ -35,7 +35,7 @@ use writeable::Writeable;
 /// ```
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
-    pub(crate) data: DataPayload<CaseMapV1Marker>,
+    pub(crate) data: DataPayload<CaseMapV1>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -74,9 +74,7 @@ impl CaseMapper {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CASE_MAP_V1_MARKER,
-            ),
+            data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_CASE_MAP_V1),
         }
     }
 
@@ -92,7 +90,7 @@ impl CaseMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1> + ?Sized,
     {
         let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
@@ -181,7 +179,7 @@ impl CaseMapper {
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-        char_is_lead: impl Fn(&CaseMapV1, char) -> bool,
+        char_is_lead: impl Fn(&CaseMap, char) -> bool,
     ) -> StringAndWriteable<'a, FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.leading_adjustment {

@@ -129,7 +129,7 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
 ///
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
-/// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+/// let result = DataProvider::<NeverMarker<HelloWorld<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
@@ -178,7 +178,7 @@ where
 ///
 /// icu_provider::marker::impl_data_provider_never_marker!(MyProvider);
 ///
-/// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+/// let result = DataProvider::<NeverMarker<HelloWorld<'static>>>::load(
 ///     &MyProvider,
 ///     DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("und").into()),
@@ -534,15 +534,15 @@ impl DataMarkerInfo {
     /// use icu_provider::hello_world::*;
     /// # struct DummyMarker;
     /// # impl DynamicDataMarker for DummyMarker {
-    /// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
+    /// #     type DataStruct = <HelloWorldV1 as DynamicDataMarker>::DataStruct;
     /// # }
     /// # impl DataMarker for DummyMarker {
     /// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
     /// # }
     ///
-    /// assert!(matches!(HelloWorldV1Marker::INFO.match_marker(HelloWorldV1Marker::INFO), Ok(())));
+    /// assert!(matches!(HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO), Ok(())));
     /// assert!(matches!(
-    ///     HelloWorldV1Marker::INFO.match_marker(DummyMarker::INFO),
+    ///     HelloWorldV1::INFO.match_marker(DummyMarker::INFO),
     ///     Err(DataError {
     ///         kind: DataErrorKind::MarkerNotFound,
     ///         ..
@@ -550,7 +550,7 @@ impl DataMarkerInfo {
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(HelloWorldV1Marker::INFO.match_marker(DummyMarker::INFO).unwrap_err().marker, Some(DummyMarker::INFO.id));
+    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyMarker::INFO).unwrap_err().marker, Some(DummyMarker::INFO.id));
     /// ```
     pub fn match_marker(self, marker: Self) -> Result<(), DataError> {
         if self == marker {

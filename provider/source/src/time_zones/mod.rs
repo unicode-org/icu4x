@@ -28,8 +28,8 @@ pub(crate) struct Caches {
     bcp47_to_canonical_iana: Cache<BTreeMap<TimeZoneBcp47Id, String>>,
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZoneBcp47Id, Region>>,
-    mz_period: Cache<MetazonePeriodV1<'static>>,
-    offset_period: Cache<ZoneOffsetPeriodV1<'static>>,
+    mz_period: Cache<MetazonePeriod<'static>>,
+    offset_period: Cache<ZoneOffsetPeriod<'static>>,
     reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZoneBcp47Id>>>,
 }
 
@@ -247,24 +247,24 @@ macro_rules! impl_iterable_data_provider {
 }
 
 impl_iterable_data_provider!(
-    TimeZoneEssentialsV1Marker,
-    LocationsV1Marker,
-    LocationsRootV1Marker,
-    ExemplarCitiesV1Marker,
-    ExemplarCitiesRootV1Marker,
-    MetazoneGenericNamesLongV1Marker,
-    MetazoneGenericNamesShortV1Marker,
-    MetazoneSpecificNamesLongV1Marker,
-    MetazoneSpecificNamesShortV1Marker
+    TimeZoneEssentialsV1,
+    LocationsV1,
+    LocationsRootV1,
+    ExemplarCitiesV1,
+    ExemplarCitiesRootV1,
+    MetazoneGenericNamesLongV1,
+    MetazoneGenericNamesShortV1,
+    MetazoneSpecificNamesLongV1,
+    MetazoneSpecificNamesShortV1
 );
 
-impl IterableDataProviderCached<MetazonePeriodV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<MetazonePeriodV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl IterableDataProviderCached<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<ZoneOffsetPeriodV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -295,12 +295,11 @@ mod tests {
             ..Default::default()
         };
 
-        let time_zone_formats: DataResponse<TimeZoneEssentialsV1Marker> =
-            provider.load(en).unwrap();
+        let time_zone_formats: DataResponse<TimeZoneEssentialsV1> = provider.load(en).unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations_root: DataResponse<LocationsRootV1Marker> = provider.load(en).unwrap();
+        let locations_root: DataResponse<LocationsRootV1> = provider.load(en).unwrap();
         assert_eq!(
             "Pohnpei",
             locations_root
@@ -320,7 +319,7 @@ mod tests {
                 .unwrap()
         );
 
-        let locations: DataResponse<LocationsV1Marker> = provider.load(fr).unwrap();
+        let locations: DataResponse<LocationsV1> = provider.load(fr).unwrap();
         assert_eq!(
             "Italie",
             locations
@@ -346,7 +345,7 @@ mod tests {
                 .unwrap()
         };
 
-        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1Marker> =
+        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "Australian Central Western Time",
@@ -367,7 +366,7 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1Marker> =
+        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
@@ -391,7 +390,7 @@ mod tests {
                 .unwrap()
         );
 
-        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1Marker> =
+        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "PT",
@@ -412,7 +411,7 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1Marker> =
+        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "PDT",

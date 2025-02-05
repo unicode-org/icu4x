@@ -38,7 +38,7 @@ use icu_provider::{marker::ErasedMarker, prelude::*};
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
 pub struct ExemplarCharacters {
-    data: DataPayload<ErasedMarker<ExemplarCharactersV1<'static>>>,
+    data: DataPayload<ErasedMarker<ExemplarCharactersData<'static>>>,
 }
 
 impl ExemplarCharacters {
@@ -58,7 +58,7 @@ impl ExemplarCharacters {
 /// [`ExemplarCharacters::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct ExemplarCharactersBorrowed<'a> {
-    data: &'a ExemplarCharactersV1<'a>,
+    data: &'a ExemplarCharactersData<'a>,
 }
 
 impl<'a> Deref for ExemplarCharactersBorrowed<'a> {
@@ -133,7 +133,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
 impl ExemplarCharacters {
     make_exemplar_chars_unicode_set_property!(
         dyn_data_marker: ExemplarCharactersMain;
-        data_marker: ExemplarCharactersMainV1Marker;
+        data_marker: ExemplarCharactersMainV1;
         func:
         pub fn try_new_main_unstable();
 
@@ -164,7 +164,7 @@ impl ExemplarCharacters {
 
     make_exemplar_chars_unicode_set_property!(
         dyn_data_marker: ExemplarCharactersAuxiliary;
-        data_marker: ExemplarCharactersAuxiliaryV1Marker;
+        data_marker: ExemplarCharactersAuxiliaryV1;
         func:
         pub fn try_new_auxiliary_unstable();
 
@@ -196,7 +196,7 @@ impl ExemplarCharacters {
 
     make_exemplar_chars_unicode_set_property!(
         dyn_data_marker: ExemplarCharactersPunctuation;
-        data_marker: ExemplarCharactersPunctuationV1Marker;
+        data_marker: ExemplarCharactersPunctuationV1;
         func:
         pub fn try_new_punctuation_unstable();
 
@@ -229,7 +229,7 @@ impl ExemplarCharacters {
 
     make_exemplar_chars_unicode_set_property!(
         dyn_data_marker: ExemplarCharactersNumbers;
-        data_marker: ExemplarCharactersNumbersV1Marker;
+        data_marker: ExemplarCharactersNumbersV1;
         func:
         pub fn try_new_numbers_unstable();
 
@@ -262,7 +262,7 @@ impl ExemplarCharacters {
 
     make_exemplar_chars_unicode_set_property!(
         dyn_data_marker: ExemplarCharactersIndex;
-        data_marker: ExemplarCharactersIndexV1Marker;
+        data_marker: ExemplarCharactersIndexV1;
         func:
         pub fn try_new_index_unstable();
 

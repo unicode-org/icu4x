@@ -15,26 +15,26 @@ use std::hash::Hasher;
 
 const BLOB_V3: &[u8] = include_bytes!("data/v3.postcard");
 
-fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<HelloWorldV1Marker>)
+fn run_driver(mut exporter: BlobExporter, provider: &impl IterableDataProvider<HelloWorldV1>)
 where
-    ExportMarker: UpcastDataPayload<HelloWorldV1Marker>,
+    ExportMarker: UpcastDataPayload<HelloWorldV1>,
 {
     for id in &provider.iter_ids().unwrap() {
         let req = DataRequest {
             id: id.as_borrowed(),
             ..Default::default()
         };
-        let res = DataProvider::<HelloWorldV1Marker>::load(provider, req).unwrap();
+        let res = DataProvider::<HelloWorldV1>::load(provider, req).unwrap();
         exporter
             .put_payload(
-                HelloWorldV1Marker::INFO,
+                HelloWorldV1::INFO,
                 id.as_borrowed(),
                 &ExportMarker::upcast(res.payload),
             )
             .unwrap();
     }
     exporter
-        .flush(HelloWorldV1Marker::INFO, {
+        .flush(HelloWorldV1::INFO, {
             let mut metadata = FlushMetadata::default();
             metadata.checksum = Some(1234);
             metadata
@@ -43,10 +43,7 @@ where
     exporter.close().unwrap();
 }
 
-fn check_hello_world(
-    blob_provider: impl DataProvider<HelloWorldV1Marker>,
-    test_prefix_match: bool,
-) {
+fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1>, test_prefix_match: bool) {
     let hello_world_provider = HelloWorldProvider;
     for id in hello_world_provider.iter_ids().unwrap() {
         let blob_result = blob_provider
@@ -120,12 +117,12 @@ fn test_format() {
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
     assert!(
         !blob_provider.internal_is_using_bigger_format(),
-        "Should have exported to smaller V3 format"
+        "Should have exported to smaller  format"
     );
     check_hello_world(blob_provider.as_deserializing(), true);
 }
 
-// This tests that the V3Bigger format works by attempting to export something with 26^4 = 456976 data entries
+// This tests that the Bigger format works by attempting to export something with 26^4 = 456976 data entries
 #[test]
 fn test_format_bigger() {
     // We do print progress since this is a slower test and it's useful to get some feedback.
@@ -143,14 +140,14 @@ fn test_format_bigger() {
 
     assert_eq!(
         hash, 8768499095842070212,
-        "V2Bigger format appears to have changed!"
+        "Bigger format appears to have changed!"
     );
 
     println!("Loading and testing locales .... ");
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
     assert!(
         blob_provider.internal_is_using_bigger_format(),
-        "Should have exported to V3Bigger format"
+        "Should have exported to Bigger format"
     );
     let blob_provider = blob_provider.as_deserializing();
 
@@ -162,7 +159,7 @@ fn test_format_bigger() {
         "tyz-Latn-001",
         "uaf-Latn-001",
     ] {
-        let blob_result = DataProvider::<HelloWorldV1Marker>::load(
+        let blob_result = DataProvider::<HelloWorldV1>::load(
             &blob_provider,
             DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&loc.parse().expect("locale must parse")),
@@ -177,11 +174,11 @@ fn test_format_bigger() {
 
 struct ManyLocalesProvider;
 
-impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+impl DataProvider<HelloWorldV1> for ManyLocalesProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorld {
                 message: format!("Hello {}!", req.id.locale).into(),
             }),
         })
@@ -190,7 +187,7 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
-impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
+impl IterableDataProvider<HelloWorldV1> for ManyLocalesProvider {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok(LOWERCASE
             .flat_map(|i0| {
@@ -212,4 +209,4 @@ impl IterableDataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
 }
 
 extern crate alloc;
-icu_provider::export::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1Marker,]);
+icu_provider::export::make_exportable_provider!(ManyLocalesProvider, [HelloWorldV1,]);

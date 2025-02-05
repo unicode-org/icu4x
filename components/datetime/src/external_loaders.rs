@@ -114,8 +114,8 @@ pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
     P: ?Sized
-        + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-        + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
+        + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+        + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
 {
     #[inline]
     fn load(
@@ -129,12 +129,12 @@ where
 
 impl<P> AnyCalendarLoader for ExternalLoaderUnstable<'_, P>
 where
-    P: DataProvider<icu_calendar::provider::JapaneseErasV1Marker>
-        + DataProvider<icu_calendar::provider::JapaneseExtendedErasV1Marker>
-        + DataProvider<icu_calendar::provider::ChineseCacheV1Marker>
-        + DataProvider<icu_calendar::provider::DangiCacheV1Marker>
-        + DataProvider<icu_calendar::provider::IslamicObservationalCacheV1Marker>
-        + DataProvider<icu_calendar::provider::IslamicUmmAlQuraCacheV1Marker>
+    P: DataProvider<icu_calendar::provider::JapaneseErasV1>
+        + DataProvider<icu_calendar::provider::JapaneseExtendedErasV1>
+        + DataProvider<icu_calendar::provider::ChineseCacheV1>
+        + DataProvider<icu_calendar::provider::DangiCacheV1>
+        + DataProvider<icu_calendar::provider::IslamicObservationalCacheV1>
+        + DataProvider<icu_calendar::provider::IslamicUmmAlQuraCacheV1>
         + ?Sized,
 {
     #[inline]

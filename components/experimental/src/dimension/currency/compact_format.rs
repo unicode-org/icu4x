@@ -9,8 +9,8 @@ use super::{
 use crate::{
     compactdecimal::CompactDecimalFormatter,
     dimension::provider::{
-        currency::{self, CurrencyEssentialsV1},
-        currency_compact::ShortCurrencyCompactV1,
+        currency::{self, CurrencyEssentials},
+        currency_compact::ShortCurrencyCompact,
     },
 };
 use fixed_decimal::SignedFixedDecimal;
@@ -20,8 +20,8 @@ pub struct FormattedCompactCurrency<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CompactCurrencyFormatterOptions,
-    pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
-    pub(crate) _short_currency_compact: &'l ShortCurrencyCompactV1<'l>,
+    pub(crate) essential: &'l CurrencyEssentials<'l>,
+    pub(crate) _short_currency_compact: &'l ShortCurrencyCompact<'l>,
     pub(crate) compact_decimal_formatter: &'l CompactDecimalFormatter,
 }
 

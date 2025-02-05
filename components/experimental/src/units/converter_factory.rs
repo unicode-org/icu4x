@@ -26,7 +26,7 @@ use super::convertible::Convertible;
 /// ConverterFactory is a factory for creating a converter.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
-    payload: DataPayload<provider::UnitsInfoV1Marker>,
+    payload: DataPayload<provider::UnitsInfoV1>,
 }
 
 impl From<Sign> for num_bigint::Sign {
@@ -58,16 +58,14 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
-            ),
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
         }
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
+        D: ?Sized + DataProvider<provider::UnitsInfoV1>,
     {
         let payload = provider.load(DataRequest::default())?.payload;
 

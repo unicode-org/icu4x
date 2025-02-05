@@ -11,9 +11,9 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 
-impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV2Marker>, DataError> {
-        self.check_req::<DecimalSymbolsV2Marker>(req)?;
+impl DataProvider<DecimalSymbolsV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV2>, DataError> {
+        self.check_req::<DecimalSymbolsV2>(req)?;
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -28,12 +28,11 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result =
-            DecimalSymbolsV2::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
-                DataError::custom("Could not create decimal symbols")
-                    .with_display_context(&s)
-                    .with_display_context(nsname)
-            })?;
+        let result = DecimalSymbols::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
+            DataError::custom("Could not create decimal symbols")
+                .with_display_context(&s)
+                .with_display_context(nsname)
+        })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -42,7 +41,7 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<DecimalSymbolsV2Marker> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalSymbolsV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
@@ -54,7 +53,7 @@ struct NumbersWithNumsys<'a>(
     pub(crate) &'a str,
 );
 
-impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
+impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbols<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: NumbersWithNumsys<'_>) -> Result<Self, Self::Error> {
@@ -92,7 +91,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
 
         Ok(Self {
             strings: strings.build(),
-            grouping_sizes: GroupingSizesV1 {
+            grouping_sizes: GroupingSizes {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: numbers.minimum_grouping_digits,
@@ -107,7 +106,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let ar_decimal: DataResponse<DecimalSymbolsV2Marker> = provider
+    let ar_decimal: DataResponse<DecimalSymbolsV2> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()

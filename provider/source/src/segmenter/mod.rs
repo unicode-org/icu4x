@@ -90,7 +90,7 @@ fn generate_rule_break_data(
     provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
-) -> RuleBreakDataV2<'static> {
+) -> RuleBreakData<'static> {
     use icu::properties::{props::ExtendedPictographic, PropertyParser};
 
     let segmenter = provider
@@ -594,7 +594,7 @@ fn generate_rule_break_data(
         }
     }
 
-    RuleBreakDataV2 {
+    RuleBreakData {
         property_table: CodePointTrieBuilder {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
@@ -642,7 +642,7 @@ fn generate_rule_break_data_override(
     provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
-) -> RuleBreakDataOverrideV1<'static> {
+) -> RuleBreakDataOverride<'static> {
     let segmenter = provider
         .icuexport()
         .unwrap()
@@ -693,7 +693,7 @@ fn generate_rule_break_data_override(
         }
     }
 
-    RuleBreakDataOverrideV1 {
+    RuleBreakDataOverride {
         property_table_override: CodePointTrieBuilder {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
@@ -859,17 +859,13 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
         .clone()
 }
 
-implement!(LineBreakDataV2Marker, "segmenter/line.toml");
-implement!(GraphemeClusterBreakDataV2Marker, "segmenter/grapheme.toml");
-implement!(WordBreakDataV2Marker, "segmenter/word.toml");
-implement!(SentenceBreakDataV2Marker, "segmenter/sentence.toml");
+implement!(LineBreakDataV2, "segmenter/line.toml");
+implement!(GraphemeClusterBreakDataV2, "segmenter/grapheme.toml");
+implement!(WordBreakDataV2, "segmenter/word.toml");
+implement!(SentenceBreakDataV2, "segmenter/sentence.toml");
+implement_override!(WordBreakDataOverrideV1, "segmenter/word.toml", ["fi", "sv"]);
 implement_override!(
-    WordBreakDataOverrideV1Marker,
-    "segmenter/word.toml",
-    ["fi", "sv"]
-);
-implement_override!(
-    SentenceBreakDataOverrideV1Marker,
+    SentenceBreakDataOverrideV1,
     "segmenter/sentence.toml",
     ["el"]
 );
@@ -881,7 +877,7 @@ mod tests {
     #[test]
     fn load_grapheme_cluster_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<GraphemeClusterBreakDataV2Marker> = provider
+        let response: DataResponse<GraphemeClusterBreakDataV2> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         assert_eq!(
@@ -894,7 +890,7 @@ mod tests {
     #[test]
     fn load_line_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<LineBreakDataV2Marker> = provider
+        let response: DataResponse<LineBreakDataV2> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();
@@ -924,7 +920,7 @@ mod tests {
     #[should_panic]
     fn missing_locale_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<SentenceBreakDataOverrideV1Marker> = provider
+        let response: DataResponse<SentenceBreakDataOverrideV1> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         response.payload.get();

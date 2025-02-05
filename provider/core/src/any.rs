@@ -136,13 +136,13 @@ impl AnyPayload {
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+    /// const HELLO_DATA: HelloWorld<'static> = HelloWorld {
     ///     message: Cow::Borrowed("Custom Hello World"),
     /// };
     ///
     /// let any_payload = AnyPayload::from_static_ref(&HELLO_DATA);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
+    /// let payload: DataPayload<HelloWorldV1> =
     ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
@@ -174,14 +174,14 @@ where
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
+    /// let payload: DataPayload<HelloWorldV1> =
+    ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Custom Hello World"),
     ///     });
     ///
     /// let any_payload = payload.wrap_into_any_payload();
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> =
+    /// let payload: DataPayload<HelloWorldV1> =
     ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
@@ -300,7 +300,7 @@ where
 /// assert_eq!(
 ///     any_provider
 ///         .load_any(
-///             HelloWorldV1Marker::INFO,
+///             HelloWorldV1::INFO,
 ///             DataRequest {
 ///                 id: DataIdentifierBorrowed::for_locale(
 ///                     &langid!("de").into()
@@ -309,17 +309,17 @@ where
 ///             }
 ///         )
 ///         .expect("load should succeed")
-///         .downcast::<HelloWorldV1Marker>()
+///         .downcast::<HelloWorldV1>()
 ///         .expect("types should match")
 ///         .payload
 ///         .get(),
-///     &HelloWorldV1 {
+///     &HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );
 ///
 /// // Downcasting automatically
-/// let downcasting_provider: &dyn DataProvider<HelloWorldV1Marker> =
+/// let downcasting_provider: &dyn DataProvider<HelloWorldV1> =
 ///     &any_provider.as_downcasting();
 ///
 /// assert_eq!(
@@ -331,7 +331,7 @@ where
 ///         .expect("load should succeed")
 ///         .payload
 ///         .get(),
-///     &HelloWorldV1 {
+///     &HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );
@@ -474,19 +474,19 @@ mod test {
     use crate::hello_world::*;
     use alloc::borrow::Cow;
 
-    const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+    const CONST_DATA: HelloWorld<'static> = HelloWorld {
         message: Cow::Borrowed("Custom Hello World"),
     };
 
     #[test]
     fn test_debug() {
-        let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
             message: Cow::Borrowed("Custom Hello World"),
         });
 
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
-            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
+            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1\" }",
             format!("{any_payload:?}")
         );
 
@@ -498,7 +498,7 @@ mod test {
 
         let err = any_payload.downcast::<WrongMarker>().unwrap_err();
         assert_eq!(
-            "ICU4X data error: Downcast: expected icu_provider::any::test::test_debug::WrongMarker, found: icu_provider::hello_world::HelloWorldV1Marker",
+            "ICU4X data error: Downcast: expected icu_provider::any::test::test_debug::WrongMarker, found: icu_provider::hello_world::HelloWorldV1",
             format!("{err}")
         );
     }
@@ -509,6 +509,6 @@ mod test {
         let payload_result: DataPayload<AnyMarker> =
             DataPayload::from_owned_buffer(Box::new(*b"pretend we're borrowing from here"))
                 .map_project(|_, _| AnyPayload::from_static_ref(&CONST_DATA));
-        payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
+        payload_result.downcast::<HelloWorldV1>().unwrap_err();
     }
 }

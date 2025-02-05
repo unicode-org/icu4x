@@ -14,28 +14,28 @@ use crate::elements::{
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
-use crate::provider::CollationDataV1;
+use crate::provider::CollationData;
+use crate::provider::CollationDiacritics;
 use crate::provider::CollationDiacriticsV1;
-use crate::provider::CollationDiacriticsV1Marker;
+use crate::provider::CollationJamo;
 use crate::provider::CollationJamoV1;
-use crate::provider::CollationJamoV1Marker;
-use crate::provider::CollationMetadataV1Marker;
+use crate::provider::CollationMetadataV1;
+use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
-use crate::provider::CollationReorderingV1Marker;
-use crate::provider::CollationRootV1Marker;
+use crate::provider::CollationRootV1;
+use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
-use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::provider::CollationTailoringV1Marker;
+use crate::provider::CollationTailoringV1;
 use crate::{
     AlternateHandling, CaseFirst, CollationType, CollatorOptions, MaxVariable, NumericOrdering,
     ResolvedCollatorOptions, Strength,
 };
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_normalizer::provider::CanonicalDecompositionDataV2Marker;
-use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
-use icu_normalizer::provider::DecompositionDataV2;
-use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::provider::CanonicalDecompositionDataV2;
+use icu_normalizer::provider::CanonicalDecompositionTablesV1;
+use icu_normalizer::provider::DecompositionData;
+use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
@@ -66,9 +66,9 @@ impl AnyQuaternaryAccumulator {
 /// reuse between owned and borrowed cases.)
 #[derive(Debug)]
 struct LocaleSpecificDataHolder {
-    tailoring: Option<DataPayload<CollationTailoringV1Marker>>,
-    diacritics: DataPayload<CollationDiacriticsV1Marker>,
-    reordering: Option<DataPayload<CollationReorderingV1Marker>>,
+    tailoring: Option<DataPayload<CollationTailoringV1>>,
+    diacritics: DataPayload<CollationDiacriticsV1>,
+    reordering: Option<DataPayload<CollationReorderingV1>>,
     merged_options: CollatorOptionsBitField,
     lithuanian_dot_above: bool,
 }
@@ -115,10 +115,10 @@ impl LocaleSpecificDataHolder {
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationTailoringV1Marker>
-            + DataProvider<CollationDiacriticsV1Marker>
-            + DataProvider<CollationMetadataV1Marker>
-            + DataProvider<CollationReorderingV1Marker>
+        D: DataProvider<CollationTailoringV1>
+            + DataProvider<CollationDiacriticsV1>
+            + DataProvider<CollationMetadataV1>
+            + DataProvider<CollationReorderingV1>
             + ?Sized,
     {
         let marker_attributes = prefs
@@ -128,7 +128,7 @@ impl LocaleSpecificDataHolder {
             .map(|c| DataMarkerAttributes::from_str_or_panic(c.as_str()))
             .unwrap_or_default();
 
-        let data_locale = CollationTailoringV1Marker::make_locale(prefs.locale_preferences);
+        let data_locale = CollationTailoringV1::make_locale(prefs.locale_preferences);
         let id = DataIdentifierCow::from_borrowed_and_owned(marker_attributes, data_locale);
 
         let req = DataRequest {
@@ -148,14 +148,14 @@ impl LocaleSpecificDataHolder {
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
+        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1> = provider
             .load(req)
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1Marker>> =
+        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1>> =
             if metadata.tailored() {
                 Some(
                     provider
@@ -167,7 +167,7 @@ impl LocaleSpecificDataHolder {
                 None
             };
 
-        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
+        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1>> =
             if metadata.reordering() {
                 Some(
                     provider
@@ -181,14 +181,12 @@ impl LocaleSpecificDataHolder {
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationReorderingV1Marker::INFO)
-                );
+                return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
             }
         }
 
         let tailored_diacritics = metadata.tailored_diacritics();
-        let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
+        let diacritics: DataPayload<CollationDiacriticsV1> = provider
             .load(if tailored_diacritics {
                 req
             } else {
@@ -203,12 +201,10 @@ impl LocaleSpecificDataHolder {
             // Vietnamese and Ewe load a full-length alternative table and the rest use
             // the default one.
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO)
-                );
+                return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
             }
         } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
         }
 
         let mut altered_defaults = CollatorOptionsBitField::default();
@@ -241,15 +237,15 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
-    root: DataPayload<CollationRootV1Marker>,
-    tailoring: Option<DataPayload<CollationTailoringV1Marker>>,
-    jamo: DataPayload<CollationJamoV1Marker>,
-    diacritics: DataPayload<CollationDiacriticsV1Marker>,
+    special_primaries: Option<DataPayload<CollationSpecialPrimariesV1>>,
+    root: DataPayload<CollationRootV1>,
+    tailoring: Option<DataPayload<CollationTailoringV1>>,
+    jamo: DataPayload<CollationJamoV1>,
+    diacritics: DataPayload<CollationDiacriticsV1>,
     options: CollatorOptionsBitField,
-    reordering: Option<DataPayload<CollationReorderingV1Marker>>,
-    decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
-    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+    reordering: Option<DataPayload<CollationReorderingV1>>,
+    decompositions: DataPayload<CanonicalDecompositionDataV2>,
+    tables: DataPayload<CanonicalDecompositionTablesV1>,
     lithuanian_dot_above: bool,
 }
 
@@ -297,15 +293,15 @@ impl Collator {
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationSpecialPrimariesV1Marker>
-            + DataProvider<CollationRootV1Marker>
-            + DataProvider<CollationTailoringV1Marker>
-            + DataProvider<CollationDiacriticsV1Marker>
-            + DataProvider<CollationJamoV1Marker>
-            + DataProvider<CollationMetadataV1Marker>
-            + DataProvider<CollationReorderingV1Marker>
-            + DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+        D: DataProvider<CollationSpecialPrimariesV1>
+            + DataProvider<CollationRootV1>
+            + DataProvider<CollationTailoringV1>
+            + DataProvider<CollationDiacriticsV1>
+            + DataProvider<CollationJamoV1>
+            + DataProvider<CollationMetadataV1>
+            + DataProvider<CollationReorderingV1>
+            + DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
         Self::try_new_unstable_internal(
@@ -323,23 +319,20 @@ impl Collator {
     #[allow(clippy::too_many_arguments)]
     fn try_new_unstable_internal<D>(
         provider: &D,
-        root: DataPayload<CollationRootV1Marker>,
-        decompositions: DataPayload<CanonicalDecompositionDataV2Marker>,
-        tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-        jamo: DataPayload<CollationJamoV1Marker>,
-        special_primaries: impl FnOnce() -> Result<
-            DataPayload<CollationSpecialPrimariesV1Marker>,
-            DataError,
-        >,
+        root: DataPayload<CollationRootV1>,
+        decompositions: DataPayload<CanonicalDecompositionDataV2>,
+        tables: DataPayload<CanonicalDecompositionTablesV1>,
+        jamo: DataPayload<CollationJamoV1>,
+        special_primaries: impl FnOnce() -> Result<DataPayload<CollationSpecialPrimariesV1>, DataError>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationRootV1Marker>
-            + DataProvider<CollationTailoringV1Marker>
-            + DataProvider<CollationDiacriticsV1Marker>
-            + DataProvider<CollationMetadataV1Marker>
-            + DataProvider<CollationReorderingV1Marker>
+        D: DataProvider<CollationRootV1>
+            + DataProvider<CollationTailoringV1>
+            + DataProvider<CollationDiacriticsV1>
+            + DataProvider<CollationMetadataV1>
+            + DataProvider<CollationReorderingV1>
             + ?Sized,
     {
         let locale_dependent =
@@ -347,7 +340,7 @@ impl Collator {
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
         let special_primaries = if locale_dependent.merged_options.alternate_handling()
@@ -358,8 +351,9 @@ impl Collator {
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(DataError::custom("invalid")
-                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
+                );
             }
             Some(special_primaries)
         } else {
@@ -385,15 +379,15 @@ impl Collator {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: Option<&'a CollationSpecialPrimariesV1<'a>>,
-    root: &'a CollationDataV1<'a>,
-    tailoring: Option<&'a CollationDataV1<'a>>,
-    jamo: &'a CollationJamoV1<'a>,
-    diacritics: &'a CollationDiacriticsV1<'a>,
+    special_primaries: Option<&'a CollationSpecialPrimaries<'a>>,
+    root: &'a CollationData<'a>,
+    tailoring: Option<&'a CollationData<'a>>,
+    jamo: &'a CollationJamo<'a>,
+    diacritics: &'a CollationDiacritics<'a>,
     options: CollatorOptionsBitField,
-    reordering: Option<&'a CollationReorderingV1<'a>>,
-    decompositions: &'a DecompositionDataV2<'a>,
-    tables: &'a DecompositionTablesV1<'a>,
+    reordering: Option<&'a CollationReordering<'a>>,
+    decompositions: &'a DecompositionData<'a>,
+    tables: &'a DecompositionTables<'a>,
     lithuanian_dot_above: bool,
 }
 
@@ -409,18 +403,17 @@ impl CollatorBorrowed<'static> {
 
         let provider = &crate::provider::Baked;
         let decompositions =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2_MARKER;
-        let tables =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER;
-        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER;
-        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
+            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2;
+        let tables = icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1;
+        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
+        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
 
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
         let special_primaries = if locale_dependent.merged_options.alternate_handling()
@@ -428,12 +421,13 @@ impl CollatorBorrowed<'static> {
             || locale_dependent.merged_options.numeric()
         {
             let special_primaries =
-                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER;
+                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(DataError::custom("invalid")
-                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
+                );
             }
             Some(special_primaries)
         } else {
@@ -542,7 +536,7 @@ impl CollatorBorrowed<'_> {
     }
 
     fn compare_impl<I: Iterator<Item = char>>(&self, left_chars: I, right_chars: I) -> Ordering {
-        let tailoring: &CollationDataV1 = if let Some(tailoring) = &self.tailoring {
+        let tailoring: &CollationData = if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
             // If the root collation is valid for the locale,

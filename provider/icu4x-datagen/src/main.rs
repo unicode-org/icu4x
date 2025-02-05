@@ -29,7 +29,7 @@
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
-use icu_provider::hello_world::HelloWorldV1Marker;
+use icu_provider::hello_world::HelloWorldV1;
 use icu_provider_export::prelude::*;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
@@ -348,13 +348,13 @@ fn main() -> eyre::Result<()> {
     };
 
     let (provider, fallbacker): (Box<dyn ExportableProvider>, _) = match () {
-        () if markers == [HelloWorldV1Marker::INFO] => {
+        () if markers == [HelloWorldV1::INFO] => {
             // Just do naive fallback instead of pulling in compiled data or something. We only use this code path to debug
             // providers, so we don't need 100% correct fallback.
             (Box::new(icu_provider::hello_world::HelloWorldProvider), LocaleFallbacker::new_without_data())
         }
-        () if markers.contains(&HelloWorldV1Marker::INFO) => {
-            eyre::bail!("HelloWorldV1Marker is only allowed as the only marker")
+        () if markers.contains(&HelloWorldV1::INFO) => {
+            eyre::bail!("HelloWorldV1 is only allowed as the only marker")
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
@@ -478,7 +478,7 @@ fn main() -> eyre::Result<()> {
         }
 
         #[cfg(not(any(feature = "provider", feature = "blob_input")))]
-        () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
+        () => eyre::bail!("Only the `HelloWorld marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
     let locale_families = match preprocessed_locales {
@@ -624,8 +624,8 @@ macro_rules! cb {
             static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
                 [
-                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
-                    (stringify!(icu_provider::hello_world::HelloWorldV1Marker).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
                         ($path, Some(<$marker>::INFO)),
                         (stringify!($marker).split("::").last().unwrap().trim(), Some(<$marker>::INFO)),
@@ -649,8 +649,8 @@ macro_rules! cb {
 
         #[test]
         fn test_lookup() {
-            assert_eq!(marker_lookup().get("AndListV2Marker"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
-            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
+            assert_eq!(marker_lookup().get("AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
+            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 
@@ -659,7 +659,7 @@ macro_rules! cb {
         icu_provider::export::make_exportable_provider!(
             ReexportableBlobDataProvider,
             [
-                icu_provider::hello_world::HelloWorldV1Marker,
+                icu_provider::hello_world::HelloWorldV1,
                 $(
                     $marker,
                 )+

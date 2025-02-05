@@ -105,9 +105,9 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu::list::provider::OrListV2Marker::INFO,
-    icu::list::provider::UnitListV2Marker::INFO,
-    icu::list::provider::AndListV2Marker::INFO,
+    icu::list::provider::OrListV2::INFO,
+    icu::list::provider::UnitListV2::INFO,
+    icu::list::provider::AndListV2::INFO,
 ];
 
 impl DataExporter for ZeroCopyCheckExporter {
@@ -138,8 +138,8 @@ impl DataExporter for ZeroCopyCheckExporter {
         macro_rules! cb {
             ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
                 ((allocated, deallocated), payload_after) = match marker {
-                    k if k == icu_provider::hello_world::HelloWorldV1Marker::INFO => {
-                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                    k if k == icu_provider::hello_world::HelloWorldV1::INFO => {
+                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                         (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                     }
                     $(

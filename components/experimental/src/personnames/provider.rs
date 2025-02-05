@@ -41,12 +41,12 @@ pub use crate::provider::Baked;
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-#[icu_provider::data_struct(PersonNamesFormatV1Marker = "personnames/personnames@1")]
+#[icu_provider::data_struct(PersonNamesFormatV1 = "personnames/personnames@1")]
 #[derive(PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PersonNamesFormatV1<'data> {
+pub struct PersonNamesFormat<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub surname_first_locales: VarZeroVec<'data, str>,

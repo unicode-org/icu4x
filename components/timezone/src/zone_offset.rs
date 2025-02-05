@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{ZoneOffsetPeriodV1Marker, EPOCH};
+use crate::provider::{ZoneOffsetPeriodV1, EPOCH};
 use crate::{Time, TimeZoneBcp47Id, UtcOffset};
 use icu_calendar::Date;
 use icu_calendar::Iso;
@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct ZoneOffsetCalculator {
-    pub(super) offset_period: DataPayload<ZoneOffsetPeriodV1Marker>,
+    pub(super) offset_period: DataPayload<ZoneOffsetPeriodV1>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -34,7 +34,7 @@ impl ZoneOffsetCalculator {
     pub const fn new() -> Self {
         ZoneOffsetCalculator {
             offset_period: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1_MARKER,
+                crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1,
             ),
         }
     }
@@ -51,7 +51,7 @@ impl ZoneOffsetCalculator {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<ZoneOffsetPeriodV1Marker> + ?Sized),
+        provider: &(impl DataProvider<ZoneOffsetPeriodV1> + ?Sized),
     ) -> Result<Self, DataError> {
         let metazone_period = provider.load(Default::default())?.payload;
         Ok(Self {

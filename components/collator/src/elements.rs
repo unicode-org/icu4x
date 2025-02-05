@@ -21,15 +21,15 @@
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::DecompositionDataV2;
-use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::provider::DecompositionData;
+use icu_normalizer::provider::DecompositionTables;
 use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::{zeroslice, ZeroSlice};
 
-use crate::provider::CollationDataV1;
+use crate::provider::CollationData;
 
 /// Marker that the decomposition does not round trip via NFC.
 ///
@@ -805,9 +805,9 @@ where
     /// starter.
     upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
     /// The root collation data.
-    root: &'data CollationDataV1<'data>,
+    root: &'data CollationData<'data>,
     /// Tailoring if applicable.
-    tailoring: &'data CollationDataV1<'data>,
+    tailoring: &'data CollationData<'data>,
     /// The `CollationElement32` mapping for the Hangul Jamo block.
     ///
     /// Note: in ICU4C the jamo table contains only modern jamo. Here, the jamo table contains the whole Unicode block.
@@ -839,12 +839,12 @@ where
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         delegate: I,
-        root: &'data CollationDataV1,
-        tailoring: &'data CollationDataV1,
+        root: &'data CollationData,
+        tailoring: &'data CollationData,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data ZeroSlice<u16>,
-        decompositions: &'data DecompositionDataV2,
-        tables: &'data DecompositionTablesV1,
+        decompositions: &'data DecompositionData,
+        tables: &'data DecompositionTables,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
     ) -> Self {
@@ -1275,7 +1275,7 @@ where
         if let Some(c_c_tv) = self.next_internal() {
             let mut c = c_c_tv.character();
             let mut ce32;
-            let mut data: &CollationDataV1 = self.tailoring;
+            let mut data: &CollationData = self.tailoring;
             let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // TODO(#2005): Figure out good length
 
             // Betting that fusing the NFD algorithm into this one at the

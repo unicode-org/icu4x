@@ -8,8 +8,8 @@ use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
-use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
-use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
+use crate::dimension::provider::currency_patterns::CurrencyPatternsData;
+use crate::dimension::provider::extended_currency::CurrencyExtendedData;
 
 use super::CurrencyCode;
 
@@ -17,8 +17,8 @@ pub struct LongFormattedCurrency<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
-    pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
-    pub(crate) patterns: &'l CurrencyPatternsDataV1<'l>,
+    pub(crate) extended: &'l CurrencyExtendedData<'l>,
+    pub(crate) patterns: &'l CurrencyPatternsData<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }

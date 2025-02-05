@@ -54,7 +54,7 @@ macro_rules! normalization_data_provider {
 
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(DecompositionDataV2 {
+                    payload: DataPayload::from_owned(DecompositionData {
                         trie,
                         passthrough_cap: toml_data.cap,
                     }),
@@ -82,7 +82,7 @@ macro_rules! normalization_tables_provider {
                     .collect::<Result<Vec<char>, DataError>>()?;
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(DecompositionTablesV1 {
+                    payload: DataPayload::from_owned(DecompositionTables {
                         scalars16: ZeroVec::alloc_from_slice(&toml_data.scalars16),
                         scalars24: ZeroVec::alloc_from_slice(&scalars24),
                     }),
@@ -102,7 +102,7 @@ macro_rules! normalization_canonical_compositions_provider {
             {
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(CanonicalCompositionsV1 {
+                    payload: DataPayload::from_owned(CanonicalCompositions {
                         canonical_compositions: Char16Trie::new(ZeroVec::alloc_from_slice(
                             &toml_data.compositions,
                         )),
@@ -134,7 +134,7 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
 
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(NonRecursiveDecompositionSupplementV1 {
+                    payload: DataPayload::from_owned(NonRecursiveDecompositionSupplement {
                         trie,
                         scalars24: ZeroVec::alloc_from_slice(&scalars24),
                     }),
@@ -145,21 +145,21 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
     };
 }
 
-normalization_data_provider!(CanonicalDecompositionDataV2Marker, "nfd");
+normalization_data_provider!(CanonicalDecompositionDataV2, "nfd");
 
-normalization_data_provider!(CompatibilityDecompositionDataV2Marker, "nfkd");
+normalization_data_provider!(CompatibilityDecompositionDataV2, "nfkd");
 
-normalization_data_provider!(Uts46DecompositionDataV2Marker, "uts46d");
+normalization_data_provider!(Uts46DecompositionDataV2, "uts46d");
 
-normalization_tables_provider!(CanonicalDecompositionTablesV1Marker, "nfdex");
+normalization_tables_provider!(CanonicalDecompositionTablesV1, "nfdex");
 
-normalization_tables_provider!(CompatibilityDecompositionTablesV1Marker, "nfkdex");
+normalization_tables_provider!(CompatibilityDecompositionTablesV1, "nfkdex");
 
 // No uts46dex, because that data is also in nfkdex.
 
-normalization_canonical_compositions_provider!(CanonicalCompositionsV1Marker, "compositions");
+normalization_canonical_compositions_provider!(CanonicalCompositionsV1, "compositions");
 
 normalization_non_recursive_decomposition_supplement_provider!(
-    NonRecursiveDecompositionSupplementV1Marker,
+    NonRecursiveDecompositionSupplementV1,
     "decompositionex"
 );

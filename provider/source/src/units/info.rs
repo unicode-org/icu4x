@@ -7,16 +7,16 @@ use std::collections::{BTreeMap, HashSet};
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
-use icu::experimental::units::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
+use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
-impl DataProvider<UnitsInfoV1Marker> for SourceDataProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1Marker>, DataError> {
-        self.check_req::<UnitsInfoV1Marker>(_req)?;
+impl DataProvider<UnitsInfoV1> for SourceDataProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1>, DataError> {
+        self.check_req::<UnitsInfoV1>(_req)?;
 
         // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
         let units_data: &cldr_serde::units::info::Resource = self
@@ -80,7 +80,7 @@ impl DataProvider<UnitsInfoV1Marker> for SourceDataProvider {
             })
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
 
-        let result = UnitsInfoV1 {
+        let result = UnitsInfo {
             units_conversion_trie: units_conversion_trie.convert_store(),
             convert_infos: VarZeroVec::from(&convert_infos),
         };
@@ -92,7 +92,7 @@ impl DataProvider<UnitsInfoV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<UnitsInfoV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -113,7 +113,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let und: DataResponse<UnitsInfoV1Marker> = provider
+    let und: DataResponse<UnitsInfoV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()

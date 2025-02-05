@@ -11,13 +11,13 @@ use crate::dimension::currency::options::CurrencyFormatterOptions;
 use crate::dimension::currency::options::Width;
 use crate::dimension::currency::CurrencyCode;
 use crate::dimension::provider::currency;
-use crate::dimension::provider::currency::CurrencyEssentialsV1;
+use crate::dimension::provider::currency::CurrencyEssentials;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
-    pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
+    pub(crate) essential: &'l CurrencyEssentials<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }
 

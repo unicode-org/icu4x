@@ -78,12 +78,9 @@ fn currency_pattern_selection(
     )
 }
 
-impl DataProvider<CurrencyEssentialsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyEssentialsV1Marker>, DataError> {
-        self.check_req::<CurrencyEssentialsV1Marker>(req)?;
+impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsV1>, DataError> {
+        self.check_req::<CurrencyEssentialsV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
@@ -104,7 +101,7 @@ impl DataProvider<CurrencyEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<CurrencyEssentialsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -119,7 +116,7 @@ fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
-) -> Result<CurrencyEssentialsV1<'data>, DataError> {
+) -> Result<CurrencyEssentials<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;
 
     // TODO(#3838): these patterns might be numbering system dependent.
@@ -294,7 +291,7 @@ fn extract_currency_essentials<'data>(
             .map(Some)
     }
 
-    Ok(CurrencyEssentialsV1 {
+    Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_pattern(standard.as_str())?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,
@@ -310,7 +307,7 @@ fn test_basic() {
 
     fn get_placeholders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
-        locale: &DataResponse<CurrencyEssentialsV1Marker>,
+        locale: &DataResponse<CurrencyEssentialsV1>,
         placeholders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatternConfig {
@@ -351,7 +348,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let en: DataResponse<CurrencyEssentialsV1Marker> = provider
+    let en: DataResponse<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
@@ -394,7 +391,7 @@ fn test_basic() {
     assert_eq!(en_egp_short, "EGP");
     assert_eq!(en_egp_narrow, "E£");
 
-    let ar_eg: DataResponse<CurrencyEssentialsV1Marker> = provider
+    let ar_eg: DataResponse<CurrencyEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("ar-EG").into()),
             ..Default::default()

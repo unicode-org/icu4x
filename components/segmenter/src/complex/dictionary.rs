@@ -137,14 +137,14 @@ impl<'s> DictionaryType<'_, 's> for char {
 }
 
 pub(super) struct DictionarySegmenter<'l> {
-    dict: &'l UCharDictionaryBreakDataV1<'l>,
-    grapheme: &'l RuleBreakDataV2<'l>,
+    dict: &'l UCharDictionaryBreakData<'l>,
+    grapheme: &'l RuleBreakData<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub(super) fn new(
-        dict: &'l UCharDictionaryBreakDataV1<'l>,
-        grapheme: &'l RuleBreakDataV2<'l>,
+        dict: &'l UCharDictionaryBreakData<'l>,
+        grapheme: &'l RuleBreakData<'l>,
     ) -> Self {
         // TODO: no way to verify trie data
         Self { dict, grapheme }
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let response: DataResponse<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
+        let response: DataResponse<DictionaryForWordOnlyAutoV1> = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("cjdict"),
@@ -206,7 +206,7 @@ mod tests {
         let word_segmenter = WordSegmenter::new_dictionary(Default::default());
         let dict_segmenter = DictionarySegmenter::new(
             response.payload.get(),
-            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2,
         );
 
         // Match case

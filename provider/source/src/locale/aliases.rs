@@ -14,21 +14,21 @@ use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
-impl DataProvider<AliasesV2Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2Marker>, DataError> {
-        self.check_req::<AliasesV2Marker>(req)?;
+impl DataProvider<AliasesV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2>, DataError> {
+        self.check_req::<AliasesV2>(req)?;
         let data: &cldr_serde::aliases::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/aliases.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(AliasesV2::from(data)),
+            payload: DataPayload::from_owned(Aliases::from(data)),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<AliasesV2Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<AliasesV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -57,7 +57,7 @@ fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     )
 }
 
-impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
+impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
     // Step 1. Load the rules from aliases.json
     fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known
@@ -277,7 +277,7 @@ fn test_basic() {
     use icu::locale::subtags::{language, region, script};
 
     let provider = SourceDataProvider::new_testing();
-    let data: DataResponse<AliasesV2Marker> = provider.load(Default::default()).unwrap();
+    let data: DataResponse<AliasesV2> = provider.load(Default::default()).unwrap();
 
     // We should handle all language rules as special cases, leaving the generic category empty.
     assert!(data.payload.get().language.is_empty());

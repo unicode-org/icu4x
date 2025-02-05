@@ -25,12 +25,9 @@ use std::collections::BTreeSet;
 use writeable::Writeable;
 use zerovec::ule::NichedOption;
 
-impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeZoneEssentialsV1Marker>, DataError> {
-        self.check_req::<TimeZoneEssentialsV1Marker>(req)?;
+impl DataProvider<TimeZoneEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeZoneEssentialsV1>, DataError> {
+        self.check_req::<TimeZoneEssentialsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -48,7 +45,7 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(TimeZoneEssentialsV1 {
+            payload: DataPayload::from_owned(TimeZoneEssentials {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
@@ -207,7 +204,7 @@ impl SourceDataProvider {
         Ok((locations, exemplar_cities))
     }
 
-    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriodV1<'static>, DataError> {
+    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriod<'static>, DataError> {
         let metazones = &self
             .cldr()?
             .core()
@@ -222,7 +219,7 @@ impl SourceDataProvider {
             .tz_caches
             .mz_period
             .get_or_init(|| {
-                Ok(MetazonePeriodV1 {
+                Ok(MetazonePeriod {
                     list: metazones
                         .meta_zone_info
                         .time_zone
@@ -277,14 +274,14 @@ impl SourceDataProvider {
             .map_err(|&e| e)
     }
 
-    fn offset_period(&self) -> Result<&ZoneOffsetPeriodV1<'static>, DataError> {
+    fn offset_period(&self) -> Result<&ZoneOffsetPeriod<'static>, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
 
         self.cldr()?
             .tz_caches
             .offset_period
             .get_or_init(|| {
-                Ok(ZoneOffsetPeriodV1(
+                Ok(ZoneOffsetPeriod(
                     self.bcp47_to_canonical_iana_map()?
                         .iter()
                         .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
@@ -491,9 +488,9 @@ impl SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
+impl DataProvider<LocationsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1>, DataError> {
+        self.check_req::<LocationsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -509,13 +506,13 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         let mut locations = self.calculate_locations(req.id.locale)?.0;
 
-        let base = DataProvider::<LocationsRootV1Marker>::load(&self, req)?.payload;
+        let base = DataProvider::<LocationsRootV1>::load(&self, req)?.payload;
 
         locations.retain(|k, v| base.get().locations.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1 {
+            payload: DataPayload::from_owned(Locations {
                 locations: locations.into_iter().collect(),
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
@@ -526,13 +523,13 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
+impl DataProvider<LocationsRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1>, DataError> {
+        self.check_req::<LocationsV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1 {
+            payload: DataPayload::from_owned(Locations {
                 locations: self
                     .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
                     .0
@@ -547,35 +544,32 @@ impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+impl DataProvider<ExemplarCitiesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1>, DataError> {
+        self.check_req::<ExemplarCitiesV1>(req)?;
 
         let mut exemplars = self.calculate_locations(req.id.locale)?.1;
 
-        let base = DataProvider::<ExemplarCitiesRootV1Marker>::load(&self, req)?.payload;
+        let base = DataProvider::<ExemplarCitiesRootV1>::load(&self, req)?.payload;
 
         exemplars.retain(|k, v| base.get().exemplars.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+            payload: DataPayload::from_owned(ExemplarCities {
                 exemplars: exemplars.into_iter().collect(),
             }),
         })
     }
 }
 
-impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ExemplarCitiesRootV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
+impl DataProvider<ExemplarCitiesRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesRootV1>, DataError> {
+        self.check_req::<ExemplarCitiesV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+            payload: DataPayload::from_owned(ExemplarCities {
                 exemplars: self
                     .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
                     .1
@@ -586,9 +580,9 @@ impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1Marker>, DataError> {
-        self.check_req::<MetazonePeriodV1Marker>(req)?;
+impl DataProvider<MetazonePeriodV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1>, DataError> {
+        self.check_req::<MetazonePeriodV1>(req)?;
 
         let (_, checksum) = self.metazone_to_id_map()?;
 
@@ -599,9 +593,9 @@ impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1Marker>, DataError> {
-        self.check_req::<ZoneOffsetPeriodV1Marker>(req)?;
+impl DataProvider<ZoneOffsetPeriodV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1>, DataError> {
+        self.check_req::<ZoneOffsetPeriodV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -610,12 +604,12 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneGenericNamesLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesLongV1Marker>, DataError> {
-        self.check_req::<MetazoneGenericNamesLongV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneGenericNamesLongV1>, DataError> {
+        self.check_req::<MetazoneGenericNamesLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -659,7 +653,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
             }),
@@ -667,12 +661,12 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1Marker>, DataError> {
-        self.check_req::<MetazoneSpecificNamesLongV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1>, DataError> {
+        self.check_req::<MetazoneSpecificNamesLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -731,7 +725,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+            payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
             }),
@@ -739,12 +733,12 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneGenericNamesShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesShortV1Marker>, DataError> {
-        self.check_req::<MetazoneGenericNamesShortV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneGenericNamesShortV1>, DataError> {
+        self.check_req::<MetazoneGenericNamesShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -769,19 +763,19 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
             }),
         })
     }
 }
-impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneSpecificNamesShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1Marker>, DataError> {
-        self.check_req::<MetazoneSpecificNamesShortV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1>, DataError> {
+        self.check_req::<MetazoneSpecificNamesShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -807,7 +801,7 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+            payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
             }),

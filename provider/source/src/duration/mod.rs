@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use std::{borrow::Cow, collections::HashSet};
 
 #[cfg(feature = "experimental")]
-use icu::experimental::duration::provider::{DigitalDurationDataV1, DigitalDurationDataV1Marker};
+use icu::experimental::duration::provider::{DigitalDurationData, DigitalDurationDataV1};
 #[cfg(feature = "experimental")]
 use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 
@@ -70,11 +70,8 @@ fn strip_separated_padded_characters<'s, const N: usize>(
 }
 
 #[cfg(feature = "experimental")]
-impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<DigitalDurationDataV1Marker>, DataError> {
+impl DataProvider<DigitalDurationDataV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DigitalDurationDataV1>, DataError> {
         let (
             hm_hour_pad,
             hm_min_pad,
@@ -86,7 +83,7 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
             hms_sec_pad,
         ) = self.load_duration_parts_internal(req)?;
 
-        let result = DigitalDurationDataV1 {
+        let result = DigitalDurationData {
             separator: Cow::Owned(hm_sep.to_string()),
             hms_padding: HmsPadding {
                 h: hms_hour_pad,
@@ -159,7 +156,7 @@ impl SourceDataProvider {
 }
 
 #[cfg(feature = "experimental")]
-impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
