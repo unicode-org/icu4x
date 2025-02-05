@@ -630,20 +630,20 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawDateTimeNamesBorrowed<'l> {
-    year_names: OptionalNames<YearNameLength, &'l YearNamesV1<'l>>,
-    month_names: OptionalNames<MonthNameLength, &'l MonthNamesV1<'l>>,
-    weekday_names: OptionalNames<WeekdayNameLength, &'l LinearNamesV1<'l>>,
-    dayperiod_names: OptionalNames<DayPeriodNameLength, &'l LinearNamesV1<'l>>,
-    zone_essentials: OptionalNames<(), &'l tz::EssentialsV1<'l>>,
-    locations_root: OptionalNames<(), &'l tz::LocationsV1<'l>>,
-    locations: OptionalNames<(), &'l tz::LocationsV1<'l>>,
-    exemplars_root: OptionalNames<(), &'l tz::ExemplarCitiesV1<'l>>,
-    exemplars: OptionalNames<(), &'l tz::ExemplarCitiesV1<'l>>,
-    mz_generic_long: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
-    mz_generic_short: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
-    mz_specific_long: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
-    mz_specific_short: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
-    mz_periods: OptionalNames<(), &'l tz::MzPeriodV1<'l>>,
+    year_names: OptionalNames<YearNameLength, &'l YearNames<'l>>,
+    month_names: OptionalNames<MonthNameLength, &'l MonthNames<'l>>,
+    weekday_names: OptionalNames<WeekdayNameLength, &'l LinearNames<'l>>,
+    dayperiod_names: OptionalNames<DayPeriodNameLength, &'l LinearNames<'l>>,
+    zone_essentials: OptionalNames<(), &'l tz::Essentials<'l>>,
+    locations_root: OptionalNames<(), &'l tz::Locations<'l>>,
+    locations: OptionalNames<(), &'l tz::Locations<'l>>,
+    exemplars_root: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
+    exemplars: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
+    mz_generic_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_generic_short: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_specific_long: OptionalNames<(), &'l tz::MzSpecific<'l>>,
+    mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
+    mz_periods: OptionalNames<(), &'l tz::MzPeriod<'l>>,
     pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
 }
 
@@ -2501,14 +2501,14 @@ impl RawDateTimeNamesBorrowed<'_> {
         };
         let month_index = usize::from(month_index);
         let name = match month_names {
-            MonthNamesV1::Linear(linear) => {
+            MonthNames::Linear(linear) => {
                 if is_leap {
                     None
                 } else {
                     linear.get(month_index)
                 }
             }
-            MonthNamesV1::LeapLinear(leap_linear) => {
+            MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
                 if is_leap {
                     leap_linear.get(month_index + num_months)
@@ -2518,7 +2518,7 @@ impl RawDateTimeNamesBorrowed<'_> {
                     None
                 }
             }
-            MonthNamesV1::LeapNumeric(leap_numeric) => {
+            MonthNames::LeapNumeric(leap_numeric) => {
                 if is_leap {
                     return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
                 } else {
@@ -2568,11 +2568,11 @@ impl RawDateTimeNamesBorrowed<'_> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match (year_names, era) {
-            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => {
+            (YearNames::VariableEras(era_names), FormattingEra::Code(era_code)) => {
                 crate::provider::neo::get_year_name_from_map(era_names, era_code.0.as_str().into())
                     .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
+            (YearNames::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
                 era_names
                     .get(index.into())
                     .ok_or(GetNameForEraError::InvalidEraCode)
@@ -2593,7 +2593,7 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(year_name_length)
             .ok_or(GetNameForCyclicYearError::NotLoaded)?;
 
-        let YearNamesV1::Cyclic(cyclics) = year_names else {
+        let YearNames::Cyclic(cyclics) = year_names else {
             return Err(GetNameForCyclicYearError::InvalidYearNumber { max: 0 });
         };
 
@@ -2632,25 +2632,25 @@ impl RawDateTimeNamesBorrowed<'_> {
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
-    pub(crate) essentials: Option<&'a tz::EssentialsV1<'a>>,
+    pub(crate) essentials: Option<&'a tz::Essentials<'a>>,
     /// The root location names, e.g. Italy
-    pub(crate) locations_root: Option<&'a tz::LocationsV1<'a>>,
+    pub(crate) locations_root: Option<&'a tz::Locations<'a>>,
     /// The language specific location names, e.g. Italia
-    pub(crate) locations: Option<&'a tz::LocationsV1<'a>>,
+    pub(crate) locations: Option<&'a tz::Locations<'a>>,
     /// The root exemplar city names, e.g. Rome
-    pub(crate) exemplars_root: Option<&'a tz::ExemplarCitiesV1<'a>>,
+    pub(crate) exemplars_root: Option<&'a tz::ExemplarCities<'a>>,
     /// The language specific exemplar names, e.g. Roma
-    pub(crate) exemplars: Option<&'a tz::ExemplarCitiesV1<'a>>,
+    pub(crate) exemplars: Option<&'a tz::ExemplarCities<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
-    pub(crate) mz_generic_long: Option<&'a tz::MzGenericV1<'a>>,
+    pub(crate) mz_generic_long: Option<&'a tz::MzGeneric<'a>>,
     /// The generic short metazone names, e.g. PT
-    pub(crate) mz_generic_short: Option<&'a tz::MzGenericV1<'a>>,
+    pub(crate) mz_generic_short: Option<&'a tz::MzGeneric<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_long: Option<&'a tz::MzSpecificV1<'a>>,
+    pub(crate) mz_specific_long: Option<&'a tz::MzSpecific<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_short: Option<&'a tz::MzSpecificV1<'a>>,
+    pub(crate) mz_specific_short: Option<&'a tz::MzSpecific<'a>>,
     /// The metazone lookup
-    pub(crate) mz_periods: Option<&'a tz::MzPeriodV1<'a>>,
+    pub(crate) mz_periods: Option<&'a tz::MzPeriod<'a>>,
 }
 
 impl<'data> RawDateTimeNamesBorrowed<'data> {

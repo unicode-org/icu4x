@@ -17,7 +17,7 @@ impl DataProvider<ScriptDirectionV1Marker> for SourceDataProvider {
             self.cldr()?.core().read_and_parse("scriptMetadata.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ScriptDirectionV1::from(data)),
+            payload: DataPayload::from_owned(ScriptDirection::from(data)),
         })
     }
 }
@@ -28,7 +28,7 @@ impl crate::IterableDataProviderCached<ScriptDirectionV1Marker> for SourceDataPr
     }
 }
 
-impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
+impl From<&cldr_serde::directionality::Resource> for ScriptDirection<'_> {
     fn from(other: &cldr_serde::directionality::Resource) -> Self {
         let mut rtl = vec![];
         let mut ltr = vec![];

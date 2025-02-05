@@ -14,20 +14,20 @@ use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant}
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
     pub(crate) use super::ExemplarCitiesRootV1Marker;
-    pub(crate) use super::ExemplarCitiesV1;
+    pub(crate) use super::ExemplarCities;
     pub(crate) use super::ExemplarCitiesV1Marker;
     pub(crate) use super::LocationsRootV1Marker;
-    pub(crate) use super::LocationsV1;
+    pub(crate) use super::Locations;
     pub(crate) use super::LocationsV1Marker;
     pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
     pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
-    pub(crate) use super::MetazoneGenericNamesV1 as MzGenericV1;
-    pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
+    pub(crate) use super::MetazoneGenericNames as MzGeneric;
+    pub(crate) use super::MetazonePeriod as MzPeriod;
     pub(crate) use super::MetazonePeriodV1Marker as MzPeriodV1Marker;
     pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
     pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
-    pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
+    pub(crate) use super::MetazoneSpecificNames as MzSpecific;
+    pub(crate) use super::TimeZoneEssentials as Essentials;
     pub(crate) use super::TimeZoneEssentialsV1Marker as EssentialsV1Marker;
 }
 
@@ -46,7 +46,7 @@ pub(crate) mod tz {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct TimeZoneEssentialsV1<'data> {
+pub struct TimeZoneEssentials<'data> {
     /// The separator sign
     #[cfg_attr(feature = "serde", serde(borrow,))]
     pub offset_separator: Cow<'data, str>,
@@ -84,7 +84,7 @@ pub struct TimeZoneEssentialsV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LocationsV1<'data> {
+pub struct Locations<'data> {
     /// Per-zone location display name
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
@@ -143,8 +143,8 @@ pub struct LocationsV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct ExemplarCitiesV1<'data> {
-    /// Per-zone exemplar city name. This is deduplicated against `LocationsV1.locations`, so it
+pub struct ExemplarCities<'data> {
+    /// Per-zone exemplar city name. This is deduplicated against `Locations.locations`, so it
     /// only contains time zones that don't use the exemplar city in the location format.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub exemplars: ZeroMap<'data, TimeZoneBcp47Id, str>,
@@ -153,7 +153,7 @@ pub struct ExemplarCitiesV1<'data> {
 /// An ICU4X mapping to generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
-/// These markers use a checksum to ensure consistency with [`MetazonePeriodV1`].
+/// These markers use a checksum to ensure consistency with [`MetazonePeriod`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -177,7 +177,7 @@ pub struct ExemplarCitiesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneGenericNamesV1<'data> {
+pub struct MetazoneGenericNames<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
@@ -190,7 +190,7 @@ pub struct MetazoneGenericNamesV1<'data> {
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
-/// These markers use a checksum to ensure consistency with [`MetazonePeriodV1`].
+/// These markers use a checksum to ensure consistency with [`MetazonePeriod`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -214,7 +214,7 @@ pub struct MetazoneGenericNamesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneSpecificNamesV1<'data> {
+pub struct MetazoneSpecificNames<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
@@ -235,7 +235,7 @@ pub type MetazoneId = core::num::NonZeroU8;
 /// An ICU4X mapping to the metazones at a given period.
 /// See CLDR-JSON metaZones.json for more context.
 ///
-/// This markers uses a checksum to ensure consistency with `Metazone*NamesV1`.
+/// This markers uses a checksum to ensure consistency with `Metazone*Names`.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -253,7 +253,7 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazonePeriodV1<'data> {
+pub struct MetazonePeriod<'data> {
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
     /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]

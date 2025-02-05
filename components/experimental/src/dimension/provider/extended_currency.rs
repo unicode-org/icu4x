@@ -22,7 +22,7 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Currency Extended V1 data struct.
+/// Currency Extended  data struct.
 #[icu_provider::data_struct(marker(
     CurrencyExtendedDataV1Marker,
     "currency/extended@1",
@@ -32,7 +32,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyExtendedDataV1<'data> {
+pub struct CurrencyExtendedData<'data> {
     /// Contains the localized display names for a currency based on plural rules.
     /// For instance, in the "en" locale for the "USD" currency:
     ///     - "US Dollars" when count is `zero`,
@@ -45,7 +45,7 @@ pub struct CurrencyExtendedDataV1<'data> {
     pub display_names: PluralElementsPackedCow<'data, str>,
 }
 
-impl<'data> CurrencyExtendedDataV1<'data> {
+impl<'data> CurrencyExtendedData<'data> {
     /// Construct an instance directly from a byte slice.
     ///
     /// # Safety
@@ -65,20 +65,20 @@ impl<'data> CurrencyExtendedDataV1<'data> {
 }
 
 #[cfg(feature = "datagen")]
-impl databake::Bake for CurrencyExtendedDataV1<'_> {
+impl databake::Bake for CurrencyExtendedData<'_> {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         use zerovec::ule::VarULE;
         ctx.insert("icu_experimental::dimension::provider::extended_currency");
         let bytes = self.display_names.elements.as_bytes().bake(ctx);
         // Safety: The bytes are returned by `PluralElementsPackedULE::slice_as_bytes`.
         databake::quote! { unsafe {
-            icu_experimental::dimension::provider::extended_currency::CurrencyExtendedDataV1::from_bytes_unchecked(#bytes)
+            icu_experimental::dimension::provider::extended_currency::CurrencyExtendedData::from_bytes_unchecked(#bytes)
         }}
     }
 }
 
 #[cfg(feature = "datagen")]
-impl databake::BakeSize for CurrencyExtendedDataV1<'_> {
+impl databake::BakeSize for CurrencyExtendedData<'_> {
     fn borrows_size(&self) -> usize {
         self.display_names.borrows_size()
     }

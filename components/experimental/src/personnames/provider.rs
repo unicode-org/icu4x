@@ -46,7 +46,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PersonNamesFormatV1<'data> {
+pub struct PersonNamesFormat<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub surname_first_locales: VarZeroVec<'data, str>,

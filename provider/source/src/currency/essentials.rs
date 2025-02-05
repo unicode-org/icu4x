@@ -119,7 +119,7 @@ fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
-) -> Result<CurrencyEssentialsV1<'data>, DataError> {
+) -> Result<CurrencyEssentials<'data>, DataError> {
     let currencies = &currencies_resource.main.value.numbers.currencies;
 
     // TODO(#3838): these patterns might be numbering system dependent.
@@ -294,7 +294,7 @@ fn extract_currency_essentials<'data>(
             .map(Some)
     }
 
-    Ok(CurrencyEssentialsV1 {
+    Ok(CurrencyEssentials {
         pattern_config_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard_pattern: create_pattern(standard.as_str())?,
         standard_alpha_next_to_number_pattern: create_pattern(standard_alpha_next_to_number)?,

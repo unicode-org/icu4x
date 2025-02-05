@@ -55,7 +55,7 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorld {
                 message: (*self
                     .0
                     .get(&(

@@ -90,7 +90,7 @@ fn generate_rule_break_data(
     provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
-) -> RuleBreakDataV2<'static> {
+) -> RuleBreakData<'static> {
     use icu::properties::{props::ExtendedPictographic, PropertyParser};
 
     let segmenter = provider
@@ -594,7 +594,7 @@ fn generate_rule_break_data(
         }
     }
 
-    RuleBreakDataV2 {
+    RuleBreakData {
         property_table: CodePointTrieBuilder {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
@@ -642,7 +642,7 @@ fn generate_rule_break_data_override(
     provider: &SourceDataProvider,
     rules_file: &str,
     trie_type: crate::TrieType,
-) -> RuleBreakDataOverrideV1<'static> {
+) -> RuleBreakDataOverride<'static> {
     let segmenter = provider
         .icuexport()
         .unwrap()
@@ -693,7 +693,7 @@ fn generate_rule_break_data_override(
         }
     }
 
-    RuleBreakDataOverrideV1 {
+    RuleBreakDataOverride {
         property_table_override: CodePointTrieBuilder {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,

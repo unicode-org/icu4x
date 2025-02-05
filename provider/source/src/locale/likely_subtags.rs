@@ -154,8 +154,8 @@ pub(crate) struct TransformResult {
 }
 
 impl TransformResult {
-    pub(crate) fn as_langs(&self) -> LikelySubtagsForLanguageV1<'static> {
-        LikelySubtagsForLanguageV1 {
+    pub(crate) fn as_langs(&self) -> LikelySubtagsForLanguage<'static> {
+        LikelySubtagsForLanguage {
             language_script: self
                 .language_script
                 .iter()
@@ -179,8 +179,8 @@ impl TransformResult {
         }
     }
 
-    pub(crate) fn as_script_region(&self) -> LikelySubtagsForScriptRegionV1<'static> {
-        LikelySubtagsForScriptRegionV1 {
+    pub(crate) fn as_script_region(&self) -> LikelySubtagsForScriptRegion<'static> {
+        LikelySubtagsForScriptRegion {
             script_region: self
                 .script_region
                 .iter()
@@ -199,8 +199,8 @@ impl TransformResult {
         }
     }
 
-    pub(crate) fn as_extended(&self) -> LikelySubtagsExtendedV1<'static> {
-        LikelySubtagsExtendedV1 {
+    pub(crate) fn as_extended(&self) -> LikelySubtagsExtended<'static> {
+        LikelySubtagsExtended {
             language_script: self
                 .language_script
                 .iter()

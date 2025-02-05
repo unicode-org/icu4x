@@ -11,7 +11,7 @@ use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1M
 
 use icu::experimental::dimension::provider::pattern_key::{PatternKey, PowerValue};
 use icu::experimental::dimension::provider::units_essentials::CompoundCount;
-use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1;
+use icu::experimental::dimension::provider::units_essentials::UnitsEssentials;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use zerovec::ZeroMap;
@@ -117,7 +117,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
             );
         }
 
-        let result = UnitsEssentialsV1 {
+        let result = UnitsEssentials {
             per: per.into(),
             times: times.into(),
             prefixes: ZeroMap::from_iter(prefixes),

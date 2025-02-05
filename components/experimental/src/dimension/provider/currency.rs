@@ -41,7 +41,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyEssentialsV1<'data> {
+pub struct CurrencyEssentials<'data> {
     /// A mapping from each currency's ISO code to its associated formatting patterns.
     /// This includes information on which specific pattern to apply as well as the index
     /// of placeholders within the `placeholders` vector.

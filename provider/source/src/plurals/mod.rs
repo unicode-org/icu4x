@@ -35,7 +35,7 @@ impl SourceDataProvider {
         } else {
             None
         }
-        .ok_or(DataError::custom("Unknown marker for PluralRulesV1"))
+        .ok_or(DataError::custom("Unknown marker for PluralRules"))
     }
 
     fn get_plural_ranges(&self) -> Result<&cldr_serde::plural_ranges::PluralRanges, DataError> {
@@ -57,7 +57,7 @@ macro_rules! implement {
                 self.check_req::<$marker>(req)?;
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(PluralRulesV1::from(
+                    payload: DataPayload::from_owned(PluralRulesData::from(
                         self.get_rules_for(<$marker>::INFO)?
                             .0
                             .get(&icu::locale::LanguageIdentifier::from((
@@ -87,7 +87,7 @@ macro_rules! implement {
 implement!(CardinalV1Marker);
 implement!(OrdinalV1Marker);
 
-impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
+impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> {
     fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
         /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
         /// returns a new [`String`] in a [`Cow::Owned`].
@@ -110,14 +110,14 @@ impl DataProvider<PluralRangesV1Marker> for SourceDataProvider {
         if req.id.locale.is_default() {
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(PluralRangesV1 {
+                payload: DataPayload::from_owned(PluralRanges {
                     ranges: ZeroMap::default(),
                 }),
             })
         } else {
             Ok(DataResponse {
                 metadata: Default::default(),
-                payload: DataPayload::from_owned(PluralRangesV1::from(
+                payload: DataPayload::from_owned(PluralRanges::from(
                     self.get_plural_ranges()?
                         .0
                         .get(&icu::locale::LanguageIdentifier::from((
@@ -144,7 +144,7 @@ impl IterableDataProviderCached<PluralRangesV1Marker> for SourceDataProvider {
     }
 }
 
-impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'static> {
+impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRanges<'static> {
     fn from(other: &cldr_serde::plural_ranges::LocalePluralRanges) -> Self {
         fn convert(s: &str) -> RawPluralCategory {
             PluralCategory::get_for_cldr_string(s)
@@ -168,7 +168,7 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
             }
         }
 
-        PluralRangesV1 {
+        PluralRanges {
             ranges: map
                 .into_iter()
                 .map(|((start, end), result)| {

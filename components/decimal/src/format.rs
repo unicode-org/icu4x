@@ -22,8 +22,8 @@ use writeable::Writeable;
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
-    pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
-    pub(crate) digits: &'l DecimalDigitsV1,
+    pub(crate) symbols: &'l DecimalSymbols<'l>,
+    pub(crate) digits: &'l DecimalDigits,
 }
 
 impl FormattedFixedDecimal<'_> {

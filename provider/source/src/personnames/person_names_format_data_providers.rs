@@ -22,7 +22,7 @@ impl DataProvider<PersonNamesFormatV1Marker> for crate::SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(PersonNamesFormatV1::try_from(data).map_err(|e| {
+            payload: DataPayload::from_owned(PersonNamesFormat::try_from(data).map_err(|e| {
                 DataError::custom("data for PersonNamesFormattingDefinition")
                     .with_display_context(&e)
             })?),
@@ -81,7 +81,7 @@ fn to_mask(ordering: &str, size: &str, referring: &str, formality: &str) -> Resu
 /// Transform the JSON Resource into a single PersonNamesFormattingDefinitionV1
 ///
 /// The JSON Structure is expected to be perfect and all combination should be provided.
-impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
+impl TryFrom<&'_ Resource> for PersonNamesFormat<'_> {
     type Error = DataError;
     fn try_from(other: &'_ Resource) -> Result<Self, Self::Error> {
         let person_names = &other.main.value.person_names;
@@ -165,7 +165,7 @@ mod tests {
             })?
             .payload;
 
-        let real_data: &PersonNamesFormatV1 = data_payload.get();
+        let real_data: &PersonNamesFormat = data_payload.get();
 
         assert_eq!(
             real_data.initial_pattern.as_ref().unwrap(),
@@ -188,7 +188,7 @@ mod tests {
             })?
             .payload;
 
-        let real_data: &PersonNamesFormatV1 = data_payload.get();
+        let real_data: &PersonNamesFormat = data_payload.get();
         let test_mask: PersonNamesFormattingAttributesMask =
             PersonNamesFormattingAttributes::GivenFirst.bit_value()
                 | PersonNamesFormattingAttributes::Long.bit_value()
@@ -236,7 +236,7 @@ mod tests {
             })?
             .payload;
 
-        let real_data: &PersonNamesFormatV1 = data_payload.get();
+        let real_data: &PersonNamesFormat = data_payload.get();
         let test_mask: PersonNamesFormattingAttributesMask =
             PersonNamesFormattingAttributes::Sorting.bit_value()
                 | PersonNamesFormattingAttributes::Short.bit_value()

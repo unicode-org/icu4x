@@ -39,7 +39,7 @@ use super::ratio::IcuRatio;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct UnitsInfoV1<'data> {
+pub struct UnitsInfo<'data> {
     // TODO: remove this field once we are using this map from `measure/provider::UnitsTrie`.
     /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]

@@ -107,7 +107,7 @@ pub struct EraStartDate {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct JapaneseErasV1<'data> {
+pub struct JapaneseEras<'data> {
     /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
@@ -131,7 +131,7 @@ pub struct JapaneseErasV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
-pub struct WeekDataV2 {
+pub struct WeekData {
     /// The first day of a week.
     pub first_weekday: IsoWeekday,
     /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.

@@ -44,7 +44,7 @@ use super::pattern_key::PatternKey;
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units_essentials))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsEssentialsV1<'data> {
+pub struct UnitsEssentials<'data> {
     // TODO: use `SinglePlaceholderPattern` instead of `str` for the patterns' string representations.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub prefixes: ZeroMap<'data, PatternKey, str>,

@@ -164,10 +164,10 @@ pub struct LanguageStrStrPair<'a>(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 // TODO: Use validated types as value types
-// Notice: V2 improves the alignment of `language_variants` speeding up canonicalization by upon
+// Notice:  improves the alignment of `language_variants` speeding up canonicalization by upon
 // to 40%. See https://github.com/unicode-org/icu4x/pull/2935 for details.
 #[derive(Debug)]
-pub struct AliasesV2<'data> {
+pub struct Aliases<'data> {
     /// `[language, variant(-variant)*] -> [langid]`
     /// This is not a map as it's searched linearly according to the canonicalization rules.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -234,7 +234,7 @@ pub struct AliasesV2<'data> {
 /// region.
 ///
 /// This struct contains mappings when the input contains a language subtag.
-/// Also see [`LikelySubtagsForScriptRegionV1`].
+/// Also see [`LikelySubtagsForScriptRegion`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -242,7 +242,7 @@ pub struct AliasesV2<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[yoke(prove_covariance_manually)]
-pub struct LikelySubtagsForLanguageV1<'data> {
+pub struct LikelySubtagsForLanguage<'data> {
     /// Language and script.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_script: ZeroMap<'data, (UnvalidatedLanguage, UnvalidatedScript), Region>,
@@ -280,7 +280,7 @@ pub struct LikelySubtagsForLanguageV1<'data> {
 /// language.
 ///
 /// This struct contains mappings when the input does not contain a language subtag.
-/// Also see [`LikelySubtagsForLanguageV1`].
+/// Also see [`LikelySubtagsForLanguage`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -288,7 +288,7 @@ pub struct LikelySubtagsForLanguageV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[yoke(prove_covariance_manually)]
-pub struct LikelySubtagsForScriptRegionV1<'data> {
+pub struct LikelySubtagsForScriptRegion<'data> {
     /// Script and region.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub script_region: ZeroMap<'data, (UnvalidatedScript, UnvalidatedRegion), Language>,
@@ -318,7 +318,7 @@ pub struct LikelySubtagsForScriptRegionV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[yoke(prove_covariance_manually)]
-pub struct LikelySubtagsExtendedV1<'data> {
+pub struct LikelySubtagsExtended<'data> {
     /// Language and script.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_script: ZeroMap<'data, (UnvalidatedLanguage, UnvalidatedScript), Region>,
@@ -346,7 +346,7 @@ pub struct LikelySubtagsExtendedV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct ParentsV1<'data> {
+pub struct Parents<'data> {
     /// Map from language identifier to language identifier, indicating that the language on the
     /// left should inherit from the language on the right.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -366,7 +366,7 @@ pub struct ParentsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[yoke(prove_covariance_manually)]
-pub struct ScriptDirectionV1<'data> {
+pub struct ScriptDirection<'data> {
     /// Scripts in right-to-left direction.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub rtl: ZeroVec<'data, UnvalidatedScript>,
@@ -402,6 +402,6 @@ pub struct ScriptDirectionV1<'data> {
     databake(path = icu_locale::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ExemplarCharactersV1<'data>(
+pub struct ExemplarCharactersData<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointInversionListAndStringList<'data>,
 );

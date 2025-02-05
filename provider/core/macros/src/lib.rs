@@ -68,7 +68,7 @@ mod tests;
 ///     BarV1Marker = "demo/bar@1",
 ///     marker(BazV1Marker, "demo/baz@1", fallback_by = "region",)
 /// )]
-/// pub struct FooV1<'data> {
+/// pub struct Foo<'data> {
 ///     message: Cow<'data, str>,
 /// };
 ///

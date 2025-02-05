@@ -48,7 +48,7 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(TimeZoneEssentialsV1 {
+            payload: DataPayload::from_owned(TimeZoneEssentials {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
@@ -207,7 +207,7 @@ impl SourceDataProvider {
         Ok((locations, exemplar_cities))
     }
 
-    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriodV1<'static>, DataError> {
+    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriod<'static>, DataError> {
         let metazones = &self
             .cldr()?
             .core()
@@ -222,7 +222,7 @@ impl SourceDataProvider {
             .tz_caches
             .mz_period
             .get_or_init(|| {
-                Ok(MetazonePeriodV1 {
+                Ok(MetazonePeriod {
                     list: metazones
                         .meta_zone_info
                         .time_zone
@@ -277,14 +277,14 @@ impl SourceDataProvider {
             .map_err(|&e| e)
     }
 
-    fn offset_period(&self) -> Result<&ZoneOffsetPeriodV1<'static>, DataError> {
+    fn offset_period(&self) -> Result<&ZoneOffsetPeriod<'static>, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
 
         self.cldr()?
             .tz_caches
             .offset_period
             .get_or_init(|| {
-                Ok(ZoneOffsetPeriodV1(
+                Ok(ZoneOffsetPeriod(
                     self.bcp47_to_canonical_iana_map()?
                         .iter()
                         .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
@@ -515,7 +515,7 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1 {
+            payload: DataPayload::from_owned(Locations {
                 locations: locations.into_iter().collect(),
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
@@ -532,7 +532,7 @@ impl DataProvider<LocationsRootV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1 {
+            payload: DataPayload::from_owned(Locations {
                 locations: self
                     .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
                     .0
@@ -559,7 +559,7 @@ impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+            payload: DataPayload::from_owned(ExemplarCities {
                 exemplars: exemplars.into_iter().collect(),
             }),
         })
@@ -575,7 +575,7 @@ impl DataProvider<ExemplarCitiesRootV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+            payload: DataPayload::from_owned(ExemplarCities {
                 exemplars: self
                     .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
                     .1
@@ -659,7 +659,7 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
             }),
@@ -731,7 +731,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+            payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
             }),
@@ -769,7 +769,7 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
             }),
@@ -807,7 +807,7 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+            payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
             }),

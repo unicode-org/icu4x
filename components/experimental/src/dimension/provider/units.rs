@@ -22,14 +22,14 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsDisplayNameV1<'data> {
+pub struct UnitsDisplayName<'data> {
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
-impl<'data> UnitsDisplayNameV1<'data> {
+impl<'data> UnitsDisplayName<'data> {
     /// Construct an instance directly from a byte slice.
     ///
     /// # Safety
@@ -49,20 +49,20 @@ impl<'data> UnitsDisplayNameV1<'data> {
 }
 
 #[cfg(feature = "datagen")]
-impl databake::Bake for UnitsDisplayNameV1<'_> {
+impl databake::Bake for UnitsDisplayName<'_> {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         use zerovec::ule::VarULE;
         ctx.insert("icu_experimental::dimension::provider::units");
         let bytes = self.patterns.elements.as_bytes().bake(ctx);
         // Safety: The bytes are returned by `PluralElementsPackedULE::slice_as_bytes`.
         databake::quote! { unsafe {
-            icu_experimental::dimension::provider::units::UnitsDisplayNameV1::from_bytes_unchecked(#bytes)
+            icu_experimental::dimension::provider::units::UnitsDisplayName::from_bytes_unchecked(#bytes)
         }}
     }
 }
 
 #[cfg(feature = "datagen")]
-impl databake::BakeSize for UnitsDisplayNameV1<'_> {
+impl databake::BakeSize for UnitsDisplayName<'_> {
     fn borrows_size(&self) -> usize {
         self.patterns.borrows_size()
     }

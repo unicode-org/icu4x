@@ -81,7 +81,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`FixedDecimalFormatter`] from preconstructed locale data.
-        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV2, Struct)]
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbols, Struct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_with_manual_data(
             plus_sign_prefix: &DiplomatStr,
@@ -112,8 +112,8 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalDigitsV1, DecimalDigitsV1Marker, DecimalSymbolStrsBuilder, DecimalSymbolsV2,
-                DecimalSymbolsV2Marker, GroupingSizesV1,
+                DecimalDigits, DecimalDigitsV1Marker, DecimalSymbolStrsBuilder, DecimalSymbols,
+                DecimalSymbolsV2Marker, GroupingSizes,
             };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
@@ -135,7 +135,7 @@ pub mod ffi {
                 numsys: "zyyy".into(),
             };
 
-            let grouping_sizes = GroupingSizesV1 {
+            let grouping_sizes = GroupingSizes {
                 primary: primary_group_size,
                 secondary: secondary_group_size,
                 min_grouping: min_group_size,
@@ -146,12 +146,12 @@ pub mod ffi {
                 .map(Into::into)
                 .unwrap_or(options.grouping_strategy);
             let provider_symbols =
-                FixedProvider::<DecimalSymbolsV2Marker>::from_owned(DecimalSymbolsV2 {
+                FixedProvider::<DecimalSymbolsV2Marker>::from_owned(DecimalSymbols {
                     strings: VarZeroCow::from_encodeable(&strings),
                     grouping_sizes,
                 });
             let provider_digits =
-                FixedProvider::<DecimalDigitsV1Marker>::from_owned(DecimalDigitsV1 { digits });
+                FixedProvider::<DecimalDigitsV1Marker>::from_owned(DecimalDigits { digits });
             let provider = ForkByMarkerProvider::new(provider_symbols, provider_digits);
             Ok(Box::new(FixedDecimalFormatter(
                 icu_decimal::FixedDecimalFormatter::try_new_unstable(

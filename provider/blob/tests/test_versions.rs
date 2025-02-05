@@ -120,12 +120,12 @@ fn test_format() {
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
     assert!(
         !blob_provider.internal_is_using_bigger_format(),
-        "Should have exported to smaller V3 format"
+        "Should have exported to smaller  format"
     );
     check_hello_world(blob_provider.as_deserializing(), true);
 }
 
-// This tests that the V3Bigger format works by attempting to export something with 26^4 = 456976 data entries
+// This tests that the Bigger format works by attempting to export something with 26^4 = 456976 data entries
 #[test]
 fn test_format_bigger() {
     // We do print progress since this is a slower test and it's useful to get some feedback.
@@ -143,14 +143,14 @@ fn test_format_bigger() {
 
     assert_eq!(
         hash, 8768499095842070212,
-        "V2Bigger format appears to have changed!"
+        "Bigger format appears to have changed!"
     );
 
     println!("Loading and testing locales .... ");
     let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
     assert!(
         blob_provider.internal_is_using_bigger_format(),
-        "Should have exported to V3Bigger format"
+        "Should have exported to Bigger format"
     );
     let blob_provider = blob_provider.as_deserializing();
 
@@ -181,7 +181,7 @@ impl DataProvider<HelloWorldV1Marker> for ManyLocalesProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorld {
                 message: format!("Hello {}!", req.id.locale).into(),
             }),
         })

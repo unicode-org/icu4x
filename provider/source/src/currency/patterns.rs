@@ -55,7 +55,7 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
+            payload: DataPayload::from_owned(CurrencyPatternsData {
                 // TODO(#5334):
                 //      Before graduating the currency crate,
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.

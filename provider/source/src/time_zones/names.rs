@@ -52,7 +52,7 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
             })
             .collect();
 
-        let data_struct = IanaToBcp47MapV3 {
+        let data_struct = IanaToBcp47Map {
             map: ZeroAsciiIgnoreCaseTrie::try_from(&map)
                 .map_err(|e| {
                     DataError::custom("Could not create ZeroTrie from timezone.json data")
@@ -87,7 +87,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
         let iana_vec: Vec<&String> = bcp2iana.values().collect();
         let canonical_iana_ids = iana_vec.as_slice().into();
 
-        let data_struct = Bcp47ToIanaMapV1 { canonical_iana_ids };
+        let data_struct = Bcp47ToIanaMap { canonical_iana_ids };
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),

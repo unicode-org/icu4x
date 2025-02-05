@@ -14,16 +14,16 @@ use crate::elements::{
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
-use crate::provider::CollationDataV1;
-use crate::provider::CollationDiacriticsV1;
+use crate::provider::CollationData;
+use crate::provider::CollationDiacritics;
 use crate::provider::CollationDiacriticsV1Marker;
-use crate::provider::CollationJamoV1;
+use crate::provider::CollationJamo;
 use crate::provider::CollationJamoV1Marker;
 use crate::provider::CollationMetadataV1Marker;
-use crate::provider::CollationReorderingV1;
+use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationRootV1Marker;
-use crate::provider::CollationSpecialPrimariesV1;
+use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::provider::CollationTailoringV1Marker;
 use crate::{
@@ -34,8 +34,8 @@ use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_normalizer::provider::CanonicalDecompositionDataV2Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
-use icu_normalizer::provider::DecompositionDataV2;
-use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::provider::DecompositionData;
+use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
@@ -385,15 +385,15 @@ impl Collator {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: Option<&'a CollationSpecialPrimariesV1<'a>>,
-    root: &'a CollationDataV1<'a>,
-    tailoring: Option<&'a CollationDataV1<'a>>,
-    jamo: &'a CollationJamoV1<'a>,
-    diacritics: &'a CollationDiacriticsV1<'a>,
+    special_primaries: Option<&'a CollationSpecialPrimaries<'a>>,
+    root: &'a CollationData<'a>,
+    tailoring: Option<&'a CollationData<'a>>,
+    jamo: &'a CollationJamo<'a>,
+    diacritics: &'a CollationDiacritics<'a>,
     options: CollatorOptionsBitField,
-    reordering: Option<&'a CollationReorderingV1<'a>>,
-    decompositions: &'a DecompositionDataV2<'a>,
-    tables: &'a DecompositionTablesV1<'a>,
+    reordering: Option<&'a CollationReordering<'a>>,
+    decompositions: &'a DecompositionData<'a>,
+    tables: &'a DecompositionTables<'a>,
     lithuanian_dot_above: bool,
 }
 
@@ -542,7 +542,7 @@ impl CollatorBorrowed<'_> {
     }
 
     fn compare_impl<I: Iterator<Item = char>>(&self, left_chars: I, right_chars: I) -> Ordering {
-        let tailoring: &CollationDataV1 = if let Some(tailoring) = &self.tailoring {
+        let tailoring: &CollationData = if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
             // If the root collation is valid for the locale,

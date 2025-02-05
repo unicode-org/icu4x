@@ -31,7 +31,7 @@ impl DataProvider<CurrencyExtendedDataV1Marker> for crate::SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyExtendedDataV1 {
+            payload: DataPayload::from_owned(CurrencyExtendedData {
                 display_names: PluralElements::new(
                     currency
                         .other

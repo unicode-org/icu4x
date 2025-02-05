@@ -178,7 +178,7 @@ impl GraphemeClusterSegmenter {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub(crate) fn new_and_segment_str<'l, 's>(
         input: &'s str,
-        payload: &'l RuleBreakDataV2<'l>,
+        payload: &'l RuleBreakData<'l>,
     ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
@@ -244,7 +244,7 @@ impl GraphemeClusterSegmenter {
     /// Creates a grapheme cluster break iterator from grapheme cluster rule payload.
     pub(crate) fn new_and_segment_utf16<'l, 's>(
         input: &'s [u16],
-        payload: &'l RuleBreakDataV2<'l>,
+        payload: &'l RuleBreakData<'l>,
     ) -> GraphemeClusterBreakIteratorUtf16<'l, 's> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),

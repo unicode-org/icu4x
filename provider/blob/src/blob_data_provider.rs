@@ -114,7 +114,7 @@ impl BlobDataProvider {
         })
     }
 
-    #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
+    #[doc(hidden)] // for testing purposes only: checks if it is using the Bigger format
     pub fn internal_is_using_bigger_format(&self) -> bool {
         matches!(self.data.get(), BlobSchema::V003Bigger(..))
     }
@@ -170,7 +170,7 @@ mod test {
 
     #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
     #[derive(Clone, Copy)]
-    pub struct HelloSingletonV1;
+    pub struct HelloSingleton;
 
     #[test]
     fn test_empty() {

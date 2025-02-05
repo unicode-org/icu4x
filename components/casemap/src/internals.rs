@@ -4,7 +4,7 @@
 
 //! This module contains most of the actual algorithms for case mapping.
 //!
-//! Primarily, it implements methods on `CaseMapV1`, which contains the data model.
+//! Primarily, it implements methods on `CaseMap`, which contains the data model.
 
 use crate::greek_to_me::{
     self, GreekCombiningCharacterSequenceDiacritics, GreekDiacritics, GreekPrecomposedLetterData,
@@ -12,7 +12,7 @@ use crate::greek_to_me::{
 };
 use crate::provider::data::{DotType, MappingKind};
 use crate::provider::exception_helpers::ExceptionSlot;
-use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
+use crate::provider::{CaseMapUnfold, CaseMap};
 use crate::set::ClosureSink;
 use crate::titlecase::TrailingCase;
 use core::fmt;
@@ -53,7 +53,7 @@ impl<Wr: Writeable> Writeable for StringAndWriteable<'_, Wr> {
 }
 
 pub(crate) struct FullCaseWriteable<'a, const IS_TITLE_CONTEXT: bool> {
-    data: &'a CaseMapV1<'a>,
+    data: &'a CaseMap<'a>,
     src: &'a str,
     locale: CaseMapLocale,
     mapping: MappingKind,
@@ -89,7 +89,7 @@ impl<const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'_, IS_TITLE_
     }
 }
 
-impl<'data> CaseMapV1<'data> {
+impl<'data> CaseMap<'data> {
     fn simple_helper(&self, c: char, kind: MappingKind) -> char {
         let data = self.lookup_data(c);
         if !data.has_exception() {
@@ -626,7 +626,7 @@ impl<'data> CaseMapV1<'data> {
         &self,
         s: &str,
         set: &mut S,
-        unfold_data: &CaseMapUnfoldV1,
+        unfold_data: &CaseMapUnfold,
     ) -> bool {
         if s.chars().count() <= 1 {
             // The string is too short to find any match.
@@ -736,7 +736,7 @@ impl<'a> ContextIterator<'a> {
         greek_to_me::preceding_greek_vowel_diacritics(self.before)
     }
 
-    fn preceded_by_soft_dotted(&self, mapping: &CaseMapV1) -> bool {
+    fn preceded_by_soft_dotted(&self, mapping: &CaseMap) -> bool {
         for c in self.before.chars().rev() {
             match mapping.dot_type(c) {
                 DotType::SoftDotted => return true,
@@ -751,7 +751,7 @@ impl<'a> ContextIterator<'a> {
     /// If I_MUST_NOT_START_STRING is true, additionally will require that the capital I does not start the string
     fn preceded_by_capital_i<const I_MUST_NOT_START_STRING: bool>(
         &self,
-        mapping: &CaseMapV1,
+        mapping: &CaseMap,
     ) -> bool {
         let mut iter = self.before.chars().rev();
         while let Some(c) = iter.next() {
@@ -768,7 +768,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn preceded_by_cased_letter(&self, mapping: &CaseMapV1) -> bool {
+    fn preceded_by_cased_letter(&self, mapping: &CaseMap) -> bool {
         for c in self.before.chars().rev() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
@@ -777,7 +777,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_cased_letter(&self, mapping: &CaseMapV1) -> bool {
+    fn followed_by_cased_letter(&self, mapping: &CaseMap) -> bool {
         for c in self.after.chars() {
             let data = mapping.lookup_data(c);
             if !data.is_ignorable() {
@@ -786,7 +786,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_more_above(&self, mapping: &CaseMapV1) -> bool {
+    fn followed_by_more_above(&self, mapping: &CaseMap) -> bool {
         for c in self.after.chars() {
             match mapping.dot_type(c) {
                 DotType::Above => return true,
@@ -796,7 +796,7 @@ impl<'a> ContextIterator<'a> {
         }
         false
     }
-    fn followed_by_dot_above(&self, mapping: &CaseMapV1) -> bool {
+    fn followed_by_dot_above(&self, mapping: &CaseMap) -> bool {
         for c in self.after.chars() {
             if c == '\u{307}' {
                 return true;
@@ -812,7 +812,7 @@ impl<'a> ContextIterator<'a> {
     /// and returns true if it is preceded by an i or I at the start of the string.
     /// If one has an acute accent,
     /// both must have the accent for this to return true. No other accents are handled.
-    fn is_dutch_ij_pair_at_beginning(&self, mapping: &CaseMapV1) -> bool {
+    fn is_dutch_ij_pair_at_beginning(&self, mapping: &CaseMap) -> bool {
         let mut before = self.before.chars().rev();
         let mut i_has_acute = false;
         loop {

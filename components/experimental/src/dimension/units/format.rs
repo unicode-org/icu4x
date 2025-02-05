@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use crate::dimension::provider::units::UnitsDisplayNameV1;
+use crate::dimension::provider::units::UnitsDisplayName;
 use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
@@ -14,8 +14,8 @@ pub struct FormattedUnit<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     // TODO: review using options and essentials.
     // pub(crate) _options: &'l UnitsFormatterOptions,
-    // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
-    pub(crate) display_name: &'l UnitsDisplayNameV1<'l>,
+    // pub(crate) essential: &'l UnitsEssentials<'l>,
+    pub(crate) display_name: &'l UnitsDisplayName<'l>,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }

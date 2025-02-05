@@ -15,10 +15,10 @@ use icu_provider::prelude::*;
 const YEARS: i32 = 250;
 const ISO_START: i32 = 1900;
 
-fn load<IB: IslamicBasedMarker>() -> IslamicCacheV1<'static> {
+fn load<IB: IslamicBasedMarker>() -> IslamicCache<'static> {
     let extended_start = IB::approximate_islamic_from_fixed(iso::fixed_from_iso(ISO_START, 1, 1));
     let extended_end = extended_start + YEARS;
-    IslamicCacheV1::compute_for::<IB>(extended_start..extended_end)
+    IslamicCache::compute_for::<IB>(extended_start..extended_end)
 }
 
 impl DataProvider<IslamicObservationalCacheV1Marker> for SourceDataProvider {

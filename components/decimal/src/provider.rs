@@ -126,7 +126,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDi
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct GroupingSizesV1 {
+pub struct GroupingSizes {
     /// The size of the first (lowest-magnitude) group.
     ///
     /// If 0, grouping separators will never be shown.
@@ -142,7 +142,7 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// A stack representation of the strings used in [`DecimalSymbolsV2`], i.e. a builder type
+/// A stack representation of the strings used in [`DecimalSymbols`], i.e. a builder type
 /// for [`DecimalSymbolsStrs`]. This type can be obtained from a [`DecimalSymbolsStrs`]
 /// the `From`/`Into` traits.
 ///
@@ -210,15 +210,15 @@ impl DecimalSymbolStrsBuilder<'_> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct DecimalSymbolsV2<'data> {
+pub struct DecimalSymbols<'data> {
     /// String data for the symbols: +/- affixes and separators
     #[cfg_attr(feature = "serde", serde(borrow))]
-    // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV2: instead of serializing multiple strs,
+    // We use a VarZeroCow here to reduce the stack size of DecimalSymbols: instead of serializing multiple strs,
     // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
     pub strings: VarZeroCow<'data, DecimalSymbolsStrs>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
-    pub grouping_sizes: GroupingSizesV1,
+    pub grouping_sizes: GroupingSizes,
 }
 
 /// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
@@ -238,13 +238,13 @@ pub struct DecimalSymbolsV2<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct DecimalDigitsV1 {
+pub struct DecimalDigits {
     /// Digit characters for the current numbering system. In most systems, these digits are
     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
     pub digits: [char; 10],
 }
 
-impl DecimalSymbolsV2<'_> {
+impl DecimalSymbols<'_> {
     /// Return (prefix, suffix) for the minus sign
     pub fn minus_sign_affixes(&self) -> (&str, &str) {
         (
@@ -274,7 +274,7 @@ impl DecimalSymbolsV2<'_> {
     }
 }
 
-impl DecimalSymbolsV2<'static> {
+impl DecimalSymbols<'static> {
     #[cfg(test)]
     /// Create a new en-US format for use in testing
     pub(crate) fn new_en_for_testing() -> Self {
@@ -289,7 +289,7 @@ impl DecimalSymbolsV2<'static> {
         };
         Self {
             strings: VarZeroCow::from_encodeable(&strings),
-            grouping_sizes: GroupingSizesV1 {
+            grouping_sizes: GroupingSizes {
                 primary: 3,
                 secondary: 3,
                 min_grouping: 1,

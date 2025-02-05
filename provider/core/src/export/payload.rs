@@ -155,7 +155,7 @@ impl DataPayload<ExportMarker> {
     /// let tokens = export.tokenize(&env);
     /// assert_eq!(
     ///     quote! {
-    ///         icu_provider::hello_world::HelloWorldV1 {
+    ///         icu_provider::hello_world::HelloWorld {
     ///             message: alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
     ///     }
@@ -251,13 +251,13 @@ mod tests {
 
     #[test]
     fn test_compare_with_dyn() {
-        let payload1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorld {
             message: "abc".into(),
         });
-        let payload2: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload2: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorld {
             message: "abc".into(),
         });
-        let payload3: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload3: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorld {
             message: "def".into(),
         });
 
@@ -272,19 +272,19 @@ mod tests {
     fn test_export_marker_partial_eq() {
         let payload1: DataPayload<ExportMarker> =
             UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
-                HelloWorldV1 {
+                HelloWorld {
                     message: "abc".into(),
                 },
             ));
         let payload2: DataPayload<ExportMarker> =
             UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
-                HelloWorldV1 {
+                HelloWorld {
                     message: "abc".into(),
                 },
             ));
         let payload3: DataPayload<ExportMarker> =
             UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
-                HelloWorldV1 {
+                HelloWorld {
                     message: "def".into(),
                 },
             ));

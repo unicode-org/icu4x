@@ -26,7 +26,7 @@ use zerovec::ZeroMap;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Relative time format V1 data struct.
+/// Relative time format  data struct.
 
 #[icu_provider::data_struct(
     LongSecondRelativeTimeFormatDataV1Marker = "relativetime/long/second@1",
@@ -59,7 +59,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
-pub struct RelativeTimePatternDataV1<'data> {
+pub struct RelativeTimePatternData<'data> {
     /// Mapping for relative times with unique names.
     /// Example.
     /// In English, "-1" corresponds to "yesterday", "1" corresponds to "tomorrow".

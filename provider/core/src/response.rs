@@ -77,7 +77,7 @@ impl DataResponseMetadata {
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
+/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorld {
 ///     message: Cow::Borrowed("Demo"),
 /// });
 ///
@@ -114,7 +114,7 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// assert_eq!(
 ///     payload_some.get(),
-///     Ok(&HelloWorldV1 {
+///     Ok(&HelloWorld {
 ///         message: "Hallo Welt".into()
 ///     })
 /// );
@@ -366,7 +366,7 @@ where
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// let local_struct = HelloWorldV1 {
+    /// let local_struct = HelloWorld {
     ///     message: Cow::Owned("example".to_owned()),
     /// };
     ///
@@ -493,7 +493,7 @@ where
     ///
     /// # Examples
     ///
-    /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
+    /// Map from `HelloWorld` to a `Cow<str>` containing just the message:
     ///
     /// ```
     /// use icu_provider::hello_world::*;
@@ -508,7 +508,7 @@ where
     ///     type DataStruct = Cow<'static, str>;
     /// }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorld {
     ///     message: Cow::Borrowed("Hello World"),
     /// });
     ///
@@ -556,7 +556,7 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Hello World"),
     ///     });
     ///
@@ -608,7 +608,7 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Hello World"),
     ///     });
     ///
@@ -664,7 +664,7 @@ where
     /// # }
     ///
     /// let p1: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Hello World"),
     ///     });
     ///
@@ -726,7 +726,7 @@ where
     ///
     /// struct CustomHelloWorldV1Marker;
     /// impl DynamicDataMarker for CustomHelloWorldV1Marker {
-    ///     type DataStruct = HelloWorldV1<'static>;
+    ///     type DataStruct = HelloWorld<'static>;
     /// }
     ///
     /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
@@ -1102,5 +1102,5 @@ fn test_debug() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234) }, payload: HelloWorldV1 { message: \"Hello World\" } }", format!("{resp:?}"));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None, checksum: Some(1234) }, payload: HelloWorld { message: \"Hello World\" } }", format!("{resp:?}"));
 }

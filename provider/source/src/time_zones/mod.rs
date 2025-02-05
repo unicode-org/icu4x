@@ -28,8 +28,8 @@ pub(crate) struct Caches {
     bcp47_to_canonical_iana: Cache<BTreeMap<TimeZoneBcp47Id, String>>,
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZoneBcp47Id, Region>>,
-    mz_period: Cache<MetazonePeriodV1<'static>>,
-    offset_period: Cache<ZoneOffsetPeriodV1<'static>>,
+    mz_period: Cache<MetazonePeriod<'static>>,
+    offset_period: Cache<ZoneOffsetPeriod<'static>>,
     reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZoneBcp47Id>>>,
 }
 

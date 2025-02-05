@@ -22,7 +22,7 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Currency Extended V1 data struct.
+/// Currency Extended  data struct.
 #[icu_provider::data_struct(marker(
     CurrencyDisplaynameV1Marker,
     "currency/displayname@1",
@@ -33,7 +33,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_displayname))]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyDisplaynameV1<'data> {
+pub struct CurrencyDisplayname<'data> {
     /// The display name for the currency.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_name: Cow<'data, str>,

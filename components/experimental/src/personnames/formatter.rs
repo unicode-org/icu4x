@@ -14,7 +14,7 @@ use super::api::{
     PersonNamesFormatterOptions, PreferredOrder,
 };
 use super::provider::{
-    PersonNamesFormatV1, PersonNamesFormatV1Marker, PersonNamesFormattingAttributes,
+    PersonNamesFormat, PersonNamesFormatV1Marker, PersonNamesFormattingAttributes,
     PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
 };
 use super::specifications;
@@ -90,7 +90,7 @@ impl PersonNamesFormatter {
                 ..Default::default()
             })
             .map_err(PersonNamesFormatterError::Data)?;
-        let formatting_definition: &PersonNamesFormatV1 = data.payload.get();
+        let formatting_definition: &PersonNamesFormat = data.payload.get();
         let option_with_proper_name_order = self.final_person_names_formatter_options(
             effective_locale,
             person_name,
@@ -155,7 +155,7 @@ impl PersonNamesFormatter {
         &self,
         locale: &Locale,
         person_name: &N,
-        formatting_definition: &PersonNamesFormatV1,
+        formatting_definition: &PersonNamesFormat,
     ) -> PersonNamesFormatterOptions
     where
         N: PersonName,

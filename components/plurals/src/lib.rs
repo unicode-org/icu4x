@@ -89,7 +89,7 @@ pub use operands::PluralOperands;
 pub use options::*;
 use provider::CardinalV1Marker;
 use provider::OrdinalV1Marker;
-use provider::PluralRulesV1;
+use provider::PluralRulesData;
 use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
@@ -258,7 +258,7 @@ define_preferences!(
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
 #[derive(Debug)]
-pub struct PluralRules(DataPayload<ErasedMarker<PluralRulesV1<'static>>>);
+pub struct PluralRules(DataPayload<ErasedMarker<PluralRulesData<'static>>>);
 
 impl AsRef<PluralRules> for PluralRules {
     fn as_ref(&self) -> &PluralRules {

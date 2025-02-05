@@ -247,7 +247,7 @@ macro_rules! impl_data_provider {
 
 impl_data_provider!(
     BuddhistDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "buddhist"
 );
 impl_data_provider!(
@@ -257,7 +257,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     ChineseDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "chinese"
 );
 impl_data_provider!(
@@ -267,19 +267,19 @@ impl_data_provider!(
 );
 impl_data_provider!(
     CopticDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "coptic"
 );
 impl_data_provider!(CopticDateSymbolsV1Marker, symbols::convert_dates, "coptic");
 impl_data_provider!(
     DangiDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "dangi"
 );
 impl_data_provider!(DangiDateSymbolsV1Marker, symbols::convert_dates, "dangi");
 impl_data_provider!(
     EthiopianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "ethiopic"
 );
 impl_data_provider!(
@@ -289,7 +289,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     GregorianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "gregory"
 );
 impl_data_provider!(
@@ -299,19 +299,19 @@ impl_data_provider!(
 );
 impl_data_provider!(
     HebrewDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "hebrew"
 );
 impl_data_provider!(HebrewDateSymbolsV1Marker, symbols::convert_dates, "hebrew");
 impl_data_provider!(
     IndianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "indian"
 );
 impl_data_provider!(IndianDateSymbolsV1Marker, symbols::convert_dates, "indian");
 impl_data_provider!(
     IslamicDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "islamicc"
 );
 impl_data_provider!(
@@ -321,7 +321,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     JapaneseDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "japanese"
 );
 impl_data_provider!(
@@ -331,7 +331,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     JapaneseExtendedDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "japanext"
 );
 impl_data_provider!(
@@ -341,7 +341,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     PersianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "persian"
 );
 impl_data_provider!(
@@ -351,14 +351,14 @@ impl_data_provider!(
 );
 impl_data_provider!(
     RocDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
+    |dates, _| DateLengths::from(dates),
     "roc"
 );
 impl_data_provider!(RocDateSymbolsV1Marker, symbols::convert_dates, "roc");
 
 impl_data_provider!(
     TimeLengthsV1Marker,
-    |dates, _| TimeLengthsV1::from(dates),
+    |dates, _| TimeLengths::from(dates),
     "gregory"
 );
 impl_data_provider!(
@@ -378,7 +378,7 @@ mod test {
             .get_datetime_resources(&langid!("cs").into(), Either::Left(&value!("gregory")))
             .unwrap();
 
-        let cs_dates = DateLengthsV1::from(&data);
+        let cs_dates = DateLengths::from(&data);
 
         assert_eq!("d. M. y", cs_dates.date.medium.to_string());
     }
@@ -389,7 +389,7 @@ mod test {
             .get_datetime_resources(&langid!("haw").into(), Either::Left(&value!("gregory")))
             .unwrap();
 
-        let haw_dates = DateLengthsV1::from(&data);
+        let haw_dates = DateLengths::from(&data);
 
         assert_eq!("d MMM y", haw_dates.date.medium.to_string());
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -409,7 +409,7 @@ mod test {
             .get_datetime_resources(&langid!("fil").into(), Either::Left(&value!("gregory")))
             .unwrap();
 
-        let skeletons = DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats).0;
+        let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats).0;
 
         assert_eq!(
             Some(
@@ -417,7 +417,7 @@ mod test {
                     .expect("Failed to create pattern")
                     .into()
             ),
-            skeletons.get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))
+            skeletons.get(&Skeleton::try_from("M").expect("Failed to create Skeleton"))
         );
 
         let mut expected = PluralPattern::new(
@@ -434,7 +434,7 @@ mod test {
         );
         assert_eq!(
             Some(&expected.into()),
-            skeletons.get(&SkeletonV1::try_from("yw").expect("Failed to create Skeleton"))
+            skeletons.get(&Skeleton::try_from("yw").expect("Failed to create Skeleton"))
         );
     }
 

@@ -11,8 +11,8 @@ use core::{fmt, mem};
 /// fields packed into a single end-of-struct field. It is not recommended
 /// to use this type directly, use [`Tuple2VarULE`](crate::ule::tuplevar::Tuple2VarULE) etc instead.
 ///
-/// Logically, consider it to be `(V1, V2, V3, ..)`
-/// where `V1` etc are potentially different [`VarULE`] types.
+/// Logically, consider it to be `(, , , ..)`
+/// where `` etc are potentially different [`VarULE`] types.
 ///
 /// Internally, it is represented by a VarZeroSlice without the length part.
 #[derive(PartialEq, Eq)]

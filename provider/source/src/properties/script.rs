@@ -6,7 +6,7 @@ use crate::SourceDataProvider;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::properties::props::Script;
 use icu::properties::provider::{
-    ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
+    ScriptWithExtensionsProperty, ScriptWithExtensionsPropertyV1Marker,
 };
 use icu::properties::script::ScriptWithExt;
 use icu_provider::prelude::*;
@@ -48,7 +48,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for SourceDataProvider {
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
-        let data_struct = ScriptWithExtensionsPropertyV1 {
+        let data_struct = ScriptWithExtensionsProperty {
             trie,
             extensions: scx_vzv,
         };

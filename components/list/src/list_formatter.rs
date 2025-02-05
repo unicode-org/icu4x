@@ -24,7 +24,7 @@ define_preferences!(
 /// [crate-level documentation](crate) for more details.
 #[derive(Debug)]
 pub struct ListFormatter {
-    data: DataPayload<ErasedMarker<ListFormatterPatternsV2<'static>>>,
+    data: DataPayload<ErasedMarker<ListFormatterPatterns<'static>>>,
 }
 
 macro_rules! constructor {
@@ -51,9 +51,9 @@ macro_rules! constructor {
             options: ListFormatterOptions,
         ) -> Result<Self, DataError> {
             let length = match options.length.unwrap_or_default() {
-                ListLength::Narrow => ListFormatterPatternsV2::NARROW,
-                ListLength::Short => ListFormatterPatternsV2::SHORT,
-                ListLength::Wide => ListFormatterPatternsV2::WIDE,
+                ListLength::Narrow => ListFormatterPatterns::NARROW,
+                ListLength::Short => ListFormatterPatterns::SHORT,
+                ListLength::Wide => ListFormatterPatterns::WIDE,
             };
             let locale = <$marker>::make_locale(prefs.locale_preferences);
             let data = provider
@@ -276,7 +276,7 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(patterns: ListFormatterPatternsV2<'static>) -> ListFormatter {
+    fn formatter(patterns: ListFormatterPatterns<'static>) -> ListFormatter {
         ListFormatter {
             data: DataPayload::from_owned(patterns),
         }

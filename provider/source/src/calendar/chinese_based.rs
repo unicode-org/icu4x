@@ -12,10 +12,10 @@ use icu_provider::prelude::*;
 const YEARS: i32 = 250;
 const ISO_START: i32 = 1900;
 
-fn load<CB: ChineseBased>() -> ChineseBasedCacheV1<'static> {
+fn load<CB: ChineseBased>() -> ChineseBasedCache<'static> {
     let extended_start = CB::extended_from_iso(ISO_START);
     let extended_end = extended_start + YEARS;
-    ChineseBasedCacheV1::compute_for::<CB>(extended_start..extended_end)
+    ChineseBasedCache::compute_for::<CB>(extended_start..extended_end)
 }
 
 impl DataProvider<ChineseCacheV1Marker> for SourceDataProvider {

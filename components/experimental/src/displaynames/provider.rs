@@ -41,7 +41,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// RegionDisplayNames provides mapping between a region code and locale display name.
-pub struct RegionDisplayNamesV1<'data> {
+pub struct RegionDisplayNames<'data> {
     /// Mapping for region to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedRegion, str>,
@@ -57,7 +57,7 @@ pub struct RegionDisplayNamesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// LanguageDisplayNames provides mapping between languages and display names.
-pub struct LanguageDisplayNamesV1<'data> {
+pub struct LanguageDisplayNames<'data> {
     /// Mapping for language to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedLanguage, str>,
@@ -79,7 +79,7 @@ pub struct LanguageDisplayNamesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// ScriptDisplayNames provides mapping between a script code and it's display name.
-pub struct ScriptDisplayNamesV1<'data> {
+pub struct ScriptDisplayNames<'data> {
     /// Mapping for script to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedScript, str>,
@@ -95,7 +95,7 @@ pub struct ScriptDisplayNamesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// LocaleDisplayNames provides mapping between locales and display names.
-pub struct LocaleDisplayNamesV1<'data> {
+pub struct LocaleDisplayNames<'data> {
     /// Mapping for locale to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedLocale, str>,
@@ -117,7 +117,7 @@ pub struct LocaleDisplayNamesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// VariantDisplayNames provides the user-translated names for the variant-code values.
-pub struct VariantDisplayNamesV1<'data> {
+pub struct VariantDisplayNames<'data> {
     /// Mapping for Variant to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedVariant, str>,

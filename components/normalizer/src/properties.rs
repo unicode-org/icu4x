@@ -14,13 +14,13 @@
 use crate::char_from_u16;
 use crate::char_from_u32;
 use crate::in_inclusive_range;
-use crate::provider::CanonicalCompositionsV1;
+use crate::provider::CanonicalCompositions;
 use crate::provider::CanonicalCompositionsV1Marker;
 use crate::provider::CanonicalDecompositionDataV2Marker;
 use crate::provider::CanonicalDecompositionTablesV1Marker;
-use crate::provider::DecompositionDataV2;
-use crate::provider::DecompositionTablesV1;
-use crate::provider::NonRecursiveDecompositionSupplementV1;
+use crate::provider::DecompositionData;
+use crate::provider::DecompositionTables;
+use crate::provider::NonRecursiveDecompositionSupplement;
 use crate::provider::NonRecursiveDecompositionSupplementV1Marker;
 use crate::trie_value_has_ccc;
 use crate::CanonicalCombiningClass;
@@ -46,7 +46,7 @@ use icu_provider::prelude::*;
 /// glyph-availability-guided custom normalizer.
 #[derive(Debug, Copy, Clone)]
 pub struct CanonicalCompositionBorrowed<'a> {
-    canonical_compositions: &'a CanonicalCompositionsV1<'a>,
+    canonical_compositions: &'a CanonicalCompositions<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -189,9 +189,9 @@ pub enum Decomposed {
 /// glyph-availability-guided custom normalizer.
 #[derive(Debug)]
 pub struct CanonicalDecompositionBorrowed<'a> {
-    decompositions: &'a DecompositionDataV2<'a>,
-    tables: &'a DecompositionTablesV1<'a>,
-    non_recursive: &'a NonRecursiveDecompositionSupplementV1<'a>,
+    decompositions: &'a DecompositionData<'a>,
+    tables: &'a DecompositionTables<'a>,
+    non_recursive: &'a NonRecursiveDecompositionSupplement<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -535,7 +535,7 @@ impl CanonicalDecomposition {
 #[derive(Debug)]
 pub struct CanonicalCombiningClassMapBorrowed<'a> {
     /// The data trie
-    decompositions: &'a DecompositionDataV2<'a>,
+    decompositions: &'a DecompositionData<'a>,
 }
 
 #[cfg(feature = "compiled_data")]

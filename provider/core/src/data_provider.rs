@@ -458,7 +458,7 @@ mod test {
     const HELLO_ALT_KEY: DataMarkerInfo =
         DataMarkerInfo::from_id(crate::marker::data_marker_id!("core/helloalt1@1"));
 
-    /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
+    /// A data struct serialization-compatible with HelloWorld used for testing mismatched types
     #[derive(
         Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom,
     )]
@@ -481,7 +481,7 @@ mod test {
     #[derive(Deserialize, Debug, Clone, Default, PartialEq)]
     struct HelloCombined<'data> {
         #[serde(borrow)]
-        pub hello_v1: HelloWorldV1<'data>,
+        pub hello_v1: HelloWorld<'data>,
         pub hello_alt: HelloAlt,
     }
 
@@ -489,7 +489,7 @@ mod test {
     /// Supports only key::HELLO_WORLD_V1. Uses `impl_dynamic_data_provider!()`.
     #[derive(Debug)]
     struct DataWarehouse {
-        hello_v1: HelloWorldV1<'static>,
+        hello_v1: HelloWorld<'static>,
         hello_alt: HelloAlt,
     }
 
@@ -542,7 +542,7 @@ mod test {
 
     const DATA: &str = r#"{
         "hello_v1": {
-            "message": "Hello V1"
+            "message": "Hello "
         },
         "hello_alt": {
             "message": "Hello Alt"
@@ -575,7 +575,7 @@ mod test {
         let hello_data = get_payload_v1(&warehouse).unwrap();
         assert!(matches!(
             hello_data.get(),
-            HelloWorldV1 {
+            HelloWorld {
                 message: Cow::Borrowed(_),
             }
         ));
@@ -588,7 +588,7 @@ mod test {
         let hello_data = get_payload_v1(&warehouse.as_any_provider().as_downcasting()).unwrap();
         assert!(matches!(
             hello_data.get(),
-            HelloWorldV1 {
+            HelloWorld {
                 message: Cow::Borrowed(_),
             }
         ));
@@ -601,7 +601,7 @@ mod test {
             get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
         assert!(matches!(
             hello_data.get(),
-            HelloWorldV1 {
+            HelloWorld {
                 message: Cow::Borrowed(_),
             }
         ));
@@ -627,7 +627,7 @@ mod test {
         let hello_data = get_payload_v1(&provider).unwrap();
         assert!(matches!(
             hello_data.get(),
-            HelloWorldV1 {
+            HelloWorld {
                 message: Cow::Borrowed(_),
             }
         ));
@@ -640,7 +640,7 @@ mod test {
         let hello_data = get_payload_v1(&provider.as_any_provider().as_downcasting()).unwrap();
         assert!(matches!(
             hello_data.get(),
-            HelloWorldV1 {
+            HelloWorld {
                 message: Cow::Borrowed(_),
             }
         ));
@@ -662,7 +662,7 @@ mod test {
             get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
         assert!(matches!(
             hello_data.get(),
-            HelloWorldV1 {
+            HelloWorld {
                 message: Cow::Borrowed(_),
             }
         ));

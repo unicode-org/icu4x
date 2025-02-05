@@ -606,7 +606,7 @@ impl LineSegmenter {
     }
 }
 
-impl RuleBreakDataV2<'_> {
+impl RuleBreakData<'_> {
     fn get_linebreak_property_utf32_with_rule(
         &self,
         codepoint: u32,
@@ -764,7 +764,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
     result_cache: Vec<usize>,
-    data: &'l RuleBreakDataV2<'l>,
+    data: &'l RuleBreakData<'l>,
     options: &'l ResolvedLineBreakOptions,
     complex: &'l ComplexPayloads,
 }
@@ -1356,7 +1356,7 @@ mod tests {
         )
         .expect("Loading should succeed!")
         .payload;
-        let lb_data: &RuleBreakDataV2 = payload.get();
+        let lb_data: &RuleBreakData = payload.get();
 
         let is_break = |left, right| {
             matches!(

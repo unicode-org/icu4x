@@ -36,8 +36,8 @@ fn month_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
-    P: DataMarker<DataStruct = MonthNamesV1<'static>>,
+    M: DataMarker<DataStruct = DateSymbols<'static>>,
+    P: DataMarker<DataStruct = MonthNames<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
@@ -73,8 +73,8 @@ fn weekday_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<DataStruct = DateSymbolsV1<'static>>,
-    P: DataMarker<DataStruct = LinearNamesV1<'static>>,
+    M: DataMarker<DataStruct = DateSymbols<'static>>,
+    P: DataMarker<DataStruct = LinearNames<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
@@ -120,8 +120,8 @@ fn dayperiod_symbols_map_project_cloned<M, P>(
     req: DataRequest,
 ) -> Result<DataResponse<P>, DataError>
 where
-    M: DataMarker<DataStruct = TimeSymbolsV1<'static>>,
-    P: DataMarker<DataStruct = LinearNamesV1<'static>>,
+    M: DataMarker<DataStruct = TimeSymbols<'static>>,
+    P: DataMarker<DataStruct = LinearNames<'static>>,
 {
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
@@ -152,17 +152,17 @@ where
     })
 }
 
-impl<'a> From<&months::SymbolsV1<'a>> for MonthNamesV1<'a> {
-    fn from(other: &months::SymbolsV1<'a>) -> Self {
+impl<'a> From<&months::Symbols<'a>> for MonthNames<'a> {
+    fn from(other: &months::Symbols<'a>) -> Self {
         match other {
-            months::SymbolsV1::SolarTwelve(cow_list) => {
+            months::Symbols::SolarTwelve(cow_list) => {
                 // Can't zero-copy convert a cow list to a VarZeroVec, so we need to allocate
                 // a new VarZeroVec. Since VarZeroVec does not implement `from_iter`, first we
                 // make a Vec of string references.
                 let vec: alloc::vec::Vec<&str> = cow_list.iter().map(|x| &**x).collect();
-                MonthNamesV1::Linear((&vec).into())
+                MonthNames::Linear((&vec).into())
             }
-            months::SymbolsV1::Other(zero_map) => {
+            months::Symbols::Other(zero_map) => {
                 // Only calendar that uses this is hebrew, we can assume it is 12-month
                 let mut vec = vec![""; 24];
 
@@ -178,24 +178,24 @@ impl<'a> From<&months::SymbolsV1<'a>> for MonthNamesV1<'a> {
                         debug_assert!(false, "Found out of bounds hebrew month code {k}")
                     }
                 }
-                MonthNamesV1::LeapLinear((&vec).into())
+                MonthNames::LeapLinear((&vec).into())
             }
         }
     }
 }
 
-impl<'a> From<&weekdays::SymbolsV1<'a>> for LinearNamesV1<'a> {
-    fn from(other: &weekdays::SymbolsV1<'a>) -> Self {
+impl<'a> From<&weekdays::Symbols<'a>> for LinearNames<'a> {
+    fn from(other: &weekdays::Symbols<'a>) -> Self {
         // Input is a cow array of length 7. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
-        LinearNamesV1 {
+        LinearNames {
             names: (&vec).into(),
         }
     }
 }
 
-impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearNamesV1<'a> {
-    fn from(other: &day_periods::SymbolsV1<'a>) -> Self {
+impl<'a> From<&day_periods::Symbols<'a>> for LinearNames<'a> {
+    fn from(other: &day_periods::Symbols<'a>) -> Self {
         // Input is a struct with four fields. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = match (other.noon.as_ref(), other.midnight.as_ref()) {
             (Some(noon), Some(midnight)) => vec![&other.am, &other.pm, &noon, &midnight],
@@ -203,7 +203,7 @@ impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearNamesV1<'a> {
             (None, Some(midnight)) => vec![&other.am, &other.pm, "", &midnight],
             (None, None) => vec![&other.am, &other.pm],
         };
-        LinearNamesV1 {
+        LinearNames {
             names: (&vec).into(),
         }
     }

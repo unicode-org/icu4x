@@ -64,23 +64,23 @@ pub struct LocaleFallbacker {
 /// Borrowed version of [`LocaleFallbacker`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerBorrowed<'a> {
-    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a ParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguage<'a>,
+    parents: &'a Parents<'a>,
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
-    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a ParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguage<'a>,
+    parents: &'a Parents<'a>,
     config: LocaleFallbackConfig,
 }
 
 /// Inner iteration type. Does not own the item under fallback.
 #[derive(Debug)]
 struct LocaleFallbackIteratorInner<'a> {
-    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a ParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguage<'a>,
+    parents: &'a Parents<'a>,
     config: LocaleFallbackConfig,
     backup_subdivision: Option<Subtag>,
     backup_variant: Option<Variant>,
@@ -143,7 +143,7 @@ impl LocaleFallbacker {
     /// surprising behavior, especially in multi-script languages.
     pub fn new_without_data() -> Self {
         LocaleFallbacker {
-            likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguageV1 {
+            likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguage {
                 language: Default::default(),
                 language_region: Default::default(),
                 language_script: Default::default(),

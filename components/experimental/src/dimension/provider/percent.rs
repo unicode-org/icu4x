@@ -36,7 +36,7 @@ pub use crate::provider::Baked;
 /// If an `approximate` or `explicit plus` are required, use the negative pattern as explained below:
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting>
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
-pub struct PercentEssentialsV1<'data> {
+pub struct PercentEssentials<'data> {
     #[cfg_attr(
         feature = "serde",
         serde(

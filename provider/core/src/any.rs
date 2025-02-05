@@ -136,7 +136,7 @@ impl AnyPayload {
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// const HELLO_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+    /// const HELLO_DATA: HelloWorld<'static> = HelloWorld {
     ///     message: Cow::Borrowed("Custom Hello World"),
     /// };
     ///
@@ -175,7 +175,7 @@ where
     /// use std::borrow::Cow;
     ///
     /// let payload: DataPayload<HelloWorldV1Marker> =
-    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///     DataPayload::from_owned(HelloWorld {
     ///         message: Cow::Borrowed("Custom Hello World"),
     ///     });
     ///
@@ -313,7 +313,7 @@ where
 ///         .expect("types should match")
 ///         .payload
 ///         .get(),
-///     &HelloWorldV1 {
+///     &HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );
@@ -331,7 +331,7 @@ where
 ///         .expect("load should succeed")
 ///         .payload
 ///         .get(),
-///     &HelloWorldV1 {
+///     &HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );
@@ -474,13 +474,13 @@ mod test {
     use crate::hello_world::*;
     use alloc::borrow::Cow;
 
-    const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
+    const CONST_DATA: HelloWorld<'static> = HelloWorld {
         message: Cow::Borrowed("Custom Hello World"),
     };
 
     #[test]
     fn test_debug() {
-        let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorld {
             message: Cow::Borrowed("Custom Hello World"),
         });
 

@@ -303,7 +303,7 @@ pub mod marker_attrs {
     }
 }
 
-size_test!(YearNamesV1, year_names_v1_size, 32);
+size_test!(YearNames, year_names_v1_size, 32);
 
 /// Names used for representing the year.
 ///
@@ -396,7 +396,7 @@ size_test!(YearNamesV1, year_names_v1_size, 32);
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum YearNamesV1<'data> {
+pub enum YearNames<'data> {
     /// This calendar has a small, fixed set of eras with numeric years, this stores the era names in chronological order.
     ///
     /// See FormattableEra for a definition of what chronological order is in this context.
@@ -421,11 +421,11 @@ pub(crate) fn get_year_name_from_map<'a>(
     map.b().get(idx)
 }
 
-size_test!(MonthNamesV1, month_names_v1_size, 32);
+size_test!(MonthNames, month_names_v1_size, 32);
 
 /// Names used for representing the month.
 ///
-/// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme. This
+/// This uses a data marker attribute for length. See [`YearNames`] for more information on the scheme. This
 /// has an additional `1` value used for numeric names, only found for calendars with leap months.
 #[doc = month_names_v1_size!()]
 ///
@@ -506,7 +506,7 @@ size_test!(MonthNamesV1, month_names_v1_size, 32);
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum MonthNamesV1<'data> {
+pub enum MonthNames<'data> {
     /// Month codes M01, M02, M03, .. (can allow for M13 onwards)
     ///
     /// Found for solar and pure lunar calendars
@@ -535,7 +535,7 @@ pub enum MonthNamesV1<'data> {
     ),
 }
 
-size_test!(LinearNamesV1, linear_names_v1_size, 24);
+size_test!(LinearNames, linear_names_v1_size, 24);
 
 /// Names that can be stored as a simple linear array.
 ///
@@ -544,7 +544,7 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses a data marker attribute for length. See [`YearNamesV1`] for more information on the scheme.
+/// This uses a data marker attribute for length. See [`YearNames`] for more information on the scheme.
 #[doc = linear_names_v1_size!()]
 ///
 /// <div class="stab unstable">
@@ -567,14 +567,14 @@ size_test!(LinearNamesV1, linear_names_v1_size, 24);
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LinearNamesV1<'data> {
+pub struct LinearNames<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The names, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub names: VarZeroVec<'data, str>,
 }
 
-impl LinearNamesV1<'_> {
+impl LinearNames<'_> {
     /// Gets the 'am' name assuming this struct contains day period data.
     pub(crate) fn am(&self) -> Option<&str> {
         self.names.get(0)
@@ -601,7 +601,7 @@ impl LinearNamesV1<'_> {
 //     WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
 // }
 
-size_test!(GluePatternV1, glue_pattern_v1_size, 24);
+size_test!(GluePattern, glue_pattern_v1_size, 24);
 
 /// The default per-length patterns used for combining dates, times, and timezones into formatted strings.
 #[doc = glue_pattern_v1_size!()]
@@ -617,7 +617,7 @@ size_test!(GluePatternV1, glue_pattern_v1_size, 24);
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct GluePatternV1<'data> {
+pub struct GluePattern<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
@@ -633,7 +633,7 @@ pub struct GluePatternV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[allow(missing_docs)] // TODO
-pub struct DateTimeSkeletonsV1<'data> {
+pub struct DateTimeSkeletons<'data> {
     // will typically be small, there are only a couple special cases like E B h m
     // TODO: This should support plurals
     // TODO: The key of this map should be Skeleton
@@ -646,12 +646,12 @@ pub struct DateTimeSkeletonsV1<'data> {
 #[derive(Debug)]
 pub struct YearNamesV1Marker;
 impl DynamicDataMarker for YearNamesV1Marker {
-    type DataStruct = YearNamesV1<'static>;
+    type DataStruct = YearNames<'static>;
 }
 
 /// Calendar-agnostic month name data marker
 #[derive(Debug)]
 pub struct MonthNamesV1Marker;
 impl DynamicDataMarker for MonthNamesV1Marker {
-    type DataStruct = MonthNamesV1<'static>;
+    type DataStruct = MonthNames<'static>;
 }

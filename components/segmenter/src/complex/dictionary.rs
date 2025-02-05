@@ -137,14 +137,14 @@ impl<'s> DictionaryType<'_, 's> for char {
 }
 
 pub(super) struct DictionarySegmenter<'l> {
-    dict: &'l UCharDictionaryBreakDataV1<'l>,
-    grapheme: &'l RuleBreakDataV2<'l>,
+    dict: &'l UCharDictionaryBreakData<'l>,
+    grapheme: &'l RuleBreakData<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub(super) fn new(
-        dict: &'l UCharDictionaryBreakDataV1<'l>,
-        grapheme: &'l RuleBreakDataV2<'l>,
+        dict: &'l UCharDictionaryBreakData<'l>,
+        grapheme: &'l RuleBreakData<'l>,
     ) -> Self {
         // TODO: no way to verify trie data
         Self { dict, grapheme }

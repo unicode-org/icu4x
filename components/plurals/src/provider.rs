@@ -88,7 +88,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PluralRulesV1<'data> {
+pub struct PluralRulesData<'data> {
     /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
@@ -318,7 +318,7 @@ mod ranges {
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[yoke(prove_covariance_manually)]
-    pub struct PluralRangesV1<'data> {
+    pub struct PluralRanges<'data> {
         /// Map between the categories of the endpoints of a range and its corresponding
         /// category.
         ///
@@ -499,21 +499,21 @@ where
         match parts.specials {
             Some(specials) => {
                 if op.is_exactly_zero() {
-                    if let Some(value) = get_special(specials, PluralElementsKeysV1::ExplicitZero) {
+                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero) {
                         return value;
                     }
                 }
                 if op.is_exactly_one() {
-                    if let Some(value) = get_special(specials, PluralElementsKeysV1::ExplicitOne) {
+                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne) {
                         return value;
                     }
                 }
                 match category {
-                    PluralCategory::Zero => Some(PluralElementsKeysV1::Zero),
-                    PluralCategory::One => Some(PluralElementsKeysV1::One),
-                    PluralCategory::Two => Some(PluralElementsKeysV1::Two),
-                    PluralCategory::Few => Some(PluralElementsKeysV1::Few),
-                    PluralCategory::Many => Some(PluralElementsKeysV1::Many),
+                    PluralCategory::Zero => Some(PluralElementsKeys::Zero),
+                    PluralCategory::One => Some(PluralElementsKeys::One),
+                    PluralCategory::Two => Some(PluralElementsKeys::Two),
+                    PluralCategory::Few => Some(PluralElementsKeys::Few),
+                    PluralCategory::Many => Some(PluralElementsKeys::Many),
                     PluralCategory::Other => None,
                 }
                 .and_then(|key| get_special(specials, key))
@@ -536,11 +536,11 @@ where
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[zerovec::make_ule(PluralCategoryV1ULE)]
+#[zerovec::make_ule(PluralCategoryULE)]
 #[repr(u8)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-enum PluralElementsKeysV1 {
+enum PluralElementsKeys {
     Zero = 0,
     One = 1,
     Two = 2,
@@ -554,36 +554,36 @@ impl<T> PluralElementsInner<T>
 where
     T: PartialEq,
 {
-    fn get_specials_tuples(&self) -> impl Iterator<Item = (PluralElementsKeysV1, &T)> {
+    fn get_specials_tuples(&self) -> impl Iterator<Item = (PluralElementsKeys, &T)> {
         [
             self.zero
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Zero, s)),
+                .map(|s| (PluralElementsKeys::Zero, s)),
             self.one
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::One, s)),
+                .map(|s| (PluralElementsKeys::One, s)),
             self.two
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Two, s)),
+                .map(|s| (PluralElementsKeys::Two, s)),
             self.few
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Few, s)),
+                .map(|s| (PluralElementsKeys::Few, s)),
             self.many
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Many, s)),
+                .map(|s| (PluralElementsKeys::Many, s)),
             self.explicit_zero
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::ExplicitZero, s)),
+                .map(|s| (PluralElementsKeys::ExplicitZero, s)),
             self.explicit_one
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::ExplicitOne, s)),
+                .map(|s| (PluralElementsKeys::ExplicitOne, s)),
         ]
         .into_iter()
         .flatten()
@@ -617,10 +617,10 @@ impl FourBitMetadata {
     }
 }
 
-/// A pair of [`PluralElementsKeysV1`] and [`FourBitMetadata`].
+/// A pair of [`PluralElementsKeys`] and [`FourBitMetadata`].
 #[derive(Debug, Copy, Clone)]
 struct PluralCategoryAndMetadata {
-    pub plural_category: PluralElementsKeysV1,
+    pub plural_category: PluralElementsKeys,
     pub metadata: FourBitMetadata,
 }
 
@@ -634,7 +634,7 @@ struct PluralCategoryAndMetadataUnpacked {
 #[repr(transparent)]
 struct PluralCategoryAndMetadataPackedULE(
     /// Representation: `ppppmmmm`
-    /// - `pppp` are a valid [`PluralElementsKeysV1`]
+    /// - `pppp` are a valid [`PluralElementsKeys`]
     /// - `mmmm` are a valid [`FourBitMetadata`]
     ///
     /// The valid values are determined by their respective types.
@@ -693,7 +693,7 @@ impl PluralCategoryAndMetadataPackedULE {
 
 impl PluralCategoryAndMetadata {
     fn try_from_unpacked(unpacked: PluralCategoryAndMetadataUnpacked) -> Option<Self> {
-        let plural_category = PluralElementsKeysV1::new_from_u8(unpacked.plural_category_byte)?;
+        let plural_category = PluralElementsKeys::new_from_u8(unpacked.plural_category_byte)?;
         let metadata = FourBitMetadata::try_from_byte(unpacked.metadata_byte)?;
         Some(Self {
             plural_category,
@@ -742,7 +742,7 @@ struct PluralElementsUnpackedBytes<'a> {
 /// Helper function to access a value from [`PluralElementsTupleSliceVarULE`]
 fn get_special<V: VarULE + ?Sized>(
     data: &PluralElementsTupleSliceVarULE<V>,
-    key: PluralElementsKeysV1,
+    key: PluralElementsKeys,
 ) -> Option<(FourBitMetadata, &V)> {
     data.iter()
         .filter_map(|ule| {
@@ -853,25 +853,25 @@ where
             other: parts.default,
             zero: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Zero)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Zero)),
             one: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::One)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::One)),
             two: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Two)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Two)),
             few: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Few)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Few)),
             many: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Many)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Many)),
             explicit_zero: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::ExplicitZero)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::ExplicitZero)),
             explicit_one: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::ExplicitOne)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::ExplicitOne)),
         }
     }
 }

@@ -7,7 +7,7 @@ use std::collections::HashSet;
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
-use icu::experimental::dimension::provider::units::{UnitsDisplayNameV1, UnitsDisplayNameV1Marker};
+use icu::experimental::dimension::provider::units::{UnitsDisplayName, UnitsDisplayNameV1Marker};
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
@@ -48,7 +48,7 @@ impl DataProvider<UnitsDisplayNameV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(UnitsDisplayNameV1 {
+            payload: DataPayload::from_owned(UnitsDisplayName {
                 patterns: PluralElements::new(
                     unit_patterns
                         .other

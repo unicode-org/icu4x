@@ -34,7 +34,7 @@ impl crate::IterableDataProviderCached<ParentsV1Marker> for SourceDataProvider {
     }
 }
 
-impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
+impl From<&cldr_serde::parent_locales::Resource> for Parents<'static> {
     fn from(source_data: &cldr_serde::parent_locales::Resource) -> Self {
         let mut parents = BTreeMap::<_, (Language, Option<Script>, Option<Region>)>::new();
 
@@ -56,7 +56,7 @@ impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
             (Language::UND, Some(script!("Hani")), None),
         );
 
-        ParentsV1 {
+        Parents {
             parents: parents
                 .iter()
                 .map(|(k, v)| (<&PotentialUtf8>::from(k.as_ref()), v))

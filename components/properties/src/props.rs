@@ -80,7 +80,7 @@ macro_rules! make_enumerated_property {
         impl EnumeratedProperty for $value_ty {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
-            const SINGLETON: &'static crate::provider::PropertyCodePointMapV1<'static, Self> =
+            const SINGLETON: &'static crate::provider::PropertyCodePointMap<'static, Self> =
                 crate::provider::Baked::$singleton;
             const NAME: &'static [u8] = $name.as_bytes();
             const SHORT_NAME: &'static [u8] = $short_name.as_bytes();
@@ -1513,7 +1513,7 @@ macro_rules! make_binary_property {
         impl BinaryProperty for $d {
         type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
-            const SINGLETON: &'static crate::provider::PropertyCodePointSetV1<'static> =
+            const SINGLETON: &'static crate::provider::PropertyCodePointSet<'static> =
                 &crate::provider::Baked::$singleton;
             const NAME: &'static [u8] = $name.as_bytes();
             const SHORT_NAME: &'static [u8] = $short_name.as_bytes();
@@ -2968,7 +2968,7 @@ macro_rules! make_emoji_set {
         impl EmojiSet for $marker_name {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
-            const SINGLETON: &'static crate::provider::PropertyUnicodeSetV1<'static> =
+            const SINGLETON: &'static crate::provider::PropertyUnicodeSet<'static> =
                 &crate::provider::Baked::$singleton;
         }
     }
@@ -3007,7 +3007,7 @@ mod test_enumerated_property_completeness {
     use alloc::collections::BTreeMap;
 
     fn check_enum<'a, T: NamedEnumeratedProperty>(
-        lookup: &crate::provider::names::PropertyValueNameToEnumMapV1<'static>,
+        lookup: &crate::provider::names::PropertyValueNameToEnumMap<'static>,
         consts: impl IntoIterator<Item = &'a T>,
     ) where
         u16: From<T>,

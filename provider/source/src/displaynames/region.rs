@@ -25,7 +25,7 @@ impl DataProvider<RegionDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(RegionDisplayNamesV1::try_from(data).map_err(
+            payload: DataPayload::from_owned(RegionDisplayNames::try_from(data).map_err(
                 |e| DataError::custom("data for RegionDisplayNames").with_display_context(&e),
             )?),
         })
@@ -56,7 +56,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
 const SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
     type Error = icu::locale::ParseError;
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();

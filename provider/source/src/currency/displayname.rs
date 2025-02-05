@@ -35,7 +35,7 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyDisplaynameV1 {
+            payload: DataPayload::from_owned(CurrencyDisplayname {
                 display_name: Cow::Owned(
                     currency
                         .display_name
@@ -65,7 +65,7 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1Marker> for SourceDa
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for (currency, patterns) in currencies {
-                // If the currency doesn't have a display name, we can not create `CurrencyDisplaynameV1` for it.
+                // If the currency doesn't have a display name, we can not create `CurrencyDisplayname` for it.
                 // Therefore, we skip it.
                 if patterns.display_name.is_none() {
                     continue;

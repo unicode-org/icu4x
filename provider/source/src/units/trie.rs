@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde;
 use crate::cldr_serde::units::info::ConvertUnit;
 use crate::SourceDataProvider;
-use icu::experimental::measure::provider::trie::{UnitsTrieV1, UnitsTrieV1Marker};
+use icu::experimental::measure::provider::trie::{UnitsTrie, UnitsTrieV1Marker};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 
@@ -24,11 +24,11 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
         // Get all the units and their conversion information.
         let convert_units = &units_data.supplemental.convert_units.convert_units;
 
-        // Maps from unit id to its id which will be use to get the conversion information from the `UnitsInfoV1`.
+        // Maps from unit id to its id which will be use to get the conversion information from the `UnitsInfo`.
         let mut trie_map = BTreeMap::<Vec<u8>, usize>::new();
 
         // Pre-process the conversion information to convert the factor and offset to scientific notation.
-        // This used to get the id for each unit which is used to get the conversion information from the `UnitsInfoV1`.
+        // This used to get the id for each unit which is used to get the conversion information from the `UnitsInfo`.
         let mut convert_units_vec = Vec::<&ConvertUnit>::new();
         for (unit_name, convert_unit) in convert_units {
             let convert_unit_index = convert_units_vec.len();
@@ -41,7 +41,7 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
                 .with_display_context(&e)
         })?;
 
-        let result = UnitsTrieV1 {
+        let result = UnitsTrie {
             trie: units_conversion_trie.convert_store(),
         };
 

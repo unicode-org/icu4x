@@ -57,13 +57,13 @@ pub trait DateInputMarkers: UnstableSealed {
 /// </div>
 pub trait TypedDateDataMarkers<C>: UnstableSealed {
     /// Marker for loading date skeleton patterns.
-    type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
+    type DateSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatterns<'static>>;
     /// Marker for loading year names.
-    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<DataStruct = YearNames<'static>>;
     /// Marker for loading month names.
-    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNames<'static>>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNames<'static>>;
 }
 
 /// A trait associating types for date formatting in any calendar
@@ -83,7 +83,7 @@ pub trait DateDataMarkers: UnstableSealed {
     /// Cross-calendar data markers for month names.
     type Month: CalMarkers<MonthNamesV1Marker>;
     /// Marker for loading weekday names.
-    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker: DataMarker<DataStruct = LinearNames<'static>>;
 }
 
 /// A trait associating types for time formatting
@@ -105,9 +105,9 @@ pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the any-calendar-kind input field.
     type NanoSecondInput: IntoOption<NanoSecond>;
     /// Marker for loading time skeleton patterns.
-    type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
+    type TimeSkeletonPatternsV1Marker: DataMarker<DataStruct = PackedPatterns<'static>>;
     /// Marker for loading day period names.
-    type DayPeriodNamesV1Marker: DataMarker<DataStruct = LinearNamesV1<'static>>;
+    type DayPeriodNamesV1Marker: DataMarker<DataStruct = LinearNames<'static>>;
 }
 
 /// A trait associating types for time zone formatting
@@ -129,25 +129,25 @@ pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
     type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
     /// Marker for loading core time zone data.
-    type EssentialsV1Marker: DataMarker<DataStruct = tz::EssentialsV1<'static>>;
+    type EssentialsV1Marker: DataMarker<DataStruct = tz::Essentials<'static>>;
     /// Marker for loading location names for time zone formatting
-    type LocationsV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
+    type LocationsV1Marker: DataMarker<DataStruct = tz::Locations<'static>>;
     /// Marker for loading location names for time zone formatting
-    type LocationsRootV1Marker: DataMarker<DataStruct = tz::LocationsV1<'static>>;
+    type LocationsRootV1Marker: DataMarker<DataStruct = tz::Locations<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
-    type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
+    type ExemplarCitiesV1Marker: DataMarker<DataStruct = tz::ExemplarCities<'static>>;
     /// Marker for loading exemplar city names for time zone formatting
-    type ExemplarCitiesRootV1Marker: DataMarker<DataStruct = tz::ExemplarCitiesV1<'static>>;
+    type ExemplarCitiesRootV1Marker: DataMarker<DataStruct = tz::ExemplarCities<'static>>;
     /// Marker for loading generic long time zone names.
-    type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
+    type GenericLongV1Marker: DataMarker<DataStruct = tz::MzGeneric<'static>>;
     /// Marker for loading generic short time zone names.
-    type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGenericV1<'static>>;
+    type GenericShortV1Marker: DataMarker<DataStruct = tz::MzGeneric<'static>>;
     /// Marker for loading specific long time zone names.
-    type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
+    type SpecificLongV1Marker: DataMarker<DataStruct = tz::MzSpecific<'static>>;
     /// Marker for loading generic short time zone names.
-    type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecificV1<'static>>;
+    type SpecificShortV1Marker: DataMarker<DataStruct = tz::MzSpecific<'static>>;
     /// Marker for loading metazone periods.
-    type MetazonePeriodV1Marker: DataMarker<DataStruct = tz::MzPeriodV1<'static>>;
+    type MetazonePeriodV1Marker: DataMarker<DataStruct = tz::MzPeriod<'static>>;
 }
 
 /// A trait associating constants and types implementing various other traits
@@ -173,7 +173,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
     /// Should implement [`ZoneMarkers`].
     type Z;
     /// Marker for loading the date/time glue pattern.
-    type GluePatternV1Marker: DataMarker<DataStruct = GluePatternV1<'static>>;
+    type GluePatternV1Marker: DataMarker<DataStruct = GluePattern<'static>>;
 }
 
 /// Trait implemented on formattable datetime types.
@@ -499,17 +499,17 @@ impl DateInputMarkers for () {
 }
 
 impl<C> TypedDateDataMarkers<C> for () {
-    type DateSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
-    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
-    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
-    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type DateSkeletonPatternsV1Marker = NeverMarker<PackedPatterns<'static>>;
+    type YearNamesV1Marker = NeverMarker<YearNames<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNames<'static>>;
+    type WeekdayNamesV1Marker = NeverMarker<LinearNames<'static>>;
 }
 
 impl DateDataMarkers for () {
     type Skel = NoDataCalMarkers;
     type Year = NoDataCalMarkers;
     type Month = NoDataCalMarkers;
-    type WeekdayNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type WeekdayNamesV1Marker = NeverMarker<LinearNames<'static>>;
 }
 
 impl TimeMarkers for () {
@@ -517,8 +517,8 @@ impl TimeMarkers for () {
     type MinuteInput = ();
     type SecondInput = ();
     type NanoSecondInput = ();
-    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedPatternsV1<'static>>;
-    type DayPeriodNamesV1Marker = NeverMarker<LinearNamesV1<'static>>;
+    type TimeSkeletonPatternsV1Marker = NeverMarker<PackedPatterns<'static>>;
+    type DayPeriodNamesV1Marker = NeverMarker<LinearNames<'static>>;
 }
 
 impl ZoneMarkers for () {
@@ -526,16 +526,16 @@ impl ZoneMarkers for () {
     type TimeZoneOffsetInput = ();
     type TimeZoneVariantInput = ();
     type TimeZoneLocalTimeInput = ();
-    type EssentialsV1Marker = NeverMarker<tz::EssentialsV1<'static>>;
-    type LocationsV1Marker = NeverMarker<tz::LocationsV1<'static>>;
-    type LocationsRootV1Marker = NeverMarker<tz::LocationsV1<'static>>;
-    type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
-    type ExemplarCitiesRootV1Marker = NeverMarker<tz::ExemplarCitiesV1<'static>>;
-    type GenericLongV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
-    type GenericShortV1Marker = NeverMarker<tz::MzGenericV1<'static>>;
-    type SpecificLongV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
-    type SpecificShortV1Marker = NeverMarker<tz::MzSpecificV1<'static>>;
-    type MetazonePeriodV1Marker = NeverMarker<tz::MzPeriodV1<'static>>;
+    type EssentialsV1Marker = NeverMarker<tz::Essentials<'static>>;
+    type LocationsV1Marker = NeverMarker<tz::Locations<'static>>;
+    type LocationsRootV1Marker = NeverMarker<tz::Locations<'static>>;
+    type ExemplarCitiesV1Marker = NeverMarker<tz::ExemplarCities<'static>>;
+    type ExemplarCitiesRootV1Marker = NeverMarker<tz::ExemplarCities<'static>>;
+    type GenericLongV1Marker = NeverMarker<tz::MzGeneric<'static>>;
+    type GenericShortV1Marker = NeverMarker<tz::MzGeneric<'static>>;
+    type SpecificLongV1Marker = NeverMarker<tz::MzSpecific<'static>>;
+    type SpecificShortV1Marker = NeverMarker<tz::MzSpecific<'static>>;
+    type MetazonePeriodV1Marker = NeverMarker<tz::MzPeriod<'static>>;
 }
 
 macro_rules! datetime_marker_helper {
@@ -543,19 +543,19 @@ macro_rules! datetime_marker_helper {
         C::YearNamesV1Marker
     };
     (@years/typed,) => {
-        NeverMarker<YearNamesV1<'static>>
+        NeverMarker<YearNames<'static>>
     };
     (@months/typed, yes) => {
         C::MonthNamesV1Marker
     };
     (@months/typed,) => {
-        NeverMarker<MonthNamesV1<'static>>
+        NeverMarker<MonthNames<'static>>
     };
     (@dates/typed, yes) => {
         C::SkeletaV1Marker
     };
     (@dates/typed,) => {
-        NeverMarker<PackedPatternsV1<'static>>
+        NeverMarker<PackedPatterns<'static>>
     };
     (@calmarkers, yes) => {
         FullDataCalMarkers
@@ -567,13 +567,13 @@ macro_rules! datetime_marker_helper {
         WeekdayNamesV1Marker
     };
     (@weekdays,) => {
-        NeverMarker<LinearNamesV1<'static>>
+        NeverMarker<LinearNames<'static>>
     };
     (@dayperiods, yes) => {
         DayPeriodNamesV1Marker
     };
     (@dayperiods,) => {
-        NeverMarker<LinearNamesV1<'static>>
+        NeverMarker<LinearNames<'static>>
     };
     (@times, yes) => {
         TimeNeoSkeletonPatternsV1Marker
@@ -585,7 +585,7 @@ macro_rules! datetime_marker_helper {
         GluePatternV1Marker
     };
     (@glue,) => {
-        NeverMarker<GluePatternV1<'static>>
+        NeverMarker<GluePattern<'static>>
     };
     (@option/length, yes) => {
         Length
@@ -687,34 +687,34 @@ macro_rules! datetime_marker_helper {
         tz::MzPeriodV1Marker
     };
     (@data/zone/essentials,) => {
-        NeverMarker<tz::EssentialsV1<'static>>
+        NeverMarker<tz::Essentials<'static>>
     };
     (@data/zone/locations,) => {
-        NeverMarker<tz::LocationsV1<'static>>
+        NeverMarker<tz::Locations<'static>>
     };
     (@data/zone/locations_root,) => {
-        NeverMarker<tz::LocationsV1<'static>>
+        NeverMarker<tz::Locations<'static>>
     };
     (@data/zone/exemplars,) => {
-        NeverMarker<tz::ExemplarCitiesV1<'static>>
+        NeverMarker<tz::ExemplarCities<'static>>
     };
     (@data/zone/exemplars_root,) => {
-        NeverMarker<tz::ExemplarCitiesV1<'static>>
+        NeverMarker<tz::ExemplarCities<'static>>
     };
     (@data/zone/generic_long,) => {
-        NeverMarker<tz::MzGenericV1<'static>>
+        NeverMarker<tz::MzGeneric<'static>>
     };
     (@data/zone/generic_short,) => {
-        NeverMarker<tz::MzGenericV1<'static>>
+        NeverMarker<tz::MzGeneric<'static>>
     };
     (@data/zone/specific_long,) => {
-        NeverMarker<tz::MzSpecificV1<'static>>
+        NeverMarker<tz::MzSpecific<'static>>
     };
     (@data/zone/specific_short,) => {
-        NeverMarker<tz::MzSpecificV1<'static>>
+        NeverMarker<tz::MzSpecific<'static>>
     };
     (@data/zone/metazone_periods,) => {
-        NeverMarker<tz::MzPeriodV1<'static>>
+        NeverMarker<tz::MzPeriod<'static>>
     };
     (@names/year, yes) => {
         YearNamesV1Marker

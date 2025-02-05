@@ -218,11 +218,11 @@ impl IterableDataProviderCached<CollationTailoringV1Marker> for SourceDataProvid
     }
 }
 
-impl TryInto<CollationDataV1<'static>> for &collator_serde::CollationData {
+impl TryInto<CollationData<'static>> for &collator_serde::CollationData {
     type Error = DataError;
 
-    fn try_into(self) -> Result<CollationDataV1<'static>, Self::Error> {
-        Ok(CollationDataV1 {
+    fn try_into(self) -> Result<CollationData<'static>, Self::Error> {
+        Ok(CollationData {
             trie: CodePointTrie::<u32>::try_from(&self.trie)
                 .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?,
             contexts: ZeroVec::alloc_from_slice(&self.contexts),
@@ -232,39 +232,39 @@ impl TryInto<CollationDataV1<'static>> for &collator_serde::CollationData {
     }
 }
 
-impl TryInto<CollationDiacriticsV1<'static>> for &collator_serde::CollationDiacritics {
+impl TryInto<CollationDiacritics<'static>> for &collator_serde::CollationDiacritics {
     type Error = DataError;
 
-    fn try_into(self) -> Result<CollationDiacriticsV1<'static>, Self::Error> {
-        Ok(CollationDiacriticsV1 {
+    fn try_into(self) -> Result<CollationDiacritics<'static>, Self::Error> {
+        Ok(CollationDiacritics {
             secondaries: ZeroVec::alloc_from_slice(&self.secondaries),
         })
     }
 }
 
-impl TryInto<CollationJamoV1<'static>> for &collator_serde::CollationJamo {
+impl TryInto<CollationJamo<'static>> for &collator_serde::CollationJamo {
     type Error = DataError;
 
-    fn try_into(self) -> Result<CollationJamoV1<'static>, Self::Error> {
-        Ok(CollationJamoV1 {
+    fn try_into(self) -> Result<CollationJamo<'static>, Self::Error> {
+        Ok(CollationJamo {
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
         })
     }
 }
 
-impl TryInto<CollationMetadataV1> for &collator_serde::CollationMetadata {
+impl TryInto<CollationMetadata> for &collator_serde::CollationMetadata {
     type Error = DataError;
 
-    fn try_into(self) -> Result<CollationMetadataV1, Self::Error> {
-        Ok(CollationMetadataV1 { bits: self.bits })
+    fn try_into(self) -> Result<CollationMetadata, Self::Error> {
+        Ok(CollationMetadata { bits: self.bits })
     }
 }
 
-impl TryInto<CollationReorderingV1<'static>> for &collator_serde::CollationReordering {
+impl TryInto<CollationReordering<'static>> for &collator_serde::CollationReordering {
     type Error = DataError;
 
-    fn try_into(self) -> Result<CollationReorderingV1<'static>, Self::Error> {
-        Ok(CollationReorderingV1 {
+    fn try_into(self) -> Result<CollationReordering<'static>, Self::Error> {
+        Ok(CollationReordering {
             min_high_no_reorder: self.min_high_no_reorder,
             reorder_table: ZeroVec::alloc_from_slice(&self.reorder_table),
             reorder_ranges: ZeroVec::alloc_from_slice(&self.reorder_ranges),
@@ -272,11 +272,11 @@ impl TryInto<CollationReorderingV1<'static>> for &collator_serde::CollationReord
     }
 }
 
-impl TryInto<CollationSpecialPrimariesV1<'static>> for &collator_serde::CollationSpecialPrimaries {
+impl TryInto<CollationSpecialPrimaries<'static>> for &collator_serde::CollationSpecialPrimaries {
     type Error = DataError;
 
-    fn try_into(self) -> Result<CollationSpecialPrimariesV1<'static>, Self::Error> {
-        Ok(CollationSpecialPrimariesV1 {
+    fn try_into(self) -> Result<CollationSpecialPrimaries<'static>, Self::Error> {
+        Ok(CollationSpecialPrimaries {
             last_primaries: ZeroVec::alloc_from_slice(&self.last_primaries),
             numeric_primary: self.numeric_primary,
         })

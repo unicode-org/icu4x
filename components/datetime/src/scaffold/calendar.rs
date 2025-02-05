@@ -35,20 +35,20 @@ mod private {
 /// </div>
 pub trait CldrCalendar: private::Sealed {
     /// The data marker for loading year symbols for this calendar.
-    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
+    type YearNamesV1Marker: DataMarker<DataStruct = YearNames<'static>>;
 
     /// The data marker for loading month symbols for this calendar.
-    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
+    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNames<'static>>;
 
     /// The data marker for loading skeleton patterns for this calendar.
-    type SkeletaV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
+    type SkeletaV1Marker: DataMarker<DataStruct = PackedPatterns<'static>>;
 }
 
 impl private::Sealed for () {}
 impl CldrCalendar for () {
-    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
-    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
-    type SkeletaV1Marker = NeverMarker<PackedPatternsV1<'static>>;
+    type YearNamesV1Marker = NeverMarker<YearNames<'static>>;
+    type MonthNamesV1Marker = NeverMarker<MonthNames<'static>>;
+    type SkeletaV1Marker = NeverMarker<PackedPatterns<'static>>;
 }
 
 impl private::Sealed for Buddhist {}

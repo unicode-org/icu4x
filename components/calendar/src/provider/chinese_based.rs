@@ -33,7 +33,7 @@ use zerovec::ZeroVec;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::chinese_based))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ChineseBasedCacheV1<'data> {
+pub struct ChineseBasedCache<'data> {
     /// The extended year corresponding to the first data entry for this year
     pub first_extended_year: i32,
     /// A list of precomputed data for each year beginning with first_extended_year
@@ -41,12 +41,12 @@ pub struct ChineseBasedCacheV1<'data> {
     pub data: ZeroVec<'data, PackedChineseBasedYearInfo>,
 }
 
-impl ChineseBasedCacheV1<'_> {
+impl ChineseBasedCache<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
     pub fn compute_for<CB: ChineseBased>(extended_years: core::ops::Range<i32>) -> Self {
         let data = crate::chinese_based::compute_many_packed::<CB>(extended_years.clone());
-        ChineseBasedCacheV1 {
+        ChineseBasedCache {
             first_extended_year: extended_years.start,
             data: data.into(),
         }

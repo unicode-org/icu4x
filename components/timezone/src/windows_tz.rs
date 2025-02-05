@@ -10,7 +10,7 @@ use icu_provider::{
 };
 
 use crate::{
-    provider::windows::{WindowsZonesToBcp47MapV1, WindowsZonesToBcp47MapV1Marker},
+    provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1Marker},
     TimeZoneBcp47Id,
 };
 
@@ -81,7 +81,7 @@ impl WindowsTimeZoneMapper {
 /// A borrowed wrapper around the windows time zone mapper data.
 #[derive(Debug, Copy, Clone)]
 pub struct WindowsTimeZoneMapperBorrowed<'a> {
-    data: &'a WindowsZonesToBcp47MapV1<'a>,
+    data: &'a WindowsZonesToBcp47Map<'a>,
 }
 
 #[cfg(feature = "compiled_data")]

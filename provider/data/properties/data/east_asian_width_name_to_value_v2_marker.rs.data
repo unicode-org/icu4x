@@ -16,7 +16,7 @@ macro_rules! __impl_east_asian_width_name_to_value_v2_marker {
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::EastAsianWidthNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC5AFHNW\n\x14\x1E/\x81mbiguous\x81\x83ullwidth\x83\x82alfwidth\x82\x80\xC2ae\x06\x84rrow\x84utral\x80\x85ide\x85") } } };
+            pub const SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::EastAsianWidthNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMap { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC5AFHNW\n\x14\x1E/\x81mbiguous\x81\x83ullwidth\x83\x82alfwidth\x82\x80\xC2ae\x06\x84rrow\x84utral\x80\x85ide\x85") } } };
         }
         #[clippy::msrv = "1.81"]
         impl icu_provider::DataProvider<icu::properties::provider::EastAsianWidthNameToValueV2Marker> for $provider {

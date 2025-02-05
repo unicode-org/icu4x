@@ -26,7 +26,7 @@ use zerovec::ZeroMap2d;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Compact Decimal Pattern V1 data struct.
+/// Compact Decimal Pattern  data struct.
 ///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) and count (a plural case or an
@@ -61,7 +61,7 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 #[yoke(prove_covariance_manually)]
-pub struct CompactDecimalPatternDataV1<'data> {
+pub struct CompactDecimalPatternData<'data> {
     /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,

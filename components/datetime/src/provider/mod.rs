@@ -27,7 +27,7 @@ pub mod time_zones;
 pub use packed_pattern::*;
 
 pub(crate) type ErasedPackedPatterns =
-    icu_provider::marker::ErasedMarker<PackedPatternsV1<'static>>;
+    icu_provider::marker::ErasedMarker<PackedPatterns<'static>>;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]

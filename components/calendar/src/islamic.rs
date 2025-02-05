@@ -23,7 +23,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::islamic::{
-    IslamicCacheV1, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
+    IslamicCache, IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker,
     PackedIslamicYearInfo,
 };
 use crate::Iso;
@@ -310,7 +310,7 @@ impl IslamicYearInfo {
 /// *not* contain any extra data and will always compute stuff from scratch
 #[derive(Default)]
 pub(crate) struct IslamicPrecomputedData<'a, IB: IslamicBasedMarker> {
-    data: Option<&'a IslamicCacheV1<'a>>,
+    data: Option<&'a IslamicCache<'a>>,
     _ib: PhantomData<IB>,
 }
 
@@ -348,7 +348,7 @@ fn compute_month_day(info: IslamicYearInfo, mut possible_month: u8, day_of_year:
     (possible_month, day.unwrap_or(29))
 }
 impl<'b, IB: IslamicBasedMarker> IslamicPrecomputedData<'b, IB> {
-    pub(crate) fn new(data: Option<&'b IslamicCacheV1<'b>>) -> Self {
+    pub(crate) fn new(data: Option<&'b IslamicCache<'b>>) -> Self {
         Self {
             data,
             _ib: PhantomData,

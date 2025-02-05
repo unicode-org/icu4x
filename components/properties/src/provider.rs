@@ -393,7 +393,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyCodePointSetV1<'data> {
+pub enum PropertyCodePointSet<'data> {
     /// The set of characters, represented as an inversion list
     InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionList<'data>),
     // new variants should go BELOW existing ones
@@ -402,7 +402,7 @@ pub enum PropertyCodePointSetV1<'data> {
 }
 
 // See CodePointSetData for documentation of these functions
-impl<'data> PropertyCodePointSetV1<'data> {
+impl<'data> PropertyCodePointSet<'data> {
     #[inline]
     pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
@@ -471,7 +471,7 @@ impl<'data> PropertyCodePointSetV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
+pub enum PropertyCodePointMap<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
     // new variants should go BELOW existing ones
@@ -488,7 +488,7 @@ macro_rules! data_struct_generic {
             #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
             pub struct $marker;
             impl icu_provider::DynamicDataMarker for $marker {
-                type DataStruct = PropertyCodePointMapV1<'static, $ty>;
+                type DataStruct = PropertyCodePointMap<'static, $ty>;
             }
             impl icu_provider::DataMarker for $marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -540,7 +540,7 @@ data_struct_generic!(
 );
 
 // See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
+impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     #[inline]
     pub(crate) fn get32(&self, ch: u32) -> T {
         match *self {
@@ -549,14 +549,14 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
+    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMap<'data, P>, UleError>
     where
         P: TrieValue,
     {
         match self {
             Self::CodePointTrie(t) => t
                 .try_into_converted()
-                .map(PropertyCodePointMapV1::CodePointTrie),
+                .map(PropertyCodePointMap::CodePointTrie),
         }
     }
 
@@ -617,7 +617,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyUnicodeSetV1<'data> {
+pub enum PropertyUnicodeSet<'data> {
     /// A set representing characters in an inversion list, and the strings in a list.
     CPInversionListStrList(
         #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
@@ -627,7 +627,7 @@ pub enum PropertyUnicodeSetV1<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-impl<'data> PropertyUnicodeSetV1<'data> {
+impl<'data> PropertyUnicodeSet<'data> {
     #[inline]
     pub(crate) fn contains_str(&self, s: &str) -> bool {
         match *self {
@@ -692,7 +692,7 @@ impl<'data> PropertyUnicodeSetV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ScriptWithExtensionsPropertyV1<'data> {
+pub struct ScriptWithExtensionsProperty<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
     /// Script_Extensions value, nearly matching the representation

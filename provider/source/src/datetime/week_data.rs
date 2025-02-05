@@ -8,7 +8,7 @@ use crate::cldr_serde::{
 };
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::calendar::provider::{WeekDataV2, WeekDataV2Marker, WeekdaySet};
+use icu::calendar::provider::{WeekData, WeekDataV2Marker, WeekdaySet};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -67,7 +67,7 @@ impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(WeekDataV2 {
+            payload: DataPayload::from_owned(WeekData {
                 first_weekday,
                 min_week_days,
                 weekend,

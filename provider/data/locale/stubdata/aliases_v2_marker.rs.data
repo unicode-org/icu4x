@@ -16,7 +16,7 @@ macro_rules! __impl_aliases_v2_marker {
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_ALIASES_V2_MARKER: &'static <icu::locale::provider::AliasesV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::AliasesV2 {
+            pub const SINGLETON_ALIASES_V2_MARKER: &'static <icu::locale::provider::AliasesV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::Aliases {
                 language_variants: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x13\0\r\0\x1B\0*\09\0F\0T\0r\0~\0\x8B\0\x98\0\xA9\0\xB8\0\xC7\0\xD5\0\xE2\0\xF0\0\xFF\0\x0C\x01aa\0\x05\0saahossyart\x06\0lojbanjbocel\x07\0gaulishxtghy\0\x07\0arevmdahywno\0\x06\0bokmalnbno\0\x07\0nynorsknnund\x0E\0hepburn-heplocund-alalc97zh\0\x05\0guoyuzhzh\0\x05\0hakkahakzh\0\x05\0xianghsnund\x06\0aalandund-AXund\x07\0arevelaundund\x07\0arevmdaundund\x06\0bokmalundund\x05\0hakkaundund\x06\0lojbanundund\x07\0nynorskundund\x05\0saahoundund\x05\0xiangund") },
                 sgn_region: unsafe {
                     #[allow(unused_unsafe)]

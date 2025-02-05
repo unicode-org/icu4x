@@ -102,7 +102,7 @@ macro_rules! make_data_provider {
 
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(RelativeTimePatternDataV1 {
+                        payload: DataPayload::from_owned(RelativeTimePatternData {
                             relatives: data.relatives.iter().map(|r| (&r.count, r.pattern.as_ref())).collect(),
                             past: (&data.past).into(),
                             future: (&data.future).into(),

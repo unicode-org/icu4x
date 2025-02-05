@@ -88,7 +88,7 @@ impl DataProvider<BidiMirroringGlyphV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                icu::properties::provider::PropertyCodePointMapV1::CodePointTrie(
+                icu::properties::provider::PropertyCodePointMap::CodePointTrie(
                     CodePointTrieBuilder {
                         data: CodePointTrieBuilderData::ValuesByCodePoint(
                             &trie_vals.collect::<Vec<_>>(),

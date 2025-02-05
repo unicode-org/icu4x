@@ -29,7 +29,7 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
         };
 
         let result =
-            DecimalSymbolsV2::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
+            DecimalSymbols::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
                 DataError::custom("Could not create decimal symbols")
                     .with_display_context(&s)
                     .with_display_context(nsname)
@@ -54,7 +54,7 @@ struct NumbersWithNumsys<'a>(
     pub(crate) &'a str,
 );
 
-impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
+impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbols<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: NumbersWithNumsys<'_>) -> Result<Self, Self::Error> {
@@ -92,7 +92,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
 
         Ok(Self {
             strings: strings.build(),
-            grouping_sizes: GroupingSizesV1 {
+            grouping_sizes: GroupingSizes {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: numbers.minimum_grouping_digits,

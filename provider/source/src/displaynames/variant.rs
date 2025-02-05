@@ -25,7 +25,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(VariantDisplayNamesV1::try_from(data).map_err(
+            payload: DataPayload::from_owned(VariantDisplayNames::try_from(data).map_err(
                 |e| DataError::custom("data for VariantDisplayNames").with_display_context(&e),
             )?),
         })
@@ -54,7 +54,7 @@ impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for SourceDataProvi
 /// Substring used to denote alternative display names data variants for a given variant. For example: "FONUPA-alt-secondary".
 const ALT_SUBSTRING: &str = "-alt-";
 
-impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::variant::Resource) -> Result<Self, Self::Error> {

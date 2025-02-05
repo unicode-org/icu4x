@@ -70,7 +70,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ListFormatterPatternsV2<'data> {
+pub struct ListFormatterPatterns<'data> {
     /// The start pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub start: ListJoinerPattern<'data>,
@@ -86,7 +86,7 @@ pub struct ListFormatterPatternsV2<'data> {
     pub pair: Option<ConditionalListJoinerPattern<'data>>,
 }
 
-impl ListFormatterPatternsV2<'_> {
+impl ListFormatterPatterns<'_> {
     /// The marker attributes for narrow lists
     pub const NARROW: &'static DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("N");
     #[doc(hidden)]

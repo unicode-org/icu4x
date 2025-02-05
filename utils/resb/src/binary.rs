@@ -28,7 +28,7 @@ pub fn determine_endianness(resb: &[u8]) -> Result<Endianness, BinaryDeserialize
 
 /// The `BinIndex` struct represents details of the written bundle.
 ///
-/// The index is present from [`FormatVersion::V1_1`] on.
+/// The index is present from [`FormatVersion::_1`] on.
 #[allow(dead_code)]
 struct BinIndex {
     /// The number of 32-bit fields written in the index, including the field
@@ -46,7 +46,7 @@ struct BinIndex {
     /// The offset of the end of the bundle in 32-bit values from the beginning
     /// of the body.
     ///
-    /// In all versions through [`FormatVersion::V3_0`], this is always the same
+    /// In all versions through [`FormatVersion::_0`], this is always the same
     /// as `resources_end`.
     bundle_end: u32,
 
@@ -55,18 +55,18 @@ struct BinIndex {
 
     /// Attributes describing resolution of external resources.
     ///
-    /// Present from [`FormatVersion::V1_2`] on.
+    /// Present from [`FormatVersion::_2`] on.
     bundle_attributes: Option<u32>,
 
     /// The offset of the end of the 16-bit data block in 32-bit values from the
     /// beginning of the body.
     ///
-    /// Present from [`FormatVersion::V2_0`] on.
+    /// Present from [`FormatVersion::_0`] on.
     data_16_bit_end: Option<u32>,
 
     /// The resource pool bundle checksum.
     ///
-    /// Present from [`FormatVersion::V2_0`] on when the bundle either is a pool
+    /// Present from [`FormatVersion::_0`] on when the bundle either is a pool
     /// bundle or uses a pool bundle for sharing resources.
     pool_checksum: Option<u32>,
 }
@@ -180,7 +180,7 @@ primitive_enum!(
         /// A 16-bit table resource. Not yet supported.
         Table16 = 5,
 
-        /// A 16-bit string resource for [`FormatVersion::V2_0`] and later.
+        /// A 16-bit string resource for [`FormatVersion::_0`] and later.
         ///
         /// Consists of a UTF-16 string with length marked in one of the
         /// following ways:
@@ -209,7 +209,7 @@ primitive_enum!(
         /// These length markers can be reliably detected, as UTF-16 low
         /// surrogates may not legally appear without a preceding high surrogate
         /// in a UTF-16 string.
-        StringV2 = 6,
+        String = 6,
 
         /// A 28-bit integer resource.
         ///
@@ -233,8 +233,8 @@ primitive_enum!(
         /// Consists of a 16-bit length value `n` followed by `n` 16-bit offsets
         /// from the beginning of the 16-bit data block.
         ///
-        /// As of [`FormatVersion::V3_0`], only `StringV2` representations can
-        /// be fully stored in the 16-bit data block. As such, only `StringV2`
+        /// As of [`FormatVersion::_0`], only `String` representations can
+        /// be fully stored in the 16-bit data block. As such, only `String`
         /// resources can appear in an `Array16`.
         Array16 = 9,
 
@@ -263,12 +263,12 @@ primitive_enum!(
 // Note that order of declaration is important for partial ordering.
 #[repr(u32)]
 enum FormatVersion {
-    V1_0,
-    V1_1,
-    V1_2,
-    V1_3,
-    V2_0,
-    V3_0,
+    _0,
+    _1,
+    _2,
+    _3,
+    _0,
+    _0,
 }
 
 /// The `ResDescriptor` struct represents a typed pointer to a resource body

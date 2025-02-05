@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 pub use skeletons::*;
 pub use symbols::*;
 
-size_test!(DateLengthsV1, date_lengths_v1_size, 224);
+size_test!(DateLengths, date_lengths_v1_size, 224);
 
 /// Pattern data for dates.
 #[doc = date_lengths_v1_size!()]
@@ -44,17 +44,17 @@ size_test!(DateLengthsV1, date_lengths_v1_size, 224);
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DateLengthsV1<'data> {
+pub struct DateLengths<'data> {
     /// Date pattern data, broken down by pattern length.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub date: patterns::LengthPatternsV1<'data>,
+    pub date: patterns::LengthPatterns<'data>,
 
     /// Patterns used to combine date and time length patterns into full date_time patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
+    pub length_combinations: patterns::GenericLengthPatterns<'data>,
 }
 
-size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
+size_test!(TimeLengths, time_lengths_v1_size, 264);
 
 /// Pattern data for times.
 #[doc = time_lengths_v1_size!()]
@@ -69,18 +69,18 @@ size_test!(TimeLengthsV1, time_lengths_v1_size, 264);
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct TimeLengthsV1<'data> {
+pub struct TimeLengths<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h11 or h12.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub time_h11_h12: patterns::LengthPatternsV1<'data>,
+    pub time_h11_h12: patterns::LengthPatterns<'data>,
 
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h23 or h24.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub time_h23_h24: patterns::LengthPatternsV1<'data>,
+    pub time_h23_h24: patterns::LengthPatterns<'data>,
 
     /// By default a locale will prefer one hour cycle type over another.
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
@@ -93,7 +93,7 @@ pub mod patterns {
     use crate::provider::pattern::runtime::{self, GenericPattern};
 
     /// An enum containing four lengths (full, long, medium, short) for interfacing
-    /// with [`LengthPatternsV1`] and [`GenericLengthPatternsV1`]
+    /// with [`LengthPatterns`] and [`GenericLengthPatterns`]
     #[derive(Debug)]
     pub enum FullLongMediumShort {
         /// "full" length
@@ -117,7 +117,7 @@ pub mod patterns {
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct LengthPatternsV1<'data> {
+    pub struct LengthPatterns<'data> {
         /// A full length date/time pattern.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub full: runtime::Pattern<'data>,
@@ -143,7 +143,7 @@ pub mod patterns {
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct GenericLengthPatternsV1<'data> {
+    pub struct GenericLengthPatterns<'data> {
         /// A full length glue pattern of other formatted elements.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub full: GenericPattern<'data>,
@@ -172,7 +172,7 @@ pub mod patterns {
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct GenericPatternV1<'data>(
+    pub struct GenericPatternData<'data>(
         #[cfg_attr(feature = "serde", serde(borrow))] pub GenericPattern<'data>,
     );
 }

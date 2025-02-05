@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 use crate::{cldr_serde, SourceDataProvider};
 use icu::timezone::{
-    provider::windows::{WindowsZonesToBcp47MapV1, WindowsZonesToBcp47MapV1Marker},
+    provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1Marker},
     TimeZoneBcp47Id,
 };
 use icu_provider::prelude::*;
@@ -61,7 +61,7 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
             })
             .collect();
 
-        let data_struct = WindowsZonesToBcp47MapV1 {
+        let data_struct = WindowsZonesToBcp47Map {
             map: ZeroTrieSimpleAscii::try_from(&windows2bcp_map)
                 .map_err(|e| {
                     DataError::custom("Could not map windowsZones.json data")

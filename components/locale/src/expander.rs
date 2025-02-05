@@ -70,9 +70,9 @@ pub struct LocaleExpander {
 }
 
 struct LocaleExpanderBorrowed<'a> {
-    likely_subtags_l: &'a LikelySubtagsForLanguageV1<'a>,
-    likely_subtags_sr: &'a LikelySubtagsForScriptRegionV1<'a>,
-    likely_subtags_ext: Option<&'a LikelySubtagsExtendedV1<'a>>,
+    likely_subtags_l: &'a LikelySubtagsForLanguage<'a>,
+    likely_subtags_sr: &'a LikelySubtagsForScriptRegion<'a>,
+    likely_subtags_ext: Option<&'a LikelySubtagsExtended<'a>>,
 }
 
 impl LocaleExpanderBorrowed<'_> {

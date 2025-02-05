@@ -16,7 +16,7 @@ macro_rules! __impl_likely_subtags_extended_v1_marker {
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1_MARKER: &'static <icu::locale::provider::LikelySubtagsExtendedV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::LikelySubtagsExtendedV1 {
+            pub const SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1_MARKER: &'static <icu::locale::provider::LikelySubtagsExtendedV1Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::LikelySubtagsExtended {
                 language_script: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"arcHatrarcNbatarcPalmbapKraicu\0GlaghakHanthnjHmnglifLimblzzGeormanNkoonanHantpalPhlppntCyrlpntLatnunrDeva") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"IQ\0JO\0SY\0IN\0BG\0TW\0LA\0IN\0GE\0GN\0TW\0CN\0RU\0TR\0NP\0") })

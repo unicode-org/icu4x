@@ -36,16 +36,16 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
-    pub struct TitlecaseOptionsV1 {
+    pub struct TitlecaseOptions {
         pub leading_adjustment: DiplomatOption<LeadingAdjustment>,
         pub trailing_case: DiplomatOption<TrailingCase>,
     }
 
-    impl TitlecaseOptionsV1 {
+    impl TitlecaseOptions {
         #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
-        pub fn default() -> TitlecaseOptionsV1 {
+        pub fn default() -> TitlecaseOptions {
             Self {
                 leading_adjustment: None.into(),
                 trailing_case: None.into(),
@@ -108,7 +108,7 @@ pub mod ffi {
             &self,
             s: &str,
             locale: &Locale,
-            options: TitlecaseOptionsV1,
+            options: TitlecaseOptions,
             write: &mut DiplomatWrite,
         ) {
             let _infallible = self
@@ -311,7 +311,7 @@ pub mod ffi {
             &self,
             s: &str,
             locale: &Locale,
-            options: TitlecaseOptionsV1,
+            options: TitlecaseOptions,
             write: &mut DiplomatWrite,
         ) {
             let _infallible = self
@@ -322,8 +322,8 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::TitlecaseOptionsV1> for TitlecaseOptions {
-    fn from(other: ffi::TitlecaseOptionsV1) -> Self {
+impl From<ffi::TitlecaseOptions> for TitlecaseOptions {
+    fn from(other: ffi::TitlecaseOptions) -> Self {
         let mut ret = Self::default();
 
         ret.leading_adjustment = other

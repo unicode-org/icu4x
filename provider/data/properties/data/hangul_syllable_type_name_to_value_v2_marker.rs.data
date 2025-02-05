@@ -16,7 +16,7 @@ macro_rules! __impl_hangul_syllable_type_name_to_value_v2_marker {
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::HangulSyllableTypeNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC4LNTV);I\x81\xC2Ve\x19\x84\xC2T_\x0B\x85_Syllable\x85Syllable\x84ading_Jamo\x81\xC2Ao\x01\x80t_Applicable\x80\x83railing_Jamo\x83\x82owel_Jamo\x82") } } };
+            pub const SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::HangulSyllableTypeNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMap { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC4LNTV);I\x81\xC2Ve\x19\x84\xC2T_\x0B\x85_Syllable\x85Syllable\x84ading_Jamo\x81\xC2Ao\x01\x80t_Applicable\x80\x83railing_Jamo\x83\x82owel_Jamo\x82") } } };
         }
         #[clippy::msrv = "1.81"]
         impl icu_provider::DataProvider<icu::properties::provider::HangulSyllableTypeNameToValueV2Marker> for $provider {

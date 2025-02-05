@@ -51,7 +51,7 @@ where
 ///     BarV1Marker = "demo/bar@1",
 ///     BazV1Marker = "demo/baz@1"
 /// )]
-/// pub struct FooV1<'data> {
+/// pub struct Foo<'data> {
 ///     message: Cow<'data, str>,
 /// };
 ///

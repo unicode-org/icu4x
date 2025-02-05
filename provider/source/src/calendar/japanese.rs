@@ -73,7 +73,7 @@ impl SourceDataProvider {
             }
         }
 
-        let ret = JapaneseErasV1 {
+        let ret = JapaneseEras {
             dates_to_eras: dates_to_eras.into_iter().collect(),
         };
 
@@ -83,7 +83,7 @@ impl SourceDataProvider {
         // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
         // be disabled when generating new data.
         if japanext && env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
-            let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+            let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
                 .expect("Failed to parse the precached golden. This is a bug.");
 
             if snapshot != ret {
@@ -188,7 +188,7 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
     static MAP: OnceLock<BTreeMap<String, TinyStr16>> = OnceLock::new();
 
     MAP.get_or_init(|| {
-        let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+        let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
             .expect("Failed to parse the precached golden. This is a bug.");
         let mut map: BTreeMap<_, _> = snapshot
             .dates_to_eras

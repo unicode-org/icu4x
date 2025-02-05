@@ -25,7 +25,7 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ScriptDisplayNamesV1::try_from(data).map_err(
+            payload: DataPayload::from_owned(ScriptDisplayNames::try_from(data).map_err(
                 |e| DataError::custom("data for ScriptDisplayNames").with_display_context(&e),
             )?),
         })
@@ -57,7 +57,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {

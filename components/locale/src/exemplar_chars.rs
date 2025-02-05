@@ -38,7 +38,7 @@ use icu_provider::{marker::ErasedMarker, prelude::*};
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
 pub struct ExemplarCharacters {
-    data: DataPayload<ErasedMarker<ExemplarCharactersV1<'static>>>,
+    data: DataPayload<ErasedMarker<ExemplarCharactersData<'static>>>,
 }
 
 impl ExemplarCharacters {
@@ -58,7 +58,7 @@ impl ExemplarCharacters {
 /// [`ExemplarCharacters::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct ExemplarCharactersBorrowed<'a> {
-    data: &'a ExemplarCharactersV1<'a>,
+    data: &'a ExemplarCharactersData<'a>,
 }
 
 impl<'a> Deref for ExemplarCharactersBorrowed<'a> {

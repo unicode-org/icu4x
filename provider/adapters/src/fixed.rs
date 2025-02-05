@@ -24,7 +24,7 @@ use yoke::Yokeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let provider =
-///     FixedProvider::<HelloWorldV1Marker>::from_static(&HelloWorldV1 {
+///     FixedProvider::<HelloWorldV1Marker>::from_static(&HelloWorld {
 ///         message: Cow::Borrowed("custom hello world"),
 ///     });
 ///

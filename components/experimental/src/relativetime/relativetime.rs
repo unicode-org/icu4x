@@ -120,7 +120,7 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// ```
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternDataV1<'static>>>,
+    pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternData<'static>>>,
     pub(crate) options: RelativeTimeFormatterOptions,
     pub(crate) fixed_decimal_format: FixedDecimalFormatter,
 }

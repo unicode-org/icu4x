@@ -13,7 +13,7 @@ use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
     provider::names::{
-        Bcp47ToIanaMapV1, Bcp47ToIanaMapV1Marker, IanaToBcp47MapV3, IanaToBcp47MapV3Marker,
+        Bcp47ToIanaMap, Bcp47ToIanaMapV1Marker, IanaToBcp47Map, IanaToBcp47MapV3Marker,
         NON_REGION_CITY_PREFIX,
     },
     TimeZoneBcp47Id,
@@ -165,7 +165,7 @@ impl AsRef<TimeZoneIdMapper> for TimeZoneIdMapper {
 /// [`TimeZoneIdMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
 pub struct TimeZoneIdMapperBorrowed<'a> {
-    data: &'a IanaToBcp47MapV3<'a>,
+    data: &'a IanaToBcp47Map<'a>,
     checksum: u64,
 }
 
@@ -673,7 +673,7 @@ where
 #[derive(Debug, Copy, Clone)]
 pub struct TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     inner: TimeZoneIdMapperBorrowed<'a>,
-    data: &'a Bcp47ToIanaMapV1<'a>,
+    data: &'a Bcp47ToIanaMap<'a>,
 }
 
 #[cfg(feature = "compiled_data")]

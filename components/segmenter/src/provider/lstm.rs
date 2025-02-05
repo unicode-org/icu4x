@@ -366,7 +366,7 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[non_exhaustive]
-pub enum LstmDataV1<'data> {
+pub enum LstmData<'data> {
     /// The data as matrices of zerovec f32 values.
     Float32(#[cfg_attr(feature = "serde", serde(borrow))] LstmDataFloat32<'data>),
     // new variants should go BELOW existing ones

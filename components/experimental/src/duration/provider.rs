@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 
 /// A struct containing digital duration data (durationUnit-type-* patterns).
-pub struct DigitalDurationDataV1<'data> {
+pub struct DigitalDurationData<'data> {
     /// The separator between the hour, minute, and second fields.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub separator: Cow<str, 'data>,

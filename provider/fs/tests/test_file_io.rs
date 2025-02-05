@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::langid;
-use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
+use icu_provider::hello_world::{HelloWorldProvider, HelloWorld, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
@@ -68,7 +68,7 @@ fn test_errors() {
 
         struct WrongV1Marker;
         impl DynamicDataMarker for WrongV1Marker {
-            type DataStruct = HelloWorldV1<'static>;
+            type DataStruct = HelloWorld<'static>;
         }
         impl DataMarker for WrongV1Marker {
             const INFO: DataMarkerInfo =

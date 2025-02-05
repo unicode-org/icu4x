@@ -46,7 +46,7 @@ macro_rules! expand {
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(
-                            PropertyCodePointSetV1::InversionList(inv_list),
+                            PropertyCodePointSet::InversionList(inv_list),
                         ),
                     })
                 }

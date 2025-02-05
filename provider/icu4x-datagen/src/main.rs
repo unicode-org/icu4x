@@ -478,7 +478,7 @@ fn main() -> eyre::Result<()> {
         }
 
         #[cfg(not(any(feature = "provider", feature = "blob_input")))]
-        () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
+        () => eyre::bail!("Only the `HelloWorld marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
     let locale_families = match preprocessed_locales {

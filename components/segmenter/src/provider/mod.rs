@@ -87,7 +87,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleBreakDataV2<'data> {
+pub struct RuleBreakData<'data> {
     /// Property table.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table: CodePointTrie<'data, u8>,
@@ -141,7 +141,7 @@ pub struct RuleBreakDataV2<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct UCharDictionaryBreakDataV1<'data> {
+pub struct UCharDictionaryBreakData<'data> {
     /// Dictionary data of char16trie.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie_data: ZeroVec<'data, u16>,
@@ -150,7 +150,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 pub(crate) struct UCharDictionaryBreakDataV1Marker;
 
 impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
-    type DataStruct = UCharDictionaryBreakDataV1<'static>;
+    type DataStruct = UCharDictionaryBreakData<'static>;
 }
 
 /// codepoint trie data that the difference by specific locale
@@ -165,7 +165,7 @@ impl DynamicDataMarker for UCharDictionaryBreakDataV1Marker {
     databake(path = icu_segmenter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleBreakDataOverrideV1<'data> {
+pub struct RuleBreakDataOverride<'data> {
     /// The difference of property table for special locale.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table_override: CodePointTrie<'data, u8>,

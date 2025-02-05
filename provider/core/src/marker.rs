@@ -129,7 +129,7 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
 ///
 /// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
-/// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+/// let result = DataProvider::<NeverMarker<HelloWorld<'static>>>::load(
 ///     &buffer_provider.as_deserializing(),
 ///     DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
@@ -178,7 +178,7 @@ where
 ///
 /// icu_provider::marker::impl_data_provider_never_marker!(MyProvider);
 ///
-/// let result = DataProvider::<NeverMarker<HelloWorldV1<'static>>>::load(
+/// let result = DataProvider::<NeverMarker<HelloWorld<'static>>>::load(
 ///     &MyProvider,
 ///     DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("und").into()),

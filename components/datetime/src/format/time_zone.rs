@@ -15,7 +15,7 @@ use icu_timezone::provider::EPOCH;
 use icu_timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
-impl crate::provider::time_zones::MetazonePeriodV1<'_> {
+impl crate::provider::time_zones::MetazonePeriod<'_> {
     fn resolve(
         &self,
         time_zone_id: TimeZoneBcp47Id,

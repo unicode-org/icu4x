@@ -18,7 +18,7 @@ impl DataProvider<DecimalDigitsV1Marker> for SourceDataProvider {
             panic!("Found empty numbering system")
         }
 
-        let result = DecimalDigitsV1 {
+        let result = DecimalDigits {
             digits: self.get_digits_for_numbering_system(nsname)?,
         };
 

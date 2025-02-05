@@ -4,7 +4,7 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::data::MappingKind;
-use crate::provider::CaseMapV1;
+use crate::provider::CaseMap;
 use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
 use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
@@ -181,7 +181,7 @@ impl CaseMapper {
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-        char_is_lead: impl Fn(&CaseMapV1, char) -> bool,
+        char_is_lead: impl Fn(&CaseMap, char) -> bool,
     ) -> StringAndWriteable<'a, FullCaseWriteable<'a, true>> {
         let data = self.data.get();
         let (head, rest) = match options.leading_adjustment {

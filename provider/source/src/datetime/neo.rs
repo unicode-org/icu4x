@@ -199,7 +199,7 @@ fn weekday_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearNamesV1<'static>, DataError> {
+) -> Result<LinearNames<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
     let days = [
@@ -212,7 +212,7 @@ fn weekday_convert(
         &*day_symbols.sat,
     ];
 
-    Ok(LinearNamesV1 {
+    Ok(LinearNames {
         names: (&days).into(),
     })
 }
@@ -224,7 +224,7 @@ fn dayperiods_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearNamesV1<'static>, DataError> {
+) -> Result<LinearNames<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -239,7 +239,7 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearNamesV1 {
+    Ok(LinearNames {
         names: (&periods).into(),
     })
 }
@@ -250,7 +250,7 @@ fn eras_convert(
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
-) -> Result<YearNamesV1<'static>, DataError> {
+) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
@@ -342,7 +342,7 @@ fn eras_convert(
         let values: Vec<&str> = out_eras.values().copied().collect();
         let kv = (keys, values);
         let cow = VarZeroCow::from_encodeable(&kv);
-        Ok(YearNamesV1::VariableEras(cow))
+        Ok(YearNames::VariableEras(cow))
     } else {
         let mut out_eras: Vec<&str> = Vec::new();
         for (index, (cldr, _code)) in map.enumerate() {
@@ -359,7 +359,7 @@ fn eras_convert(
             }
         }
 
-        Ok(YearNamesV1::FixedEras((&out_eras).into()))
+        Ok(YearNames::FixedEras((&out_eras).into()))
     }
 }
 fn years_convert(
@@ -369,7 +369,7 @@ fn years_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<YearNamesV1<'static>, DataError> {
+) -> Result<YearNames<'static>, DataError> {
     assert_eq!(
         context,
         Context::Format,
@@ -391,7 +391,7 @@ fn years_convert(
             }
             &**value
         }).collect();
-        Ok(YearNamesV1::Cyclic((&years).into()))
+        Ok(YearNames::Cyclic((&years).into()))
     } else {
         panic!(
             "Calendar {calendar} in locale {locale} has neither eras nor cyclicNameSets for years"
@@ -431,7 +431,7 @@ fn months_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<MonthNamesV1<'static>, DataError> {
+) -> Result<MonthNames<'static>, DataError> {
     if length == Length::Numeric {
         assert_eq!(
             context,
@@ -442,7 +442,7 @@ fn months_convert(
             panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
-        return Ok(MonthNamesV1::LeapNumeric(Cow::Owned(
+        return Ok(MonthNames::LeapNumeric(Cow::Owned(
             pattern.leap.0.to_owned(),
         )));
     }
@@ -487,7 +487,7 @@ fn months_convert(
 
             symbols[index] = (&**v).into();
         }
-        Ok(MonthNamesV1::LeapLinear((&symbols).into()))
+        Ok(MonthNames::LeapLinear((&symbols).into()))
     } else {
         for (k, v) in months.0.iter() {
             let index: usize = k
@@ -536,9 +536,9 @@ fn months_convert(
                     .into_owned();
                 symbols[nonleap + i] = replaced.into();
             }
-            Ok(MonthNamesV1::LeapLinear((&symbols).into()))
+            Ok(MonthNames::LeapLinear((&symbols).into()))
         } else {
-            Ok(MonthNamesV1::Linear((&symbols).into()))
+            Ok(MonthNames::Linear((&symbols).into()))
         }
     }
 }
@@ -595,7 +595,7 @@ fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     glue_type: GlueType,
-) -> Result<GluePatternV1<'static>, DataError> {
+) -> Result<GluePattern<'static>, DataError> {
     let mut pattern_anchor = None;
     let pattern = match glue_type {
         GlueType::DateTime => data.datetime_formats.get_pattern(length).get_pattern(),
@@ -621,7 +621,7 @@ fn datetimepattern_convert(
     };
 
     let pattern = pattern.parse().expect("failed to parse pattern");
-    Ok(GluePatternV1 { pattern })
+    Ok(GluePattern { pattern })
 }
 
 macro_rules! impl_symbols_datagen {

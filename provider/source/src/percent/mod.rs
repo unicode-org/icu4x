@@ -49,7 +49,7 @@ impl IterableDataProviderCached<PercentEssentialsV1Marker> for SourceDataProvide
 
 fn extract_percent_essentials<'data>(
     numbers_resource: &cldr_serde::numbers::Resource,
-) -> Result<PercentEssentialsV1<'data>, DataError> {
+) -> Result<PercentEssentials<'data>, DataError> {
     // TODO(#3838): these patterns might be numbering system dependent.
     let percent_patterns = &&numbers_resource
         .main
@@ -89,7 +89,7 @@ fn extract_percent_essentials<'data>(
         None => Cow::Owned(String::from("-") + &standard_pattern),
     };
 
-    Ok(PercentEssentialsV1 {
+    Ok(PercentEssentials {
         unsigned_pattern: create_unsigned_pattern(unsigned_pattern, &localized_percent_sign)?,
         signed_pattern: create_signed_pattern(&signed_pattern, &localized_percent_sign)?,
         approximately_sign: localized_approximately_sign.into(),

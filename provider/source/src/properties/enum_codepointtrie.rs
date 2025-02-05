@@ -49,7 +49,7 @@ impl SourceDataProvider {
 fn get_prop_values_map<F>(
     values: &[super::uprops_serde::PropertyValue],
     transform_u32: F,
-) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError>
+) -> Result<PropertyValueNameToEnumMap<'static>, DataError>
 where
     F: Fn(u32) -> Result<u16, DataError>,
 {
@@ -64,7 +64,7 @@ where
             map.insert(alias.as_bytes(), discr);
         }
     }
-    Ok(PropertyValueNameToEnumMapV1 {
+    Ok(PropertyValueNameToEnumMap {
         map: ZeroTrieSimpleAscii::from_iter(map).convert_store(),
     })
 }
@@ -144,14 +144,14 @@ fn load_values_to_names_sparse<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
     let map = map.into_iter().collect();
-    let data_struct = PropertyEnumToValueNameSparseMapV1 { map };
+    let data_struct = PropertyEnumToValueNameSparseMap { map };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -165,7 +165,7 @@ fn load_values_to_names_linear<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -173,7 +173,7 @@ where
     let map = load_values_to_names(data, is_short)?;
     let vec = map_to_vec(&map, prop_name)?;
     let varzerovec = (&vec).into();
-    let data_struct = PropertyEnumToValueNameLinearMapV1 { map: varzerovec };
+    let data_struct = PropertyEnumToValueNameLinearMap { map: varzerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -187,7 +187,7 @@ fn load_values_to_names_linear4<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -207,7 +207,7 @@ where
 
     let vec = vec.map_err(|_| DataError::custom("Found invalid script tag"))?;
     let zerovec = vec.into_iter().map(NichedOption).collect();
-    let data_struct = PropertyScriptToIcuScriptMapV1 { map: zerovec };
+    let data_struct = PropertyScriptToIcuScriptMap { map: zerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -234,7 +234,7 @@ macro_rules! expand {
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
                     })?;
-                    let data_struct = PropertyCodePointMapV1::CodePointTrie(code_point_trie);
+                    let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(data_struct),

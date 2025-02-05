@@ -16,7 +16,7 @@ macro_rules! __impl_joining_type_name_to_value_v2_marker {
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::JoiningTypeNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC8CDJLNRTU\x01\x0E\x1A'2@L\x81\x82ual_Joining\x82oin_Causing\x81\x83eft_Joining\x83on_Joining\x80\x84ight_Joining\x84\x85ransparent\x85\x80") } } };
+            pub const SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER: &'static <icu::properties::provider::JoiningTypeNameToValueV2Marker as icu_provider::DynamicDataMarker>::DataStruct = &icu::properties::provider::names::PropertyValueNameToEnumMap { map: zerotrie::ZeroTrieSimpleAscii { store: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC8CDJLNRTU\x01\x0E\x1A'2@L\x81\x82ual_Joining\x82oin_Causing\x81\x83eft_Joining\x83on_Joining\x80\x84ight_Joining\x84\x85ransparent\x85\x80") } } };
         }
         #[clippy::msrv = "1.81"]
         impl icu_provider::DataProvider<icu::properties::provider::JoiningTypeNameToValueV2Marker> for $provider {

@@ -23,7 +23,7 @@ impl DataProvider<AliasesV2Marker> for SourceDataProvider {
             .read_and_parse("supplemental/aliases.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(AliasesV2::from(data)),
+            payload: DataPayload::from_owned(Aliases::from(data)),
         })
     }
 }
@@ -57,7 +57,7 @@ fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     )
 }
 
-impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
+impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
     // Step 1. Load the rules from aliases.json
     fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known

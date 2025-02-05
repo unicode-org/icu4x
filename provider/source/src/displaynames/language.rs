@@ -26,7 +26,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LanguageDisplayNamesV1::from(data)),
+            payload: DataPayload::from_owned(LanguageDisplayNames::from(data)),
         })
     }
 }
@@ -44,7 +44,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocaleDisplayNamesV1::from(data)),
+            payload: DataPayload::from_owned(LocaleDisplayNames::from(data)),
         })
     }
 }
@@ -96,7 +96,7 @@ const ALT_LONG_SUBSTRING: &str = "-alt-long";
 /// Substring used to denote menu display names data variants for a given language. For example: "az-alt-menu".
 const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
-impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNamesV1<'static> {
+impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
@@ -145,7 +145,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
     }
 }
 
-impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNamesV1<'static> {
+impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<'static> {
     fn from(other: &cldr_serde::displaynames::language::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();

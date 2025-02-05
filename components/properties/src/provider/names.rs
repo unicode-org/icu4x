@@ -65,7 +65,7 @@ use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PropertyValueNameToEnumMapV1<'data> {
+pub struct PropertyValueNameToEnumMap<'data> {
     /// A map from names to their value discriminant
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
@@ -96,7 +96,7 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameSparseMapV1<'data> {
+pub struct PropertyEnumToValueNameSparseMap<'data> {
     /// A map from the value discriminant to the names
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroMap<'data, u16, str>,
@@ -222,7 +222,7 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameLinearMapV1<'data> {
+pub struct PropertyEnumToValueNameLinearMap<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -247,7 +247,7 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyScriptToIcuScriptMapV1<'data> {
+pub struct PropertyScriptToIcuScriptMap<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
     #[cfg_attr(feature = "serde", serde(borrow))]

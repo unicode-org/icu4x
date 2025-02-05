@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use std::{borrow::Cow, collections::HashSet};
 
 #[cfg(feature = "experimental")]
-use icu::experimental::duration::provider::{DigitalDurationDataV1, DigitalDurationDataV1Marker};
+use icu::experimental::duration::provider::{DigitalDurationData, DigitalDurationDataV1Marker};
 #[cfg(feature = "experimental")]
 use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 
@@ -86,7 +86,7 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
             hms_sec_pad,
         ) = self.load_duration_parts_internal(req)?;
 
-        let result = DigitalDurationDataV1 {
+        let result = DigitalDurationData {
             separator: Cow::Owned(hm_sep.to_string()),
             hms_padding: HmsPadding {
                 h: hms_hour_pad,

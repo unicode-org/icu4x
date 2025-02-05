@@ -17,7 +17,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
-/// [`IanaToBcp47MapV3`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
+/// [`IanaToBcp47Map`]'s trie cannot handle differently-cased prefixes, like `Mexico/BajaSur`` and `MET`.
 ///
 /// Therefore, any ID that is not of the shape `{region}/{city}` gets prefixed with this character
 /// inside the trie.
@@ -30,7 +30,7 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 ///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
 ///
-/// This markers uses a checksum to ensure consistency with [`Bcp47ToIanaMapV1`].
+/// This markers uses a checksum to ensure consistency with [`Bcp47ToIanaMap`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -47,7 +47,7 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct IanaToBcp47MapV3<'data> {
+pub struct IanaToBcp47Map<'data> {
     /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
     /// identifiers along with a canonical flag. The IANA identifiers are normal-case.
     ///
@@ -71,7 +71,7 @@ pub struct IanaToBcp47MapV3<'data> {
 ///
 /// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
 ///
-/// This markers uses a checksum to ensure consistency with [`IanaToBcp47MapV3`].
+/// This markers uses a checksum to ensure consistency with [`IanaToBcp47Map`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -89,9 +89,9 @@ pub struct IanaToBcp47MapV3<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct Bcp47ToIanaMapV1<'data> {
+pub struct Bcp47ToIanaMap<'data> {
     /// The IANA time zone identifier corresponding to the BCP-47 ID in
-    /// [`IanaToBcp47MapV3::bcp47_ids`].
+    /// [`IanaToBcp47Map::bcp47_ids`].
     ///
     /// Since there can be more than one IANA identifier for a particular
     /// BCP-47 identifier, this list contains only the current canonical

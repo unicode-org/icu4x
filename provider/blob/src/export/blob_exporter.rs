@@ -191,7 +191,7 @@ impl BlobExporter<'_> {
             if let Ok(locales_vzv) =
                 VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
             {
-                let blob = BlobSchema::V003(BlobSchemaV3 {
+                let blob = BlobSchema::V003(BlobSchema {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
@@ -201,11 +201,11 @@ impl BlobExporter<'_> {
                 let output = postcard::to_allocvec(&blob)?;
                 self.sink.write_all(&output)?;
             } else {
-                log::info!("Upgrading to BlobSchemaV3 (bigger)...");
+                log::info!("Upgrading to BlobSchema (bigger)...");
                 let locales_vzv =
                     VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
                         .expect("Locales vector does not fit in Index32 buffer!");
-                let blob = BlobSchema::V003Bigger(BlobSchemaV3 {
+                let blob = BlobSchema::V003Bigger(BlobSchema {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,

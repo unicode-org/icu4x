@@ -138,7 +138,7 @@ pub const EPOCH: RataDie = RataDie::new(719163);
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct ZoneOffsetPeriodV1<'data>(
+pub struct ZoneOffsetPeriod<'data>(
     /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
     /// the number of minutes since the local [`EPOCH`]. It represents when the offsets ended to be used.
     ///

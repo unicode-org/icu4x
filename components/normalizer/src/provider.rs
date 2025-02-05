@@ -77,7 +77,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecompositionDataV2<'data> {
+pub struct DecompositionData<'data> {
     /// Trie for decomposition.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
@@ -107,7 +107,7 @@ pub struct DecompositionDataV2<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecompositionTablesV1<'data> {
+pub struct DecompositionTables<'data> {
     /// Decompositions that are fully within the BMP
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars16: ZeroVec<'data, u16>,
@@ -129,7 +129,7 @@ pub struct DecompositionTablesV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CanonicalCompositionsV1<'data> {
+pub struct CanonicalCompositions<'data> {
     /// Trie keys are two-`char` strings with the second
     /// character coming first. The value, if any, is the
     /// (non-Hangul) canonical composition.
@@ -138,7 +138,7 @@ pub struct CanonicalCompositionsV1<'data> {
 }
 
 /// Non-recursive canonical decompositions that differ from
-/// `DecompositionDataV1`.
+/// `DecompositionData`.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -154,7 +154,7 @@ pub struct CanonicalCompositionsV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct NonRecursiveDecompositionSupplementV1<'data> {
+pub struct NonRecursiveDecompositionSupplement<'data> {
     /// Trie for the supplementary non-recursive decompositions
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,

@@ -30,7 +30,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for SourceDataProvider 
             &numbers.default_numbering_system
         };
 
-        let result = CompactDecimalPatternDataV1::try_from(
+        let result = CompactDecimalPatternData::try_from(
             &numbers
                 .numsys_data
                 .formats
@@ -75,7 +75,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result = CompactDecimalPatternDataV1::try_from(
+        let result = CompactDecimalPatternData::try_from(
             &numbers
                 .numsys_data
                 .formats

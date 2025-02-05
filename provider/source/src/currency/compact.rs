@@ -47,7 +47,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             None => {
                 return Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(ShortCurrencyCompactV1 {
+                    payload: DataPayload::from_owned(ShortCurrencyCompact {
                         compact_patterns: Default::default(),
                     }),
                 })
@@ -117,7 +117,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ShortCurrencyCompactV1 { compact_patterns }),
+            payload: DataPayload::from_owned(ShortCurrencyCompact { compact_patterns }),
         })
     }
 }

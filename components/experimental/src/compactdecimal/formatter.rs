@@ -6,7 +6,7 @@ use crate::compactdecimal::{
     format::FormattedCompactDecimal,
     options::CompactDecimalFormatterOptions,
     provider::{
-        CompactDecimalPatternDataV1, Count, LongCompactDecimalFormatDataV1Marker, PatternULE,
+        CompactDecimalPatternData, Count, LongCompactDecimalFormatDataV1Marker, PatternULE,
         ShortCompactDecimalFormatDataV1Marker,
     },
     ExponentError,
@@ -81,7 +81,7 @@ prefs_convert!(CompactDecimalFormatterPreferences, PluralRulesPreferences);
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) fixed_decimal_formatter: FixedDecimalFormatter,
-    pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternDataV1<'static>>>,
+    pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternData<'static>>>,
 }
 
 impl CompactDecimalFormatter {

@@ -35,9 +35,9 @@ pub use crate::provider::Baked;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::trie))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct UnitsTrieV1<'data> {
-    // TODO: remove this field from units/provider::UnitsInfoV1 once the `MeasureUnit` is fully used in the measurement units.
-    /// Maps from unit name (e.g. foot or meter) to its unit id. this id can be used to retrieve the conversion information from the `UnitsInfoV1`.
+pub struct UnitsTrie<'data> {
+    // TODO: remove this field from units/provider::UnitsInfo once the `MeasureUnit` is fully used in the measurement units.
+    /// Maps from unit name (e.g. foot or meter) to its unit id. this id can be used to retrieve the conversion information from the `UnitsInfo`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }

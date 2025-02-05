@@ -58,7 +58,7 @@ const _: () = {
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1Marker::INFO, CaseMapV1Marker::INFO];
 
-pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
+pub use self::unfold::{CaseMapUnfold, CaseMapUnfoldV1Marker};
 
 /// This type contains all of the casemapping data
 ///
@@ -78,7 +78,7 @@ pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-pub struct CaseMapV1<'data> {
+pub struct CaseMap<'data> {
     /// Case mapping data
     pub trie: CodePointTrie<'data, CaseMapData>,
     /// Exceptions to the case mapping data
@@ -86,7 +86,7 @@ pub struct CaseMapV1<'data> {
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
+impl<'de> serde::Deserialize<'de> for CaseMap<'de> {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         #[derive(serde::Deserialize)]
         pub struct Raw<'data> {
@@ -103,8 +103,8 @@ impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
     }
 }
 
-impl CaseMapV1<'_> {
-    /// Creates a new CaseMapV1 using data exported by the
+impl CaseMap<'_> {
+    /// Creates a new CaseMap using data exported by the
     // `icuexportdata` tool in ICU4C. Validates that the data is
     // consistent.
     #[cfg(feature = "datagen")]

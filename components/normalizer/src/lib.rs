@@ -79,10 +79,10 @@ pub mod properties;
 pub mod provider;
 pub mod uts46;
 
-use crate::provider::CanonicalCompositionsV1;
+use crate::provider::CanonicalCompositions;
 use crate::provider::CanonicalDecompositionDataV2Marker;
 use crate::provider::CompatibilityDecompositionDataV2Marker;
-use crate::provider::DecompositionDataV2;
+use crate::provider::DecompositionData;
 use crate::provider::Uts46DecompositionDataV2Marker;
 use alloc::borrow::Cow;
 use alloc::string::String;
@@ -97,7 +97,7 @@ use icu_provider::prelude::*;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
 use provider::CompatibilityDecompositionTablesV1Marker;
-use provider::DecompositionTablesV1;
+use provider::DecompositionTables;
 use smallvec::SmallVec;
 #[cfg(feature = "utf16_iter")]
 use utf16_iter::Utf16CharsEx;
@@ -526,8 +526,8 @@ where
     #[doc(hidden)] // used in collator
     pub fn new(
         delegate: I,
-        decompositions: &'data DecompositionDataV2,
-        tables: &'data DecompositionTablesV1,
+        decompositions: &'data DecompositionData,
+        tables: &'data DecompositionTables,
     ) -> Self {
         Self::new_with_supplements(
             delegate,
@@ -547,9 +547,9 @@ where
     /// there's a good reason to use this constructor directly.
     fn new_with_supplements(
         delegate: I,
-        decompositions: &'data DecompositionDataV2,
-        tables: &'data DecompositionTablesV1,
-        supplementary_tables: Option<&'data DecompositionTablesV1>,
+        decompositions: &'data DecompositionData,
+        tables: &'data DecompositionTables,
+        supplementary_tables: Option<&'data DecompositionTables>,
         decomposition_passthrough_bound: u8,
         ignorable_behavior: IgnorableBehavior,
     ) -> Self {
@@ -1590,9 +1590,9 @@ macro_rules! normalizer_methods {
 /// Borrowed version of a normalizer for performing decomposing normalization.
 #[derive(Debug)]
 pub struct DecomposingNormalizerBorrowed<'a> {
-    decompositions: &'a DecompositionDataV2<'a>,
-    tables: &'a DecompositionTablesV1<'a>,
-    supplementary_tables: Option<&'a DecompositionTablesV1<'a>>,
+    decompositions: &'a DecompositionData<'a>,
+    tables: &'a DecompositionTables<'a>,
+    supplementary_tables: Option<&'a DecompositionTables<'a>>,
     decomposition_passthrough_bound: u8, // never above 0xC0
     composition_passthrough_bound: u16,  // never above 0x0300
 }
@@ -2273,7 +2273,7 @@ impl DecomposingNormalizer {
 #[derive(Debug)]
 pub struct ComposingNormalizerBorrowed<'a> {
     decomposing_normalizer: DecomposingNormalizerBorrowed<'a>,
-    canonical_compositions: &'a CanonicalCompositionsV1<'a>,
+    canonical_compositions: &'a CanonicalCompositions<'a>,
 }
 
 impl ComposingNormalizerBorrowed<'static> {

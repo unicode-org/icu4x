@@ -51,7 +51,7 @@ impl DynamicDataMarker for BufferMarker {
 ///
 /// // Deserializing manually
 /// assert_eq!(
-///     serde_json::from_slice::<HelloWorldV1>(
+///     serde_json::from_slice::<HelloWorld>(
 ///         buffer_provider
 ///             .load_data(
 ///                 HelloWorldV1Marker::INFO,
@@ -67,7 +67,7 @@ impl DynamicDataMarker for BufferMarker {
 ///             .get()
 ///     )
 ///     .expect("should deserialize"),
-///     HelloWorldV1 {
+///     HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );
@@ -85,7 +85,7 @@ impl DynamicDataMarker for BufferMarker {
 ///         .expect("load should succeed")
 ///         .payload
 ///         .get(),
-///     &HelloWorldV1 {
+///     &HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );

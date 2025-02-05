@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use crate::SourceDataProvider;
-use icu::casemap::provider::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker, CaseMapV1, CaseMapV1Marker};
+use icu::casemap::provider::{CaseMapUnfold, CaseMapUnfoldV1Marker, CaseMap, CaseMapV1Marker};
 use icu::collections::codepointtrie::toml::CodePointDataSlice;
 use icu::collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
@@ -40,7 +40,7 @@ impl DataProvider<CaseMapV1Marker> for SourceDataProvider {
         };
         let exceptions = &toml.exceptions.exceptions;
 
-        let case_mapping = CaseMapV1::try_from_icu(trie_header, trie_index, trie_data, exceptions)?;
+        let case_mapping = CaseMap::try_from_icu(trie_header, trie_index, trie_data, exceptions)?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(case_mapping),
@@ -67,7 +67,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for SourceDataProvider {
 
         let unfold = &toml.unfold.unfold;
 
-        let unfold = CaseMapUnfoldV1::try_from_icu(unfold)?;
+        let unfold = CaseMapUnfold::try_from_icu(unfold)?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(unfold),

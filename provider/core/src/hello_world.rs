@@ -27,26 +27,26 @@ use zerofrom::*;
 )]
 #[cfg_attr(feature = "export", derive(databake::Bake))]
 #[cfg_attr(feature = "export", databake(path = icu_provider::hello_world))]
-pub struct HelloWorldV1<'data> {
+pub struct HelloWorld<'data> {
     /// The translation of "Hello World".
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub message: Cow<'data, str>,
 }
 
-impl Default for HelloWorldV1<'_> {
+impl Default for HelloWorld<'_> {
     fn default() -> Self {
-        HelloWorldV1 {
+        HelloWorld {
             message: Cow::Borrowed("(und) Hello World"),
         }
     }
 }
 
-/// Marker type for [`HelloWorldV1`].
+/// Marker type for [`HelloWorld`].
 #[derive(Debug)]
 pub struct HelloWorldV1Marker;
 
 impl DynamicDataMarker for HelloWorldV1Marker {
-    type DataStruct = HelloWorldV1<'static>;
+    type DataStruct = HelloWorld<'static>;
 }
 
 impl DataMarker for HelloWorldV1Marker {
@@ -176,7 +176,7 @@ impl DryDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 impl DataPayload<HelloWorldV1Marker> {
     /// Make a [`DataPayload`]`<`[`HelloWorldV1Marker`]`>` from a static string slice.
     pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1Marker> {
-        DataPayload::from_owned(HelloWorldV1 {
+        DataPayload::from_owned(HelloWorld {
             message: Cow::Borrowed(s),
         })
     }
@@ -226,7 +226,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
                 buffer_format: Some(icu_provider::buf::BufferFormat::Json),
                 ..result.metadata
             },
-            #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
+            #[allow(clippy::unwrap_used)] // HelloWorld::serialize is infallible
             payload: DataPayload::from_owned_buffer(
                 serde_json::to_string(result.payload.get())
                     .unwrap()
@@ -290,7 +290,7 @@ pub struct HelloWorldFormatter {
 /// For an example, see [`HelloWorldFormatter`].
 #[derive(Debug)]
 pub struct FormattedHelloWorld<'l> {
-    data: &'l HelloWorldV1<'l>,
+    data: &'l HelloWorld<'l>,
 }
 
 impl HelloWorldFormatter {

@@ -57,8 +57,8 @@ exemplar_chars_impls!(ExemplarCharactersPunctuationV1Marker, punctuation);
 exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
 exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
 
-fn string_to_prop_unicodeset(s: &str) -> ExemplarCharactersV1<'static> {
-    ExemplarCharactersV1(CodePointInversionListAndStringList::from_iter(
+fn string_to_prop_unicodeset(s: &str) -> ExemplarCharactersData<'static> {
+    ExemplarCharactersData(CodePointInversionListAndStringList::from_iter(
         parse_exemplar_char_string(s)
             .iter()
             .map(Deref::deref)

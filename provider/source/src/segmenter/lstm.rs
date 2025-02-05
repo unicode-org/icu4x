@@ -7,7 +7,7 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::locale::langid;
 use icu::segmenter::provider::{
-    LstmDataFloat32, LstmDataV1, LstmForWordLineAutoV1Marker, LstmMatrix1, LstmMatrix2,
+    LstmDataFloat32, LstmData, LstmForWordLineAutoV1Marker, LstmMatrix1, LstmMatrix2,
     LstmMatrix3, ModelType,
 };
 use icu_provider::prelude::*;
@@ -68,7 +68,7 @@ struct RawLstmData {
 }
 
 impl RawLstmData {
-    pub(crate) fn try_convert(&self) -> Result<LstmDataV1<'static>, DataError> {
+    pub(crate) fn try_convert(&self) -> Result<LstmData<'static>, DataError> {
         let embedding = self.embedding.to_ndarray2()?;
         let fw_w = self.fw_w.to_ndarray2()?;
         let fw_u = self.fw_u.to_ndarray2()?;
@@ -150,7 +150,7 @@ impl RawLstmData {
             ndarray_to_lstm_matrix1(time_b)?,
         )
         .map_err(|_| DataError::custom("Just checked the shapes"))?;
-        Ok(LstmDataV1::Float32(lstm_data_float32))
+        Ok(LstmData::Float32(lstm_data_float32))
     }
 }
 

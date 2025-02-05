@@ -18,11 +18,11 @@ fn test_basic() {
     check(
         quote!(),
         quote!(
-            pub struct FooV1;
+            pub struct Foo;
         ),
         quote!(
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
-            pub struct FooV1;
+            pub struct Foo;
         ),
     );
 }
@@ -33,16 +33,16 @@ fn test_dyn_data_marker() {
     check(
         quote!(FooV1Marker),
         quote!(
-            pub struct FooV1;
+            pub struct Foo;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]"]
+            #[doc = "Marker type for [`Foo`]"]
             pub struct FooV1Marker;
             impl icu_provider::DynamicDataMarker for FooV1Marker {
-                type DataStruct = FooV1;
+                type DataStruct = Foo;
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
-            pub struct FooV1;
+            pub struct Foo;
         ),
     );
 }
@@ -53,13 +53,13 @@ fn test_data_marker() {
     check(
         quote!(BarV1Marker = "demo/bar@1"),
         quote!(
-            pub struct FooV1;
+            pub struct Foo;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
+            #[doc = "Marker type for [`Foo`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             pub struct BarV1Marker;
             impl icu_provider::DynamicDataMarker for BarV1Marker {
-                type DataStruct = FooV1;
+                type DataStruct = Foo;
             }
             impl icu_provider::DataMarker for BarV1Marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -71,7 +71,7 @@ fn test_data_marker() {
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
-            pub struct FooV1;
+            pub struct Foo;
         ),
     );
 }
@@ -86,18 +86,18 @@ fn test_multi_named_keyed_data_marker() {
             BazV1Marker = "demo/baz@1",
         ],
         quote!(
-            pub struct FooV1<'data>;
+            pub struct Foo<'data>;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]"]
+            #[doc = "Marker type for [`Foo`]"]
             pub struct FooV1Marker;
             impl icu_provider::DynamicDataMarker for FooV1Marker {
-                type DataStruct = FooV1<'static>;
+                type DataStruct = Foo<'static>;
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
+            #[doc = "Marker type for [`Foo`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)"]
             pub struct BarV1Marker;
             impl icu_provider::DynamicDataMarker for BarV1Marker {
-                type DataStruct = FooV1<'static>;
+                type DataStruct = Foo<'static>;
             }
             impl icu_provider::DataMarker for BarV1Marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -108,10 +108,10 @@ fn test_multi_named_keyed_data_marker() {
                     info
                 };
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)"]
+            #[doc = "Marker type for [`Foo`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)"]
             pub struct BazV1Marker;
             impl icu_provider::DynamicDataMarker for BazV1Marker {
-                type DataStruct = FooV1<'static>;
+                type DataStruct = Foo<'static>;
             }
             impl icu_provider::DataMarker for BazV1Marker {
                 const INFO: icu_provider::DataMarkerInfo =  {
@@ -123,7 +123,7 @@ fn test_multi_named_keyed_data_marker() {
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
-            pub struct FooV1<'data>;
+            pub struct Foo<'data>;
         ),
     );
 }
@@ -143,18 +143,18 @@ fn test_attributes() {
             ),
         ],
         quote!(
-            pub struct FooV1<'data>;
+            pub struct Foo<'data>;
         ),
         quote!(
-            #[doc = "Marker type for [`FooV1`]"]
+            #[doc = "Marker type for [`Foo`]"]
             pub struct FooV1Marker;
             impl icu_provider::DynamicDataMarker for FooV1Marker {
-                type DataStruct = FooV1<'static>;
+                type DataStruct = Foo<'static>;
             }
-            #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: region"]
+            #[doc = "Marker type for [`Foo`]: \"demo/bar@1\"\n\n- Fallback priority: region"]
             pub struct BarV1Marker;
             impl icu_provider::DynamicDataMarker for BarV1Marker {
-                type DataStruct = FooV1<'static>;
+                type DataStruct = Foo<'static>;
             }
             impl icu_provider::DataMarker for BarV1Marker {
                 const INFO: icu_provider::DataMarkerInfo = {
@@ -166,7 +166,7 @@ fn test_attributes() {
                 };
             }
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
-            pub struct FooV1<'data>;
+            pub struct Foo<'data>;
         ),
     );
 }

@@ -167,23 +167,23 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     DateTimeGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     DateZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     TimeZoneGlue {
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     DateTimeZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
 }
 
