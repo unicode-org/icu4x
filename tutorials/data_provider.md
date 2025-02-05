@@ -197,7 +197,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 ```rust
 use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
-use icu::decimal::provider::{DecimalSymbolsV2Marker, DecimalSymbolStrsBuilder};
+use icu::decimal::provider::{DecimalSymbolsV2, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -216,7 +216,7 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
         if req.id.locale.region == Some(region!("CH")) {
-            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2Marker>() {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2>() {
                 decimal_payload.with_mut(|data| {
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'
@@ -276,7 +276,7 @@ use icu_provider_source::SourceDataProvider;
 use std::borrow::Cow;
 use std::collections::BTreeSet;
 
-#[icu_provider::data_struct(marker(CustomMarker, "x/custom@1"))]
+#[icu_provider::data_struct(marker(CustomV1, "x/custom@1"))]
 #[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake)]
 #[databake(path = crate)]
 pub struct Custom<'data> {
@@ -284,8 +284,8 @@ pub struct Custom<'data> {
 };
 
 struct CustomProvider;
-impl DataProvider<CustomMarker> for CustomProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CustomMarker>, DataError> {
+impl DataProvider<CustomV1> for CustomProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CustomV1>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(Custom {
@@ -295,7 +295,7 @@ impl DataProvider<CustomMarker> for CustomProvider {
     }
 }
 
-impl IterableDataProvider<CustomMarker> for CustomProvider {
+impl IterableDataProvider<CustomV1> for CustomProvider {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok([locale!("es"), locale!("ja")]
             .into_iter()
@@ -306,7 +306,7 @@ impl IterableDataProvider<CustomMarker> for CustomProvider {
 }
 
 extern crate alloc;
-icu_provider::export::make_exportable_provider!(CustomProvider, [CustomMarker,]);
+icu_provider::export::make_exportable_provider!(CustomProvider, [CustomV1,]);
 
 let icu4x_source_provider = SourceDataProvider::new_latest_tested();
 let custom_source_provider = CustomProvider;
@@ -318,7 +318,7 @@ ExportDriver::new(
     DeduplicationStrategy::None.into(),
     LocaleFallbacker::try_new_unstable(&icu4x_source_provider).unwrap(),
 )
-.with_markers([CardinalV1::INFO, CustomMarker::INFO])
+.with_markers([CardinalV1::INFO, CustomV1::INFO])
 .export(
     &ForkByMarkerProvider::new(icu4x_source_provider, custom_source_provider),
     BlobExporter::new_with_sink(Box::new(&mut buffer)),
@@ -334,7 +334,7 @@ let req = DataRequest {
 };
 
 assert!(blob_provider.load_data(CardinalV1::INFO, req).is_ok());
-assert!(blob_provider.load_data(CustomMarker::INFO, req).is_ok());
+assert!(blob_provider.load_data(CustomV1::INFO, req).is_ok());
 ```
 
 ## Accessing the Resolved Locale
