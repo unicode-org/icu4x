@@ -20,7 +20,7 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-icu_provider = { workspace = true, features = ["deserialize_postcard_1", "serde"] }
+icu_provider = { workspace = true, features = ["alloc", "deserialize_postcard_1", "serde"] }
 postcard = { workspace = true, features = ["alloc"] }
 serde = { workspace = true, features = ["alloc"] }
 writeable = {workspace = true }
@@ -34,7 +34,7 @@ databake = { path = "../../utils/databake" }
 icu_provider_export = { path = "../../provider/export" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
 icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["macros"] }
+icu_provider = { path = "../../provider/core", features = ["macros", "alloc"] }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 twox-hash = { workspace = true }
 

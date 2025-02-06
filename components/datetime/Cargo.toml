@@ -69,6 +69,7 @@ serde = [
     "icu_decimal/serde",
     "icu_pattern/serde",
     "icu_plurals/serde",
+    "icu_provider/alloc",
     "icu_provider/serde",
     "icu_timezone/serde",
     "litemap?/serde",

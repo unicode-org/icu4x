@@ -94,6 +94,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 pub mod buf;
@@ -101,18 +102,21 @@ pub mod constructors;
 pub mod dynutil;
 #[cfg(feature = "export")]
 pub mod export;
+#[cfg(feature = "alloc")]
 pub mod hello_world;
 
 // TODO: put this in a separate crate
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "serde", feature = "alloc"))]
 #[doc(hidden)]
 pub mod serde_borrow_de_utils;
 
 mod data_provider;
 pub use data_provider::{
     BoundDataProvider, DataProvider, DataProviderWithMarker, DryDataProvider, DynamicDataProvider,
-    DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider,
+    DynamicDryDataProvider,
 };
+#[cfg(feature = "alloc")]
+pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
 
 mod error;
 pub use error::{DataError, DataErrorKind, ResultDataError};
@@ -154,9 +158,10 @@ pub mod prelude {
         data_marker, marker::DataMarkerExt, BoundDataProvider, DataError, DataErrorKind,
         DataLocale, DataMarker, DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider,
         DataRequest, DataRequestMetadata, DataResponse, DataResponseMetadata, DryDataProvider,
-        DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, IterableDataProvider,
-        IterableDynamicDataProvider, ResultDataError,
+        DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, ResultDataError,
     };
+    #[cfg(feature = "alloc")]
+    pub use crate::{IterableDataProvider, IterableDynamicDataProvider};
 
     #[doc(no_inline)]
     pub use icu_locale_core;

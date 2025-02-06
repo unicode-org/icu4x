@@ -2039,6 +2039,7 @@ version = "2.0.0-beta1"
 dependencies = [
  "icu_collections",
  "icu_locale_core",
+ "icu_provider",
  "litemap",
  "potential_utf",
  "tinystr",

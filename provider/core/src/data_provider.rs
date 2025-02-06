@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::{boxed::Box, collections::BTreeSet};
 use core::marker::PhantomData;
 use yoke::Yokeable;
 
@@ -31,7 +30,8 @@ where
     }
 }
 
-impl<M, P> DataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DataProvider<M> for alloc::boxed::Box<P>
 where
     M: DataMarker,
     P: DataProvider<M> + ?Sized,
@@ -42,6 +42,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DataProvider<M> for alloc::rc::Rc<P>
 where
     M: DataMarker,
@@ -54,6 +55,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DataProvider<M> for alloc::sync::Arc<P>
 where
     M: DataMarker,
@@ -89,7 +91,8 @@ where
     }
 }
 
-impl<M, P> DryDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DryDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DataMarker,
     P: DryDataProvider<M> + ?Sized,
@@ -100,6 +103,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DryDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DataMarker,
@@ -112,6 +116,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DryDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DataMarker,
@@ -127,9 +132,10 @@ where
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+#[cfg(feature = "alloc")]
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a set of [`DataIdentifierCow`].
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+    fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError>;
 }
 
 /// A data provider that loads data for a specific data type.
@@ -165,7 +171,8 @@ where
     }
 }
 
-impl<M, P> DynamicDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
@@ -180,6 +187,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DynamicDataMarker,
@@ -196,6 +204,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DynamicDataMarker,
@@ -243,7 +252,8 @@ where
     }
 }
 
-impl<M, P> DynamicDryDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DynamicDryDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: DynamicDryDataProvider<M> + ?Sized,
@@ -258,6 +268,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDryDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DynamicDataMarker,
@@ -274,6 +285,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDryDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DynamicDataMarker,
@@ -293,15 +305,17 @@ where
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+#[cfg(feature = "alloc")]
 pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataMarkerInfo`], returns a set of [`DataIdentifierCow`].
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError>;
 }
 
-impl<M, P> IterableDynamicDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> IterableDynamicDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
@@ -309,7 +323,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
         (**self).iter_ids_for_marker(marker)
     }
 }
@@ -350,7 +364,8 @@ where
     }
 }
 
-impl<M, P> BoundDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> BoundDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
@@ -365,6 +380,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> BoundDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DynamicDataMarker,
@@ -381,6 +397,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> BoundDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DynamicDataMarker,

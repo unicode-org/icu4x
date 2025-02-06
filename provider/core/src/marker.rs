@@ -304,6 +304,7 @@ const fn fxhash_32(bytes: &[u8]) -> u32 {
     hash
 }
 
+#[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for DataMarkerIdHash {
     type Container = zerovec::ZeroVec<'a, DataMarkerIdHash>;
     type Slice = zerovec::ZeroSlice<DataMarkerIdHash>;
