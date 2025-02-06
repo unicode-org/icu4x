@@ -7,15 +7,9 @@ mod langid;
 mod locale;
 
 pub use errors::ParseError;
-pub use langid::{
-    parse_language_identifier, parse_language_identifier_from_iter,
-    parse_language_identifier_with_single_variant,
-    parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter, ParserMode,
-};
+pub use langid::*;
 
-pub use locale::{
-    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
-};
+pub use locale::*;
 
 // Safety-usable invariant: returns a prefix of `slice`
 const fn skip_before_separator(slice: &[u8]) -> &[u8] {

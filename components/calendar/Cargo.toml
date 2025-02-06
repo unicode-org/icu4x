@@ -23,7 +23,7 @@ all-features = true
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-icu_locale_core = { workspace = true }
+icu_locale_core = { workspace = true, features = ["alloc"]}
 ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }

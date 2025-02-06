@@ -11,6 +11,7 @@
 //!
 //! [`Locale`]: crate::Locale
 pub mod errors;
+#[cfg(feature = "alloc")]
 pub mod keywords;
 mod macros;
 #[doc(inline)]

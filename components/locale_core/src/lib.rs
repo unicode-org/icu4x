@@ -65,6 +65,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 #[macro_use]
@@ -80,7 +81,7 @@ mod shortvec;
 pub use data::DataLocale;
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
-pub use parser::errors::ParseError;
+pub use parser::ParseError;
 
 pub mod extensions;
 #[macro_use]

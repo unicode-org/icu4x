@@ -4,8 +4,8 @@
 
 use super::ShortBoxSlice;
 use super::ShortBoxSliceInner;
+#[cfg(feature = "alloc")]
 use super::ShortBoxSliceIntoIter;
-use alloc::vec::Vec;
 use litemap::store::*;
 
 impl<K, V> StoreConstEmpty<K, V> for ShortBoxSlice<(K, V)> {
@@ -34,6 +34,7 @@ impl<K, V> Store<K, V> for ShortBoxSlice<(K, V)> {
         use ShortBoxSliceInner::*;
         match self.0 {
             ZeroOne(ref v) => v.as_ref(),
+            #[cfg(feature = "alloc")]
             Multi(ref v) => v.last(),
         }
         .map(|elt| (&elt.0, &elt.1))
@@ -48,13 +49,14 @@ impl<K, V> Store<K, V> for ShortBoxSlice<(K, V)> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<K: Ord, V> StoreFromIterable<K, V> for ShortBoxSlice<(K, V)> {
     fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let v: Vec<(K, V)> = Vec::lm_sort_from_iter(iter);
-        v.into()
+        alloc::vec::Vec::lm_sort_from_iter(iter).into()
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<K, V> StoreMut<K, V> for ShortBoxSlice<(K, V)> {
     fn lm_with_capacity(_capacity: usize) -> Self {
         ShortBoxSlice::new()
@@ -99,8 +101,10 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortBoxSlice<(K, V)> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<K, V> StoreFromIterator<K, V> for ShortBoxSlice<(K, V)> {}
 
+#[cfg(feature = "alloc")]
 impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for ShortBoxSlice<(K, V)> {
     type KeyValueIterMut = core::iter::Map<
         core::slice::IterMut<'a, (K, V)>,
@@ -114,6 +118,7 @@ impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for ShortBoxSlice<(K, V)> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<K, V> StoreIntoIterator<K, V> for ShortBoxSlice<(K, V)> {
     type KeyValueIntoIter = ShortBoxSliceIntoIter<(K, V)>;
 
