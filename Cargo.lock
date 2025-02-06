@@ -2040,6 +2040,7 @@ dependencies = [
  "icu_collections",
  "icu_locale_core",
  "icu_provider",
+ "icu_provider_baked",
  "litemap",
  "potential_utf",
  "tinystr",
