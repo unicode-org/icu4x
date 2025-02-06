@@ -5,10 +5,15 @@
 use crate::ule::*;
 use crate::varzerovec::VarZeroVecFormat;
 use crate::{VarZeroSlice, VarZeroVec, ZeroSlice, ZeroVec};
+#[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
+#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+#[cfg(feature = "alloc")]
 use alloc::string::String;
+#[cfg(feature = "alloc")]
 use alloc::{vec, vec::Vec};
+#[cfg(feature = "alloc")]
 use core::mem;
 
 /// Allows types to be encoded as VarULEs. This is highly useful for implementing VarULE on
@@ -81,6 +86,7 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
 /// Given an [`EncodeAsVarULE`] type `S`, encode it into a `Box<T>`
 ///
 /// This is primarily useful for generating `Deserialize` impls for VarULE types
+#[cfg(feature = "alloc")]
 pub fn encode_varule_to_box<S: EncodeAsVarULE<T> + ?Sized, T: VarULE + ?Sized>(x: &S) -> Box<T> {
     // zero-fill the vector to avoid uninitialized data UB
     let mut vec: Vec<u8> = vec![0; x.encode_var_ule_len()];
@@ -114,6 +120,7 @@ unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ &'_ T {
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Cow<'_, T>
 where
     T: ToOwned,
@@ -123,24 +130,28 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Box<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[T::as_bytes(self)])
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ Box<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[T::as_bytes(self)])
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl EncodeAsVarULE<str> for String {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[self.as_bytes()])
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl EncodeAsVarULE<str> for &'_ String {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[self.as_bytes()])
@@ -149,6 +160,7 @@ unsafe impl EncodeAsVarULE<str> for &'_ String {
 
 // Note: This impl could technically use `T: AsULE`, but we want users to prefer `ZeroSlice<T>`
 // for cases where T is not a ULE. Therefore, we can use the more efficient `memcpy` impl here.
+#[cfg(feature = "alloc")]
 unsafe impl<T> EncodeAsVarULE<[T]> for Vec<T>
 where
     T: ULE,
@@ -183,6 +195,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl<T> EncodeAsVarULE<ZeroSlice<T>> for Vec<T>
 where
     T: AsULE + 'static,
@@ -244,6 +257,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl<T, E, F> EncodeAsVarULE<VarZeroSlice<T, F>> for Vec<E>
 where
     T: VarULE + ?Sized,

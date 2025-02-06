@@ -13,7 +13,6 @@
 
 use super::*;
 use crate::varzerovec::{Index16, VarZeroVecFormat};
-use alloc::borrow::ToOwned;
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
@@ -160,8 +159,9 @@ macro_rules! tuple_varule {
             }
         }
 
-        impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> ToOwned for $name<$($T,)+ Format> {
-            type Owned = Box<Self>;
+        #[cfg(feature = "alloc")]
+        impl<$($T: VarULE + ?Sized,)+ Format: VarZeroVecFormat> alloc::borrow::ToOwned for $name<$($T,)+ Format> {
+            type Owned = alloc::boxed::Box<Self>;
             fn to_owned(&self) -> Self::Owned {
                 encode_varule_to_box(self)
             }
@@ -200,14 +200,14 @@ macro_rules! tuple_varule {
         }
 
         #[cfg(feature = "serde")]
-        impl<'de, $($T: VarULE + ?Sized,)+ Format> serde::Deserialize<'de> for Box<$name<$($T,)+ Format>>
+        impl<'de, $($T: VarULE + ?Sized,)+ Format> serde::Deserialize<'de> for alloc::boxed::Box<$name<$($T,)+ Format>>
             where
                 // This impl should be present on almost all deserializable VarULE types
-                $( Box<$T>: serde::Deserialize<'de>,)+
+                $( alloc::boxed::Box<$T>: serde::Deserialize<'de>,)+
                 Format: VarZeroVecFormat {
             fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error> where Des: serde::Deserializer<'de> {
                 if deserializer.is_human_readable() {
-                    let this = <( $(Box<$T>),+) as serde::Deserialize>::deserialize(deserializer)?;
+                    let this = <( $(alloc::boxed::Box<$T>),+) as serde::Deserialize>::deserialize(deserializer)?;
                     let this_ref = (
                         $(&*this.$i),+
                     );

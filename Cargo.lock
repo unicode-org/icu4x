@@ -2043,6 +2043,7 @@ dependencies = [
  "yoke",
  "zerofrom",
  "zerotrie",
+ "zerovec",
 ]
 
 [[package]]

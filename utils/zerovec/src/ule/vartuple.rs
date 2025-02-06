@@ -49,8 +49,6 @@
 //! assert_eq!(&employees_vzv.get(1).unwrap().variable, "John Doe");
 //! ```
 
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
 use core::mem::{size_of, transmute_copy};
 use zerofrom::ZeroFrom;
 
@@ -178,12 +176,13 @@ where
     }
 }
 
-impl<A, V> ToOwned for VarTupleULE<A, V>
+#[cfg(feature = "alloc")]
+impl<A, V> alloc::borrow::ToOwned for VarTupleULE<A, V>
 where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
 {
-    type Owned = Box<Self>;
+    type Owned = alloc::boxed::Box<Self>;
     fn to_owned(&self) -> Self::Owned {
         crate::ule::encode_varule_to_box(self)
     }
@@ -250,19 +249,19 @@ where
 }
 
 #[cfg(feature = "serde")]
-impl<'de, A, V> serde::Deserialize<'de> for Box<VarTupleULE<A, V>>
+impl<'de, A, V> serde::Deserialize<'de> for alloc::boxed::Box<VarTupleULE<A, V>>
 where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
     A: serde::Deserialize<'de>,
-    Box<V>: serde::Deserialize<'de>,
+    alloc::boxed::Box<V>: serde::Deserialize<'de>,
 {
     fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
     where
         Des: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            let this = VarTuple::<A, Box<V>>::deserialize(deserializer)?;
+            let this = VarTuple::<A, alloc::boxed::Box<V>>::deserialize(deserializer)?;
             Ok(crate::ule::encode_varule_to_box(&this))
         } else {
             // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a TupleNVarULE instead.

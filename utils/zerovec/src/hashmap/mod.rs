@@ -4,8 +4,8 @@
 
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
-use alloc::borrow::Borrow;
 use alloc::vec::Vec;
+use core::borrow::Borrow;
 use core::hash::Hash;
 
 pub mod algorithms;

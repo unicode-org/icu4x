@@ -3,9 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::{EncodeAsVarULE, UleError, VarULE};
+#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use core::fmt;
 use core::marker::PhantomData;
+#[cfg(feature = "alloc")]
 use core::mem::ManuallyDrop;
 use core::ops::Deref;
 use core::ptr::NonNull;
@@ -40,14 +42,18 @@ pub struct VarZeroCow<'a, V: ?Sized> {
     /// The slice may NOT have the lifetime of `'a`.
     buf: NonNull<[u8]>,
     /// The buffer is `Box<[u8]>` if true
+    #[cfg(feature = "alloc")]
     owned: bool,
-    _phantom: PhantomData<(&'a V, Box<V>)>,
+    marker1: PhantomData<&'a V>,
+    #[cfg(feature = "alloc")]
+    marker2: PhantomData<V>,
 }
 
 // This is mostly just a `Cow<[u8]>`, safe to implement Send and Sync on
 unsafe impl<'a, V: ?Sized> Send for VarZeroCow<'a, V> {}
 unsafe impl<'a, V: ?Sized> Sync for VarZeroCow<'a, V> {}
 
+#[cfg(feature = "alloc")]
 impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
     fn clone(&self) -> Self {
         if self.is_owned() {
@@ -61,7 +67,8 @@ impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
                 // 3: This is owned (we cloned it), so we set owned to true.
                 buf,
                 owned: true,
-                _phantom: PhantomData,
+                marker1: PhantomData,
+                marker2: PhantomData,
             }
         } else {
             // Unfortunately we can't just use `new_borrowed(self.deref())` since the lifetime is shorter
@@ -71,12 +78,14 @@ impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
                 // 3: This is borrowed (we're sharing a borrow), so we set owned to false.
                 buf: self.buf,
                 owned: false,
-                _phantom: PhantomData,
+                marker1: PhantomData,
+                marker2: PhantomData,
             }
         }
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a, V: ?Sized> Drop for VarZeroCow<'a, V> {
     fn drop(&mut self) {
         if self.owned {
@@ -97,6 +106,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     }
 
     /// Construct from an owned slice. Errors if the slice doesn't represent a valid `V`
+    #[cfg(feature = "alloc")]
     pub fn parse_owned_bytes(bytes: Box<[u8]>) -> Result<Self, UleError> {
         V::validate_bytes(&bytes)?;
         let bytes = ManuallyDrop::new(bytes);
@@ -107,7 +117,8 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
             // 3: This is owned, so we set owned to true.
             buf,
             owned: true,
-            _phantom: PhantomData,
+            marker1: PhantomData,
+            marker2: PhantomData,
         })
     }
 
@@ -126,8 +137,11 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
                 // 1 & 2: Passed upstream to caller
                 // 3: This is borrowed, so we set owned to false.
                 buf,
+                #[cfg(feature = "alloc")]
                 owned: false,
-                _phantom: PhantomData,
+                marker1: PhantomData,
+                #[cfg(feature = "alloc")]
+                marker2: PhantomData,
             }
         }
     }
@@ -135,6 +149,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// Construct this from an [`EncodeAsVarULE`] version of the contained type
     ///
     /// Will always construct an owned version
+    #[cfg(feature = "alloc")]
     pub fn from_encodeable<E: EncodeAsVarULE<V>>(encodeable: &E) -> Self {
         let b = crate::ule::encode_varule_to_box(encodeable);
         Self::new_owned(b)
@@ -149,6 +164,7 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     }
 
     /// Construct a new borrowed version of this
+    #[cfg(feature = "alloc")]
     pub fn new_owned(val: Box<V>) -> Self {
         let val = ManuallyDrop::new(val);
         let buf: NonNull<[u8]> = val.as_bytes().into();
@@ -157,8 +173,11 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
             // 1 & 2: The bytes came from `val` so they're a valid value and byte slice
             // 3: This is owned, so we set owned to true.
             buf,
+            #[cfg(feature = "alloc")]
             owned: true,
-            _phantom: PhantomData,
+            marker1: PhantomData,
+            #[cfg(feature = "alloc")]
+            marker2: PhantomData,
         }
     }
 }
@@ -166,7 +185,10 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
 impl<'a, V: ?Sized> VarZeroCow<'a, V> {
     /// Whether or not this is owned
     pub fn is_owned(&self) -> bool {
-        self.owned
+        #[cfg(feature = "alloc")]
+        return self.owned;
+        #[cfg(not(feature = "alloc"))]
+        return false;
     }
 
     /// Get the byte representation of this type
@@ -194,6 +216,7 @@ impl<'a, V: VarULE + ?Sized> From<&'a V> for VarZeroCow<'a, V> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a, V: VarULE + ?Sized> From<Box<V>> for VarZeroCow<'a, V> {
     fn from(other: Box<V>) -> Self {
         Self::new_owned(other)

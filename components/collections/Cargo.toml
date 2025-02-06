@@ -23,7 +23,7 @@ all-features = true
 displaydoc = { workspace = true }
 yoke = { workspace = true, features = ["derive"] }
 zerofrom = { workspace = true, features = ["derive"] }
-zerovec = { workspace = true, features = ["derive", "yoke"] }
+zerovec = { workspace = true, features = ["alloc", "derive", "yoke"] }
 potential_utf = { workspace = true, features = ["zerovec"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }

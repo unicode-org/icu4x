@@ -20,12 +20,13 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
-tinystr = {workspace = true, default-features = false}
-zerofrom = {workspace = true, default-features = false}
-yoke = {workspace = true, default-features = false}
-zerotrie = {workspace = true, default-features = false}
-potential_utf = {workspace = true, default-features = false}
-litemap = {workspace = true, default-features = false}
+litemap = { workspace = true }
+potential_utf = { workspace = true }
+tinystr = { workspace = true }
+yoke = { workspace = true }
+zerofrom = { workspace = true }
+zerotrie = { workspace = true }
+zerovec = { workspace = true }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_noalloctest)'] }

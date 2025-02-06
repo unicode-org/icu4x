@@ -9,11 +9,16 @@
 #![allow(clippy::forget_copy)]
 #![allow(clippy::forget_non_drop)]
 
+#[cfg(feature = "alloc")]
 use crate::map::ZeroMapBorrowed;
+#[cfg(feature = "alloc")]
 use crate::map::ZeroMapKV;
+#[cfg(feature = "alloc")]
 use crate::map2d::ZeroMap2dBorrowed;
 use crate::ule::*;
-use crate::{VarZeroCow, VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
+use crate::{VarZeroCow, VarZeroVec, ZeroVec};
+#[cfg(feature = "alloc")]
+use crate::{ZeroMap, ZeroMap2d};
 use core::{mem, ptr};
 use yoke::*;
 
@@ -103,6 +108,7 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for VarZeroCow<'static, T> {
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
+#[cfg(feature = "alloc")]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMap<'static, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
@@ -149,6 +155,7 @@ where
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
+#[cfg(feature = "alloc")]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMapBorrowed<'static, K, V>
 where
     K: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
@@ -195,6 +202,7 @@ where
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
+#[cfg(feature = "alloc")]
 unsafe impl<'a, K0, K1, V> Yokeable<'a> for ZeroMap2d<'static, K0, K1, V>
 where
     K0: 'static + for<'b> ZeroMapKV<'b> + ?Sized,
@@ -243,6 +251,7 @@ where
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
+#[cfg(feature = "alloc")]
 unsafe impl<'a, K0, K1, V> Yokeable<'a> for ZeroMap2dBorrowed<'static, K0, K1, V>
 where
     K0: 'static + for<'b> ZeroMapKV<'b> + ?Sized,

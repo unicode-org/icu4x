@@ -40,7 +40,7 @@ criterion = { workspace = true }
 
 [features]
 default = ["alloc"]
-alloc = []
+alloc = ["zerovec?/alloc"]
 zerovec = ["dep:zerovec"]
 databake = ["dep:databake"]
 serde = ["dep:serde"]

@@ -54,10 +54,11 @@ criterion = { workspace = true }
 
 [features]
 derive = ["dep:zerovec-derive"]
-hashmap = ["dep:twox-hash"]
+hashmap = ["dep:twox-hash", "alloc"]
 yoke = ["dep:yoke"]
-serde = ["dep:serde"]
+serde = ["dep:serde", "alloc"]
 databake = ["dep:databake"]
+alloc = []
 
 [package.metadata.cargo-all-features]
 # We have tons of features here, limit the amount of tests we run

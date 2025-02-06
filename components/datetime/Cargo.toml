@@ -32,9 +32,9 @@ icu_provider = { workspace = true, features = ["macros"] }
 icu_timezone = { workspace = true }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
-potential_utf = { workspace = true, features = ["zerovec"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
-zerovec = { workspace = true, features = ["yoke"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
