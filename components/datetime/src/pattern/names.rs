@@ -22,10 +22,10 @@ use core::marker::PhantomData;
 use core::num::NonZeroU8;
 use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
-use icu_decimal::options::FixedDecimalFormatterOptions;
+use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use icu_provider::prelude::*;
 
 /// Choices for loading year names.
@@ -575,8 +575,8 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     mz_specific_short:
         <FSet::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1, ()>>::Container,
     mz_periods: <FSet::MetazoneLookup as NamesContainer<tz::MzPeriodV1, ()>>::Container,
-    // TODO(#4340): Make the FixedDecimalFormatter optional
-    fixed_decimal_formatter: Option<FixedDecimalFormatter>,
+    // TODO(#4340): Make the DecimalFormatter optional
+    fixed_decimal_formatter: Option<DecimalFormatter>,
     _marker: PhantomData<FSet>,
 }
 
@@ -638,7 +638,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     mz_specific_long: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_periods: OptionalNames<(), &'l tz::MzPeriod<'l>>,
-    pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
+    pub(crate) fixed_decimal_formatter: Option<&'l DecimalFormatter>,
 }
 
 impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
@@ -712,7 +712,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// assert_try_writeable_parts_eq!(
     ///     names.with_pattern_unchecked(&pattern).format(&date),
     ///     "It is: 2024-07-01",
-    ///     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded),
+    ///     Err(DateTimeWriteError::DecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
     ///         (7, 11, parts::YEAR), // 2024
@@ -1514,7 +1514,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         self.load_time_zone_specific_short_names(&crate::provider::Baked)
     }
 
-    /// Loads a [`FixedDecimalFormatter`] from a data provider.
+    /// Loads a [`DecimalFormatter`] from a data provider.
     #[inline]
     pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
@@ -1525,7 +1525,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         Ok(self)
     }
 
-    /// Loads a [`FixedDecimalFormatter`] with compiled data.
+    /// Loads a [`DecimalFormatter`] with compiled data.
     ///
     /// # Examples
     ///
@@ -2195,15 +2195,15 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
     pub(crate) fn load_fixed_decimal_formatter(
         &mut self,
-        loader: &impl FixedDecimalFormatterLoader,
+        loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), DataError> {
         if self.fixed_decimal_formatter.is_some() {
             return Ok(());
         }
-        let mut options = FixedDecimalFormatterOptions::default();
+        let mut options = DecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(
+        self.fixed_decimal_formatter = Some(DecimalFormatterLoader::load(
             loader,
             (&prefs).into(),
             options,
@@ -2232,7 +2232,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
-        fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
+        fixed_decimal_formatter_loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
         pattern_items: impl Iterator<Item = PatternItem>,
     ) -> Result<(), PatternLoadError> {

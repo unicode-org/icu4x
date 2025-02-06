@@ -8,11 +8,11 @@
 //!
 //! ```
 //! use icu::decimal::parts;
-//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_parts_eq;
 //!
-//! let df = FixedDecimalFormatter::try_new(
+//! let df = DecimalFormatter::try_new(
 //!     locale!("en").into(),
 //!     Default::default(),
 //! )
@@ -36,37 +36,37 @@
 
 use writeable::Part;
 
-/// A [`Part`] used by [`FormattedFixedDecimal`](super::FormattedFixedDecimal).
+/// A [`Part`] used by [`FormattedDecimal`](super::FormattedDecimal).
 pub const PLUS_SIGN: Part = Part {
     category: "decimal",
     value: "plusSign",
 };
 
-/// A [`Part`] used by [`FormattedFixedDecimal`](super::FormattedFixedDecimal).
+/// A [`Part`] used by [`FormattedDecimal`](super::FormattedDecimal).
 pub const MINUS_SIGN: Part = Part {
     category: "decimal",
     value: "minusSign",
 };
 
-/// A [`Part`] used by [`FormattedFixedDecimal`](super::FormattedFixedDecimal).
+/// A [`Part`] used by [`FormattedDecimal`](super::FormattedDecimal).
 pub const INTEGER: Part = Part {
     category: "decimal",
     value: "integer",
 };
 
-/// A [`Part`] used by [`FormattedFixedDecimal`](super::FormattedFixedDecimal).
+/// A [`Part`] used by [`FormattedDecimal`](super::FormattedDecimal).
 pub const FRACTION: Part = Part {
     category: "decimal",
     value: "fraction",
 };
 
-/// A [`Part`] used by [`FormattedFixedDecimal`](super::FormattedFixedDecimal).
+/// A [`Part`] used by [`FormattedDecimal`](super::FormattedDecimal).
 pub const GROUP: Part = Part {
     category: "decimal",
     value: "group",
 };
 
-/// A [`Part`] used by [`FormattedFixedDecimal`](super::FormattedFixedDecimal).
+/// A [`Part`] used by [`FormattedDecimal`](super::FormattedDecimal).
 pub const DECIMAL: Part = Part {
     category: "decimal",
     value: "decimal",

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/FixedDecimalFormatter.hpp>
+#include <icu4x/DecimalFormatter.hpp>
 #include <icu4x/Logger.hpp>
 
 #include <iostream>
@@ -14,8 +14,8 @@ int main() {
     Logger::init_simple_logger();
     std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    std::unique_ptr<FixedDecimalFormatter> fdf = FixedDecimalFormatter::create_with_grouping_strategy(
-        *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
+    std::unique_ptr<DecimalFormatter> fdf = DecimalFormatter::create_with_grouping_strategy(
+        *locale.get(), DecimalGroupingStrategy::Auto).ok().value();
 
     std::unique_ptr<SignedFixedDecimal> decimal = SignedFixedDecimal::from(1000007);
     std::string out = fdf->format(*decimal.get());
@@ -84,7 +84,7 @@ int main() {
 
     std::array<char32_t, 10> digits = {U'a', U'b', U'c', U'd', U'e', U'f', U'g', U'h', U'i', U'j'};
 
-    fdf = FixedDecimalFormatter::create_with_manual_data("+", "", "-", "", "/", "_", 4, 2, 4, digits, FixedDecimalGroupingStrategy::Auto).ok().value();
+    fdf = DecimalFormatter::create_with_manual_data("+", "", "-", "", "/", "_", 4, 2, 4, digits, DecimalGroupingStrategy::Auto).ok().value();
 
     decimal = SignedFixedDecimal::from_double_with_round_trip_precision(123456.8901).ok().value();
     out = fdf->format(*decimal.get());
@@ -103,8 +103,8 @@ int main() {
 
     locale = Locale::from_string("th-u-nu-thai").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    fdf = FixedDecimalFormatter::create_with_grouping_strategy(
-        *locale.get(), FixedDecimalGroupingStrategy::Auto).ok().value();
+    fdf = DecimalFormatter::create_with_grouping_strategy(
+        *locale.get(), DecimalGroupingStrategy::Auto).ok().value();
 
     decimal = SignedFixedDecimal::from_double_with_round_trip_precision(123456.8901).ok().value();
     out = fdf->format(*decimal.get());

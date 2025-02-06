@@ -4,7 +4,7 @@
 
 use fixed_decimal::SignedFixedDecimal;
 
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
@@ -19,7 +19,7 @@ pub struct LongFormattedCurrency<'l> {
     pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedData<'l>,
     pub(crate) patterns: &'l CurrencyPatternsData<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) fixed_decimal_formatter: &'l DecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }
 

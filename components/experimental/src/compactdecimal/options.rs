@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
+use icu_decimal::options::{DecimalFormatterOptions, GroupingStrategy};
 
 /// A bag of options defining how numbers will be formatted by
 /// [`CompactDecimalFormatter`](super::CompactDecimalFormatter).
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[non_exhaustive]
 pub struct CompactDecimalFormatterOptions {
-    /// Options to configure the inner [`icu_decimal::FixedDecimalFormatter`].
-    pub fixed_decimal_formatter_options: FixedDecimalFormatterOptions,
+    /// Options to configure the inner [`icu_decimal::DecimalFormatter`].
+    pub fixed_decimal_formatter_options: DecimalFormatterOptions,
 }
 
 impl Default for CompactDecimalFormatterOptions {
@@ -21,8 +21,8 @@ impl Default for CompactDecimalFormatterOptions {
     }
 }
 
-impl From<FixedDecimalFormatterOptions> for CompactDecimalFormatterOptions {
-    fn from(fixed_decimal_formatter_options: FixedDecimalFormatterOptions) -> Self {
+impl From<DecimalFormatterOptions> for CompactDecimalFormatterOptions {
+    fn from(fixed_decimal_formatter_options: DecimalFormatterOptions) -> Self {
         Self {
             fixed_decimal_formatter_options,
         }

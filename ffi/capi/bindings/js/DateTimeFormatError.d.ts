@@ -22,7 +22,7 @@ export class DateTimeFormatError {
     static InvalidMonthCode : DateTimeFormatError;
     static InvalidCyclicYear : DateTimeFormatError;
     static NamesNotLoaded : DateTimeFormatError;
-    static FixedDecimalFormatterNotLoaded : DateTimeFormatError;
+    static DecimalFormatterNotLoaded : DateTimeFormatError;
     static UnsupportedField : DateTimeFormatError;
 
     constructor(value: DateTimeFormatError | string );

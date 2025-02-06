@@ -9,7 +9,7 @@ use core::fmt;
 use core::fmt::Write;
 use either::Either;
 use fixed_decimal::{SignDisplay, SignedFixedDecimal, UnsignedFixedDecimal};
-use icu_decimal::FormattedFixedDecimal;
+use icu_decimal::FormattedDecimal;
 use smallvec::SmallVec;
 use writeable::{adapters::WithPart, PartsWrite, Writeable};
 
@@ -97,11 +97,11 @@ impl DigitalDuration {
 
 struct FormattedDigitalDuration<'l> {
     fmt: &'l DurationFormatter,
-    hours: Option<FormattedFixedDecimal<'l>>,
+    hours: Option<FormattedDecimal<'l>>,
     add_hour_minute_separator: bool,
-    minutes: Option<FormattedFixedDecimal<'l>>,
+    minutes: Option<FormattedDecimal<'l>>,
     add_minute_second_separator: bool,
-    seconds: Option<FormattedFixedDecimal<'l>>,
+    seconds: Option<FormattedDecimal<'l>>,
 }
 
 impl Writeable for FormattedDigitalDuration<'_> {
@@ -152,7 +152,7 @@ impl FormattedDuration<'_> {
 
         let mut fd = SignedFixedDecimal::from(self.duration.hours);
 
-        // Since we construct the FixedDecimal from an unsigned hours value, we need to set the sign manually.
+        // Since we construct the SignedFixedDecimal from an unsigned hours value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
 
         // 7. If hoursStyle is "2-digit", then
@@ -198,7 +198,7 @@ impl FormattedDuration<'_> {
         // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
         let mut fd = SignedFixedDecimal::from(self.duration.minutes);
 
-        // Since we construct the FixedDecimal from an unsigned minutes value, we need to set the sign manually.
+        // Since we construct the SignedFixedDecimal from an unsigned minutes value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
 
         // 8. If minutesStyle is "2-digit", then
@@ -280,7 +280,7 @@ impl FormattedDuration<'_> {
             formatted_digital_duration.add_minute_second_separator = true;
         }
 
-        // Since we construct the FixedDecimal from an unsigned seconds value, we need to set the sign manually.
+        // Since we construct the SignedFixedDecimal from an unsigned seconds value, we need to set the sign manually.
         second_fd.set_sign(self.duration.get_sign());
 
         // 5. Let nfOpts be OrdinaryObjectCreate(null).

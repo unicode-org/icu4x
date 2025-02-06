@@ -14,7 +14,7 @@ use crate::compactdecimal::{
 use alloc::borrow::Cow;
 use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
-use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
@@ -37,7 +37,7 @@ define_preferences!(
 
 prefs_convert!(
     CompactDecimalFormatterPreferences,
-    FixedDecimalFormatterPreferences,
+    DecimalFormatterPreferences,
     { numbering_system }
 );
 prefs_convert!(CompactDecimalFormatterPreferences, PluralRulesPreferences);
@@ -80,7 +80,7 @@ prefs_convert!(CompactDecimalFormatterPreferences, PluralRulesPreferences);
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) fixed_decimal_formatter: FixedDecimalFormatter,
+    pub(crate) fixed_decimal_formatter: DecimalFormatter,
     pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternData<'static>>>,
 }
 
@@ -111,7 +111,7 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
+            fixed_decimal_formatter: DecimalFormatter::try_new(
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
@@ -154,7 +154,7 @@ impl CompactDecimalFormatter {
     {
         let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
+            fixed_decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
@@ -198,7 +198,7 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
+            fixed_decimal_formatter: DecimalFormatter::try_new(
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
             )?,
@@ -241,7 +241,7 @@ impl CompactDecimalFormatter {
     {
         let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
+            fixed_decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
                 options.fixed_decimal_formatter_options,
@@ -382,7 +382,7 @@ impl CompactDecimalFormatter {
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.
     ///
-    /// Because the FixedDecimal is mutated before formatting, this function
+    /// Because the SignedFixedDecimal is mutated before formatting, this function
     /// takes ownership of it.
     ///
     /// # Examples
@@ -428,7 +428,7 @@ impl CompactDecimalFormatter {
     ///     "-13K"
     /// );
     ///
-    /// // The sign display on the FixedDecimal is respected:
+    /// // The sign display on the SignedFixedDecimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(
     ///         &SignedFixedDecimal::from(2500)
@@ -524,7 +524,7 @@ impl CompactDecimalFormatter {
     ///
     /// Since the caller specifies the exact digits that are displayed, this
     /// allows for arbitrarily complex rounding rules.
-    /// However, contrary to [`FixedDecimalFormatter::format()`], this operation
+    /// However, contrary to [`DecimalFormatter::format()`], this operation
     /// can fail, because the given [`CompactDecimal`] can be inconsistent with
     /// the locale data; for instance, if the locale uses lakhs and crores and
     /// millions are requested, or vice versa, this function returns an error.

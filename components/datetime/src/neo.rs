@@ -22,7 +22,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
-use icu_decimal::FixedDecimalFormatterPreferences;
+use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HourCycle, NumberingSystem,
 };
@@ -80,11 +80,9 @@ define_preferences!(
     }
 );
 
-prefs_convert!(
-    DateTimeFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 
 prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
     calendar_algorithm
@@ -275,7 +273,7 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
-        L: FixedDecimalFormatterLoader,
+        L: DecimalFormatterLoader,
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1::bind(provider),
@@ -501,7 +499,7 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
-        L: FixedDecimalFormatterLoader + AnyCalendarLoader,
+        L: DecimalFormatterLoader + AnyCalendarLoader,
     {
         let calendar = AnyCalendarLoader::load(loader, (&prefs).into())
             .map_err(DateTimeFormatterLoadError::Data)?;

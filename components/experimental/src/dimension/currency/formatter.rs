@@ -6,7 +6,7 @@
 
 use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::{
-    options::FixedDecimalFormatterOptions, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
+    options::DecimalFormatterOptions, DecimalFormatter, DecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
@@ -33,11 +33,9 @@ define_preferences!(
     }
 );
 
-prefs_convert!(
-    CurrencyFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(CurrencyFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter for monetary values.
@@ -55,8 +53,8 @@ pub struct CurrencyFormatter {
     /// Essential data for the currency formatter.
     essential: DataPayload<CurrencyEssentialsV1>,
 
-    /// A [`FixedDecimalFormatter`] to format the currency value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
+    /// A [`DecimalFormatter`] to format the currency value.
+    decimal_formatter: DecimalFormatter,
 }
 
 impl CurrencyFormatter {
@@ -82,10 +80,8 @@ impl CurrencyFormatter {
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
+        let fixed_decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -96,7 +92,7 @@ impl CurrencyFormatter {
         Ok(Self {
             options,
             essential,
-            fixed_decimal_formatter,
+            decimal_formatter: fixed_decimal_formatter,
         })
     }
 
@@ -113,10 +109,10 @@ impl CurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let fixed_decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
+            DecimalFormatterOptions::default(),
         )?;
         let essential = provider
             .load(DataRequest {
@@ -128,7 +124,7 @@ impl CurrencyFormatter {
         Ok(Self {
             options,
             essential,
-            fixed_decimal_formatter,
+            decimal_formatter: fixed_decimal_formatter,
         })
     }
 
@@ -161,7 +157,7 @@ impl CurrencyFormatter {
             currency_code,
             options: &self.options,
             essential: self.essential.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            fixed_decimal_formatter: &self.decimal_formatter,
         }
     }
 }

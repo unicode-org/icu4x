@@ -15,8 +15,8 @@ import * as GregorianDateTimeFormatterDemo from "./GregorianDateTimeFormatter.mj
 export * as GregorianDateTimeFormatterDemo from "./GregorianDateTimeFormatter.mjs";
 import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
-import * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
-export * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
+import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
+export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 import * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
 export * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
 import * as ListFormatterDemo from "./ListFormatter.mjs";
@@ -611,21 +611,21 @@ let termini = Object.assign({
         ]
     },
 
-    "FixedDecimalFormatter.format": {
-        func: FixedDecimalFormatterDemo.format,
+    "DecimalFormatter.format": {
+        func: DecimalFormatterDemo.format,
         // For avoiding webpacking minifying issues:
-        funcName: "FixedDecimalFormatter.format",
+        funcName: "DecimalFormatter.format",
         parameters: [
             
             {
-                name: "FixedDecimalFormatter:Locale:Name",
+                name: "DecimalFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "FixedDecimalFormatter:GroupingStrategy",
-                type: "FixedDecimalGroupingStrategy",
+                name: "DecimalFormatter:GroupingStrategy",
+                type: "DecimalGroupingStrategy",
                 typeUse: "enumerator"
             },
             

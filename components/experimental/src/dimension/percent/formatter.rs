@@ -5,8 +5,8 @@
 //! Experimental.
 
 use fixed_decimal::SignedFixedDecimal;
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_decimal::options::DecimalFormatterOptions;
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
@@ -31,11 +31,9 @@ define_preferences!(
     }
 );
 
-prefs_convert!(
-    PercentFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(PercentFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 
 /// A formatter for percent values.
 ///
@@ -52,7 +50,7 @@ pub struct PercentFormatter<R> {
     fixed_decimal_formatter: R,
 }
 
-impl PercentFormatter<FixedDecimalFormatter> {
+impl PercentFormatter<DecimalFormatter> {
     icu_provider::gen_any_buffer_data_constructors!(
         (prefs: PercentFormatterPreferences, options: PercentFormatterOptions) -> error: DataError,
         functions: [
@@ -74,10 +72,8 @@ impl PercentFormatter<FixedDecimalFormatter> {
         prefs: PercentFormatterPreferences,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
+        let fixed_decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         PercentFormatter::try_new_with_fixed_decimal_formatter(
             prefs,
@@ -98,10 +94,10 @@ impl PercentFormatter<FixedDecimalFormatter> {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let fixed_decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
+            DecimalFormatterOptions::default(),
         )?;
 
         PercentFormatter::try_new_with_fixed_decimal_formatter_unstable(
@@ -140,7 +136,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
 
 impl<R> PercentFormatter<R>
 where
-    R: AsRef<FixedDecimalFormatter>,
+    R: AsRef<DecimalFormatter>,
 {
     /// Creates a new [`PercentFormatter`] from compiled locale data, an options bag and fixed decimal formatter.
     ///

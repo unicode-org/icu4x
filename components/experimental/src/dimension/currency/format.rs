@@ -4,7 +4,7 @@
 
 use fixed_decimal::SignedFixedDecimal;
 
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use writeable::Writeable;
 
 use crate::dimension::currency::options::CurrencyFormatterOptions;
@@ -18,7 +18,7 @@ pub struct FormattedCurrency<'l> {
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentials<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) fixed_decimal_formatter: &'l DecimalFormatter,
 }
 
 writeable::impl_display_with_writeable!(FormattedCurrency<'_>);

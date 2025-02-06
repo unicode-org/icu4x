@@ -9,7 +9,7 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use icu_locale_core::locale;
 
 const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
@@ -21,7 +21,7 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
 ];
 
 fn main() {
-    let fdf = FixedDecimalFormatter::try_new(locale!("bn").into(), Default::default())
+    let fdf = DecimalFormatter::try_new(locale!("bn").into(), Default::default())
         .expect("locale should be present");
 
     for (removed, added) in LINES_REMOVED_ADDED {
