@@ -5,6 +5,8 @@
 #include <string>
 #include <type_traits>
 #include <variant>
+#include <cstdint>
+#include <functional>
 
 #if __cplusplus >= 202002L
 #include <span>
@@ -209,6 +211,61 @@ private:
 };
 
 #endif // __cplusplus >= 202002L
+
+// Interop between std::function & our C Callback wrapper type
+
+template <typename T> struct fn_traits;
+template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Args...)>> {
+    using fn_ptr_t = Ret(Args...);
+    using function_t = std::function<fn_ptr_t>;
+    using ret = Ret;
+
+    template <typename T, typename = void>
+    struct as_ffi {
+      using type = T;
+    };
+
+    template <typename T>
+    struct as_ffi<T, std::void_t<decltype(&T::AsFFI)>> {
+      using type = decltype(std::declval<T>().AsFFI());
+    };
+
+    template<typename T>
+    using as_ffi_t = typename as_ffi<T>::type;
+
+    template<typename T>
+    using replace_string_view_t = std::conditional_t<std::is_same_v<T, std::string_view>, capi::DiplomatStringView, T>;
+
+    template<typename T>
+    using replace_fn_t = replace_string_view_t<as_ffi_t<T>>;
+
+    // For a given T, creates a function that take in the C ABI version & return the C++ type.
+    template<typename T>
+    static T replace(replace_fn_t<T> val) {
+        if constexpr(std::is_same_v<T, std::string_view>)   {
+            return std::string_view{val.data, val.len};
+        } else if constexpr(!std::is_same_v<T, as_ffi_t<T>>) {
+            return T::FromFFI(val);
+        }
+        else {
+            return val;
+        }
+    }
+
+    static Ret c_run_callback(const void *cb, replace_fn_t<Args>... args) {
+        return (*reinterpret_cast<const function_t *>(cb))(replace<Args>(args)...);
+    }
+
+    static void c_delete(const void *cb) {
+        delete reinterpret_cast<const function_t *>(cb);
+    }
+
+    fn_traits(function_t) {} // Allows less clunky construction (avoids decltype)
+};
+
+// additional deduction guide required
+template<class T>
+fn_traits(T) -> fn_traits<T>;
 
 } // namespace diplomat
 

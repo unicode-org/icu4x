@@ -136,23 +136,23 @@ pub(crate) enum DateTimeZonePatternSelectionData {
     DateTimeGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
     DateZoneGlue {
         date: DatePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
     TimeZoneGlue {
         time: TimePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
     DateTimeZoneGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
 }
 
@@ -167,23 +167,23 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     DateTimeGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     DateZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     TimeZoneGlue {
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     DateTimeZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
 }
 
@@ -493,7 +493,7 @@ impl DateTimeZonePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         skeleton: CompositeFieldSet,
     ) -> Result<Self, DataError> {
@@ -615,11 +615,11 @@ impl DateTimeZonePatternSelectionData {
     }
 
     fn load_glue(
-        provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         options: RawOptions,
         glue_type: GlueType,
-    ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
+    ) -> Result<DataPayload<GluePatternV1>, DataError> {
         let locale = provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);

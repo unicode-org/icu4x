@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
@@ -92,7 +93,7 @@ inline std::string icu4x::ListFormatter::format(diplomat::span<const std::string
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_ListFormatter_format_utf8_mv1(this->AsFFI(),
-    {list.data(), list.size()},
+    {reinterpret_cast<const diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
     &write);
   return output;
 }
@@ -101,7 +102,7 @@ inline std::string icu4x::ListFormatter::format16(diplomat::span<const std::u16s
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_ListFormatter_format_utf16_mv1(this->AsFFI(),
-    {list.data(), list.size()},
+    {reinterpret_cast<const diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
     &write);
   return output;
 }

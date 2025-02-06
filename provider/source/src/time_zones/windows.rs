@@ -6,18 +6,15 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 use crate::{cldr_serde, SourceDataProvider};
 use icu::timezone::{
-    provider::windows::{WindowsZonesToBcp47MapV1, WindowsZonesToBcp47MapV1Marker},
+    provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1},
     TimeZoneBcp47Id,
 };
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        _: DataRequest,
-    ) -> Result<DataResponse<WindowsZonesToBcp47MapV1Marker>, DataError> {
+impl DataProvider<WindowsZonesToBcp47MapV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<WindowsZonesToBcp47MapV1>, DataError> {
         let resource: &cldr_serde::time_zones::windows_zones::WindowsResource = self
             .cldr()?
             .core()
@@ -61,7 +58,7 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
             })
             .collect();
 
-        let data_struct = WindowsZonesToBcp47MapV1 {
+        let data_struct = WindowsZonesToBcp47Map {
             map: ZeroTrieSimpleAscii::try_from(&windows2bcp_map)
                 .map_err(|e| {
                     DataError::custom("Could not map windowsZones.json data")
@@ -78,7 +75,7 @@ impl DataProvider<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<WindowsZonesToBcp47MapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<WindowsZonesToBcp47MapV1> for SourceDataProvider {
     fn iter_ids_cached(
         &self,
     ) -> Result<std::collections::HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -88,7 +85,7 @@ impl crate::IterableDataProviderCached<WindowsZonesToBcp47MapV1Marker> for Sourc
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::{provider::windows::WindowsZonesToBcp47MapV1Marker, TimeZoneBcp47Id};
+    use icu::timezone::{provider::windows::WindowsZonesToBcp47MapV1, TimeZoneBcp47Id};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
     use tinystr::tinystr;
 
@@ -97,7 +94,7 @@ mod tests {
     #[test]
     fn windows_to_iana_basic_test() {
         let provider = SourceDataProvider::new_testing();
-        let provider_response: DataResponse<WindowsZonesToBcp47MapV1Marker> =
+        let provider_response: DataResponse<WindowsZonesToBcp47MapV1> =
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
@@ -132,7 +129,7 @@ mod tests {
     #[test]
     fn windows_to_iana_with_territories() {
         let provider = SourceDataProvider::new_testing();
-        let provider_response: DataResponse<WindowsZonesToBcp47MapV1Marker> =
+        let provider_response: DataResponse<WindowsZonesToBcp47MapV1> =
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 

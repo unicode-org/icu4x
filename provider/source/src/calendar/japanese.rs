@@ -20,7 +20,7 @@ impl SourceDataProvider {
     fn load_japanese_eras(
         &self,
         japanext: bool,
-    ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+    ) -> Result<DataResponse<JapaneseErasV1>, DataError> {
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -73,7 +73,7 @@ impl SourceDataProvider {
             }
         }
 
-        let ret = JapaneseErasV1 {
+        let ret = JapaneseEras {
             dates_to_eras: dates_to_eras.into_iter().collect(),
         };
 
@@ -83,14 +83,14 @@ impl SourceDataProvider {
         // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
         // be disabled when generating new data.
         if japanext && env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
-            let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+            let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
                 .expect("Failed to parse the precached golden. This is a bug.");
 
             if snapshot != ret {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
                     changed in an incompatible way, or there is a new Japanese era. Run \
-                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseExtendedErasV1Marker --format fs --syntax json \
+                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseExtendedErasV1 --format fs --syntax json \
                     --out provider/source/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
                     check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
                     in icu_provider_source will need to be updated to handle the data changes."
@@ -105,19 +105,16 @@ impl SourceDataProvider {
     }
 }
 
-impl DataProvider<JapaneseErasV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        self.check_req::<JapaneseErasV1Marker>(req)?;
+impl DataProvider<JapaneseErasV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1>, DataError> {
+        self.check_req::<JapaneseErasV1>(req)?;
         self.load_japanese_eras(false)
     }
 }
 
-impl DataProvider<JapaneseExtendedErasV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<JapaneseExtendedErasV1Marker>, DataError> {
-        self.check_req::<JapaneseExtendedErasV1Marker>(req)?;
+impl DataProvider<JapaneseExtendedErasV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseExtendedErasV1>, DataError> {
+        self.check_req::<JapaneseExtendedErasV1>(req)?;
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {
             metadata,
@@ -171,13 +168,13 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-impl crate::IterableDataProviderCached<JapaneseErasV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<JapaneseErasV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl crate::IterableDataProviderCached<JapaneseExtendedErasV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<JapaneseExtendedErasV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -188,7 +185,7 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
     static MAP: OnceLock<BTreeMap<String, TinyStr16>> = OnceLock::new();
 
     MAP.get_or_init(|| {
-        let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+        let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
             .expect("Failed to parse the precached golden. This is a bug.");
         let mut map: BTreeMap<_, _> = snapshot
             .dates_to_eras

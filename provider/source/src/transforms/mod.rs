@@ -49,22 +49,10 @@ impl CldrCache {
                         .read_and_parse_json::<transforms::Resource>(&format!(
                             "cldr-transforms/transforms/{transform}.json"
                         ))?;
-                    let source = self
-                        .serde_cache
-                        .root
-                        .read_to_string(&format!(
-                            "cldr-transforms/transforms/{}",
-                            metadata.rules_file
-                        ))?
-                        // und-Ethi-t-und-latn-m0-beta_metsehaf-geminate has a typo
-                        .replace(
-                            "Ethiopic-Latin/BetaMetsehaf",
-                            "Ethiopic-Latin/Beta_Metsehaf",
-                        )
-                        // This attempts to group the decomposed character, but erroneously uses a context (chr-chr_FONIPA)
-                        .replace("ə̃ {ə̃}+ → ə̃;", "ə̃ ə̃+ → ə̃;")
-                        // Back references don't work in reverse (byn-Ethi-t-byn-latn-m0-xaleget)
-                        .replace("$1 ↔", "$1 ←");
+                    let source = self.serde_cache.root.read_to_string(&format!(
+                        "cldr-transforms/transforms/{}",
+                        metadata.rules_file
+                    ))?;
 
                     if matches!(
                         metadata.direction,
@@ -97,6 +85,14 @@ impl CldrCache {
                             .chain(
                                 metadata
                                     .alias_bcp47
+                                    .as_deref()
+                                    .unwrap_or_default()
+                                    .split(' ')
+                                    .skip(1),
+                            )
+                            .chain(
+                                metadata
+                                    .alias
                                     .as_deref()
                                     .unwrap_or_default()
                                     .split(' ')
@@ -154,12 +150,9 @@ impl CldrCache {
     }
 }
 
-impl DataProvider<TransliteratorRulesV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        self.check_req::<TransliteratorRulesV1Marker>(req)?;
+impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
+        self.check_req::<TransliteratorRulesV1>(req)?;
         self.cldr()?
             .transforms()?
             .lock()
@@ -169,7 +162,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -192,7 +185,7 @@ mod tests {
     fn test_de_ascii_forward() {
         let provider = SourceDataProvider::new_testing();
 
-        let _data: DataPayload<TransliteratorRulesV1Marker> = provider
+        let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierCow::from_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("de-t-de-d0-ascii"),
@@ -208,7 +201,7 @@ mod tests {
     fn test_latin_ascii_backward() {
         let provider = SourceDataProvider::new_testing();
 
-        let _data: DataPayload<TransliteratorRulesV1Marker> = provider
+        let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierCow::from_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("und-latn-t-s0-ascii"),

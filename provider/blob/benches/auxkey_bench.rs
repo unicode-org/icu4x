@@ -14,10 +14,10 @@ use icu_provider_blob::BlobDataProvider;
 use std::collections::BTreeSet;
 
 #[icu_provider::data_struct(
-    marker(MarkerA, "a@1"),
-    marker(MarkerB, "b@1"),
-    marker(MarkerC, "c@1"),
-    marker(MarkerD, "d@1")
+    marker(MarkerV1, "a@1"),
+    marker(MarkerV2, "b@1"),
+    marker(MarkerV3, "c@1"),
+    marker(MarkerV4, "d@1")
 )]
 #[derive(serde::Serialize, serde::Deserialize, Clone, Copy, databake::Bake, PartialEq)]
 #[databake(path = crate)]
@@ -243,10 +243,10 @@ macro_rules! implement {
     };
 }
 
-implement!(MarkerA);
-implement!(MarkerB);
-implement!(MarkerC);
-implement!(MarkerD);
+implement!(MarkerV1);
+implement!(MarkerV2);
+implement!(MarkerV3);
+implement!(MarkerV4);
 
 fn put_payloads<M: DataMarker>(exporter: &mut BlobExporter)
 where
@@ -273,10 +273,10 @@ where
 fn make_blob_v3() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-    put_payloads::<MarkerA>(&mut exporter);
-    put_payloads::<MarkerB>(&mut exporter);
-    put_payloads::<MarkerC>(&mut exporter);
-    put_payloads::<MarkerD>(&mut exporter);
+    put_payloads::<MarkerV1>(&mut exporter);
+    put_payloads::<MarkerV2>(&mut exporter);
+    put_payloads::<MarkerV3>(&mut exporter);
+    put_payloads::<MarkerV4>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
     assert_eq!(blob.len(), 32974);
@@ -316,7 +316,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
             |b| {
                 b.iter(|| {
                     provider
-                        .load_data(black_box(MarkerA::INFO), black_box(req))
+                        .load_data(black_box(MarkerV1::INFO), black_box(req))
                         .unwrap()
                 });
             },

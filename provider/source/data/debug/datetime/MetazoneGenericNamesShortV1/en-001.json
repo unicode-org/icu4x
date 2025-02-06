@@ -1,0 +1,8 @@
+{
+  "defaults": {
+    "101": "GMT"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
+}

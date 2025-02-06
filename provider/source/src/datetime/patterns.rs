@@ -7,7 +7,7 @@ use icu::datetime::provider::calendar::*;
 use icu::datetime::provider::pattern;
 use icu::datetime::provider::pattern::CoarseHourCycle;
 
-impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
+impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -35,7 +35,7 @@ impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatternsV1<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
+impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -63,7 +63,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatternsV1<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV1<'_> {
+impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -91,10 +91,9 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV
     }
 }
 
-impl From<&cldr_serde::ca::Dates> for DateLengthsV1<'_> {
+impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 =
-            patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
+        let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
 
         Self {
             date: (&other.date_formats).into(),
@@ -103,11 +102,10 @@ impl From<&cldr_serde::ca::Dates> for DateLengthsV1<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::Dates> for TimeLengthsV1<'_> {
+impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 =
-            patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
-        let skeletons_v1 = DateSkeletonPatternsV1::from(&other.datetime_formats.available_formats);
+        let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
+        let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
 
         let pattern_str_full = other.time_formats.full.get_pattern();
         let pattern_str_long = other.time_formats.long.get_pattern();
@@ -156,7 +154,7 @@ impl From<&cldr_serde::ca::Dates> for TimeLengthsV1<'_> {
 
         let (time_h11_h12, time_h23_h24) = {
             let time = (&other.time_formats).into();
-            let alt_time = patterns::LengthPatternsV1 {
+            let alt_time = patterns::LengthPatterns {
                 full: alt_hour_cycle
                     .apply_on_pattern(
                         &length_combinations_v1,

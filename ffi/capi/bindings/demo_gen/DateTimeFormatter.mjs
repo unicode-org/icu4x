@@ -4,86 +4,37 @@ import { DateTimeFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
-export function format(name, length, year, month, day, name_1, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].format(...args.slice(1)) }).apply(
-        null,
-        [
-            DateTimeFormatter.createWithLength.apply(
-                null,
-                [
-                    Locale.fromString.apply(
-                        null,
-                        [
-                            name
-                        ]
-                    ),
-                    length
-                ]
-            ),
-            Date.fromIsoInCalendar.apply(
-                null,
-                [
-                    year,
-                    month,
-                    day,
-                    Calendar.createForLocale.apply(
-                        null,
-                        [
-                            Locale.fromString.apply(
-                                null,
-                                [
-                                    name_1
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            ),
-            (function (...args) { return new Time(...args) } ).apply(
-                null,
-                [
-                    hour,
-                    minute,
-                    second,
-                    nanosecond
-                ]
-            )
-        ]
-    );
+export function format(dateTimeFormatterLocaleName, dateTimeFormatterLength, dateYear, dateMonth, dateDay, dateCalendarLocaleName, timeHour, timeMinute, timeSecond, timeNanosecond) {
+    
+    let dateTimeFormatterLocale = Locale.fromString(dateTimeFormatterLocaleName);
+    
+    let dateTimeFormatter = DateTimeFormatter.createWithLength(dateTimeFormatterLocale,dateTimeFormatterLength);
+    
+    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
+    
+    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    
+    let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
+    
+    let time = new Time(timeHour,timeMinute,timeSecond,timeNanosecond);
+    
+    let out = dateTimeFormatter.format(date,time);
+    
+
+    return out;
 }
-export function formatIso(name, length, year, month, day, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].formatIso(...args.slice(1)) }).apply(
-        null,
-        [
-            DateTimeFormatter.createWithLength.apply(
-                null,
-                [
-                    Locale.fromString.apply(
-                        null,
-                        [
-                            name
-                        ]
-                    ),
-                    length
-                ]
-            ),
-            (function (...args) { return new IsoDate(...args) } ).apply(
-                null,
-                [
-                    year,
-                    month,
-                    day
-                ]
-            ),
-            (function (...args) { return new Time(...args) } ).apply(
-                null,
-                [
-                    hour,
-                    minute,
-                    second,
-                    nanosecond
-                ]
-            )
-        ]
-    );
+export function formatIso(dateTimeFormatterLocaleName, dateTimeFormatterLength, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeNanosecond) {
+    
+    let dateTimeFormatterLocale = Locale.fromString(dateTimeFormatterLocaleName);
+    
+    let dateTimeFormatter = DateTimeFormatter.createWithLength(dateTimeFormatterLocale,dateTimeFormatterLength);
+    
+    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    
+    let time = new Time(timeHour,timeMinute,timeSecond,timeNanosecond);
+    
+    let out = dateTimeFormatter.formatIso(date,time);
+    
+
+    return out;
 }

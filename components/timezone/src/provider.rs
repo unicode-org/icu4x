@@ -44,19 +44,19 @@ const _: () = {
         pub use crate as timezone;
     }
     make_provider!(Baked);
-    impl_bcp47_to_iana_map_v1_marker!(Baked);
-    impl_iana_to_bcp47_map_v3_marker!(Baked);
-    impl_windows_zones_to_bcp47_map_v1_marker!(Baked);
-    impl_zone_offset_period_v1_marker!(Baked);
+    impl_bcp47_to_iana_map_v1!(Baked);
+    impl_iana_to_bcp47_map_v3!(Baked);
+    impl_windows_zones_to_bcp47_map_v1!(Baked);
+    impl_zone_offset_period_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    names::Bcp47ToIanaMapV1Marker::INFO,
-    names::IanaToBcp47MapV3Marker::INFO,
-    windows::WindowsZonesToBcp47MapV1Marker::INFO,
-    ZoneOffsetPeriodV1Marker::INFO,
+    names::Bcp47ToIanaMapV1::INFO,
+    names::IanaToBcp47MapV3::INFO,
+    windows::WindowsZonesToBcp47MapV1::INFO,
+    ZoneOffsetPeriodV1::INFO,
 ];
 
 /// TimeZone ID in BCP47 format
@@ -128,17 +128,13 @@ pub const EPOCH: RataDie = RataDie::new(719163);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    ZoneOffsetPeriodV1Marker,
-    "time_zone/offset_period@1",
-    singleton
-))]
+#[icu_provider::data_struct(marker(ZoneOffsetPeriodV1, "time_zone/offset_period@1", singleton))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct ZoneOffsetPeriodV1<'data>(
+pub struct ZoneOffsetPeriod<'data>(
     /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
     /// the number of minutes since the local [`EPOCH`]. It represents when the offsets ended to be used.
     ///

@@ -24,7 +24,7 @@ use yoke::Yokeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let provider =
-///     FixedProvider::<HelloWorldV1Marker>::from_static(&HelloWorldV1 {
+///     FixedProvider::<HelloWorldV1>::from_static(&HelloWorld {
 ///         message: Cow::Borrowed("custom hello world"),
 ///     });
 ///
@@ -36,16 +36,10 @@ use yoke::Yokeable;
 /// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
 ///
-/// # struct DummyMarker;
-/// # impl DynamicDataMarker for DummyMarker {
-/// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
-/// # }
-/// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
-/// # }
+/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
 /// // Requests for invalid markers get MissingDataMarker
 /// assert!(matches!(
-///     provider.load_any(DummyMarker::INFO, Default::default()),
+///     provider.load_any(DummyV1::INFO, Default::default()),
 ///     Err(DataError {
 ///         kind: DataErrorKind::MarkerNotFound,
 ///         ..

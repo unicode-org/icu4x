@@ -19,7 +19,7 @@ typedef enum DateTimeFormatError {
   DateTimeFormatError_InvalidMonthCode = 4,
   DateTimeFormatError_InvalidCyclicYear = 5,
   DateTimeFormatError_NamesNotLoaded = 16,
-  DateTimeFormatError_FixedDecimalFormatterNotLoaded = 17,
+  DateTimeFormatError_DecimalFormatterNotLoaded = 17,
   DateTimeFormatError_UnsupportedField = 18,
 } DateTimeFormatError;
 

@@ -11,6 +11,7 @@ use icu_provider::{marker::DataMarkerIdHash, prelude::*};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::maps::MutableZeroVecLike;
 use zerovec::vecs::Index32;
 use zerovec::vecs::VarZeroVecOwned;
 use zerovec::VarZeroVec;
@@ -24,6 +25,7 @@ pub struct BlobExporter<'w> {
     /// Map of marker path hash -> locale byte string -> blob ID
     #[allow(clippy::type_complexity)]
     resources: Mutex<BTreeMap<DataMarkerIdHash, BTreeMap<Vec<u8>, usize>>>,
+    checksums: Mutex<BTreeMap<DataMarkerIdHash, u64>>,
     // All seen markers
     all_markers: Mutex<BTreeSet<DataMarkerIdHash>>,
     /// Map from blob to blob ID
@@ -51,6 +53,7 @@ impl<'w> BlobExporter<'w> {
         Self {
             resources: Default::default(),
             unique_resources: Default::default(),
+            checksums: Default::default(),
             all_markers: Default::default(),
             sink,
         }
@@ -95,7 +98,13 @@ impl DataExporter for BlobExporter<'_> {
         Ok(())
     }
 
-    fn flush(&self, marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        if let Some(checksum) = metadata.checksum {
+            self.checksums
+                .lock()
+                .expect("poison")
+                .insert(marker.id.hashed(), checksum);
+        }
         self.all_markers
             .lock()
             .expect("poison")
@@ -145,28 +154,36 @@ impl BlobExporter<'_> {
     }
 
     fn close_internal(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
+        let FinalizedBuffers { mut vzv, remap } = self.finalize_buffers();
 
         let all_markers = self.all_markers.lock().expect("poison");
         let resources = self.resources.lock().expect("poison");
+        let checksums = self.checksums.lock().expect("poison");
 
         let markers: ZeroVec<DataMarkerIdHash> = all_markers.iter().copied().collect();
 
         let locales_vec: Vec<Vec<u8>> = all_markers
             .iter()
-            .map(|marker_path_hash| resources.get(marker_path_hash))
-            .map(|option_sub_map| {
-                if let Some(sub_map) = option_sub_map {
-                    let mut sub_map = sub_map.clone();
-                    sub_map
-                        .iter_mut()
-                        .for_each(|(_, id)| *id = *remap.get(id).expect("in-bound index"));
-                    let zerotrie = ZeroTrieSimpleAscii::try_from(&sub_map).expect("in-bounds");
-                    zerotrie.into_store()
-                } else {
-                    // Key with no locales: insert an empty ZeroTrie
-                    ZeroTrieSimpleAscii::default().into_store()
+            .map(|marker_path_hash| {
+                (
+                    resources.get(marker_path_hash),
+                    checksums.get(marker_path_hash),
+                )
+            })
+            .map(|(option_sub_map, checksum)| {
+                let mut sub_map = BTreeMap::new();
+                if let Some(sub_map_wrong) = option_sub_map {
+                    if let Some(&checksum) = checksum {
+                        sub_map.insert(CHECKSUM_KEY, vzv.len());
+                        vzv.zvl_push(checksum.to_le_bytes().as_slice());
+                    }
+                    sub_map.extend(sub_map_wrong.iter().map(|(key, id)| {
+                        (key.as_slice(), *remap.get(id).expect("in-bound index"))
+                    }));
                 }
+                ZeroTrieSimpleAscii::try_from(&sub_map)
+                    .expect("in-bounds")
+                    .into_store()
             })
             .collect();
 
@@ -174,7 +191,7 @@ impl BlobExporter<'_> {
             if let Ok(locales_vzv) =
                 VarZeroVecOwned::<[u8]>::try_from_elements(locales_vec.as_slice())
             {
-                let blob = BlobSchema::V003(BlobSchemaV3 {
+                let blob = BlobSchema::V003(BlobSchemaV1 {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,
@@ -184,11 +201,11 @@ impl BlobExporter<'_> {
                 let output = postcard::to_allocvec(&blob)?;
                 self.sink.write_all(&output)?;
             } else {
-                log::info!("Upgrading to BlobSchemaV3 (bigger)...");
+                log::info!("Upgrading to BlobSchema (bigger)...");
                 let locales_vzv =
                     VarZeroVecOwned::<[u8], Index32>::try_from_elements(locales_vec.as_slice())
                         .expect("Locales vector does not fit in Index32 buffer!");
-                let blob = BlobSchema::V003Bigger(BlobSchemaV3 {
+                let blob = BlobSchema::V003Bigger(BlobSchemaV1 {
                     markers: &markers,
                     locales: &locales_vzv,
                     buffers: &vzv,

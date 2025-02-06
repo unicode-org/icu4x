@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{CaseMapUnfoldV1Marker, CaseMapV1Marker};
+use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSink;
 use crate::CaseMapper;
 
@@ -37,7 +37,7 @@ use icu_provider::prelude::*;
 #[derive(Clone, Debug)]
 pub struct CaseMapCloser<CM> {
     cm: CM,
-    unfold: DataPayload<CaseMapUnfoldV1Marker>,
+    unfold: DataPayload<CaseMapUnfoldV1>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -82,7 +82,7 @@ impl CaseMapCloser<CaseMapper> {
         Self {
             cm: CaseMapper::new(),
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,
             ),
         }
     }
@@ -99,7 +99,7 @@ impl CaseMapCloser<CaseMapper> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1> + DataProvider<CaseMapUnfoldV1> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
         let unfold = provider.load(Default::default())?.payload;
@@ -129,7 +129,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
         Self {
             cm: casemapper,
             unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1_MARKER,
+                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,
             ),
         }
     }
@@ -138,7 +138,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + DataProvider<CaseMapUnfoldV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1> + DataProvider<CaseMapUnfoldV1> + ?Sized,
     {
         let unfold = provider.load(Default::default())?.payload;
         Ok(Self {

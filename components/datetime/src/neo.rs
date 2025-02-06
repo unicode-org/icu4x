@@ -22,7 +22,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
-use icu_decimal::FixedDecimalFormatterPreferences;
+use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HourCycle, NumberingSystem,
 };
@@ -80,11 +80,9 @@ define_preferences!(
     }
 );
 
-prefs_convert!(
-    DateTimeFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 
 prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
     calendar_algorithm
@@ -275,12 +273,12 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
-        L: FixedDecimalFormatterLoader,
+        L: DecimalFormatterLoader,
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
-            &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
-            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
-            &FSet::GluePatternV1Marker::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1::bind(provider),
+            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider),
+            &FSet::GluePatternV1::bind(provider),
             prefs,
             field_set,
         )
@@ -288,18 +286,20 @@ where
         let mut names = RawDateTimeNames::new_without_number_formatting();
         names
             .load_for_pattern(
-                &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
-                &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker::bind(provider),
-                &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
-                &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1::bind(provider),
+                &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1::bind(provider),
+                &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
                 loader, // fixed decimal formatter
                 prefs,
                 selection.pattern_items_for_data_loading(),
@@ -499,15 +499,15 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
-        L: FixedDecimalFormatterLoader + AnyCalendarLoader,
+        L: DecimalFormatterLoader + AnyCalendarLoader,
     {
         let calendar = AnyCalendarLoader::load(loader, (&prefs).into())
             .map_err(DateTimeFormatterLoadError::Data)?;
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider, kind),
-            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
-            &FSet::GluePatternV1Marker::bind(provider),
+            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider),
+            &FSet::GluePatternV1::bind(provider),
             prefs,
             field_set,
         )
@@ -517,16 +517,18 @@ where
             .load_for_pattern(
                 &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),
                 &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(provider, kind),
-                &<FSet::D as DateDataMarkers>::WeekdayNamesV1Marker::bind(provider),
-                &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
+                &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
+                &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
                 loader, // fixed decimal formatter
                 prefs,
                 selection.pattern_items_for_data_loading(),
@@ -955,7 +957,7 @@ impl Writeable for FormattedDateTime<'_> {
             self.pattern.iter_items(),
             &self.input,
             &self.names,
-            self.names.fixed_decimal_formatter,
+            self.names.decimal_formatter,
             sink,
         );
         // A DateTimeWriteError should not occur in normal usage because DateTimeFormatter

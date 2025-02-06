@@ -114,7 +114,7 @@ impl BlobDataProvider {
         })
     }
 
-    #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
+    #[doc(hidden)] // for testing purposes only: checks if it is using the Bigger format
     pub fn internal_is_using_bigger_format(&self) -> bool {
         matches!(self.data.get(), BlobSchema::V003Bigger(..))
     }
@@ -126,13 +126,16 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let payload = self
+        let payload: Yoke<(&[u8], Option<u64>), Option<Cart>> = self
             .data
-            .try_map_project_cloned(|blob, _| blob.load(marker, req))
-            .map(DataPayload::from_yoked_buffer)?;
+            .try_map_project_cloned(|blob, _| blob.load(marker, req))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
-        Ok(DataResponse { metadata, payload })
+        metadata.checksum = payload.get().1;
+        Ok(DataResponse {
+            metadata,
+            payload: DataPayload::from_yoked_buffer(payload.map_project(|(bytes, _), _| bytes)),
+        })
     }
 }
 
@@ -165,9 +168,9 @@ mod test {
     use icu_provider::export::*;
     use icu_provider::hello_world::*;
 
-    #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
+    #[icu_provider::data_struct(marker(HelloSingletonV1, "hello/singleton@1", singleton))]
     #[derive(Clone, Copy)]
-    pub struct HelloSingletonV1;
+    pub struct HelloSingleton;
 
     #[test]
     fn test_empty() {
@@ -177,7 +180,7 @@ mod test {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
             exporter
-                .flush(HelloWorldV1Marker::INFO, Default::default())
+                .flush(HelloWorldV1::INFO, Default::default())
                 .unwrap();
 
             exporter.close().unwrap();
@@ -187,7 +190,7 @@ mod test {
 
         assert!(
             matches!(
-                provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
+                provider.load_data(HelloWorldV1::INFO, Default::default()),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..
@@ -205,7 +208,7 @@ mod test {
             let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
             exporter
-                .flush(HelloSingletonV1Marker::INFO, Default::default())
+                .flush(HelloSingletonV1::INFO, Default::default())
                 .unwrap();
 
             exporter.close().unwrap();
@@ -216,7 +219,7 @@ mod test {
         assert!(
             matches!(
                 provider.load_data(
-                    HelloSingletonV1Marker::INFO,
+                    HelloSingletonV1::INFO,
                     DataRequest {
                         id: DataIdentifierBorrowed::for_locale(
                             &icu_locale_core::langid!("de").into()
@@ -234,7 +237,7 @@ mod test {
 
         assert!(
             matches!(
-                provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
+                provider.load_data(HelloSingletonV1::INFO, Default::default()),
                 Err(DataError {
                     kind: DataErrorKind::IdentifierNotFound,
                     ..

@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fmt::Write;
 use std::fs;
+use std::io::Write as _;
 use std::path::PathBuf;
 
 /// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
@@ -97,40 +98,10 @@ impl FilesystemExporter {
         result.manifest.write(&result.root)?;
         Ok(result)
     }
-}
 
-impl DataExporter for FilesystemExporter {
-    fn put_payload(
-        &self,
-        marker: DataMarkerInfo,
-        id: DataIdentifierBorrowed,
-        obj: &DataPayload<ExportMarker>,
-    ) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_id(marker.id) else {
-            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
-        };
-        let mut path_buf = self.root.join(path);
-        if !id.marker_attributes.is_empty() {
-            path_buf.push(id.marker_attributes.as_str());
-        }
-
-        #[allow(clippy::unwrap_used)] // has parent by construction
-        let parent_dir = path_buf.parent().unwrap();
-
-        fs::create_dir_all(parent_dir)
-            .map_err(|e| DataError::from(e).with_path_context(parent_dir))?;
-
-        if !marker.is_singleton {
-            fs::create_dir_all(&path_buf)
-                .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
-            let mut string_path = path_buf.into_os_string();
-            write!(&mut string_path, "/{}", id.locale).expect("infallible");
-            path_buf = PathBuf::from(string_path);
-        }
-
+    fn setup_file(&self, mut path_buf: PathBuf) -> Result<Box<dyn std::io::Write>, DataError> {
         path_buf.set_extension(self.manifest.file_extension);
-
-        let mut file: Box<dyn std::io::Write> = if self.serializer.is_text_format() {
+        let file: Box<dyn std::io::Write> = if self.serializer.is_text_format() {
             Box::new(crlify::BufWriterWithLineEndingFix::new(
                 fs::File::create(&path_buf)
                     .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
@@ -141,26 +112,87 @@ impl DataExporter for FilesystemExporter {
                     .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
             ))
         };
-
-        self.serializer
-            .serialize(obj, &mut file)
-            .map_err(|e| e.with_path_context(&path_buf))?;
-        Ok(())
+        Ok(file)
     }
+}
 
-    fn flush(&self, marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
-        let Some(path) = get_data_marker_id(marker.id) else {
+impl DataExporter for FilesystemExporter {
+    fn put_payload(
+        &self,
+        marker: DataMarkerInfo,
+        id: DataIdentifierBorrowed,
+        payload: &DataPayload<ExportMarker>,
+    ) -> Result<(), DataError> {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
             return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
         };
-        let mut path_buf = self.root.join(path);
+        let mut path_buf = self.root.join(component).join(marker_name);
+        if !id.marker_attributes.is_empty() {
+            path_buf.push(id.marker_attributes.as_str());
+        }
 
-        if !marker.is_singleton && !path_buf.exists() {
+        #[allow(clippy::unwrap_used)] // has parent by construction
+        let parent_dir = path_buf.parent().unwrap();
+
+        fs::create_dir_all(parent_dir)
+            .map_err(|e| DataError::from(e).with_path_context(parent_dir))?;
+
+        fs::create_dir_all(&path_buf)
+            .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
+        let mut string_path = path_buf.into_os_string();
+        write!(&mut string_path, "/{}", id.locale).expect("infallible");
+        path_buf = PathBuf::from(string_path);
+
+        let mut file = self.setup_file(path_buf)?;
+        self.serializer.serialize(payload, &mut file)
+    }
+
+    fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
+            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
+        };
+        let path_buf = self.root.join(component).join(marker_name);
+
+        if !path_buf.exists() {
             fs::create_dir_all(&path_buf)
                 .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
-            path_buf.push(".empty");
-            fs::File::create(&path_buf)?;
+            fs::File::create(path_buf.join(".empty"))?;
+        } else if let Some(checksum) = metadata.checksum {
+            write!(
+                &mut fs::File::create(path_buf.join(".checksum"))?,
+                "{checksum}"
+            )?;
         }
 
         Ok(())
+    }
+
+    fn flush_singleton(
+        &self,
+        marker: DataMarkerInfo,
+        payload: &DataPayload<ExportMarker>,
+        metadata: FlushMetadata,
+    ) -> Result<(), DataError> {
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
+            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
+        };
+        let path_buf = self.root.join(component).join(marker_name);
+
+        #[allow(clippy::unwrap_used)] // has parent by construction
+        let parent_dir = path_buf.parent().unwrap();
+
+        fs::create_dir_all(parent_dir)
+            .map_err(|e| DataError::from(e).with_path_context(parent_dir))?;
+
+        if let Some(checksum) = metadata.checksum {
+            write!(
+                &mut fs::File::create(format!("{}_checksum", path_buf.display()))?,
+                "{checksum}"
+            )
+            .unwrap();
+        }
+        let mut file = self.setup_file(path_buf)?;
+
+        self.serializer.serialize(payload, &mut file)
     }
 }

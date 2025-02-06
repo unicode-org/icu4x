@@ -15,7 +15,7 @@ use litemap::LiteMap;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, Default)]
-pub struct DateSkeletonPatternsV1<'data>(pub LiteMap<SkeletonV1, PatternPlurals<'data>>);
+pub struct DateSkeletonPatterns<'data>(pub LiteMap<SkeletonData, PatternPlurals<'data>>);
 
 /// This struct is a public wrapper around the internal `Skeleton` struct.
 ///
@@ -32,9 +32,9 @@ pub struct DateSkeletonPatternsV1<'data>(pub LiteMap<SkeletonV1, PatternPlurals<
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
-pub struct SkeletonV1(pub Skeleton);
+pub struct SkeletonData(pub Skeleton);
 
-impl TryFrom<&str> for SkeletonV1 {
+impl TryFrom<&str> for SkeletonData {
     type Error = SkeletonError;
 
     fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {

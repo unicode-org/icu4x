@@ -47,9 +47,9 @@ impl WeekCalculator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::WeekDataV2Marker> + ?Sized,
+        P: DataProvider<crate::provider::WeekDataV2> + ?Sized,
     {
-        let locale = WeekDataV2Marker::make_locale(prefs.locale_preferences);
+        let locale = WeekDataV2::make_locale(prefs.locale_preferences);
         provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

@@ -11,7 +11,7 @@ use core::cmp::Ordering;
 use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::{langid, LanguageIdentifier};
+use icu::locale::LanguageIdentifier;
 use icu::timezone::provider::*;
 use icu::timezone::Time;
 use icu::timezone::UtcOffset;
@@ -23,13 +23,11 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use writeable::Writeable;
+use zerovec::ule::NichedOption;
 
-impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeZoneEssentialsV1Marker>, DataError> {
-        self.check_req::<TimeZoneEssentialsV1Marker>(req)?;
+impl DataProvider<TimeZoneEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeZoneEssentialsV1>, DataError> {
+        self.check_req::<TimeZoneEssentialsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -47,7 +45,7 @@ impl DataProvider<TimeZoneEssentialsV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(TimeZoneEssentialsV1 {
+            payload: DataPayload::from_owned(TimeZoneEssentials {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
@@ -68,7 +66,7 @@ impl SourceDataProvider {
     #[allow(clippy::type_complexity)]
     fn calculate_locations(
         &self,
-        req: DataRequest,
+        locale: &DataLocale,
     ) -> Result<
         (
             BTreeMap<TimeZoneBcp47Id, String>,
@@ -80,7 +78,7 @@ impl SourceDataProvider {
             .cldr()?
             .dates("gregorian")
             .read_and_parse::<cldr_serde::time_zones::time_zone_names::Resource>(
-                req.id.locale,
+                locale,
                 "timeZoneNames.json",
             )?
             .main
@@ -148,14 +146,14 @@ impl SourceDataProvider {
 
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
-        let region_display_names = if req.id.locale.is_default() {
+        let region_display_names = if locale.is_default() {
             BTreeMap::default()
         } else {
             let regions = &self
                 .cldr()?
                 .displaynames()
                 .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                    req.id.locale,
+                    locale,
                     "territories.json",
                 )?
                 .main
@@ -184,71 +182,19 @@ impl SourceDataProvider {
                 .collect()
         };
 
-        let find_endonym_or_en = |region: icu::locale::subtags::Region| -> Option<&str> {
-            let expander = self.cldr().unwrap().extended_locale_expander().unwrap();
-            let mut langid = LanguageIdentifier {
-                region: Some(region),
-                // `und` is `Latn`
-                script: Some(icu::locale::subtags::script!("Latn")),
-                ..Default::default()
-            };
-            expander.maximize(&mut langid);
-            langid.region = None;
-            expander.minimize(&mut langid);
-            let locale = langid.into();
-
-            // Avoid logging file-not-found errors
-            let regions = &if self
-                .cldr()
-                .unwrap()
-                .displaynames()
-                .file_exists(&locale, "territories.json")
-                != Ok(true)
-            {
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &langid!("en").into(),
-                        "territories.json",
-                    )
-                    .ok()?
-            } else {
-                self.cldr()
-                    .unwrap()
-                    .displaynames()
-                    .read_and_parse::<cldr_serde::displaynames::region::Resource>(
-                        &locale,
-                        "territories.json",
-                    )
-                    .ok()?
-            }
-            .main
-            .value
-            .localedisplaynames
-            .regions;
-
-            regions
-                .get(&format!("{region}-alt-short"))
-                .or_else(|| regions.get(region.as_str()))
-                .map(|x| x.as_str())
-        };
-
         let mut locations = BTreeMap::new();
 
         exemplar_cities.retain(|&k, v| {
             if k.0 == "unk" {
                 true
             } else if let Some(region) = primary_zones.get(&k) {
-                let region_name = region_display_names
-                    .get(region)
-                    .copied()
-                    .or_else(|| find_endonym_or_en(*region))
-                    .unwrap_or(region.as_str())
-                    .to_string();
-                let retain = &region_name != v;
-                locations.insert(k, region_name);
-                retain
+                if let Some(region_name) = region_display_names.get(region) {
+                    locations.insert(k, region_name.to_string());
+                    region_name != v
+                } else {
+                    locations.insert(k, v.clone());
+                    false
+                }
             } else {
                 locations.insert(k, v.clone());
                 false
@@ -258,7 +204,7 @@ impl SourceDataProvider {
         Ok((locations, exemplar_cities))
     }
 
-    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriodV1<'static>, DataError> {
+    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriod<'static>, DataError> {
         let metazones = &self
             .cldr()?
             .core()
@@ -268,13 +214,13 @@ impl SourceDataProvider {
             .supplemental
             .meta_zones;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, _checksum) = self.metazone_to_id_map()?;
         self.cldr()?
             .tz_caches
             .mz_period
             .get_or_init(|| {
-                Ok(MetazonePeriodV1(
-                    metazones
+                Ok(MetazonePeriod {
+                    list: metazones
                         .meta_zone_info
                         .time_zone
                         .0
@@ -313,25 +259,29 @@ impl SourceDataProvider {
                                                     + time.minute.number() as i32)
                                         })
                                         .unwrap_or_default(),
-                                    meta_zone_id_data.get(&period.uses_meta_zone.mzone).copied(),
+                                    NichedOption(
+                                        meta_zone_id_data
+                                            .get(&period.uses_meta_zone.mzone)
+                                            .copied(),
+                                    ),
                                 ))
                             })
                         })
                         .collect(),
-                ))
+                })
             })
             .as_ref()
             .map_err(|&e| e)
     }
 
-    fn offset_period(&self) -> Result<&ZoneOffsetPeriodV1<'static>, DataError> {
+    fn offset_period(&self) -> Result<&ZoneOffsetPeriod<'static>, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
 
         self.cldr()?
             .tz_caches
             .offset_period
             .get_or_init(|| {
-                Ok(ZoneOffsetPeriodV1(
+                Ok(ZoneOffsetPeriod(
                     self.bcp47_to_canonical_iana_map()?
                         .iter()
                         .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
@@ -503,11 +453,44 @@ impl SourceDataProvider {
             .as_ref()
             .map_err(|&e| e)
     }
+
+    fn dedupe_group(&self, locale: DataLocale) -> Result<DataLocale, DataError> {
+        let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
+        self.cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut group);
+        group.language = Default::default();
+        group.region = Default::default();
+        self.cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut group);
+        self.cldr()?
+            .extended_locale_expander()?
+            .minimize_favor_script(&mut group);
+        let group = DataLocale::from(group);
+        if self
+            .cldr()
+            .unwrap()
+            .displaynames()
+            .file_exists(&group, "territories.json")
+            != Ok(true)
+            || self
+                .cldr()
+                .unwrap()
+                .dates("gregorian")
+                .file_exists(&group, "timeZoneNames.json")
+                != Ok(true)
+        {
+            Ok(locale)
+        } else {
+            Ok(group)
+        }
+    }
 }
 
-impl DataProvider<LocationsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1Marker>, DataError> {
-        self.check_req::<LocationsV1Marker>(req)?;
+impl DataProvider<LocationsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1>, DataError> {
+        self.check_req::<LocationsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -521,16 +504,15 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
 
-        let mut locations = self.calculate_locations(req)?.0;
+        let mut locations = self.calculate_locations(req.id.locale)?.0;
 
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?.0;
-            locations.retain(|k, v| und.get(k) != Some(v));
-        }
+        let base = DataProvider::<LocationsRootV1>::load(&self, req)?.payload;
+
+        locations.retain(|k, v| base.get().locations.get(k) != Some(v));
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(LocationsV1 {
+            payload: DataPayload::from_owned(Locations {
                 locations: locations.into_iter().collect(),
                 pattern_generic: Cow::Owned(time_zone_names.region_format.0.clone()),
                 pattern_standard: Cow::Owned(time_zone_names.region_format_st.0.clone()),
@@ -541,40 +523,79 @@ impl DataProvider<LocationsV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1Marker>, DataError> {
-        self.check_req::<ExemplarCitiesV1Marker>(req)?;
-
-        let mut exemplars = self.calculate_locations(req)?.1;
-
-        if *req.id.locale != DataLocale::default() {
-            let und = self.calculate_locations(Default::default())?.1;
-            exemplars.retain(|k, v| und.get(k) != Some(v));
-        }
+impl DataProvider<LocationsRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1>, DataError> {
+        self.check_req::<LocationsV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ExemplarCitiesV1 {
+            payload: DataPayload::from_owned(Locations {
+                locations: self
+                    .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
+                    .0
+                    .into_iter()
+                    .collect(),
+                pattern_generic: Default::default(),
+                pattern_standard: Default::default(),
+                pattern_daylight: Default::default(),
+                pattern_partial_location: Default::default(),
+            }),
+        })
+    }
+}
+
+impl DataProvider<ExemplarCitiesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1>, DataError> {
+        self.check_req::<ExemplarCitiesV1>(req)?;
+
+        let mut exemplars = self.calculate_locations(req.id.locale)?.1;
+
+        let base = DataProvider::<ExemplarCitiesRootV1>::load(&self, req)?.payload;
+
+        exemplars.retain(|k, v| base.get().exemplars.get(k) != Some(v));
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(ExemplarCities {
                 exemplars: exemplars.into_iter().collect(),
             }),
         })
     }
 }
 
-impl DataProvider<MetazonePeriodV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1Marker>, DataError> {
-        self.check_req::<MetazonePeriodV1Marker>(req)?;
+impl DataProvider<ExemplarCitiesRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesRootV1>, DataError> {
+        self.check_req::<ExemplarCitiesV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
+            payload: DataPayload::from_owned(ExemplarCities {
+                exemplars: self
+                    .calculate_locations(&self.dedupe_group(*req.id.locale)?)?
+                    .1
+                    .into_iter()
+                    .collect(),
+            }),
+        })
+    }
+}
+
+impl DataProvider<MetazonePeriodV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1>, DataError> {
+        self.check_req::<MetazonePeriodV1>(req)?;
+
+        let (_, checksum) = self.metazone_to_id_map()?;
+
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
             payload: DataPayload::from_owned(self.metazone_period()?.clone()),
         })
     }
 }
 
-impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1Marker>, DataError> {
-        self.check_req::<ZoneOffsetPeriodV1Marker>(req)?;
+impl DataProvider<ZoneOffsetPeriodV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ZoneOffsetPeriodV1>, DataError> {
+        self.check_req::<ZoneOffsetPeriodV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -583,12 +604,12 @@ impl DataProvider<ZoneOffsetPeriodV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneGenericNamesLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesLongV1Marker>, DataError> {
-        self.check_req::<MetazoneGenericNamesLongV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneGenericNamesLongV1>, DataError> {
+        self.check_req::<MetazoneGenericNamesLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -602,9 +623,9 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         let reverse_metazones = self.reverse_metazones()?;
-        let locations = self.calculate_locations(req)?.0;
+        let locations = self.calculate_locations(req.id.locale)?.0;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
@@ -631,8 +652,8 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
             }),
@@ -640,12 +661,12 @@ impl DataProvider<MetazoneGenericNamesLongV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1Marker>, DataError> {
-        self.check_req::<MetazoneSpecificNamesLongV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1>, DataError> {
+        self.check_req::<MetazoneSpecificNamesLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -660,9 +681,9 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
             .time_zone_names;
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
         let reverse_metazones = self.reverse_metazones()?;
-        let locations = self.calculate_locations(req)?.0;
+        let locations = self.calculate_locations(req.id.locale)?.0;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
@@ -703,8 +724,8 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
             }),
@@ -712,12 +733,12 @@ impl DataProvider<MetazoneSpecificNamesLongV1Marker> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneGenericNamesShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesShortV1Marker>, DataError> {
-        self.check_req::<MetazoneGenericNamesShortV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneGenericNamesShortV1>, DataError> {
+        self.check_req::<MetazoneGenericNamesShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -731,7 +752,7 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
@@ -741,20 +762,20 @@ impl DataProvider<MetazoneGenericNamesShortV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneGenericNamesV1 {
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
             }),
         })
     }
 }
-impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
+impl DataProvider<MetazoneSpecificNamesShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1Marker>, DataError> {
-        self.check_req::<MetazoneSpecificNamesShortV1Marker>(req)?;
+    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1>, DataError> {
+        self.check_req::<MetazoneSpecificNamesShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -769,7 +790,7 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
             .time_zone_names;
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let meta_zone_id_data = self.metazone_to_short_map()?;
+        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
@@ -779,8 +800,8 @@ impl DataProvider<MetazoneSpecificNamesShortV1Marker> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(MetazoneSpecificNamesV1 {
+            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
             }),

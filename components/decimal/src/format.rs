@@ -16,17 +16,17 @@ use writeable::Part;
 use writeable::PartsWrite;
 use writeable::Writeable;
 
-/// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
+/// An intermediate structure returned by [`DecimalFormatter`](crate::DecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
-pub struct FormattedFixedDecimal<'l> {
+pub struct FormattedDecimal<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
-    pub(crate) options: &'l FixedDecimalFormatterOptions,
-    pub(crate) symbols: &'l DecimalSymbolsV2<'l>,
-    pub(crate) digits: &'l DecimalDigitsV1,
+    pub(crate) options: &'l DecimalFormatterOptions,
+    pub(crate) symbols: &'l DecimalSymbols<'l>,
+    pub(crate) digits: &'l DecimalDigits,
 }
 
-impl FormattedFixedDecimal<'_> {
+impl FormattedDecimal<'_> {
     /// Returns the affixes needed for the current sign, as (prefix, suffix)
     fn get_affixes(&self) -> Option<(Part, (&str, &str))> {
         match self.value.sign() {
@@ -37,7 +37,7 @@ impl FormattedFixedDecimal<'_> {
     }
 }
 
-impl Writeable for FormattedFixedDecimal<'_> {
+impl Writeable for FormattedDecimal<'_> {
     fn write_to_parts<W>(&self, w: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: writeable::PartsWrite + ?Sized,
@@ -101,19 +101,19 @@ impl Writeable for FormattedFixedDecimal<'_> {
     }
 }
 
-writeable::impl_display_with_writeable!(FormattedFixedDecimal<'_>);
+writeable::impl_display_with_writeable!(FormattedDecimal<'_>);
 
 #[cfg(test)]
 mod tests {
     use icu_locale_core::locale;
     use writeable::assert_writeable_eq;
 
-    use crate::FixedDecimalFormatter;
+    use crate::DecimalFormatter;
 
     #[test]
     pub fn test_es_mx() {
         let locale = locale!("es-MX").into();
-        let fmt = FixedDecimalFormatter::try_new(locale, Default::default()).unwrap();
+        let fmt = DecimalFormatter::try_new(locale, Default::default()).unwrap();
         let fd = "12345.67".parse().unwrap();
         assert_writeable_eq!(fmt.format(&fd), "12,345.67");
     }

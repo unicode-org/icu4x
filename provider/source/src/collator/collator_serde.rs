@@ -4,7 +4,7 @@
 
 use icu::collections::codepointtrie::toml::CodePointTrieToml;
 
-/// Serde counterpart for `CollationDataV1`.
+/// Serde counterpart for `CollationData`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationData {
     pub(crate) trie: CodePointTrieToml,
@@ -14,25 +14,25 @@ pub(crate) struct CollationData {
     pub(crate) ces: Vec<i64>,
 }
 
-/// Serde counterpart for `CollationDiacriticsV1`.
+/// Serde counterpart for `CollationDiacritics`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationDiacritics {
     pub(crate) secondaries: Vec<u16>,
 }
 
-/// Serde counterpart for `CollationJamoV1`.
+/// Serde counterpart for `CollationJamo`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationJamo {
     pub(crate) ce32s: Vec<u32>,
 }
 
-/// Serde counterpart for `CollationMetadataV1`.
+/// Serde counterpart for `CollationMetadata`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationMetadata {
     pub(crate) bits: u32,
 }
 
-/// Serde counterpart for `CollationReorderingV1`.
+/// Serde counterpart for `CollationReordering`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationReordering {
     pub(crate) min_high_no_reorder: u32,
@@ -40,7 +40,7 @@ pub(crate) struct CollationReordering {
     pub(crate) reorder_ranges: Vec<u32>,
 }
 
-/// Serde counterpart for `CollationSpecialPrimariesV1`.
+/// Serde counterpart for `CollationSpecialPrimaries`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationSpecialPrimaries {
     pub(crate) last_primaries: Vec<u16>, // length always supposed to be 4

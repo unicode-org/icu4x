@@ -21,15 +21,15 @@
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_normalizer::provider::DecompositionDataV2;
-use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::provider::DecompositionData;
+use icu_normalizer::provider::DecompositionTables;
 use icu_properties::props::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::{zeroslice, ZeroSlice};
 
-use crate::provider::CollationDataV1;
+use crate::provider::CollationData;
 
 /// Marker that the decomposition does not round trip via NFC.
 ///
@@ -204,7 +204,7 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 /// Bits  5..4: Reserved. May be used in the future to indicate lccc!=0 and tccc!=0.
 #[derive(Eq, PartialEq, Debug)]
 #[allow(dead_code)]
-#[repr(u8)]
+#[repr(u8)] // This repr is necessary for transmute safety
 pub(crate) enum Tag {
     /// Fall back to the base collator.
     /// This is the tag value in SPECIAL_CE32_LOW_BYTE and FALLBACK_CE32.
@@ -360,8 +360,7 @@ impl CollationElement32 {
     #[inline(always)]
     pub(crate) fn tag(self) -> Tag {
         debug_assert!(self.low_byte() >= SPECIAL_CE32_LOW_BYTE);
-        // By construction, the byte being transmuted to the enum is within
-        // the value space of the enum, so the transmute cannot be UB.
+        // Safety: Tag has values 0 to 15, which are filtered for with the 0xF mask.
         unsafe { core::mem::transmute(self.low_byte() & 0xF) }
     }
 
@@ -727,24 +726,30 @@ impl CharacterAndClassAndTrieValue {
 // or the crate-module-qualified name of this struct
 // without coordination.
 #[derive(Debug, Clone)]
+// Safety invariant: The low 24 bits are a valid char
 struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
+        // Safety invariant upheld here: the first half is a valid char
+        // and the second half does not affect the low 24 bits
         CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
+        // Safety invariant upheld here: the first half is a valid char
+        // and the second half does not affect the low 24 bits
         CharacterAndClass(u32::from(c) | ((0xFF) << 24))
     }
     pub fn new_with_trie_value(c: char, trie_value: u32) -> Self {
         Self::new(c, ccc_from_trie_value(trie_value))
     }
     pub fn character(&self) -> char {
-        // Safe, because the low 24 bits came from a `char`
-        // originally.
-        unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
+        // Safety: from the safety invariant, this extracts the low 24 bits
+        unsafe { char::from_u32_unchecked(self.0 & 0xFF_FFFF) }
     }
     pub fn ccc(&self) -> CanonicalCombiningClass {
+        // Safety invariant upheld here: The argument is outside of the low 24 bits,
+        // and \0 is a valid character
         CanonicalCombiningClass((self.0 >> 24) as u8)
     }
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
@@ -754,7 +759,9 @@ impl CharacterAndClass {
         if self.0 >> 24 != 0xFF {
             return;
         }
-        let scalar = self.0 & 0xFFFFFF;
+        let scalar = self.0 & 0xFF_FFFF;
+        // Safety invariant upheld here: The first half doesn't affect the lower 24 bits,
+        // and the second half was taken from the old `self` which had these invariants upheld already.
         self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
     }
 }
@@ -798,9 +805,9 @@ where
     /// starter.
     upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
     /// The root collation data.
-    root: &'data CollationDataV1<'data>,
+    root: &'data CollationData<'data>,
     /// Tailoring if applicable.
-    tailoring: &'data CollationDataV1<'data>,
+    tailoring: &'data CollationData<'data>,
     /// The `CollationElement32` mapping for the Hangul Jamo block.
     ///
     /// Note: in ICU4C the jamo table contains only modern jamo. Here, the jamo table contains the whole Unicode block.
@@ -832,12 +839,12 @@ where
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         delegate: I,
-        root: &'data CollationDataV1,
-        tailoring: &'data CollationDataV1,
+        root: &'data CollationData,
+        tailoring: &'data CollationData,
         jamo: &'data [<u32 as AsULE>::ULE; JAMO_COUNT],
         diacritics: &'data ZeroSlice<u16>,
-        decompositions: &'data DecompositionDataV2,
-        tables: &'data DecompositionTablesV1,
+        decompositions: &'data DecompositionData,
+        tables: &'data DecompositionTables,
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
     ) -> Self {
@@ -1268,7 +1275,7 @@ where
         if let Some(c_c_tv) = self.next_internal() {
             let mut c = c_c_tv.character();
             let mut ce32;
-            let mut data: &CollationDataV1 = self.tailoring;
+            let mut data: &CollationData = self.tailoring;
             let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // TODO(#2005): Figure out good length
 
             // Betting that fusing the NFD algorithm into this one at the
@@ -1567,9 +1574,6 @@ where
                 // last jamo unmapped to `CollationElement` in `pending` and instead prepend it to
                 // `upcoming`.
                 //
-                // The `unsafe` blocks are OK, because the value is by construction in the Hangul
-                // jamo block, which is in the scalar value range.
-                //
                 // Indexing OK, because indices in range by construction
                 #[allow(clippy::indexing_slicing)]
                 if t != 0 {
@@ -1581,6 +1585,8 @@ where
                     );
                     self.upcoming.insert(
                         0,
+                        // Safety: HANGUL_T_BASE is 0x11A7, t is < HANGUL_T_COUNT = 28, so this is definitely
+                        // in range for a char (≤ 0xD800)
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
                             core::char::from_u32_unchecked(HANGUL_T_BASE + t)
                         }),
@@ -1588,6 +1594,8 @@ where
                 } else {
                     self.upcoming.insert(
                         0,
+                        // Safety: HANGUL_V_BASE is 0x1161, v is < HANGUL_N_COUNT = 588, so this is definitely
+                        // in range for a char (≤ 0xD800)
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(unsafe {
                             core::char::from_u32_unchecked(HANGUL_V_BASE + v)
                         }),

@@ -70,7 +70,7 @@ export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter.mjs"
 
 export { TimeFormatter } from "./TimeFormatter.mjs"
 
-export { FixedDecimalFormatter } from "./FixedDecimalFormatter.mjs"
+export { DecimalFormatter } from "./DecimalFormatter.mjs"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter.mjs"
 
@@ -216,7 +216,7 @@ export { IsoWeekday } from "./IsoWeekday.mjs"
 
 export { DateTimeLength } from "./DateTimeLength.mjs"
 
-export { FixedDecimalGroupingStrategy } from "./FixedDecimalGroupingStrategy.mjs"
+export { DecimalGroupingStrategy } from "./DecimalGroupingStrategy.mjs"
 
 export { DisplayNamesFallback } from "./DisplayNamesFallback.mjs"
 

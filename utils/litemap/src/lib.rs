@@ -50,6 +50,7 @@
 #[cfg(doc)]
 extern crate std;
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 #[cfg(feature = "databake")]

@@ -11,12 +11,9 @@ use icu::locale::{subtags::Variant, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<VariantDisplayNamesV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<VariantDisplayNamesV1Marker>, DataError> {
-        self.check_req::<VariantDisplayNamesV1Marker>(req)?;
+impl DataProvider<VariantDisplayNamesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<VariantDisplayNamesV1>, DataError> {
+        self.check_req::<VariantDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::variant::Resource = self
             .cldr()?
@@ -25,14 +22,14 @@ impl DataProvider<VariantDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(VariantDisplayNamesV1::try_from(data).map_err(
-                |e| DataError::custom("data for VariantDisplayNames").with_display_context(&e),
-            )?),
+            payload: DataPayload::from_owned(VariantDisplayNames::try_from(data).map_err(|e| {
+                DataError::custom("data for VariantDisplayNames").with_display_context(&e)
+            })?),
         })
     }
 }
 
-impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<VariantDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -54,7 +51,7 @@ impl IterableDataProviderCached<VariantDisplayNamesV1Marker> for SourceDataProvi
 /// Substring used to denote alternative display names data variants for a given variant. For example: "FONUPA-alt-secondary".
 const ALT_SUBSTRING: &str = "-alt-";
 
-impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNames<'static> {
     type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::variant::Resource) -> Result<Self, Self::Error> {
@@ -88,7 +85,7 @@ mod tests {
     fn test_basic_variant_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<VariantDisplayNamesV1Marker> = provider
+        let data: DataPayload<VariantDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()

@@ -272,9 +272,9 @@ fn assert_fixture_element<C>(
     description: &str,
 ) where
     C: Calendar + CldrCalendar + IntoAnyCalendar + Clone,
-    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::SkeletaV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::SkeletaV1>,
 {
     assert!(
         input_value.date.calendar().any_calendar_kind().is_some(),

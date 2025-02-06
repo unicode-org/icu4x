@@ -189,7 +189,7 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendarPreferences",
         "icu::calendar::any_calendar::AnyCalendarPreferences",
         "icu::datetime::DateTimeFormatterPreferences",
-        "icu::decimal::FixedDecimalFormatterPreferences",
+        "icu::decimal::DecimalFormatterPreferences",
         "icu::list::ListFormatterPreferences",
         "icu::locale::preferences::LocalePreferences",
         "icu::plurals::PluralRulesPreferences",
@@ -358,7 +358,7 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatterOptions",
         "icu::datetime::options::DateTimeFormatterOptions",
         "icu::datetime::options::length::Bag",
-        "icu::decimal::options::FixedDecimalFormatterOptions",
+        "icu::decimal::options::DecimalFormatterOptions",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)

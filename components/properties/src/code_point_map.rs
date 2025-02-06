@@ -19,7 +19,7 @@ use zerovec::ule::UleError;
 /// [`CodePointMapDataBorrowed`].
 #[derive(Debug, Clone)]
 pub struct CodePointMapData<T: TrieValue> {
-    data: DataPayload<ErasedMarker<PropertyCodePointMapV1<'static, T>>>,
+    data: DataPayload<ErasedMarker<PropertyCodePointMap<'static, T>>>,
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -91,7 +91,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     {
         self.data
             .try_map_project(|data, _| data.try_into_converted())
-            .map(CodePointMapData::from_data::<ErasedMarker<PropertyCodePointMapV1<'static, P>>>)
+            .map(CodePointMapData::from_data::<ErasedMarker<PropertyCodePointMap<'static, P>>>)
     }
 
     /// Construct a new one from loaded data
@@ -99,17 +99,17 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<DataStruct = PropertyCodePointMapV1<'static, T>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointMap<'static, T>>,
     {
         Self { data: data.cast() }
     }
 
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        let set = PropertyCodePointMapV1::from_code_point_trie(trie);
-        CodePointMapData::from_data(DataPayload::<
-            ErasedMarker<PropertyCodePointMapV1<'static, T>>,
-        >::from_owned(set))
+        let set = PropertyCodePointMap::from_code_point_trie(trie);
+        CodePointMapData::from_data(
+            DataPayload::<ErasedMarker<PropertyCodePointMap<'static, T>>>::from_owned(set),
+        )
     }
 
     /// Convert this type to a [`CodePointTrie`] as a borrowed value.
@@ -143,7 +143,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
-    map: &'a PropertyCodePointMapV1<'a, T>,
+    map: &'a PropertyCodePointMap<'a, T>,
 }
 
 impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
@@ -350,10 +350,10 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
 /// [`TR44`]: https://www.unicode.org/reports/tr44
 pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]
-    type DataMarker: DataMarker<DataStruct = PropertyCodePointMapV1<'static, Self>>;
+    type DataMarker: DataMarker<DataStruct = PropertyCodePointMap<'static, Self>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
-    const SINGLETON: &'static PropertyCodePointMapV1<'static, Self>;
+    const SINGLETON: &'static PropertyCodePointMap<'static, Self>;
     /// The name of this property
     const NAME: &'static [u8];
     /// The abbreviated name of this property, if it exists, otherwise the name

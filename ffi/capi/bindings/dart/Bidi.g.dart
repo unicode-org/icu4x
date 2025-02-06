@@ -52,7 +52,7 @@ final class Bidi implements ffi.Finalizable {
   /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
-  BidiInfo forText(String text, int? defaultLevel) {
+  BidiInfo forText(String text, [int? defaultLevel]) {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [textArena];

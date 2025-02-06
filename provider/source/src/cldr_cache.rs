@@ -7,8 +7,7 @@
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
-    LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
-    LikelySubtagsForScriptRegionV1Marker,
+    LikelySubtagsExtendedV1, LikelySubtagsForLanguageV1, LikelySubtagsForScriptRegionV1,
 };
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
@@ -135,13 +134,13 @@ impl CldrCache {
                 let provider = make_forking_provider!(
                     ForkByMarkerProvider::new,
                     [
-                        FixedProvider::<LikelySubtagsForLanguageV1Marker>::from_owned(
+                        FixedProvider::<LikelySubtagsForLanguageV1>::from_owned(
                             common_data.as_langs(),
                         ),
-                        FixedProvider::<LikelySubtagsForScriptRegionV1Marker>::from_owned(
+                        FixedProvider::<LikelySubtagsForScriptRegionV1>::from_owned(
                             common_data.as_script_region(),
                         ),
-                        FixedProvider::<LikelySubtagsExtendedV1Marker>::from_owned(
+                        FixedProvider::<LikelySubtagsExtendedV1>::from_owned(
                             extended_data.as_extended()
                         ),
                     ]

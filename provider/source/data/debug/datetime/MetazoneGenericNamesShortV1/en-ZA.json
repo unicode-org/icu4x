@@ -1,0 +1,12 @@
+{
+  "defaults": {
+    "2": "CAT",
+    "3": "EAT",
+    "5": "SAST",
+    "6": "WAT",
+    "101": "GMT"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
+}

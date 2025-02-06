@@ -91,16 +91,16 @@ pub struct SourceDataProvider {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         icu_provider::export::make_exportable_provider!(SourceDataProvider, [
-            $($marker,)+
-            $(#[cfg(feature = "experimental")] $emarker,)+
+            $($marker_ty,)+
+            $(#[cfg(feature = "experimental")] $emarker_ty,)+
         ]);
 
         #[cfg(test)]
         icu_provider::dynutil::impl_dynamic_data_provider!(SourceDataProvider, [
-            $($marker,)+
-            $(#[cfg(feature = "experimental")] $emarker,)+
+            $($marker_ty,)+
+            $(#[cfg(feature = "experimental")] $emarker_ty,)+
         ], icu_provider::any::AnyMarker);
     }
 }
@@ -111,7 +111,7 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "46.1.0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0-ALPHA1";
 
     /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-12-16/76.x";
@@ -270,7 +270,7 @@ impl SourceDataProvider {
         Self {
             tzdb_paths: Some(Arc::new(TzdbCache {
                 root: AbstractFs::new_from_url(format!(
-                    "https://github.com/eggert/tz/archive/refs/tags/{tag}.zip",
+                    "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
                 )),
                 transitions: Default::default(),
                 zone_tab: Default::default(),
@@ -395,14 +395,14 @@ fn test_check_req() {
     use icu_provider::hello_world::*;
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl DataProvider<HelloWorldV1Marker> for SourceDataProvider {
-        fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1> for SourceDataProvider {
+        fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
             HelloWorldProvider.load(req)
         }
     }
 
     #[allow(non_local_definitions)] // test-scoped, only place that uses it
-    impl crate::IterableDataProviderCached<HelloWorldV1Marker> for SourceDataProvider {
+    impl crate::IterableDataProviderCached<HelloWorldV1> for SourceDataProvider {
         fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
             Ok(HelloWorldProvider.iter_ids()?.into_iter().collect())
         }
@@ -410,13 +410,13 @@ fn test_check_req() {
 
     let provider = SourceDataProvider::new_testing();
     assert!(provider
-        .check_req::<HelloWorldV1Marker>(DataRequest {
+        .check_req::<HelloWorldV1>(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("fi").into()),
             ..Default::default()
         })
         .is_ok());
     assert!(provider
-        .check_req::<HelloWorldV1Marker>(DataRequest {
+        .check_req::<HelloWorldV1>(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("arc").into()),
             ..Default::default()
         })

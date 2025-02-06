@@ -15,8 +15,8 @@ import * as GregorianDateTimeFormatterDemo from "./GregorianDateTimeFormatter.mj
 export * as GregorianDateTimeFormatterDemo from "./GregorianDateTimeFormatter.mjs";
 import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
-import * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
-export * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
+import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
+export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 import * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
 export * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
 import * as ListFormatterDemo from "./ListFormatter.mjs";
@@ -189,25 +189,25 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Year",
+                name: "Date:Year",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Month",
+                name: "Date:Month",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Day",
+                name: "Date:Day",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Calendar:Locale:Name",
+                name: "Date:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -222,25 +222,25 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Year",
+                name: "Date:Year",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Month",
+                name: "Date:Month",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Day",
+                name: "Date:Day",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Calendar:Locale:Name",
+                name: "Date:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -255,13 +255,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "DateFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "DateFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -300,13 +300,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "DateFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "DateFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -339,13 +339,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "DateTimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "DateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -408,13 +408,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "DateTimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "DateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -471,13 +471,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "GregorianDateFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "GregorianDateFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -510,13 +510,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "GregorianDateTimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "GregorianDateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -573,13 +573,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "TimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "TimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -611,21 +611,21 @@ let termini = Object.assign({
         ]
     },
 
-    "FixedDecimalFormatter.format": {
-        func: FixedDecimalFormatterDemo.format,
+    "DecimalFormatter.format": {
+        func: DecimalFormatterDemo.format,
         // For avoiding webpacking minifying issues:
-        funcName: "FixedDecimalFormatter.format",
+        funcName: "DecimalFormatter.format",
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "DecimalFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:GroupingStrategy",
-                type: "FixedDecimalGroupingStrategy",
+                name: "DecimalFormatter:GroupingStrategy",
+                type: "DecimalGroupingStrategy",
                 typeUse: "enumerator"
             },
             
@@ -651,13 +651,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:F",
+                name: "SignedFixedDecimal:F",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Magnitude",
+                name: "SignedFixedDecimal:Magnitude",
                 type: "number",
                 typeUse: "number"
             }
@@ -672,13 +672,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "ListFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "ListFormatter:Length",
                 type: "ListLength",
                 typeUse: "enumerator"
             },
@@ -699,7 +699,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Name",
+                name: "Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -714,7 +714,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Name",
+                name: "Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
@@ -735,7 +735,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Name",
+                name: "Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -750,7 +750,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Name",
+                name: "Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -765,7 +765,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Name",
+                name: "Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -795,7 +795,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Name",
+                name: "Locale:Name",
                 type: "string",
                 typeUse: "string"
             }
@@ -840,19 +840,19 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Bcp47Id",
+                name: "TimeZoneInfo:Bcp47Id",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:OffsetSeconds",
+                name: "TimeZoneInfo:OffsetSeconds",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Self:Dst",
+                name: "TimeZoneInfo:Dst",
                 type: "boolean",
                 typeUse: "boolean"
             }
@@ -957,13 +957,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "GregorianZonedDateTimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "GregorianZonedDateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -1038,13 +1038,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "ZonedDateTimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "ZonedDateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -1125,13 +1125,13 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self:Locale:Name",
+                name: "ZonedDateTimeFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Self:Length",
+                name: "ZonedDateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -1206,7 +1206,7 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "Self",
+                name: "AnyCalendarKind",
                 type: "AnyCalendarKind",
                 typeUse: "enumerator"
             }

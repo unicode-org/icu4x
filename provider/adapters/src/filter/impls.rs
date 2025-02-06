@@ -41,7 +41,7 @@ where
     ///
     /// // German requests should succeed:
     /// let de = DataIdentifierCow::from_locale(langid!("de").into());
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    /// let response: Result<DataResponse<HelloWorldV1>, _> =
     ///     provider.load(DataRequest {
     ///         id: de.as_borrowed(),
     ///         ..Default::default()
@@ -50,12 +50,12 @@ where
     ///
     /// // English requests should fail:
     /// let en = DataIdentifierCow::from_locale(langid!("en-US").into());
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    /// let response: Result<DataResponse<HelloWorldV1>, _> =
     ///     provider.load(DataRequest {
     ///         id: en.as_borrowed(),
     ///         ..Default::default()
     ///     });
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    /// let response: Result<DataResponse<HelloWorldV1>, _> =
     ///     provider.load(DataRequest {
     ///         id: en.as_borrowed(),
     ///         ..Default::default()

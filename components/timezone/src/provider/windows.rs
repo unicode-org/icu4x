@@ -27,14 +27,14 @@ use super::TimeZoneBcp47Id;
 /// </div>
 #[derive(PartialEq, Debug, Clone)]
 #[icu_provider::data_struct(marker(
-    WindowsZonesToBcp47MapV1Marker,
+    WindowsZonesToBcp47MapV1,
     "time_zone/windows_zones_to_bcp47@1",
     singleton
 ))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider::windows))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct WindowsZonesToBcp47MapV1<'data> {
+pub struct WindowsZonesToBcp47Map<'data> {
     /// A map from a `WindowsZoneIdentifier` and `WindowsRegion` to indexes of the associated BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,

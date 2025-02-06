@@ -13,8 +13,7 @@ use crate::{
     compactdecimal::CompactDecimalFormatterOptions,
     compactdecimal::CompactDecimalFormatterPreferences,
     dimension::provider::{
-        currency_patterns::CurrencyPatternsDataV1Marker,
-        extended_currency::CurrencyExtendedDataV1Marker,
+        currency_patterns::CurrencyPatternsDataV1, extended_currency::CurrencyExtendedDataV1,
     },
 };
 use icu_locale_core::preferences::{
@@ -51,10 +50,10 @@ prefs_convert!(
 ///   2. Locale-sensitive grouping separator positions.
 pub struct LongCompactCurrencyFormatter {
     /// Extended data for the currency formatter.
-    extended: DataPayload<CurrencyExtendedDataV1Marker>,
+    extended: DataPayload<CurrencyExtendedDataV1>,
 
     /// Formatting patterns for each currency plural category.
-    patterns: DataPayload<CurrencyPatternsDataV1Marker>,
+    patterns: DataPayload<CurrencyPatternsDataV1>,
 
     /// A [`CompactDecimalFormatter`] to format the currency value in compact form.
     compact_decimal_formatter: CompactDecimalFormatter,
@@ -100,7 +99,7 @@ impl LongCompactCurrencyFormatter {
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
 
-        let locale = &CurrencyPatternsDataV1Marker::make_locale(prefs.locale_preferences);
+        let locale = &CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 
         let extended = crate::provider::Baked
             .load(DataRequest {
@@ -132,16 +131,14 @@ impl LongCompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<
-                crate::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker,
-            > + DataProvider<
-                crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker,
-            > + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>
-            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>,
+            + DataProvider<crate::dimension::provider::extended_currency::CurrencyExtendedDataV1>
+            + DataProvider<crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::CardinalV1>
+            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1>,
     {
-        let locale = CurrencyPatternsDataV1Marker::make_locale(prefs.locale_preferences);
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {

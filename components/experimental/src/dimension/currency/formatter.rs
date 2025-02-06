@@ -6,7 +6,7 @@
 
 use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::{
-    options::FixedDecimalFormatterOptions, FixedDecimalFormatter, FixedDecimalFormatterPreferences,
+    options::DecimalFormatterOptions, DecimalFormatter, DecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
@@ -14,7 +14,7 @@ use icu_locale_core::preferences::{
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 
-use super::super::provider::currency::CurrencyEssentialsV1Marker;
+use super::super::provider::currency::CurrencyEssentialsV1;
 use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 use super::CurrencyCode;
@@ -33,11 +33,9 @@ define_preferences!(
     }
 );
 
-prefs_convert!(
-    CurrencyFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(CurrencyFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 prefs_convert!(CurrencyFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter for monetary values.
@@ -53,10 +51,10 @@ pub struct CurrencyFormatter {
     options: CurrencyFormatterOptions,
 
     /// Essential data for the currency formatter.
-    essential: DataPayload<CurrencyEssentialsV1Marker>,
+    essential: DataPayload<CurrencyEssentialsV1>,
 
-    /// A [`FixedDecimalFormatter`] to format the currency value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
+    /// A [`DecimalFormatter`] to format the currency value.
+    decimal_formatter: DecimalFormatter,
 }
 
 impl CurrencyFormatter {
@@ -81,11 +79,9 @@ impl CurrencyFormatter {
         prefs: CurrencyFormatterPreferences,
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = CurrencyEssentialsV1Marker::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
         let essential = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -96,7 +92,7 @@ impl CurrencyFormatter {
         Ok(Self {
             options,
             essential,
-            fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 
@@ -108,15 +104,15 @@ impl CurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
+            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        let locale = CurrencyEssentialsV1Marker::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
+            DecimalFormatterOptions::default(),
         )?;
         let essential = provider
             .load(DataRequest {
@@ -128,7 +124,7 @@ impl CurrencyFormatter {
         Ok(Self {
             options,
             essential,
-            fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 
@@ -161,7 +157,7 @@ impl CurrencyFormatter {
             currency_code,
             options: &self.options,
             essential: self.essential.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
         }
     }
 }

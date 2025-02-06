@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use crate::SourceDataProvider;
-use icu::casemap::provider::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker, CaseMapV1, CaseMapV1Marker};
+use icu::casemap::provider::{CaseMap, CaseMapUnfold, CaseMapUnfoldV1, CaseMapV1};
 use icu::collections::codepointtrie::toml::CodePointDataSlice;
 use icu::collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
@@ -15,9 +15,9 @@ use std::convert::TryFrom;
 
 mod ucase_serde;
 
-impl DataProvider<CaseMapV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1Marker>, DataError> {
-        self.check_req::<CaseMapV1Marker>(req)?;
+impl DataProvider<CaseMapV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
+        self.check_req::<CaseMapV1>(req)?;
         let toml = &self
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
@@ -40,7 +40,7 @@ impl DataProvider<CaseMapV1Marker> for SourceDataProvider {
         };
         let exceptions = &toml.exceptions.exceptions;
 
-        let case_mapping = CaseMapV1::try_from_icu(trie_header, trie_index, trie_data, exceptions)?;
+        let case_mapping = CaseMap::try_from_icu(trie_header, trie_index, trie_data, exceptions)?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(case_mapping),
@@ -48,15 +48,15 @@ impl DataProvider<CaseMapV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CaseMapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CaseMapV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<CaseMapUnfoldV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapUnfoldV1Marker>, DataError> {
-        self.check_req::<CaseMapUnfoldV1Marker>(req)?;
+impl DataProvider<CaseMapUnfoldV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapUnfoldV1>, DataError> {
+        self.check_req::<CaseMapUnfoldV1>(req)?;
         let toml = &self
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
@@ -67,7 +67,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for SourceDataProvider {
 
         let unfold = &toml.unfold.unfold;
 
-        let unfold = CaseMapUnfoldV1::try_from_icu(unfold)?;
+        let unfold = CaseMapUnfold::try_from_icu(unfold)?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(unfold),
@@ -75,7 +75,7 @@ impl DataProvider<CaseMapUnfoldV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CaseMapUnfoldV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CaseMapUnfoldV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

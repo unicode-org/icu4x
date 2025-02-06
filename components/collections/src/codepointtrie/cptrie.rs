@@ -187,6 +187,46 @@ impl TryFrom<u8> for TrieType {
     }
 }
 
+// Helper macro that turns arithmetic into wrapping-in-release, checked-in-debug arithmetic
+//
+// This is rustc's default behavior anyway, however some projects like Android deliberately
+// enable overflow checks. CodePointTrie::get() is intended to be used in Android bionic which
+// cares about codesize and we don't want the pile of panicking infrastructure brought in by overflow
+// checks, so we force wrapping in release.
+// See #6052
+macro_rules! w(
+    // Note: these matchers are not perfect since you cannot have an operator after an expr matcher
+    // Use variables if you need complex first operands.
+    ($a:tt + $b:expr) => {
+        {
+            #[allow(unused_parens)]
+            let a = $a;
+            let b = $b;
+            debug_assert!(a.checked_add(b).is_some());
+            $a.wrapping_add($b)
+        }
+    };
+    ($a:tt - $b:expr) => {
+
+        {
+            #[allow(unused_parens)]
+            let a = $a;
+            let b = $b;
+            debug_assert!(a.checked_sub(b).is_some());
+            $a.wrapping_sub($b)
+        }
+    };
+    ($a:tt * $b:expr) => {
+        {
+            #[allow(unused_parens)]
+            let a = $a;
+            let b = $b;
+            debug_assert!(a.checked_mul(b).is_some());
+            $a.wrapping_mul($b)
+        }
+    };
+);
+
 impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     #[doc(hidden)] // databake internal
     pub const fn from_parts(
@@ -236,26 +276,34 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// error value.
     #[inline(always)] // `always` based on normalizer benchmarking
     fn trie_error_val_index(&self) -> u32 {
-        self.data.len() as u32 - ERROR_VALUE_NEG_DATA_OFFSET
+        // We use wrapping_sub here to avoid panicky overflow checks.
+        // len should always be > 1, but if it isn't this will just cause GIGO behavior of producing
+        // None on `.get()`
+        debug_assert!(self.data.len() as u32 >= ERROR_VALUE_NEG_DATA_OFFSET);
+        w!((self.data.len() as u32) - ERROR_VALUE_NEG_DATA_OFFSET)
     }
 
     fn internal_small_index(&self, code_point: u32) -> u32 {
+        // We use wrapping arithmetic here to avoid overflow checks making their way into binaries
+        // with overflow checks enabled. Ultimately this code ends up as a checked index, so any
+        // bugs here will cause GIGO
         let mut index1_pos: u32 = code_point >> SHIFT_1;
         if self.header.trie_type == TrieType::Fast {
             debug_assert!(
                 FAST_TYPE_FAST_INDEXING_MAX < code_point && code_point < self.header.high_start
             );
-            index1_pos = index1_pos + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
+            index1_pos = w!(index1_pos + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH);
         } else {
             assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
-            index1_pos += SMALL_INDEX_LENGTH;
+            index1_pos = w!(index1_pos + SMALL_INDEX_LENGTH);
         }
         let index1_val = if let Some(index1_val) = self.index.get(index1_pos as usize) {
             index1_val
         } else {
             return self.trie_error_val_index();
         };
-        let index3_block_idx: u32 = (index1_val as u32) + ((code_point >> SHIFT_2) & INDEX_2_MASK);
+        let index3_block_idx: u32 =
+            w!((index1_val as u32) + (code_point >> SHIFT_2) & INDEX_2_MASK);
         let mut index3_block: u32 =
             if let Some(index3_block) = self.index.get(index3_block_idx as usize) {
                 index3_block as u32
@@ -267,24 +315,24 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         if index3_block & 0x8000 == 0 {
             // 16-bit indexes
             data_block =
-                if let Some(data_block) = self.index.get((index3_block + index3_pos) as usize) {
+                if let Some(data_block) = self.index.get(w!(index3_block + index3_pos) as usize) {
                     data_block as u32
                 } else {
                     return self.trie_error_val_index();
                 };
         } else {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
-            index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
+            index3_block = w!((index3_block & 0x7fff) + w!((index3_pos & !7) + index3_pos >> 3));
             index3_pos &= 7;
             data_block = if let Some(data_block) = self.index.get(index3_block as usize) {
                 data_block as u32
             } else {
                 return self.trie_error_val_index();
             };
-            data_block = (data_block << (2 + (2 * index3_pos))) & 0x30000;
+            data_block = (data_block << w!(2u32 + w!(2u32 * index3_pos))) & 0x30000;
             index3_block += 1;
             data_block =
-                if let Some(index3_val) = self.index.get((index3_block + index3_pos) as usize) {
+                if let Some(index3_val) = self.index.get(w!(index3_block + index3_pos) as usize) {
                     data_block | (index3_val as u32)
                 } else {
                     return self.trie_error_val_index();
@@ -292,7 +340,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         }
         // Returns data_pos == data_block (offset) +
         //     portion of code_point bit field for last (4th) lookup
-        data_block + (code_point & SMALL_DATA_MASK)
+        w!(data_block + code_point & SMALL_DATA_MASK)
     }
 
     /// Returns the position in the `data` array for the given code point,

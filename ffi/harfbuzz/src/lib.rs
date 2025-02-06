@@ -41,13 +41,12 @@ use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
-    CanonicalCompositionsV1Marker, CanonicalDecompositionDataV2Marker,
-    CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
+    CanonicalCompositionsV1, CanonicalDecompositionDataV2, CanonicalDecompositionTablesV1,
+    NonRecursiveDecompositionSupplementV1,
 };
 use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
 use icu_properties::provider::{
-    BidiMirroringGlyphV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
-    ScriptValueToShortNameV1Marker,
+    BidiMirroringGlyphV1, GeneralCategoryV1, ScriptV1, ScriptValueToShortNameV1,
 };
 use icu_properties::{CodePointMapData, PropertyNamesShort};
 use icu_provider::prelude::*;
@@ -143,7 +142,7 @@ impl GeneralCategoryData {
     /// Construct a new [`GeneralCategoryData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
+        D: DataProvider<GeneralCategoryV1> + ?Sized,
     {
         let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
 
@@ -221,7 +220,7 @@ impl CombiningClassData {
     /// Construct a new [`CombiningClassData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2Marker> + ?Sized,
+        D: DataProvider<CanonicalDecompositionDataV2> + ?Sized,
     {
         let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
 
@@ -262,7 +261,7 @@ impl MirroringData {
     /// Construct a new [`MirroringData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<BidiMirroringGlyphV1Marker> + ?Sized,
+        D: DataProvider<BidiMirroringGlyphV1> + ?Sized,
     {
         let bidi = CodePointMapData::try_new_unstable(provider)?;
 
@@ -308,7 +307,7 @@ impl ScriptData {
     /// Construct a new [`ScriptData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
+        D: DataProvider<ScriptValueToShortNameV1> + DataProvider<ScriptV1> + ?Sized,
     {
         let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
         let script_names = PropertyNamesShort::try_new_unstable(provider)?;
@@ -357,7 +356,7 @@ impl ComposeData {
     /// Construct a new [`ComposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
+        D: DataProvider<CanonicalCompositionsV1> + ?Sized,
     {
         let comp = CanonicalComposition::try_new_unstable(provider)?;
 
@@ -398,9 +397,9 @@ impl DecomposeData {
     /// Construct a new [`DecomposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2Marker>
-            + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<NonRecursiveDecompositionSupplementV1>
+            + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
         let decomp = CanonicalDecomposition::try_new_unstable(provider)?;

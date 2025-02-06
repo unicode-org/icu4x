@@ -1,0 +1,67 @@
+{
+  "locations": {
+    "auldh": "Lord Howe",
+    "aumqi": "Macquarie",
+    "basjj": "Bosnia and Herzegovina",
+    "cayek": "Makipot na Look ng Rankin",
+    "cccck": "Cocos (Keeling) Islands",
+    "clipc": "Easter",
+    "eheai": "Kanlurang Sahara",
+    "gblon": "U.K.",
+    "gpmsb": "Saint Martin",
+    "kpfnj": "Hilagang Korea",
+    "krsel": "Timog Korea",
+    "lccas": "Saint Lucia",
+    "mmrgn": "Myanmar (Burma)",
+    "momfm": "Macau",
+    "mxcjs": "Lungsod ng Juárez",
+    "mxcun": "Cancun",
+    "mxmex": "Lungsod ng Mexico",
+    "mxmid": "Merida",
+    "mxpvr": "Bahia Banderas",
+    "phmnl": "Pilipinas",
+    "pnpcn": "Pitcairn Islands",
+    "ssjub": "Timog Sudan",
+    "szqmn": "Swaziland",
+    "uaiev": "Kiev",
+    "umawk": "Wake"
+  },
+  "pattern_generic": [
+    {
+      "Literal": "Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Literal": "Standard na Oras sa "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Literal": "Daylight Time ng "
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

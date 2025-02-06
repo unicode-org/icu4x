@@ -164,7 +164,9 @@ where
     type DayPeriodNames = DT::DayPeriodNames;
     type ZoneEssentials = Z::ZoneEssentials;
     type ZoneLocations = Z::ZoneLocations;
+    type ZoneLocationsRoot = Z::ZoneLocationsRoot;
     type ZoneExemplars = Z::ZoneExemplars;
+    type ZoneExemplarsRoot = Z::ZoneExemplarsRoot;
     type ZoneGenericLong = Z::ZoneGenericLong;
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;
@@ -180,5 +182,5 @@ where
     type D = DT::D;
     type T = DT::T;
     type Z = Z::Z;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
+    type GluePatternV1 = datetime_marker_helper!(@glue, yes);
 }

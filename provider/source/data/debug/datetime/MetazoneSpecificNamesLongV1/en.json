@@ -1,0 +1,1357 @@
+{
+  "defaults": [
+    [
+      [
+        1,
+        "Standard"
+      ],
+      "Acre Standard Time"
+    ],
+    [
+      [
+        1,
+        "Daylight"
+      ],
+      "Acre Summer Time"
+    ],
+    [
+      [
+        2,
+        "Standard"
+      ],
+      "Central Africa Time"
+    ],
+    [
+      [
+        3,
+        "Standard"
+      ],
+      "East Africa Time"
+    ],
+    [
+      [
+        4,
+        "Standard"
+      ],
+      "Afghanistan Time"
+    ],
+    [
+      [
+        5,
+        "Standard"
+      ],
+      "South Africa Standard Time"
+    ],
+    [
+      [
+        6,
+        "Standard"
+      ],
+      "West Africa Standard Time"
+    ],
+    [
+      [
+        6,
+        "Daylight"
+      ],
+      "West Africa Summer Time"
+    ],
+    [
+      [
+        7,
+        "Daylight"
+      ],
+      "Almaty Summer Time"
+    ],
+    [
+      [
+        8,
+        "Standard"
+      ],
+      "Alaska Standard Time"
+    ],
+    [
+      [
+        8,
+        "Daylight"
+      ],
+      "Alaska Daylight Time"
+    ],
+    [
+      [
+        9,
+        "Standard"
+      ],
+      "Amazon Standard Time"
+    ],
+    [
+      [
+        9,
+        "Daylight"
+      ],
+      "Amazon Summer Time"
+    ],
+    [
+      [
+        10,
+        "Standard"
+      ],
+      "Central Standard Time"
+    ],
+    [
+      [
+        10,
+        "Daylight"
+      ],
+      "Central Daylight Time"
+    ],
+    [
+      [
+        11,
+        "Standard"
+      ],
+      "Eastern Standard Time"
+    ],
+    [
+      [
+        11,
+        "Daylight"
+      ],
+      "Eastern Daylight Time"
+    ],
+    [
+      [
+        12,
+        "Standard"
+      ],
+      "Mountain Standard Time"
+    ],
+    [
+      [
+        12,
+        "Daylight"
+      ],
+      "Mountain Daylight Time"
+    ],
+    [
+      [
+        13,
+        "Standard"
+      ],
+      "Pacific Standard Time"
+    ],
+    [
+      [
+        13,
+        "Daylight"
+      ],
+      "Pacific Daylight Time"
+    ],
+    [
+      [
+        14,
+        "Daylight"
+      ],
+      "Anadyr Summer Time"
+    ],
+    [
+      [
+        16,
+        "Daylight"
+      ],
+      "Aqtau Summer Time"
+    ],
+    [
+      [
+        17,
+        "Daylight"
+      ],
+      "Aqtobe Summer Time"
+    ],
+    [
+      [
+        18,
+        "Standard"
+      ],
+      "Arabian Standard Time"
+    ],
+    [
+      [
+        18,
+        "Daylight"
+      ],
+      "Arabian Daylight Time"
+    ],
+    [
+      [
+        19,
+        "Standard"
+      ],
+      "Argentina Standard Time"
+    ],
+    [
+      [
+        19,
+        "Daylight"
+      ],
+      "Argentina Summer Time"
+    ],
+    [
+      [
+        20,
+        "Daylight"
+      ],
+      "Armenia Summer Time"
+    ],
+    [
+      [
+        21,
+        "Standard"
+      ],
+      "Western Argentina Standard Time"
+    ],
+    [
+      [
+        21,
+        "Daylight"
+      ],
+      "Western Argentina Summer Time"
+    ],
+    [
+      [
+        22,
+        "Standard"
+      ],
+      "Atlantic Standard Time"
+    ],
+    [
+      [
+        22,
+        "Daylight"
+      ],
+      "Atlantic Daylight Time"
+    ],
+    [
+      [
+        23,
+        "Standard"
+      ],
+      "Australian Central Standard Time"
+    ],
+    [
+      [
+        23,
+        "Daylight"
+      ],
+      "Australian Central Daylight Time"
+    ],
+    [
+      [
+        24,
+        "Standard"
+      ],
+      "Australian Central Western Standard Time"
+    ],
+    [
+      [
+        24,
+        "Daylight"
+      ],
+      "Australian Central Western Daylight Time"
+    ],
+    [
+      [
+        25,
+        "Standard"
+      ],
+      "Australian Eastern Standard Time"
+    ],
+    [
+      [
+        25,
+        "Daylight"
+      ],
+      "Australian Eastern Daylight Time"
+    ],
+    [
+      [
+        26,
+        "Standard"
+      ],
+      "Australian Western Standard Time"
+    ],
+    [
+      [
+        26,
+        "Daylight"
+      ],
+      "Australian Western Daylight Time"
+    ],
+    [
+      [
+        27,
+        "Daylight"
+      ],
+      "Azerbaijan Summer Time"
+    ],
+    [
+      [
+        28,
+        "Daylight"
+      ],
+      "Azores Summer Time"
+    ],
+    [
+      [
+        29,
+        "Daylight"
+      ],
+      "Bangladesh Summer Time"
+    ],
+    [
+      [
+        30,
+        "Standard"
+      ],
+      "Bhutan Time"
+    ],
+    [
+      [
+        31,
+        "Standard"
+      ],
+      "Bolivia Time"
+    ],
+    [
+      [
+        32,
+        "Standard"
+      ],
+      "Brasilia Standard Time"
+    ],
+    [
+      [
+        32,
+        "Daylight"
+      ],
+      "Brasilia Summer Time"
+    ],
+    [
+      [
+        33,
+        "Standard"
+      ],
+      "Brunei Time"
+    ],
+    [
+      [
+        34,
+        "Standard"
+      ],
+      "Casey Time"
+    ],
+    [
+      [
+        35,
+        "Daylight"
+      ],
+      "Cape Verde Summer Time"
+    ],
+    [
+      [
+        36,
+        "Standard"
+      ],
+      "Chamorro Standard Time"
+    ],
+    [
+      [
+        38,
+        "Standard"
+      ],
+      "Chile Standard Time"
+    ],
+    [
+      [
+        38,
+        "Daylight"
+      ],
+      "Chile Summer Time"
+    ],
+    [
+      [
+        39,
+        "Standard"
+      ],
+      "China Standard Time"
+    ],
+    [
+      [
+        39,
+        "Daylight"
+      ],
+      "China Daylight Time"
+    ],
+    [
+      [
+        40,
+        "Standard"
+      ],
+      "Christmas Island Time"
+    ],
+    [
+      [
+        41,
+        "Standard"
+      ],
+      "Cocos Islands Time"
+    ],
+    [
+      [
+        42,
+        "Daylight"
+      ],
+      "Colombia Summer Time"
+    ],
+    [
+      [
+        43,
+        "Daylight"
+      ],
+      "Cook Islands Summer Time"
+    ],
+    [
+      [
+        45,
+        "Standard"
+      ],
+      "Davis Time"
+    ],
+    [
+      [
+        46,
+        "Standard"
+      ],
+      "Dumont d’Urville Time"
+    ],
+    [
+      [
+        47,
+        "Daylight"
+      ],
+      "Easter Island Summer Time"
+    ],
+    [
+      [
+        48,
+        "Standard"
+      ],
+      "Timor-Leste Time"
+    ],
+    [
+      [
+        49,
+        "Standard"
+      ],
+      "Ecuador Time"
+    ],
+    [
+      [
+        50,
+        "Standard"
+      ],
+      "Central European Standard Time"
+    ],
+    [
+      [
+        50,
+        "Daylight"
+      ],
+      "Central European Summer Time"
+    ],
+    [
+      [
+        51,
+        "Standard"
+      ],
+      "Eastern European Standard Time"
+    ],
+    [
+      [
+        51,
+        "Daylight"
+      ],
+      "Eastern European Summer Time"
+    ],
+    [
+      [
+        52,
+        "Standard"
+      ],
+      "Further-eastern European Time"
+    ],
+    [
+      [
+        53,
+        "Standard"
+      ],
+      "Western European Standard Time"
+    ],
+    [
+      [
+        53,
+        "Daylight"
+      ],
+      "Western European Summer Time"
+    ],
+    [
+      [
+        54,
+        "Daylight"
+      ],
+      "Falkland Islands Summer Time"
+    ],
+    [
+      [
+        55,
+        "Daylight"
+      ],
+      "Fiji Summer Time"
+    ],
+    [
+      [
+        56,
+        "Standard"
+      ],
+      "French Guiana Time"
+    ],
+    [
+      [
+        57,
+        "Standard"
+      ],
+      "French Southern & Antarctic Time"
+    ],
+    [
+      [
+        58,
+        "Standard"
+      ],
+      "Galapagos Time"
+    ],
+    [
+      [
+        59,
+        "Standard"
+      ],
+      "Gambier Time"
+    ],
+    [
+      [
+        60,
+        "Daylight"
+      ],
+      "Georgia Summer Time"
+    ],
+    [
+      [
+        61,
+        "Standard"
+      ],
+      "Gilbert Islands Time"
+    ],
+    [
+      [
+        62,
+        "Standard"
+      ],
+      "East Greenland Standard Time"
+    ],
+    [
+      [
+        62,
+        "Daylight"
+      ],
+      "East Greenland Summer Time"
+    ],
+    [
+      [
+        63,
+        "Standard"
+      ],
+      "Greenland Standard Time"
+    ],
+    [
+      [
+        63,
+        "Daylight"
+      ],
+      "Greenland Summer Time"
+    ],
+    [
+      [
+        64,
+        "Standard"
+      ],
+      "West Greenland Standard Time"
+    ],
+    [
+      [
+        64,
+        "Daylight"
+      ],
+      "West Greenland Summer Time"
+    ],
+    [
+      [
+        66,
+        "Standard"
+      ],
+      "Gulf Standard Time"
+    ],
+    [
+      [
+        67,
+        "Standard"
+      ],
+      "Guyana Time"
+    ],
+    [
+      [
+        68,
+        "Standard"
+      ],
+      "Hawaii-Aleutian Standard Time"
+    ],
+    [
+      [
+        68,
+        "Daylight"
+      ],
+      "Hawaii-Aleutian Daylight Time"
+    ],
+    [
+      [
+        69,
+        "Daylight"
+      ],
+      "Hong Kong Summer Time"
+    ],
+    [
+      [
+        70,
+        "Daylight"
+      ],
+      "Hovd Summer Time"
+    ],
+    [
+      [
+        71,
+        "Standard"
+      ],
+      "Central Indonesia Time"
+    ],
+    [
+      [
+        72,
+        "Standard"
+      ],
+      "India Standard Time"
+    ],
+    [
+      [
+        73,
+        "Standard"
+      ],
+      "Indochina Time"
+    ],
+    [
+      [
+        74,
+        "Standard"
+      ],
+      "Eastern Indonesia Time"
+    ],
+    [
+      [
+        75,
+        "Standard"
+      ],
+      "Indian Ocean Time"
+    ],
+    [
+      [
+        76,
+        "Standard"
+      ],
+      "Western Indonesia Time"
+    ],
+    [
+      [
+        78,
+        "Standard"
+      ],
+      "Irkutsk Standard Time"
+    ],
+    [
+      [
+        78,
+        "Daylight"
+      ],
+      "Irkutsk Summer Time"
+    ],
+    [
+      [
+        79,
+        "Standard"
+      ],
+      "Israel Standard Time"
+    ],
+    [
+      [
+        79,
+        "Daylight"
+      ],
+      "Israel Daylight Time"
+    ],
+    [
+      [
+        81,
+        "Standard"
+      ],
+      "East Kazakhstan Time"
+    ],
+    [
+      [
+        82,
+        "Daylight"
+      ],
+      "Kamchatka Summer Time"
+    ],
+    [
+      [
+        83,
+        "Standard"
+      ],
+      "West Kazakhstan Time"
+    ],
+    [
+      [
+        84,
+        "Standard"
+      ],
+      "Kazakhstan Time"
+    ],
+    [
+      [
+        85,
+        "Standard"
+      ],
+      "Korean Standard Time"
+    ],
+    [
+      [
+        85,
+        "Daylight"
+      ],
+      "Korean Daylight Time"
+    ],
+    [
+      [
+        86,
+        "Standard"
+      ],
+      "Kosrae Time"
+    ],
+    [
+      [
+        87,
+        "Standard"
+      ],
+      "Krasnoyarsk Standard Time"
+    ],
+    [
+      [
+        87,
+        "Daylight"
+      ],
+      "Krasnoyarsk Summer Time"
+    ],
+    [
+      [
+        88,
+        "Standard"
+      ],
+      "Kyrgyzstan Time"
+    ],
+    [
+      [
+        89,
+        "Standard"
+      ],
+      "Lanka Time"
+    ],
+    [
+      [
+        90,
+        "Standard"
+      ],
+      "Line Islands Time"
+    ],
+    [
+      [
+        91,
+        "Standard"
+      ],
+      "Lord Howe Standard Time"
+    ],
+    [
+      [
+        91,
+        "Daylight"
+      ],
+      "Lord Howe Daylight Time"
+    ],
+    [
+      [
+        92,
+        "Daylight"
+      ],
+      "Macao Summer Time"
+    ],
+    [
+      [
+        93,
+        "Standard"
+      ],
+      "Magadan Standard Time"
+    ],
+    [
+      [
+        93,
+        "Daylight"
+      ],
+      "Magadan Summer Time"
+    ],
+    [
+      [
+        94,
+        "Standard"
+      ],
+      "Marshall Islands Time"
+    ],
+    [
+      [
+        95,
+        "Standard"
+      ],
+      "Malaysia Time"
+    ],
+    [
+      [
+        96,
+        "Standard"
+      ],
+      "Maldives Time"
+    ],
+    [
+      [
+        97,
+        "Standard"
+      ],
+      "Marquesas Time"
+    ],
+    [
+      [
+        98,
+        "Daylight"
+      ],
+      "Mauritius Summer Time"
+    ],
+    [
+      [
+        99,
+        "Standard"
+      ],
+      "Mawson Time"
+    ],
+    [
+      [
+        100,
+        "Standard"
+      ],
+      "Mexican Pacific Standard Time"
+    ],
+    [
+      [
+        100,
+        "Daylight"
+      ],
+      "Mexican Pacific Daylight Time"
+    ],
+    [
+      [
+        101,
+        "Standard"
+      ],
+      "Greenwich Mean Time"
+    ],
+    [
+      [
+        102,
+        "Daylight"
+      ],
+      "Ulaanbaatar Summer Time"
+    ],
+    [
+      [
+        103,
+        "Standard"
+      ],
+      "Moscow Standard Time"
+    ],
+    [
+      [
+        103,
+        "Daylight"
+      ],
+      "Moscow Summer Time"
+    ],
+    [
+      [
+        104,
+        "Standard"
+      ],
+      "Myanmar Time"
+    ],
+    [
+      [
+        105,
+        "Standard"
+      ],
+      "Nauru Time"
+    ],
+    [
+      [
+        106,
+        "Daylight"
+      ],
+      "New Caledonia Summer Time"
+    ],
+    [
+      [
+        107,
+        "Standard"
+      ],
+      "Nepal Time"
+    ],
+    [
+      [
+        108,
+        "Standard"
+      ],
+      "Newfoundland Standard Time"
+    ],
+    [
+      [
+        108,
+        "Daylight"
+      ],
+      "Newfoundland Daylight Time"
+    ],
+    [
+      [
+        109,
+        "Standard"
+      ],
+      "New Zealand Standard Time"
+    ],
+    [
+      [
+        109,
+        "Daylight"
+      ],
+      "New Zealand Daylight Time"
+    ],
+    [
+      [
+        110,
+        "Standard"
+      ],
+      "Niue Time"
+    ],
+    [
+      [
+        111,
+        "Standard"
+      ],
+      "Northern Mariana Islands Time"
+    ],
+    [
+      [
+        113,
+        "Daylight"
+      ],
+      "Fernando de Noronha Summer Time"
+    ],
+    [
+      [
+        114,
+        "Standard"
+      ],
+      "Novosibirsk Standard Time"
+    ],
+    [
+      [
+        114,
+        "Daylight"
+      ],
+      "Novosibirsk Summer Time"
+    ],
+    [
+      [
+        115,
+        "Daylight"
+      ],
+      "Omsk Summer Time"
+    ],
+    [
+      [
+        116,
+        "Daylight"
+      ],
+      "Pakistan Summer Time"
+    ],
+    [
+      [
+        117,
+        "Standard"
+      ],
+      "Palau Time"
+    ],
+    [
+      [
+        118,
+        "Standard"
+      ],
+      "Papua New Guinea Time"
+    ],
+    [
+      [
+        119,
+        "Daylight"
+      ],
+      "Paraguay Summer Time"
+    ],
+    [
+      [
+        120,
+        "Daylight"
+      ],
+      "Peru Summer Time"
+    ],
+    [
+      [
+        121,
+        "Standard"
+      ],
+      "Philippine Standard Time"
+    ],
+    [
+      [
+        121,
+        "Daylight"
+      ],
+      "Philippine Summer Time"
+    ],
+    [
+      [
+        122,
+        "Standard"
+      ],
+      "Phoenix Islands Time"
+    ],
+    [
+      [
+        124,
+        "Standard"
+      ],
+      "Pitcairn Time"
+    ],
+    [
+      [
+        125,
+        "Standard"
+      ],
+      "Pohnpei Time"
+    ],
+    [
+      [
+        126,
+        "Standard"
+      ],
+      "North Korea Time"
+    ],
+    [
+      [
+        127,
+        "Daylight"
+      ],
+      "Qyzylorda Summer Time"
+    ],
+    [
+      [
+        128,
+        "Standard"
+      ],
+      "Réunion Time"
+    ],
+    [
+      [
+        129,
+        "Standard"
+      ],
+      "Rothera Time"
+    ],
+    [
+      [
+        130,
+        "Daylight"
+      ],
+      "Sakhalin Summer Time"
+    ],
+    [
+      [
+        131,
+        "Daylight"
+      ],
+      "Samara Summer Time"
+    ],
+    [
+      [
+        132,
+        "Standard"
+      ],
+      "American Samoa Standard Time"
+    ],
+    [
+      [
+        132,
+        "Daylight"
+      ],
+      "American Samoa Daylight Time"
+    ],
+    [
+      [
+        133,
+        "Standard"
+      ],
+      "Seychelles Time"
+    ],
+    [
+      [
+        135,
+        "Standard"
+      ],
+      "South Georgia Time"
+    ],
+    [
+      [
+        136,
+        "Standard"
+      ],
+      "Solomon Islands Time"
+    ],
+    [
+      [
+        137,
+        "Standard"
+      ],
+      "Suriname Time"
+    ],
+    [
+      [
+        138,
+        "Standard"
+      ],
+      "Syowa Time"
+    ],
+    [
+      [
+        139,
+        "Standard"
+      ],
+      "Tahiti Time"
+    ],
+    [
+      [
+        141,
+        "Standard"
+      ],
+      "Tajikistan Time"
+    ],
+    [
+      [
+        142,
+        "Standard"
+      ],
+      "Tokelau Time"
+    ],
+    [
+      [
+        143,
+        "Daylight"
+      ],
+      "Tonga Summer Time"
+    ],
+    [
+      [
+        144,
+        "Standard"
+      ],
+      "Chuuk Time"
+    ],
+    [
+      [
+        145,
+        "Daylight"
+      ],
+      "Turkmenistan Summer Time"
+    ],
+    [
+      [
+        146,
+        "Standard"
+      ],
+      "Tuvalu Time"
+    ],
+    [
+      [
+        147,
+        "Daylight"
+      ],
+      "Uruguay Summer Time"
+    ],
+    [
+      [
+        148,
+        "Standard"
+      ],
+      "Uzbekistan Standard Time"
+    ],
+    [
+      [
+        148,
+        "Daylight"
+      ],
+      "Uzbekistan Summer Time"
+    ],
+    [
+      [
+        149,
+        "Daylight"
+      ],
+      "Vanuatu Summer Time"
+    ],
+    [
+      [
+        150,
+        "Standard"
+      ],
+      "Venezuela Time"
+    ],
+    [
+      [
+        151,
+        "Standard"
+      ],
+      "Vladivostok Standard Time"
+    ],
+    [
+      [
+        151,
+        "Daylight"
+      ],
+      "Vladivostok Summer Time"
+    ],
+    [
+      [
+        152,
+        "Daylight"
+      ],
+      "Volgograd Summer Time"
+    ],
+    [
+      [
+        153,
+        "Standard"
+      ],
+      "Vostok Time"
+    ],
+    [
+      [
+        154,
+        "Standard"
+      ],
+      "Wake Island Time"
+    ],
+    [
+      [
+        155,
+        "Standard"
+      ],
+      "Wallis & Futuna Time"
+    ],
+    [
+      [
+        156,
+        "Standard"
+      ],
+      "Yakutsk Standard Time"
+    ],
+    [
+      [
+        156,
+        "Daylight"
+      ],
+      "Yakutsk Summer Time"
+    ],
+    [
+      [
+        157,
+        "Daylight"
+      ],
+      "Yekaterinburg Summer Time"
+    ],
+    [
+      [
+        158,
+        "Standard"
+      ],
+      "Yukon Time"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "gblon",
+        "Daylight"
+      ],
+      "British Summer Time"
+    ],
+    [
+      [
+        "iedub",
+        "Daylight"
+      ],
+      "Irish Standard Time"
+    ],
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "Coordinated Universal Time"
+    ]
+  ]
+}

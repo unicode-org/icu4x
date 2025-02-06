@@ -18,14 +18,14 @@ use icu_provider::prelude::*;
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::HelloWorldV1Marker;
+/// use icu_provider::hello_world::HelloWorldV1;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 ///
 /// let provider = EmptyDataProvider::new();
 ///
 /// assert!(matches!(
-///     provider.load_any(HelloWorldV1Marker::INFO, Default::default()),
+///     provider.load_any(HelloWorldV1::INFO, Default::default()),
 ///     Err(DataError {
 ///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
