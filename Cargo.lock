@@ -2034,6 +2034,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "noalloctest"
+version = "2.0.0-beta1"
+dependencies = [
+ "litemap",
+ "potential_utf",
+ "tinystr",
+ "yoke",
+ "zerofrom",
+ "zerotrie",
+]
+
+[[package]]
 name = "nom"
 version = "7.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
