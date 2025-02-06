@@ -196,7 +196,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 
 ```rust
 use core::any::Any;
-use icu::decimal::FixedDecimalFormatter;
+use icu::decimal::DecimalFormatter;
 use icu::decimal::provider::{DecimalSymbolsV2, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
@@ -236,7 +236,7 @@ let provider = CustomDecimalSymbolsProvider(
     icu::decimal::provider::Baked
 );
 
-let formatter = FixedDecimalFormatter::try_new_unstable(
+let formatter = DecimalFormatter::try_new_unstable(
     &provider,
     locale!("und").into(),
     Default::default(),
@@ -245,7 +245,7 @@ let formatter = FixedDecimalFormatter::try_new_unstable(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
-let formatter = FixedDecimalFormatter::try_new_unstable(
+let formatter = DecimalFormatter::try_new_unstable(
     &provider,
     locale!("und-CH").into(),
     Default::default(),
