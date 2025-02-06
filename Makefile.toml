@@ -144,7 +144,7 @@ env = { ICU4X_DATA_DIR = "../stubdata" }
 category = "CI"
 dependencies = [
     "check-nostd",
-    "check-noalloc-crates",
+    "check-noalloc",
     "check-freertos-wearos",
 ]
 
