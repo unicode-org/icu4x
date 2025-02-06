@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
 pub struct EmojiSetData {
-    data: DataPayload<ErasedMarker<PropertyUnicodeSetV1<'static>>>,
+    data: DataPayload<ErasedMarker<PropertyUnicodeSet<'static>>>,
 }
 
 impl EmojiSetData {
@@ -55,7 +55,7 @@ impl EmojiSetData {
     /// Typically it is preferable to use getters instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<DataStruct = PropertyUnicodeSetV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyUnicodeSet<'static>>,
     {
         Self { data: data.cast() }
     }
@@ -64,9 +64,9 @@ impl EmojiSetData {
     pub fn from_code_point_inversion_list_string_list(
         set: CodePointInversionListAndStringList<'static>,
     ) -> Self {
-        let set = PropertyUnicodeSetV1::from_code_point_inversion_list_string_list(set);
+        let set = PropertyUnicodeSet::from_code_point_inversion_list_string_list(set);
         EmojiSetData::from_data(
-            DataPayload::<ErasedMarker<PropertyUnicodeSetV1<'static>>>::from_owned(set),
+            DataPayload::<ErasedMarker<PropertyUnicodeSet<'static>>>::from_owned(set),
         )
     }
 
@@ -105,7 +105,7 @@ impl EmojiSetData {
 /// [`EmojiSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct EmojiSetDataBorrowed<'a> {
-    set: &'a PropertyUnicodeSetV1<'a>,
+    set: &'a PropertyUnicodeSet<'a>,
 }
 
 impl EmojiSetDataBorrowed<'_> {
@@ -151,8 +151,8 @@ impl EmojiSetDataBorrowed<'static> {
 /// </div>
 pub trait EmojiSet: crate::private::Sealed {
     #[doc(hidden)]
-    type DataMarker: DataMarker<DataStruct = PropertyUnicodeSetV1<'static>>;
+    type DataMarker: DataMarker<DataStruct = PropertyUnicodeSet<'static>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
-    const SINGLETON: &'static PropertyUnicodeSetV1<'static>;
+    const SINGLETON: &'static PropertyUnicodeSet<'static>;
 }

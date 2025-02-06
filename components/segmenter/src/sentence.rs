@@ -117,8 +117,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {
-    payload: DataPayload<SentenceBreakDataV2Marker>,
-    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1Marker>>,
+    payload: DataPayload<SentenceBreakDataV2>,
+    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1>>,
 }
 
 impl SentenceSegmenter {
@@ -131,7 +131,7 @@ impl SentenceSegmenter {
     pub fn new(_options: SentenceBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2,
             ),
             payload_locale_override: None,
         }
@@ -155,9 +155,7 @@ impl SentenceSegmenter {
         options: SentenceBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SentenceBreakDataV2Marker>
-            + DataProvider<SentenceBreakDataOverrideV1Marker>
-            + ?Sized,
+        D: DataProvider<SentenceBreakDataV2> + DataProvider<SentenceBreakDataOverrideV1> + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
         let payload_locale_override = if let Some(locale) = options.content_locale {

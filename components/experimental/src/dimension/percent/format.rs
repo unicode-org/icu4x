@@ -9,7 +9,7 @@ use crate::alloc::borrow::ToOwned;
 use alloc::borrow::Cow;
 use writeable::Writeable;
 
-use crate::dimension::provider::percent::PercentEssentialsV1;
+use crate::dimension::provider::percent::PercentEssentials;
 
 use super::options::{Display, PercentFormatterOptions};
 
@@ -27,7 +27,7 @@ impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
 
 pub struct FormattedPercent<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
-    pub(crate) essential: &'l PercentEssentialsV1<'l>,
+    pub(crate) essential: &'l PercentEssentials<'l>,
     pub(crate) options: &'l PercentFormatterOptions,
     pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
 }

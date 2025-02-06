@@ -10,7 +10,7 @@ use icu_provider::{
 };
 
 use crate::{
-    provider::windows::{WindowsZonesToBcp47MapV1, WindowsZonesToBcp47MapV1Marker},
+    provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1},
     TimeZoneBcp47Id,
 };
 
@@ -36,7 +36,7 @@ use crate::{
 /// then the territory will default to the M.49 World Code, `001`.
 #[derive(Debug)]
 pub struct WindowsTimeZoneMapper {
-    data: DataPayload<WindowsZonesToBcp47MapV1Marker>,
+    data: DataPayload<WindowsZonesToBcp47MapV1>,
 }
 
 impl WindowsTimeZoneMapper {
@@ -60,7 +60,7 @@ impl WindowsTimeZoneMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<WindowsZonesToBcp47MapV1Marker> + ?Sized,
+        P: DataProvider<WindowsZonesToBcp47MapV1> + ?Sized,
     {
         let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
@@ -81,7 +81,7 @@ impl WindowsTimeZoneMapper {
 /// A borrowed wrapper around the windows time zone mapper data.
 #[derive(Debug, Copy, Clone)]
 pub struct WindowsTimeZoneMapperBorrowed<'a> {
-    data: &'a WindowsZonesToBcp47MapV1<'a>,
+    data: &'a WindowsZonesToBcp47Map<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -96,7 +96,7 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         WindowsTimeZoneMapperBorrowed {
-            data: crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1_MARKER,
+            data: crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1,
         }
     }
 

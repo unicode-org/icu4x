@@ -20,7 +20,7 @@
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
     error::DateError,
-    provider::chinese_based::{ChineseBasedCacheV1, PackedChineseBasedYearInfo},
+    provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo},
     types::{MonthCode, MonthInfo},
     Calendar, Iso,
 };
@@ -57,7 +57,7 @@ impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
 /// *not* contain any extra data and will always compute stuff from scratch
 #[derive(Default)]
 pub(crate) struct ChineseBasedPrecomputedData<'a, CB: ChineseBased> {
-    data: Option<&'a ChineseBasedCacheV1<'a>>,
+    data: Option<&'a ChineseBasedCache<'a>>,
     _cb: PhantomData<CB>,
 }
 
@@ -139,7 +139,7 @@ impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
 }
 
 impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
-    pub(crate) fn new(data: Option<&'b ChineseBasedCacheV1<'b>>) -> Self {
+    pub(crate) fn new(data: Option<&'b ChineseBasedCache<'b>>) -> Self {
         Self {
             data,
             _cb: PhantomData,

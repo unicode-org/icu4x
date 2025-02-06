@@ -11,7 +11,7 @@ use icu::plurals::PluralCategory;
 use std::collections::HashMap;
 use std::convert::TryFrom;
 
-impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatternsV1<'_> {
+impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
     fn from(other: &cldr_serde::ca::AvailableFormats) -> Self {
         let mut patterns: HashMap<String, HashMap<String, String>> = HashMap::new();
 
@@ -66,7 +66,7 @@ impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatternsV1<'_> {
                 // here. The following `normalize` will turn those cases to `SingleVariant`.
                 pattern_plurals.normalize();
 
-                Some((SkeletonV1(skeleton), pattern_plurals))
+                Some((SkeletonData(skeleton), pattern_plurals))
             })
             .collect();
 
@@ -84,7 +84,7 @@ mod test {
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
     use icu::datetime::{
-        provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, SkeletonV1},
+        provider::calendar::{DateLengths, DateSkeletonPatterns, SkeletonData},
         provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::pattern::{reference, runtime},
     };
@@ -94,14 +94,14 @@ mod test {
 
     use crate::SourceDataProvider;
 
-    fn get_data_payload() -> (DateLengthsV1<'static>, DateSkeletonPatternsV1<'static>) {
+    fn get_data_payload() -> (DateLengths<'static>, DateSkeletonPatterns<'static>) {
         let locale = locale!("en").into();
 
         let data = SourceDataProvider::new_testing()
             .get_datetime_resources(&locale, Either::Right("gregorian"))
             .unwrap();
-        let patterns = DateLengthsV1::from(&data);
-        let skeletons = DateSkeletonPatternsV1::from(&data.datetime_formats.available_formats);
+        let patterns = DateLengths::from(&data);
+        let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         (patterns, skeletons)
     }
 
@@ -218,10 +218,10 @@ mod test {
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
-            SkeletonV1::try_from("EEEE").unwrap(),
+            SkeletonData::try_from("EEEE").unwrap(),
             runtime::Pattern::from_str("weekday EEEE").unwrap().into(),
         );
-        let skeletons = DateSkeletonPatternsV1(skeletons);
+        let skeletons = DateSkeletonPatterns(skeletons);
 
         assert_eq!(
             get_best_available_format_pattern(&skeletons, &requested_fields, false),

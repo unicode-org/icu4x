@@ -190,7 +190,7 @@ pub enum AlternateHandling {
 /// What characters get shifted to the quaternary level
 /// with `AlternateHandling::Shifted`.
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
-#[repr(u8)]
+#[repr(u8)] // This repr is necessary for transmute safety
 #[non_exhaustive]
 pub enum MaxVariable {
     /// Characters classified as spaces are shifted.
@@ -497,8 +497,8 @@ impl CollatorOptionsBitField {
             // lower than `Identical`, clamp to `Quaternary`.
             bits = 3;
         }
-        // By construction above in range and, therefore,
-        // never UB.
+        // Safety: Strength is repr(u8) and has discriminants between 0 and 7. The
+        // above code ensures that, since the mask puts us `≤ 8`
         unsafe { core::mem::transmute(bits as u8) }
     }
 

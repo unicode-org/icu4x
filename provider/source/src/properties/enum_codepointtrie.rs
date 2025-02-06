@@ -49,7 +49,7 @@ impl SourceDataProvider {
 fn get_prop_values_map<F>(
     values: &[super::uprops_serde::PropertyValue],
     transform_u32: F,
-) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError>
+) -> Result<PropertyValueNameToEnumMap<'static>, DataError>
 where
     F: Fn(u32) -> Result<u16, DataError>,
 {
@@ -64,7 +64,7 @@ where
             map.insert(alias.as_bytes(), discr);
         }
     }
-    Ok(PropertyValueNameToEnumMapV1 {
+    Ok(PropertyValueNameToEnumMap {
         map: ZeroTrieSimpleAscii::from_iter(map).convert_store(),
     })
 }
@@ -144,14 +144,14 @@ fn load_values_to_names_sparse<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
     let map = map.into_iter().collect();
-    let data_struct = PropertyEnumToValueNameSparseMapV1 { map };
+    let data_struct = PropertyEnumToValueNameSparseMap { map };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -165,7 +165,7 @@ fn load_values_to_names_linear<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -173,7 +173,7 @@ where
     let map = load_values_to_names(data, is_short)?;
     let vec = map_to_vec(&map, prop_name)?;
     let varzerovec = (&vec).into();
-    let data_struct = PropertyEnumToValueNameLinearMapV1 { map: varzerovec };
+    let data_struct = PropertyEnumToValueNameLinearMap { map: varzerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -187,7 +187,7 @@ fn load_values_to_names_linear4<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -207,7 +207,7 @@ where
 
     let vec = vec.map_err(|_| DataError::custom("Found invalid script tag"))?;
     let zerovec = vec.into_iter().map(NichedOption).collect();
-    let data_struct = PropertyScriptToIcuScriptMapV1 { map: zerovec };
+    let data_struct = PropertyScriptToIcuScriptMap { map: zerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -234,7 +234,7 @@ macro_rules! expand {
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
                     })?;
-                    let data_struct = PropertyCodePointMapV1::CodePointTrie(code_point_trie);
+                    let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(data_struct),
@@ -373,15 +373,15 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV2Marker> for SourceDataProvider {
+impl DataProvider<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV2Marker>, DataError> {
+    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV2>, DataError> {
         use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
-        self.check_req::<GeneralCategoryMaskNameToValueV2Marker>(req)?;
+        self.check_req::<GeneralCategoryMaskNameToValueV2>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
@@ -402,9 +402,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV2Marker> for SourceDataProvider
     }
 }
 
-impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2Marker>
-    for SourceDataProvider
-{
+impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(HashSet::from_iter([Default::default()]))
@@ -413,110 +411,110 @@ impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2Marker>
 
 expand!(
     (
-        CanonicalCombiningClassV1Marker,
-        CanonicalCombiningClassNameToValueV2Marker,
+        CanonicalCombiningClassV1,
+        CanonicalCombiningClassNameToValueV2,
         (
-            sparse: CanonicalCombiningClassValueToShortNameV1Marker,
-            CanonicalCombiningClassValueToLongNameV1Marker
+            sparse: CanonicalCombiningClassValueToShortNameV1,
+            CanonicalCombiningClassValueToLongNameV1
         ),
         "ccc"
     ),
     (
-        GeneralCategoryV1Marker,
-        GeneralCategoryNameToValueV2Marker,
+        GeneralCategoryV1,
+        GeneralCategoryNameToValueV2,
         (
-            linear: GeneralCategoryValueToShortNameV1Marker,
-            GeneralCategoryValueToLongNameV1Marker
+            linear: GeneralCategoryValueToShortNameV1,
+            GeneralCategoryValueToLongNameV1
         ),
         "gc"
     ),
     (
-        BidiClassV1Marker,
-        BidiClassNameToValueV2Marker,
+        BidiClassV1,
+        BidiClassNameToValueV2,
         (
-            linear: BidiClassValueToShortNameV1Marker,
-            BidiClassValueToLongNameV1Marker
+            linear: BidiClassValueToShortNameV1,
+            BidiClassValueToLongNameV1
         ),
         "bc"
     ),
     (
-        ScriptV1Marker,
-        ScriptNameToValueV2Marker,
+        ScriptV1,
+        ScriptNameToValueV2,
         (
-            linear4: ScriptValueToShortNameV1Marker,
-            ScriptValueToLongNameV1Marker
+            linear4: ScriptValueToShortNameV1,
+            ScriptValueToLongNameV1
         ),
         "sc"
     ),
     (
-        HangulSyllableTypeV1Marker,
-        HangulSyllableTypeNameToValueV2Marker,
+        HangulSyllableTypeV1,
+        HangulSyllableTypeNameToValueV2,
         (
-            linear: HangulSyllableTypeValueToShortNameV1Marker,
-            HangulSyllableTypeValueToLongNameV1Marker
+            linear: HangulSyllableTypeValueToShortNameV1,
+            HangulSyllableTypeValueToLongNameV1
         ),
         "hst"
     ),
     (
-        EastAsianWidthV1Marker,
-        EastAsianWidthNameToValueV2Marker,
+        EastAsianWidthV1,
+        EastAsianWidthNameToValueV2,
         (
-            linear: EastAsianWidthValueToShortNameV1Marker,
-            EastAsianWidthValueToLongNameV1Marker
+            linear: EastAsianWidthValueToShortNameV1,
+            EastAsianWidthValueToLongNameV1
         ),
         "ea"
     ),
     (
-        IndicSyllabicCategoryV1Marker,
-        IndicSyllabicCategoryNameToValueV2Marker,
+        IndicSyllabicCategoryV1,
+        IndicSyllabicCategoryNameToValueV2,
         (
-            linear: IndicSyllabicCategoryValueToShortNameV1Marker,
-            IndicSyllabicCategoryValueToLongNameV1Marker
+            linear: IndicSyllabicCategoryValueToShortNameV1,
+            IndicSyllabicCategoryValueToLongNameV1
         ),
         "InSC"
     ),
     (
-        LineBreakV1Marker,
-        LineBreakNameToValueV2Marker,
+        LineBreakV1,
+        LineBreakNameToValueV2,
         (
-            linear: LineBreakValueToShortNameV1Marker,
-            LineBreakValueToLongNameV1Marker
+            linear: LineBreakValueToShortNameV1,
+            LineBreakValueToLongNameV1
         ),
         "lb"
     ),
     (
-        GraphemeClusterBreakV1Marker,
-        GraphemeClusterBreakNameToValueV2Marker,
+        GraphemeClusterBreakV1,
+        GraphemeClusterBreakNameToValueV2,
         (
-            linear: GraphemeClusterBreakValueToShortNameV1Marker,
-            GraphemeClusterBreakValueToLongNameV1Marker
+            linear: GraphemeClusterBreakValueToShortNameV1,
+            GraphemeClusterBreakValueToLongNameV1
         ),
         "GCB"
     ),
     (
-        WordBreakV1Marker,
-        WordBreakNameToValueV2Marker,
+        WordBreakV1,
+        WordBreakNameToValueV2,
         (
-            linear: WordBreakValueToShortNameV1Marker,
-            WordBreakValueToLongNameV1Marker
+            linear: WordBreakValueToShortNameV1,
+            WordBreakValueToLongNameV1
         ),
         "WB"
     ),
     (
-        SentenceBreakV1Marker,
-        SentenceBreakNameToValueV2Marker,
+        SentenceBreakV1,
+        SentenceBreakNameToValueV2,
         (
-            linear: SentenceBreakValueToShortNameV1Marker,
-            SentenceBreakValueToLongNameV1Marker
+            linear: SentenceBreakValueToShortNameV1,
+            SentenceBreakValueToLongNameV1
         ),
         "SB"
     ),
     (
-        JoiningTypeV1Marker,
-        JoiningTypeNameToValueV2Marker,
+        JoiningTypeV1,
+        JoiningTypeNameToValueV2,
         (
-            linear: JoiningTypeValueToShortNameV1Marker,
-            JoiningTypeValueToLongNameV1Marker
+            linear: JoiningTypeValueToShortNameV1,
+            JoiningTypeValueToLongNameV1
         ),
         "jt"
     ),

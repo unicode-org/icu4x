@@ -8,7 +8,7 @@ use alloc::collections::{BTreeMap, BTreeSet};
 use icu_provider::prelude::*;
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
         ///
         /// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
@@ -25,8 +25,8 @@ macro_rules! cb {
         /// assert_eq!(
         ///     icu::markers_for_bin(&std::fs::read(Path::new("target/release/my-app"))?)?,
         ///     std::collections::BTreeSet::from_iter([
-        ///         icu::list::provider::AndListV2Marker::INFO,
-        ///         icu::list::provider::OrListV2Marker::INFO,
+        ///         icu::list::provider::AndListV2::INFO,
+        ///         icu::list::provider::OrListV2::INFO,
         ///     ]),
         /// );
         /// # Ok(())
@@ -36,15 +36,15 @@ macro_rules! cb {
             use crate as icu;
             let lookup =
                 [
-                    (icu_provider::marker::data_marker_id!("core/helloworld@1").hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (icu_provider::marker::data_marker_id!(HelloWorldV1).hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        (icu_provider::marker::data_marker_id!($path).hashed().to_bytes(), Ok(<$marker>::INFO)),
+                        (icu_provider::marker::data_marker_id!($marker).hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        (icu_provider::marker::data_marker_id!($epath).hashed().to_bytes(), Ok(<$emarker>::INFO)),
+                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (icu_provider::marker::data_marker_id!($epath).hashed().to_bytes(), Err($epath)),
+                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
                 ]
@@ -76,14 +76,14 @@ fn test_markers_for_bin() {
     assert_eq!(
         markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
         [
-            crate::datetime::provider::neo::DayPeriodNamesV1Marker::INFO,
-            crate::datetime::provider::neo::GregorianMonthNamesV1Marker::INFO,
-            crate::datetime::provider::neo::GregorianYearNamesV1Marker::INFO,
-            crate::datetime::provider::neo::GluePatternV1Marker::INFO,
-            crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1Marker::INFO,
-            crate::datetime::provider::TimeNeoSkeletonPatternsV1Marker::INFO,
-            crate::decimal::provider::DecimalSymbolsV2Marker::INFO,
-            crate::decimal::provider::DecimalDigitsV1Marker::INFO,
+            crate::datetime::provider::neo::DayPeriodNamesV1::INFO,
+            crate::datetime::provider::neo::GregorianMonthNamesV1::INFO,
+            crate::datetime::provider::neo::GregorianYearNamesV1::INFO,
+            crate::datetime::provider::neo::GluePatternV1::INFO,
+            crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1::INFO,
+            crate::datetime::provider::TimeNeoSkeletonPatternsV1::INFO,
+            crate::decimal::provider::DecimalSymbolsV2::INFO,
+            crate::decimal::provider::DecimalDigitsV1::INFO,
         ]
         .into_iter()
         .collect(),

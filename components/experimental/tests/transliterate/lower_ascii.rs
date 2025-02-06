@@ -6,8 +6,8 @@ use core::any::TypeId;
 
 use icu::casemap::CaseMapper;
 use icu_experimental::transliterate::{
-    provider::TransliteratorRulesV1Marker, CustomTransliterator, RuleCollection,
-    RuleCollectionProvider, Transliterator,
+    provider::TransliteratorRulesV1, CustomTransliterator, RuleCollection, RuleCollectionProvider,
+    Transliterator,
 };
 use icu_locale::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -24,10 +24,10 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         println!("{:?} {req:?}", M::INFO);
-        if TypeId::of::<M>() == TypeId::of::<TransliteratorRulesV1Marker>() {
+        if TypeId::of::<M>() == TypeId::of::<TransliteratorRulesV1>() {
             let mut silent_req = req;
             silent_req.metadata.silent = true;
-            if let Some(response) = DataProvider::<TransliteratorRulesV1Marker>::load(
+            if let Some(response) = DataProvider::<TransliteratorRulesV1>::load(
                 &icu_experimental::provider::Baked,
                 silent_req,
             )

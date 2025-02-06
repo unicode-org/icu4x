@@ -7,13 +7,13 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde;
 use crate::cldr_serde::units::info::ConvertUnit;
 use crate::SourceDataProvider;
-use icu::experimental::measure::provider::trie::{UnitsTrieV1, UnitsTrieV1Marker};
+use icu::experimental::measure::provider::trie::{UnitsTrie, UnitsTrieV1};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 
-impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsTrieV1Marker>, DataError> {
-        self.check_req::<UnitsTrieV1Marker>(_req)?;
+impl DataProvider<UnitsTrieV1> for SourceDataProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsTrieV1>, DataError> {
+        self.check_req::<UnitsTrieV1>(_req)?;
 
         // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
         let units_data: &cldr_serde::units::info::Resource = self
@@ -24,11 +24,11 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
         // Get all the units and their conversion information.
         let convert_units = &units_data.supplemental.convert_units.convert_units;
 
-        // Maps from unit id to its id which will be use to get the conversion information from the `UnitsInfoV1`.
+        // Maps from unit id to its id which will be use to get the conversion information from the `UnitsInfo`.
         let mut trie_map = BTreeMap::<Vec<u8>, usize>::new();
 
         // Pre-process the conversion information to convert the factor and offset to scientific notation.
-        // This used to get the id for each unit which is used to get the conversion information from the `UnitsInfoV1`.
+        // This used to get the id for each unit which is used to get the conversion information from the `UnitsInfo`.
         let mut convert_units_vec = Vec::<&ConvertUnit>::new();
         for (unit_name, convert_unit) in convert_units {
             let convert_unit_index = convert_units_vec.len();
@@ -41,7 +41,7 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
                 .with_display_context(&e)
         })?;
 
-        let result = UnitsTrieV1 {
+        let result = UnitsTrie {
             trie: units_conversion_trie.convert_store(),
         };
 
@@ -52,7 +52,7 @@ impl DataProvider<UnitsTrieV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsTrieV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -60,13 +60,13 @@ impl crate::IterableDataProviderCached<UnitsTrieV1Marker> for SourceDataProvider
 
 #[test]
 fn test_basic() {
-    use icu::experimental::units::provider::UnitsInfoV1Marker;
+    use icu::experimental::units::provider::UnitsInfoV1;
     use icu::locale::langid;
     use icu_provider::prelude::*;
 
     let provider = SourceDataProvider::new_testing();
 
-    let und_trie: DataResponse<UnitsTrieV1Marker> = provider
+    let und_trie: DataResponse<UnitsTrieV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()
@@ -76,7 +76,7 @@ fn test_basic() {
     let units_info = und_trie.payload.get().to_owned();
     let trie = &units_info.trie;
 
-    let und_info: DataResponse<UnitsInfoV1Marker> = provider
+    let und_info: DataResponse<UnitsInfoV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
             ..Default::default()

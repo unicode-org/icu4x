@@ -69,10 +69,10 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 /// use icu_locale::langid;
 ///
 /// struct SingleLocaleProvider(DataLocale);
-/// impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
-///     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// impl DataProvider<HelloWorldV1> for SingleLocaleProvider {
+///     fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
 ///         if *req.id.locale != self.0 {
-///             return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req));
+///             return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req));
 ///         }
 ///         HelloWorldProvider.load(req)
 ///     }
@@ -90,7 +90,7 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 ///
 /// // Test that we can load both "de" and "ro" data:
 ///
-/// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
+/// let german_hello_world: DataResponse<HelloWorldV1> = provider
 ///     .load(DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///         ..Default::default()
@@ -99,7 +99,7 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 ///
-/// let romanian_hello_world: DataResponse<HelloWorldV1Marker> = provider
+/// let romanian_hello_world: DataResponse<HelloWorldV1> = provider
 ///     .load(DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("ro").into()),
 ///         ..Default::default()
@@ -110,7 +110,7 @@ impl ForkByErrorPredicate for MarkerNotFoundPredicate {
 ///
 /// // We should not be able to load "en" data because it is not in either provider:
 ///
-/// DataProvider::<HelloWorldV1Marker>::load(
+/// DataProvider::<HelloWorldV1>::load(
 ///     &provider,
 ///     DataRequest {
 ///         id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),

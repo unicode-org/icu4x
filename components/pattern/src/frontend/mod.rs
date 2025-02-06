@@ -143,13 +143,13 @@ where
 impl<B: PatternBackend> Pattern<B> {
     #[cfg(feature = "alloc")]
     pub(crate) const fn from_boxed_store_unchecked(store: Box<B::Store>) -> Box<Self> {
-        // Safety: Pattern's layout is the same as B::Store's
+        // Safety: Pattern is repr(transparent) over B::Store
         unsafe { core::mem::transmute(store) }
     }
 
     #[doc(hidden)] // databake
     pub const fn from_ref_store_unchecked(store: &B::Store) -> &Self {
-        // Safety: Pattern's layout is the same as B::Store's
+        // Safety: Pattern is repr(transparent) over B::Store
         unsafe { &*(store as *const B::Store as *const Self) }
     }
 }

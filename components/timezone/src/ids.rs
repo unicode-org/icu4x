@@ -13,8 +13,7 @@ use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
     provider::names::{
-        Bcp47ToIanaMapV1, Bcp47ToIanaMapV1Marker, IanaToBcp47MapV3, IanaToBcp47MapV3Marker,
-        NON_REGION_CITY_PREFIX,
+        Bcp47ToIanaMap, Bcp47ToIanaMapV1, IanaToBcp47Map, IanaToBcp47MapV3, NON_REGION_CITY_PREFIX,
     },
     TimeZoneBcp47Id,
 };
@@ -100,7 +99,8 @@ use crate::{
 /// ```
 #[derive(Debug, Clone)]
 pub struct TimeZoneIdMapper {
-    data: DataPayload<IanaToBcp47MapV3Marker>,
+    data: DataPayload<IanaToBcp47MapV3>,
+    checksum: u64,
 }
 
 impl TimeZoneIdMapper {
@@ -130,10 +130,16 @@ impl TimeZoneIdMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<IanaToBcp47MapV3Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV3> + ?Sized,
     {
-        let data = provider.load(Default::default())?.payload;
-        Ok(Self { data })
+        let response = provider.load(Default::default())?;
+        Ok(Self {
+            data: response.payload,
+            checksum: response.metadata.checksum.ok_or_else(|| {
+                DataError::custom("Missing checksum")
+                    .with_req(IanaToBcp47MapV3::INFO, Default::default())
+            })?,
+        })
     }
 
     /// Returns a borrowed version of the mapper that can be queried.
@@ -142,6 +148,7 @@ impl TimeZoneIdMapper {
     pub fn as_borrowed(&self) -> TimeZoneIdMapperBorrowed {
         TimeZoneIdMapperBorrowed {
             data: self.data.get(),
+            checksum: self.checksum,
         }
     }
 }
@@ -157,7 +164,8 @@ impl AsRef<TimeZoneIdMapper> for TimeZoneIdMapper {
 /// [`TimeZoneIdMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug, Copy, Clone)]
 pub struct TimeZoneIdMapperBorrowed<'a> {
-    data: &'a IanaToBcp47MapV3<'a>,
+    data: &'a IanaToBcp47Map<'a>,
+    checksum: u64,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -178,7 +186,8 @@ impl TimeZoneIdMapperBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V3_MARKER,
+            data: crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V3,
+            checksum: crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V3_CHECKSUM,
         }
     }
 
@@ -189,6 +198,7 @@ impl TimeZoneIdMapperBorrowed<'static> {
     pub fn static_to_owned(&self) -> TimeZoneIdMapper {
         TimeZoneIdMapper {
             data: DataPayload::from_static_ref(self.data),
+            checksum: self.checksum,
         }
     }
 }
@@ -546,7 +556,7 @@ impl Iterator for TimeZoneBcp47Iter<'_> {
 #[derive(Debug, Clone)]
 pub struct TimeZoneIdMapperWithFastCanonicalization<I> {
     inner: I,
-    data: DataPayload<Bcp47ToIanaMapV1Marker>,
+    data: DataPayload<Bcp47ToIanaMapV1>,
 }
 
 impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
@@ -576,7 +586,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<IanaToBcp47MapV3Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV3> + DataProvider<Bcp47ToIanaMapV1> + ?Sized,
     {
         let mapper = TimeZoneIdMapper::try_new_unstable(provider)?;
         Self::try_new_with_mapper_unstable(provider, mapper)
@@ -597,13 +607,18 @@ where
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_mapper(mapper: I) -> Result<Self, DataError> {
-        Self {
+        if mapper.as_ref().checksum
+            != crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_CHECKSUM
+        {
+            return Err(DataErrorKind::InconsistentData(IanaToBcp47MapV3::INFO)
+                .with_marker(Bcp47ToIanaMapV1::INFO));
+        }
+        Ok(Self {
             inner: mapper,
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER,
+                crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1,
             ),
-        }
-        .validated()
+        })
     }
 
     icu_provider::gen_any_buffer_data_constructors!((mapper: I) -> error: DataError,
@@ -619,24 +634,17 @@ where
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, mapper: I) -> Result<Self, DataError>
     where
-        P: DataProvider<IanaToBcp47MapV3Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV3> + DataProvider<Bcp47ToIanaMapV1> + ?Sized,
     {
-        let data = provider.load(Default::default())?.payload;
-        Self {
+        let response = provider.load(Default::default())?;
+        if Some(mapper.as_ref().checksum) != response.metadata.checksum {
+            return Err(DataErrorKind::InconsistentData(IanaToBcp47MapV3::INFO)
+                .with_marker(Bcp47ToIanaMapV1::INFO));
+        }
+        Ok(Self {
             inner: mapper,
-            data,
-        }
-        .validated()
-    }
-
-    fn validated(self) -> Result<Self, DataError> {
-        if self.inner.as_ref().data.get().bcp47_ids_checksum != self.data.get().bcp47_ids_checksum {
-            return Err(
-                DataErrorKind::InconsistentData(IanaToBcp47MapV3Marker::INFO)
-                    .with_marker(Bcp47ToIanaMapV1Marker::INFO),
-            );
-        }
-        Ok(self)
+            data: response.payload,
+        })
     }
 
     /// Gets the inner [`TimeZoneIdMapper`] for performing queries.
@@ -660,7 +668,7 @@ where
 #[derive(Debug, Copy, Clone)]
 pub struct TimeZoneIdMapperWithFastCanonicalizationBorrowed<'a> {
     inner: TimeZoneIdMapperBorrowed<'a>,
-    data: &'a Bcp47ToIanaMapV1<'a>,
+    data: &'a Bcp47ToIanaMap<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -681,12 +689,12 @@ impl TimeZoneIdMapperWithFastCanonicalizationBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V3_MARKER.bcp47_ids_checksum
-                == crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER.bcp47_ids_checksum,
+            crate::provider::Baked::SINGLETON_IANA_TO_BCP47_MAP_V3_CHECKSUM
+                == crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_CHECKSUM,
         );
         Self {
             inner: TimeZoneIdMapperBorrowed::new(),
-            data: crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1_MARKER,
+            data: crate::provider::Baked::SINGLETON_BCP47_TO_IANA_MAP_V1,
         }
     }
 

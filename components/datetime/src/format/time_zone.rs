@@ -15,13 +15,13 @@ use icu_timezone::provider::EPOCH;
 use icu_timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use writeable::Writeable;
 
-impl crate::provider::time_zones::MetazonePeriodV1<'_> {
+impl crate::provider::time_zones::MetazonePeriod<'_> {
     fn resolve(
         &self,
         time_zone_id: TimeZoneBcp47Id,
         (date, time): (Date<Iso>, Time),
     ) -> Option<MetazoneId> {
-        let cursor = self.0.get0(&time_zone_id)?;
+        let cursor = self.list.get0(&time_zone_id)?;
         let mut metazone_id = None;
         let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
             + (time.hour.number() as i32 * 60 + time.minute.number() as i32);

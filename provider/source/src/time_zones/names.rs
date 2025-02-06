@@ -13,8 +13,8 @@ use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{ZeroSlice, ZeroVec};
 
-impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3Marker>, DataError> {
+impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
 
         // Sort and deduplicate the BCP-47 IDs:
@@ -52,7 +52,7 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
             })
             .collect();
 
-        let data_struct = IanaToBcp47MapV3 {
+        let data_struct = IanaToBcp47Map {
             map: ZeroAsciiIgnoreCaseTrie::try_from(&map)
                 .map_err(|e| {
                     DataError::custom("Could not create ZeroTrie from timezone.json data")
@@ -60,23 +60,22 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
                 })?
                 .convert_store(),
             bcp47_ids,
-            bcp47_ids_checksum,
         };
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<IanaToBcp47MapV3Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<IanaToBcp47MapV3> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
+impl DataProvider<Bcp47ToIanaMapV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1>, DataError> {
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
@@ -88,18 +87,15 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
         let iana_vec: Vec<&String> = bcp2iana.values().collect();
         let canonical_iana_ids = iana_vec.as_slice().into();
 
-        let data_struct = Bcp47ToIanaMapV1 {
-            bcp47_ids_checksum,
-            canonical_iana_ids,
-        };
+        let data_struct = Bcp47ToIanaMap { canonical_iana_ids };
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

@@ -80,7 +80,7 @@ macro_rules! make_enumerated_property {
         impl EnumeratedProperty for $value_ty {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
-            const SINGLETON: &'static crate::provider::PropertyCodePointMapV1<'static, Self> =
+            const SINGLETON: &'static crate::provider::PropertyCodePointMap<'static, Self> =
                 crate::provider::Baked::$singleton;
             const NAME: &'static [u8] = $name.as_bytes();
             const SHORT_NAME: &'static [u8] = $short_name.as_bytes();
@@ -170,8 +170,8 @@ make_enumerated_property! {
     name: "Bidi_Class";
     short_name: "bc";
     ident: BidiClass;
-    data_marker: crate::provider::BidiClassV1Marker;
-    singleton: SINGLETON_BIDI_CLASS_V1_MARKER;
+    data_marker: crate::provider::BidiClassV1;
+    singleton: SINGLETON_BIDI_CLASS_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
@@ -331,8 +331,8 @@ make_enumerated_property! {
     name: "General_Category";
     short_name: "gc";
     ident: GeneralCategory;
-    data_marker: crate::provider::GeneralCategoryV1Marker;
-    singleton: SINGLETON_GENERAL_CATEGORY_V1_MARKER;
+    data_marker: crate::provider::GeneralCategoryV1;
+    singleton: SINGLETON_GENERAL_CATEGORY_V1;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
@@ -840,8 +840,8 @@ make_enumerated_property! {
     name: "Script";
     short_name: "sc";
     ident: Script;
-    data_marker: crate::provider::ScriptV1Marker;
-    singleton: SINGLETON_SCRIPT_V1_MARKER;
+    data_marker: crate::provider::ScriptV1;
+    singleton: SINGLETON_SCRIPT_V1;
     ule_ty: <u16 as zerovec::ule::AsULE>::ULE;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Script Unicode enumerated property. See [`Script`].
@@ -899,8 +899,8 @@ make_enumerated_property! {
     name: "Hangul_Syllable_Type";
     short_name: "hst";
     ident: HangulSyllableType;
-    data_marker: crate::provider::HangulSyllableTypeV1Marker;
-    singleton: SINGLETON_HANGUL_SYLLABLE_TYPE_V1_MARKER;
+    data_marker: crate::provider::HangulSyllableTypeV1;
+    singleton: SINGLETON_HANGUL_SYLLABLE_TYPE_V1;
     ule_ty: u8;
     func:
     /// Returns a [`CodePointMapDataBorrowed`] for the Hangul_Syllable_Type
@@ -948,8 +948,8 @@ make_enumerated_property! {
     name: "East_Asian_Width";
     short_name: "ea";
     ident: EastAsianWidth;
-    data_marker: crate::provider::EastAsianWidthV1Marker;
-    singleton: SINGLETON_EAST_ASIAN_WIDTH_V1_MARKER;
+    data_marker: crate::provider::EastAsianWidthV1;
+    singleton: SINGLETON_EAST_ASIAN_WIDTH_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the East_Asian_Width Unicode enumerated
@@ -1040,8 +1040,8 @@ make_enumerated_property! {
     name: "Line_Break";
     short_name: "lb";
     ident: LineBreak;
-    data_marker: crate::provider::LineBreakV1Marker;
-    singleton: SINGLETON_LINE_BREAK_V1_MARKER;
+    data_marker: crate::provider::LineBreakV1;
+    singleton: SINGLETON_LINE_BREAK_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Line_Break Unicode enumerated
@@ -1107,8 +1107,8 @@ make_enumerated_property! {
     name: "Grapheme_Cluster_Break";
     short_name: "GCB";
     ident: GraphemeClusterBreak;
-    data_marker: crate::provider::GraphemeClusterBreakV1Marker;
-    singleton: SINGLETON_GRAPHEME_CLUSTER_BREAK_V1_MARKER;
+    data_marker: crate::provider::GraphemeClusterBreakV1;
+    singleton: SINGLETON_GRAPHEME_CLUSTER_BREAK_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Grapheme_Cluster_Break Unicode enumerated
@@ -1179,8 +1179,8 @@ make_enumerated_property! {
     name: "Word_Break";
     short_name: "WB";
     ident: WordBreak;
-    data_marker: crate::provider::WordBreakV1Marker;
-    singleton: SINGLETON_WORD_BREAK_V1_MARKER;
+    data_marker: crate::provider::WordBreakV1;
+    singleton: SINGLETON_WORD_BREAK_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Word_Break Unicode enumerated
@@ -1238,8 +1238,8 @@ make_enumerated_property! {
     name: "Sentence_Break";
     short_name: "SB";
     ident: SentenceBreak;
-    data_marker: crate::provider::SentenceBreakV1Marker;
-    singleton: SINGLETON_SENTENCE_BREAK_V1_MARKER;
+    data_marker: crate::provider::SentenceBreakV1;
+    singleton: SINGLETON_SENTENCE_BREAK_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Sentence_Break Unicode enumerated
@@ -1346,8 +1346,8 @@ make_enumerated_property! {
     name: "Canonical_Combining_Class";
     short_name: "ccc";
     ident: CanonicalCombiningClass;
-    data_marker: crate::provider::CanonicalCombiningClassV1Marker;
-    singleton: SINGLETON_CANONICAL_COMBINING_CLASS_V1_MARKER;
+    data_marker: crate::provider::CanonicalCombiningClassV1;
+    singleton: SINGLETON_CANONICAL_COMBINING_CLASS_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
@@ -1427,8 +1427,8 @@ make_enumerated_property! {
     name: "Indic_Syllabic_Category";
     short_name: "InSC";
     ident: IndicSyllabicCategory;
-    data_marker: crate::provider::IndicSyllabicCategoryV1Marker;
-    singleton: SINGLETON_INDIC_SYLLABIC_CATEGORY_V1_MARKER;
+    data_marker: crate::provider::IndicSyllabicCategoryV1;
+    singleton: SINGLETON_INDIC_SYLLABIC_CATEGORY_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
@@ -1474,8 +1474,8 @@ make_enumerated_property! {
     name: "Joining_Type";
     short_name: "jt";
     ident: JoiningType;
-    data_marker: crate::provider::JoiningTypeV1Marker;
-    singleton: SINGLETON_JOINING_TYPE_V1_MARKER;
+    data_marker: crate::provider::JoiningTypeV1;
+    singleton: SINGLETON_JOINING_TYPE_V1;
     ule_ty: u8;
     func:
     /// Return a [`CodePointMapDataBorrowed`] for the Joining_Type Unicode enumerated
@@ -1513,7 +1513,7 @@ macro_rules! make_binary_property {
         impl BinaryProperty for $d {
         type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
-            const SINGLETON: &'static crate::provider::PropertyCodePointSetV1<'static> =
+            const SINGLETON: &'static crate::provider::PropertyCodePointSet<'static> =
                 &crate::provider::Baked::$singleton;
             const NAME: &'static [u8] = $name.as_bytes();
             const SHORT_NAME: &'static [u8] = $short_name.as_bytes();
@@ -1525,8 +1525,8 @@ make_binary_property! {
     name: "ASCII_Hex_Digit";
     short_name: "AHex";
     ident: AsciiHexDigit;
-    data_marker: crate::provider::AsciiHexDigitV1Marker;
-    singleton: SINGLETON_ASCII_HEX_DIGIT_V1_MARKER;
+    data_marker: crate::provider::AsciiHexDigitV1;
+    singleton: SINGLETON_ASCII_HEX_DIGIT_V1;
     func:
     /// ASCII characters commonly used for the representation of hexadecimal numbers.
     ///
@@ -1549,8 +1549,8 @@ make_binary_property! {
     name: "Alnum";
     short_name: "Alnum";
     ident: Alnum;
-    data_marker: crate::provider::AlnumV1Marker;
-    singleton: SINGLETON_ALNUM_V1_MARKER;
+    data_marker: crate::provider::AlnumV1;
+    singleton: SINGLETON_ALNUM_V1;
     func:
     /// Characters with the `Alphabetic` or `Decimal_Number` property.
     ///
@@ -1561,8 +1561,8 @@ make_binary_property! {
     name: "Alphabetic";
     short_name: "Alpha";
     ident: Alphabetic;
-    data_marker: crate::provider::AlphabeticV1Marker;
-    singleton: SINGLETON_ALPHABETIC_V1_MARKER;
+    data_marker: crate::provider::AlphabeticV1;
+    singleton: SINGLETON_ALPHABETIC_V1;
     func:
     /// Alphabetic characters.
     ///
@@ -1586,8 +1586,8 @@ make_binary_property! {
     name: "Bidi_Control";
     short_name: "Bidi_C";
     ident: BidiControl;
-    data_marker: crate::provider::BidiControlV1Marker;
-    singleton: SINGLETON_BIDI_CONTROL_V1_MARKER;
+    data_marker: crate::provider::BidiControlV1;
+    singleton: SINGLETON_BIDI_CONTROL_V1;
     func:
     /// Format control characters which have specific functions in the Unicode Bidirectional
     /// Algorithm.
@@ -1610,8 +1610,8 @@ make_binary_property! {
     name: "Bidi_Mirrored";
     short_name: "Bidi_M";
     ident: BidiMirrored;
-    data_marker: crate::provider::BidiMirroredV1Marker;
-    singleton: SINGLETON_BIDI_MIRRORED_V1_MARKER;
+    data_marker: crate::provider::BidiMirroredV1;
+    singleton: SINGLETON_BIDI_MIRRORED_V1;
     func:
     /// Characters that are mirrored in bidirectional text.
     ///
@@ -1635,8 +1635,8 @@ make_binary_property! {
     name: "Blank";
     short_name: "Blank";
     ident: Blank;
-    data_marker: crate::provider::BlankV1Marker;
-    singleton: SINGLETON_BLANK_V1_MARKER;
+    data_marker: crate::provider::BlankV1;
+    singleton: SINGLETON_BLANK_V1;
     func:
     /// Horizontal whitespace characters
 
@@ -1646,8 +1646,8 @@ make_binary_property! {
     name: "Cased";
     short_name: "Cased";
     ident: Cased;
-    data_marker: crate::provider::CasedV1Marker;
-    singleton: SINGLETON_CASED_V1_MARKER;
+    data_marker: crate::provider::CasedV1;
+    singleton: SINGLETON_CASED_V1;
     func:
     /// Uppercase, lowercase, and titlecase characters.
     ///
@@ -1669,8 +1669,8 @@ make_binary_property! {
     name: "Case_Ignorable";
     short_name: "CI";
     ident: CaseIgnorable;
-    data_marker: crate::provider::CaseIgnorableV1Marker;
-    singleton: SINGLETON_CASE_IGNORABLE_V1_MARKER;
+    data_marker: crate::provider::CaseIgnorableV1;
+    singleton: SINGLETON_CASE_IGNORABLE_V1;
     func:
     /// Characters which are ignored for casing purposes.
     ///
@@ -1692,8 +1692,8 @@ make_binary_property! {
     name: "Full_Composition_Exclusion";
     short_name: "Comp_Ex";
     ident: FullCompositionExclusion;
-    data_marker: crate::provider::FullCompositionExclusionV1Marker;
-    singleton: SINGLETON_FULL_COMPOSITION_EXCLUSION_V1_MARKER;
+    data_marker: crate::provider::FullCompositionExclusionV1;
+    singleton: SINGLETON_FULL_COMPOSITION_EXCLUSION_V1;
     func:
     /// Characters that are excluded from composition.
     ///
@@ -1705,8 +1705,8 @@ make_binary_property! {
     name: "Changes_When_Casefolded";
     short_name: "CWCF";
     ident: ChangesWhenCasefolded;
-    data_marker: crate::provider::ChangesWhenCasefoldedV1Marker;
-    singleton: SINGLETON_CHANGES_WHEN_CASEFOLDED_V1_MARKER;
+    data_marker: crate::provider::ChangesWhenCasefoldedV1;
+    singleton: SINGLETON_CHANGES_WHEN_CASEFOLDED_V1;
     func:
     /// Characters whose normalized forms are not stable under case folding.
     ///
@@ -1728,8 +1728,8 @@ make_binary_property! {
     name: "Changes_When_Casemapped";
     short_name: "CWCM";
     ident: ChangesWhenCasemapped;
-    data_marker: crate::provider::ChangesWhenCasemappedV1Marker;
-    singleton: SINGLETON_CHANGES_WHEN_CASEMAPPED_V1_MARKER;
+    data_marker: crate::provider::ChangesWhenCasemappedV1;
+    singleton: SINGLETON_CHANGES_WHEN_CASEMAPPED_V1;
     func:
     /// Characters which may change when they undergo case mapping.
 
@@ -1739,8 +1739,8 @@ make_binary_property! {
     name: "Changes_When_NFKC_Casefolded";
     short_name: "CWKCF";
     ident: ChangesWhenNfkcCasefolded;
-    data_marker: crate::provider::ChangesWhenNfkcCasefoldedV1Marker;
-    singleton: SINGLETON_CHANGES_WHEN_NFKC_CASEFOLDED_V1_MARKER;
+    data_marker: crate::provider::ChangesWhenNfkcCasefoldedV1;
+    singleton: SINGLETON_CHANGES_WHEN_NFKC_CASEFOLDED_V1;
     func:
     /// Characters which are not identical to their `NFKC_Casefold` mapping.
     ///
@@ -1762,8 +1762,8 @@ make_binary_property! {
     name: "Changes_When_Lowercased";
     short_name: "CWL";
     ident: ChangesWhenLowercased;
-    data_marker: crate::provider::ChangesWhenLowercasedV1Marker;
-    singleton: SINGLETON_CHANGES_WHEN_LOWERCASED_V1_MARKER;
+    data_marker: crate::provider::ChangesWhenLowercasedV1;
+    singleton: SINGLETON_CHANGES_WHEN_LOWERCASED_V1;
     func:
     /// Characters whose normalized forms are not stable under a `toLowercase` mapping.
     ///
@@ -1785,8 +1785,8 @@ make_binary_property! {
     name: "Changes_When_Titlecased";
     short_name: "CWT";
     ident: ChangesWhenTitlecased;
-    data_marker: crate::provider::ChangesWhenTitlecasedV1Marker;
-    singleton: SINGLETON_CHANGES_WHEN_TITLECASED_V1_MARKER;
+    data_marker: crate::provider::ChangesWhenTitlecasedV1;
+    singleton: SINGLETON_CHANGES_WHEN_TITLECASED_V1;
     func:
     /// Characters whose normalized forms are not stable under a `toTitlecase` mapping.
     ///
@@ -1808,8 +1808,8 @@ make_binary_property! {
     name: "Changes_When_Uppercased";
     short_name: "CWU";
     ident: ChangesWhenUppercased;
-    data_marker: crate::provider::ChangesWhenUppercasedV1Marker;
-    singleton: SINGLETON_CHANGES_WHEN_UPPERCASED_V1_MARKER;
+    data_marker: crate::provider::ChangesWhenUppercasedV1;
+    singleton: SINGLETON_CHANGES_WHEN_UPPERCASED_V1;
     func:
     /// Characters whose normalized forms are not stable under a `toUppercase` mapping.
     ///
@@ -1831,8 +1831,8 @@ make_binary_property! {
     name: "Dash";
     short_name: "Dash";
     ident: Dash;
-    data_marker: crate::provider::DashV1Marker;
-    singleton: SINGLETON_DASH_V1_MARKER;
+    data_marker: crate::provider::DashV1;
+    singleton: SINGLETON_DASH_V1;
     func:
     /// Punctuation characters explicitly called out as dashes in the Unicode Standard, plus
     /// their compatibility equivalents.
@@ -1856,8 +1856,8 @@ make_binary_property! {
     name: "Deprecated";
     short_name: "Dep";
     ident: Deprecated;
-    data_marker: crate::provider::DeprecatedV1Marker;
-    singleton: SINGLETON_DEPRECATED_V1_MARKER;
+    data_marker: crate::provider::DeprecatedV1;
+    singleton: SINGLETON_DEPRECATED_V1;
     func:
     /// Deprecated characters.
     ///
@@ -1882,8 +1882,8 @@ make_binary_property! {
     name: "Default_Ignorable_Code_Point";
     short_name: "DI";
     ident: DefaultIgnorableCodePoint;
-    data_marker: crate::provider::DefaultIgnorableCodePointV1Marker;
-    singleton: SINGLETON_DEFAULT_IGNORABLE_CODE_POINT_V1_MARKER;
+    data_marker: crate::provider::DefaultIgnorableCodePointV1;
+    singleton: SINGLETON_DEFAULT_IGNORABLE_CODE_POINT_V1;
     func:
     /// For programmatic determination of default ignorable code points.
     ///
@@ -1910,8 +1910,8 @@ make_binary_property! {
     name: "Diacritic";
     short_name: "Dia";
     ident: Diacritic;
-    data_marker: crate::provider::DiacriticV1Marker;
-    singleton: SINGLETON_DIACRITIC_V1_MARKER;
+    data_marker: crate::provider::DiacriticV1;
+    singleton: SINGLETON_DIACRITIC_V1;
     func:
     /// Characters that linguistically modify the meaning of another character to which they apply.
     ///
@@ -1933,8 +1933,8 @@ make_binary_property! {
     name: "Emoji_Modifier_Base";
     short_name: "EBase";
     ident: EmojiModifierBase;
-    data_marker: crate::provider::EmojiModifierBaseV1Marker;
-    singleton: SINGLETON_EMOJI_MODIFIER_BASE_V1_MARKER;
+    data_marker: crate::provider::EmojiModifierBaseV1;
+    singleton: SINGLETON_EMOJI_MODIFIER_BASE_V1;
     func:
     /// Characters that can serve as a base for emoji modifiers.
     ///
@@ -1956,8 +1956,8 @@ make_binary_property! {
     name: "Emoji_Component";
     short_name: "EComp";
     ident: EmojiComponent;
-    data_marker: crate::provider::EmojiComponentV1Marker;
-    singleton: SINGLETON_EMOJI_COMPONENT_V1_MARKER;
+    data_marker: crate::provider::EmojiComponentV1;
+    singleton: SINGLETON_EMOJI_COMPONENT_V1;
     func:
     /// Characters used in emoji sequences that normally do not appear on emoji keyboards as
     /// separate choices, such as base characters for emoji keycaps.
@@ -1982,8 +1982,8 @@ make_binary_property! {
     name: "Emoji_Modifier";
     short_name: "EMod";
     ident: EmojiModifier;
-    data_marker: crate::provider::EmojiModifierV1Marker;
-    singleton: SINGLETON_EMOJI_MODIFIER_V1_MARKER;
+    data_marker: crate::provider::EmojiModifierV1;
+    singleton: SINGLETON_EMOJI_MODIFIER_V1;
     func:
     /// Characters that are emoji modifiers.
     ///
@@ -2005,8 +2005,8 @@ make_binary_property! {
     name: "Emoji";
     short_name: "Emoji";
     ident: Emoji;
-    data_marker: crate::provider::EmojiV1Marker;
-    singleton: SINGLETON_EMOJI_V1_MARKER;
+    data_marker: crate::provider::EmojiV1;
+    singleton: SINGLETON_EMOJI_V1;
     func:
     /// Characters that are emoji.
     ///
@@ -2028,8 +2028,8 @@ make_binary_property! {
     name: "Emoji_Presentation";
     short_name: "EPres";
     ident: EmojiPresentation;
-    data_marker: crate::provider::EmojiPresentationV1Marker;
-    singleton: SINGLETON_EMOJI_PRESENTATION_V1_MARKER;
+    data_marker: crate::provider::EmojiPresentationV1;
+    singleton: SINGLETON_EMOJI_PRESENTATION_V1;
     func:
     /// Characters that have emoji presentation by default.
     ///
@@ -2051,8 +2051,8 @@ make_binary_property! {
     name: "Extender";
     short_name: "Ext";
     ident: Extender;
-    data_marker: crate::provider::ExtenderV1Marker;
-    singleton: SINGLETON_EXTENDER_V1_MARKER;
+    data_marker: crate::provider::ExtenderV1;
+    singleton: SINGLETON_EXTENDER_V1;
     func:
     /// Characters whose principal function is to extend the value of a preceding alphabetic
     /// character or to extend the shape of adjacent characters.
@@ -2076,8 +2076,8 @@ make_binary_property! {
     name: "Extended_Pictographic";
     short_name: "ExtPict";
     ident: ExtendedPictographic;
-    data_marker: crate::provider::ExtendedPictographicV1Marker;
-    singleton: SINGLETON_EXTENDED_PICTOGRAPHIC_V1_MARKER;
+    data_marker: crate::provider::ExtendedPictographicV1;
+    singleton: SINGLETON_EXTENDED_PICTOGRAPHIC_V1;
     func:
     /// Pictographic symbols, as well as reserved ranges in blocks largely associated with
     /// emoji characters
@@ -2100,8 +2100,8 @@ make_binary_property! {
     name: "Graph";
     short_name: "Graph";
     ident: Graph;
-    data_marker: crate::provider::GraphV1Marker;
-    singleton: SINGLETON_GRAPH_V1_MARKER;
+    data_marker: crate::provider::GraphV1;
+    singleton: SINGLETON_GRAPH_V1;
     func:
     /// Visible characters.
     ///
@@ -2113,8 +2113,8 @@ make_binary_property! {
     name: "Grapheme_Base";
     short_name: "Gr_Base";
     ident: GraphemeBase;
-    data_marker: crate::provider::GraphemeBaseV1Marker;
-    singleton: SINGLETON_GRAPHEME_BASE_V1_MARKER;
+    data_marker: crate::provider::GraphemeBaseV1;
+    singleton: SINGLETON_GRAPHEME_BASE_V1;
     func:
     /// Property used together with the definition of Standard Korean Syllable Block to define
     /// "Grapheme base".
@@ -2140,8 +2140,8 @@ make_binary_property! {
     name: "Grapheme_Extend";
     short_name: "Gr_Ext";
     ident: GraphemeExtend;
-    data_marker: crate::provider::GraphemeExtendV1Marker;
-    singleton: SINGLETON_GRAPHEME_EXTEND_V1_MARKER;
+    data_marker: crate::provider::GraphemeExtendV1;
+    singleton: SINGLETON_GRAPHEME_EXTEND_V1;
     func:
     /// Property used to define "Grapheme extender".
     ///
@@ -2167,8 +2167,8 @@ make_binary_property! {
     name: "Grapheme_Link";
     short_name: "Gr_Link";
     ident: GraphemeLink;
-    data_marker: crate::provider::GraphemeLinkV1Marker;
-    singleton: SINGLETON_GRAPHEME_LINK_V1_MARKER;
+    data_marker: crate::provider::GraphemeLinkV1;
+    singleton: SINGLETON_GRAPHEME_LINK_V1;
     func:
     /// Deprecated property.
     ///
@@ -2181,8 +2181,8 @@ make_binary_property! {
     name: "Hex_Digit";
     short_name: "Hex";
     ident: HexDigit;
-    data_marker: crate::provider::HexDigitV1Marker;
-    singleton: SINGLETON_HEX_DIGIT_V1_MARKER;
+    data_marker: crate::provider::HexDigitV1;
+    singleton: SINGLETON_HEX_DIGIT_V1;
     func:
     /// Characters commonly used for the representation of hexadecimal numbers, plus their
     /// compatibility equivalents.
@@ -2209,8 +2209,8 @@ make_binary_property! {
     name: "Hyphen";
     short_name: "Hyphen";
     ident: Hyphen;
-    data_marker: crate::provider::HyphenV1Marker;
-    singleton: SINGLETON_HYPHEN_V1_MARKER;
+    data_marker: crate::provider::HyphenV1;
+    singleton: SINGLETON_HYPHEN_V1;
     func:
     /// Deprecated property.
     ///
@@ -2223,8 +2223,8 @@ make_binary_property! {
     name: "Id_Continue";
     short_name: "IDC";
     ident: IdContinue;
-    data_marker: crate::provider::IdContinueV1Marker;
-    singleton: SINGLETON_ID_CONTINUE_V1_MARKER;
+    data_marker: crate::provider::IdContinueV1;
+    singleton: SINGLETON_ID_CONTINUE_V1;
     func:
     /// Characters that can come after the first character in an identifier.
     ///
@@ -2255,8 +2255,8 @@ make_binary_property! {
     name: "Ideographic";
     short_name: "Ideo";
     ident: Ideographic;
-    data_marker: crate::provider::IdeographicV1Marker;
-    singleton: SINGLETON_IDEOGRAPHIC_V1_MARKER;
+    data_marker: crate::provider::IdeographicV1;
+    singleton: SINGLETON_IDEOGRAPHIC_V1;
     func:
     /// Characters considered to be CJKV (Chinese, Japanese, Korean, and Vietnamese)
     /// ideographs, or related siniform ideographs
@@ -2279,8 +2279,8 @@ make_binary_property! {
     name: "Id_Start";
     short_name: "IDS";
     ident: IdStart;
-    data_marker: crate::provider::IdStartV1Marker;
-    singleton: SINGLETON_ID_START_V1_MARKER;
+    data_marker: crate::provider::IdStartV1;
+    singleton: SINGLETON_ID_START_V1;
     func:
     /// Characters that can begin an identifier.
     ///
@@ -2310,8 +2310,8 @@ make_binary_property! {
     name: "Ids_Binary_Operator";
     short_name: "IDSB";
     ident: IdsBinaryOperator;
-    data_marker: crate::provider::IdsBinaryOperatorV1Marker;
-    singleton: SINGLETON_IDS_BINARY_OPERATOR_V1_MARKER;
+    data_marker: crate::provider::IdsBinaryOperatorV1;
+    singleton: SINGLETON_IDS_BINARY_OPERATOR_V1;
     func:
     /// Characters used in Ideographic Description Sequences.
     ///
@@ -2333,8 +2333,8 @@ make_binary_property! {
     name: "Ids_Trinary_Operator";
     short_name: "IDST";
     ident: IdsTrinaryOperator;
-    data_marker: crate::provider::IdsTrinaryOperatorV1Marker;
-    singleton: SINGLETON_IDS_TRINARY_OPERATOR_V1_MARKER;
+    data_marker: crate::provider::IdsTrinaryOperatorV1;
+    singleton: SINGLETON_IDS_TRINARY_OPERATOR_V1;
     func:
     /// Characters used in Ideographic Description Sequences.
     ///
@@ -2359,8 +2359,8 @@ make_binary_property! {
     name: "Join_Control";
     short_name: "Join_C";
     ident: JoinControl;
-    data_marker: crate::provider::JoinControlV1Marker;
-    singleton: SINGLETON_JOIN_CONTROL_V1_MARKER;
+    data_marker: crate::provider::JoinControlV1;
+    singleton: SINGLETON_JOIN_CONTROL_V1;
     func:
     /// Format control characters which have specific functions for control of cursive joining
     /// and ligation.
@@ -2384,8 +2384,8 @@ make_binary_property! {
     name: "Logical_Order_Exception";
     short_name: "LOE";
     ident: LogicalOrderException;
-    data_marker: crate::provider::LogicalOrderExceptionV1Marker;
-    singleton: SINGLETON_LOGICAL_ORDER_EXCEPTION_V1_MARKER;
+    data_marker: crate::provider::LogicalOrderExceptionV1;
+    singleton: SINGLETON_LOGICAL_ORDER_EXCEPTION_V1;
     func:
     /// A small number of spacing vowel letters occurring in certain Southeast Asian scripts such as Thai and Lao.
     ///
@@ -2407,8 +2407,8 @@ make_binary_property! {
     name: "Lowercase";
     short_name: "Lower";
     ident: Lowercase;
-    data_marker: crate::provider::LowercaseV1Marker;
-    singleton: SINGLETON_LOWERCASE_V1_MARKER;
+    data_marker: crate::provider::LowercaseV1;
+    singleton: SINGLETON_LOWERCASE_V1;
     func:
     /// Lowercase characters.
     ///
@@ -2430,8 +2430,8 @@ make_binary_property! {
     name: "Math";
     short_name: "Math";
     ident: Math;
-    data_marker: crate::provider::MathV1Marker;
-    singleton: SINGLETON_MATH_V1_MARKER;
+    data_marker: crate::provider::MathV1;
+    singleton: SINGLETON_MATH_V1;
     func:
     /// Characters used in mathematical notation.
     ///
@@ -2457,8 +2457,8 @@ make_binary_property! {
     name: "Noncharacter_Code_Point";
     short_name: "NChar";
     ident: NoncharacterCodePoint;
-    data_marker: crate::provider::NoncharacterCodePointV1Marker;
-    singleton: SINGLETON_NONCHARACTER_CODE_POINT_V1_MARKER;
+    data_marker: crate::provider::NoncharacterCodePointV1;
+    singleton: SINGLETON_NONCHARACTER_CODE_POINT_V1;
     func:
     /// Code points permanently reserved for internal use.
     ///
@@ -2481,8 +2481,8 @@ make_binary_property! {
     name: "NFC_Inert";
     short_name: "NFC_Inert";
     ident: NfcInert;
-    data_marker: crate::provider::NfcInertV1Marker;
-    singleton: SINGLETON_NFC_INERT_V1_MARKER;
+    data_marker: crate::provider::NfcInertV1;
+    singleton: SINGLETON_NFC_INERT_V1;
     func:
     /// Characters that are inert under NFC, i.e., they do not interact with adjacent characters.
 
@@ -2492,8 +2492,8 @@ make_binary_property! {
     name: "NFD_Inert";
     short_name: "NFD_Inert";
     ident: NfdInert;
-    data_marker: crate::provider::NfdInertV1Marker;
-    singleton: SINGLETON_NFD_INERT_V1_MARKER;
+    data_marker: crate::provider::NfdInertV1;
+    singleton: SINGLETON_NFD_INERT_V1;
     func:
     /// Characters that are inert under NFD, i.e., they do not interact with adjacent characters.
 
@@ -2503,8 +2503,8 @@ make_binary_property! {
     name: "NFKC_Inert";
     short_name: "NFKC_Inert";
     ident: NfkcInert;
-    data_marker: crate::provider::NfkcInertV1Marker;
-    singleton: SINGLETON_NFKC_INERT_V1_MARKER;
+    data_marker: crate::provider::NfkcInertV1;
+    singleton: SINGLETON_NFKC_INERT_V1;
     func:
     /// Characters that are inert under NFKC, i.e., they do not interact with adjacent characters.
 
@@ -2514,8 +2514,8 @@ make_binary_property! {
     name: "NFKD_Inert";
     short_name: "NFKD_Inert";
     ident: NfkdInert;
-    data_marker: crate::provider::NfkdInertV1Marker;
-    singleton: SINGLETON_NFKD_INERT_V1_MARKER;
+    data_marker: crate::provider::NfkdInertV1;
+    singleton: SINGLETON_NFKD_INERT_V1;
     func:
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters.
 
@@ -2525,8 +2525,8 @@ make_binary_property! {
     name: "Pattern_Syntax";
     short_name: "Pat_Syn";
     ident: PatternSyntax;
-    data_marker: crate::provider::PatternSyntaxV1Marker;
-    singleton: SINGLETON_PATTERN_SYNTAX_V1_MARKER;
+    data_marker: crate::provider::PatternSyntaxV1;
+    singleton: SINGLETON_PATTERN_SYNTAX_V1;
     func:
     /// Characters used as syntax in patterns (such as regular expressions).
     ///
@@ -2553,8 +2553,8 @@ make_binary_property! {
     name: "Pattern_White_Space";
     short_name: "Pat_WS";
     ident: PatternWhiteSpace;
-    data_marker: crate::provider::PatternWhiteSpaceV1Marker;
-    singleton: SINGLETON_PATTERN_WHITE_SPACE_V1_MARKER;
+    data_marker: crate::provider::PatternWhiteSpaceV1;
+    singleton: SINGLETON_PATTERN_WHITE_SPACE_V1;
     func:
     /// Characters used as whitespace in patterns (such as regular expressions).
     ///
@@ -2582,8 +2582,8 @@ make_binary_property! {
     name: "Prepended_Concatenation_Mark";
     short_name: "PCM";
     ident: PrependedConcatenationMark;
-    data_marker: crate::provider::PrependedConcatenationMarkV1Marker;
-    singleton: SINGLETON_PREPENDED_CONCATENATION_MARK_V1_MARKER;
+    data_marker: crate::provider::PrependedConcatenationMarkV1;
+    singleton: SINGLETON_PREPENDED_CONCATENATION_MARK_V1;
     func:
     /// A small class of visible format controls, which precede and then span a sequence of
     /// other characters, usually digits.
@@ -2594,8 +2594,8 @@ make_binary_property! {
     name: "Print";
     short_name: "Print";
     ident: Print;
-    data_marker: crate::provider::PrintV1Marker;
-    singleton: SINGLETON_PRINT_V1_MARKER;
+    data_marker: crate::provider::PrintV1;
+    singleton: SINGLETON_PRINT_V1;
     func:
     /// Printable characters (visible characters and whitespace).
     ///
@@ -2607,8 +2607,8 @@ make_binary_property! {
     name: "Quotation_Mark";
     short_name: "QMark";
     ident: QuotationMark;
-    data_marker: crate::provider::QuotationMarkV1Marker;
-    singleton: SINGLETON_QUOTATION_MARK_V1_MARKER;
+    data_marker: crate::provider::QuotationMarkV1;
+    singleton: SINGLETON_QUOTATION_MARK_V1;
     func:
     /// Punctuation characters that function as quotation marks.
     ///
@@ -2631,8 +2631,8 @@ make_binary_property! {
     name: "Radical";
     short_name: "Radical";
     ident: Radical;
-    data_marker: crate::provider::RadicalV1Marker;
-    singleton: SINGLETON_RADICAL_V1_MARKER;
+    data_marker: crate::provider::RadicalV1;
+    singleton: SINGLETON_RADICAL_V1;
     func:
     /// Characters used in the definition of Ideographic Description Sequences.
     ///
@@ -2654,8 +2654,8 @@ make_binary_property! {
     name: "Regional_Indicator";
     short_name: "RI";
     ident: RegionalIndicator;
-    data_marker: crate::provider::RegionalIndicatorV1Marker;
-    singleton: SINGLETON_REGIONAL_INDICATOR_V1_MARKER;
+    data_marker: crate::provider::RegionalIndicatorV1;
+    singleton: SINGLETON_REGIONAL_INDICATOR_V1;
     func:
     /// Regional indicator characters, `U+1F1E6..U+1F1FF`.
     ///
@@ -2678,8 +2678,8 @@ make_binary_property! {
     name: "Soft_Dotted";
     short_name: "SD";
     ident: SoftDotted;
-    data_marker: crate::provider::SoftDottedV1Marker;
-    singleton: SINGLETON_SOFT_DOTTED_V1_MARKER;
+    data_marker: crate::provider::SoftDottedV1;
+    singleton: SINGLETON_SOFT_DOTTED_V1;
     func:
     /// Characters with a "soft dot", like i or j.
     ///
@@ -2704,8 +2704,8 @@ make_binary_property! {
     name: "Segment_Starter";
     short_name: "Segment_Starter";
     ident: SegmentStarter;
-    data_marker: crate::provider::SegmentStarterV1Marker;
-    singleton: SINGLETON_SEGMENT_STARTER_V1_MARKER;
+    data_marker: crate::provider::SegmentStarterV1;
+    singleton: SINGLETON_SEGMENT_STARTER_V1;
     func:
     /// Characters that are starters in terms of Unicode normalization and combining character
     /// sequences.
@@ -2716,8 +2716,8 @@ make_binary_property! {
     name: "Case_Sensitive";
     short_name: "Case_Sensitive";
     ident: CaseSensitive;
-    data_marker: crate::provider::CaseSensitiveV1Marker;
-    singleton: SINGLETON_CASE_SENSITIVE_V1_MARKER;
+    data_marker: crate::provider::CaseSensitiveV1;
+    singleton: SINGLETON_CASE_SENSITIVE_V1;
     func:
     /// Characters that are either the source of a case mapping or in the target of a case
     /// mapping.
@@ -2728,8 +2728,8 @@ make_binary_property! {
     name: "Sentence_Terminal";
     short_name: "STerm";
     ident: SentenceTerminal;
-    data_marker: crate::provider::SentenceTerminalV1Marker;
-    singleton: SINGLETON_SENTENCE_TERMINAL_V1_MARKER;
+    data_marker: crate::provider::SentenceTerminalV1;
+    singleton: SINGLETON_SENTENCE_TERMINAL_V1;
     func:
     /// Punctuation characters that generally mark the end of sentences.
     ///
@@ -2754,8 +2754,8 @@ make_binary_property! {
     name: "Terminal_Punctuation";
     short_name: "Term";
     ident: TerminalPunctuation;
-    data_marker: crate::provider::TerminalPunctuationV1Marker;
-    singleton: SINGLETON_TERMINAL_PUNCTUATION_V1_MARKER;
+    data_marker: crate::provider::TerminalPunctuationV1;
+    singleton: SINGLETON_TERMINAL_PUNCTUATION_V1;
     func:
     /// Punctuation characters that generally mark the end of textual units.
     ///
@@ -2780,8 +2780,8 @@ make_binary_property! {
     name: "Unified_Ideograph";
     short_name: "UIdeo";
     ident: UnifiedIdeograph;
-    data_marker: crate::provider::UnifiedIdeographV1Marker;
-    singleton: SINGLETON_UNIFIED_IDEOGRAPH_V1_MARKER;
+    data_marker: crate::provider::UnifiedIdeographV1;
+    singleton: SINGLETON_UNIFIED_IDEOGRAPH_V1;
     func:
     /// A property which specifies the exact set of Unified CJK Ideographs in the standard.
     ///
@@ -2804,8 +2804,8 @@ make_binary_property! {
     name: "Uppercase";
     short_name: "Upper";
     ident: Uppercase;
-    data_marker: crate::provider::UppercaseV1Marker;
-    singleton: SINGLETON_UPPERCASE_V1_MARKER;
+    data_marker: crate::provider::UppercaseV1;
+    singleton: SINGLETON_UPPERCASE_V1;
     func:
     /// Uppercase characters.
     ///
@@ -2827,8 +2827,8 @@ make_binary_property! {
     name: "Variation_Selector";
     short_name: "VS";
     ident: VariationSelector;
-    data_marker: crate::provider::VariationSelectorV1Marker;
-    singleton: SINGLETON_VARIATION_SELECTOR_V1_MARKER;
+    data_marker: crate::provider::VariationSelectorV1;
+    singleton: SINGLETON_VARIATION_SELECTOR_V1;
     func:
     /// Characters that are Variation Selectors.
     ///
@@ -2853,8 +2853,8 @@ make_binary_property! {
     name: "White_Space";
     short_name: "space";
     ident: WhiteSpace;
-    data_marker: crate::provider::WhiteSpaceV1Marker;
-    singleton: SINGLETON_WHITE_SPACE_V1_MARKER;
+    data_marker: crate::provider::WhiteSpaceV1;
+    singleton: SINGLETON_WHITE_SPACE_V1;
     func:
     /// Spaces, separator characters and other control characters which should be treated by
     /// programming languages as "white space" for the purpose of parsing elements.
@@ -2879,8 +2879,8 @@ make_binary_property! {
     name: "Xdigit";
     short_name: "Xdigit";
     ident: Xdigit;
-    data_marker: crate::provider::XdigitV1Marker;
-    singleton: SINGLETON_XDIGIT_V1_MARKER;
+    data_marker: crate::provider::XdigitV1;
+    singleton: SINGLETON_XDIGIT_V1;
     func:
     /// Hexadecimal digits
     /// This is defined for POSIX compatibility.
@@ -2891,8 +2891,8 @@ make_binary_property! {
     name: "XID_Continue";
     short_name: "XIDC";
     ident: XidContinue;
-    data_marker: crate::provider::XidContinueV1Marker;
-    singleton: SINGLETON_XID_CONTINUE_V1_MARKER;
+    data_marker: crate::provider::XidContinueV1;
+    singleton: SINGLETON_XID_CONTINUE_V1;
     func:
     /// Characters that can come after the first character in an identifier.
     ///
@@ -2921,8 +2921,8 @@ make_binary_property! {
     name: "XID_Start";
     short_name: "XIDS";
     ident: XidStart;
-    data_marker: crate::provider::XidStartV1Marker;
-    singleton: SINGLETON_XID_START_V1_MARKER;
+    data_marker: crate::provider::XidStartV1;
+    singleton: SINGLETON_XID_START_V1;
     func:
     /// Characters that can begin an identifier.
     ///
@@ -2968,7 +2968,7 @@ macro_rules! make_emoji_set {
         impl EmojiSet for $marker_name {
             type DataMarker = $data_marker;
             #[cfg(feature = "compiled_data")]
-            const SINGLETON: &'static crate::provider::PropertyUnicodeSetV1<'static> =
+            const SINGLETON: &'static crate::provider::PropertyUnicodeSet<'static> =
                 &crate::provider::Baked::$singleton;
         }
     }
@@ -2976,8 +2976,8 @@ macro_rules! make_emoji_set {
 
 make_emoji_set! {
     ident: BasicEmoji;
-    data_marker: crate::provider::BasicEmojiV1Marker;
-    singleton: SINGLETON_BASIC_EMOJI_V1_MARKER;
+    data_marker: crate::provider::BasicEmojiV1;
+    singleton: SINGLETON_BASIC_EMOJI_V1;
     func:
     /// Characters and character sequences intended for general-purpose, independent, direct input.
     ///
@@ -3007,7 +3007,7 @@ mod test_enumerated_property_completeness {
     use alloc::collections::BTreeMap;
 
     fn check_enum<'a, T: NamedEnumeratedProperty>(
-        lookup: &crate::provider::names::PropertyValueNameToEnumMapV1<'static>,
+        lookup: &crate::provider::names::PropertyValueNameToEnumMap<'static>,
         consts: impl IntoIterator<Item = &'a T>,
     ) where
         u16: From<T>,
@@ -3052,7 +3052,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ea() {
         check_enum(
-            crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_EAST_ASIAN_WIDTH_NAME_TO_VALUE_V2,
             EastAsianWidth::ALL_VALUES,
         );
     }
@@ -3060,7 +3060,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_ccc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_CANONICAL_COMBINING_CLASS_NAME_TO_VALUE_V2,
             CanonicalCombiningClass::ALL_VALUES,
         );
     }
@@ -3068,7 +3068,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_jt() {
         check_enum(
-            crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_JOINING_TYPE_NAME_TO_VALUE_V2,
             JoiningType::ALL_VALUES,
         );
     }
@@ -3076,7 +3076,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_insc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_INDIC_SYLLABIC_CATEGORY_NAME_TO_VALUE_V2,
             IndicSyllabicCategory::ALL_VALUES,
         );
     }
@@ -3084,7 +3084,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_sb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_SENTENCE_BREAK_NAME_TO_VALUE_V2,
             SentenceBreak::ALL_VALUES,
         );
     }
@@ -3092,7 +3092,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_wb() {
         check_enum(
-            crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_WORD_BREAK_NAME_TO_VALUE_V2,
             WordBreak::ALL_VALUES,
         );
     }
@@ -3100,7 +3100,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_bc() {
         check_enum(
-            crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_BIDI_CLASS_NAME_TO_VALUE_V2,
             BidiClass::ALL_VALUES,
         );
     }
@@ -3108,7 +3108,7 @@ mod test_enumerated_property_completeness {
     #[test]
     fn test_hst() {
         check_enum(
-            crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2_MARKER,
+            crate::provider::Baked::SINGLETON_HANGUL_SYLLABLE_TYPE_NAME_TO_VALUE_V2,
             HangulSyllableType::ALL_VALUES,
         );
     }

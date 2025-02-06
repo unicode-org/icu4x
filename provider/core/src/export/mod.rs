@@ -66,6 +66,8 @@ pub struct FlushMetadata {
     /// Whether the data was generated in such a way that a [`DryDataProvider`] implementation
     /// makes sense.
     pub supports_dry_provider: bool,
+    /// The checksum to return with this data marker.
+    pub checksum: Option<u64>,
 }
 
 impl DataExporter for Box<dyn DataExporter> {

@@ -24,7 +24,7 @@ define_preferences!(
 /// [crate-level documentation](crate) for more details.
 #[derive(Debug)]
 pub struct ListFormatter {
-    data: DataPayload<ErasedMarker<ListFormatterPatternsV2<'static>>>,
+    data: DataPayload<ErasedMarker<ListFormatterPatterns<'static>>>,
 }
 
 macro_rules! constructor {
@@ -51,9 +51,9 @@ macro_rules! constructor {
             options: ListFormatterOptions,
         ) -> Result<Self, DataError> {
             let length = match options.length.unwrap_or_default() {
-                ListLength::Narrow => ListFormatterPatternsV2::NARROW,
-                ListLength::Short => ListFormatterPatternsV2::SHORT,
-                ListLength::Wide => ListFormatterPatternsV2::WIDE,
+                ListLength::Narrow => ListFormatterPatterns::NARROW,
+                ListLength::Short => ListFormatterPatterns::SHORT,
+                ListLength::Wide => ListFormatterPatterns::WIDE,
             };
             let locale = <$marker>::make_locale(prefs.locale_preferences);
             let data = provider
@@ -77,7 +77,7 @@ impl ListFormatter {
         try_new_and_with_any_provider,
         try_new_and_with_buffer_provider,
         try_new_and_unstable,
-        AndListV2Marker,
+        AndListV2,
         "and"
     );
     constructor!(
@@ -85,7 +85,7 @@ impl ListFormatter {
         try_new_or_with_any_provider,
         try_new_or_with_buffer_provider,
         try_new_or_unstable,
-        OrListV2Marker,
+        OrListV2,
         "or"
     );
     constructor!(
@@ -93,7 +93,7 @@ impl ListFormatter {
         try_new_unit_with_any_provider,
         try_new_unit_with_buffer_provider,
         try_new_unit_unstable,
-        UnitListV2Marker,
+        UnitListV2,
         "unit"
     );
 
@@ -276,7 +276,7 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(patterns: ListFormatterPatternsV2<'static>) -> ListFormatter {
+    fn formatter(patterns: ListFormatterPatterns<'static>) -> ListFormatter {
         ListFormatter {
             data: DataPayload::from_owned(patterns),
         }

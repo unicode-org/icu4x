@@ -14,7 +14,7 @@ use icu_locale_core::preferences::{
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 
-use super::super::provider::currency::CurrencyEssentialsV1Marker;
+use super::super::provider::currency::CurrencyEssentialsV1;
 use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 use super::CurrencyCode;
@@ -53,7 +53,7 @@ pub struct CurrencyFormatter {
     options: CurrencyFormatterOptions,
 
     /// Essential data for the currency formatter.
-    essential: DataPayload<CurrencyEssentialsV1Marker>,
+    essential: DataPayload<CurrencyEssentialsV1>,
 
     /// A [`FixedDecimalFormatter`] to format the currency value.
     fixed_decimal_formatter: FixedDecimalFormatter,
@@ -81,7 +81,7 @@ impl CurrencyFormatter {
         prefs: CurrencyFormatterPreferences,
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = CurrencyEssentialsV1Marker::make_locale(prefs.locale_preferences);
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
             (&prefs).into(),
             FixedDecimalFormatterOptions::default(),
@@ -108,11 +108,11 @@ impl CurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>,
+            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        let locale = CurrencyEssentialsV1Marker::make_locale(prefs.locale_preferences);
+        let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
         let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

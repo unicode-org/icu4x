@@ -5,7 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locale_core::langid;
-use icu_provider::hello_world::HelloWorldV1Marker;
+use icu_provider::hello_world::HelloWorldV1;
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
@@ -15,7 +15,7 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             let provider = FsDataProvider::try_new("./tests/data/json".into())
                 .expect("Loading file from testdata directory");
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
@@ -38,7 +38,7 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
@@ -50,7 +50,7 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
@@ -67,7 +67,7 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
@@ -79,7 +79,7 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
@@ -96,7 +96,7 @@ fn postcard_bench(c: &mut Criterion) {
 
     c.bench_function("postcard/generic", |b| {
         b.iter(|| {
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),
@@ -108,7 +108,7 @@ fn postcard_bench(c: &mut Criterion) {
 
     c.bench_function("postcard/erased_serde", |b| {
         b.iter(|| {
-            let _: DataResponse<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
+            let _: DataResponse<HelloWorldV1> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&langid!("ru").into()),

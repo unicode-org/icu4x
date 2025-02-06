@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Titlecasing-specific try_new_with_mapper_unstable
-use crate::provider::CaseMapV1Marker;
+use crate::provider::CaseMapV1;
 use crate::CaseMapper;
 use alloc::string::String;
 use icu_locale_core::LanguageIdentifier;
 use icu_properties::props::{GeneralCategory, GeneralCategoryGroup};
-use icu_properties::provider::GeneralCategoryV1Marker;
+use icu_properties::provider::GeneralCategoryV1;
 use icu_properties::CodePointMapData;
 use icu_provider::prelude::*;
 use writeable::Writeable;
@@ -238,7 +238,7 @@ impl TitlecaseMapper<CaseMapper> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1> + DataProvider<GeneralCategoryV1> + ?Sized,
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
         let gc = icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::try_new_unstable(provider)?;
@@ -276,7 +276,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where
-        P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
+        P: DataProvider<CaseMapV1> + DataProvider<GeneralCategoryV1> + ?Sized,
     {
         let gc = icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::try_new_unstable(provider)?;
         Ok(Self { cm: casemapper, gc })

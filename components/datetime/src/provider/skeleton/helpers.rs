@@ -11,8 +11,8 @@ use crate::{
     options::FractionalSecondDigits,
     provider::{
         calendar::{
-            patterns::{FullLongMediumShort, GenericLengthPatternsV1},
-            DateSkeletonPatternsV1,
+            patterns::{FullLongMediumShort, GenericLengthPatterns},
+            DateSkeletonPatterns,
         },
         fields::{self, components, Field, FieldLength, FieldSymbol},
         pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
@@ -133,8 +133,8 @@ fn naively_apply_time_zone_name(
 ///         configuration option makes it so that the final pattern won't have additional work
 ///         done to mutate it to match the fields. It will prefer the actual matched pattern.
 pub fn create_best_pattern_for_fields<'data>(
-    skeletons: &DateSkeletonPatternsV1<'data>,
-    length_patterns: &GenericLengthPatternsV1<'data>,
+    skeletons: &DateSkeletonPatterns<'data>,
+    length_patterns: &GenericLengthPatterns<'data>,
     fields: &[Field],
     components: &components::Bag,
     prefer_matched_pattern: bool,
@@ -392,7 +392,7 @@ fn apply_fractional_seconds(
 ///
 /// Panics if `prefer_matched_pattern` is set to true in a non-datagen mode.
 pub fn get_best_available_format_pattern<'data>(
-    skeletons: &DateSkeletonPatternsV1<'data>,
+    skeletons: &DateSkeletonPatterns<'data>,
     fields: &[Field],
     prefer_matched_pattern: bool,
 ) -> BestSkeleton<PatternPlurals<'data>> {
@@ -528,9 +528,9 @@ impl components::Bag {
     #[cfg(feature = "datagen")]
     pub fn select_pattern<'data>(
         self,
-        skeletons: &DateSkeletonPatternsV1<'data>,
+        skeletons: &DateSkeletonPatterns<'data>,
         preferred_hour_cycle: CoarseHourCycle,
-        length_patterns: &GenericLengthPatternsV1<'data>,
+        length_patterns: &GenericLengthPatterns<'data>,
     ) -> PatternPlurals<'data> {
         use crate::provider::pattern::runtime::Pattern;
         use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;

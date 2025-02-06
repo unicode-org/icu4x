@@ -27,10 +27,10 @@ where
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// let original = DataPayload::<HelloWorldV1Marker>::from_static_str("foo");
+    /// let original = DataPayload::<HelloWorldV1>::from_static_str("foo");
     /// let upcasted = AnyMarker::upcast(original);
     /// let downcasted = upcasted
-    ///     .downcast::<HelloWorldV1Marker>()
+    ///     .downcast::<HelloWorldV1>()
     ///     .expect("Type conversion");
     /// assert_eq!(downcasted.get().message, "foo");
     /// ```
@@ -47,17 +47,17 @@ where
 /// use std::borrow::Cow;
 ///
 /// #[icu_provider::data_struct(
-///     FooV1Marker,
-///     BarV1Marker = "demo/bar@1",
-///     BazV1Marker = "demo/baz@1"
+///     FooV1,
+///     BarV1 = "demo/bar@1",
+///     BazV1 = "demo/baz@1"
 /// )]
-/// pub struct FooV1<'data> {
+/// pub struct Foo<'data> {
 ///     message: Cow<'data, str>,
 /// };
 ///
 /// icu_provider::dynutil::impl_casting_upcast!(
-///     FooV1Marker,
-///     [BarV1Marker, BazV1Marker,]
+///     FooV1,
+///     [BarV1, BazV1,]
 /// );
 /// ```
 ///
@@ -100,34 +100,29 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// #
 /// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
 /// # struct HelloWorldProvider;
-/// # impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+/// # impl DataProvider<HelloWorldV1> for HelloWorldProvider {
 /// #     fn load(
 /// #         &self,
 /// #         req: DataRequest,
-/// #     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// #     ) -> Result<DataResponse<HelloWorldV1>, DataError> {
 /// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
 /// # }
 ///
-/// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1Marker>
-/// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+/// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1>
+/// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1,], AnyMarker);
 ///
 /// // Successful because the marker matches:
-/// HelloWorldProvider.load_data(HelloWorldV1Marker::INFO, DataRequest {
+/// HelloWorldProvider.load_data(HelloWorldV1::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap();
 ///
-/// # struct DummyMarker;
-/// # impl DynamicDataMarker for DummyMarker {
-/// #     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
-/// # }
-/// # impl DataMarker for DummyMarker {
-/// #     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
-/// # }
+/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
+///
 /// // MissingDataMarker error as the marker does not match:
 /// assert_eq!(
-///     HelloWorldProvider.load_data(DummyMarker::INFO, DataRequest {
+///     HelloWorldProvider.load_data(DummyV1::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap_err().kind,
@@ -147,36 +142,30 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// use icu_locale_core::langid;
 /// #
 /// # struct HelloWorldProvider;
-/// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+/// # impl DynamicDataProvider<HelloWorldV1> for HelloWorldProvider {
 /// #     fn load_data(&self, marker: DataMarkerInfo, req: DataRequest)
-/// #             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// #             -> Result<DataResponse<HelloWorldV1>, DataError> {
 /// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
 /// # }
 ///
-/// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynamicDataProvider<HelloWorldV1Marker>
+/// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynamicDataProvider<HelloWorldV1>
 /// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, {
-///     // Match HelloWorldV1Marker::INFO and delegate to DynamicDataProvider<HelloWorldV1Marker>.
-///     HW = HelloWorldV1Marker::INFO => HelloWorldV1Marker,
-///     // Send the wildcard match also to DynamicDataProvider<HelloWorldV1Marker>.
-///     _ => HelloWorldV1Marker,
+///     // Match HelloWorldV1::INFO and delegate to DynamicDataProvider<HelloWorldV1>.
+///     HW = HelloWorldV1::INFO => HelloWorldV1,
+///     // Send the wildcard match also to DynamicDataProvider<HelloWorldV1>.
+///     _ => HelloWorldV1,
 /// }, AnyMarker);
 ///
 /// // Successful because the marker matches:
-/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::INFO, DataRequest {
+/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap();
 ///
 /// // Because of the wildcard, any marker actually works:
-/// struct DummyMarker;
-/// impl DynamicDataMarker for DummyMarker {
-///     type DataStruct = <HelloWorldV1Marker as DynamicDataMarker>::DataStruct;
-/// }
-/// impl DataMarker for DummyMarker {
-///     const INFO: DataMarkerInfo = DataMarkerInfo::from_id(icu_provider::marker::data_marker_id!("dummy@1"));
-/// }
-/// HelloWorldProvider.as_any_provider().load_any(DummyMarker::INFO, DataRequest {
+/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
+/// HelloWorldProvider.as_any_provider().load_any(DummyV1::INFO, DataRequest {
 ///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
 ///     ..Default::default()
 /// }).unwrap();

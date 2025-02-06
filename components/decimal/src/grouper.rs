@@ -5,7 +5,7 @@
 //! Algorithms to determine where to position grouping separators.
 
 use crate::options::GroupingStrategy;
-use crate::provider::GroupingSizesV1;
+use crate::provider::GroupingSizes;
 use core::cmp;
 
 /// Returns whether to display a grouping separator at the given magnitude.
@@ -16,7 +16,7 @@ pub fn check(
     upper_magnitude: i16,
     magnitude: i16,
     strategy: GroupingStrategy,
-    sizes: GroupingSizesV1,
+    sizes: GroupingSizes,
 ) -> bool {
     let primary = if sizes.primary == 0 {
         return false;
@@ -62,31 +62,31 @@ fn test_grouper() {
     use icu_provider_adapters::fork::ForkByMarkerProvider;
     use writeable::assert_writeable_eq;
 
-    let western_sizes = GroupingSizesV1 {
+    let western_sizes = GroupingSizes {
         min_grouping: 1,
         primary: 3,
         secondary: 3,
     };
-    let indic_sizes = GroupingSizesV1 {
+    let indic_sizes = GroupingSizes {
         min_grouping: 1,
         primary: 3,
         secondary: 2,
     };
-    let western_sizes_min3 = GroupingSizesV1 {
+    let western_sizes_min3 = GroupingSizes {
         min_grouping: 3,
         primary: 3,
         secondary: 3,
     };
 
     // primary=0 implies no grouping; the other fields are ignored
-    let zero_test = GroupingSizesV1 {
+    let zero_test = GroupingSizes {
         min_grouping: 0,
         primary: 0,
         secondary: 0,
     };
 
     // secondary=0 implies that it inherits from primary
-    let blank_secondary = GroupingSizesV1 {
+    let blank_secondary = GroupingSizes {
         min_grouping: 0,
         primary: 3,
         secondary: 0,
@@ -95,7 +95,7 @@ fn test_grouper() {
     #[derive(Debug)]
     struct TestCase {
         strategy: GroupingStrategy,
-        sizes: GroupingSizesV1,
+        sizes: GroupingSizes,
         // Expected results for numbers with magnitude 3, 4, 5, and 6
         expected: [&'static str; 4],
     }
@@ -159,17 +159,15 @@ fn test_grouper() {
                 dec.multiply_pow10((i as i16) + 3);
                 dec
             };
-            let provider_symbols = FixedProvider::<DecimalSymbolsV2Marker>::from_owned(
-                crate::provider::DecimalSymbolsV2 {
+            let provider_symbols =
+                FixedProvider::<DecimalSymbolsV2>::from_owned(crate::provider::DecimalSymbols {
                     grouping_sizes: cas.sizes,
-                    ..DecimalSymbolsV2::new_en_for_testing()
-                },
-            );
-            let provider_digits = FixedProvider::<DecimalDigitsV1Marker>::from_owned(
-                crate::provider::DecimalDigitsV1 {
+                    ..DecimalSymbols::new_en_for_testing()
+                });
+            let provider_digits =
+                FixedProvider::<DecimalDigitsV1>::from_owned(crate::provider::DecimalDigits {
                     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-                },
-            );
+                });
             let provider = ForkByMarkerProvider::new(provider_symbols, provider_digits);
             let options = options::FixedDecimalFormatterOptions {
                 grouping_strategy: cas.strategy,

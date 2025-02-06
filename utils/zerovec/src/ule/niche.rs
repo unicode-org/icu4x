@@ -4,6 +4,8 @@
 
 use core::{marker::Copy, mem::size_of};
 
+use crate::{map::ZeroMapKV, ZeroSlice, ZeroVec};
+
 use super::{AsULE, ULE};
 
 /// The [`ULE`] types implementing this trait guarantee that [`NicheBytes::NICHE_BIT_PATTERN`]
@@ -177,5 +179,24 @@ where
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         Self(unaligned.get().map(U::from_unaligned))
+    }
+}
+
+impl<'a, T: AsULE + 'static, const N: usize> ZeroMapKV<'a> for NichedOption<T, N>
+where
+    T::ULE: NicheBytes<N>,
+{
+    type Container = ZeroVec<'a, NichedOption<T, N>>;
+    type Slice = ZeroSlice<NichedOption<T, N>>;
+    type GetType = <NichedOption<T, N> as AsULE>::ULE;
+    type OwnedType = Self;
+}
+
+impl<T, const N: usize> IntoIterator for NichedOption<T, N> {
+    type IntoIter = <Option<T> as IntoIterator>::IntoIter;
+    type Item = T;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }

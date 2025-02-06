@@ -119,6 +119,15 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store: ?Sized> ZeroTrieSimpleAscii<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
+}
+
 impl<Store> ZeroTrieSimpleAscii<Store> {
     /// Wrap this specific ZeroTrie variant into a ZeroTrie.
     #[inline]
@@ -177,6 +186,15 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store: ?Sized> ZeroAsciiIgnoreCaseTrie<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
+}
+
 // Note: ZeroAsciiIgnoreCaseTrie is not a variant of ZeroTrie so there is no `into_zerotrie`
 
 /// A data structure that compactly maps from byte strings to integers.
@@ -213,6 +231,15 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store: ?Sized> ZeroTriePerfectHash<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
+}
+
 impl<Store> ZeroTriePerfectHash<Store> {
     /// Wrap this specific ZeroTrie variant into a ZeroTrie.
     #[inline]
@@ -232,6 +259,15 @@ impl<Store> ZeroTriePerfectHash<Store> {
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
     pub store: Store,
+}
+
+impl<Store: ?Sized> ZeroTrieExtendedCapacity<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
 }
 
 impl<Store> ZeroTrieExtendedCapacity<Store> {
@@ -387,8 +423,7 @@ macro_rules! impl_zerotrie_subtype {
             /// If the bytes are not a valid trie, unexpected behavior may occur.
             #[inline]
             pub fn from_bytes(trie: &[u8]) -> &Self {
-                // Safety: Self is repr(transparent) over [u8]
-                unsafe { core::mem::transmute(trie) }
+                Self::transparent_ref_from_store(trie)
             }
         }
         #[cfg(feature = "alloc")]
@@ -598,7 +633,16 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         // TODO(#2778): Auto-derive these impls based on the repr(transparent).
-        // Safety: $name is repr(transparent) over S, a VarULE
+        //
+        // Safety (based on the safety checklist on the VarULE trait):
+        //  1. `$name` does not include any uninitialized or padding bytes as it is `repr(transparent)`
+        //     over a `VarULE` type, `Store`, as evidenced by the existence of `transparent_ref_from_store()`
+        //  2. `$name` is aligned to 1 byte for the same reason
+        //  3. The impl of `validate_bytes()` returns an error if any byte is not valid (passed down to `VarULE` impl of `Store`)
+        //  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety (passed down to `VarULE` impl of `Store`)
+        //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
+        //  6. `parse_bytes()` is left to its default impl
+        //  7. byte equality is semantic equality
         #[cfg(feature = "zerovec")]
         unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where
@@ -610,7 +654,8 @@ macro_rules! impl_zerotrie_subtype {
             }
             #[inline]
             unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-                core::mem::transmute(Store::from_bytes_unchecked(bytes))
+                // Safety: we can pass down the validity invariant to Store
+                Self::transparent_ref_from_store(Store::from_bytes_unchecked(bytes))
             }
         }
         #[cfg(feature = "zerofrom")]
