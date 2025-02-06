@@ -135,6 +135,17 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::DT::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_dt(
             locale: &Locale,
@@ -153,6 +164,14 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::DT::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_alignment, FnInStruct, compact)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_dt_with_provider(
             provider: &DataProvider,
@@ -177,6 +196,17 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::MDT::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_mdt(
             locale: &Locale,
@@ -195,6 +225,13 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::MDT::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::with_alignment, FnInStruct, compact)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_mdt_with_provider(
             provider: &DataProvider,
@@ -219,6 +256,18 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::YMDT::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_year_style, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdt(
             locale: &Locale,
@@ -239,6 +288,14 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::YMDT::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::with_year_style, FnInStruct, compact)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymdt_with_provider(
             provider: &DataProvider,
@@ -265,6 +322,17 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::DET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_det(
             locale: &Locale,
@@ -283,6 +351,13 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::DET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::with_alignment, FnInStruct, compact)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_det_with_provider(
             provider: &DataProvider,
@@ -307,6 +382,17 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::MDET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_mdet(
             locale: &Locale,
@@ -325,6 +411,13 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::MDET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::with_alignment, FnInStruct, compact)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_mdet_with_provider(
             provider: &DataProvider,
@@ -349,6 +442,22 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::YMDET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::YMDET::with_year_style,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdet(
             locale: &Locale,
@@ -369,6 +478,18 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::YMDET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::YMDET::with_year_style,
+            FnInStruct,
+            compact
+        )]
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymdet_with_provider(
             provider: &DataProvider,
@@ -395,6 +516,17 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et")]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::ET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::hm, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_et(
             locale: &Locale,
@@ -413,6 +545,13 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::ET::with_time_precision,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::with_alignment, FnInStruct, compact)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_et_with_provider(
             provider: &DataProvider,
