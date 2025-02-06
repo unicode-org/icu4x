@@ -115,7 +115,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_builder_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DateTimeFormatter::try_new, FnInStruct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_from_builder_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -153,7 +153,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_dt_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -195,7 +195,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDT, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_mdt_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -239,7 +239,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdt_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ymdt_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -283,7 +283,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "det_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DET, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_det_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -325,7 +325,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_mdet_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -369,7 +369,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymdet_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ymdet_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -413,7 +413,7 @@ pub mod ffi {
 
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "et_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_et_with_provider(
             provider: &DataProvider,
             locale: &Locale,
