@@ -645,6 +645,7 @@ impl From<ffi::DateTimeFieldSetBuilder> for icu_datetime::fieldsets::builder::Fi
     }
 }
 
+#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 fn map_or_default<Input, Output>(input: Option<Input>) -> Output
 where
     Output: From<Input> + Default,
