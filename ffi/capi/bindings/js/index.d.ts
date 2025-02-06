@@ -14,8 +14,6 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
-export { DateTimeFieldSetBuilder } from "./DateTimeFieldSetBuilder"
-
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 
 export { LineBreakOptions } from "./LineBreakOptions"
@@ -236,8 +234,6 @@ export { DataError } from "./DataError"
 
 export { DateTimeFormatError } from "./DateTimeFormatError"
 
-export { DateTimeFormatterBuildOrLoadError } from "./DateTimeFormatterBuildOrLoadError"
-
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
@@ -260,15 +256,11 @@ export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
 
-export { DateFields } from "./DateFields"
-
 export { DateTimeAlignment } from "./DateTimeAlignment"
 
 export { TimePrecision } from "./TimePrecision"
 
 export { YearStyle } from "./YearStyle"
-
-export { ZoneStyle } from "./ZoneStyle"
 
 export { PluralCategory } from "./PluralCategory"
 

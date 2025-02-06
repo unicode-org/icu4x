@@ -21,9 +21,7 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct Time; }
 class Time;
-struct DateTimeFieldSetBuilder;
 class DateTimeAlignment;
-class DateTimeFormatterBuildOrLoadError;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
 class TimePrecision;
@@ -40,10 +38,6 @@ namespace capi {
 namespace icu4x {
 class DateTimeFormatter {
 public:
-
-  inline static diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
-
-  inline static diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
 
   inline static diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_dt(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 

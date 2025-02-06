@@ -22,30 +22,6 @@ final class DateTimeFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DateTimeFormatter_destroy_mv1));
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DateTimeFormatter.html#method.try_new) for more information.
-  ///
-  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
-  factory DateTimeFormatter.fromBuilder(Locale locale, DateTimeFieldSetBuilder builder) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_DateTimeFormatter_create_from_builder_mv1(locale._ffi, builder._toFfi(temp.arena));
-    if (!result.isOk) {
-      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return DateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DateTimeFormatter.html#method.try_new) for more information.
-  ///
-  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
-  factory DateTimeFormatter.fromBuilderWithProvider(DataProvider provider, Locale locale, DateTimeFieldSetBuilder builder) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(provider._ffi, locale._ffi, builder._toFfi(temp.arena));
-    if (!result.isOk) {
-      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return DateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment)
@@ -242,16 +218,6 @@ final class DateTimeFormatter implements ffi.Finalizable {
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_DateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
-
-@meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_from_builder_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_from_builder_mv1(ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
-
-@meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_dt_mv1')

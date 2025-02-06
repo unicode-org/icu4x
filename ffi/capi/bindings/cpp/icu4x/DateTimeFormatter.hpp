@@ -13,8 +13,6 @@
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
 #include "DateTimeAlignment.hpp"
-#include "DateTimeFieldSetBuilder.hpp"
-#include "DateTimeFormatterBuildOrLoadError.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
 #include "IsoDate.hpp"
@@ -27,12 +25,6 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    typedef struct icu4x_DateTimeFormatter_create_from_builder_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_mv1_result;
-    icu4x_DateTimeFormatter_create_from_builder_mv1_result icu4x_DateTimeFormatter_create_from_builder_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
-    
-    typedef struct icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result;
-    icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
     
     typedef struct icu4x_DateTimeFormatter_create_dt_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_dt_mv1_result;
     icu4x_DateTimeFormatter_create_dt_mv1_result icu4x_DateTimeFormatter_create_dt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
@@ -84,19 +76,6 @@ namespace capi {
     } // extern "C"
 } // namespace capi
 } // namespace
-
-inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::DateTimeFormatter::create_from_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
-  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_from_builder_mv1(locale.AsFFI(),
-    builder.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
-}
-
-inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::DateTimeFormatter::create_from_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
-  auto result = icu4x::capi::icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(provider.AsFFI(),
-    locale.AsFFI(),
-    builder.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
-}
 
 inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::create_dt(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment) {
   auto result = icu4x::capi::icu4x_DateTimeFormatter_create_dt_mv1(locale.AsFFI(),

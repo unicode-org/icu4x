@@ -61,16 +61,6 @@ void main() {
 
     var locale = Locale.fromString('de');
 
-    var builder = DateTimeFieldSetBuilder()
-      ..dateFields = DateFields.mde
-      ..length = DateTimeLength.short
-      ..timePrecision = TimePrecision.minute;
-
-    expect(
-        DateTimeFormatter.fromBuilder(locale, builder)
-            .formatIso(zonedDateTime.date, zonedDateTime.time),
-        'Mi., 15.01., 14:32');
-
     expect(
         DateTimeFormatter.mdet(locale)
             .formatIso(zonedDateTime.date, zonedDateTime.time),

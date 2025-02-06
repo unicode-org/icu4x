@@ -239,6 +239,7 @@ icu::datetime::fieldsets::Z#Struct
 icu::datetime::fieldsets::Z::new#FnInStruct
 icu::datetime::fieldsets::Zs#Struct
 icu::datetime::fieldsets::Zs::new#FnInStruct
+icu::datetime::fieldsets::builder::BuilderError#Enum
 icu::datetime::fieldsets::builder::DateFields#Enum
 icu::datetime::fieldsets::builder::FieldSetBuilder#Struct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_calendar_period#FnInStruct

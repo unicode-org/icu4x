@@ -9,7 +9,6 @@ use icu_datetime::options::FractionalSecondDigits;
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatOption;
     use icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet;
     use writeable::Writeable;
 
@@ -21,7 +20,7 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
-        errors::ffi::{DateTimeFormatterBuildOrLoadError, DateTimeFormatterLoadError},
+        errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
     };
 
@@ -57,84 +56,11 @@ pub mod ffi {
         SecondF9,
     }
 
-    #[diplomat::enum_convert(icu_datetime::fieldsets::builder::DateFields, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::DateFields, Enum)]
-    pub enum DateFields {
-        D,
-        MD,
-        YMD,
-        DE,
-        MDE,
-        YMDE,
-        E,
-        M,
-        YM,
-        Y,
-    }
-
-    #[diplomat::enum_convert(icu_datetime::fieldsets::builder::ZoneStyle, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::ZoneStyle, Enum)]
-    pub enum ZoneStyle {
-        Z,
-        Zs,
-        O,
-        Os,
-        V,
-        Vs,
-        L,
-    }
-
-    #[diplomat::rust_link(icu::datetime::builder::FieldSetBuilder, Enum)]
-    pub struct DateTimeFieldSetBuilder {
-        pub length: DiplomatOption<DateTimeLength>,
-        pub date_fields: DiplomatOption<DateFields>,
-        pub time_precision: DiplomatOption<TimePrecision>,
-        pub zone_style: DiplomatOption<ZoneStyle>,
-        pub alignment: DiplomatOption<DateTimeAlignment>,
-        pub year_style: DiplomatOption<YearStyle>,
-    }
-
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
     pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<CompositeDateTimeFieldSet>);
 
     impl DateTimeFormatter {
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_builder")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DateTimeFormatter::try_new, FnInStruct)]
-        #[diplomat::demo(default_constructor)]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_from_builder(
-            locale: &Locale,
-            builder: DateTimeFieldSetBuilder,
-        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterBuildOrLoadError> {
-            let prefs = (&locale.0).into();
-            let builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
-            let options = builder.build_composite_datetime()?;
-            Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
-            )))
-        }
-
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_builder_with_provider")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DateTimeFormatter::try_new, FnInStruct)]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_from_builder_with_provider(
-            provider: &DataProvider,
-            locale: &Locale,
-            builder: DateTimeFieldSetBuilder,
-        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterBuildOrLoadError> {
-            let prefs = (&locale.0).into();
-            let builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
-            let options = builder.build_composite_datetime()?;
-            Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?,
-            )))
-        }
-
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DT::with_length, FnInStruct, compact)]
@@ -270,6 +196,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::long, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::hm, FnInStruct, hidden)]
+        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdt(
             locale: &Locale,
@@ -629,19 +556,6 @@ impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
                 TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
             }
         }
-    }
-}
-
-impl From<ffi::DateTimeFieldSetBuilder> for icu_datetime::fieldsets::builder::FieldSetBuilder {
-    fn from(other: ffi::DateTimeFieldSetBuilder) -> Self {
-        let mut builder = Self::default();
-        builder.length = other.length.into_option().map(Into::into);
-        builder.date_fields = other.date_fields.into_option().map(Into::into);
-        builder.time_precision = other.time_precision.into_option().map(Into::into);
-        builder.zone_style = other.zone_style.into_option().map(Into::into);
-        builder.alignment = other.alignment.into_option().map(Into::into);
-        builder.year_style = other.year_style.into_option().map(Into::into);
-        builder
     }
 }
 

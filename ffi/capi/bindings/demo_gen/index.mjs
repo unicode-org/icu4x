@@ -684,37 +684,25 @@ let termini = Object.assign({
             },
             
             {
-                name: "DateTimeFormatter:Builder:Length",
+                name: "DateTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "DateTimeFormatter:Builder:DateFields",
-                type: "DateFields",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "DateTimeFormatter:Builder:TimePrecision",
+                name: "DateTimeFormatter:TimePrecision",
                 type: "TimePrecision",
                 typeUse: "enumerator"
             },
             
             {
-                name: "DateTimeFormatter:Builder:ZoneStyle",
-                type: "ZoneStyle",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "DateTimeFormatter:Builder:Alignment",
+                name: "DateTimeFormatter:Alignment",
                 type: "DateTimeAlignment",
                 typeUse: "enumerator"
             },
             
             {
-                name: "DateTimeFormatter:Builder:YearStyle",
+                name: "DateTimeFormatter:YearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator"
             },

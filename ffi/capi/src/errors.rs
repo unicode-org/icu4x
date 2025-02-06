@@ -102,33 +102,6 @@ pub mod ffi {
         DataIo = 0x08,
     }
 
-    #[derive(Debug, PartialEq, Eq)]
-    #[repr(C)]
-    #[diplomat::rust_link(icu::datetime::fieldsets::builder::BuilderError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatterLoadError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
-    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
-    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
-    pub enum DateTimeFormatterBuildOrLoadError {
-        Unknown = 0x00,
-
-        InvalidFields = 0x1_00,
-        InvalidOptions = 0x1_01,
-
-        UnsupportedLength = 0x8_03,
-        DuplicateField = 0x8_09,
-        TypeTooSpecific = 0x8_0A,
-
-        DataMarkerNotFound = 0x01,
-        DataIdentifierNotFound = 0x02,
-        DataInvalidRequest = 0x03,
-        DataInconsistentData = 0x04,
-        DataDowncast = 0x05,
-        DataDeserialize = 0x06,
-        DataCustom = 0x07,
-        DataIo = 0x08,
-    }
-
     // TODO: This type is currently never constructed, as all formatters perform lossy formatting.
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -252,52 +225,6 @@ impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
             icu_provider::DataErrorKind::Io(..) => Self::DataIo,
             _ => Self::Unknown,
         }
-    }
-}
-
-#[cfg(feature = "datetime")]
-impl From<icu_datetime::fieldsets::builder::BuilderError> for DateTimeFormatterBuildOrLoadError {
-    fn from(e: icu_datetime::fieldsets::builder::BuilderError) -> Self {
-        use icu_datetime::fieldsets::builder::BuilderError;
-        match e {
-            BuilderError::InvalidFields => Self::InvalidFields,
-            BuilderError::InvalidOptions => Self::InvalidOptions,
-            _ => Self::Unknown,
-        }
-    }
-}
-
-#[cfg(feature = "datetime")]
-impl From<DateTimeFormatterLoadError> for DateTimeFormatterBuildOrLoadError {
-    fn from(e: DateTimeFormatterLoadError) -> Self {
-        match e {
-            DateTimeFormatterLoadError::Unknown => Self::Unknown,
-            DateTimeFormatterLoadError::UnsupportedLength => Self::UnsupportedLength,
-            DateTimeFormatterLoadError::DuplicateField => Self::DuplicateField,
-            DateTimeFormatterLoadError::TypeTooSpecific => Self::TypeTooSpecific,
-            DateTimeFormatterLoadError::DataMarkerNotFound => Self::DataMarkerNotFound,
-            DateTimeFormatterLoadError::DataIdentifierNotFound => Self::DataIdentifierNotFound,
-            DateTimeFormatterLoadError::DataInvalidRequest => Self::DataInvalidRequest,
-            DateTimeFormatterLoadError::DataInconsistentData => Self::DataInconsistentData,
-            DateTimeFormatterLoadError::DataDowncast => Self::DataDowncast,
-            DateTimeFormatterLoadError::DataDeserialize => Self::DataDeserialize,
-            DateTimeFormatterLoadError::DataCustom => Self::DataCustom,
-            DateTimeFormatterLoadError::DataIo => Self::DataIo,
-        }
-    }
-}
-
-#[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterBuildOrLoadError {
-    fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {
-        DateTimeFormatterLoadError::from(e).into()
-    }
-}
-
-#[cfg(feature = "datetime")]
-impl From<icu_provider::DataError> for DateTimeFormatterBuildOrLoadError {
-    fn from(e: icu_provider::DataError) -> Self {
-        DateTimeFormatterLoadError::from(e).into()
     }
 }
 

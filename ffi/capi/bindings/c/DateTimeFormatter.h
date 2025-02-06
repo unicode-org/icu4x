@@ -9,8 +9,6 @@
 
 #include "DataProvider.d.h"
 #include "DateTimeAlignment.d.h"
-#include "DateTimeFieldSetBuilder.d.h"
-#include "DateTimeFormatterBuildOrLoadError.d.h"
 #include "DateTimeFormatterLoadError.d.h"
 #include "DateTimeLength.d.h"
 #include "IsoDate.d.h"
@@ -25,12 +23,6 @@
 
 
 
-
-typedef struct icu4x_DateTimeFormatter_create_from_builder_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_mv1_result;
-icu4x_DateTimeFormatter_create_from_builder_mv1_result icu4x_DateTimeFormatter_create_from_builder_mv1(const Locale* locale, DateTimeFieldSetBuilder builder);
-
-typedef struct icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result;
-icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1_result icu4x_DateTimeFormatter_create_from_builder_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeFieldSetBuilder builder);
 
 typedef struct icu4x_DateTimeFormatter_create_dt_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_dt_mv1_result;
 icu4x_DateTimeFormatter_create_dt_mv1_result icu4x_DateTimeFormatter_create_dt_mv1(const Locale* locale, DateTimeLength_option length, TimePrecision_option time_precision, DateTimeAlignment_option alignment);
