@@ -19,10 +19,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
-    };
+    use crate::{errors::ffi::DateTimeFormatterLoadError, locale_core::ffi::Locale};
 
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
