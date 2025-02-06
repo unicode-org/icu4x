@@ -2037,6 +2037,7 @@ dependencies = [
 name = "noalloctest"
 version = "2.0.0-beta1"
 dependencies = [
+ "icu_collections",
  "litemap",
  "potential_utf",
  "tinystr",

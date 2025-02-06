@@ -20,6 +20,7 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
+icu_collections = { workspace = true }
 litemap = { workspace = true }
 potential_utf = { workspace = true }
 tinystr = { workspace = true }
