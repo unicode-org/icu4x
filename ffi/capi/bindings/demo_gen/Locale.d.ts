@@ -1,8 +1,8 @@
 import { Locale } from "icu4x"
-export function basename(name: string);
-export function getUnicodeExtension(name: string, s: string);
-export function language(name: string);
-export function region(name: string);
-export function script(name: string);
+export function basename(localeName: string);
+export function getUnicodeExtension(localeName: string, s: string);
+export function language(localeName: string);
+export function region(localeName: string);
+export function script(localeName: string);
 export function normalize(s: string);
-export function toString(name: string);
+export function toString(localeName: string);

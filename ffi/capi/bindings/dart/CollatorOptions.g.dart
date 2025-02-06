@@ -18,7 +18,7 @@ final class CollatorOptions {
   CollatorCaseLevel? caseLevel;
   CollatorBackwardSecondLevel? backwardSecondLevel;
 
-  CollatorOptions({required this.strength, required this.alternateHandling, required this.maxVariable, required this.caseLevel, required this.backwardSecondLevel});
+  CollatorOptions({this.strength, this.alternateHandling, this.maxVariable, this.caseLevel, this.backwardSecondLevel});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from

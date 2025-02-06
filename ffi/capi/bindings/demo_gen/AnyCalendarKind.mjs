@@ -1,9 +1,8 @@
 import { AnyCalendarKind } from "icu4x"
-export function bcp47(self) {
-    return (function (...args) { return args[0].bcp47 }).apply(
-        null,
-        [
-            self
-        ]
-    );
+export function bcp47(anyCalendarKind) {
+    
+    let out = anyCalendarKind.bcp47;
+    
+
+    return out;
 }
