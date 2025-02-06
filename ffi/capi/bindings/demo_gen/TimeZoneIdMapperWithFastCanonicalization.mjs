@@ -1,27 +1,19 @@
 import { TimeZoneIdMapperWithFastCanonicalization } from "icu4x"
 export function canonicalizeIana(value) {
-    return (function (...args) { return args[0].canonicalizeIana(...args.slice(1)) }).apply(
-        null,
-        [
-            (function (...args) { return new TimeZoneIdMapperWithFastCanonicalization(...args) } ).apply(
-                null,
-                [
-                ]
-            ),
-            value
-        ]
-    );
+    
+    let timeZoneIdMapperWithFastCanonicalization = new TimeZoneIdMapperWithFastCanonicalization();
+    
+    let out = timeZoneIdMapperWithFastCanonicalization.canonicalizeIana(value);
+    
+
+    return out;
 }
 export function canonicalIanaFromBcp47(value) {
-    return (function (...args) { return args[0].canonicalIanaFromBcp47(...args.slice(1)) }).apply(
-        null,
-        [
-            (function (...args) { return new TimeZoneIdMapperWithFastCanonicalization(...args) } ).apply(
-                null,
-                [
-                ]
-            ),
-            value
-        ]
-    );
+    
+    let timeZoneIdMapperWithFastCanonicalization = new TimeZoneIdMapperWithFastCanonicalization();
+    
+    let out = timeZoneIdMapperWithFastCanonicalization.canonicalIanaFromBcp47(value);
+    
+
+    return out;
 }

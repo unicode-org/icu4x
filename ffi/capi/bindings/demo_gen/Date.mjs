@@ -1,55 +1,29 @@
 import { Calendar } from "icu4x"
 import { Date } from "icu4x"
 import { Locale } from "icu4x"
-export function monthCode(year, month, day, name) {
-    return (function (...args) { return args[0].monthCode }).apply(
-        null,
-        [
-            Date.fromIsoInCalendar.apply(
-                null,
-                [
-                    year,
-                    month,
-                    day,
-                    Calendar.createForLocale.apply(
-                        null,
-                        [
-                            Locale.fromString.apply(
-                                null,
-                                [
-                                    name
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    );
+export function monthCode(dateYear, dateMonth, dateDay, dateCalendarLocaleName) {
+    
+    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
+    
+    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    
+    let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
+    
+    let out = date.monthCode;
+    
+
+    return out;
 }
-export function era(year, month, day, name) {
-    return (function (...args) { return args[0].era }).apply(
-        null,
-        [
-            Date.fromIsoInCalendar.apply(
-                null,
-                [
-                    year,
-                    month,
-                    day,
-                    Calendar.createForLocale.apply(
-                        null,
-                        [
-                            Locale.fromString.apply(
-                                null,
-                                [
-                                    name
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    );
+export function era(dateYear, dateMonth, dateDay, dateCalendarLocaleName) {
+    
+    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
+    
+    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    
+    let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
+    
+    let out = date.era;
+    
+
+    return out;
 }

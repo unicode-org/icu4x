@@ -55,7 +55,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
-  factory LineSegmenter.autoWithOptions(Locale? contentLocale, LineBreakOptions options) {
+  factory LineSegmenter.autoWithOptions(LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
@@ -67,7 +67,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.autoWithOptionsAndProvider(DataProvider provider, Locale? contentLocale, LineBreakOptions options) {
+  factory LineSegmenter.autoWithOptionsAndProvider(DataProvider provider, LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(provider._ffi, contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     if (!result.isOk) {
@@ -80,7 +80,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
-  factory LineSegmenter.lstmWithOptions(Locale? contentLocale, LineBreakOptions options) {
+  factory LineSegmenter.lstmWithOptions(LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
@@ -92,7 +92,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.lstmWithOptionsAndProvider(DataProvider provider, Locale? contentLocale, LineBreakOptions options) {
+  factory LineSegmenter.lstmWithOptionsAndProvider(DataProvider provider, LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(provider._ffi, contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     if (!result.isOk) {
@@ -105,7 +105,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
-  factory LineSegmenter.dictionaryWithOptions(Locale? contentLocale, LineBreakOptions options) {
+  factory LineSegmenter.dictionaryWithOptions(LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
@@ -117,7 +117,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.dictionaryWithOptionsAndProvider(DataProvider provider, Locale? contentLocale, LineBreakOptions options) {
+  factory LineSegmenter.dictionaryWithOptionsAndProvider(DataProvider provider, LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
     final result = _icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(provider._ffi, contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     if (!result.isOk) {

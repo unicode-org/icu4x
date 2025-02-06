@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
@@ -48,7 +49,7 @@ inline diplomat::result<std::unique_ptr<icu4x::TimeZoneIdMapperWithFastCanonical
 
 inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapperWithFastCanonicalization::canonicalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);

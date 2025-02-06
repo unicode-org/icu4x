@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
@@ -62,7 +63,7 @@ inline std::string icu4x::TimeZoneIdMapper::iana_to_bcp47(std::string_view value
 
 inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::normalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
@@ -74,7 +75,7 @@ inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::
 
 inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::TimeZoneIdMapper::canonicalize_iana(std::string_view value) const {
   if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);

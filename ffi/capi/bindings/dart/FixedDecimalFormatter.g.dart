@@ -29,7 +29,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory FixedDecimalFormatter.withGroupingStrategy(Locale locale, FixedDecimalGroupingStrategy? groupingStrategy) {
+  factory FixedDecimalFormatter.withGroupingStrategy(Locale locale, [FixedDecimalGroupingStrategy? groupingStrategy]) {
     final result = _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1(locale._ffi, groupingStrategy != null ? _ResultInt32Void.ok(groupingStrategy.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -42,7 +42,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory FixedDecimalFormatter.withGroupingStrategyAndProvider(DataProvider provider, Locale locale, FixedDecimalGroupingStrategy? groupingStrategy) {
+  factory FixedDecimalFormatter.withGroupingStrategyAndProvider(DataProvider provider, Locale locale, [FixedDecimalGroupingStrategy? groupingStrategy]) {
     final result = _icu4x_FixedDecimalFormatter_create_with_grouping_strategy_and_provider_mv1(provider._ffi, locale._ffi, groupingStrategy != null ? _ResultInt32Void.ok(groupingStrategy.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -55,7 +55,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `DecimalSymbolsV2`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV2.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  static FixedDecimalFormatter createWithManualData(String plusSignPrefix, String plusSignSuffix, String minusSignPrefix, String minusSignSuffix, String decimalSeparator, String groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, core.List<Rune> digits, FixedDecimalGroupingStrategy? groupingStrategy) {
+  static FixedDecimalFormatter createWithManualData(String plusSignPrefix, String plusSignSuffix, String minusSignPrefix, String minusSignSuffix, String decimalSeparator, String groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, core.List<Rune> digits, [FixedDecimalGroupingStrategy? groupingStrategy]) {
     final temp = _FinalizedArena();
     final result = _icu4x_FixedDecimalFormatter_create_with_manual_data_mv1(plusSignPrefix._utf8AllocIn(temp.arena), plusSignSuffix._utf8AllocIn(temp.arena), minusSignPrefix._utf8AllocIn(temp.arena), minusSignSuffix._utf8AllocIn(temp.arena), decimalSeparator._utf8AllocIn(temp.arena), groupingSeparator._utf8AllocIn(temp.arena), primaryGroupSize, secondaryGroupSize, minGroupSize, digits._uint32AllocIn(temp.arena), groupingStrategy != null ? _ResultInt32Void.ok(groupingStrategy.index) : _ResultInt32Void.err());
     if (!result.isOk) {
