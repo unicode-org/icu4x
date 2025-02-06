@@ -18,7 +18,7 @@ pub struct FormattedCurrency<'l> {
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentials<'l>,
-    pub(crate) fixed_decimal_formatter: &'l DecimalFormatter,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
 }
 
 writeable::impl_display_with_writeable!(FormattedCurrency<'_>);
@@ -62,7 +62,7 @@ impl Writeable for FormattedCurrency<'_> {
 
         pattern
             .interpolate((
-                self.fixed_decimal_formatter.format(self.value),
+                self.decimal_formatter.format(self.value),
                 currency_sign_value,
             ))
             .write_to(sink)?;

@@ -10,21 +10,21 @@ use icu_decimal::options::{DecimalFormatterOptions, GroupingStrategy};
 #[non_exhaustive]
 pub struct CompactDecimalFormatterOptions {
     /// Options to configure the inner [`icu_decimal::DecimalFormatter`].
-    pub fixed_decimal_formatter_options: DecimalFormatterOptions,
+    pub decimal_formatter_options: DecimalFormatterOptions,
 }
 
 impl Default for CompactDecimalFormatterOptions {
     fn default() -> Self {
         Self {
-            fixed_decimal_formatter_options: GroupingStrategy::Min2.into(),
+            decimal_formatter_options: GroupingStrategy::Min2.into(),
         }
     }
 }
 
 impl From<DecimalFormatterOptions> for CompactDecimalFormatterOptions {
-    fn from(fixed_decimal_formatter_options: DecimalFormatterOptions) -> Self {
+    fn from(decimal_formatter_options: DecimalFormatterOptions) -> Self {
         Self {
-            fixed_decimal_formatter_options,
+            decimal_formatter_options,
         }
     }
 }
@@ -32,7 +32,7 @@ impl From<DecimalFormatterOptions> for CompactDecimalFormatterOptions {
 impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
     fn from(grouping_strategy: GroupingStrategy) -> Self {
         Self {
-            fixed_decimal_formatter_options: grouping_strategy.into(),
+            decimal_formatter_options: grouping_strategy.into(),
         }
     }
 }

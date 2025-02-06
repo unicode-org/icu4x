@@ -113,7 +113,7 @@ use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
-size_test!(DecimalFormatter, fixed_decimal_formatter_size, 96);
+size_test!(DecimalFormatter, decimal_formatter_size, 96);
 
 define_preferences!(
     /// The preferences for fixed decimal formatting.
@@ -141,7 +141,7 @@ define_preferences!(
 /// To get the resolved numbering system, see [`provider`].
 ///
 /// See the crate-level documentation for examples.
-#[doc = fixed_decimal_formatter_size!()]
+#[doc = decimal_formatter_size!()]
 #[derive(Debug)]
 pub struct DecimalFormatter {
     options: options::DecimalFormatterOptions,

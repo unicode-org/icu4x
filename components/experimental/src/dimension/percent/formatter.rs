@@ -47,7 +47,7 @@ pub struct PercentFormatter<R> {
     options: PercentFormatterOptions,
 
     /// A fixed decimal formatter used to format the percent value.
-    fixed_decimal_formatter: R,
+    decimal_formatter: R,
 }
 
 impl PercentFormatter<DecimalFormatter> {
@@ -72,14 +72,10 @@ impl PercentFormatter<DecimalFormatter> {
         prefs: PercentFormatterPreferences,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
+        let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
-        PercentFormatter::try_new_with_fixed_decimal_formatter(
-            prefs,
-            fixed_decimal_formatter,
-            options,
-        )
+        PercentFormatter::try_new_with_decimal_formatter(prefs, decimal_formatter, options)
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -94,16 +90,16 @@ impl PercentFormatter<DecimalFormatter> {
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        let fixed_decimal_formatter = DecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
             DecimalFormatterOptions::default(),
         )?;
 
-        PercentFormatter::try_new_with_fixed_decimal_formatter_unstable(
+        PercentFormatter::try_new_with_decimal_formatter_unstable(
             provider,
             prefs,
-            fixed_decimal_formatter,
+            decimal_formatter,
             options,
         )
     }
@@ -128,7 +124,7 @@ impl PercentFormatter<DecimalFormatter> {
         FormattedPercent {
             value,
             essential: self.essential.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             options: &self.options,
         }
     }
@@ -144,9 +140,9 @@ where
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_fixed_decimal_formatter(
+    pub fn try_new_with_decimal_formatter(
         prefs: PercentFormatterPreferences,
-        fixed_decimal_formatter: R,
+        decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
@@ -160,15 +156,15 @@ where
         Ok(Self {
             essential,
             options,
-            fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_fixed_decimal_formatter_unstable(
+    pub fn try_new_with_decimal_formatter_unstable(
         provider: &(impl DataProvider<PercentEssentialsV1> + ?Sized),
         prefs: PercentFormatterPreferences,
-        fixed_decimal_formatter: R,
+        decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
@@ -182,7 +178,7 @@ where
         Ok(Self {
             essential,
             options,
-            fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 }

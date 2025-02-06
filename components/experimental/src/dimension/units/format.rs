@@ -16,7 +16,7 @@ pub struct FormattedUnit<'l> {
     // pub(crate) _options: &'l UnitsFormatterOptions,
     // pub(crate) essential: &'l UnitsEssentials<'l>,
     pub(crate) display_name: &'l UnitsDisplayName<'l>,
-    pub(crate) fixed_decimal_formatter: &'l DecimalFormatter,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }
 
@@ -28,7 +28,7 @@ impl Writeable for FormattedUnit<'_> {
         self.display_name
             .patterns
             .get(self.value.into(), self.plural_rules)
-            .interpolate((self.fixed_decimal_formatter.format(self.value),))
+            .interpolate((self.decimal_formatter.format(self.value),))
             .write_to_parts(sink)
     }
 }

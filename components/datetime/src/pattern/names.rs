@@ -576,7 +576,7 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
         <FSet::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1, ()>>::Container,
     mz_periods: <FSet::MetazoneLookup as NamesContainer<tz::MzPeriodV1, ()>>::Container,
     // TODO(#4340): Make the DecimalFormatter optional
-    fixed_decimal_formatter: Option<DecimalFormatter>,
+    decimal_formatter: Option<DecimalFormatter>,
     _marker: PhantomData<FSet>,
 }
 
@@ -594,7 +594,7 @@ impl<FSet: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<FSet> {
             .field("mz_generic_short", &self.mz_generic_short)
             .field("mz_specific_long", &self.mz_specific_long)
             .field("mz_specific_short", &self.mz_specific_short)
-            .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
+            .field("decimal_formatter", &self.decimal_formatter)
             .finish()
     }
 }
@@ -616,7 +616,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_specific_long: FSet2::map_zone_specific_long(self.mz_specific_long),
             mz_specific_short: FSet2::map_zone_specific_short(self.mz_specific_short),
             mz_periods: FSet2::map_metazone_lookup(self.mz_periods),
-            fixed_decimal_formatter: self.fixed_decimal_formatter,
+            decimal_formatter: self.decimal_formatter,
             _marker: PhantomData,
         }
     }
@@ -638,7 +638,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     mz_specific_long: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_periods: OptionalNames<(), &'l tz::MzPeriod<'l>>,
-    pub(crate) fixed_decimal_formatter: Option<&'l DecimalFormatter>,
+    pub(crate) decimal_formatter: Option<&'l DecimalFormatter>,
 }
 
 impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
@@ -656,7 +656,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             inner: RawDateTimeNames::new_without_number_formatting(),
             _calendar: PhantomData,
         };
-        names.include_fixed_decimal_formatter()?;
+        names.include_decimal_formatter()?;
         Ok(names)
     }
 
@@ -673,7 +673,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
             inner: RawDateTimeNames::new_without_number_formatting(),
             _calendar: PhantomData,
         };
-        names.load_fixed_decimal_formatter(provider)?;
+        names.load_decimal_formatter(provider)?;
         Ok(names)
     }
 
@@ -1516,12 +1516,12 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
 
     /// Loads a [`DecimalFormatter`] from a data provider.
     #[inline]
-    pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
+    pub fn load_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
         P: DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1> + ?Sized,
     {
         self.inner
-            .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider), self.prefs)?;
+            .load_decimal_formatter(&ExternalLoaderUnstable(provider), self.prefs)?;
         Ok(self)
     }
 
@@ -1540,7 +1540,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// let mut names =
     ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(locale!("bn").into())
     ///         .unwrap();
-    /// names.include_fixed_decimal_formatter();
+    /// names.include_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers
     /// let pattern_str = "'The current 24-hour time is:' HH:mm";
@@ -1555,9 +1555,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[inline]
-    pub fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
+    pub fn include_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
         self.inner
-            .load_fixed_decimal_formatter(&ExternalLoaderCompiledData, self.prefs)?;
+            .load_decimal_formatter(&ExternalLoaderCompiledData, self.prefs)?;
         Ok(self)
     }
 
@@ -1815,7 +1815,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 tz::MzPeriodV1,
                 (),
             >>::Container::new_empty(),
-            fixed_decimal_formatter: None,
+            decimal_formatter: None,
             _marker: PhantomData,
         }
     }
@@ -1836,7 +1836,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_specific_long: self.mz_specific_long.get().inner,
             mz_specific_short: self.mz_specific_short.get().inner,
             mz_periods: self.mz_periods.get().inner,
-            fixed_decimal_formatter: self.fixed_decimal_formatter.as_ref(),
+            decimal_formatter: self.decimal_formatter.as_ref(),
         }
     }
 
@@ -2193,17 +2193,17 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    pub(crate) fn load_fixed_decimal_formatter(
+    pub(crate) fn load_decimal_formatter(
         &mut self,
         loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), DataError> {
-        if self.fixed_decimal_formatter.is_some() {
+        if self.decimal_formatter.is_some() {
             return Ok(());
         }
         let mut options = DecimalFormatterOptions::default();
         options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(DecimalFormatterLoader::load(
+        self.decimal_formatter = Some(DecimalFormatterLoader::load(
             loader,
             (&prefs).into(),
             options,
@@ -2232,7 +2232,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
-        fixed_decimal_formatter_loader: &impl DecimalFormatterLoader,
+        decimal_formatter_loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
         pattern_items: impl Iterator<Item = PatternItem>,
     ) -> Result<(), PatternLoadError> {
@@ -2461,7 +2461,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         }
 
         if let Some(field) = numeric_field {
-            self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, prefs)
+            self.load_decimal_formatter(decimal_formatter_loader, prefs)
                 .map_err(|e| PatternLoadError::Data(e, ErrorField(field)))?;
         }
 

@@ -223,7 +223,7 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
             self.pattern.0.as_borrowed().items.iter(),
             &self.input,
             &self.names,
-            self.names.fixed_decimal_formatter,
+            self.names.decimal_formatter,
             sink,
         )
     }

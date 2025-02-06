@@ -957,7 +957,7 @@ impl Writeable for FormattedDateTime<'_> {
             self.pattern.iter_items(),
             &self.input,
             &self.names,
-            self.names.fixed_decimal_formatter,
+            self.names.decimal_formatter,
             sink,
         );
         // A DateTimeWriteError should not occur in normal usage because DateTimeFormatter

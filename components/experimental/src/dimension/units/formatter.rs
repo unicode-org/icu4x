@@ -99,7 +99,7 @@ impl UnitsFormatter {
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter =
+        let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
@@ -122,7 +122,7 @@ impl UnitsFormatter {
         Ok(Self {
             _options: options,
             display_name,
-            decimal_formatter: fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -142,7 +142,7 @@ impl UnitsFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1>,
     {
         let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = DecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
             DecimalFormatterOptions::default(),
@@ -168,7 +168,7 @@ impl UnitsFormatter {
         Ok(Self {
             _options: options,
             display_name,
-            decimal_formatter: fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -178,7 +178,7 @@ impl UnitsFormatter {
         FormattedUnit {
             value,
             display_name: self.display_name.get(),
-            fixed_decimal_formatter: &self.decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
     }

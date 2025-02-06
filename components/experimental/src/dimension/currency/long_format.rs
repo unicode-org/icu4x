@@ -19,7 +19,7 @@ pub struct LongFormattedCurrency<'l> {
     pub(crate) _currency_code: CurrencyCode,
     pub(crate) extended: &'l CurrencyExtendedData<'l>,
     pub(crate) patterns: &'l CurrencyPatternsData<'l>,
-    pub(crate) fixed_decimal_formatter: &'l DecimalFormatter,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }
 
@@ -33,7 +33,7 @@ impl Writeable for LongFormattedCurrency<'_> {
         let operands = self.value.into();
         let display_name = self.extended.display_names.get(operands, self.plural_rules);
         let pattern = self.patterns.patterns.get(operands, self.plural_rules);
-        let formatted_value = self.fixed_decimal_formatter.format(self.value);
+        let formatted_value = self.decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
     }

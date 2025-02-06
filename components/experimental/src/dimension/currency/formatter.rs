@@ -80,7 +80,7 @@ impl CurrencyFormatter {
         options: super::options::CurrencyFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter =
+        let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
         let essential = crate::provider::Baked
             .load(DataRequest {
@@ -92,7 +92,7 @@ impl CurrencyFormatter {
         Ok(Self {
             options,
             essential,
-            decimal_formatter: fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 
@@ -109,7 +109,7 @@ impl CurrencyFormatter {
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = DecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
             DecimalFormatterOptions::default(),
@@ -124,7 +124,7 @@ impl CurrencyFormatter {
         Ok(Self {
             options,
             essential,
-            decimal_formatter: fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 
@@ -157,7 +157,7 @@ impl CurrencyFormatter {
             currency_code,
             options: &self.options,
             essential: self.essential.get(),
-            fixed_decimal_formatter: &self.decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
         }
     }
 }

@@ -63,7 +63,7 @@ impl LongCurrencyFormatter {
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter =
+        let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
@@ -90,7 +90,7 @@ impl LongCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            decimal_formatter: fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -110,7 +110,7 @@ impl LongCurrencyFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = DecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
             DecimalFormatterOptions::default(),
@@ -139,7 +139,7 @@ impl LongCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            decimal_formatter: fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -173,7 +173,7 @@ impl LongCurrencyFormatter {
             _currency_code: currency_code,
             extended: self.extended.get(),
             patterns: self.patterns.get(),
-            fixed_decimal_formatter: &self.decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
     }

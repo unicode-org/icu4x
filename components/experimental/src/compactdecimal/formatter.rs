@@ -80,7 +80,7 @@ prefs_convert!(CompactDecimalFormatterPreferences, PluralRulesPreferences);
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) fixed_decimal_formatter: DecimalFormatter,
+    pub(crate) decimal_formatter: DecimalFormatter,
     pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternData<'static>>>,
 }
 
@@ -111,9 +111,9 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: DecimalFormatter::try_new(
+            decimal_formatter: DecimalFormatter::try_new(
                 (&prefs).into(),
-                options.fixed_decimal_formatter_options,
+                options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1>::load(
@@ -154,10 +154,10 @@ impl CompactDecimalFormatter {
     {
         let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: DecimalFormatter::try_new_unstable(
+            decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                options.fixed_decimal_formatter_options,
+                options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1>::load(
@@ -198,9 +198,9 @@ impl CompactDecimalFormatter {
     ) -> Result<Self, DataError> {
         let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: DecimalFormatter::try_new(
+            decimal_formatter: DecimalFormatter::try_new(
                 (&prefs).into(),
-                options.fixed_decimal_formatter_options,
+                options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1>::load(
@@ -241,10 +241,10 @@ impl CompactDecimalFormatter {
     {
         let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: DecimalFormatter::try_new_unstable(
+            decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                options.fixed_decimal_formatter_options,
+                options.decimal_formatter_options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1>::load(
