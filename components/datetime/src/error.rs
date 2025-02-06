@@ -15,7 +15,7 @@ use crate::pattern::TypedDateTimeNames;
 #[cfg(doc)]
 use icu_calendar::types::YearInfo;
 #[cfg(doc)]
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 
 /// An error from constructing a formatter.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -87,15 +87,15 @@ pub enum DateTimeWriteError {
         max: usize,
     },
 
-    /// The [`FixedDecimalFormatter`] has not been loaded.
+    /// The [`DecimalFormatter`] has not been loaded.
     ///
     /// This *only* happens if the formatter has been created using
     /// [`TypedDateTimeNames::with_pattern_unchecked`], the pattern requires decimal
     /// formatting, and the decimal formatter was not loaded.
     ///
     /// The output will contain fallback values using Latin numerals.
-    #[displaydoc("FixedDecimalFormatter not loaded")]
-    FixedDecimalFormatterNotLoaded,
+    #[displaydoc("DecimalFormatter not loaded")]
+    DecimalFormatterNotLoaded,
     /// The localized names for a field have not been loaded.
     ///
     /// This *only* happens if the formatter has been created using

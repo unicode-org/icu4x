@@ -4,10 +4,10 @@
 
 import test from 'ava';
 
-import { SignedFixedDecimal, Locale, FixedDecimalFormatter, FixedDecimalSign, FixedDecimalGroupingStrategy } from 'icu4x';
+import { SignedFixedDecimal, Locale, DecimalFormatter, FixedDecimalSign, DecimalGroupingStrategy } from 'icu4x';
 
 const locale = Locale.fromString('bn');
-const format = FixedDecimalFormatter.createWithGroupingStrategy(locale, FixedDecimalGroupingStrategy.Auto);
+const format = DecimalFormatter.createWithGroupingStrategy(locale, DecimalGroupingStrategy.Auto);
 
 test('format a simple decimal', t => {
   const decimal = SignedFixedDecimal.fromNumber(1234);

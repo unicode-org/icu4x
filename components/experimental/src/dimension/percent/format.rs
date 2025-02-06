@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::{Sign, SignedFixedDecimal};
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 
 use crate::alloc::borrow::ToOwned;
 use alloc::borrow::Cow;
@@ -29,7 +29,7 @@ pub struct FormattedPercent<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     pub(crate) essential: &'l PercentEssentials<'l>,
     pub(crate) options: &'l PercentFormatterOptions,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
 }
 
 impl Writeable for FormattedPercent<'_> {
@@ -43,7 +43,7 @@ impl Writeable for FormattedPercent<'_> {
             _ => self.value.to_owned(),
         };
 
-        let value = self.fixed_decimal_formatter.format(&abs_value);
+        let value = self.decimal_formatter.format(&abs_value);
 
         match self.options.display {
             // In the Standard display, we take the unsigned pattern only when the value is positive.

@@ -22,7 +22,7 @@ use icu_timezone::{
     Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
-// TODO: Add WeekCalculator and FixedDecimalFormatter optional bindings here
+// TODO: Add WeekCalculator and DecimalFormatter optional bindings here
 
 /// A trait associating types for date formatting in any calendar
 /// (input types only).

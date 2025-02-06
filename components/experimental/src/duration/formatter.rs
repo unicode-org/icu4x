@@ -14,7 +14,7 @@ use super::{provider, Duration};
 
 pub use super::validated_options::ValidatedDurationFormatterOptions;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
-use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_list::{ListFormatter, ListFormatterPreferences, ListLength};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
@@ -36,11 +36,9 @@ define_preferences!(
 prefs_convert!(DurationFormatterPreferences, UnitsFormatterPreferences, {
     numbering_system
 });
-prefs_convert!(
-    DurationFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(DurationFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 prefs_convert!(DurationFormatterPreferences, ListFormatterPreferences);
 
 /// A formatter for [`Duration`](crate::duration::Duration)s.
@@ -60,7 +58,7 @@ pub struct DurationFormatter {
     pub(crate) digital: DataPayload<provider::DigitalDurationDataV1>,
     pub(crate) unit: DurationUnitFormatter,
     pub(crate) list: ListFormatter,
-    pub(crate) fdf: FixedDecimalFormatter,
+    pub(crate) fdf: DecimalFormatter,
 }
 
 pub(crate) struct DurationUnitFormatter {
@@ -227,7 +225,7 @@ impl DurationFormatter {
             options,
             unit: DurationUnitFormatter::try_new(prefs, options)?,
             list: ListFormatter::try_new_unit((&prefs).into(), options.base.into())?,
-            fdf: FixedDecimalFormatter::try_new((&prefs).into(), Default::default())?,
+            fdf: DecimalFormatter::try_new((&prefs).into(), Default::default())?,
         })
     }
 
@@ -262,11 +260,7 @@ impl DurationFormatter {
                 (&prefs).into(),
                 options.base.into(),
             )?,
-            fdf: FixedDecimalFormatter::try_new_unstable(
-                provider,
-                (&prefs).into(),
-                Default::default(),
-            )?,
+            fdf: DecimalFormatter::try_new_unstable(provider, (&prefs).into(), Default::default())?,
         })
     }
 

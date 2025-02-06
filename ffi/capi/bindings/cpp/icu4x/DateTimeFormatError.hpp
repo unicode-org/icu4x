@@ -35,7 +35,7 @@ inline icu4x::DateTimeFormatError icu4x::DateTimeFormatError::FromFFI(icu4x::cap
     case icu4x::capi::DateTimeFormatError_InvalidMonthCode:
     case icu4x::capi::DateTimeFormatError_InvalidCyclicYear:
     case icu4x::capi::DateTimeFormatError_NamesNotLoaded:
-    case icu4x::capi::DateTimeFormatError_FixedDecimalFormatterNotLoaded:
+    case icu4x::capi::DateTimeFormatError_DecimalFormatterNotLoaded:
     case icu4x::capi::DateTimeFormatError_UnsupportedField:
       return static_cast<icu4x::DateTimeFormatError::Value>(c_enum);
     default:

@@ -5,19 +5,19 @@
 //! Internal traits and structs for loading data from other crates.
 
 use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_decimal::options::DecimalFormatterOptions;
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_provider::prelude::*;
 
-/// Trait for loading a FixedDecimalFormatter.
+/// Trait for loading a DecimalFormatter.
 ///
 /// Implemented on the provider-specific loader types in this module.
-pub(crate) trait FixedDecimalFormatterLoader {
+pub(crate) trait DecimalFormatterLoader {
     fn load(
         &self,
-        prefs: FixedDecimalFormatterPreferences,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DataError>;
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+    ) -> Result<DecimalFormatter, DataError>;
 }
 
 /// Trait for loading an AnyCalendar.
@@ -32,14 +32,14 @@ pub(crate) trait AnyCalendarLoader {
 pub(crate) struct ExternalLoaderCompiledData;
 
 #[cfg(feature = "compiled_data")]
-impl FixedDecimalFormatterLoader for ExternalLoaderCompiledData {
+impl DecimalFormatterLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(
         &self,
-        prefs: FixedDecimalFormatterPreferences,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new(prefs, options)
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+    ) -> Result<DecimalFormatter, DataError> {
+        DecimalFormatter::try_new(prefs, options)
     }
 }
 
@@ -54,17 +54,17 @@ impl AnyCalendarLoader for ExternalLoaderCompiledData {
 /// Loader for types from other crates using [`AnyProvider`].
 pub(crate) struct ExternalLoaderAny<'a, P: ?Sized>(pub &'a P);
 
-impl<P> FixedDecimalFormatterLoader for ExternalLoaderAny<'_, P>
+impl<P> DecimalFormatterLoader for ExternalLoaderAny<'_, P>
 where
     P: ?Sized + AnyProvider,
 {
     #[inline]
     fn load(
         &self,
-        prefs: FixedDecimalFormatterPreferences,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_any_provider(self.0, prefs, options)
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+    ) -> Result<DecimalFormatter, DataError> {
+        DecimalFormatter::try_new_with_any_provider(self.0, prefs, options)
     }
 }
 
@@ -83,17 +83,17 @@ where
 pub(crate) struct ExternalLoaderBuffer<'a, P: ?Sized>(pub &'a P);
 
 #[cfg(feature = "serde")]
-impl<P> FixedDecimalFormatterLoader for ExternalLoaderBuffer<'_, P>
+impl<P> DecimalFormatterLoader for ExternalLoaderBuffer<'_, P>
 where
     P: ?Sized + BufferProvider,
 {
     #[inline]
     fn load(
         &self,
-        prefs: FixedDecimalFormatterPreferences,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_with_buffer_provider(self.0, prefs, options)
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+    ) -> Result<DecimalFormatter, DataError> {
+        DecimalFormatter::try_new_with_buffer_provider(self.0, prefs, options)
     }
 }
 
@@ -111,7 +111,7 @@ where
 /// Loader for types from other crates using [`DataProvider`].
 pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 
-impl<P> FixedDecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
+impl<P> DecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
     P: ?Sized
         + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
@@ -120,10 +120,10 @@ where
     #[inline]
     fn load(
         &self,
-        prefs: FixedDecimalFormatterPreferences,
-        options: FixedDecimalFormatterOptions,
-    ) -> Result<FixedDecimalFormatter, DataError> {
-        FixedDecimalFormatter::try_new_unstable(self.0, prefs, options)
+        prefs: DecimalFormatterPreferences,
+        options: DecimalFormatterOptions,
+    ) -> Result<DecimalFormatter, DataError> {
+        DecimalFormatter::try_new_unstable(self.0, prefs, options)
     }
 }
 
