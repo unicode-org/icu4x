@@ -357,10 +357,6 @@ pub struct FieldSetBuilder {
     pub year_style: Option<YearStyle>,
 }
 
-// This is the default length when the builder is used. This could have been defined in the macro
-// that generates the `take_from_builder` fns, but it would be easily lost.
-pub(crate) const DEFAULT_LENGTH: Length = Length::Medium;
-
 enum DateOrCalendarPeriodFieldSet {
     Date(DateFieldSet),
     CalendarPeriod(CalendarPeriodFieldSet),

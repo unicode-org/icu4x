@@ -58,7 +58,7 @@ use crate::neo_serde::TimePrecisionSerde;
 ///     "January 1, 2000"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -73,6 +73,9 @@ pub enum Length {
     /// A long date; typically spelled-out, as in “January 1, 2000”.
     Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
+    ///
+    /// This is the default.
+    #[default]
     Medium = 3,
     /// A short date; typically numeric, as in “1/1/2000”.
     Short = 1,
@@ -128,7 +131,7 @@ impl IntoOption<Length> for Length {
 ///     "01/01/25"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -142,6 +145,7 @@ pub enum Alignment {
     /// Align fields as the locale specifies them to be aligned.
     ///
     /// This is the default option.
+    #[default]
     Auto,
     /// Align fields as appropriate for a column layout. For example:
     ///
@@ -257,7 +261,7 @@ impl IntoOption<Alignment> for Alignment {
 ///     "1/1/2025 AD"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -279,6 +283,7 @@ pub enum YearStyle {
     /// - `77 AD`
     /// - `1900`
     /// - `'24`
+    #[default]
     Auto,
     /// Always display the century, and display the era when needed to
     /// disambiguate the year, based on locale preferences.

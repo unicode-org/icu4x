@@ -224,7 +224,7 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { options, payload } => {
-                let year_style = options.year_style.unwrap_or(YearStyle::Auto);
+                let year_style = options.year_style.unwrap_or_default();
                 let variant = match (
                     year_style,
                     input
@@ -870,7 +870,8 @@ impl<'a> ItemsAndOptions<'a> {
             #[allow(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
             match &mut pattern_item {
                 PatternItem::Field(ref mut field) => {
-                    if matches!(self.alignment, Some(Alignment::Column))
+                    let alignment = self.alignment.unwrap_or_default();
+                    if matches!(alignment, Alignment::Column)
                         && field.length == FieldLength::One
                         && matches!(
                             field.symbol,
