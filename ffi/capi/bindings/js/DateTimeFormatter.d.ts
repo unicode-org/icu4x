@@ -26,33 +26,33 @@ export class DateTimeFormatter {
 
     static createFromBuilderWithProvider(provider: DataProvider, locale: Locale, builder: DateTimeFieldSetBuilder_obj): DateTimeFormatter;
 
-    static createDt(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createDt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createDtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createDtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createMdt(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createMdt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createMdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createMdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createYmdt(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): DateTimeFormatter;
+    static createYmdt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatter;
 
-    static createYmdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): DateTimeFormatter;
+    static createYmdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatter;
 
-    static createDet(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createDet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createDetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createDetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createMdet(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createMdet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createMdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createMdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createYmdet(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): DateTimeFormatter;
+    static createYmdet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatter;
 
-    static createYmdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment, yearStyle: YearStyle): DateTimeFormatter;
+    static createYmdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatter;
 
-    static createEt(locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createEt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength, timePrecision: TimePrecision, alignment: DateTimeAlignment): DateTimeFormatter;
+    static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
     formatIso(date: IsoDate, time: Time): string;
 }

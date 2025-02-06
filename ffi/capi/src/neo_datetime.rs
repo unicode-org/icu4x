@@ -15,6 +15,8 @@ pub mod ffi {
 
     use crate::{date::ffi::IsoDate, datetime_formatter::ffi::DateTimeLength, time::ffi::Time};
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use super::map_or_default;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -149,14 +151,14 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_dt(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::DT::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::DT::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -176,14 +178,14 @@ pub mod ffi {
         pub fn create_dt_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::DT::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::DT::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -210,14 +212,14 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_mdt(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::MDT::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::MDT::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -236,14 +238,14 @@ pub mod ffi {
         pub fn create_mdt_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::MDT::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::MDT::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -271,16 +273,16 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdt(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
-            year_style: YearStyle,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
+            year_style: Option<YearStyle>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::YMDT::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into())
-                .with_year_style(year_style.into());
+            let options = icu_datetime::fieldsets::YMDT::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision))
+                .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -300,16 +302,16 @@ pub mod ffi {
         pub fn create_ymdt_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
-            year_style: YearStyle,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
+            year_style: Option<YearStyle>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::YMDT::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into())
-                .with_year_style(year_style.into());
+            let options = icu_datetime::fieldsets::YMDT::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision))
+                .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -336,14 +338,14 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_det(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::DET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::DET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -362,14 +364,14 @@ pub mod ffi {
         pub fn create_det_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::DET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::DET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -396,14 +398,14 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_mdet(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::MDET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::MDET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -422,14 +424,14 @@ pub mod ffi {
         pub fn create_mdet_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::MDET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::MDET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -461,16 +463,16 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_ymdet(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
-            year_style: YearStyle,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
+            year_style: Option<YearStyle>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::YMDET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into())
-                .with_year_style(year_style.into());
+            let options = icu_datetime::fieldsets::YMDET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision))
+                .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -494,16 +496,16 @@ pub mod ffi {
         pub fn create_ymdet_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
-            year_style: YearStyle,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
+            year_style: Option<YearStyle>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::YMDET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into())
-                .with_year_style(year_style.into());
+            let options = icu_datetime::fieldsets::YMDET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision))
+                .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -530,14 +532,14 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_et(
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::ET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::ET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
             )))
@@ -556,14 +558,14 @@ pub mod ffi {
         pub fn create_et_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            length: DateTimeLength,
-            time_precision: TimePrecision,
-            alignment: DateTimeAlignment,
+            length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
+            alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = icu_datetime::fieldsets::ET::with_length(length.into())
-                .with_alignment(alignment.into())
-                .with_time_precision(time_precision.into());
+            let options = icu_datetime::fieldsets::ET::with_length(map_or_default(length))
+                .with_alignment(map_or_default(alignment))
+                .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -641,4 +643,11 @@ impl From<ffi::DateTimeFieldSetBuilder> for icu_datetime::fieldsets::builder::Fi
         builder.year_style = other.year_style.into_option().map(Into::into);
         builder
     }
+}
+
+fn map_or_default<Input, Output>(input: Option<Input>) -> Output
+where
+    Output: From<Input> + Default,
+{
+    input.map(Output::from).unwrap_or_default()
 }
