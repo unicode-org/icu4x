@@ -30,7 +30,7 @@ icu_list = { workspace = true }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
-icu_properties = { workspace = true }
+icu_properties = { workspace = true, features = ["alloc"] }
 icu_segmenter = { workspace = true }
 icu_timezone = { workspace = true }
 icu_experimental = { workspace = true, optional = true }

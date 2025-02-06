@@ -45,7 +45,7 @@ use icu_collections::codepointinvliststringlist::CodePointInversionListAndString
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-use zerovec::{ule::UleError, VarZeroVec, ZeroSlice};
+use zerovec::{VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -528,7 +528,10 @@ impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMap<'data, P>, UleError>
+    #[cfg(feature = "alloc")]
+    pub(crate) fn try_into_converted<P>(
+        self,
+    ) -> Result<PropertyCodePointMap<'data, P>, zerovec::ule::UleError>
     where
         P: TrieValue,
     {
@@ -540,6 +543,7 @@ impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     }
 
     #[inline]
+    #[cfg(feature = "alloc")]
     pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         match *self {
             Self::CodePointTrie(ref t) => t.get_set_for_value(value),

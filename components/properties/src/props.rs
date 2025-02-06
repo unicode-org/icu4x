@@ -3004,7 +3004,7 @@ make_emoji_set! {
 #[cfg(test)]
 mod test_enumerated_property_completeness {
     use super::*;
-    use alloc::collections::BTreeMap;
+    use std::collections::BTreeMap;
 
     fn check_enum<'a, T: NamedEnumeratedProperty>(
         lookup: &crate::provider::names::PropertyValueNameToEnumMap<'static>,

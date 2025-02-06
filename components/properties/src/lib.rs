@@ -68,6 +68,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod code_point_set;

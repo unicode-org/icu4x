@@ -8,8 +8,10 @@
 use crate::props::Script;
 use crate::provider::*;
 
+#[cfg(feature = "alloc")]
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
+#[cfg(feature = "alloc")]
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
@@ -641,6 +643,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert!(syriac.contains('\u{1DFA}')); // COMBINING DOT BELOW LEFT
     /// assert!(!syriac.contains('\u{1DFB}')); // COMBINING DELETION MARK
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_script_extensions_set(self, script: Script) -> CodePointInversionList<'a> {
         CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
