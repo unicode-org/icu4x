@@ -25,6 +25,7 @@ zerofrom = {workspace = true, default-features = false}
 yoke = {workspace = true, default-features = false}
 zerotrie = {workspace = true, default-features = false}
 potential_utf = {workspace = true, default-features = false}
+litemap = {workspace = true, default-features = false}
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_noalloctest)'] }
