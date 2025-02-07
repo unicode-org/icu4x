@@ -21,7 +21,7 @@
 //!
 //! ```
 //! use icu_provider::prelude::*;
-//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::DecimalFormatter;
 //! use icu::decimal::provider::DecimalDigitsV1;
 //! use icu::locale::locale;
 //! use std::any::TypeId;
@@ -50,7 +50,7 @@
 //!     numbering_system: RefCell::new(None),
 //! };
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//! let df = DecimalFormatter::try_new_unstable(
 //!     &provider,
 //!     locale!("th").into(),
 //!     Default::default(),
@@ -59,7 +59,7 @@
 //!
 //! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//! let df = DecimalFormatter::try_new_unstable(
 //!     &provider,
 //!     locale!("th-u-nu-thai").into(),
 //!     Default::default(),
@@ -68,7 +68,7 @@
 //!
 //! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
+//! let df = DecimalFormatter::try_new_unstable(
 //!     &provider,
 //!     locale!("th-u-nu-adlm").into(),
 //!     Default::default(),

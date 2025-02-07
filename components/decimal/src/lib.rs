@@ -16,11 +16,11 @@
 //!
 //! ```
 //! use fixed_decimal::SignedFixedDecimal;
-//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new(
+//! let df = DecimalFormatter::try_new(
 //!     locale!("bn").into(),
 //!     Default::default(),
 //! )
@@ -28,19 +28,19 @@
 //!
 //! let fixed_decimal = SignedFixedDecimal::from(1000007);
 //!
-//! assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
+//! assert_writeable_eq!(df.format(&fixed_decimal), "১০,০০,০০৭");
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator
 //!
 //! ```
 //! use fixed_decimal::SignedFixedDecimal;
-//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::DecimalFormatter;
 //! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf =
-//!     FixedDecimalFormatter::try_new(Default::default(), Default::default())
+//! let df =
+//!     DecimalFormatter::try_new(Default::default(), Default::default())
 //!         .expect("locale should be present");
 //!
 //! let fixed_decimal = {
@@ -49,7 +49,7 @@
 //!     decimal
 //! };
 //!
-//! assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
+//! assert_writeable_eq!(df.format(&fixed_decimal), "2,000.50");
 //! ```
 //!
 //! ## Format a number using an alternative numbering system
@@ -58,11 +58,11 @@
 //!
 //! ```
 //! use fixed_decimal::SignedFixedDecimal;
-//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new(
+//! let fdf = DecimalFormatter::try_new(
 //!     locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
@@ -73,7 +73,7 @@
 //! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 //! ```
 //!
-//! [`FixedDecimalFormatter`]: FixedDecimalFormatter
+//! [`DecimalFormatter`]: DecimalFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, doc)), no_std)]
@@ -101,7 +101,7 @@ pub mod parts;
 pub mod provider;
 pub(crate) mod size_test_macro;
 
-pub use format::FormattedFixedDecimal;
+pub use format::FormattedDecimal;
 
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
@@ -113,12 +113,12 @@ use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
 
-size_test!(FixedDecimalFormatter, fixed_decimal_formatter_size, 96);
+size_test!(DecimalFormatter, decimal_formatter_size, 96);
 
 define_preferences!(
     /// The preferences for fixed decimal formatting.
     [Copy]
-    FixedDecimalFormatterPreferences,
+    DecimalFormatterPreferences,
     {
         /// The user's preferred numbering system.
         ///
@@ -132,7 +132,7 @@ define_preferences!(
 
 /// A formatter for [`SignedFixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
-/// [`FixedDecimalFormatter`] supports:
+/// [`DecimalFormatter`] supports:
 ///
 /// 1. Rendering in the local numbering system
 /// 2. Locale-sensitive grouping separator positions
@@ -141,24 +141,24 @@ define_preferences!(
 /// To get the resolved numbering system, see [`provider`].
 ///
 /// See the crate-level documentation for examples.
-#[doc = fixed_decimal_formatter_size!()]
+#[doc = decimal_formatter_size!()]
 #[derive(Debug)]
-pub struct FixedDecimalFormatter {
-    options: options::FixedDecimalFormatterOptions,
+pub struct DecimalFormatter {
+    options: options::DecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV2>,
     digits: DataPayload<provider::DecimalDigitsV1>,
 }
 
-impl AsRef<FixedDecimalFormatter> for FixedDecimalFormatter {
-    fn as_ref(&self) -> &FixedDecimalFormatter {
+impl AsRef<DecimalFormatter> for DecimalFormatter {
+    fn as_ref(&self) -> &DecimalFormatter {
         self
     }
 }
 
-impl FixedDecimalFormatter {
+impl DecimalFormatter {
     icu_provider::gen_any_buffer_data_constructors!(
-        (prefs: FixedDecimalFormatterPreferences, options: options::FixedDecimalFormatterOptions) -> error: DataError,
-        /// Creates a new [`FixedDecimalFormatter`] from compiled data and an options bag.
+        (prefs: DecimalFormatterPreferences, options: options::DecimalFormatterOptions) -> error: DataError,
+        /// Creates a new [`DecimalFormatter`] from compiled data and an options bag.
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -166,8 +166,8 @@ impl FixedDecimalFormatter {
         D: DataProvider<provider::DecimalSymbolsV2> + DataProvider<provider::DecimalDigitsV1> + ?Sized,
     >(
         provider: &D,
-        prefs: FixedDecimalFormatterPreferences,
-        options: options::FixedDecimalFormatterOptions,
+        prefs: DecimalFormatterPreferences,
+        options: options::DecimalFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = provider::DecimalSymbolsV2::make_locale(prefs.locale_preferences);
         let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
@@ -270,9 +270,9 @@ impl FixedDecimalFormatter {
         }
     }
 
-    /// Formats a [`SignedFixedDecimal`], returning a [`FormattedFixedDecimal`].
-    pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedFixedDecimal<'l> {
-        FormattedFixedDecimal {
+    /// Formats a [`SignedFixedDecimal`], returning a [`FormattedDecimal`].
+    pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedDecimal<'l> {
+        FormattedDecimal {
             value,
             options: &self.options,
             symbols: self.symbols.get(),
@@ -289,8 +289,8 @@ impl FixedDecimalFormatter {
 #[test]
 fn test_numbering_resolution_fallback() {
     fn test_locale(locale: icu_locale_core::Locale, expected_format: &str) {
-        let formatter = FixedDecimalFormatter::try_new((&locale).into(), Default::default())
-            .expect("Must load");
+        let formatter =
+            DecimalFormatter::try_new((&locale).into(), Default::default()).expect("Must load");
         let fd = 1234.into();
         writeable::assert_writeable_eq!(
             formatter.format(&fd),

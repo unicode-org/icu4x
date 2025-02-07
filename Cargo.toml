@@ -95,6 +95,7 @@ members = [
     "tools/make/diplomat-gen",
     "tools/make/download-repo-sources",
     "tools/md-tests",
+    "tools/noalloctest",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.

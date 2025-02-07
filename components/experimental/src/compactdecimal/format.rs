@@ -56,7 +56,7 @@ impl Writeable for FormattedCompactDecimal<'_> {
     {
         if self.value.exponent() == 0 {
             self.formatter
-                .fixed_decimal_formatter
+                .decimal_formatter
                 .format(self.value.significand())
                 .write_to(sink)
         } else {
@@ -87,7 +87,7 @@ impl Writeable for FormattedCompactDecimal<'_> {
                             .ok_or(core::fmt::Error)?,
                     )?;
                     self.formatter
-                        .fixed_decimal_formatter
+                        .decimal_formatter
                         .format(self.value.significand())
                         .write_to(sink)?;
                     sink.write_str(

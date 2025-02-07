@@ -4,8 +4,8 @@
 
 use fixed_decimal::{Sign, SignedFixedDecimal};
 use icu_decimal::{
-    options::FixedDecimalFormatterOptions, provider::DecimalDigitsV1, provider::DecimalSymbolsV2,
-    FixedDecimalFormatter, FixedDecimalFormatterPreferences,
+    options::DecimalFormatterOptions, provider::DecimalDigitsV1, provider::DecimalSymbolsV2,
+    DecimalFormatter, DecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
@@ -25,7 +25,7 @@ define_preferences!(
 );
 prefs_convert!(
     RelativeTimeFormatterPreferences,
-    FixedDecimalFormatterPreferences
+    DecimalFormatterPreferences
 );
 prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 
@@ -122,7 +122,7 @@ pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) rt: DataPayload<ErasedMarker<RelativeTimePatternData<'static>>>,
     pub(crate) options: RelativeTimeFormatterOptions,
-    pub(crate) fixed_decimal_format: FixedDecimalFormatter,
+    pub(crate) decimal_formatter: DecimalFormatter,
 }
 
 macro_rules! constructor {
@@ -140,10 +140,10 @@ macro_rules! constructor {
         ) -> Result<Self, DataError> {
             let locale = <$marker>::make_locale(prefs.locale_preferences);
             let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
-            // Initialize FixedDecimalFormatter with default options
-            let fixed_decimal_format = FixedDecimalFormatter::try_new(
+            // Initialize DecimalFormatter with default options
+            let decimal_formatter = DecimalFormatter::try_new(
                 (&prefs).into(),
-                FixedDecimalFormatterOptions::default(),
+                DecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = crate::provider::Baked
                 .load(DataRequest {
@@ -155,7 +155,7 @@ macro_rules! constructor {
                 plural_rules,
                 options,
                 rt,
-                fixed_decimal_format,
+                decimal_formatter,
             })
         }
 
@@ -185,11 +185,11 @@ macro_rules! constructor {
         {
             let locale = <$marker>::make_locale(prefs.locale_preferences);
             let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
-            // Initialize FixedDecimalFormatter with default options
-            let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            // Initialize DecimalFormatter with default options
+            let decimal_formatter = DecimalFormatter::try_new_unstable(
                 provider,
                 (&prefs).into(),
-                FixedDecimalFormatterOptions::default(),
+                DecimalFormatterOptions::default(),
             )?;
             let rt: DataResponse<$marker> = provider
                 .load(DataRequest {
@@ -201,7 +201,7 @@ macro_rules! constructor {
                 plural_rules,
                 options,
                 rt,
-                fixed_decimal_format,
+                decimal_formatter,
             })
         }
     };

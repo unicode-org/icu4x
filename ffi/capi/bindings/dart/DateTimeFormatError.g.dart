@@ -18,7 +18,7 @@ enum DateTimeFormatError {
 
   namesNotLoaded,
 
-  fixedDecimalFormatterNotLoaded,
+  decimalFormatterNotLoaded,
 
   unsupportedField;
 
@@ -38,7 +38,7 @@ enum DateTimeFormatError {
         return 5;
       case namesNotLoaded:
         return 16;
-      case fixedDecimalFormatterNotLoaded:
+      case decimalFormatterNotLoaded:
         return 17;
       case unsupportedField:
         return 18;

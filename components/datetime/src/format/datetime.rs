@@ -13,14 +13,14 @@ use crate::{parts, pattern::*};
 use core::fmt::{self, Write};
 use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::types::{DayOfWeekInMonth, IsoWeekday};
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
 
-/// Apply length to input number and write to result using fixed_decimal_format.
+/// Apply length to input number and write to result using decimal_formatter.
 fn try_write_number<W>(
     part: Part,
     w: &mut W,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    decimal_formatter: Option<&DecimalFormatter>,
     mut num: SignedFixedDecimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
@@ -29,22 +29,22 @@ where
 {
     num.pad_start(length.to_len() as i16);
 
-    if let Some(fdf) = fixed_decimal_format {
+    if let Some(fdf) = decimal_formatter {
         w.with_part(part, |w| fdf.format(&num).write_to_parts(w))?;
         Ok(Ok(()))
     } else {
         w.with_part(part, |w| {
             w.with_part(writeable::Part::ERROR, |r| num.write_to_parts(r))
         })?;
-        Ok(Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded))
+        Ok(Err(DateTimeWriteError::DecimalFormatterNotLoaded))
     }
 }
 
-/// Apply length to input number and write to result using fixed_decimal_format.
+/// Apply length to input number and write to result using decimal_formatter.
 /// Don't annotate it with a part.
 fn try_write_number_without_part<W>(
     w: &mut W,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    decimal_formatter: Option<&DecimalFormatter>,
     mut num: SignedFixedDecimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
@@ -53,12 +53,12 @@ where
 {
     num.pad_start(length.to_len() as i16);
 
-    if let Some(fdf) = fixed_decimal_format {
+    if let Some(fdf) = decimal_formatter {
         fdf.format(&num).write_to(w)?;
         Ok(Ok(()))
     } else {
         w.with_part(writeable::Part::ERROR, |r| num.write_to(r))?;
-        Ok(Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded))
+        Ok(Err(DateTimeWriteError::DecimalFormatterNotLoaded))
     }
 }
 
@@ -68,7 +68,7 @@ pub(crate) fn try_write_pattern_items<W>(
     pattern_items: impl Iterator<Item = PatternItem>,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    fixed_decimal_format: Option<&FixedDecimalFormatter>,
+    decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -84,7 +84,7 @@ where
                     pattern_metadata,
                     input,
                     datetime_names,
-                    fixed_decimal_format,
+                    decimal_formatter,
                     w,
                 )?);
             }
@@ -103,7 +103,7 @@ fn try_write_field<W>(
     pattern_metadata: PatternMetadata,
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    fdf: Option<&FixedDecimalFormatter>,
+    fdf: Option<&DecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -255,7 +255,7 @@ where
                                     .write_to(w)
                             })
                         })?;
-                        Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
+                        Err(DateTimeWriteError::DecimalFormatterNotLoaded)
                     }
                 }
                 Err(e) => {
@@ -534,7 +534,7 @@ fn perform_timezone_fallback(
     w: &mut (impl writeable::PartsWrite + ?Sized),
     input: &ExtractedInput,
     datetime_names: &RawDateTimeNamesBorrowed,
-    fdf: Option<&FixedDecimalFormatter>,
+    fdf: Option<&DecimalFormatter>,
     field: fields::Field,
     units: &[TimeZoneFormatterUnit],
 ) -> Result<Result<(), DateTimeWriteError>, core::fmt::Error> {
@@ -576,8 +576,8 @@ fn perform_timezone_fallback(
                 w.with_part(PART, |w| write_value_missing(w, field))?;
             }
             match e {
-                FormatTimeZoneError::FixedDecimalFormatterNotLoaded => {
-                    Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded)
+                FormatTimeZoneError::DecimalFormatterNotLoaded => {
+                    Err(DateTimeWriteError::DecimalFormatterNotLoaded)
                 }
                 FormatTimeZoneError::NamesNotLoaded => {
                     Err(DateTimeWriteError::NamesNotLoaded(ErrorField(field)))
@@ -599,7 +599,7 @@ fn perform_timezone_fallback(
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
-    use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
+    use icu_decimal::options::{DecimalFormatterOptions, GroupingStrategy};
 
     #[test]
     fn test_format_number() {
@@ -611,11 +611,11 @@ mod tests {
             (FieldLength::Four, ["0002", "0020", "0201", "2017", "20173"]),
         ];
 
-        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
-        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
+        let mut decimal_formatter_options = DecimalFormatterOptions::default();
+        decimal_formatter_options.grouping_strategy = GroupingStrategy::Never;
+        let decimal_formatter = DecimalFormatter::try_new(
             icu_locale_core::locale!("en").into(),
-            fixed_decimal_format_options,
+            decimal_formatter_options,
         )
         .unwrap();
 
@@ -624,7 +624,7 @@ mod tests {
                 let mut s = String::new();
                 try_write_number_without_part(
                     &mut writeable::adapters::CoreWriteAsPartsWrite(&mut s),
-                    Some(&fixed_decimal_format),
+                    Some(&decimal_formatter),
                     SignedFixedDecimal::from(*value),
                     *length,
                 )

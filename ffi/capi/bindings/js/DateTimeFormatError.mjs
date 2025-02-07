@@ -19,7 +19,7 @@ export class DateTimeFormatError {
         ["InvalidMonthCode", 4],
         ["InvalidCyclicYear", 5],
         ["NamesNotLoaded", 16],
-        ["FixedDecimalFormatterNotLoaded", 17],
+        ["DecimalFormatterNotLoaded", 17],
         ["UnsupportedField", 18]
     ]);
 
@@ -86,7 +86,7 @@ export class DateTimeFormatError {
     static InvalidMonthCode = DateTimeFormatError.#objectValues[4];
     static InvalidCyclicYear = DateTimeFormatError.#objectValues[5];
     static NamesNotLoaded = DateTimeFormatError.#objectValues[16];
-    static FixedDecimalFormatterNotLoaded = DateTimeFormatError.#objectValues[17];
+    static DecimalFormatterNotLoaded = DateTimeFormatError.#objectValues[17];
     static UnsupportedField = DateTimeFormatError.#objectValues[18];
 
     constructor(value) {

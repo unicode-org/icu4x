@@ -11,7 +11,7 @@ use crate::{
     },
 };
 use fixed_decimal::SignedFixedDecimal;
-use icu_decimal::FixedDecimalFormatterPreferences;
+use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
@@ -38,7 +38,7 @@ define_preferences!(
 
 prefs_convert!(
     CompactCurrencyFormatterPreferences,
-    FixedDecimalFormatterPreferences,
+    DecimalFormatterPreferences,
     { numbering_system }
 );
 prefs_convert!(

@@ -21,7 +21,7 @@ namespace capi {
       DateTimeFormatError_InvalidMonthCode = 4,
       DateTimeFormatError_InvalidCyclicYear = 5,
       DateTimeFormatError_NamesNotLoaded = 16,
-      DateTimeFormatError_FixedDecimalFormatterNotLoaded = 17,
+      DateTimeFormatError_DecimalFormatterNotLoaded = 17,
       DateTimeFormatError_UnsupportedField = 18,
     };
     
@@ -40,7 +40,7 @@ public:
     InvalidMonthCode = 4,
     InvalidCyclicYear = 5,
     NamesNotLoaded = 16,
-    FixedDecimalFormatterNotLoaded = 17,
+    DecimalFormatterNotLoaded = 17,
     UnsupportedField = 18,
   };
 

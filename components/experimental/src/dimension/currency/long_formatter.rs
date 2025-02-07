@@ -5,7 +5,7 @@
 //! Experimental.
 
 use fixed_decimal::SignedFixedDecimal;
-use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
+use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
@@ -33,8 +33,8 @@ pub struct LongCurrencyFormatter {
     /// Formatting patterns for each currency plural category.
     patterns: DataPayload<CurrencyPatternsDataV1>,
 
-    /// A [`FixedDecimalFormatter`] to format the currency value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
+    /// A [`DecimalFormatter`] to format the currency value.
+    decimal_formatter: DecimalFormatter,
 
     /// A [`PluralRules`] to determine the plural category of the unit.
     plural_rules: PluralRules,
@@ -63,10 +63,8 @@ impl LongCurrencyFormatter {
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError> {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
@@ -92,7 +90,7 @@ impl LongCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -112,10 +110,10 @@ impl LongCurrencyFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
+            DecimalFormatterOptions::default(),
         )?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
@@ -141,7 +139,7 @@ impl LongCurrencyFormatter {
         Ok(Self {
             extended,
             patterns,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -175,7 +173,7 @@ impl LongCurrencyFormatter {
             _currency_code: currency_code,
             extended: self.extended.get(),
             patterns: self.patterns.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
     }

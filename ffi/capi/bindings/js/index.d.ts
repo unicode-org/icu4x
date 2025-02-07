@@ -70,7 +70,7 @@ export { GregorianDateFormatter } from "./GregorianDateFormatter"
 
 export { TimeFormatter } from "./TimeFormatter"
 
-export { FixedDecimalFormatter } from "./FixedDecimalFormatter"
+export { DecimalFormatter } from "./DecimalFormatter"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter"
 
@@ -220,7 +220,7 @@ export { IsoWeekday } from "./IsoWeekday"
 
 export { DateTimeLength } from "./DateTimeLength"
 
-export { FixedDecimalGroupingStrategy } from "./FixedDecimalGroupingStrategy"
+export { DecimalGroupingStrategy } from "./DecimalGroupingStrategy"
 
 export { DisplayNamesFallback } from "./DisplayNamesFallback"
 

@@ -5,8 +5,8 @@
 //! Experimental.
 
 use fixed_decimal::SignedFixedDecimal;
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
+use icu_decimal::options::DecimalFormatterOptions;
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
@@ -32,11 +32,9 @@ define_preferences!(
         numbering_system: NumberingSystem
     }
 );
-prefs_convert!(
-    UnitsFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter for measurement unit values.
@@ -56,8 +54,8 @@ pub struct UnitsFormatter {
     /// Display name for the units.
     display_name: DataPayload<UnitsDisplayNameV1>,
 
-    /// A [`FixedDecimalFormatter`] to format the unit value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
+    /// A [`DecimalFormatter`] to format the unit value.
+    decimal_formatter: DecimalFormatter,
 
     /// A [`PluralRules`] to determine the plural category of the unit.
     plural_rules: PluralRules,
@@ -101,10 +99,8 @@ impl UnitsFormatter {
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
         let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
@@ -126,7 +122,7 @@ impl UnitsFormatter {
         Ok(Self {
             _options: options,
             display_name,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -146,10 +142,10 @@ impl UnitsFormatter {
             + DataProvider<icu_plurals::provider::CardinalV1>,
     {
         let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
+            DecimalFormatterOptions::default(),
         )?;
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
@@ -172,7 +168,7 @@ impl UnitsFormatter {
         Ok(Self {
             _options: options,
             display_name,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
@@ -182,7 +178,7 @@ impl UnitsFormatter {
         FormattedUnit {
             value,
             display_name: self.display_name.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
     }
