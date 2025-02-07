@@ -31,9 +31,7 @@ icu::collator::CollationType::unicode_extension_key#FnInEnum
 icu::collator::CollationType::unicode_extension_value#FnInEnum
 icu::collator::CollatorPreferences::extend#FnInStruct
 icu::datetime::DateTimeFormatter::try_into_typed_formatter#FnInStruct
-icu::datetime::DateTimeFormatter::with_fset#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::into_formatter#FnInStruct
-icu::datetime::FixedCalendarDateTimeFormatter::with_fset#FnInStruct
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D#Struct

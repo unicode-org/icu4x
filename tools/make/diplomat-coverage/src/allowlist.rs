@@ -323,10 +323,12 @@ lazy_static::lazy_static! {
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
 
-        // Rust-specific calendar wrapper stuff
+        // Rust-specific calendar and field set wrapper stuff
         "icu::calendar::AsCalendar",
         "icu::calendar::Ref",
         "icu::datetime::CldrCalendar",
+        "icu::datetime::DateTimeFormatter::with_fset",
+        "icu::datetime::FixedCalendarDateTimeFormatter::with_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
