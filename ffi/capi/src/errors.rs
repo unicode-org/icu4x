@@ -8,8 +8,11 @@ use ffi::*;
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::calendar::ffi::AnyCalendarKind;
+    #[cfg(feature = "datetime")]
     use diplomat_runtime::DiplomatOption;
+
+    #[cfg(feature = "datetime")]
+    use crate::calendar::ffi::AnyCalendarKind;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
