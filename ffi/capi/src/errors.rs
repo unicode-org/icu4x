@@ -106,6 +106,7 @@ pub mod ffi {
     }
 
     #[cfg(feature = "datetime")]
+    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
     pub struct DateTimeMismatchedCalendarError {
         pub this_kind: AnyCalendarKind,
         pub date_kind: DiplomatOption<AnyCalendarKind>,

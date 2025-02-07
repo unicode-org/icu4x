@@ -30,6 +30,7 @@ icu::collator::CollationType::try_from_key_value#FnInEnum
 icu::collator::CollationType::unicode_extension_key#FnInEnum
 icu::collator::CollationType::unicode_extension_value#FnInEnum
 icu::collator::CollatorPreferences::extend#FnInStruct
+icu::datetime::DateTimeFormatter::try_into_typed_formatter#FnInStruct
 icu::datetime::DateTimeFormatter::with_fset#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::into_formatter#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::with_fset#FnInStruct
@@ -289,19 +290,6 @@ icu::datetime::options::FractionalSecondDigits#Enum
 icu::datetime::options::FractionalSecondError#Enum
 icu::datetime::options::TimePrecision#Enum
 icu::datetime::options::YearStyle#Enum
-icu::datetime::pattern::DateTimePattern#Struct
-icu::datetime::pattern::DateTimePattern::from_str#FnInStruct
-icu::datetime::pattern::DateTimePattern::to_string#FnInStruct
-icu::datetime::pattern::DateTimePattern::try_from_pattern_str#FnInStruct
-icu::datetime::pattern::DateTimePattern::write_to#FnInStruct
-icu::datetime::pattern::DateTimePatternFormatter#Struct
-icu::datetime::pattern::DateTimePatternFormatter::format#FnInStruct
-icu::datetime::pattern::DayPeriodNameLength#Enum
-icu::datetime::pattern::FormattedDateTimePattern#Struct
-icu::datetime::pattern::FormattedDateTimePattern::try_write_to_parts#FnInStruct
-icu::datetime::pattern::MonthNameLength#Enum
-icu::datetime::pattern::WeekdayNameLength#Enum
-icu::datetime::pattern::YearNameLength#Enum
 icu::list::ListFormatterOptions#Struct
 icu::list::ListFormatterOptions::default#FnInStruct
 icu::list::ListFormatterOptions::with_length#FnInStruct

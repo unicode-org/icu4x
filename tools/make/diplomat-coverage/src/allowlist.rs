@@ -165,19 +165,10 @@ lazy_static::lazy_static! {
         "icu::calendar::types::YearAmbiguity",
         "icu::calendar::types::YearInfo::year_ambiguity",
 
-        // Strongly calendar-typed datetime methods
-        "icu::datetime::DateTimeFormatter::format_same_calendar",
-        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
-        "icu::datetime::MismatchedCalendarError",
-
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
         "icu::datetime::parts",
         "icu::decimal::parts",
-
-        // Not planned for 2.0: Intermediate Writeable types.
-        "icu::datetime::FormattedDateTime::to_string",
-        "icu::datetime::FormattedDateTime::pattern",
 
         // Not planned for 2.0: Until someone needs them
         "icu::locale::extensions",
@@ -252,8 +243,9 @@ lazy_static::lazy_static! {
         "fixed_decimal::UnsignedRoundingMode",
 
         // Not planned for 2.0
-        // Lower-level pattern API
-        "icu::datetime::pattern::TypedDateTimeNames",
+        // DateTimePattern and related low-level APIs
+        "icu::datetime::pattern",
+        "icu::datetime::FormattedDateTime::pattern",
 
         // Not planned for 2.0
         // Serde-specific
