@@ -206,7 +206,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
     return DateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   String formatIso(IsoDate date, Time time) {
     final write = _Write();
     _icu4x_DateTimeFormatterGregorian_format_iso_mv1(_ffi, date._ffi, time._ffi, write._ffi);

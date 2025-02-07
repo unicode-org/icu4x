@@ -2,6 +2,9 @@
 import type { AnyCalendarKind } from "./AnyCalendarKind"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
+
+/** See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+*/
 type DateTimeMismatchedCalendarError_obj = {
     thisKind: AnyCalendarKind;
     dateKind?: AnyCalendarKind | null;
