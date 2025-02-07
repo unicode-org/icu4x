@@ -47,9 +47,7 @@ pub mod ffi {
             let prefs = DecimalFormatterPreferences::from(&locale.0);
 
             let mut options = DecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy
-                .map(Into::into)
-                .unwrap_or(options.grouping_strategy);
+            options.grouping_strategy = grouping_strategy.map(Into::into);
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new(prefs, options)?,
             )))
@@ -68,9 +66,7 @@ pub mod ffi {
             let prefs = DecimalFormatterPreferences::from(&locale.0);
 
             let mut options = DecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy
-                .map(Into::into)
-                .unwrap_or(options.grouping_strategy);
+            options.grouping_strategy = grouping_strategy.map(Into::into);
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -142,9 +138,7 @@ pub mod ffi {
             };
 
             let mut options = DecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy
-                .map(Into::into)
-                .unwrap_or(options.grouping_strategy);
+            options.grouping_strategy = grouping_strategy.map(Into::into);
 
             struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
             impl DataProvider<DecimalSymbolsV2> for Provider {

@@ -67,7 +67,7 @@ impl Writeable for FormattedDecimal<'_> {
                 if grouper::check(
                     upper_magnitude,
                     m,
-                    self.options.grouping_strategy,
+                    self.options.grouping_strategy.unwrap_or_default(),
                     self.symbols.grouping_sizes,
                 ) {
                     w.with_part(parts::GROUP, |w| {

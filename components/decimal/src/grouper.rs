@@ -198,7 +198,7 @@ fn test_grouper() {
             }
             let provider = Provider(RefCell::new(Some(symbols)), digits);
             let options = options::DecimalFormatterOptions {
-                grouping_strategy: cas.strategy,
+                grouping_strategy: Some(cas.strategy),
                 ..Default::default()
             };
             let fdf =
