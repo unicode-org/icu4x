@@ -235,21 +235,24 @@ mod tests {
             SourceDataProvider: DataProvider<M>,
         {
             fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-                let mut res = self.0.load(req)?;
-                if let Ok(payload) = res.payload.dynamic_cast_mut::<LstmForWordLineAutoV1>() {
-                    *payload = DataPayload::from_owned(
-                        self.0
-                            .segmenter_lstm()
-                            .unwrap()
-                            .read_and_parse_json::<RawLstmData>(
-                                "Thai_graphclust_model4_heavy/weights.json",
-                            )
-                            .unwrap()
-                            .try_convert()
-                            .unwrap(),
-                    );
+                if LstmForWordLineAutoV1::INFO == M::INFO {
+                    return Ok(DataResponse {
+                        payload: DataPayload::<LstmForWordLineAutoV1>::from_owned(
+                            self.0
+                                .segmenter_lstm()
+                                .unwrap()
+                                .read_and_parse_json::<RawLstmData>(
+                                    "Thai_graphclust_model4_heavy/weights.json",
+                                )
+                                .unwrap()
+                                .try_convert()
+                                .unwrap(),
+                        )
+                        .dynamic_cast()?,
+                        metadata: Default::default(),
+                    });
                 }
-                Ok(res)
+                self.0.load(req)
             }
         }
 
