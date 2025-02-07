@@ -59,6 +59,12 @@ impl<K: Ord, V> StoreFromIterable<K, V> for VecWithDefaults<(K, V)> {
     }
 }
 
+impl<K: Ord, V> SortedStoreFromStore<K, V> for VecWithDefaults<(K, V)> {
+    fn lm_sorted_store_from_store(self) -> Self {
+        Self(self.0.lm_sorted_store_from_store())
+    }
+}
+
 impl<K, V> StoreMut<K, V> for VecWithDefaults<(K, V)> {
     #[inline]
     fn lm_with_capacity(capacity: usize) -> Self {

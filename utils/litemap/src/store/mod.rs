@@ -77,6 +77,12 @@ pub trait StoreFromIterable<K, V>: Store<K, V> {
     fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self;
 }
 
+pub trait SortedStoreFromStore<K, V>: Store<K, V> {
+    /// Create a sorted and deduplicated store from an existing store.
+    /// This is a specialized version of StoreFromIterable::lm_sort_from_iter.
+    fn lm_sorted_store_from_store(self) -> Self;
+}
+
 pub trait StoreSlice<K: ?Sized, V: ?Sized>: Store<K, V> {
     type Slice: ?Sized;
 

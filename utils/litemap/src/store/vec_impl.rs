@@ -114,6 +114,13 @@ impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
     }
 }
 
+impl<K: Ord, V> SortedStoreFromStore<K, V> for Vec<(K, V)> {
+    fn lm_sorted_store_from_store(mut self) -> Self {
+        sort_and_dedup_in_place(&mut self);
+        self
+    }
+}
+
 impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {
     type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<K, V>>;
 
@@ -183,24 +190,26 @@ impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
             }
         }
 
-        if fast_path {
-            return;
+        if !fast_path {
+            sort_and_dedup_in_place(self);
         }
+    }
+}
 
-        // Stable sort in order to sort and preserve the order of elements.
-        // This way, if there are elements with the same key we'll keep the last value.
-        self.sort_by(|a, b| a.0.cmp(&b.0));
-        // Then deduplicate elements with the same key by keeping the _last_ value.
-        let mut i = 0;
-        while i < self.len() {
-            #[allow(clippy::indexing_slicing)] // while condition checks if i is in range
-            let Some((head, tail)) = self[i..].split_first() else {
-                break;
-            };
-            let equals = tail.iter().take_while(|t| head.0 == t.0).count();
-            self.drain(i..i + equals);
-            i += 1;
-        }
+fn sort_and_dedup_in_place<K: Ord, V>(v: &mut Vec<(K, V)>) {
+    // Stable sort in order to preserve the order of elements.
+    // This way, if there are elements with the same key we'll keep the last value.
+    v.sort_by(|a, b| a.0.cmp(&b.0));
+    // Then deduplicate elements with the same key by keeping the _last_ value.
+    let mut i = 0;
+    while i < v.len() {
+        #[allow(clippy::indexing_slicing)] // while condition checks if i is in range
+        let Some((head, tail)) = v[i..].split_first() else {
+            break;
+        };
+        let equals = tail.iter().take_while(|t| head.0 == t.0).count();
+        v.drain(i..i + equals);
+        i += 1;
     }
 }
 
@@ -209,4 +218,30 @@ impl<K, V> StoreFromIterator<K, V> for Vec<(K, V)> {}
 #[test]
 fn test_vec_impl() {
     crate::testing::check_store_full::<Vec<(u32, u64)>>();
+}
+
+#[test]
+fn test_sort_and_dedup_in_place() {
+    let mut vec = vec![
+        (3, "c"),
+        (1, "a"),
+        (2, "b"),
+        (1, "a2"),
+        (3, "c2"),
+        (3, "c3"),
+    ];
+    sort_and_dedup_in_place(&mut vec);
+    assert_eq!(vec, vec![(1, "a2"), (2, "b"), (3, "c3")]);
+
+    let mut vec: Vec<(u32, &str)> = Vec::new();
+    sort_and_dedup_in_place(&mut vec);
+    assert!(vec.is_empty());
+
+    let mut vec = vec![(3, "c"), (1, "a"), (2, "b")];
+    sort_and_dedup_in_place(&mut vec);
+    assert_eq!(vec, vec![(1, "a"), (2, "b"), (3, "c")]);
+
+    let mut vec = vec![(1, "a"), (1, "a2"), (1, "a3")];
+    sort_and_dedup_in_place(&mut vec);
+    assert_eq!(vec, vec![(1, "a3")]);
 }

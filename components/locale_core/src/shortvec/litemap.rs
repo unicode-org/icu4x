@@ -55,6 +55,18 @@ impl<K: Ord, V> StoreFromIterable<K, V> for ShortBoxSlice<(K, V)> {
     }
 }
 
+impl<K: Ord, V> SortedStoreFromStore<K, V> for ShortBoxSlice<(K, V)> {
+    fn lm_sorted_store_from_store(self) -> Self {
+        match self {
+            ShortBoxSlice(ShortBoxSliceInner::ZeroOne(_)) => self,
+            ShortBoxSlice(ShortBoxSliceInner::Multi(v)) => {
+                let v: Vec<(K, V)> = Vec::lm_sort_from_iter(v);
+                v.into()
+            }
+        }
+    }
+}
+
 impl<K, V> StoreMut<K, V> for ShortBoxSlice<(K, V)> {
     fn lm_with_capacity(_capacity: usize) -> Self {
         ShortBoxSlice::new()
