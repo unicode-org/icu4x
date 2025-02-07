@@ -212,7 +212,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 /// [`CodePointSetData`]: crate::sets::CodePointSetData
 /// [`TR44`]: https://www.unicode.org/reports/tr44
 /// [`TR18`]: https://www.unicode.org/reports/tr18
-pub trait BinaryProperty: crate::private::Sealed {
+pub trait BinaryProperty: crate::private::Sealed + Sized {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyCodePointSet<'static>>;
     #[doc(hidden)]
@@ -222,6 +222,14 @@ pub trait BinaryProperty: crate::private::Sealed {
     const NAME: &'static [u8];
     /// The abbreviated name of this property, if it exists, otherwise the name
     const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `CodePointSetData::new().contains(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_char(ch: char) -> bool {
+        CodePointSetData::new::<Self>().contains(ch)
+    }
 }
 
 #[cfg(test)]
