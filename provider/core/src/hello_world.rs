@@ -286,7 +286,7 @@ impl HelloWorldFormatter {
         Self::try_new_unstable(&HelloWorldProvider, prefs)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((prefs: HelloWorldFormatterPreferences) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!((prefs: HelloWorldFormatterPreferences) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -294,7 +294,7 @@ impl HelloWorldFormatter {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: HelloWorldFormatterPreferences,

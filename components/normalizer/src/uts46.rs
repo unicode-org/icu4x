@@ -160,7 +160,7 @@ impl Uts46Mapper {
     }
 
     /// Construct with provider.
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<Uts46DecompositionDataV2>

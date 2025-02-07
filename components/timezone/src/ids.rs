@@ -117,7 +117,7 @@ impl TimeZoneIdMapper {
         TimeZoneIdMapperBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
                         try_new_with_buffer_provider,
@@ -126,7 +126,7 @@ impl TimeZoneIdMapper {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV3> + ?Sized,
@@ -572,7 +572,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
         TimeZoneIdMapperWithFastCanonicalizationBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
                         try_new_with_buffer_provider,
@@ -581,7 +581,7 @@ impl TimeZoneIdMapperWithFastCanonicalization<TimeZoneIdMapper> {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV3> + DataProvider<Bcp47ToIanaMapV1> + ?Sized,
@@ -619,7 +619,7 @@ where
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((mapper: I) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!((mapper: I) -> error: DataError,
         functions: [
             try_new_with_mapper: skip,
             try_new_with_mapper_with_buffer_provider,
@@ -628,7 +628,7 @@ where
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, mapper: I) -> Result<Self, DataError>
     where
         P: DataProvider<IanaToBcp47MapV3> + DataProvider<Bcp47ToIanaMapV1> + ?Sized,

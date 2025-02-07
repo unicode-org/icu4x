@@ -1607,7 +1607,7 @@ pub fn parse_with_variables(
     parse_unstable_with_variables(source, variable_map, &icu_properties::provider::Baked)
 }
 
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]
+#[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]
 pub fn parse_unstable_with_variables<P>(
     source: &str,
     variable_map: &VariableMap<'_>,
@@ -1724,7 +1724,7 @@ where
     Ok((cpinvlistandstrlist, parsed_bytes))
 }
 
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
+#[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, parse)]
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,

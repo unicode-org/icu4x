@@ -613,7 +613,7 @@ impl AnyCalendar {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
     pub fn try_new_for_kind_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -659,7 +659,7 @@ impl AnyCalendar {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
     pub fn try_new_for_kind_unstable<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -722,7 +722,7 @@ impl AnyCalendar {
         Ok(Self::new_for_kind(kind))
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
             try_new: skip,
@@ -732,7 +732,7 @@ impl AnyCalendar {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: AnyCalendarPreferences,

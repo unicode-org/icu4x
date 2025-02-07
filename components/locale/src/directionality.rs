@@ -50,7 +50,7 @@ impl LocaleDirectionality<LocaleExpander> {
     }
 
     // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_common)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_common)]
     #[cfg(feature = "serde")]
     pub fn try_new_common_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
@@ -58,7 +58,7 @@ impl LocaleDirectionality<LocaleExpander> {
         let expander = LocaleExpander::try_new_common_with_buffer_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
         P: DataProvider<ScriptDirectionV1>
@@ -80,7 +80,7 @@ impl LocaleDirectionality<LocaleExpander> {
     }
 
     // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_extended)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_extended)]
     #[cfg(feature = "serde")]
     pub fn try_new_extended_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
@@ -88,7 +88,7 @@ impl LocaleDirectionality<LocaleExpander> {
         let expander = LocaleExpander::try_new_extended_with_buffer_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
         P: DataProvider<ScriptDirectionV1>
@@ -136,7 +136,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: Expander,

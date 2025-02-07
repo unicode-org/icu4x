@@ -101,7 +101,7 @@
 
 #[doc(hidden)] // macro
 #[macro_export]
-macro_rules! gen_any_buffer_unstable_docs {
+macro_rules! gen_buffer_unstable_docs {
     (BUFFER, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
@@ -123,7 +123,7 @@ macro_rules! gen_any_buffer_unstable_docs {
 /// Usage:
 ///
 /// ```rust,ignore
-/// gen_any_buffer_data_constructors!((locale, options: FooOptions) -> error: DataError,
+/// gen_buffer_data_constructors!((locale, options: FooOptions) -> error: DataError,
 ///    /// Some docs
 ///   functions: [try_new, try_new_with_buffer_provider, try_new_unstable]
 /// );
@@ -138,10 +138,10 @@ macro_rules! gen_any_buffer_unstable_docs {
 #[allow(clippy::crate_in_macro_def)] // by convention each crate's data provider is `crate::provider::Baked`
 #[doc(hidden)] // macro
 #[macro_export]
-macro_rules! gen_any_buffer_data_constructors {
+macro_rules! gen_buffer_data_constructors {
     // Allow people to omit the functions
     (($($args:tt)*) -> $error_kind:ident: $error_ty:ty, $(#[$doc:meta])*) => {
-        $crate::gen_any_buffer_data_constructors!(
+        $crate::gen_buffer_data_constructors!(
             ($($args)*) -> $error_kind: $error_ty,
             $(#[$doc])*
             functions: [
@@ -154,7 +154,7 @@ macro_rules! gen_any_buffer_data_constructors {
     };
     // Allow people to specify errors instead of results
     (($($args:tt)*) -> error: $error_ty:path, $(#[$doc:meta])* functions: [$baked:ident$(: $baked_cmd:ident)?, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        $crate::gen_any_buffer_data_constructors!(
+        $crate::gen_buffer_data_constructors!(
             ($($args)*) -> result: Result<Self, $error_ty>,
             $(#[$doc])*
             functions: [
@@ -168,7 +168,7 @@ macro_rules! gen_any_buffer_data_constructors {
 
     // locale shorthand
     ((locale, $($args:tt)*) -> result: $result_ty:ty, $(#[$doc:meta])* functions: [$baked:ident$(: $baked_cmd:ident)?, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        $crate::gen_any_buffer_data_constructors!(
+        $crate::gen_buffer_data_constructors!(
             (locale: &$crate::DataLocale, $($args)*) -> result: $result_ty,
             $(#[$doc])*
             functions: [
@@ -180,7 +180,7 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     ((locale) -> result: $result_ty:ty, $(#[$doc:meta])* functions: [$baked:ident$(: $baked_cmd:ident)?, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        $crate::gen_any_buffer_data_constructors!(
+        $crate::gen_buffer_data_constructors!(
             (locale: &$crate::DataLocale) -> result: $result_ty,
             $(#[$doc])*
             functions: [
@@ -204,7 +204,7 @@ macro_rules! gen_any_buffer_data_constructors {
             $($struct :: )? $unstable(&crate::provider::Baked $(, $options_arg)* )
         }
 
-        $crate::gen_any_buffer_data_constructors!(
+        $crate::gen_buffer_data_constructors!(
             ($($options_arg: $options_ty),*) -> result: $result_ty,
             $(#[$doc])*
             functions: [
@@ -217,7 +217,7 @@ macro_rules! gen_any_buffer_data_constructors {
     };
     (($($options_arg:ident: $options_ty:ty),*) -> result: $result_ty:ty, $(#[$doc:meta])* functions: [$baked:ident: skip, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
         #[cfg(feature = "serde")]
-        #[doc = $crate::gen_any_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
+        #[doc = $crate::gen_buffer_unstable_docs!(BUFFER, $($struct ::)? $baked)]
         pub fn $buffer(provider: &(impl $crate::buf::BufferProvider + ?Sized) $(, $options_arg: $options_ty)* ) -> $result_ty {
             use $crate::buf::AsDeserializingBufferProvider;
             $($struct :: )? $unstable(&provider.as_deserializing()  $(, $options_arg)* )

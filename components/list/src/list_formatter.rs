@@ -29,7 +29,7 @@ pub struct ListFormatter {
 
 macro_rules! constructor {
     ($name: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
-        icu_provider::gen_any_buffer_data_constructors!(
+        icu_provider::gen_buffer_data_constructors!(
             (prefs: ListFormatterPreferences, options: ListFormatterOptions) ->  error: DataError,
             #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
             ///
@@ -43,7 +43,7 @@ macro_rules! constructor {
             ]
         );
 
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
+        #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
             provider: &(impl DataProvider<$marker> + ?Sized),
             prefs: ListFormatterPreferences,

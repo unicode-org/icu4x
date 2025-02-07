@@ -233,7 +233,7 @@ impl LocaleExpander {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
         new_common: skip,
         try_new_common_with_buffer_provider,
@@ -241,7 +241,7 @@ impl LocaleExpander {
         Self
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1>
@@ -283,7 +283,7 @@ impl LocaleExpander {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
         new_extended: skip,
         try_new_extended_with_buffer_provider,
@@ -291,7 +291,7 @@ impl LocaleExpander {
         Self
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1>

@@ -150,7 +150,7 @@ impl GeneralCategoryData {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -222,7 +222,7 @@ impl CombiningClassData {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -257,7 +257,7 @@ impl MirroringData {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -300,7 +300,7 @@ impl ScriptData {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -340,7 +340,7 @@ impl ComposeData {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -378,7 +378,7 @@ impl DecomposeData {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {

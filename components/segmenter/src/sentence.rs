@@ -137,7 +137,7 @@ impl SentenceSegmenter {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: SentenceBreakOptions) -> error: DataError,
         /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
         functions: [
@@ -148,7 +148,7 @@ impl SentenceSegmenter {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         options: SentenceBreakOptions,

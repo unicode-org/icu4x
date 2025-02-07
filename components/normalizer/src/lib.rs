@@ -2074,7 +2074,7 @@ impl DecomposingNormalizer {
         DecomposingNormalizerBorrowed::new_nfd()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfd: skip,
@@ -2084,7 +2084,7 @@ impl DecomposingNormalizer {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
     pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2>
@@ -2125,7 +2125,7 @@ impl DecomposingNormalizer {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfkd: skip,
@@ -2145,7 +2145,7 @@ impl DecomposingNormalizer {
         DecomposingNormalizerBorrowed::new_nfkd()
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
     pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CompatibilityDecompositionDataV2>
@@ -2646,7 +2646,7 @@ impl ComposingNormalizer {
         ComposingNormalizerBorrowed::new_nfc()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfc: skip,
@@ -2656,7 +2656,7 @@ impl ComposingNormalizer {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
     pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2>
@@ -2685,7 +2685,7 @@ impl ComposingNormalizer {
         ComposingNormalizerBorrowed::new_nfkc()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfkc: skip,
@@ -2695,7 +2695,7 @@ impl ComposingNormalizer {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
     pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CompatibilityDecompositionDataV2>
@@ -2715,7 +2715,7 @@ impl ComposingNormalizer {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
     pub(crate) fn try_new_uts46_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<Uts46DecompositionDataV2>

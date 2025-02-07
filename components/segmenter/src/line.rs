@@ -399,7 +399,7 @@ impl LineSegmenter {
     }
 
     #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             new_auto: skip,
@@ -410,7 +410,7 @@ impl LineSegmenter {
     );
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     pub fn try_new_auto_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -448,7 +448,7 @@ impl LineSegmenter {
     }
 
     #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             try_new_lstm: skip,
@@ -459,7 +459,7 @@ impl LineSegmenter {
     );
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
     pub fn try_new_lstm_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -505,7 +505,7 @@ impl LineSegmenter {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             new_dictionary: skip,
@@ -515,7 +515,7 @@ impl LineSegmenter {
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(
         provider: &D,
         options: LineBreakOptions,

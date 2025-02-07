@@ -41,7 +41,7 @@ pub struct LongCurrencyFormatter {
 }
 
 impl LongCurrencyFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new: skip,
@@ -94,7 +94,7 @@ impl LongCurrencyFormatter {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: CurrencyFormatterPreferences,

@@ -159,7 +159,7 @@ macro_rules! constructor {
             })
         }
 
-        icu_provider::gen_any_buffer_data_constructors!(
+        icu_provider::gen_buffer_data_constructors!(
             (prefs: RelativeTimeFormatterPreferences, options: RelativeTimeFormatterOptions) -> error: DataError,
             functions: [
                 $baked: skip,
@@ -170,7 +170,7 @@ macro_rules! constructor {
         );
 
 
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
+        #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
             provider: &D,
             prefs: RelativeTimeFormatterPreferences,

@@ -40,7 +40,7 @@ impl CodePointSetData {
         CodePointSetDataBorrowed { set: P::SINGLETON }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P: BinaryProperty>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
     ) -> Result<CodePointSetData, DataError> {

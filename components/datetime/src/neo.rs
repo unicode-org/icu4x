@@ -89,9 +89,9 @@ prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
 });
 
 /// Helper macro for generating any/buffer constructors in this file.
-macro_rules! gen_any_buffer_constructors_with_external_loader {
+macro_rules! gen_buffer_constructors_with_external_loader {
     (@runtime_fset, $fset:ident, $compiled_fn:ident $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+        #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
@@ -110,7 +110,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
         }
     };
     (@compiletime_fset, $fset:ident, $compiled_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+        #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
@@ -198,7 +198,7 @@ where
         )
     }
 
-    gen_any_buffer_constructors_with_external_loader!(
+    gen_buffer_constructors_with_external_loader!(
         @compiletime_fset,
         FSet,
         try_new,
@@ -206,7 +206,7 @@ where
         try_new_internal
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
@@ -425,7 +425,7 @@ where
         )
     }
 
-    gen_any_buffer_constructors_with_external_loader!(
+    gen_buffer_constructors_with_external_loader!(
         @compiletime_fset,
         FSet,
         try_new,
@@ -433,7 +433,7 @@ where
         try_new_internal
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,

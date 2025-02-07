@@ -69,7 +69,7 @@ pub struct CompactCurrencyFormatter {
 }
 
 impl CompactCurrencyFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: CompactCurrencyFormatterPreferences, options: CompactCurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
@@ -120,7 +120,7 @@ impl CompactCurrencyFormatter {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: CompactCurrencyFormatterPreferences,
