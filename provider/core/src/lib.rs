@@ -149,9 +149,11 @@ pub use marker_full::{data_marker, DataMarker, DataMarkerInfo, DynamicDataMarker
 pub mod marker {
     //! Additional [`DataMarker`](super::DataMarker) helpers.
 
+    #[cfg(feature = "export")]
+    pub use super::marker_full::DataMarkerIdHash;
     pub use super::marker_full::{
-        data_marker_id, impl_data_provider_never_marker, DataMarkerExt, DataMarkerId,
-        DataMarkerIdHash, ErasedMarker, NeverMarker,
+        data_marker_id, impl_data_provider_never_marker, DataMarkerExt, DataMarkerId, ErasedMarker,
+        NeverMarker,
     };
 }
 
