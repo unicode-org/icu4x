@@ -168,6 +168,8 @@ export { WordBreakIteratorUtf8 } from "./WordBreakIteratorUtf8"
 
 export { WordSegmenter } from "./WordSegmenter"
 
+export { StringIterator } from "./StringIterator"
+
 export { Time } from "./Time"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"

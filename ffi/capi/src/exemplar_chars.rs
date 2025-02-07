@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use crate::{properties_iter::ffi::CodePointRangeIterator, string_iter::ffi::StringIterator};
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
@@ -45,6 +46,28 @@ pub mod ffi {
         )]
         pub fn contains(&self, cp: DiplomatChar) -> bool {
             self.0.as_borrowed().contains32(cp)
+        }
+
+        /// Get an iterator of all the code point ranges in the current exemplar character set.
+        #[diplomat::rust_link(
+            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::code_points,
+            FnInStruct
+        )]
+        pub fn code_point_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            let ranges = self.0.as_borrowed().code_points().iter_ranges().collect::<Vec<_>>();
+
+            Box::new(CodePointRangeIterator(Box::new(ranges.into_iter())))
+        }
+
+        /// Get an iterator of all the code point ranges in the current exemplar character set.
+        #[diplomat::rust_link(
+            icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::strings,
+            FnInStruct
+        )]
+        pub fn strings(&self) -> Box<StringIterator> {
+            let strings = self.0.as_borrowed().strings().iter().map(|s| s.to_string()).collect::<Vec<_>>();
+
+            Box::new(StringIterator(Box::new(strings.into_iter())))
         }
 
         /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
