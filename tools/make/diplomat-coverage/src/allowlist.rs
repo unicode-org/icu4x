@@ -248,6 +248,11 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedDateTime::pattern",
 
         // Not planned for 2.0
+        // DateTimeFormatter conversion functions that involve moving opaques
+        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
+        "icu::datetime::FixedCalendarDateTimeFormatter::into_formatter",
+
+        // Not planned for 2.0
         // Serde-specific
         "icu::datetime::fieldsets::serde",
 
