@@ -12,14 +12,15 @@ pub mod ffi {
     use icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet;
     use writeable::Writeable;
 
-    use crate::{date::ffi::IsoDate, datetime_formatter::ffi::DateTimeLength, time::ffi::Time};
+    use crate::{date::ffi::IsoDate, time::ffi::Time};
 
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use super::map_or_default;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{errors::ffi::DateTimeFormatterLoadError, locale_core::ffi::Locale};
+    use crate::{
+        datetime_formatter::ffi::DateTimeLength, errors::ffi::DateTimeFormatterLoadError,
+        locale_core::ffi::Locale, neo_datetime::map_or_default,
+    };
 
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
