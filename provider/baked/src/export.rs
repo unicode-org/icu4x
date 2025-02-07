@@ -260,7 +260,8 @@ impl BakedExporter {
 
         if !self.use_separate_crates {
             // Don't search the whole file, there should be a macro in the first 1000 bytes
-            if formatted[..1000].contains("macro_rules!") || formatted[..1000].contains("include!")
+            if formatted[..core::cmp::min(formatted.len(), 1000)].contains("macro_rules!")
+                || formatted[..core::cmp::min(formatted.len(), 1000)].contains("include!")
             {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
