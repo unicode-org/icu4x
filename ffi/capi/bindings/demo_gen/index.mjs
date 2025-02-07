@@ -23,6 +23,8 @@ import * as LocaleDemo from "./Locale.mjs";
 export * as LocaleDemo from "./Locale.mjs";
 import * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
 export * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
+import * as DateTimeFormatterGregorianDemo from "./DateTimeFormatterGregorian.mjs";
+export * as DateTimeFormatterGregorianDemo from "./DateTimeFormatterGregorian.mjs";
 import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
@@ -703,6 +705,87 @@ let termini = Object.assign({
             
             {
                 name: "DateTimeFormatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Nanosecond",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "DateTimeFormatterGregorian.formatIso": {
+        func: DateTimeFormatterGregorianDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "DateTimeFormatterGregorian.formatIso",
+        parameters: [
+            
+            {
+                name: "DateTimeFormatterGregorian:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "DateTimeFormatterGregorian:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateTimeFormatterGregorian:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateTimeFormatterGregorian:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateTimeFormatterGregorian:YearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator"
             },

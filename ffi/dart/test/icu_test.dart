@@ -59,31 +59,44 @@ void main() {
     final zonedDateTime = ZonedDateTimeParser()
         .tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
 
-    var locale = Locale.fromString('de');
+    var locale = Locale.fromString('de-u-ca-islamic');
 
     expect(
-        DateTimeFormatter.mdet(locale)
+        DateTimeFormatter.ymdet(locale)
             .formatIso(zonedDateTime.date, zonedDateTime.time),
-        'Mi., 15.01., 14:32:12');
+        'Mi., 14. Raj. 1446 AH, 14:32:12');
 
     expect(
-        DateTimeFormatter.mdet(
+        DateTimeFormatter.ymdet(
           locale,
           length: DateTimeLength.long,
           timePrecision: TimePrecision.minute,
         ).formatIso(zonedDateTime.date, zonedDateTime.time),
-        'Mittwoch, 15. Januar, 14:32');
+        'Mittwoch, 14. Radschab 1446 AH, 14:32');
+
+    expect(
+        DateTimeFormatterGregorian.ymdet(locale)
+            .formatIso(zonedDateTime.date, zonedDateTime.time),
+        'Mi., 15.01.2025, 14:32:12');
+
+    expect(
+        DateTimeFormatterGregorian.ymdet(
+          locale,
+          length: DateTimeLength.long,
+          timePrecision: TimePrecision.minute,
+        ).formatIso(zonedDateTime.date, zonedDateTime.time),
+        'Mittwoch, 15. Januar 2025, 14:32');
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long)
             .formatIso(
                 zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
-        '15. Januar 2025, 14:32:12 MEZ');
+        '14. Radschab 1446 AH, 14:32:12 MEZ');
 
     expect(
         ZonedDateTimeFormatter.withLength(locale, DateTimeLength.short)
             .formatIso(
                 zonedDateTime.date, zonedDateTime.time, zonedDateTime.zone),
-        '15.01.25, 14:32:12 MEZ');
+        '14.07.46 AH, 14:32:12 MEZ');
   });
 }

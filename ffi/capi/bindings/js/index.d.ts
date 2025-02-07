@@ -100,6 +100,8 @@ export { Logger } from "./Logger"
 
 export { DateTimeFormatter } from "./DateTimeFormatter"
 
+export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
+
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer"

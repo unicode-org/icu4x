@@ -50,6 +50,7 @@ part 'DateTime.g.dart';
 part 'DateTimeAlignment.g.dart';
 part 'DateTimeFormatError.g.dart';
 part 'DateTimeFormatter.g.dart';
+part 'DateTimeFormatterGregorian.g.dart';
 part 'DateTimeFormatterLoadError.g.dart';
 part 'DateTimeLength.g.dart';
 part 'Decomposed.g.dart';

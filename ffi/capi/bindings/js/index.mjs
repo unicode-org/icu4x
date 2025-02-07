@@ -98,6 +98,8 @@ export { Logger } from "./Logger.mjs"
 
 export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
 
+export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian.mjs"
+
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer.mjs"
