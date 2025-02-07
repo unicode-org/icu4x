@@ -13,6 +13,8 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct Date; }
+class Date;
 namespace capi { struct DateTimeFormatter; }
 class DateTimeFormatter;
 namespace capi { struct IsoDate; }
@@ -21,6 +23,7 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct Time; }
 class Time;
+struct DateTimeMismatchedCalendarError;
 class DateTimeAlignment;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
@@ -68,6 +71,8 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_et_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   inline std::string format_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
+
+  inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> format_same_calendar(const icu4x::Date& date, const icu4x::Time& time) const;
 
   inline const icu4x::capi::DateTimeFormatter* AsFFI() const;
   inline icu4x::capi::DateTimeFormatter* AsFFI();

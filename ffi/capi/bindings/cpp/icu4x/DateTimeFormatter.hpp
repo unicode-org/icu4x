@@ -12,9 +12,11 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
+#include "Date.hpp"
 #include "DateTimeAlignment.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
+#include "DateTimeMismatchedCalendarError.hpp"
 #include "IsoDate.hpp"
 #include "Locale.hpp"
 #include "Time.hpp"
@@ -69,6 +71,9 @@ namespace capi {
     icu4x_DateTimeFormatter_create_et_with_provider_mv1_result icu4x_DateTimeFormatter_create_et_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
     
     void icu4x_DateTimeFormatter_format_iso_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
+    
+    typedef struct icu4x_DateTimeFormatter_format_same_calendar_mv1_result {union { icu4x::capi::DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_DateTimeFormatter_format_same_calendar_mv1_result;
+    icu4x_DateTimeFormatter_format_same_calendar_mv1_result icu4x_DateTimeFormatter_format_same_calendar_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::Date* date, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_DateTimeFormatter_destroy_mv1(DateTimeFormatter* self);
@@ -208,6 +213,16 @@ inline std::string icu4x::DateTimeFormatter::format_iso(const icu4x::IsoDate& da
     time.AsFFI(),
     &write);
   return output;
+}
+
+inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> icu4x::DateTimeFormatter::format_same_calendar(const icu4x::Date& date, const icu4x::Time& time) const {
+  std::string output;
+  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_format_same_calendar_mv1(this->AsFFI(),
+    date.AsFFI(),
+    time.AsFFI(),
+    &write);
+  return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError>(diplomat::Err<icu4x::DateTimeMismatchedCalendarError>(icu4x::DateTimeMismatchedCalendarError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::DateTimeFormatter* icu4x::DateTimeFormatter::AsFFI() const {

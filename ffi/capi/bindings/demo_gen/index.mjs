@@ -689,6 +689,93 @@ let termini = Object.assign({
         ]
     },
 
+    "DateTimeFormatter.formatSameCalendar": {
+        func: DateTimeFormatterDemo.formatSameCalendar,
+        // For avoiding webpacking minifying issues:
+        funcName: "DateTimeFormatter.formatSameCalendar",
+        parameters: [
+            
+            {
+                name: "DateTimeFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "DateTimeFormatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateTimeFormatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateTimeFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateTimeFormatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Calendar:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Nanosecond",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
     "DateTimeFormatterGregorian.formatIso": {
         func: DateTimeFormatterGregorianDemo.formatIso,
         // For avoiding webpacking minifying issues:

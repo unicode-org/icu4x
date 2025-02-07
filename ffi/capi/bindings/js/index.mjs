@@ -6,6 +6,8 @@ export { CollatorOptions } from "./CollatorOptions.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
+export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
+
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"

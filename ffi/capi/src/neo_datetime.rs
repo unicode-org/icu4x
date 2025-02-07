@@ -9,11 +9,15 @@ use icu_datetime::options::FractionalSecondDigits;
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_calendar::Gregorian;
     use icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet;
     use writeable::Writeable;
-    use icu_calendar::Gregorian;
 
-    use crate::{date::ffi::IsoDate, time::ffi::Time};
+    use crate::{
+        date::ffi::{Date, IsoDate},
+        errors::ffi::DateTimeMismatchedCalendarError,
+        time::ffi::Time,
+    };
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
@@ -516,12 +520,29 @@ pub mod ffi {
             };
             let _infallible = self.0.format(&value).write_to(write);
         }
-    }
 
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        pub fn format_same_calendar(
+            &self,
+            date: &Date,
+            time: &Time,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeMismatchedCalendarError> {
+            let value = icu_timezone::DateTime {
+                date: date.0.wrap_calendar_in_ref(),
+                time: time.0,
+            };
+            let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
+            Ok(())
+        }
+    }
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct DateTimeFormatterGregorian(pub icu_datetime::FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>);
+    pub struct DateTimeFormatterGregorian(
+        pub icu_datetime::FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>,
+    );
 
     impl DateTimeFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]

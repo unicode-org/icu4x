@@ -8,6 +8,8 @@ export { CollatorOptions } from "./CollatorOptions"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
+export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
+
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
