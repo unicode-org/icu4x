@@ -44,23 +44,3 @@ macro_rules! impl_data_provider {
         impl_canonical_compositions_v1!($provider);
     };
 }
-#[allow(unused_macros)]
-macro_rules! impl_any_provider {
-    ($ provider : ty) => {
-        #[clippy::msrv = "1.81"]
-        impl icu_provider::any::AnyProvider for $provider {
-            fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                match marker.id.hashed() {
-                    h if h == <icu::normalizer::provider::Uts46DecompositionDataV2 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::Uts46DecompositionDataV2>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::normalizer::provider::NonRecursiveDecompositionSupplementV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::NonRecursiveDecompositionSupplementV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::normalizer::provider::CanonicalDecompositionTablesV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CanonicalDecompositionTablesV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::normalizer::provider::CanonicalDecompositionDataV2 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CanonicalDecompositionDataV2>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::normalizer::provider::CompatibilityDecompositionTablesV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CompatibilityDecompositionTablesV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::normalizer::provider::CompatibilityDecompositionDataV2 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CompatibilityDecompositionDataV2>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::normalizer::provider::CanonicalCompositionsV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::normalizer::provider::CanonicalCompositionsV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
-                }
-            }
-        }
-    };
-}

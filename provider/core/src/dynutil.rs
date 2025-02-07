@@ -63,10 +63,6 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// [`DynamicDataProvider`] or [`DataProvider`] for one or more `M`, where `M` is a concrete type
 /// that is convertible to `S` via [`UpcastDataPayload`].
 ///
-/// Use this macro to add support to your data provider for:
-///
-/// - [`AnyPayload`] if your provider can return typed objects as [`Any`](core::any::Any).
-///
 /// ## Wrapping DataProvider
 ///
 /// If your type implements [`DataProvider`], pass a list of markers as the second argument.
