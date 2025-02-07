@@ -200,11 +200,19 @@ fn main() {
         let mut lines = Vec::new();
 
         for (marker, data) in fingerprint_metadata.into_iter() {
+            let mut marker_debug_path = String::new();
+            for (index, c) in format!("{marker:?}").char_indices() {
+                if c.is_ascii_uppercase() && index > 0 {
+                    marker_debug_path.push('/');
+                }
+                marker_debug_path.push(c.to_ascii_lowercase());
+            }
+
             if marker.is_singleton {
                 let ((baked_struct_size, postcard_struct_size), hash) =
                     data.size_hash[&Default::default()];
                 lines.push(format!(
-                    "{marker:?}, <singleton>, {baked_struct_size}B, {postcard_struct_size}B, {hash:x}"
+                    "{marker_debug_path}, <singleton>, {baked_struct_size}B, {postcard_struct_size}B, {hash:x}"
                 ));
             } else {
                 let postcard_structs_size = data
@@ -226,10 +234,10 @@ fn main() {
                 } = &baked_metadata.statistics[&marker];
 
                 lines.push(format!(
-                    "{marker:?}, <total>, {baked_structs_size}B, {postcard_structs_size}B, {structs_count} unique payloads",
+                    "{marker_debug_path}, <total>, {baked_structs_size}B, {postcard_structs_size}B, {structs_count} unique payloads",
                 ));
                 lines.push(format!(
-                    "{marker:?}, <lookup>, {lookup_struct_size}B, {identifiers_count} identifiers",
+                    "{marker_debug_path}, <lookup>, {lookup_struct_size}B, {identifiers_count} identifiers",
                 ));
 
                 let mut seen = HashMap::new();
@@ -253,10 +261,10 @@ fn main() {
                     .collect::<BTreeMap<_, _>>()
                 {
                     if let Some(deduped_req) = seen.get(&hash) {
-                        lines.push(format!("{marker:?}, {id}, -> {deduped_req}",));
+                        lines.push(format!("{marker_debug_path}, {id}, -> {deduped_req}",));
                     } else {
                         lines.push(format!(
-                            "{marker:?}, {id}, {baked_size}B, {postcard_size}B, {hash:x}",
+                            "{marker_debug_path}, {id}, {baked_size}B, {postcard_size}B, {hash:x}",
                         ));
                         seen.insert(hash, id.clone());
                     }
