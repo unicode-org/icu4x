@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include <icu4x/GregorianDateFormatter.hpp>
-#include <icu4x/GregorianDateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
+#include <icu4x/DateTimeFormatterGregorian.hpp>
 #include <icu4x/TimeFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
@@ -113,7 +113,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<GregorianDateTimeFormatter> dtf = GregorianDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Medium).ok().value();
+    std::unique_ptr<DateTimeFormatterGregorian> dtf = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>(), std::optional<YearStyle>()).ok().value();
     out = dtf->format_iso(*date.get(), *time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 jul 2022, 13:06") {

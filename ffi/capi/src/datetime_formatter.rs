@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
-    use icu_datetime::fieldsets::{T, YMD, YMDT};
+    use icu_datetime::fieldsets::{T, YMD};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
 
@@ -141,71 +141,6 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         pub fn format_iso(&self, value: &IsoDate, write: &mut diplomat_runtime::DiplomatWrite) {
             let greg = icu_calendar::Date::new_from_iso(value.0, icu_calendar::Gregorian);
-            let _infallible = self.0.format(&greg).write_to(write);
-        }
-    }
-
-    #[diplomat::opaque]
-    /// An ICU4X FixedCalendarDateTimeFormatter object capable of formatting an [`IsoDate`] and a [`Time`] as a string,
-    /// using the Gregorian Calendar.
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
-    #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
-    pub struct GregorianDateTimeFormatter(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, YMDT>,
-    );
-
-    impl GregorianDateTimeFormatter {
-        /// Creates a new [`GregorianDateTimeFormatter`] using compiled data.
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
-        #[diplomat::demo(default_constructor)]
-        #[cfg(feature = "compiled_data")]
-        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
-        pub fn create_with_length(
-            locale: &Locale,
-            length: DateTimeLength,
-        ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
-            let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).hm();
-
-            Ok(Box::new(GregorianDateTimeFormatter(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
-            )))
-        }
-
-        /// Creates a new [`GregorianDateTimeFormatter`] using a particular data source.
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
-        #[cfg(feature = "buffer_provider")]
-        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
-        pub fn create_with_length_and_provider(
-            provider: &DataProvider,
-            locale: &Locale,
-            length: DateTimeLength,
-        ) -> Result<Box<GregorianDateTimeFormatter>, DateTimeFormatterLoadError> {
-            let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).hm();
-
-            Ok(Box::new(GregorianDateTimeFormatter(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?,
-            )))
-        }
-
-        /// Formats an [`IsoDate`] and a [`Time`] to a string.
-        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-        pub fn format_iso(
-            &self,
-            date: &IsoDate,
-            time: &Time,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let greg = icu_timezone::DateTime {
-                date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
-                time: time.0,
-            };
             let _infallible = self.0.format(&greg).write_to(write);
         }
     }

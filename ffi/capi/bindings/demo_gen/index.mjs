@@ -9,8 +9,6 @@ import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
 import * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
 export * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
-import * as GregorianDateTimeFormatterDemo from "./GregorianDateTimeFormatter.mjs";
-export * as GregorianDateTimeFormatterDemo from "./GregorianDateTimeFormatter.mjs";
 import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
 import * as FixedDecimalFormatterDemo from "./FixedDecimalFormatter.mjs";
@@ -366,69 +364,6 @@ let termini = Object.assign({
             
             {
                 name: "Value:Day",
-                type: "number",
-                typeUse: "number"
-            }
-            
-        ]
-    },
-
-    "GregorianDateTimeFormatter.formatIso": {
-        func: GregorianDateTimeFormatterDemo.formatIso,
-        // For avoiding webpacking minifying issues:
-        funcName: "GregorianDateTimeFormatter.formatIso",
-        parameters: [
-            
-            {
-                name: "GregorianDateTimeFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "GregorianDateTimeFormatter:Length",
-                type: "DateTimeLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Date:Year",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Date:Month",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Date:Day",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Time:Hour",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Time:Minute",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Time:Second",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Time:Nanosecond",
                 type: "number",
                 typeUse: "number"
             }

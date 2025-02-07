@@ -64,8 +64,6 @@ export { DateFormatter } from "./DateFormatter.mjs"
 
 export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
 
-export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter.mjs"
-
 export { TimeFormatter } from "./TimeFormatter.mjs"
 
 export { FixedDecimalFormatter } from "./FixedDecimalFormatter.mjs"

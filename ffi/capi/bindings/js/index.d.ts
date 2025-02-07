@@ -66,8 +66,6 @@ export { DateFormatter } from "./DateFormatter"
 
 export { GregorianDateFormatter } from "./GregorianDateFormatter"
 
-export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter"
-
 export { TimeFormatter } from "./TimeFormatter"
 
 export { FixedDecimalFormatter } from "./FixedDecimalFormatter"
