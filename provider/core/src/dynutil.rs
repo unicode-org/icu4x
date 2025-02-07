@@ -15,20 +15,6 @@ where
     Self: Sized + crate::DynamicDataMarker,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
-    ///
-    /// ```
-    /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::prelude::*;
-    /// use std::borrow::Cow;
-    ///
-    /// let original = DataPayload::<HelloWorldV1>::from_static_str("foo");
-    /// let upcasted = AnyMarker::upcast(original);
-    /// let downcasted = upcasted
-    ///     .downcast::<HelloWorldV1>()
-    ///     .expect("Type conversion");
-    /// assert_eq!(downcasted.get().message, "foo");
-    /// ```
     fn upcast(other: crate::DataPayload<M>) -> crate::DataPayload<Self>;
 }
 
@@ -87,88 +73,8 @@ pub use __impl_casting_upcast as impl_casting_upcast;
 /// This results in a `DynamicDataProvider` that delegates to a specific marker if the marker
 /// matches or else returns [`DataErrorKind::MarkerNotFound`].
 ///
-/// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::*;
-/// use icu_provider::marker::NeverMarker;
-/// use icu_locale_core::langid;
-/// #
-/// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
-/// # struct HelloWorldProvider;
-/// # impl DataProvider<HelloWorldV1> for HelloWorldProvider {
-/// #     fn load(
-/// #         &self,
-/// #         req: DataRequest,
-/// #     ) -> Result<DataResponse<HelloWorldV1>, DataError> {
-/// #         icu_provider::hello_world::HelloWorldProvider.load(req)
-/// #     }
-/// # }
-///
-/// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1>
-/// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1,], AnyMarker);
-///
-/// // Successful because the marker matches:
-/// HelloWorldProvider.load_data(HelloWorldV1::INFO, DataRequest {
-///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///     ..Default::default()
-/// }).unwrap();
-///
-/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
-///
-/// // MissingDataMarker error as the marker does not match:
-/// assert_eq!(
-///     HelloWorldProvider.load_data(DummyV1::INFO, DataRequest {
-///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///     ..Default::default()
-/// }).unwrap_err().kind,
-///     DataErrorKind::MarkerNotFound,
-/// );
-/// ```
-///
-/// ## Wrapping DynamicDataProvider
-///
-/// It is also possible to wrap a [`DynamicDataProvider`] to create another [`DynamicDataProvider`]. To do this,
-/// pass a match-like statement for markers as the second argument:
-///
-/// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::hello_world::*;
-/// use icu_provider::any::*;
-/// use icu_locale_core::langid;
-/// #
-/// # struct HelloWorldProvider;
-/// # impl DynamicDataProvider<HelloWorldV1> for HelloWorldProvider {
-/// #     fn load_data(&self, marker: DataMarkerInfo, req: DataRequest)
-/// #             -> Result<DataResponse<HelloWorldV1>, DataError> {
-/// #         icu_provider::hello_world::HelloWorldProvider.load(req)
-/// #     }
-/// # }
-///
-/// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynamicDataProvider<HelloWorldV1>
-/// icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, {
-///     // Match HelloWorldV1::INFO and delegate to DynamicDataProvider<HelloWorldV1>.
-///     HW = HelloWorldV1::INFO => HelloWorldV1,
-///     // Send the wildcard match also to DynamicDataProvider<HelloWorldV1>.
-///     _ => HelloWorldV1,
-/// }, AnyMarker);
-///
-/// // Successful because the marker matches:
-/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1::INFO, DataRequest {
-///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///     ..Default::default()
-/// }).unwrap();
-///
-/// // Because of the wildcard, any marker actually works:
-/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
-/// HelloWorldProvider.as_any_provider().load_any(DummyV1::INFO, DataRequest {
-///     id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///     ..Default::default()
-/// }).unwrap();
-/// ```
-///
 /// [`DynamicDataProvider`]: crate::DynamicDataProvider
 /// [`DataProvider`]: crate::DataProvider
-/// [`AnyPayload`]: (crate::any::AnyPayload)
 /// [`DataErrorKind::MarkerNotFound`]: (crate::DataErrorKind::MarkerNotFound)
 /// [`SerializeMarker`]: (crate::buf::SerializeMarker)
 #[doc(hidden)] // macro

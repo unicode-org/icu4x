@@ -32,16 +32,6 @@ use yoke::Yokeable;
 /// )
 /// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
-///
-/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
-/// // Requests for invalid markers get MissingDataMarker
-/// assert!(matches!(
-///     provider.load_any(DummyV1::INFO, Default::default()),
-///     Err(DataError {
-///         kind: DataErrorKind::MarkerNotFound,
-///         ..
-///     })
-/// ))
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct FixedProvider<M: DataMarker> {

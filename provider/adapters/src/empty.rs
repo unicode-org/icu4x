@@ -25,7 +25,7 @@ use icu_provider::prelude::*;
 /// let provider = EmptyDataProvider::new();
 ///
 /// assert!(matches!(
-///     provider.load_any(HelloWorldV1::INFO, Default::default()),
+///     DataProvider::<HelloWorldV1>::load(&provider, Default::default()),
 ///     Err(DataError {
 ///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
