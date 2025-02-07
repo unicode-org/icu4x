@@ -30,7 +30,7 @@ int main() {
     std::unique_ptr<IsoDate> date = IsoDate::create(2022, 07, 11).ok().value();
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
 
-    std::unique_ptr<DateTimeFormatter> fmt_dt = DateTimeFormatter::create_dt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_dt = DateTimeFormatter::create_dt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt).ok().value();
     std::string out = fmt_dt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset DT: " << out;
     if (out != "11, 13:06") {
@@ -39,7 +39,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatter> fmt_mdt = DateTimeFormatter::create_mdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_mdt = DateTimeFormatter::create_mdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt).ok().value();
     out = fmt_mdt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset MDT: " << out;
     if (out != "11 jul, 13:06") {
@@ -48,7 +48,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatter> fmt_ymdt = DateTimeFormatter::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>(), std::optional<YearStyle>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_ymdt = DateTimeFormatter::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
     out = fmt_ymdt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset YMDT: " << out;
     if (out != "11 jul 2022, 13:06") {
@@ -57,7 +57,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatter> fmt_det = DateTimeFormatter::create_det(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_det = DateTimeFormatter::create_det(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt).ok().value();
     out = fmt_det->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset DET: " << out;
     if (out != "lun 11, 13:06") {
@@ -66,7 +66,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatter> fmt_mdet = DateTimeFormatter::create_mdet(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_mdet = DateTimeFormatter::create_mdet(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt).ok().value();
     out = fmt_mdet->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset MDET: " << out;
     if (out != "lun, 11 jul, 13:06") {
@@ -75,7 +75,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatter> fmt_ymdet = DateTimeFormatter::create_ymdet(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>(), std::optional<YearStyle>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_ymdet = DateTimeFormatter::create_ymdet(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
     out = fmt_ymdet->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset YMDET: " << out;
     if (out != "lun, 11 jul 2022, 13:06") {
@@ -84,7 +84,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatter> fmt_et = DateTimeFormatter::create_et(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>()).ok().value();
+    std::unique_ptr<DateTimeFormatter> fmt_et = DateTimeFormatter::create_et(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt).ok().value();
     out = fmt_et->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset ET: " << out;
     if (out != "lun, 13:06") {
@@ -113,7 +113,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<DateTimeFormatterGregorian> dtf = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::optional<DateTimeAlignment>(), std::optional<YearStyle>()).ok().value();
+    std::unique_ptr<DateTimeFormatterGregorian> dtf = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
     out = dtf->format_iso(*date.get(), *time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 jul 2022, 13:06") {
