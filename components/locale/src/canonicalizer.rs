@@ -209,7 +209,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new_common: skip,
-            try_new_common_with_any_provider,
             try_new_common_with_buffer_provider,
             try_new_common_unstable,
             Self,
@@ -242,7 +241,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new_extended: skip,
-            try_new_extended_with_any_provider,
             try_new_extended_with_buffer_provider,
             try_new_extended_unstable,
             Self,
@@ -293,7 +291,6 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     icu_provider::gen_any_buffer_data_constructors!((options: Expander) -> error: DataError,
         functions: [
             new_with_expander: skip,
-            try_new_with_expander_with_any_provider,
             try_new_with_expander_with_buffer_provider,
             try_new_with_expander_unstable,
             Self,

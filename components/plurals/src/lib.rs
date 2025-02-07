@@ -325,7 +325,6 @@ impl PluralRules {
         /// [`Other`]: PluralCategory::Other
         functions: [
             try_new_cardinal,
-            try_new_cardinal_with_any_provider,
             try_new_cardinal_with_buffer_provider,
             try_new_cardinal_unstable,
             Self,
@@ -382,7 +381,6 @@ impl PluralRules {
         /// [`Other`]: PluralCategory::Other
         functions: [
             try_new_ordinal,
-            try_new_ordinal_with_any_provider,
             try_new_ordinal_with_buffer_provider,
             try_new_ordinal_unstable,
             Self,
@@ -613,7 +611,6 @@ impl PluralRulesWithRanges<PluralRules> {
         /// ```
         functions: [
             try_new_cardinal,
-            try_new_cardinal_with_any_provider,
             try_new_cardinal_with_buffer_provider,
             try_new_cardinal_unstable,
             Self,
@@ -652,7 +649,6 @@ impl PluralRulesWithRanges<PluralRules> {
         /// ```
         functions: [
             try_new_ordinal,
-            try_new_ordinal_with_any_provider,
             try_new_ordinal_with_buffer_provider,
             try_new_ordinal_unstable,
             Self,
@@ -700,7 +696,6 @@ where
         /// ```
         functions: [
             try_new_with_rules,
-            try_new_with_rules_with_any_provider,
             try_new_with_rules_with_buffer_provider,
             try_new_with_rules_unstable,
             Self,

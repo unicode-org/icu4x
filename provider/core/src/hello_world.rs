@@ -173,8 +173,6 @@ impl DataPayload<HelloWorldV1> {
     }
 }
 
-icu_provider::dynutil::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1,], AnyMarker);
-
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
 ///
@@ -291,7 +289,6 @@ impl HelloWorldFormatter {
     icu_provider::gen_any_buffer_data_constructors!((prefs: HelloWorldFormatterPreferences) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self,

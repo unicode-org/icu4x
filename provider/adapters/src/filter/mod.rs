@@ -122,17 +122,6 @@ where
     }
 }
 
-impl<D, F> AnyProvider for FilterDataProvider<D, F>
-where
-    F: Fn(DataIdentifierBorrowed) -> bool,
-    D: AnyProvider,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.check(marker, req)?;
-        self.inner.load_any(marker, req)
-    }
-}
-
 impl<M, D, F> IterableDynamicDataProvider<M> for FilterDataProvider<D, F>
 where
     M: DynamicDataMarker,

@@ -109,7 +109,6 @@
 
 extern crate alloc;
 
-pub mod any;
 pub mod buf;
 pub mod constructors;
 pub mod dynutil;
@@ -157,11 +156,6 @@ pub mod marker {
 
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
-    #[doc(no_inline)]
-    pub use crate::any::{
-        AnyMarker, AnyPayload, AnyProvider, AnyResponse, AsDowncastingAnyProvider,
-        AsDynamicDataProviderAnyMarkerWrap,
-    };
     #[doc(no_inline)]
     #[cfg(feature = "serde")]
     pub use crate::buf::AsDeserializingBufferProvider;

@@ -57,16 +57,6 @@ impl EmptyDataProvider {
     }
 }
 
-impl AnyProvider for EmptyDataProvider {
-    fn load_any(
-        &self,
-        marker: DataMarkerInfo,
-        base_req: DataRequest,
-    ) -> Result<AnyResponse, DataError> {
-        Err(self.error_kind.with_req(marker, base_req))
-    }
-}
-
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
     M: DynamicDataMarker,

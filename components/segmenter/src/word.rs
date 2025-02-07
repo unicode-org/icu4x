@@ -235,7 +235,6 @@ impl WordSegmenter {
         (options: WordBreakOptions) -> error: DataError,
         functions: [
             try_new_auto,
-            try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
             Self
@@ -329,7 +328,6 @@ impl WordSegmenter {
         (options: WordBreakOptions) -> error: DataError,
         functions: [
             try_new_lstm,
-            try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
             Self
@@ -415,7 +413,6 @@ impl WordSegmenter {
         (options: WordBreakOptions) -> error: DataError,
         functions: [
             try_new_dictionary,
-            try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
             Self

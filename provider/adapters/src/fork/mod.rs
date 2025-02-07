@@ -36,9 +36,6 @@ mod by_error;
 
 pub mod predicates;
 
-#[macro_use]
-mod macros;
-
 pub use by_error::ForkByErrorProvider;
 pub use by_error::MultiForkByErrorProvider;
 

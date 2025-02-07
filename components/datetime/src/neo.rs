@@ -90,23 +90,7 @@ prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_any_buffer_constructors_with_external_loader {
-    (@runtime_fset, $fset:ident, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
-        pub fn $any_fn<P>(
-            provider: &P,
-            prefs: DateTimeFormatterPreferences,
-            field_set: $fset,
-        ) -> Result<Self, DateTimeFormatterLoadError>
-        where
-            P: AnyProvider + ?Sized,
-        {
-            Self::$internal_fn(
-                &provider.as_downcasting(),
-                &ExternalLoaderAny(provider),
-                prefs,
-                field_set.get_field(),
-            )
-        }
+    (@runtime_fset, $fset:ident, $compiled_fn:ident $buffer_fn:ident, $internal_fn:ident) => {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
@@ -125,23 +109,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
     };
-    (@compiletime_fset, $fset:ident, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
-        pub fn $any_fn<P>(
-            provider: &P,
-            prefs: DateTimeFormatterPreferences,
-            field_set: $fset,
-        ) -> Result<Self, DateTimeFormatterLoadError>
-        where
-            P: AnyProvider + ?Sized,
-        {
-            Self::$internal_fn(
-                &provider.as_downcasting(),
-                &ExternalLoaderAny(provider),
-                prefs,
-                field_set.get_field(),
-            )
-        }
+    (@compiletime_fset, $fset:ident, $compiled_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
@@ -234,7 +202,6 @@ where
         @compiletime_fset,
         FSet,
         try_new,
-        try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal
     );
@@ -462,7 +429,6 @@ where
         @compiletime_fset,
         FSet,
         try_new,
-        try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal
     );

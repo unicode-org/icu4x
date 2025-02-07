@@ -74,7 +74,6 @@ Static markers that determine the type of data is great for data that is compile
 
 Because of these three data provider types, every `ICU4X` API has four constructors:
 * `try_new`: This uses the built-in data provider
-* `try_new_with_any_provider`: This loads data from a provided `&impl AnyProvider`, downcasting it
 * `try_new_with_buffer_provider`: This loads data from a provided `&impl BufferProvider`, deserializing it
 * `try_new_unstable`: This loads data from a provided `&impl DataProvider<X + Y + ...>`. It is *semver unstable*, because the bounds on the provider might change in case more data is required in the future.
 

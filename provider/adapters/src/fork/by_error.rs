@@ -79,23 +79,6 @@ where
     }
 }
 
-impl<P0, P1, F> AnyProvider for ForkByErrorProvider<P0, P1, F>
-where
-    P0: AnyProvider,
-    P1: AnyProvider,
-    F: ForkByErrorPredicate,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let result = self.0.load_any(marker, req);
-        match result {
-            Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
-            _ => (),
-        };
-        self.1.load_any(marker, req)
-    }
-}
-
 impl<M, P0, P1, F> DynamicDataProvider<M> for ForkByErrorProvider<P0, P1, F>
 where
     M: DynamicDataMarker,
@@ -254,25 +237,6 @@ where
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(M::INFO, Some(req), err) => return Err(err),
-                Err(err) => last_error = err,
-            };
-        }
-        Err(last_error)
-    }
-}
-
-impl<P, F> AnyProvider for MultiForkByErrorProvider<P, F>
-where
-    P: AnyProvider,
-    F: ForkByErrorPredicate,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_marker(marker);
-        for provider in self.providers.iter() {
-            let result = provider.load_any(marker, req);
-            match result {
-                Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }

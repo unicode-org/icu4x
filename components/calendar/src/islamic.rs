@@ -124,7 +124,6 @@ impl IslamicObservational {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self,
@@ -170,8 +169,7 @@ impl IslamicUmmAlQura {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
     ]);

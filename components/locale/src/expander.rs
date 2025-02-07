@@ -236,7 +236,6 @@ impl LocaleExpander {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
         new_common: skip,
-        try_new_common_with_any_provider,
         try_new_common_with_buffer_provider,
         try_new_common_unstable,
         Self
@@ -287,7 +286,6 @@ impl LocaleExpander {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
         functions: [
         new_extended: skip,
-        try_new_extended_with_any_provider,
         try_new_extended_with_buffer_provider,
         try_new_extended_unstable,
         Self

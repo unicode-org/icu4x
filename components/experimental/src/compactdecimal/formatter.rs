@@ -132,7 +132,6 @@ impl CompactDecimalFormatter {
         (prefs: CompactDecimalFormatterPreferences, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
             try_new_short: skip,
-            try_new_short_with_any_provider,
             try_new_short_with_buffer_provider,
             try_new_short_unstable,
             Self,
@@ -219,7 +218,6 @@ impl CompactDecimalFormatter {
         (prefs: CompactDecimalFormatterPreferences, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
             try_new_long: skip,
-            try_new_long_with_any_provider,
             try_new_long_with_buffer_provider,
             try_new_long_unstable,
             Self,

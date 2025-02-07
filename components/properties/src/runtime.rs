@@ -362,7 +362,6 @@ impl CodePointSetData {
         functions: [
             new_for_ecma262: skip,
             try_new_for_ecma262_with_buffer_provider,
-            try_new_for_ecma262_with_any_provider,
             try_new_for_ecma262_unstable,
             Self,
         ]

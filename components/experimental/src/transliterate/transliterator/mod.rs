@@ -246,17 +246,6 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(
-            &provider.as_downcasting(),
-            &provider.as_downcasting(),
-            locale,
-        )
-    }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
     pub fn try_new_with_buffer_provider(
@@ -347,22 +336,6 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_override)]
-    pub fn try_new_with_override_with_any_provider<F>(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
-        lookup: F,
-    ) -> Result<Self, DataError>
-    where
-        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
-    {
-        Self::try_new_with_override_unstable(
-            &provider.as_downcasting(),
-            &provider.as_downcasting(),
-            locale,
-            lookup,
-        )
-    }
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_override)]
     pub fn try_new_with_override_with_buffer_provider<F>(

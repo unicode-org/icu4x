@@ -279,8 +279,7 @@ impl Collator {
         (prefs: CollatorPreferences, options: CollatorOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]

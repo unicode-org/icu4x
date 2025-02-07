@@ -2078,7 +2078,6 @@ impl DecomposingNormalizer {
         () -> error: DataError,
         functions: [
             new_nfd: skip,
-            try_new_nfd_with_any_provider,
             try_new_nfd_with_buffer_provider,
             try_new_nfd_unstable,
             Self,
@@ -2130,7 +2129,6 @@ impl DecomposingNormalizer {
         () -> error: DataError,
         functions: [
             new_nfkd: skip,
-            try_new_nfkd_with_any_provider,
             try_new_nfkd_with_buffer_provider,
             try_new_nfkd_unstable,
             Self,
@@ -2652,7 +2650,6 @@ impl ComposingNormalizer {
         () -> error: DataError,
         functions: [
             new_nfc: skip,
-            try_new_nfc_with_any_provider,
             try_new_nfc_with_buffer_provider,
             try_new_nfc_unstable,
             Self,
@@ -2692,7 +2689,6 @@ impl ComposingNormalizer {
         () -> error: DataError,
         functions: [
             new_nfkc: skip,
-            try_new_nfkc_with_any_provider,
             try_new_nfkc_with_buffer_provider,
             try_new_nfkc_unstable,
             Self,

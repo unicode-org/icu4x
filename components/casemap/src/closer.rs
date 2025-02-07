@@ -90,8 +90,7 @@ impl CaseMapCloser<CaseMapper> {
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
         new: skip,
-        try_new_with_any_provider,
-        try_new_with_buffer_provider,
+                try_new_with_buffer_provider,
         try_new_unstable,
         Self,
     ]);
@@ -112,7 +111,6 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
     functions: [
         new_with_mapper: skip,
-        try_new_with_mapper_with_any_provider,
         try_new_with_mapper_with_buffer_provider,
         try_new_with_mapper_unstable,
         Self,

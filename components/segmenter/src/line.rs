@@ -403,7 +403,6 @@ impl LineSegmenter {
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             new_auto: skip,
-            try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
             Self,
@@ -453,7 +452,6 @@ impl LineSegmenter {
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             try_new_lstm: skip,
-            try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
             Self,
@@ -511,7 +509,6 @@ impl LineSegmenter {
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             new_dictionary: skip,
-            try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
             Self,

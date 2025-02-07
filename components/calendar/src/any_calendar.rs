@@ -612,52 +612,6 @@ impl AnyCalendar {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_for_kind)]
-    pub fn try_new_for_kind_with_any_provider<P>(
-        provider: &P,
-        kind: AnyCalendarKind,
-    ) -> Result<Self, DataError>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        Ok(match kind {
-            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => {
-                AnyCalendar::Chinese(Chinese::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => {
-                AnyCalendar::Dangi(Dangi::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
-                EthiopianEraStyle::AmeteMihret,
-            )),
-            AnyCalendarKind::EthiopianAmeteAlem => {
-                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
-            }
-            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
-            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
-            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
-            AnyCalendarKind::IslamicObservational => AnyCalendar::IslamicObservational(
-                IslamicObservational::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(
-                IslamicUmmAlQura::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Japanese => {
-                AnyCalendar::Japanese(Japanese::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
-                JapaneseExtended::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
-            AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
-        })
-    }
-
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
     pub fn try_new_for_kind_with_buffer_provider<P>(
@@ -772,7 +726,6 @@ impl AnyCalendar {
         (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self,

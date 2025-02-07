@@ -28,7 +28,7 @@ pub struct ListFormatter {
 }
 
 macro_rules! constructor {
-    ($name: ident, $name_any: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
+    ($name: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
         icu_provider::gen_any_buffer_data_constructors!(
             (prefs: ListFormatterPreferences, options: ListFormatterOptions) ->  error: DataError,
             #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
@@ -37,7 +37,6 @@ macro_rules! constructor {
             /// an explanation of the different types.
             functions: [
                 $name,
-                $name_any,
                 $name_buffer,
                 $name_unstable,
                 Self
@@ -74,7 +73,6 @@ macro_rules! constructor {
 impl ListFormatter {
     constructor!(
         try_new_and,
-        try_new_and_with_any_provider,
         try_new_and_with_buffer_provider,
         try_new_and_unstable,
         AndListV2,
@@ -82,7 +80,6 @@ impl ListFormatter {
     );
     constructor!(
         try_new_or,
-        try_new_or_with_any_provider,
         try_new_or_with_buffer_provider,
         try_new_or_unstable,
         OrListV2,
@@ -90,7 +87,6 @@ impl ListFormatter {
     );
     constructor!(
         try_new_unit,
-        try_new_unit_with_any_provider,
         try_new_unit_with_buffer_provider,
         try_new_unit_unstable,
         UnitListV2,

@@ -489,8 +489,6 @@ mod test {
         }
     }
 
-    crate::dynutil::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1,], AnyMarker);
-
     /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
     #[derive(Debug)]
     struct DataProvider2 {
@@ -520,12 +518,6 @@ mod test {
             })
         }
     }
-
-    crate::dynutil::impl_dynamic_data_provider!(
-        DataProvider2,
-        [HelloWorldV1, HelloAltMarkerV1,],
-        AnyMarker
-    );
 
     const DATA: &str = r#"{
         "hello_v1": {
@@ -568,18 +560,6 @@ mod test {
         ));
     }
 
-    #[test]
-    fn test_warehouse_owned_dyn_erased() {
-        use crate::any::*;
-        let warehouse = get_warehouse(DATA);
-        let hello_data = get_payload_v1(&warehouse.as_any_provider().as_downcasting()).unwrap();
-        assert!(matches!(
-            hello_data.get(),
-            HelloWorld {
-                message: Cow::Borrowed(_),
-            }
-        ));
-    }
 
     #[test]
     fn test_warehouse_owned_dyn_generic() {
@@ -594,19 +574,6 @@ mod test {
     }
 
     #[test]
-    fn test_warehouse_owned_dyn_erased_alt() {
-        let warehouse = get_warehouse(DATA);
-        let response = get_payload_alt(&warehouse.as_any_provider().as_downcasting());
-        assert!(matches!(
-            response,
-            Err(DataError {
-                kind: DataErrorKind::MarkerNotFound,
-                ..
-            })
-        ));
-    }
-
-    #[test]
     fn test_provider2() {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
@@ -617,27 +584,6 @@ mod test {
                 message: Cow::Borrowed(_),
             }
         ));
-    }
-
-    #[test]
-    fn test_provider2_dyn_erased() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        let hello_data = get_payload_v1(&provider.as_any_provider().as_downcasting()).unwrap();
-        assert!(matches!(
-            hello_data.get(),
-            HelloWorld {
-                message: Cow::Borrowed(_),
-            }
-        ));
-    }
-
-    #[test]
-    fn test_provider2_dyn_erased_alt() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        let hello_data = get_payload_alt(&provider.as_any_provider().as_downcasting()).unwrap();
-        assert!(matches!(hello_data.get(), HelloAlt { .. }));
     }
 
     #[test]
@@ -661,27 +607,6 @@ mod test {
         assert!(matches!(hello_data.get(), HelloAlt { .. }));
     }
 
-    #[test]
-    fn test_mismatched_types() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        // Request is for v2, but type argument is for v1
-        let response: Result<DataResponse<HelloWorldV1>, DataError> = AnyProvider::load_any(
-            &provider.as_any_provider(),
-            HelloAltMarkerV1::INFO,
-            Default::default(),
-        )
-        .unwrap()
-        .downcast();
-        assert!(matches!(
-            response,
-            Err(DataError {
-                kind: DataErrorKind::Downcast(_),
-                ..
-            })
-        ));
-    }
-
     fn check_v1_v2<P>(d: &P)
     where
         P: DataProvider<HelloWorldV1> + DataProvider<HelloAltMarkerV1> + ?Sized,
@@ -698,12 +623,5 @@ mod test {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
         check_v1_v2(&provider);
-    }
-
-    #[test]
-    fn test_v1_v2_dyn_erased() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        check_v1_v2(&provider.as_any_provider().as_downcasting());
     }
 }

@@ -50,15 +50,6 @@ impl LocaleDirectionality<LocaleExpander> {
     }
 
     // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_common)]
-    pub fn try_new_common_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        let expander = LocaleExpander::try_new_common_with_any_provider(provider)?;
-        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
-    }
-
-    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_common)]
     #[cfg(feature = "serde")]
     pub fn try_new_common_with_buffer_provider(
@@ -86,15 +77,6 @@ impl LocaleDirectionality<LocaleExpander> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_extended() -> Self {
         Self::new_with_expander(LocaleExpander::new_extended())
-    }
-
-    // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_extended)]
-    pub fn try_new_extended_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        let expander = LocaleExpander::try_new_extended_with_any_provider(provider)?;
-        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
     }
 
     // Note: This is a custom impl because the bounds on `try_new_unstable` don't suffice
