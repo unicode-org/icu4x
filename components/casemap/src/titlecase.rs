@@ -28,7 +28,7 @@ use writeable::Writeable;
 ///
 /// let default_options = Default::default();
 /// let mut preserve_case: TitlecaseOptions = Default::default();
-/// preserve_case.trailing_case = TrailingCase::Unchanged;
+/// preserve_case.trailing_case = Some(TrailingCase::Unchanged);
 ///
 /// // Exhibits trailing case when set:
 /// assert_eq!(
@@ -74,8 +74,8 @@ pub enum TrailingCase {
 /// let default_options = Default::default(); // head adjustment set to Auto
 /// let mut no_adjust: TitlecaseOptions = Default::default();
 /// let mut adjust_to_cased: TitlecaseOptions = Default::default();
-/// no_adjust.leading_adjustment = LeadingAdjustment::None;
-/// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
+/// no_adjust.leading_adjustment = Some(LeadingAdjustment::None);
+/// adjust_to_cased.leading_adjustment = Some(LeadingAdjustment::ToCased);
 ///
 /// // Exhibits leading adjustment when set:
 /// assert_eq!(
@@ -147,10 +147,14 @@ pub enum LeadingAdjustment {
 pub struct TitlecaseOptions {
     /// How to handle the rest of the string once the head of the
     /// string has been titlecased
-    pub trailing_case: TrailingCase,
+    ///
+    /// Default is [`TrailingCase::Lower`]
+    pub trailing_case: Option<TrailingCase>,
     /// Whether to start casing at the beginning of the string or at the first
     /// relevant character.
-    pub leading_adjustment: LeadingAdjustment,
+    ///
+    /// Default is [`LeadingAdjustment::Auto`]
+    pub leading_adjustment: Option<LeadingAdjustment>,
 }
 
 /// A wrapper around [`CaseMapper`] that can compute titlecasing stuff, and is able to load additional data
@@ -301,7 +305,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
     ) -> impl Writeable + 'a {
-        if options.leading_adjustment == LeadingAdjustment::Auto {
+        if options.leading_adjustment.unwrap_or_default() == LeadingAdjustment::Auto {
             // letter, number, symbol, or private use code point
             const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
                 .union(GeneralCategoryGroup::Number)
@@ -375,7 +379,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// let default_options = Default::default();
     /// let mut no_adjust: TitlecaseOptions = Default::default();
-    /// no_adjust.leading_adjustment = LeadingAdjustment::None;
+    /// no_adjust.leading_adjustment = Some(LeadingAdjustment::None);
     ///
     /// // Exhibits leading adjustment when set:
     /// assert_eq!(
@@ -415,7 +419,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     ///
     /// let default_options = Default::default();
     /// let mut preserve_case: TitlecaseOptions = Default::default();
-    /// preserve_case.trailing_case = TrailingCase::Unchanged;
+    /// preserve_case.trailing_case = Some(TrailingCase::Unchanged);
     ///
     /// // Exhibits trailing case when set:
     /// assert_eq!(

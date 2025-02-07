@@ -182,7 +182,7 @@ impl CaseMapper {
         char_is_lead: impl Fn(&CaseMap, char) -> bool,
     ) -> StringAndWriteable<'a, FullCaseWriteable<'a, true>> {
         let data = self.data.get();
-        let (head, rest) = match options.leading_adjustment {
+        let (head, rest) = match options.leading_adjustment.unwrap_or_default() {
             LeadingAdjustment::Auto | LeadingAdjustment::ToCased => {
                 let first_cased = src.char_indices().find(|(_i, ch)| char_is_lead(data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
@@ -200,7 +200,7 @@ impl CaseMapper {
             rest,
             CaseMapLocale::from_langid(langid),
             MappingKind::Title,
-            options.trailing_case,
+            options.trailing_case.unwrap_or_default(),
         );
         StringAndWriteable {
             string: head,

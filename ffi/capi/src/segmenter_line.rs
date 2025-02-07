@@ -310,12 +310,8 @@ pub mod ffi {
 impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions<'_> {
     fn from(other: ffi::LineBreakOptionsV2) -> Self {
         let mut options = icu_segmenter::LineBreakOptions::default();
-        options.strictness = other
-            .strictness
-            .into_converted_option();
-        options.word_option = other
-            .word_option
-            .into_converted_option();
+        options.strictness = other.strictness.into_converted_option();
+        options.word_option = other.word_option.into_converted_option();
         options
     }
 }
