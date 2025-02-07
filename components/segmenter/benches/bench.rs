@@ -20,8 +20,8 @@ fn line_break_iter_latin1(c: &mut Criterion) {
     let segmenter = LineSegmenter::new_dictionary(Default::default());
 
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Anywhere;
-    options.word_option = LineBreakWordOption::BreakAll;
+    options.strictness = Some(LineBreakStrictness::Anywhere);
+    options.word_option = Some(LineBreakWordOption::BreakAll);
     let segmenter_css = LineSegmenter::new_dictionary(options);
 
     group.bench_function("En", |b| {
@@ -49,8 +49,8 @@ fn line_break_iter_utf8(c: &mut Criterion) {
     let segmenter_dictionary = LineSegmenter::new_dictionary(Default::default());
 
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Anywhere;
-    options.word_option = LineBreakWordOption::BreakAll;
+    options.strictness = Some(LineBreakStrictness::Anywhere);
+    options.word_option = Some(LineBreakWordOption::BreakAll);
     let segmenter_css_dictionary = LineSegmenter::new_dictionary(options);
 
     // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
@@ -98,8 +98,8 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let segmenter_dictionary = LineSegmenter::new_dictionary(Default::default());
 
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Anywhere;
-    options.word_option = LineBreakWordOption::BreakAll;
+    options.strictness = Some(LineBreakStrictness::Anywhere);
+    options.word_option = Some(LineBreakWordOption::BreakAll);
     let segmenter_css_dictionary = LineSegmenter::new_dictionary(options);
 
     // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only

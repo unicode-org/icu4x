@@ -312,12 +312,10 @@ impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions<'_> {
         let mut options = icu_segmenter::LineBreakOptions::default();
         options.strictness = other
             .strictness
-            .into_converted_option()
-            .unwrap_or(options.strictness);
+            .into_converted_option();
         options.word_option = other
             .word_option
-            .into_converted_option()
-            .unwrap_or(options.word_option);
+            .into_converted_option();
         options
     }
 }
