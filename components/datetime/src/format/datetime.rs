@@ -612,7 +612,7 @@ mod tests {
         ];
 
         let mut decimal_formatter_options = DecimalFormatterOptions::default();
-        decimal_formatter_options.grouping_strategy = GroupingStrategy::Never;
+        decimal_formatter_options.grouping_strategy = Some(GroupingStrategy::Never);
         let decimal_formatter = DecimalFormatter::try_new(
             icu_locale_core::locale!("en").into(),
             decimal_formatter_options,
