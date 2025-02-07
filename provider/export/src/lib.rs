@@ -294,7 +294,7 @@ impl ExportDriver {
 }
 
 #[non_exhaustive]
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 /// Contains information about a successful export.
 pub struct ExportMetadata {
     /// The metadata coming from the [`DataExporter`].
