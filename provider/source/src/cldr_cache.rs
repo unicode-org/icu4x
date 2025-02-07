@@ -12,9 +12,6 @@ use icu::locale::provider::{
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
-use icu_provider_adapters::fixed::FixedProvider;
-use icu_provider_adapters::fork::ForkByMarkerProvider;
-use icu_provider_adapters::make_forking_provider;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -127,28 +124,58 @@ impl CldrCache {
         use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
-                let common_data =
+                use icu_provider::prelude::*;
+                struct Provider {
+                    common: TransformResult,
+                    extended: TransformResult,
+                }
+                impl DataProvider<LikelySubtagsForLanguageV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LikelySubtagsForLanguageV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.common.as_langs()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                impl DataProvider<LikelySubtagsForScriptRegionV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LikelySubtagsForScriptRegionV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.common.as_script_region()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                impl DataProvider<LikelySubtagsExtendedV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.extended.as_extended()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                let common =
                     transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-                let extended_data =
+                let extended =
                     transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
-                let provider = make_forking_provider!(
-                    ForkByMarkerProvider::new,
-                    [
-                        FixedProvider::<LikelySubtagsForLanguageV1>::from_owned(
-                            common_data.as_langs(),
-                        ),
-                        FixedProvider::<LikelySubtagsForScriptRegionV1>::from_owned(
-                            common_data.as_script_region(),
-                        ),
-                        FixedProvider::<LikelySubtagsExtendedV1>::from_owned(
-                            extended_data.as_extended()
-                        ),
-                    ]
-                );
-                LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
-                    DataError::custom("creating LocaleExpander in CldrCache")
-                        .with_display_context(&e)
-                })
+
+                LocaleExpander::try_new_extended_unstable(&Provider { common, extended }).map_err(
+                    |e| {
+                        DataError::custom("creating LocaleExpander in CldrCache")
+                            .with_display_context(&e)
+                    },
+                )
             })
             .as_ref()
             .map_err(|&e| e)
