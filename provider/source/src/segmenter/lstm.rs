@@ -225,24 +225,38 @@ impl IterableDataProviderCached<LstmForWordLineAutoV1> for SourceDataProvider {
 mod tests {
     use super::*;
     use icu::segmenter::LineSegmenter;
-    use icu_provider_adapters::fixed::FixedProvider;
-    use icu_provider_adapters::fork::ForkByMarkerProvider;
 
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        let provider = SourceDataProvider::new_testing();
-        let raw_data = provider
-            .segmenter_lstm()
-            .unwrap()
-            .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
-            .unwrap();
-        let provider = ForkByMarkerProvider::new(
-            FixedProvider::<LstmForWordLineAutoV1>::from_owned(raw_data.try_convert().unwrap()),
-            provider.as_any_provider(),
-        );
+        struct OverrideProvider(SourceDataProvider);
+
+        impl<M: DataMarker> DataProvider<M> for OverrideProvider
+        where
+            SourceDataProvider: DataProvider<M>,
+        {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+                let mut res = self.0.load(req)?;
+                if let Ok(payload) = res.payload.dynamic_cast_mut::<LstmForWordLineAutoV1>() {
+                    *payload = DataPayload::from_owned(
+                        self.0
+                            .segmenter_lstm()
+                            .unwrap()
+                            .read_and_parse_json::<RawLstmData>(
+                                "Thai_graphclust_model4_heavy/weights.json",
+                            )
+                            .unwrap()
+                            .try_convert()
+                            .unwrap(),
+                    );
+                }
+                Ok(res)
+            }
+        }
+
+        let provider = OverrideProvider(SourceDataProvider::new_testing());
 
         let segmenter =
-            LineSegmenter::try_new_lstm_with_any_provider(&provider, Default::default()).unwrap();
+            LineSegmenter::try_new_lstm_unstable(&provider, Default::default()).unwrap();
 
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
