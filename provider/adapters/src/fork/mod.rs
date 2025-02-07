@@ -49,7 +49,7 @@ use predicates::MarkerNotFoundPredicate;
 /// you should add child providers that support disjoint sets of markers.
 ///
 /// [`ForkByMarkerProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
 ///
 /// # Examples
 ///
@@ -135,7 +135,6 @@ use predicates::MarkerNotFoundPredicate;
 ///
 /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
 /// [`DataProvider`]: icu_provider::DataProvider
-/// [`AnyProvider`]: icu_provider::any::AnyProvider
 /// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type ForkByMarkerProvider<P0, P1> = ForkByErrorProvider<P0, P1, MarkerNotFoundPredicate>;
@@ -156,7 +155,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 /// you should add child providers that support disjoint sets of markers.
 ///
 /// [`MultiForkByMarkerProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
 ///
 /// # Examples
 ///
@@ -206,7 +205,6 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
 ///
 /// [`DataMarkerInfo`]: icu_provider::DataMarkerInfo
 /// [`DataProvider`]: icu_provider::DataProvider
-/// [`AnyProvider`]: icu_provider::any::AnyProvider
 /// [`BufferProvider`]: icu_provider::buf::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type MultiForkByMarkerProvider<P> = MultiForkByErrorProvider<P, MarkerNotFoundPredicate>;

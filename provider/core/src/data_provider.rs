@@ -135,9 +135,6 @@ pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`DataProvider`], there may be multiple markers corresponding to the same data type.
-/// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
-///
-/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DynamicDataProvider<M>
 where
     M: DynamicDataMarker,
@@ -325,8 +322,6 @@ where
 /// with a single marker. However, this trait can also be implemented on providers that fork between
 /// multiple markers that all return the same data type. For example, it can abstract over many
 /// calendar systems in the datetime formatter.
-///
-/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait BoundDataProvider<M>
 where
     M: DynamicDataMarker,
@@ -559,7 +554,6 @@ mod test {
             }
         ));
     }
-
 
     #[test]
     fn test_warehouse_owned_dyn_generic() {

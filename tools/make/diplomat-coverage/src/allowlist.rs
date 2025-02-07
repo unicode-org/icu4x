@@ -67,9 +67,7 @@ lazy_static::lazy_static! {
         // provider stuff not relevant to FFI
         "DynamicDataMarker",
         "DataMarker",
-        "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
-        "AsDynamicDataProviderAnyMarkerWrap",
         "IterableDynamicDataProvider",
         "IterableDataProvider",
         "ForkByErrorPredicate",
@@ -79,7 +77,6 @@ lazy_static::lazy_static! {
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
-        "AnyProvider",
 
         // We might expose these if someone asks for it
         "DryDataProvider",

@@ -71,8 +71,7 @@ pub trait DynamicDataMarker: 'static {
 /// Most markers should be associated with a specific marker and should therefore implement this
 /// trait.
 ///
-/// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
-/// because they are not specific to a single marker.
+/// [`BufferMarker`] is an example of a marker that does _not_ implement this trait.
 ///
 /// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
@@ -81,7 +80,6 @@ pub trait DynamicDataMarker: 'static {
 /// [`data_struct!`]: crate::data_struct
 /// [`DataProvider`]: crate::DataProvider
 /// [`BufferMarker`]: crate::buf::BufferMarker
-/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DataMarker: DynamicDataMarker {
     /// The single [`DataMarkerInfo`] associated with this marker.
     const INFO: DataMarkerInfo;

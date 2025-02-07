@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 /// [`ForkByErrorPredicate`] trait.
 ///
 /// [`ForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
 #[derive(Debug, PartialEq, Eq)]
 pub struct ForkByErrorProvider<P0, P1, F>(P0, P1, F);
 
@@ -164,7 +164,7 @@ where
 /// [`ForkByErrorPredicate`] trait.
 ///
 /// [`MultiForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
 #[derive(Debug)]
 pub struct MultiForkByErrorProvider<P, F> {
     providers: Vec<P>,

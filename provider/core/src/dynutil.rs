@@ -16,11 +16,6 @@ where
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
-    /// # Examples
-    ///
-    /// Upcast and then downcast a data struct of type `Cow<str>` (cart type `String`) via
-    /// [`AnyPayload`](crate::any::AnyPayload):
-    ///
     /// ```
     /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::hello_world::*;
