@@ -192,7 +192,7 @@ databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-f
 deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", default-features = false }
 fixed_decimal = { version = "0.6.0", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.3.0", path = "utils/ixdtf", default-features = false }
-litemap = { version = "0.7.3", path = "utils/litemap", default-features = false }
+litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 tzif = { version = "0.3.0", path = "utils/tzif", default-features = false }
 # potential-utf can stay on 0.1.0 during release.
