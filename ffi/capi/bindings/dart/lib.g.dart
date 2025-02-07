@@ -47,10 +47,13 @@ part 'DataProvider.g.dart';
 part 'Date.g.dart';
 part 'DateFormatter.g.dart';
 part 'DateTime.g.dart';
+part 'DateTimeAlignment.g.dart';
 part 'DateTimeFormatError.g.dart';
 part 'DateTimeFormatter.g.dart';
+part 'DateTimeFormatterGregorian.g.dart';
 part 'DateTimeFormatterLoadError.g.dart';
 part 'DateTimeLength.g.dart';
+part 'DateTimeMismatchedCalendarError.g.dart';
 part 'DecimalFormatter.g.dart';
 part 'DecimalGroupingStrategy.g.dart';
 part 'Decomposed.g.dart';
@@ -76,7 +79,6 @@ part 'GraphemeClusterBreakIteratorUtf16.g.dart';
 part 'GraphemeClusterBreakIteratorUtf8.g.dart';
 part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
-part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'HangulSyllableType.g.dart';
 part 'IndicSyllabicCategory.g.dart';
@@ -131,6 +133,7 @@ part 'SentenceSegmenter.g.dart';
 part 'SignedFixedDecimal.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
+part 'TimePrecision.g.dart';
 part 'TimeZoneIdMapper.g.dart';
 part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
 part 'TimeZoneInfo.g.dart';
@@ -150,6 +153,7 @@ part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
+part 'YearStyle.g.dart';
 part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedDateTimeParser.g.dart';
@@ -506,6 +510,31 @@ final class _ResultUint8Void extends ffi.Struct {
   factory _ResultUint8Void.err() {
     final struct = ffi.Struct.create<_ResultUint8Void>();
     struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultVoidDateTimeMismatchedCalendarErrorFfiUnion extends ffi.Union {
+
+  external _DateTimeMismatchedCalendarErrorFfi err;
+}
+
+final class _ResultVoidDateTimeMismatchedCalendarErrorFfi extends ffi.Struct {
+  external _ResultVoidDateTimeMismatchedCalendarErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultVoidDateTimeMismatchedCalendarErrorFfi.ok() {
+    final struct = ffi.Struct.create<_ResultVoidDateTimeMismatchedCalendarErrorFfi>();
+    struct.isOk = true;
+    return struct;
+  }
+  factory _ResultVoidDateTimeMismatchedCalendarErrorFfi.err(_DateTimeMismatchedCalendarErrorFfi val) {
+    final struct = ffi.Struct.create<_ResultVoidDateTimeMismatchedCalendarErrorFfi>();
+    struct.isOk = false;
+    struct.union.err = val;
     return struct;
   }
 }

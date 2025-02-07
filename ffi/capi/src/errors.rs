@@ -8,6 +8,12 @@ use ffi::*;
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    #[cfg(feature = "datetime")]
+    use diplomat_runtime::DiplomatOption;
+
+    #[cfg(feature = "datetime")]
+    use crate::calendar::ffi::AnyCalendarKind;
+
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
@@ -100,6 +106,13 @@ pub mod ffi {
         DataDeserialize = 0x06,
         DataCustom = 0x07,
         DataIo = 0x08,
+    }
+
+    #[cfg(feature = "datetime")]
+    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
+    pub struct DateTimeMismatchedCalendarError {
+        pub this_kind: AnyCalendarKind,
+        pub date_kind: DiplomatOption<AnyCalendarKind>,
     }
 
     // TODO: This type is currently never constructed, as all formatters perform lossy formatting.
@@ -224,6 +237,16 @@ impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
             ))]
             icu_provider::DataErrorKind::Io(..) => Self::DataIo,
             _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCalendarError {
+    fn from(value: icu_datetime::MismatchedCalendarError) -> Self {
+        Self {
+            this_kind: value.this_kind.into(),
+            date_kind: value.date_kind.map(Into::into).into(),
         }
     }
 }

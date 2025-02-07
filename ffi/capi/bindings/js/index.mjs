@@ -6,6 +6,8 @@ export { CollatorOptions } from "./CollatorOptions.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
+export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
+
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError.mjs"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
@@ -62,11 +64,7 @@ export { IsoDate } from "./IsoDate.mjs"
 
 export { DateFormatter } from "./DateFormatter.mjs"
 
-export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
-
 export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
-
-export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter.mjs"
 
 export { TimeFormatter } from "./TimeFormatter.mjs"
 
@@ -97,6 +95,10 @@ export { Locale } from "./Locale.mjs"
 export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
+
+export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
+
+export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian.mjs"
 
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
@@ -253,6 +255,12 @@ export { ListLength } from "./ListLength.mjs"
 export { TransformResult } from "./TransformResult.mjs"
 
 export { LocaleDirection } from "./LocaleDirection.mjs"
+
+export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
+
+export { TimePrecision } from "./TimePrecision.mjs"
+
+export { YearStyle } from "./YearStyle.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 
