@@ -162,7 +162,7 @@ impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
         // Reserve the entire hint lower bound if the map is empty (e.g. from_iter).
         // Otherwise reserve half the hint (rounded up), so the map
         // will only resize twice in the worst case (assuming growth by doubling).
-        let mut iter = iter.into_iter();
+        let iter = iter.into_iter();
         let (size_hint_lower, _) = iter.size_hint();
         let reserve = if self.is_empty() {
             size_hint_lower
@@ -171,35 +171,52 @@ impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
         };
         self.reserve_exact(reserve);
 
-        // First extend self with the new elements.
-        // Fast path: if all new elements are greater than the previous elements, including existing items.
-        let mut fast_path = true;
-        while let Some((key, value)) = iter.next() {
-            fast_path = self.last().map_or(true, |l| key > l.0);
-            self.push((key, value));
-            if !fast_path {
-                self.extend(iter);
-                break;
+        // We'll use a two-pass approach to avoid any potential quadratic behavior.
+        // For that we'll need scratch space for out of order elements.
+        let mut scratch = Vec::new();
+
+        for (key, value) in iter {
+            // The fast path checks if the incoming key is >= the last key in self.
+            match self.last_mut().map(|l| (key.cmp(&l.0), l)) {
+                None | Some((Ordering::Greater, _)) => self.push((key, value)),
+                Some((Ordering::Equal, l)) => *l = (key, value),
+                // Note: Attempting to update existing keys here hurts performance.
+                // Likely because of cache misses during search. We'll perform
+                // updates later, after sorting the scratch space.
+                _ => scratch.push((key, value)),
             }
         }
-
-        if fast_path {
+        // If we have no out of order elements, we're done.
+        if scratch.is_empty() {
             return;
         }
-
-        // Stable sort in order to sort and preserve the order of elements.
-        // This way, if there are elements with the same key we'll keep the last value.
-        self.sort_by(|a, b| a.0.cmp(&b.0));
-        // Then deduplicate elements with the same key by keeping the _last_ value.
-        let mut i = 0;
-        while i < self.len() {
-            #[allow(clippy::indexing_slicing)] // while condition checks if i is in range
-            let Some((head, tail)) = self[i..].split_first() else {
-                break;
-            };
-            let equals = tail.iter().take_while(|t| head.0 == t.0).count();
-            self.drain(i..i + equals);
-            i += 1;
+        // Stable sort in order to sort and preserve the order of any repeated keys.
+        scratch.sort_by(|a, b| a.0.cmp(&b.0));
+        // Extend the sorted self with the sorted scratch space, potentially creating a second sorted run.
+        // The scratch may have elements that already exist in self that need to be updated.
+        // We'll perform the updates eagerly to avoid a costly deduplication operation in the end.
+        let sorted_len = self.len();
+        for pair in scratch {
+            // We need to look for the key in the sorted section of self but also the last position
+            // of self to prevent adding duplicated elements from the scratch space.
+            #[allow(clippy::indexing_slicing)]
+            // `sorted_len` remains valid as we do not remove items from self
+            if let Ok(idx) = self[..sorted_len].binary_search_by(|(k, _)| k.cmp(&pair.0)) {
+                // Note: Attempting to reduce the range of the search slice hurts performance.
+                // Likely due to less predictable memory access.
+                self[idx] = pair
+            } else if let Some((Ordering::Equal, last)) =
+                self.last_mut().map(|l| (l.0.cmp(&pair.0), l))
+            {
+                *last = pair;
+            } else {
+                self.push(pair);
+            }
+        }
+        // If we end up with two sorted runs in self, merge them.
+        // While this could be sort_unstable the stable sort is faster when merging two sorted runs.
+        if self.len() != sorted_len {
+            self.sort_by(|a, b| a.0.cmp(&b.0));
         }
     }
 }
