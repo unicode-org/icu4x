@@ -51,8 +51,9 @@ default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf"]
 logging = ["calendrical_calculations/logging"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc"]
 compiled_data = ["dep:icu_calendar_data"]
+alloc = []
 
 [[bench]]
 name = "date"

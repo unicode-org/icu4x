@@ -6,7 +6,9 @@ use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::error::DateError;
 use crate::week::{WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
+#[cfg(feature = "alloc")]
 use alloc::rc::Rc;
+#[cfg(feature = "alloc")]
 use alloc::sync::Arc;
 use core::fmt;
 use core::ops::Deref;
@@ -30,6 +32,7 @@ impl<C: Calendar> AsCalendar for C {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<C: AsCalendar> AsCalendar for Rc<C> {
     type Calendar = C::Calendar;
     #[inline]
@@ -38,6 +41,7 @@ impl<C: AsCalendar> AsCalendar for Rc<C> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<C: AsCalendar> AsCalendar for Arc<C> {
     type Calendar = C::Calendar;
     #[inline]
@@ -358,6 +362,7 @@ impl<A: AsCalendar> Date<A> {
     /// Wrap the calendar type in `Rc<T>`
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    #[cfg(feature = "alloc")]
     pub fn wrap_calendar_in_rc(self) -> Date<Rc<A>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
     }
@@ -365,6 +370,7 @@ impl<A: AsCalendar> Date<A> {
     /// Wrap the calendar type in `Arc<T>`
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    #[cfg(feature = "alloc")]
     pub fn wrap_calendar_in_arc(self) -> Date<Arc<A>> {
         Date::from_raw(self.inner, Arc::new(self.calendar))
     }

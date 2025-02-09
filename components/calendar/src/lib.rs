@@ -89,6 +89,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 // Make sure inherent docs go first

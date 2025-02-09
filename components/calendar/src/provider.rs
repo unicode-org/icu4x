@@ -220,9 +220,13 @@ impl serde::Serialize for WeekdaySet {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self)
-                .collect::<alloc::vec::Vec<_>>()
-                .serialize(serializer)
+            use serde::ser::SerializeSeq;
+
+            let mut seq = serializer.serialize_seq(None)?;
+            for day in crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self) {
+                seq.serialize_element(&day)?;
+            }
+            seq.end()
         } else {
             self.0.serialize(serializer)
         }
@@ -236,7 +240,26 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
         D: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            alloc::vec::Vec::<IsoWeekday>::deserialize(deserializer).map(|s| Self::new(&s))
+            use core::marker::PhantomData;
+
+            struct Visitor<'de>(PhantomData<&'de ()>);
+            impl<'de> serde::de::Visitor<'de> for Visitor<'de> {
+                type Value = WeekdaySet;
+                fn expecting(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                    core::write!(f, "a sequence of IsoWeekdays")
+                }
+                fn visit_seq<A: serde::de::SeqAccess<'de>>(
+                    self,
+                    mut seq: A,
+                ) -> Result<Self::Value, A::Error> {
+                    let mut set = WeekdaySet::new(&[]);
+                    while let Some(day) = seq.next_element::<IsoWeekday>()? {
+                        set.0 |= day.bit_value();
+                    }
+                    Ok(set)
+                }
+            }
+            deserializer.deserialize_seq(Visitor(PhantomData))
         } else {
             u8::deserialize(deserializer).map(Self)
         }

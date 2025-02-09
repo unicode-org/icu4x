@@ -20,6 +20,7 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
+icu_calendar = { workspace = true }
 icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
 icu_properties = { workspace = true }
