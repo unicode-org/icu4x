@@ -63,7 +63,7 @@ pub mod ffi {
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<CaseMapper> {
-            Box::new(CaseMapper(icu_casemap::CaseMapper::new()))
+            Box::new(CaseMapper(icu_casemap::CaseMapper::new().static_to_owned()))
         }
 
         /// Construct a new CaseMapper instance using a particular data source.
@@ -79,14 +79,22 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
         pub fn lowercase(&self, s: &str, locale: &Locale, write: &mut DiplomatWrite) {
-            let _infallible = self.0.lowercase(s, &locale.0.id).write_to(write);
+            let _infallible = self
+                .0
+                .as_borrowed()
+                .lowercase(s, &locale.0.id)
+                .write_to(write);
         }
 
         /// Returns the full uppercase mapping of the given string
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase_to_string, FnInStruct, hidden)]
         pub fn uppercase(&self, s: &str, locale: &Locale, write: &mut DiplomatWrite) {
-            let _infallible = self.0.uppercase(s, &locale.0.id).write_to(write);
+            let _infallible = self
+                .0
+                .as_borrowed()
+                .uppercase(s, &locale.0.id)
+                .write_to(write);
         }
 
         /// Returns the full titlecase mapping of the given string, performing head adjustment without
@@ -113,6 +121,7 @@ pub mod ffi {
         ) {
             let _infallible = self
                 .0
+                .as_borrowed()
                 .titlecase_segment_with_only_case_data(s, &locale.0.id, options.into())
                 .write_to(write);
         }
@@ -121,14 +130,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
         pub fn fold(&self, s: &str, write: &mut DiplomatWrite) {
-            let _infallible = self.0.fold(s).write_to(write);
+            let _infallible = self.0.as_borrowed().fold(s).write_to(write);
         }
         /// Case-folds the characters in the given string
         /// using Turkic (T) mappings for dotted/dotless I.
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic_string, FnInStruct, hidden)]
         pub fn fold_turkic(&self, s: &str, write: &mut DiplomatWrite) {
-            let _infallible = self.0.fold_turkic(s).write_to(write);
+            let _infallible = self.0.as_borrowed().fold_turkic(s).write_to(write);
         }
 
         /// Adds all simple case mappings and the full case folding for `c` to `builder`.
@@ -153,7 +162,7 @@ pub mod ffi {
             builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
         ) {
             if let Some(ch) = char::from_u32(c) {
-                self.0.add_case_closure_to(ch, &mut builder.0)
+                self.0.as_borrowed().add_case_closure_to(ch, &mut builder.0)
             }
         }
 
@@ -165,7 +174,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_lowercase, FnInStruct)]
         pub fn simple_lowercase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
-                .map(|ch| self.0.simple_lowercase(ch) as DiplomatChar)
+                .map(|ch| self.0.as_borrowed().simple_lowercase(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
 
@@ -177,7 +186,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_uppercase, FnInStruct)]
         pub fn simple_uppercase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
-                .map(|ch| self.0.simple_uppercase(ch) as DiplomatChar)
+                .map(|ch| self.0.as_borrowed().simple_uppercase(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
 
@@ -189,7 +198,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_titlecase, FnInStruct)]
         pub fn simple_titlecase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
-                .map(|ch| self.0.simple_titlecase(ch) as DiplomatChar)
+                .map(|ch| self.0.as_borrowed().simple_titlecase(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
 
@@ -200,7 +209,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold, FnInStruct)]
         pub fn simple_fold(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
-                .map(|ch| self.0.simple_fold(ch) as DiplomatChar)
+                .map(|ch| self.0.as_borrowed().simple_fold(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
         /// Returns the simple casefolding of the given character in the Turkic locale
@@ -210,7 +219,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold_turkic, FnInStruct)]
         pub fn simple_fold_turkic(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
-                .map(|ch| self.0.simple_fold_turkic(ch) as DiplomatChar)
+                .map(|ch| self.0.as_borrowed().simple_fold_turkic(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
     }
@@ -226,7 +235,9 @@ pub mod ffi {
         #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Result<Box<CaseMapCloser>, DataError> {
-            Ok(Box::new(CaseMapCloser(icu_casemap::CaseMapCloser::new())))
+            Ok(Box::new(CaseMapCloser(
+                icu_casemap::CaseMapCloser::new().static_to_owned(),
+            )))
         }
         /// Construct a new CaseMapCloser instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
@@ -250,7 +261,7 @@ pub mod ffi {
             builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
         ) {
             if let Some(ch) = char::from_u32(c) {
-                self.0.add_case_closure_to(ch, &mut builder.0)
+                self.0.as_borrowed().add_case_closure_to(ch, &mut builder.0)
             }
         }
 
@@ -266,7 +277,9 @@ pub mod ffi {
             builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
         ) -> bool {
             let s = core::str::from_utf8(s).unwrap_or("");
-            self.0.add_string_case_closure_to(s, &mut builder.0)
+            self.0
+                .as_borrowed()
+                .add_string_case_closure_to(s, &mut builder.0)
         }
     }
 
@@ -282,7 +295,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Result<Box<TitlecaseMapper>, DataError> {
             Ok(Box::new(TitlecaseMapper(
-                icu_casemap::TitlecaseMapper::new(),
+                icu_casemap::TitlecaseMapper::new().static_to_owned(),
             )))
         }
         /// Construct a new `TitlecaseMapper` instance using a particular data source.
@@ -316,6 +329,7 @@ pub mod ffi {
         ) {
             let _infallible = self
                 .0
+                .as_borrowed()
                 .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write);
         }
