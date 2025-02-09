@@ -55,11 +55,13 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::CaseMapper, Struct)]
+    #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed, Struct, hidden)]
     pub struct CaseMapper(pub icu_casemap::CaseMapper);
 
     impl CaseMapper {
         /// Construct a new CaseMapper instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::new, FnInStruct, hidden)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<CaseMapper> {
@@ -76,8 +78,12 @@ pub mod ffi {
             )))
         }
         /// Returns the full lowercase mapping of the given string
-        #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase, FnInStruct)]
-        #[diplomat::rust_link(icu::casemap::CaseMapper::lowercase_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::lowercase, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::lowercase_to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn lowercase(&self, s: &str, locale: &Locale, write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
@@ -87,8 +93,12 @@ pub mod ffi {
         }
 
         /// Returns the full uppercase mapping of the given string
-        #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase, FnInStruct)]
-        #[diplomat::rust_link(icu::casemap::CaseMapper::uppercase_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::uppercase, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::uppercase_to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn uppercase(&self, s: &str, locale: &Locale, write: &mut DiplomatWrite) {
             let _infallible = self
                 .0
@@ -103,11 +113,11 @@ pub mod ffi {
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options
         #[diplomat::rust_link(
-            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data,
+            icu::casemap::CaseMapperBorrowed::titlecase_segment_with_only_case_data,
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::casemap::CaseMapper::titlecase_segment_with_only_case_data_to_string,
+            icu::casemap::CaseMapperBorrowed::titlecase_segment_with_only_case_data_to_string,
             FnInStruct,
             hidden
         )]
@@ -127,15 +137,19 @@ pub mod ffi {
         }
 
         /// Case-folds the characters in the given string
-        #[diplomat::rust_link(icu::casemap::CaseMapper::fold, FnInStruct)]
-        #[diplomat::rust_link(icu::casemap::CaseMapper::fold_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold_string, FnInStruct, hidden)]
         pub fn fold(&self, s: &str, write: &mut DiplomatWrite) {
             let _infallible = self.0.as_borrowed().fold(s).write_to(write);
         }
         /// Case-folds the characters in the given string
         /// using Turkic (T) mappings for dotted/dotless I.
-        #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic, FnInStruct)]
-        #[diplomat::rust_link(icu::casemap::CaseMapper::fold_turkic_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::fold_turkic, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::fold_turkic_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn fold_turkic(&self, s: &str, write: &mut DiplomatWrite) {
             let _infallible = self.0.as_borrowed().fold_turkic(s).write_to(write);
         }
@@ -152,7 +166,7 @@ pub mod ffi {
         /// Identical to the similarly named method on `CaseMapCloser`, use that if you
         /// plan on using string case closure mappings too.
         #[cfg(feature = "properties")]
-        #[diplomat::rust_link(icu::casemap::CaseMapper::add_case_closure_to, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::add_case_closure_to, FnInStruct)]
         #[diplomat::rust_link(icu::casemap::ClosureSink, Trait, hidden)]
         #[diplomat::rust_link(icu::casemap::ClosureSink::add_char, FnInTrait, hidden)]
         #[diplomat::rust_link(icu::casemap::ClosureSink::add_string, FnInTrait, hidden)]
@@ -170,8 +184,8 @@ pub mod ffi {
         ///
         /// This function only implements simple and common mappings.
         /// Full mappings, which can map one char to a string, are not included.
-        /// For full mappings, use `CaseMapper::lowercase`.
-        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_lowercase, FnInStruct)]
+        /// For full mappings, use `CaseMapperBorrowed::lowercase`.
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_lowercase, FnInStruct)]
         pub fn simple_lowercase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_lowercase(ch) as DiplomatChar)
@@ -182,8 +196,8 @@ pub mod ffi {
         ///
         /// This function only implements simple and common mappings.
         /// Full mappings, which can map one char to a string, are not included.
-        /// For full mappings, use `CaseMapper::uppercase`.
-        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_uppercase, FnInStruct)]
+        /// For full mappings, use `CaseMapperBorrowed::uppercase`.
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_uppercase, FnInStruct)]
         pub fn simple_uppercase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_uppercase(ch) as DiplomatChar)
@@ -194,8 +208,8 @@ pub mod ffi {
         ///
         /// This function only implements simple and common mappings.
         /// Full mappings, which can map one char to a string, are not included.
-        /// For full mappings, use `CaseMapper::titlecase_segment`.
-        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_titlecase, FnInStruct)]
+        /// For full mappings, use `CaseMapperBorrowed::titlecase_segment`.
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_titlecase, FnInStruct)]
         pub fn simple_titlecase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_titlecase(ch) as DiplomatChar)
@@ -205,8 +219,8 @@ pub mod ffi {
         /// Returns the simple casefolding of the given character.
         ///
         /// This function only implements simple folding.
-        /// For full folding, use `CaseMapper::fold`.
-        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold, FnInStruct)]
+        /// For full folding, use `CaseMapperBorrowed::fold`.
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_fold, FnInStruct)]
         pub fn simple_fold(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_fold(ch) as DiplomatChar)
@@ -215,8 +229,8 @@ pub mod ffi {
         /// Returns the simple casefolding of the given character in the Turkic locale
         ///
         /// This function only implements simple folding.
-        /// For full folding, use `CaseMapper::fold_turkic`.
-        #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold_turkic, FnInStruct)]
+        /// For full folding, use `CaseMapperBorrowed::fold_turkic`.
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_fold_turkic, FnInStruct)]
         pub fn simple_fold_turkic(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_fold_turkic(ch) as DiplomatChar)
@@ -226,11 +240,13 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::CaseMapCloser, Struct)]
+    #[diplomat::rust_link(icu::casemap::CaseMapCloserBorrowed, Struct, hidden)]
     pub struct CaseMapCloser(pub icu_casemap::CaseMapCloser<icu_casemap::CaseMapper>);
 
     impl CaseMapCloser {
         /// Construct a new CaseMapCloser instance using compiled data.
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapCloserBorrowed::new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
@@ -254,7 +270,7 @@ pub mod ffi {
         /// Adds all simple case mappings and the full case folding for `c` to `builder`.
         /// Also adds special case closure mappings.
         #[cfg(feature = "properties")]
-        #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_case_closure_to, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::CaseMapCloserBorrowed::add_case_closure_to, FnInStruct)]
         pub fn add_case_closure_to(
             &self,
             c: DiplomatChar,
@@ -270,7 +286,10 @@ pub mod ffi {
         ///
         /// Returns true if the string was found
         #[cfg(feature = "properties")]
-        #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_string_case_closure_to, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapCloserBorrowed::add_string_case_closure_to,
+            FnInStruct
+        )]
         pub fn add_string_case_closure_to(
             &self,
             s: &DiplomatStr,
@@ -285,11 +304,13 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::casemap::TitlecaseMapper, Struct)]
+    #[diplomat::rust_link(icu::casemap::TitlecaseMapperBorrowed, Struct, hidden)]
     pub struct TitlecaseMapper(pub icu_casemap::TitlecaseMapper<icu_casemap::CaseMapper>);
 
     impl TitlecaseMapper {
         /// Construct a new `TitlecaseMapper` instance using compiled data.
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapperBorrowed::new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
@@ -313,9 +334,9 @@ pub mod ffi {
         /// Returns the full titlecase mapping of the given string
         ///
         /// The `v1` refers to the version of the options struct, which may change as we add more options
-        #[diplomat::rust_link(icu::casemap::TitlecaseMapper::titlecase_segment, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapperBorrowed::titlecase_segment, FnInStruct)]
         #[diplomat::rust_link(
-            icu::casemap::TitlecaseMapper::titlecase_segment_to_string,
+            icu::casemap::TitlecaseMapperBorrowed::titlecase_segment_to_string,
             FnInStruct,
             hidden
         )]
