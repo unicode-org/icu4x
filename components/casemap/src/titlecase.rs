@@ -208,25 +208,17 @@ pub struct TitlecaseMapper<CM> {
     gc: CodePointMapData<GeneralCategory>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for TitlecaseMapper<CaseMapper> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl TitlecaseMapper<CaseMapper> {
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data
+    /// A constructor which creates a [`TitlecaseMapperBorrowed`] using compiled data
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
+    pub const fn new() -> TitlecaseMapperBorrowed<'static> {
+        TitlecaseMapperBorrowed {
             cm: CaseMapper::new(),
-            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new()
-                .static_to_owned(),
+            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new(),
         }
     }
 

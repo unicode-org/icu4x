@@ -38,13 +38,6 @@ pub struct CaseMapper {
     pub(crate) data: DataPayload<CaseMapV1>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for CaseMapper {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl AsRef<CaseMapper> for CaseMapper {
     fn as_ref(&self) -> &CaseMapper {
         self
@@ -547,7 +540,7 @@ impl<'a> CaseMapperBorrowed<'a> {
 }
 
 impl CaseMapper {
-    /// Creates a [`CaseMapper`] using compiled data.
+    /// Creates a [`CaseMapperBorrowed`] using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -567,9 +560,9 @@ impl CaseMapper {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
-            data: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_CASE_MAP_V1),
+    pub const fn new() -> CaseMapperBorrowed<'static> {
+        CaseMapperBorrowed {
+            data: crate::provider::Baked::SINGLETON_CASE_MAP_V1,
         }
     }
 

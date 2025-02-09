@@ -40,16 +40,8 @@ pub struct CaseMapCloser<CM> {
     unfold: DataPayload<CaseMapUnfoldV1>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for CaseMapCloser<CaseMapper> {
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl CaseMapCloser<CaseMapper> {
-    /// A constructor which creates a [`CaseMapCloser`] using compiled data.
+    /// A constructor which creates a [`CaseMapCloserBorrowed`] using compiled data.
     ///
     /// # Examples
     ///
@@ -78,12 +70,10 @@ impl CaseMapCloser<CaseMapper> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
+    pub const fn new() -> CaseMapCloserBorrowed<'static> {
+        CaseMapCloserBorrowed {
             cm: CaseMapper::new(),
-            unfold: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,
-            ),
+            unfold: crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,
         }
     }
 
