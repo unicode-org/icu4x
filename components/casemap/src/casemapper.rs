@@ -425,9 +425,9 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
     /// Also adds special case closure mappings.
     ///
-    /// Identical to [`CaseMapCloser::add_case_closure_to()`], see docs there for more information.
+    /// Identical to [`CaseMapCloserBorrowed::add_case_closure_to()`], see docs there for more information.
     /// This method is duplicated so that one does not need to load extra unfold data
-    /// if they only need this and not also [`CaseMapCloser::add_string_case_closure_to()`].
+    /// if they only need this and not also [`CaseMapCloserBorrowed::add_string_case_closure_to()`].
     ///
     ///
     /// # Examples
@@ -447,8 +447,8 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
     ///
-    /// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
-    /// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
+    /// [`CaseMapCloserBorrowed::add_case_closure_to()`]: crate::CaseMapCloserBorrowed::add_case_closure_to
+    /// [`CaseMapCloserBorrowed::add_string_case_closure_to()`]: crate::CaseMapCloserBorrowed::add_string_case_closure_to
     pub fn add_case_closure_to<S: ClosureSink>(self, c: char, set: &mut S) {
         self.data.add_case_closure_to(c, set);
     }
@@ -456,7 +456,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// Returns the lowercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapper::lowercase`].
+    /// For full mappings, use [`CaseMapperBorrowed::lowercase`].
     ///
     /// # Examples
     ///
@@ -477,7 +477,7 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// Returns the uppercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapper::uppercase`].
+    /// For full mappings, use [`CaseMapperBorrowed::uppercase`].
     ///
     /// # Examples
     ///
@@ -520,21 +520,21 @@ impl<'a> CaseMapperBorrowed<'a> {
     }
 
     /// Returns the simple case folding of the given char.
-    /// For full mappings, use [`CaseMapper::fold`].
+    /// For full mappings, use [`CaseMapperBorrowed::fold`].
     ///
     /// This function can be used to perform caseless matches on
     /// individual characters.
     /// > *Note:* With Unicode 15.0 data, there are three
     /// > pairs of characters for which equivalence under this
     /// > function is inconsistent with equivalence of the
-    /// > one-character strings under [`CaseMapper::fold`].
+    /// > one-character strings under [`CaseMapperBorrowed::fold`].
     /// > This is resolved in Unicode 15.1 and later.
     ///
     /// For compatibility applications where simple case folding
     /// of strings is required, this function can be applied to
     /// each character of a string.  Note that the resulting
     /// equivalence relation is different from that obtained
-    /// by [`CaseMapper::fold`]:
+    /// by [`CaseMapperBorrowed::fold`]:
     /// The strings "Straße" and "STRASSE" are distinct
     /// under simple case folding, but are equivalent under
     /// default (full) case folding.
@@ -567,11 +567,11 @@ impl<'a> CaseMapperBorrowed<'a> {
     /// Returns the simple case folding of the given char, using Turkic (T) mappings for
     /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
     /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
-    /// [`CaseMapper::fold()`].
+    /// [`CaseMapperBorrowed::fold()`].
     ///
     /// You can use the case folding to perform Turkic caseless matches on characters
     /// provided they don't full-casefold to strings. To avoid that situation,
-    /// convert to a string and use [`CaseMapper::fold_turkic`].
+    /// convert to a string and use [`CaseMapperBorrowed::fold_turkic`].
     ///
     ///
     /// # Examples

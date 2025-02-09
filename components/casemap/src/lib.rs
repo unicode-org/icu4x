@@ -60,6 +60,6 @@ pub mod greek_to_me;
 mod internals;
 
 pub use casemapper::{CaseMapper, CaseMapperBorrowed};
-pub use closer::CaseMapCloser;
+pub use closer::{CaseMapCloser, CaseMapCloserBorrowed};
 pub use set::ClosureSink;
 pub use titlecase::{TitlecaseMapper, TitlecaseMapperBorrowed};

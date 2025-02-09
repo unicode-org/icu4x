@@ -227,7 +227,7 @@ impl CaseMapCloserBorrowed<'_> {
     /// - for sharp s include ss
     /// - for k include the Kelvin sign
     ///
-    /// This function is identical to [`CaseMapper::add_case_closure_to()`]; if you don't
+    /// This function is identical to [`CaseMapperBorrowed::add_case_closure_to()`]; if you don't
     /// need [`Self::add_string_case_closure_to()`] consider using a [`CaseMapper`] to avoid
     /// loading additional data.
     ///

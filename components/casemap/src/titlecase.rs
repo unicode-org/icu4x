@@ -128,7 +128,7 @@ pub enum LeadingAdjustment {
     /// Adjust the string to the first relevant character before beginning to apply casing
     /// ("'twixt" -> "'Twixt"). "Relevant" character is picked by best available algorithm,
     /// by default will adjust to first letter, number, symbol, or private use character,
-    /// but if no data is available (e.g. this API is being called via [`CaseMapper::titlecase_segment_with_only_case_data()`]),
+    /// but if no data is available (e.g. this API is being called via [`CaseMapperBorrowed::titlecase_segment_with_only_case_data()`]),
     /// then may be equivalent to "adjust to cased".
     ///
     /// This is the default
@@ -164,7 +164,7 @@ pub struct TitlecaseOptions {
 /// Most methods for this type live on [`TitlecaseMapperBorrowed`], which you can obtain via
 /// [`TitlecaseMapper::new()`] or [`TitlecaseMapper::as_borrowed()`].
 ///
-/// By default, [`Self::titlecase_segment()`] and [`Self::titlecase_segment_to_string()`] perform "leading adjustment",
+/// By default, [`TitlecaseMapperBorrowed::titlecase_segment()`] and [`TitlecaseMapperBorrowed::titlecase_segment_to_string()`] perform "leading adjustment",
 /// where they wait till the first relevant character to begin titlecasing. For example, in the string `'twixt`, the apostrophe
 /// is ignored because the word starts at the first "t", which will get titlecased (producing `'Twixt`). Other punctuation will
 /// also be ignored, like in the string `«hello»`, which will get titlecased to `«Hello»`.
@@ -342,7 +342,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`TitlecaseMapperBorrowed::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
     pub fn titlecase_segment(
         self,
@@ -379,7 +379,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`TitlecaseMapperBorrowed::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Examples
     ///
