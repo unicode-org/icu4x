@@ -146,7 +146,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Copy)]
 pub struct CaseMapCloserBorrowed<'a> {
     cm: CaseMapperBorrowed<'a>,
     unfold: &'a CaseMapUnfold<'a>,

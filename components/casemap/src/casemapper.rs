@@ -44,7 +44,7 @@ impl AsRef<CaseMapper> for CaseMapper {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Copy)]
 pub struct CaseMapperBorrowed<'a> {
     pub(crate) data: &'a CaseMap<'a>,
 }

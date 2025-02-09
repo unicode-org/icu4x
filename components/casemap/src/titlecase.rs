@@ -287,7 +287,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Copy)]
 pub struct TitlecaseMapperBorrowed<'a> {
     cm: CaseMapperBorrowed<'a>,
     gc: CodePointMapDataBorrowed<'a, GeneralCategory>,
