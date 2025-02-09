@@ -317,8 +317,6 @@ mod elements;
 mod options;
 pub mod provider;
 
-extern crate alloc;
-
 pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
 pub use comparison::CollatorPreferences;
