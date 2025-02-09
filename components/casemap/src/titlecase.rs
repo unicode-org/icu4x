@@ -212,19 +212,6 @@ pub struct TitlecaseMapper<CM> {
 }
 
 impl TitlecaseMapper<CaseMapper> {
-    /// A constructor which creates a [`TitlecaseMapperBorrowed`] using compiled data
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> TitlecaseMapperBorrowed<'static> {
-        TitlecaseMapperBorrowed {
-            cm: CaseMapper::new(),
-            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new(),
-        }
-    }
-
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
         new: skip,
@@ -245,6 +232,17 @@ impl TitlecaseMapper<CaseMapper> {
     }
 }
 
+impl TitlecaseMapper<CaseMapper> {
+    /// A constructor which creates a [`TitlecaseMapperBorrowed`] using compiled data
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> TitlecaseMapperBorrowed<'static> {
+        TitlecaseMapperBorrowed::new()
+    }
+}
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
@@ -297,6 +295,38 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
 pub struct TitlecaseMapperBorrowed<'a> {
     cm: CaseMapperBorrowed<'a>,
     gc: CodePointMapDataBorrowed<'a, GeneralCategory>,
+}
+
+impl TitlecaseMapperBorrowed<'static> {
+    /// A constructor which creates a [`TitlecaseMapperBorrowed`] using compiled data
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            cm: CaseMapper::new(),
+            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new(),
+        }
+    }
+    /// Cheaply converts a [`TitlecaseMapperBorrowed<'static>`] into a [`TitlecaseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`TitlecaseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`TitlecaseMapper`].
+    pub const fn static_to_owned(self) -> TitlecaseMapper<CaseMapper> {
+        TitlecaseMapper {
+            cm: self.cm.static_to_owned(),
+            gc: self.gc.static_to_owned(),
+        }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for TitlecaseMapperBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<'a> TitlecaseMapperBorrowed<'a> {
@@ -452,18 +482,5 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
         self.titlecase_segment(src, langid, options)
             .write_to_string()
             .into_owned()
-    }
-}
-
-impl TitlecaseMapperBorrowed<'static> {
-    /// Cheaply converts a [`TitlecaseMapperBorrowed<'static>`] into a [`TitlecaseMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`TitlecaseMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`TitlecaseMapper`].
-    pub const fn static_to_owned(self) -> TitlecaseMapper<CaseMapper> {
-        TitlecaseMapper {
-            cm: self.cm.static_to_owned(),
-            gc: self.gc.static_to_owned(),
-        }
     }
 }

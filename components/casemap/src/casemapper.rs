@@ -56,6 +56,50 @@ pub struct CaseMapperBorrowed<'a> {
     pub(crate) data: &'a CaseMap<'a>,
 }
 
+impl CaseMapperBorrowed<'static> {
+    /// Cheaply converts a [`CaseMapperBorrowed<'static>`] into a [`CaseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`CaseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`CaseMapperBorrowed`].
+    pub const fn static_to_owned(self) -> CaseMapper {
+        CaseMapper {
+            data: DataPayload::from_static_ref(self.data),
+        }
+    }
+    /// Creates a [`CaseMapperBorrowed`] using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// assert_eq!(
+    ///     cm.uppercase_to_string("hello world", &langid!("und")),
+    ///     "HELLO WORLD"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            data: crate::provider::Baked::SINGLETON_CASE_MAP_V1,
+        }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for CaseMapperBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a> CaseMapperBorrowed<'a> {
     /// Returns the full lowercase mapping of the given string as a [`Writeable`].
     /// This function is context and language sensitive. Callers should pass the text's language
@@ -546,18 +590,6 @@ impl<'a> CaseMapperBorrowed<'a> {
     }
 }
 
-impl CaseMapperBorrowed<'static> {
-    /// Cheaply converts a [`CaseMapperBorrowed<'static>`] into a [`CaseMapper`].
-    ///
-    /// Note: Due to branching and indirection, using [`CaseMapper`] might inhibit some
-    /// compile-time optimizations that are possible with [`CaseMapperBorrowed`].
-    pub const fn static_to_owned(self) -> CaseMapper {
-        CaseMapper {
-            data: DataPayload::from_static_ref(self.data),
-        }
-    }
-}
-
 impl CaseMapper {
     /// Creates a [`CaseMapperBorrowed`] using compiled data.
     ///
@@ -580,9 +612,7 @@ impl CaseMapper {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> CaseMapperBorrowed<'static> {
-        CaseMapperBorrowed {
-            data: crate::provider::Baked::SINGLETON_CASE_MAP_V1,
-        }
+        CaseMapperBorrowed::new()
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.

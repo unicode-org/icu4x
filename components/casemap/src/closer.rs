@@ -44,6 +44,27 @@ pub struct CaseMapCloser<CM> {
 }
 
 impl CaseMapCloser<CaseMapper> {
+    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    functions: [
+        new: skip,
+        try_new_with_any_provider,
+        try_new_with_buffer_provider,
+        try_new_unstable,
+        Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
+    where
+        P: DataProvider<CaseMapV1> + DataProvider<CaseMapUnfoldV1> + ?Sized,
+    {
+        let cm = CaseMapper::try_new_unstable(provider)?;
+        let unfold = provider.load(Default::default())?.payload;
+        Ok(Self { cm, unfold })
+    }
+}
+
+impl CaseMapCloser<CaseMapper> {
     /// A constructor which creates a [`CaseMapCloserBorrowed`] using compiled data.
     ///
     /// # Examples
@@ -74,29 +95,7 @@ impl CaseMapCloser<CaseMapper> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> CaseMapCloserBorrowed<'static> {
-        CaseMapCloserBorrowed {
-            cm: CaseMapper::new(),
-            unfold: crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,
-        }
-    }
-
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-    functions: [
-        new: skip,
-        try_new_with_any_provider,
-        try_new_with_buffer_provider,
-        try_new_unstable,
-        Self,
-    ]);
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CaseMapV1> + DataProvider<CaseMapUnfoldV1> + ?Sized,
-    {
-        let cm = CaseMapper::try_new_unstable(provider)?;
-        let unfold = provider.load(Default::default())?.payload;
-        Ok(Self { cm, unfold })
+        CaseMapCloserBorrowed::new()
     }
 }
 
@@ -156,6 +155,61 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
 pub struct CaseMapCloserBorrowed<'a> {
     cm: CaseMapperBorrowed<'a>,
     unfold: &'a CaseMapUnfold<'a>,
+}
+
+impl CaseMapCloserBorrowed<'static> {
+    /// A constructor which creates a [`CaseMapCloserBorrowed`] using compiled data.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapCloser;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+    ///
+    /// let cm = CaseMapCloser::new();
+    /// let mut builder = CodePointInversionListBuilder::new();
+    /// let found = cm.add_string_case_closure_to("ffi", &mut builder);
+    /// assert!(found);
+    /// let set = builder.build();
+    ///
+    /// assert!(set.contains('ﬃ'));
+    ///
+    /// let mut builder = CodePointInversionListBuilder::new();
+    /// let found = cm.add_string_case_closure_to("ss", &mut builder);
+    /// assert!(found);
+    /// let set = builder.build();
+    ///
+    /// assert!(set.contains('ß'));
+    /// assert!(set.contains('ẞ'));
+    /// ```
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> CaseMapCloserBorrowed<'static> {
+        CaseMapCloserBorrowed {
+            cm: CaseMapper::new(),
+            unfold: crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,
+        }
+    }
+    /// Cheaply converts a [`CaseMapCloserBorrowed<'static>`] into a [`CaseMapCloser`].
+    ///
+    /// Note: Due to branching and indirection, using [`CaseMapCloser`] might inhibit some
+    /// compile-time optimizations that are possible with [`CaseMapCloserBorrowed`].
+    pub const fn static_to_owned(self) -> CaseMapCloser<CaseMapper> {
+        CaseMapCloser {
+            cm: self.cm.static_to_owned(),
+            unfold: DataPayload::from_static_ref(self.unfold),
+        }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for CaseMapCloserBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<'a> CaseMapCloserBorrowed<'a> {
@@ -230,18 +284,5 @@ impl<'a> CaseMapCloserBorrowed<'a> {
     /// ```
     pub fn add_string_case_closure_to<S: ClosureSink>(self, s: &str, set: &mut S) -> bool {
         self.cm.data.add_string_case_closure_to(s, set, self.unfold)
-    }
-}
-
-impl CaseMapCloserBorrowed<'static> {
-    /// Cheaply converts a [`CaseMapCloserBorrowed<'static>`] into a [`CaseMapCloser`].
-    ///
-    /// Note: Due to branching and indirection, using [`CaseMapCloser`] might inhibit some
-    /// compile-time optimizations that are possible with [`CaseMapCloserBorrowed`].
-    pub const fn static_to_owned(self) -> CaseMapCloser<CaseMapper> {
-        CaseMapCloser {
-            cm: self.cm.static_to_owned(),
-            unfold: DataPayload::from_static_ref(self.unfold),
-        }
     }
 }
