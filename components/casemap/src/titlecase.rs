@@ -161,6 +161,9 @@ pub struct TitlecaseOptions {
 /// to support the non-legacy "head adjustment" behavior.
 ///
 ///
+/// Most methods for this type live on [`TitlecaseMapperBorrowed`], which you can obtain via
+/// [`TitlecaseMapper::new()`] or [`TitlecaseMapper::as_borrowed()`].
+///
 /// By default, [`Self::titlecase_segment()`] and [`Self::titlecase_segment_to_string()`] perform "leading adjustment",
 /// where they wait till the first relevant character to begin titlecasing. For example, in the string `'twixt`, the apostrophe
 /// is ignored because the word starts at the first "t", which will get titlecased (producing `'Twixt`). Other punctuation will
@@ -287,6 +290,9 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     }
 }
 
+/// A borrowed [`TitlecaseMapper`].
+///
+/// See methods or [`TitlecaseMapper`] for examples.
 #[derive(Clone, Debug, Copy)]
 pub struct TitlecaseMapperBorrowed<'a> {
     cm: CaseMapperBorrowed<'a>,

@@ -16,6 +16,9 @@ use writeable::Writeable;
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
 ///
+/// Most methods for this type live on [`CaseMapperBorrowed`], which you can obtain via
+/// [`CaseMapper::new()`] or [`CaseMapper::as_borrowed()`].
+///
 /// # Examples
 ///
 /// ```rust
@@ -44,6 +47,10 @@ impl AsRef<CaseMapper> for CaseMapper {
     }
 }
 
+/// A struct with the ability to convert characters and strings to uppercase or lowercase,
+/// or fold them to a normalized form for case-insensitive comparison, borrowed version.
+///
+/// See methods or [`CaseMapper`] for examples.
 #[derive(Clone, Debug, Copy)]
 pub struct CaseMapperBorrowed<'a> {
     pub(crate) data: &'a CaseMap<'a>,

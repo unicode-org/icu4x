@@ -12,6 +12,9 @@ use icu_provider::prelude::*;
 /// over a character or string. This wrapper can be constructed directly, or
 /// by wrapping a reference to an existing [`CaseMapper`].
 ///
+/// Most methods for this type live on [`CaseMapCloserBorrowed`], which you can obtain via
+/// [`CaseMapCloser::new()`] or [`CaseMapCloser::as_borrowed()`].
+///
 /// # Examples
 ///
 /// ```rust
@@ -146,6 +149,9 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     }
 }
 
+/// A borrowed [`CaseMapCloser`].
+///
+/// See methods or [`CaseMapCloser`] for examples.
 #[derive(Clone, Debug, Copy)]
 pub struct CaseMapCloserBorrowed<'a> {
     cm: CaseMapperBorrowed<'a>,
