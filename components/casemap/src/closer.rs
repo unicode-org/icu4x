@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{CaseMapUnfoldV1, CaseMapV1};
+use crate::provider::{CaseMapUnfold, CaseMapUnfoldV1, CaseMapV1};
 use crate::set::ClosureSink;
-use crate::CaseMapper;
+use crate::{CaseMapper, CaseMapperBorrowed};
 
 use icu_provider::prelude::*;
 
@@ -147,6 +147,22 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
         })
     }
 
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed<'a>(&'a self) -> CaseMapCloserBorrowed<'a> {
+        CaseMapCloserBorrowed {
+            cm: self.cm.as_ref().as_borrowed(),
+            unfold: self.unfold.get(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct CaseMapCloserBorrowed<'a> {
+    cm: CaseMapperBorrowed<'a>,
+    unfold: &'a CaseMapUnfold<'a>,
+}
+
+impl<'a> CaseMapCloserBorrowed<'a> {
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
     /// Also adds special case closure mappings.
     ///
@@ -180,8 +196,8 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// assert!(set.contains('ſ'));
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
-    pub fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
-        self.cm.as_ref().add_case_closure_to(c, set);
+    pub fn add_case_closure_to<S: ClosureSink>(self, c: char, set: &mut S) {
+        self.cm.add_case_closure_to(c, set);
     }
 
     /// Finds all characters and strings which may casemap to `s` as their full case folding string
@@ -216,11 +232,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     /// assert!(set.contains('ß'));
     /// assert!(set.contains('ẞ'));
     /// ```
-    pub fn add_string_case_closure_to<S: ClosureSink>(&self, s: &str, set: &mut S) -> bool {
-        self.cm
-            .as_ref()
-            .data
-            .get()
-            .add_string_case_closure_to(s, set, self.unfold.get())
+    pub fn add_string_case_closure_to<S: ClosureSink>(self, s: &str, set: &mut S) -> bool {
+        self.cm.data.add_string_case_closure_to(s, set, self.unfold)
     }
 }
