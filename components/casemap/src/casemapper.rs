@@ -51,6 +51,501 @@ impl AsRef<CaseMapper> for CaseMapper {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct CaseMapperBorrowed<'a> {
+    pub(crate) data: &'a CaseMap<'a>,
+}
+
+impl<'a> CaseMapperBorrowed<'a> {
+    /// Returns the full lowercase mapping of the given string as a [`Writeable`].
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::lowercase_to_string()`] for the equivalent convenience function that returns a String,
+    /// as well as for an example.
+    pub fn lowercase(self, src: &'a str, langid: &LanguageIdentifier) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::from_langid(langid),
+            MappingKind::Lower,
+            TrailingCase::default(),
+        )
+    }
+
+    /// Returns the full uppercase mapping of the given string as a [`Writeable`].
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::uppercase_to_string()`] for the equivalent convenience function that returns a String,
+    /// as well as for an example.
+    pub fn uppercase(self, src: &'a str, langid: &LanguageIdentifier) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::from_langid(langid),
+            MappingKind::Upper,
+            TrailingCase::default(),
+        )
+    }
+
+    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
+    /// the specified leading adjustment behavior from the options without loading additional data.
+    ///
+    /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
+    /// by the application, for example one can titlecase on a per-word basis by mixing this with
+    /// a `WordSegmenter`.
+    ///
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::ToCased`]
+    /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavior as this type does not load
+    /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
+    /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
+    /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
+    /// is [`LeadingAdjustment::None`].
+    ///
+    /// See [`Self::titlecase_segment_with_only_case_data_to_string()`] for the equivalent convenience function that returns a String,
+    /// as well as for an example.
+    ///
+    /// [`TitlecaseMapper`]: crate::TitlecaseMapper
+    pub fn titlecase_segment_with_only_case_data(
+        self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+    ) -> impl Writeable + 'a {
+        self.titlecase_segment_with_adjustment(src, langid, options, |data, ch| data.is_cased(ch))
+    }
+
+    /// Helper to support different leading adjustment behaviors,
+    /// `char_is_lead` is a function that returns true for a character that is allowed to be the
+    /// first relevant character in a titlecasing string, when `leading_adjustment != None`
+    ///
+    /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
+    /// to this function with different closures
+    pub(crate) fn titlecase_segment_with_adjustment(
+        self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+        char_is_lead: impl Fn(&CaseMap, char) -> bool,
+    ) -> StringAndWriteable<'a, FullCaseWriteable<'a, true>> {
+        let (head, rest) = match options.leading_adjustment.unwrap_or_default() {
+            LeadingAdjustment::Auto | LeadingAdjustment::ToCased => {
+                let first_cased = src
+                    .char_indices()
+                    .find(|(_i, ch)| char_is_lead(self.data, *ch));
+                if let Some((first_cased, _ch)) = first_cased {
+                    (
+                        src.get(..first_cased).unwrap_or(""),
+                        src.get(first_cased..).unwrap_or(""),
+                    )
+                } else {
+                    (src, "")
+                }
+            }
+            LeadingAdjustment::None => ("", src),
+        };
+        let writeable = self.data.full_helper_writeable::<true>(
+            rest,
+            CaseMapLocale::from_langid(langid),
+            MappingKind::Title,
+            options.trailing_case.unwrap_or_default(),
+        );
+        StringAndWriteable {
+            string: head,
+            writeable,
+        }
+    }
+    /// Case-folds the characters in the given string as a [`Writeable`].
+    /// This function is locale-independent and context-insensitive.
+    ///
+    /// Can be used to test if two strings are case-insensitively equivalent.
+    ///
+    /// See [`Self::fold_string()`] for the equivalent convenience function that returns a String,
+    /// as well as for an example.
+    pub fn fold(self, src: &'a str) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::Root,
+            MappingKind::Fold,
+            TrailingCase::default(),
+        )
+    }
+
+    /// Case-folds the characters in the given string as a [`Writeable`],
+    /// using Turkic (T) mappings for dotted/dotless I.
+    /// This function is locale-independent and context-insensitive.
+    ///
+    /// Can be used to test if two strings are case-insensitively equivalent.
+    ///
+    /// See [`Self::fold_turkic_string()`] for the equivalent convenience function that returns a String,
+    /// as well as for an example.
+    pub fn fold_turkic(self, src: &'a str) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
+            src,
+            CaseMapLocale::Turkish,
+            MappingKind::Fold,
+            TrailingCase::default(),
+        )
+    }
+
+    /// Returns the full lowercase mapping of the given string as a String.
+    ///
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::lowercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = CaseMapper::new();
+    /// let root = langid!("und");
+    ///
+    /// assert_eq!(cm.lowercase_to_string("hEllO WorLd", &root), "hello world");
+    /// assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &root), "γειά σου κόσμε");
+    /// assert_eq!(cm.lowercase_to_string("नमस्ते दुनिया", &root), "नमस्ते दुनिया");
+    /// assert_eq!(cm.lowercase_to_string("Привет мир", &root), "привет мир");
+    ///
+    /// // Some behavior is language-sensitive
+    /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &root), "constantinople");
+    /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &langid!("tr")), "constantınople");
+    /// ```
+    pub fn lowercase_to_string(self, src: &str, langid: &LanguageIdentifier) -> String {
+        self.lowercase(src, langid).write_to_string().into_owned()
+    }
+
+    /// Returns the full uppercase mapping of the given string as a String.
+    ///
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::uppercase()`] for the equivalent lower-level function that returns a [`Writeable`]
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = CaseMapper::new();
+    /// let root = langid!("und");
+    ///
+    /// assert_eq!(cm.uppercase_to_string("hEllO WorLd", &root), "HELLO WORLD");
+    /// assert_eq!(cm.uppercase_to_string("Γειά σου Κόσμε", &root), "ΓΕΙΆ ΣΟΥ ΚΌΣΜΕ");
+    /// assert_eq!(cm.uppercase_to_string("नमस्ते दुनिया", &root), "नमस्ते दुनिया");
+    /// assert_eq!(cm.uppercase_to_string("Привет мир", &root), "ПРИВЕТ МИР");
+    ///
+    /// // Some behavior is language-sensitive
+    /// assert_eq!(cm.uppercase_to_string("istanbul", &root), "ISTANBUL");
+    /// assert_eq!(cm.uppercase_to_string("istanbul", &langid!("tr")), "İSTANBUL"); // Turkish dotted i
+    ///
+    /// assert_eq!(cm.uppercase_to_string("և Երևանի", &root), "ԵՒ ԵՐԵՒԱՆԻ");
+    /// assert_eq!(cm.uppercase_to_string("և Երևանի", &langid!("hy")), "ԵՎ ԵՐԵՎԱՆԻ"); // Eastern Armenian ech-yiwn ligature
+    /// ```
+    pub fn uppercase_to_string(self, src: &str, langid: &LanguageIdentifier) -> String {
+        self.uppercase(src, langid).write_to_string().into_owned()
+    }
+
+    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// the string as a single segment (and thus only titlecasing the beginning of it). Performs
+    /// the specified leading adjustment behavior from the options without loading additional data.
+    ///
+    /// Note that [`TitlecaseMapper`] has better behavior, most users should consider using
+    /// it instead. This method primarily exists for people who care about the amount of data being loaded.
+    ///
+    /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
+    /// by the application, for example one can titlecase on a per-word basis by mixing this with
+    /// a `WordSegmenter`.
+    ///
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// This function performs "adjust to cased" leading adjustment behavior when [`LeadingAdjustment::Auto`] or [`LeadingAdjustment::ToCased`]
+    /// is set. Auto mode is not able to pick the "adjust to letter/number/symbol" behavior as this type does not load
+    /// the data to do so, use [`TitlecaseMapper`] if such behavior is desired. See
+    /// the docs of [`TitlecaseMapper`] for more information on what this means. There is no difference between
+    /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
+    /// is [`LeadingAdjustment::None`].
+    ///
+    /// See [`Self::titlecase_segment_with_only_case_data()`] for the equivalent lower-level function that returns a [`Writeable`]
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = CaseMapper::new();
+    /// let root = langid!("und");
+    ///
+    /// let default_options = Default::default();
+    ///
+    /// // note that the subsequent words are not titlecased, this function assumes
+    /// // that the entire string is a single segment and only titlecases at the beginning.
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("hEllO WorLd", &root, default_options), "Hello world");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("Γειά σου Κόσμε", &root, default_options), "Γειά σου κόσμε");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("नमस्ते दुनिया", &root, default_options), "नमस्ते दुनिया");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("Привет мир", &root, default_options), "Привет мир");
+    ///
+    /// // Some behavior is language-sensitive
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("istanbul", &root, default_options), "Istanbul");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("istanbul", &langid!("tr"), default_options), "İstanbul"); // Turkish dotted i
+    ///
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("և Երևանի", &root, default_options), "Եւ երևանի");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("և Երևանի", &langid!("hy"), default_options), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
+    ///
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("ijkdijk", &root, default_options), "Ijkdijk");
+    /// assert_eq!(cm.titlecase_segment_with_only_case_data_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
+    /// ```
+    ///
+    /// [`TitlecaseMapper`]: crate::TitlecaseMapper
+    pub fn titlecase_segment_with_only_case_data_to_string(
+        self,
+        src: &str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+    ) -> String {
+        self.titlecase_segment_with_only_case_data(src, langid, options)
+            .write_to_string()
+            .into_owned()
+    }
+
+    /// Case-folds the characters in the given string as a String.
+    /// This function is locale-independent and context-insensitive.
+    ///
+    /// Can be used to test if two strings are case-insensitively equivalent.
+    ///
+    /// See [`Self::fold()`] for the equivalent lower-level function that returns a [`Writeable`]
+    ///s s
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// // Check if two strings are equivalent case insensitively
+    /// assert_eq!(cm.fold_string("hEllO WorLd"), cm.fold_string("HELLO worlD"));
+    ///
+    /// assert_eq!(cm.fold_string("hEllO WorLd"), "hello world");
+    /// assert_eq!(cm.fold_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
+    /// assert_eq!(cm.fold_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
+    /// assert_eq!(cm.fold_string("Привет мир"), "привет мир");
+    /// ```
+    pub fn fold_string(self, src: &str) -> String {
+        self.fold(src).write_to_string().into_owned()
+    }
+
+    /// Case-folds the characters in the given string as a String,
+    /// using Turkic (T) mappings for dotted/dotless I.
+    /// This function is locale-independent and context-insensitive.
+    ///
+    /// Can be used to test if two strings are case-insensitively equivalent.
+    ///
+    /// See [`Self::fold_turkic()`] for the equivalent lower-level function that returns a [`Writeable`]
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// // Check if two strings are equivalent case insensitively
+    /// assert_eq!(cm.fold_turkic_string("İstanbul"), cm.fold_turkic_string("iSTANBUL"));
+    ///
+    /// assert_eq!(cm.fold_turkic_string("İstanbul not Constantinople"), "istanbul not constantinople");
+    /// assert_eq!(cm.fold_turkic_string("Istanbul not Constantınople"), "ıstanbul not constantınople");
+    ///
+    /// assert_eq!(cm.fold_turkic_string("hEllO WorLd"), "hello world");
+    /// assert_eq!(cm.fold_turkic_string("Γειά σου Κόσμε"), "γειά σου κόσμε");
+    /// assert_eq!(cm.fold_turkic_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
+    /// assert_eq!(cm.fold_turkic_string("Привет мир"), "привет мир");
+    /// ```
+    pub fn fold_turkic_string(self, src: &str) -> String {
+        self.fold_turkic(src).write_to_string().into_owned()
+    }
+
+    /// Adds all simple case mappings and the full case folding for `c` to `set`.
+    /// Also adds special case closure mappings.
+    ///
+    /// Identical to [`CaseMapCloser::add_case_closure_to()`], see docs there for more information.
+    /// This method is duplicated so that one does not need to load extra unfold data
+    /// if they only need this and not also [`CaseMapCloser::add_string_case_closure_to()`].
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    /// use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+    ///
+    /// let cm = CaseMapper::new();
+    /// let mut builder = CodePointInversionListBuilder::new();
+    /// cm.add_case_closure_to('s', &mut builder);
+    ///
+    /// let set = builder.build();
+    ///
+    /// assert!(set.contains('S'));
+    /// assert!(set.contains('ſ'));
+    /// assert!(!set.contains('s')); // does not contain itself
+    /// ```
+    ///
+    /// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
+    /// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
+    pub fn add_case_closure_to<S: ClosureSink>(self, c: char, set: &mut S) {
+        self.data.add_case_closure_to(c, set);
+    }
+
+    /// Returns the lowercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapper::lowercase`].
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// assert_eq!(cm.simple_lowercase('C'), 'c');
+    /// assert_eq!(cm.simple_lowercase('c'), 'c');
+    /// assert_eq!(cm.simple_lowercase('Ć'), 'ć');
+    /// assert_eq!(cm.simple_lowercase('Γ'), 'γ');
+    /// ```
+    pub fn simple_lowercase(self, c: char) -> char {
+        self.data.simple_lower(c)
+    }
+
+    /// Returns the uppercase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    /// For full mappings, use [`CaseMapper::uppercase`].
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// assert_eq!(cm.simple_uppercase('c'), 'C');
+    /// assert_eq!(cm.simple_uppercase('C'), 'C');
+    /// assert_eq!(cm.simple_uppercase('ć'), 'Ć');
+    /// assert_eq!(cm.simple_uppercase('γ'), 'Γ');
+    ///
+    /// assert_eq!(cm.simple_uppercase('ǳ'), 'Ǳ');
+    /// ```
+    pub fn simple_uppercase(self, c: char) -> char {
+        self.data.simple_upper(c)
+    }
+
+    /// Returns the titlecase mapping of the given `char`.
+    /// This function only implements simple and common mappings. Full mappings,
+    /// which can map one `char` to a string, are not included.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// assert_eq!(cm.simple_titlecase('ǳ'), 'ǲ');
+    ///
+    /// assert_eq!(cm.simple_titlecase('c'), 'C');
+    /// assert_eq!(cm.simple_titlecase('C'), 'C');
+    /// assert_eq!(cm.simple_titlecase('ć'), 'Ć');
+    /// assert_eq!(cm.simple_titlecase('γ'), 'Γ');
+    /// ```
+    pub fn simple_titlecase(self, c: char) -> char {
+        self.data.simple_title(c)
+    }
+
+    /// Returns the simple case folding of the given char.
+    /// For full mappings, use [`CaseMapper::fold`].
+    ///
+    /// This function can be used to perform caseless matches on
+    /// individual characters.
+    /// > *Note:* With Unicode 15.0 data, there are three
+    /// > pairs of characters for which equivalence under this
+    /// > function is inconsistent with equivalence of the
+    /// > one-character strings under [`CaseMapper::fold`].
+    /// > This is resolved in Unicode 15.1 and later.
+    ///
+    /// For compatibility applications where simple case folding
+    /// of strings is required, this function can be applied to
+    /// each character of a string.  Note that the resulting
+    /// equivalence relation is different from that obtained
+    /// by [`CaseMapper::fold`]:
+    /// The strings "Straße" and "STRASSE" are distinct
+    /// under simple case folding, but are equivalent under
+    /// default (full) case folding.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// // perform case insensitive checks
+    /// assert_eq!(cm.simple_fold('σ'), cm.simple_fold('ς'));
+    /// assert_eq!(cm.simple_fold('Σ'), cm.simple_fold('ς'));
+    ///
+    /// assert_eq!(cm.simple_fold('c'), 'c');
+    /// assert_eq!(cm.simple_fold('Ć'), 'ć');
+    /// assert_eq!(cm.simple_fold('Γ'), 'γ');
+    /// assert_eq!(cm.simple_fold('ς'), 'σ');
+    ///
+    /// assert_eq!(cm.simple_fold('ß'), 'ß');
+    /// assert_eq!(cm.simple_fold('I'), 'i');
+    /// assert_eq!(cm.simple_fold('İ'), 'İ');
+    /// assert_eq!(cm.simple_fold('ı'), 'ı');
+    /// ```
+    pub fn simple_fold(self, c: char) -> char {
+        self.data.simple_fold(c, FoldOptions::default())
+    }
+
+    /// Returns the simple case folding of the given char, using Turkic (T) mappings for
+    /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
+    /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
+    /// [`CaseMapper::fold()`].
+    ///
+    /// You can use the case folding to perform Turkic caseless matches on characters
+    /// provided they don't full-casefold to strings. To avoid that situation,
+    /// convert to a string and use [`CaseMapper::fold_turkic`].
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
+    /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
+    /// ```
+    pub fn simple_fold_turkic(self, c: char) -> char {
+        self.data
+            .simple_fold(c, FoldOptions::with_turkic_mappings())
+    }
+}
+
 impl CaseMapper {
     /// Creates a [`CaseMapper`] using compiled data.
     ///
