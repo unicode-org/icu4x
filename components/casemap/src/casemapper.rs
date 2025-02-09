@@ -573,6 +573,13 @@ impl CaseMapper {
         }
     }
 
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed<'a>(&'a self) -> CaseMapperBorrowed<'a> {
+        CaseMapperBorrowed {
+            data: self.data.get(),
+        }
+    }
+
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
         new: skip,
