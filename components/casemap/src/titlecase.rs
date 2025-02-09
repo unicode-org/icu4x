@@ -4,12 +4,12 @@
 
 //! Titlecasing-specific try_new_with_mapper_unstable
 use crate::provider::CaseMapV1;
-use crate::CaseMapper;
+use crate::{CaseMapper, CaseMapperBorrowed};
 use alloc::string::String;
 use icu_locale_core::LanguageIdentifier;
 use icu_properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_properties::provider::GeneralCategoryV1;
-use icu_properties::CodePointMapData;
+use icu_properties::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -128,7 +128,7 @@ pub enum LeadingAdjustment {
     /// Adjust the string to the first relevant character before beginning to apply casing
     /// ("'twixt" -> "'Twixt"). "Relevant" character is picked by best available algorithm,
     /// by default will adjust to first letter, number, symbol, or private use character,
-    /// but if no data is available (e.g. this API is being called via [`CaseMapper::titlecase_segment_with_only_case_data()`]),
+    /// but if no data is available (e.g. this API is being called via [`CaseMapperBorrowed::titlecase_segment_with_only_case_data()`]),
     /// then may be equivalent to "adjust to cased".
     ///
     /// This is the default
@@ -161,7 +161,10 @@ pub struct TitlecaseOptions {
 /// to support the non-legacy "head adjustment" behavior.
 ///
 ///
-/// By default, [`Self::titlecase_segment()`] and [`Self::titlecase_segment_to_string()`] perform "leading adjustment",
+/// Most methods for this type live on [`TitlecaseMapperBorrowed`], which you can obtain via
+/// [`TitlecaseMapper::new()`] or [`TitlecaseMapper::as_borrowed()`].
+///
+/// By default, [`TitlecaseMapperBorrowed::titlecase_segment()`] and [`TitlecaseMapperBorrowed::titlecase_segment_to_string()`] perform "leading adjustment",
 /// where they wait till the first relevant character to begin titlecasing. For example, in the string `'twixt`, the apostrophe
 /// is ignored because the word starts at the first "t", which will get titlecased (producing `'Twixt`). Other punctuation will
 /// also be ignored, like in the string `«hello»`, which will get titlecased to `«Hello»`.
@@ -208,28 +211,7 @@ pub struct TitlecaseMapper<CM> {
     gc: CodePointMapData<GeneralCategory>,
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for TitlecaseMapper<CaseMapper> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl TitlecaseMapper<CaseMapper> {
-    /// A constructor which creates a [`TitlecaseMapper`] using compiled data
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self {
-            cm: CaseMapper::new(),
-            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new()
-                .static_to_owned(),
-        }
-    }
-
     icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
     functions: [
         new: skip,
@@ -250,6 +232,18 @@ impl TitlecaseMapper<CaseMapper> {
     }
 }
 
+impl TitlecaseMapper<CaseMapper> {
+    /// A constructor which creates a [`TitlecaseMapperBorrowed`] using compiled data
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)] // Intentional
+    pub const fn new() -> TitlecaseMapperBorrowed<'static> {
+        TitlecaseMapperBorrowed::new()
+    }
+}
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
@@ -286,6 +280,57 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         Ok(Self { cm: casemapper, gc })
     }
 
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed(&self) -> TitlecaseMapperBorrowed<'_> {
+        TitlecaseMapperBorrowed {
+            cm: self.cm.as_ref().as_borrowed(),
+            gc: self.gc.as_borrowed(),
+        }
+    }
+}
+
+/// A borrowed [`TitlecaseMapper`].
+///
+/// See methods or [`TitlecaseMapper`] for examples.
+#[derive(Clone, Debug, Copy)]
+pub struct TitlecaseMapperBorrowed<'a> {
+    cm: CaseMapperBorrowed<'a>,
+    gc: CodePointMapDataBorrowed<'a, GeneralCategory>,
+}
+
+impl TitlecaseMapperBorrowed<'static> {
+    /// A constructor which creates a [`TitlecaseMapperBorrowed`] using compiled data
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            cm: CaseMapper::new(),
+            gc: icu_properties::CodePointMapData::<icu_properties::props::GeneralCategory>::new(),
+        }
+    }
+    /// Cheaply converts a [`TitlecaseMapperBorrowed<'static>`] into a [`TitlecaseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`TitlecaseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`TitlecaseMapper`].
+    pub const fn static_to_owned(self) -> TitlecaseMapper<CaseMapper> {
+        TitlecaseMapper {
+            cm: self.cm.static_to_owned(),
+            gc: self.gc.static_to_owned(),
+        }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for TitlecaseMapperBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<'a> TitlecaseMapperBorrowed<'a> {
     /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
     /// the string as a single segment (and thus only titlecasing the beginning of it).
     ///
@@ -297,10 +342,10 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`TitlecaseMapperBorrowed::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
     /// as well as for an example.
-    pub fn titlecase_segment<'a>(
-        &'a self,
+    pub fn titlecase_segment(
+        self,
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
@@ -312,13 +357,11 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
                 .union(GeneralCategoryGroup::Symbol)
                 .union(GeneralCategoryGroup::PrivateUse);
             self.cm
-                .as_ref()
                 .titlecase_segment_with_adjustment(src, langid, options, |_data, ch| {
-                    HEAD_GROUPS.contains(self.gc.as_borrowed().get(ch))
+                    HEAD_GROUPS.contains(self.gc.get(ch))
                 })
         } else {
             self.cm
-                .as_ref()
                 .titlecase_segment_with_adjustment(src, langid, options, |data, ch| {
                     data.is_cased(ch)
                 })
@@ -336,7 +379,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
+    /// See [`TitlecaseMapperBorrowed::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
     ///
     /// # Examples
     ///
@@ -432,7 +475,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// );
     /// ```
     pub fn titlecase_segment_to_string(
-        &self,
+        self,
         src: &str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
