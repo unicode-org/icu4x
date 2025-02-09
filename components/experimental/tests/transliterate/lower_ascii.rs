@@ -49,6 +49,7 @@ struct LowercaseTransliterator(CaseMapper);
 impl CustomTransliterator for LowercaseTransliterator {
     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
         self.0
+            .as_borrowed()
             .lowercase_to_string(&input[range], &LanguageIdentifier::default())
     }
 }
