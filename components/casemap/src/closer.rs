@@ -94,6 +94,7 @@ impl CaseMapCloser<CaseMapper> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)] // Intentional
     pub const fn new() -> CaseMapCloserBorrowed<'static> {
         CaseMapCloserBorrowed::new()
     }
@@ -140,7 +141,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
-    pub fn as_borrowed<'a>(&'a self) -> CaseMapCloserBorrowed<'a> {
+    pub fn as_borrowed(&self) -> CaseMapCloserBorrowed<'_> {
         CaseMapCloserBorrowed {
             cm: self.cm.as_ref().as_borrowed(),
             unfold: self.unfold.get(),
@@ -212,7 +213,7 @@ impl Default for CaseMapCloserBorrowed<'static> {
     }
 }
 
-impl<'a> CaseMapCloserBorrowed<'a> {
+impl CaseMapCloserBorrowed<'_> {
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
     /// Also adds special case closure mappings.
     ///

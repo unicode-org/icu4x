@@ -239,6 +239,7 @@ impl TitlecaseMapper<CaseMapper> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_ret_no_self)] // Intentional
     pub const fn new() -> TitlecaseMapperBorrowed<'static> {
         TitlecaseMapperBorrowed::new()
     }
@@ -280,7 +281,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     }
 
     /// Constructs a borrowed version of this type for more efficient querying.
-    pub fn as_borrowed<'a>(&'a self) -> TitlecaseMapperBorrowed<'a> {
+    pub fn as_borrowed(&self) -> TitlecaseMapperBorrowed<'_> {
         TitlecaseMapperBorrowed {
             cm: self.cm.as_ref().as_borrowed(),
             gc: self.gc.as_borrowed(),

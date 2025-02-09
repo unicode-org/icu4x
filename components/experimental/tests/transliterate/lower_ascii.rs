@@ -4,7 +4,7 @@
 
 use core::any::TypeId;
 
-use icu::casemap::CaseMapper;
+use icu::casemap::CaseMapperBorrowed;
 use icu_experimental::transliterate::{
     provider::TransliteratorRulesV1, CustomTransliterator, RuleCollection, RuleCollectionProvider,
     Transliterator,
@@ -44,12 +44,11 @@ where
 }
 
 #[derive(Debug)]
-struct LowercaseTransliterator(CaseMapper);
+struct LowercaseTransliterator(CaseMapperBorrowed<'static>);
 
 impl CustomTransliterator for LowercaseTransliterator {
     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
         self.0
-            .as_borrowed()
             .lowercase_to_string(&input[range], &LanguageIdentifier::default())
     }
 }
