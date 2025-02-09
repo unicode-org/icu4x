@@ -4,12 +4,12 @@
 
 //! Titlecasing-specific try_new_with_mapper_unstable
 use crate::provider::CaseMapV1;
-use crate::CaseMapper;
+use crate::{CaseMapper, CaseMapperBorrowed};
 use alloc::string::String;
 use icu_locale_core::LanguageIdentifier;
 use icu_properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_properties::provider::GeneralCategoryV1;
-use icu_properties::CodePointMapData;
+use icu_properties::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -433,6 +433,168 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// ```
     pub fn titlecase_segment_to_string(
         &self,
+        src: &str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+    ) -> String {
+        self.titlecase_segment(src, langid, options)
+            .write_to_string()
+            .into_owned()
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct TitlecaseMapperBorrowed<'a> {
+    cm: CaseMapperBorrowed<'a>,
+    gc: CodePointMapDataBorrowed<'a, GeneralCategory>,
+}
+
+impl<'a> TitlecaseMapperBorrowed<'a> {
+    /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
+    /// the string as a single segment (and thus only titlecasing the beginning of it).
+    ///
+    /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
+    /// by the application, for example one can titlecase on a per-word basis by mixing this with
+    /// a `WordSegmenter`.
+    ///
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::titlecase_segment_to_string()`] for the equivalent convenience function that returns a String,
+    /// as well as for an example.
+    pub fn titlecase_segment(
+        self,
+        src: &'a str,
+        langid: &LanguageIdentifier,
+        options: TitlecaseOptions,
+    ) -> impl Writeable + 'a {
+        if options.leading_adjustment.unwrap_or_default() == LeadingAdjustment::Auto {
+            // letter, number, symbol, or private use code point
+            const HEAD_GROUPS: GeneralCategoryGroup = GeneralCategoryGroup::Letter
+                .union(GeneralCategoryGroup::Number)
+                .union(GeneralCategoryGroup::Symbol)
+                .union(GeneralCategoryGroup::PrivateUse);
+            self.cm
+                .titlecase_segment_with_adjustment(src, langid, options, |_data, ch| {
+                    HEAD_GROUPS.contains(self.gc.get(ch))
+                })
+        } else {
+            self.cm
+                .titlecase_segment_with_adjustment(src, langid, options, |data, ch| {
+                    data.is_cased(ch)
+                })
+        }
+    }
+
+    /// Returns the full titlecase mapping of the given string as a String, treating
+    /// the string as a single segment (and thus only titlecasing the beginning of it).
+    ///
+    /// This should typically be used as a lower-level helper to construct the titlecasing operation desired
+    /// by the application, for example one can titlecase on a per-word basis by mixing this with
+    /// a `WordSegmenter`.
+    ///
+    /// This function is context and language sensitive. Callers should pass the text's language
+    /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
+    /// `Default::default()` for the root locale.
+    ///
+    /// See [`Self::titlecase_segment()`] for the equivalent lower-level function that returns a [`Writeable`]
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::TitlecaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = TitlecaseMapper::new();
+    /// let root = langid!("und");
+    ///
+    /// let default_options = Default::default();
+    ///
+    /// // note that the subsequent words are not titlecased, this function assumes
+    /// // that the entire string is a single segment and only titlecases at the beginning.
+    /// assert_eq!(cm.titlecase_segment_to_string("hEllO WorLd", &root, default_options), "Hello world");
+    /// assert_eq!(cm.titlecase_segment_to_string("Γειά σου Κόσμε", &root, default_options), "Γειά σου κόσμε");
+    /// assert_eq!(cm.titlecase_segment_to_string("नमस्ते दुनिया", &root, default_options), "नमस्ते दुनिया");
+    /// assert_eq!(cm.titlecase_segment_to_string("Привет мир", &root, default_options), "Привет мир");
+    ///
+    /// // Some behavior is language-sensitive
+    /// assert_eq!(cm.titlecase_segment_to_string("istanbul", &root, default_options), "Istanbul");
+    /// assert_eq!(cm.titlecase_segment_to_string("istanbul", &langid!("tr"), default_options), "İstanbul"); // Turkish dotted i
+    ///
+    /// assert_eq!(cm.titlecase_segment_to_string("և Երևանի", &root, default_options), "Եւ երևանի");
+    /// assert_eq!(cm.titlecase_segment_to_string("և Երևանի", &langid!("hy"), default_options), "Եվ երևանի"); // Eastern Armenian ech-yiwn ligature
+    ///
+    /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &root, default_options), "Ijkdijk");
+    /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
+    /// ```
+    ///
+    /// Leading adjustment behaviors:
+    ///
+    /// ```rust
+    /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+    /// use icu::casemap::TitlecaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = TitlecaseMapper::new();
+    /// let root = langid!("und");
+    ///
+    /// let default_options = Default::default();
+    /// let mut no_adjust: TitlecaseOptions = Default::default();
+    /// no_adjust.leading_adjustment = Some(LeadingAdjustment::None);
+    ///
+    /// // Exhibits leading adjustment when set:
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("«hello»", &root, default_options),
+    ///     "«Hello»"
+    /// );
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("«hello»", &root, no_adjust),
+    ///     "«hello»"
+    /// );
+    ///
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("'Twas", &root, default_options),
+    ///     "'Twas"
+    /// );
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("'Twas", &root, no_adjust),
+    ///     "'twas"
+    /// );
+    ///
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("", &root, default_options),
+    ///     ""
+    /// );
+    /// assert_eq!(cm.titlecase_segment_to_string("", &root, no_adjust), "");
+    /// ```
+    ///
+    /// Tail casing behaviors:
+    ///
+    /// ```rust
+    /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
+    /// use icu::casemap::TitlecaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = TitlecaseMapper::new();
+    /// let root = langid!("und");
+    ///
+    /// let default_options = Default::default();
+    /// let mut preserve_case: TitlecaseOptions = Default::default();
+    /// preserve_case.trailing_case = Some(TrailingCase::Unchanged);
+    ///
+    /// // Exhibits trailing case when set:
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("spOngeBoB", &root, default_options),
+    ///     "Spongebob"
+    /// );
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case),
+    ///     "SpOngeBoB"
+    /// );
+    /// ```
+    pub fn titlecase_segment_to_string(
+        self,
         src: &str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
