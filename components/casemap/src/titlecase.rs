@@ -454,3 +454,16 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
             .into_owned()
     }
 }
+
+impl TitlecaseMapperBorrowed<'static> {
+    /// Cheaply converts a [`TitlecaseMapperBorrowed<'static>`] into a [`TitlecaseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`TitlecaseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`TitlecaseMapper`].
+    pub const fn static_to_owned(self) -> TitlecaseMapper<CaseMapper> {
+        TitlecaseMapper {
+            cm: self.cm.static_to_owned(),
+            gc: self.gc.static_to_owned(),
+        }
+    }
+}

@@ -232,3 +232,16 @@ impl<'a> CaseMapCloserBorrowed<'a> {
         self.cm.data.add_string_case_closure_to(s, set, self.unfold)
     }
 }
+
+impl CaseMapCloserBorrowed<'static> {
+    /// Cheaply converts a [`CaseMapCloserBorrowed<'static>`] into a [`CaseMapCloser`].
+    ///
+    /// Note: Due to branching and indirection, using [`CaseMapCloser`] might inhibit some
+    /// compile-time optimizations that are possible with [`CaseMapCloserBorrowed`].
+    pub const fn static_to_owned(self) -> CaseMapCloser<CaseMapper> {
+        CaseMapCloser {
+            cm: self.cm.static_to_owned(),
+            unfold: DataPayload::from_static_ref(self.unfold),
+        }
+    }
+}

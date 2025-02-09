@@ -546,6 +546,18 @@ impl<'a> CaseMapperBorrowed<'a> {
     }
 }
 
+impl CaseMapperBorrowed<'static> {
+    /// Cheaply converts a [`CaseMapperBorrowed<'static>`] into a [`CaseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`CaseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`CaseMapperBorrowed`].
+    pub const fn static_to_owned(self) -> CaseMapper {
+        CaseMapper {
+            data: DataPayload::from_static_ref(self.data),
+        }
+    }
+}
+
 impl CaseMapper {
     /// Creates a [`CaseMapperBorrowed`] using compiled data.
     ///
