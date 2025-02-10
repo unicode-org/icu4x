@@ -129,10 +129,11 @@ impl LocaleSpecificDataHolder {
             .unwrap_or_default();
 
         let data_locale = CollationTailoringV1::make_locale(prefs.locale_preferences);
-        let id = DataIdentifierCow::from_borrowed_and_owned(marker_attributes, data_locale);
-
         let req = DataRequest {
-            id: id.as_borrowed(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                marker_attributes,
+                &data_locale,
+            ),
             metadata: {
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
@@ -140,11 +141,11 @@ impl LocaleSpecificDataHolder {
             },
         };
 
-        let fallback_id =
-            DataIdentifierCow::from_borrowed_and_owned(Default::default(), data_locale);
-
         let fallback_req = DataRequest {
-            id: fallback_id.as_borrowed(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                Default::default(),
+                &data_locale,
+            ),
             ..Default::default()
         };
 

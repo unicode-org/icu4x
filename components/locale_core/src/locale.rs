@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{
-    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
-    ParseError, ParserMode, SubtagIterator,
-};
+use crate::parser::*;
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
@@ -133,11 +132,13 @@ impl Locale {
     /// Locale::try_from_str("en-US-u-hc-h12").unwrap();
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         parse_locale(code_units)
     }
@@ -164,6 +165,7 @@ impl Locale {
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&locale, input))
@@ -183,6 +185,7 @@ impl Locale {
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
         Self::normalize_utf8(input.as_bytes())
     }
@@ -378,6 +381,7 @@ impl Locale {
     ///     assert!(a.parse::<Locale>().unwrap().normalizing_eq(a));
     /// }
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalizing_eq(&self, other: &str) -> bool {
         macro_rules! subtag_matches {
             ($T:ty, $iter:ident, $expected:expr) => {
@@ -452,6 +456,7 @@ impl Locale {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Locale {
     type Err = ParseError;
 

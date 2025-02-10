@@ -6,16 +6,20 @@ use crate::buf::BufferMarker;
 use crate::DataError;
 use crate::DataLocale;
 use crate::DynamicDataMarker;
+#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use core::fmt::Debug;
 use core::marker::PhantomData;
+#[cfg(feature = "alloc")]
 use core::ops::Deref;
 use yoke::cartable_ptr::CartableOptionPointer;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
+#[cfg(feature = "alloc")]
 #[cfg(not(feature = "sync"))]
 use alloc::rc::Rc as SelectedRc;
+#[cfg(feature = "alloc")]
 #[cfg(feature = "sync")]
 use alloc::sync::Arc as SelectedRc;
 
@@ -173,11 +177,18 @@ pub(crate) enum DataPayloadOrInnerInner<M: DynamicDataMarker, O> {
 /// it to a [`DataPayload`] with [`DataPayload::from_yoked_buffer`].
 #[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
-pub struct Cart(CartInner);
+pub struct Cart(#[allow(dead_code)] CartInner);
 
 /// The actual cart type (private typedef).
+#[cfg(feature = "alloc")]
 pub(crate) type CartInner = SelectedRc<Box<[u8]>>;
+#[cfg(not(feature = "alloc"))]
+pub(crate) type CartInner = &'static ();
 
+// Safety: Rc, Arc, and () are CloneableCart, and our impl delegates.
+unsafe impl yoke::CloneableCart for Cart {}
+
+#[cfg(feature = "alloc")]
 impl Deref for Cart {
     type Target = Box<[u8]>;
     fn deref(&self) -> &Self::Target {
@@ -185,11 +196,11 @@ impl Deref for Cart {
     }
 }
 // Safety: both Rc and Arc are StableDeref, and our impl delegates.
+#[cfg(feature = "alloc")]
 unsafe impl stable_deref_trait::StableDeref for Cart {}
-// Safety: both Rc and Arc are CloneableCart, and our impl delegates.
-unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
+    #[cfg(feature = "alloc")]
     /// Creates a `Yoke<Y, Option<Cart>>` from owned bytes by applying `f`.
     pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
@@ -904,6 +915,7 @@ where
 
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
+    #[cfg(feature = "alloc")]
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
         let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b)
             .wrap_cart_in_option()

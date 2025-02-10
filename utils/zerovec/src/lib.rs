@@ -212,12 +212,15 @@
 // is better here.
 #![allow(clippy::needless_lifetimes)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod cow;
 #[cfg(feature = "hashmap")]
 pub mod hashmap;
+#[cfg(feature = "alloc")]
 mod map;
+#[cfg(feature = "alloc")]
 mod map2d;
 #[cfg(test)]
 pub mod samples;
@@ -234,7 +237,9 @@ mod zerofrom_impls;
 pub use crate::cow::VarZeroCow;
 #[cfg(feature = "hashmap")]
 pub use crate::hashmap::ZeroHashMap;
+#[cfg(feature = "alloc")]
 pub use crate::map::map::ZeroMap;
+#[cfg(feature = "alloc")]
 pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};
@@ -243,13 +248,16 @@ pub use crate::zerovec::{ZeroSlice, ZeroVec};
 pub mod __zerovec_internal_reexport {
     pub use zerofrom::ZeroFrom;
 
+    #[cfg(feature = "alloc")]
     pub use alloc::borrow;
+    #[cfg(feature = "alloc")]
     pub use alloc::boxed;
 
     #[cfg(feature = "serde")]
     pub use serde;
 }
 
+#[cfg(feature = "alloc")]
 pub mod maps {
     //! This module contains additional utility types and traits for working with
     //! [`ZeroMap`] and [`ZeroMap2d`]. See their docs for more details on the general purpose
@@ -295,9 +303,9 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
-    pub use crate::varzerovec::{
-        Index16, Index32, Index8, VarZeroSliceIter, VarZeroVecFormat, VarZeroVecOwned,
-    };
+    #[cfg(feature = "alloc")]
+    pub use crate::varzerovec::VarZeroVecOwned;
+    pub use crate::varzerovec::{Index16, Index32, Index8, VarZeroSliceIter, VarZeroVecFormat};
 
     pub type VarZeroVec16<'a, T> = VarZeroVec<'a, T, Index16>;
     pub type VarZeroVec32<'a, T> = VarZeroVec<'a, T, Index32>;

@@ -25,11 +25,11 @@ icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 utf8_iter = { workspace = true }
-zerovec = { workspace = true, features = ["yoke"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
-potential_utf = { workspace = true, features = ["zerovec"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 
 core_maths = { workspace = true, optional = true }
 

@@ -6,8 +6,10 @@ pub use super::errors::ParseError;
 use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
 use crate::parser::SubtagIterator;
+#[cfg(feature = "alloc")]
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::Subtag;
+#[cfg(feature = "alloc")]
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
 
@@ -15,6 +17,7 @@ use crate::{extensions, subtags};
 pub enum ParserMode {
     LanguageIdentifier,
     Locale,
+    #[allow(dead_code)]
     Partial,
 }
 
@@ -25,6 +28,7 @@ enum ParserPosition {
     Variant,
 }
 
+#[cfg(feature = "alloc")]
 pub fn parse_language_identifier_from_iter(
     iter: &mut SubtagIterator,
     mode: ParserMode,
@@ -99,6 +103,7 @@ pub fn parse_language_identifier_from_iter(
     })
 }
 
+#[cfg(feature = "alloc")]
 pub fn parse_language_identifier(
     t: &[u8],
     mode: ParserMode,

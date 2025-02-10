@@ -6,8 +6,6 @@ use super::components::{VarZeroSliceIter, VarZeroVecComponents};
 use super::vec::VarZeroVecInner;
 use super::*;
 use crate::ule::*;
-use alloc::boxed::Box;
-use alloc::vec::Vec;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::marker::PhantomData;
@@ -231,7 +229,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     }
 
     /// Obtain an owned `Vec<Box<T>>` out of this
-    pub fn to_vec(&self) -> Vec<Box<T>> {
+    #[cfg(feature = "alloc")]
+    pub fn to_vec(&self) -> alloc::vec::Vec<alloc::boxed::Box<T>> {
         self.as_components().to_vec()
     }
 

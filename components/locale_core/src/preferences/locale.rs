@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::subtags::{Language, Region, Script, Subtag, Variant, Variants};
+#[cfg(feature = "alloc")]
+use crate::subtags::Variants;
+use crate::subtags::{Language, Region, Script, Subtag, Variant};
 use crate::DataLocale;
 
 /// The structure storing locale subtags used in preferences.
@@ -97,6 +99,7 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl From<LocalePreferences> for crate::Locale {
     fn from(prefs: LocalePreferences) -> Self {
         Self {

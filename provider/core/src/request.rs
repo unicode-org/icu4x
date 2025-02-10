@@ -2,16 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
+#[cfg(feature = "alloc")]
 use alloc::borrow::ToOwned;
+#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+#[cfg(feature = "alloc")]
 use alloc::string::String;
+#[cfg(feature = "alloc")]
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
 use core::hash::Hash;
 use core::ops::Deref;
+#[cfg(feature = "alloc")]
 use zerovec::ule::VarULE;
 
 pub use icu_locale_core::DataLocale;
@@ -89,6 +95,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 
     /// Converts this [`DataIdentifierBorrowed`] into a [`DataIdentifierCow<'static>`].
+    #[cfg(feature = "alloc")]
     pub fn into_owned(self) -> DataIdentifierCow<'static> {
         DataIdentifierCow {
             marker_attributes: Cow::Owned(self.marker_attributes.to_owned()),
@@ -97,6 +104,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
     }
 
     /// Borrows this [`DataIdentifierBorrowed`] as a [`DataIdentifierCow<'a>`].
+    #[cfg(feature = "alloc")]
     pub fn as_cow(self) -> DataIdentifierCow<'a> {
         DataIdentifierCow {
             marker_attributes: Cow::Borrowed(self.marker_attributes),
@@ -110,6 +118,7 @@ impl<'a> DataIdentifierBorrowed<'a> {
 /// It is a wrapper around a [`DataLocale`] and a [`DataMarkerAttributes`].
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 #[non_exhaustive]
+#[cfg(feature = "alloc")]
 pub struct DataIdentifierCow<'a> {
     /// Marker-specific request attributes
     pub marker_attributes: Cow<'a, DataMarkerAttributes>,
@@ -117,12 +126,14 @@ pub struct DataIdentifierCow<'a> {
     pub locale: DataLocale,
 }
 
+#[cfg(feature = "alloc")]
 impl PartialOrd for DataIdentifierCow<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
+#[cfg(feature = "alloc")]
 impl Ord for DataIdentifierCow<'_> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.marker_attributes
@@ -131,6 +142,7 @@ impl Ord for DataIdentifierCow<'_> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl fmt::Display for DataIdentifierCow<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.locale, f)?;
@@ -141,6 +153,7 @@ impl fmt::Display for DataIdentifierCow<'_> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a> DataIdentifierCow<'a> {
     /// Borrows this [`DataIdentifierCow`] as a [`DataIdentifierBorrowed<'a>`].
     pub fn as_borrowed(&'a self) -> DataIdentifierBorrowed<'a> {
@@ -175,6 +188,7 @@ impl<'a> DataIdentifierCow<'a> {
     }
 
     /// Creates a [`DataIdentifierCow`] from an owned [`DataMarkerAttributes`] and an owned [`DataLocale`].
+    #[cfg(feature = "alloc")]
     pub fn from_owned(marker_attributes: Box<DataMarkerAttributes>, locale: DataLocale) -> Self {
         Self {
             marker_attributes: Cow::Owned(marker_attributes),
@@ -199,6 +213,7 @@ impl<'a> DataIdentifierCow<'a> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl Default for DataIdentifierCow<'_> {
     fn default() -> Self {
         Self {
@@ -295,6 +310,7 @@ impl DataMarkerAttributes {
     /// Creates an owned [`DataMarkerAttributes`] from an owned string.
     ///
     /// Returns an error if the string contains characters other than `[a-zA-Z0-9_\-]`.
+    #[cfg(feature = "alloc")]
     pub fn try_from_string(s: String) -> Result<Box<Self>, AttributeParseError> {
         let Ok(()) = Self::validate(s.as_bytes()) else {
             return Err(AttributeParseError);
@@ -326,6 +342,7 @@ impl DataMarkerAttributes {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl ToOwned for DataMarkerAttributes {
     type Owned = Box<Self>;
     fn to_owned(&self) -> Self::Owned {

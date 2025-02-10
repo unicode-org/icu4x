@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
-use crate::parser::{
-    parse_language_identifier, parse_language_identifier_with_single_variant, ParseError,
-    ParserMode, SubtagIterator,
-};
+use crate::parser;
 use crate::subtags;
+use crate::ParseError;
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
@@ -100,13 +100,15 @@ impl LanguageIdentifier {
     /// LanguageIdentifier::try_from_str("en-US").expect("Parsing failed");
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        parse_language_identifier(code_units, ParserMode::LanguageIdentifier)
+        crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
@@ -124,7 +126,10 @@ impl LanguageIdentifier {
         ),
         ParseError,
     > {
-        parse_language_identifier_with_single_variant(code_units, ParserMode::LanguageIdentifier)
+        crate::parser::parse_language_identifier_with_single_variant(
+            code_units,
+            parser::ParserMode::LanguageIdentifier,
+        )
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
@@ -143,8 +148,9 @@ impl LanguageIdentifier {
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
+    #[cfg(feature = "alloc")]
     pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParseError> {
-        parse_language_identifier(v, ParserMode::Locale)
+        parser::parse_language_identifier(v, parser::ParserMode::Locale)
     }
 
     /// Const-friendly version of [`Default::default`].
@@ -179,6 +185,7 @@ impl LanguageIdentifier {
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let lang_id = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&lang_id, input))
@@ -198,6 +205,7 @@ impl LanguageIdentifier {
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
         Self::normalize_utf8(input.as_bytes())
     }
@@ -380,7 +388,7 @@ impl LanguageIdentifier {
             };
         }
 
-        let mut iter = SubtagIterator::new(other.as_bytes());
+        let mut iter = parser::SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }
@@ -494,6 +502,7 @@ impl core::fmt::Debug for LanguageIdentifier {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for LanguageIdentifier {
     type Err = ParseError;
 

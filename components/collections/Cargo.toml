@@ -44,8 +44,9 @@ toml = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-serde = ["dep:serde", "zerovec/serde", "potential_utf/serde"]
+serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "alloc"]
 databake = ["dep:databake", "zerovec/databake"]
+alloc = ["zerovec/alloc"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

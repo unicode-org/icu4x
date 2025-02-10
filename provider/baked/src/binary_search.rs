@@ -139,10 +139,12 @@ impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
             .ok()
     }
 
+    #[cfg(feature = "alloc")]
     type IterReturn = core::iter::Map<
         core::slice::Iter<'static, (K::Type, &'static M::DataStruct)>,
         fn(&'static (K::Type, &'static M::DataStruct)) -> DataIdentifierCow<'static>,
     >;
+    #[cfg(feature = "alloc")]
     fn iter(&self) -> Self::IterReturn {
         self.0.iter().map(|&(k, _)| K::to_id(k))
     }
@@ -152,6 +154,7 @@ pub trait BinarySearchKey: 'static {
     type Type: Ord + Copy + 'static;
 
     fn cmp(k: Self::Type, id: DataIdentifierBorrowed) -> core::cmp::Ordering;
+    #[cfg(feature = "alloc")]
     fn to_id(k: Self::Type) -> DataIdentifierCow<'static>;
 }
 
@@ -164,6 +167,7 @@ impl BinarySearchKey for Locale {
         id.locale.strict_cmp(locale.as_bytes()).reverse()
     }
 
+    #[cfg(feature = "alloc")]
     fn to_id(locale: Self::Type) -> DataIdentifierCow<'static> {
         DataIdentifierCow::from_locale(locale.parse().unwrap())
     }
@@ -178,6 +182,7 @@ impl BinarySearchKey for Attributes {
         attributes.cmp(id.marker_attributes)
     }
 
+    #[cfg(feature = "alloc")]
     fn to_id(attributes: Self::Type) -> DataIdentifierCow<'static> {
         DataIdentifierCow::from_marker_attributes(DataMarkerAttributes::from_str_or_panic(
             attributes,
@@ -196,6 +201,7 @@ impl BinarySearchKey for AttributesAndLocale {
             .then_with(|| id.locale.strict_cmp(locale.as_bytes()).reverse())
     }
 
+    #[cfg(feature = "alloc")]
     fn to_id((attributes, locale): Self::Type) -> DataIdentifierCow<'static> {
         DataIdentifierCow::from_borrowed_and_owned(
             DataMarkerAttributes::from_str_or_panic(attributes),

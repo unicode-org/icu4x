@@ -39,7 +39,7 @@ postcard = { workspace = true, features = ["use-std"] }
 
 [features]
 default = []
-alloc = []
+alloc = ["zerovec?/alloc"]
 databake = ["dep:databake"]
 litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]

@@ -2,15 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
-use alloc::collections::BTreeSet;
 use core::fmt::Write;
 use icu_provider::{marker::DataMarkerIdHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::maps::ZeroMapKV;
-use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVec, VarZeroVecFormat, ZeroSlice};
+use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVecFormat, ZeroSlice};
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize, yoke::Yokeable)]
@@ -55,10 +52,11 @@ impl<'data> BlobSchema<'data> {
         }
     }
 
+    #[cfg(feature = "alloc")]
     pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
         match self {
             BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => {
                 unreachable!("Unreachable blob schema")
@@ -184,10 +182,11 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
             .and_then(|cs| Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?)))
     }
 
+    #[cfg(feature = "alloc")]
     pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
         let marker_index = self
             .markers
             .binary_search(&marker.id.hashed())
@@ -241,37 +240,4 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
         debug_assert!(seen_min);
         debug_assert!(seen_max);
     }
-}
-
-/// This type lets us use a u32-index-format VarZeroVec with the ZeroMap2dBorrowed.
-///
-/// Eventually we will have a FormatSelector type that lets us do `ZeroMap<FormatSelector<K, Index32>, V>`
-/// (https://github.com/unicode-org/icu4x/issues/2312)
-///
-/// IndexU32Borrowed isn't actually important; it's just more convenient to use make_varule to get the
-/// full suite of traits instead of `#[derive(VarULE)]`. (With `#[derive(VarULE)]` we would have to manually
-/// define a Serialize implementation, and that would be gnarly)
-/// https://github.com/unicode-org/icu4x/issues/2310 tracks being able to do this with derive(ULE)
-#[zerovec::make_varule(Index32U8)]
-#[zerovec::derive(Debug)]
-#[zerovec::skip_derive(ZeroMapKV)]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Debug, serde::Deserialize)]
-#[zerovec::derive(Deserialize)]
-#[cfg_attr(feature = "export", derive(serde::Serialize))]
-#[cfg_attr(feature = "export", zerovec::derive(Serialize))]
-pub(crate) struct Index32U8Borrowed<'a>(
-    #[cfg_attr(feature = "export", serde(borrow))] pub &'a [u8],
-);
-
-impl<'a> ZeroMapKV<'a> for Index32U8 {
-    type Container = VarZeroVec<'a, Index32U8, Index32>;
-    type Slice = VarZeroSlice<Index32U8, Index32>;
-    type GetType = Index32U8;
-    type OwnedType = Box<Index32U8>;
-}
-
-impl Index32U8 {
-    // Safety: Index32U8 is a transparent DST wrapper around `[u8]`, so a transmute is fine
-    #[allow(dead_code)]
-    pub(crate) const SENTINEL: &'static Self = unsafe { &*(&[] as *const [u8] as *const Self) };
 }

@@ -9,10 +9,12 @@
 //!
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
-use crate::codepointinvlist::{
-    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListULE,
-};
+#[cfg(feature = "alloc")]
+use crate::codepointinvlist::CodePointInversionListBuilder;
+use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListULE};
+#[cfg(feature = "alloc")]
 use alloc::string::{String, ToString};
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 use displaydoc::Display;
 use yoke::Yokeable;
@@ -27,6 +29,7 @@ use zerovec::{VarZeroSlice, VarZeroVec};
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
+#[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV, ToOwned))]
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize, Debug))]
@@ -79,16 +82,27 @@ impl<'data> CodePointInversionListAndStringList<'data> {
             let mut it = str_list.iter();
             if let Some(mut x) = it.next() {
                 if x.len() == 1 {
-                    return Err(InvalidStringList::InvalidStringLength(x.to_string()));
+                    return Err(InvalidStringList::InvalidStringLength(
+                        #[cfg(feature = "alloc")]
+                        x.to_string(),
+                    ));
                 }
                 for y in it {
                     if x.len() == 1 {
-                        return Err(InvalidStringList::InvalidStringLength(x.to_string()));
+                        return Err(InvalidStringList::InvalidStringLength(
+                            #[cfg(feature = "alloc")]
+                            x.to_string(),
+                        ));
                     } else if x == y {
-                        return Err(InvalidStringList::StringListNotUnique(x.to_string()));
+                        return Err(InvalidStringList::StringListNotUnique(
+                            #[cfg(feature = "alloc")]
+                            x.to_string(),
+                        ));
                     } else if x > y {
                         return Err(InvalidStringList::StringListNotSorted(
+                            #[cfg(feature = "alloc")]
                             x.to_string(),
+                            #[cfg(feature = "alloc")]
                             y.to_string(),
                         ));
                     }
@@ -216,6 +230,7 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
     fn from_iter<I>(it: I) -> Self
     where
@@ -253,14 +268,20 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
 #[derive(Display, Debug)]
 pub enum InvalidStringList {
     /// A string in the string list had an invalid length
-    #[displaydoc("Invalid string length for string: {0}")]
-    InvalidStringLength(String),
+    #[cfg_attr(feature = "alloc", displaydoc("Invalid string length for string: {0}"))]
+    InvalidStringLength(#[cfg(feature = "alloc")] String),
     /// A string in the string list appears more than once
-    #[displaydoc("String list has duplicate: {0}")]
-    StringListNotUnique(String),
+    #[cfg_attr(feature = "alloc", displaydoc("String list has duplicate: {0}"))]
+    StringListNotUnique(#[cfg(feature = "alloc")] String),
     /// Two strings in the string list compare to each other opposite of sorted order
-    #[displaydoc("Strings in string list not in sorted order: ({0}, {1})")]
-    StringListNotSorted(String, String),
+    #[cfg_attr(
+        feature = "alloc",
+        displaydoc("Strings in string list not in sorted order: ({0}, {1})")
+    )]
+    StringListNotSorted(
+        #[cfg(feature = "alloc")] String,
+        #[cfg(feature = "alloc")] String,
+    ),
 }
 
 #[cfg(test)]

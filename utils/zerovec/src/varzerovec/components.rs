@@ -4,10 +4,6 @@
 
 use super::VarZeroVecFormatError;
 use crate::ule::*;
-use alloc::boxed::Box;
-use alloc::format;
-use alloc::string::String;
-use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
@@ -65,6 +61,7 @@ pub unsafe trait IntegerULE: ULE {
 
     /// Safety: Should always convert a buffer into an array of Self with the correct length
     #[doc(hidden)]
+    #[cfg(feature = "alloc")]
     fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self];
 }
 
@@ -123,6 +120,7 @@ unsafe impl IntegerULE for u8 {
         u8::try_from(u).ok()
     }
     #[inline]
+    #[cfg(feature = "alloc")]
     fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         bytes
     }
@@ -142,6 +140,7 @@ unsafe impl IntegerULE for RawBytesULE<2> {
         u16::try_from(u).ok().map(u16::to_unaligned)
     }
     #[inline]
+    #[cfg(feature = "alloc")]
     fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         Self::from_bytes_unchecked_mut(bytes)
     }
@@ -161,6 +160,7 @@ unsafe impl IntegerULE for RawBytesULE<4> {
         u32::try_from(u).ok().map(u32::to_unaligned)
     }
     #[inline]
+    #[cfg(feature = "alloc")]
     fn iule_from_bytes_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         Self::from_bytes_unchecked_mut(bytes)
     }
@@ -478,7 +478,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         VarZeroSliceIter::new(self)
     }
 
-    pub fn to_vec(self) -> Vec<Box<T>> {
+    #[cfg(feature = "alloc")]
+    pub fn to_vec(self) -> alloc::vec::Vec<alloc::boxed::Box<T>> {
         self.iter().map(T::to_boxed).collect()
     }
 
@@ -489,14 +490,15 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
 
     // Dump a debuggable representation of this type
     #[allow(unused)] // useful for debugging
-    pub(crate) fn dump(&self) -> String {
+    #[cfg(feature = "alloc")]
+    pub(crate) fn dump(&self) -> alloc::string::String {
         let indices = self
             .indices_slice()
             .iter()
             .copied()
             .map(IntegerULE::iule_to_usize)
-            .collect::<Vec<_>>();
-        format!("VarZeroVecComponents {{ indices: {indices:?} }}")
+            .collect::<alloc::vec::Vec<_>>();
+        alloc::format!("VarZeroVecComponents {{ indices: {indices:?} }}")
     }
 }
 
@@ -677,7 +679,8 @@ where
 }
 
 /// Collects the bytes for a VarZeroSlice into a Vec.
-pub fn get_serializable_bytes_non_empty<T, A, F>(elements: &[A]) -> Option<Vec<u8>>
+#[cfg(feature = "alloc")]
+pub fn get_serializable_bytes_non_empty<T, A, F>(elements: &[A]) -> Option<alloc::vec::Vec<u8>>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
@@ -689,7 +692,7 @@ where
         len >= F::Len::SIZE as u32,
         "Must have at least F::Len::SIZE bytes to hold the length of the vector"
     );
-    let mut output: Vec<u8> = alloc::vec![0; len as usize];
+    let mut output = alloc::vec![0u8; len as usize];
     write_serializable_bytes::<T, A, F>(elements, &mut output);
     Some(output)
 }

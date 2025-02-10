@@ -2037,12 +2037,20 @@ dependencies = [
 name = "noalloctest"
 version = "2.0.0-beta1"
 dependencies = [
+ "icu_calendar",
+ "icu_collections",
+ "icu_locale_core",
+ "icu_normalizer",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_baked",
  "litemap",
  "potential_utf",
  "tinystr",
  "yoke",
  "zerofrom",
  "zerotrie",
+ "zerovec",
 ]
 
 [[package]]

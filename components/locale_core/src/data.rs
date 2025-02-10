@@ -4,11 +4,14 @@
 
 use crate::extensions::unicode as unicode_ext;
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
-use crate::{LanguageIdentifier, Locale, ParseError};
+#[cfg(feature = "alloc")]
+use crate::ParseError;
+use crate::{LanguageIdentifier, Locale};
 use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::hash::Hash;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
 /// A locale type optimized for use in fallbacking and the ICU4X data pipeline.
@@ -126,6 +129,7 @@ impl From<&Locale> for DataLocale {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for DataLocale {
     type Err = ParseError;
     #[inline]
@@ -137,11 +141,13 @@ impl FromStr for DataLocale {
 impl DataLocale {
     #[inline]
     /// Parses a [`DataLocale`].
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// Parses a [`DataLocale`] from a UTF-8 byte slice.
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let locale = Locale::try_from_utf8(code_units)?;
         if locale.id.variants.len() > 1

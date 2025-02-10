@@ -32,9 +32,9 @@ icu_provider = { workspace = true, features = ["macros"] }
 icu_timezone = { workspace = true }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
-potential_utf = { workspace = true, features = ["zerovec"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
-zerovec = { workspace = true, features = ["yoke"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
@@ -49,7 +49,7 @@ icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_calendar = { path = "../calendar", features = ["ixdtf"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
-icu_provider_blob = { path = "../../provider/blob" }
+icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_timezone = { path = "../timezone", features = ["ixdtf"] }
 litemap = { path = "../../utils/litemap" }
 
@@ -69,6 +69,7 @@ serde = [
     "icu_decimal/serde",
     "icu_pattern/serde",
     "icu_plurals/serde",
+    "icu_provider/alloc",
     "icu_provider/serde",
     "icu_timezone/serde",
     "litemap?/serde",
