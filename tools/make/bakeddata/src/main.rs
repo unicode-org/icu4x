@@ -9,7 +9,8 @@ use icu_provider::prelude::*;
 use icu_provider_export::baked_exporter;
 use icu_provider_export::prelude::*;
 use icu_provider_source::{CoverageLevel, SourceDataProvider};
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::BTreeMap;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -162,14 +163,9 @@ fn main() {
         let stub_exporter = StubExporter(
             baked_exporter::BakedExporter::new(path.join("stubdata"), options).unwrap(),
         );
-        let fingerprinter = StatisticsExporter {
-            data: Default::default(),
-            fingerprints: crlify::BufWriterWithLineEndingFix::new(
-                File::create(path.join("fingerprints.csv")).unwrap(),
-            ),
-        };
+        let fingerprinter = StatisticsExporter::default();
 
-        driver
+        let export_metdata = driver
             .clone()
             .with_markers(markers.iter().copied())
             .export(
@@ -182,18 +178,92 @@ fn main() {
             )
             .unwrap();
 
-        // Stitch
-        let struct_fingerprints = std::fs::read_to_string(path.join("fingerprints.csv")).unwrap();
-        let lookup_fingerprints =
-            std::fs::read_to_string(path.join("data").join("fingerprints.csv")).unwrap();
-        std::fs::remove_file(path.join("stubdata").join("fingerprints.csv")).unwrap();
-        std::fs::remove_file(path.join("fingerprints.csv")).unwrap();
-        std::fs::remove_file(path.join("data").join("fingerprints.csv")).unwrap();
+        let mut export_metadatas = export_metdata
+            .exporter
+            .0
+            .unwrap()
+            .downcast::<Vec<Option<Box<dyn core::any::Any>>>>()
+            .unwrap();
 
-        let mut lines = [&struct_fingerprints, &lookup_fingerprints]
-            .into_iter()
-            .flat_map(|f| f.lines())
-            .collect::<Vec<_>>();
+        let baked_metadata = export_metadatas[0]
+            .take()
+            .unwrap()
+            .downcast::<icu_provider_export::baked_exporter::BakedExporterCloseMetadata>()
+            .unwrap();
+
+        let fingerprint_metadata = export_metadatas[2]
+            .take()
+            .unwrap()
+            .downcast::<HashMap<DataMarkerInfo, Statistics>>()
+            .unwrap();
+
+        let mut lines = Vec::new();
+
+        for (marker, data) in fingerprint_metadata.into_iter() {
+            if marker.is_singleton {
+                let ((baked_struct_size, postcard_struct_size), hash) =
+                    data.size_hash[&Default::default()];
+                lines.push(format!(
+                    "{marker:?}, <singleton>, {baked_struct_size}B, {postcard_struct_size}B, {hash:x}"
+                ));
+            } else {
+                let postcard_structs_size = data
+                    .struct_sizes
+                    .values()
+                    .map(|(_, postcard)| postcard)
+                    .sum::<usize>();
+                let baked_structs_size = data
+                    .struct_sizes
+                    .values()
+                    .map(|(baked, _)| baked)
+                    .sum::<usize>();
+
+                let baked_exporter::Statistics {
+                    structs_count,
+                    lookup_struct_size,
+                    identifiers_count,
+                    ..
+                } = &baked_metadata.statistics[&marker];
+
+                lines.push(format!(
+                    "{marker:?}, <total>, {baked_structs_size}B, {postcard_structs_size}B, {structs_count} unique payloads",
+                ));
+                lines.push(format!(
+                    "{marker:?}, <lookup>, {lookup_struct_size}B, {identifiers_count} identifiers",
+                ));
+
+                let mut seen = HashMap::new();
+                for (id, ((baked_size, postcard_size), hash)) in data
+                    .size_hash
+                    .into_iter()
+                    .map(|(id, v)| {
+                        (
+                            if !id.marker_attributes.is_empty() {
+                                format!(
+                                    "{locale}/{marker_attributes}",
+                                    locale = id.locale,
+                                    marker_attributes = id.marker_attributes.as_str(),
+                                )
+                            } else {
+                                id.locale.to_string()
+                            },
+                            v,
+                        )
+                    })
+                    .collect::<BTreeMap<_, _>>()
+                {
+                    if let Some(deduped_req) = seen.get(&hash) {
+                        lines.push(format!("{marker:?}, {id}, -> {deduped_req}",));
+                    } else {
+                        lines.push(format!(
+                            "{marker:?}, {id}, {baked_size}B, {postcard_size}B, {hash:x}",
+                        ));
+                        seen.insert(hash, id.clone());
+                    }
+                }
+            }
+        }
+
         lines.sort();
         let mut out = crlify::BufWriterWithLineEndingFix::new(
             File::create(path.join("fingerprints.csv")).unwrap(),
@@ -234,19 +304,19 @@ impl<E: DataExporter> DataExporter for StubExporter<E> {
     }
 }
 
-struct StatisticsExporter<F> {
-    data: Mutex<HashMap<DataMarkerInfo, Data>>,
-    fingerprints: F,
+#[derive(Default)]
+struct StatisticsExporter {
+    data: Mutex<HashMap<DataMarkerInfo, Statistics>>,
 }
 
 #[derive(Default)]
-struct Data {
+struct Statistics {
     size_hash: HashMap<DataIdentifierCow<'static>, ((usize, usize), u64)>,
     struct_sizes: HashMap<u64, (usize, usize)>,
     identifiers: HashSet<DataIdentifierCow<'static>>,
 }
 
-impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
+impl DataExporter for StatisticsExporter {
     fn put_payload(
         &self,
         marker: DataMarkerInfo,
@@ -274,65 +344,9 @@ impl<F: Write + Send + Sync> DataExporter for StatisticsExporter<F> {
         Ok(())
     }
 
-    fn flush(&self, _marker: DataMarkerInfo, _metadata: FlushMetadata) -> Result<(), DataError> {
-        Ok(())
-    }
-
     fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        let data = core::mem::take(self.data.get_mut().expect("poison"));
-
-        let mut lines = Vec::new();
-
-        for (marker, data) in data.into_iter() {
-            if !marker.is_singleton {
-                let structs_count = data.struct_sizes.len();
-                let baked_structs_size = data.struct_sizes.values().map(|(x, _)| x).sum::<usize>();
-                let postcard_structs_size =
-                    data.struct_sizes.values().map(|(_, x)| x).sum::<usize>();
-                lines.push(format!(
-                    "{marker:?}, <total>, {baked_structs_size}B, {postcard_structs_size}B, {structs_count} unique payloads",
-                ));
-            }
-
-            let sorted = data
-                .size_hash
-                .into_iter()
-                .map(|(id, (size, hash))| {
-                    (
-                        if marker.is_singleton && id.locale.is_default() {
-                            "<singleton>".to_string()
-                        } else if !id.marker_attributes.is_empty() {
-                            format!(
-                                "{locale}/{marker_attributes}",
-                                locale = id.locale,
-                                marker_attributes = id.marker_attributes.as_str(),
-                            )
-                        } else {
-                            id.locale.to_string()
-                        },
-                        (size, hash),
-                    )
-                })
-                .collect::<BTreeMap<_, _>>();
-
-            let mut seen = HashMap::new();
-            for (id, ((baked_size, postcard_size), hash)) in sorted.into_iter() {
-                if let Some(deduped_req) = seen.get(&hash) {
-                    lines.push(format!("{marker:?}, {id}, -> {deduped_req}",));
-                } else {
-                    lines.push(format!(
-                        "{marker:?}, {id}, {baked_size}B, {postcard_size}B, {hash:x}",
-                    ));
-                    seen.insert(hash, id.clone());
-                }
-            }
-        }
-
-        lines.sort();
-        for line in lines {
-            writeln!(&mut self.fingerprints, "{line}")?;
-        }
-
-        Ok(Default::default())
+        Ok(ExporterCloseMetadata(Some(Box::new(core::mem::take(
+            self.data.get_mut().expect("poison"),
+        )))))
     }
 }
