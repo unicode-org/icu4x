@@ -53,15 +53,15 @@ pub struct VarZeroCow<'a, V: ?Sized> {
 unsafe impl<'a, V: ?Sized> Send for VarZeroCow<'a, V> {}
 unsafe impl<'a, V: ?Sized> Sync for VarZeroCow<'a, V> {}
 
-#[cfg(feature = "alloc")]
 impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
     fn clone(&self) -> Self {
+        #[cfg(feature = "alloc")]
         if self.is_owned() {
             // This clones the box
             let b: Box<[u8]> = self.as_bytes().into();
             let b = ManuallyDrop::new(b);
             let buf: NonNull<[u8]> = (&**b).into();
-            Self {
+            return Self {
                 // Invariants upheld:
                 // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
                 // 3: This is owned (we cloned it), so we set owned to true.
@@ -69,18 +69,19 @@ impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
                 owned: true,
                 marker1: PhantomData,
                 marker2: PhantomData,
-            }
-        } else {
-            // Unfortunately we can't just use `new_borrowed(self.deref())` since the lifetime is shorter
-            Self {
-                // Invariants upheld:
-                // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
-                // 3: This is borrowed (we're sharing a borrow), so we set owned to false.
-                buf: self.buf,
-                owned: false,
-                marker1: PhantomData,
-                marker2: PhantomData,
-            }
+            };
+        }
+        // Unfortunately we can't just use `new_borrowed(self.deref())` since the lifetime is shorter
+        Self {
+            // Invariants upheld:
+            // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
+            // 3: This is borrowed (we're sharing a borrow), so we set owned to false.
+            buf: self.buf,
+            #[cfg(feature = "alloc")]
+            owned: false,
+            marker1: PhantomData,
+            #[cfg(feature = "alloc")]
+            marker2: PhantomData,
         }
     }
 }
