@@ -11,7 +11,7 @@ macro_rules! cb {
     ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         /// Parses a compiled binary and returns a list of [`DataMarkerInfo`]s that it uses *at runtime*.
         ///
-        /// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
+        /// This function is intended to be used for binaries that use `BufferProvider`,
         /// for which the compiler cannot remove unused data. Using this function on a binary that only
         /// uses compiled data (through the `compiled_data` feature or manual baked data) will not return
         /// any markers, as the markers only exist in the type system.

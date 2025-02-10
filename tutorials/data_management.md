@@ -68,13 +68,12 @@ trait DataProvider<M: DataMarker> {
 
 As you can see, the `DataProvider` trait is fairly simple. It's generic in a `DataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
 
-## `BufferProvider` and `AnyProvider`
+## `BufferProvider`
 
-Static markers that determine the type of data is great for data that is compiled into the binary, as it allows the compiler to eliminate unused data, but for runtime data loading it is too restrictive. For this reason `ICU4X` defines two more traits: `BufferProvider` abstracts over data providers that provide opaque byte buffers which can be deserialized, and `AnyProvider` which uses dynamic typing with `Any`.
+Static markers that determine the type of data is great for data that is compiled into the binary, as it allows the compiler to eliminate unused data, but for runtime data loading it is too restrictive. For this reason `ICU4X` defines one more trait: `BufferProvider` abstracts over data providers that provide opaque byte buffers which can be deserialized.
 
 Because of these three data provider types, every `ICU4X` API has four constructors:
 * `try_new`: This uses the built-in data provider
-* `try_new_with_any_provider`: This loads data from a provided `&impl AnyProvider`, downcasting it
 * `try_new_with_buffer_provider`: This loads data from a provided `&impl BufferProvider`, deserializing it
 * `try_new_unstable`: This loads data from a provided `&impl DataProvider<X + Y + ...>`. It is *semver unstable*, because the bounds on the provider might change in case more data is required in the future.
 

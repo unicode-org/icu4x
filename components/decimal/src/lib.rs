@@ -156,12 +156,12 @@ impl AsRef<DecimalFormatter> for DecimalFormatter {
 }
 
 impl DecimalFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: DecimalFormatterPreferences, options: options::DecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`DecimalFormatter`] from compiled data and an options bag.
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::DecimalSymbolsV2> + DataProvider<provider::DecimalDigitsV1> + ?Sized,
     >(

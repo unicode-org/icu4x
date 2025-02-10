@@ -44,16 +44,15 @@ pub struct CaseMapCloser<CM> {
 }
 
 impl CaseMapCloser<CaseMapper> {
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
     functions: [
         new: skip,
-        try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_unstable,
         Self,
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<CaseMapV1> + DataProvider<CaseMapUnfoldV1> + ?Sized,
@@ -102,10 +101,9 @@ impl CaseMapCloser<CaseMapper> {
 
 // We use Borrow, not AsRef, since we want the blanket impl on T
 impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
-    icu_provider::gen_any_buffer_data_constructors!((casemapper: CM) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!((casemapper: CM) -> error: DataError,
     functions: [
         new_with_mapper: skip,
-        try_new_with_mapper_with_any_provider,
         try_new_with_mapper_with_buffer_provider,
         try_new_with_mapper_unstable,
         Self,
@@ -128,7 +126,7 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     }
 
     /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where
         P: DataProvider<CaseMapV1> + DataProvider<CaseMapUnfoldV1> + ?Sized,

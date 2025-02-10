@@ -51,12 +51,11 @@ pub struct PercentFormatter<R> {
 }
 
 impl PercentFormatter<DecimalFormatter> {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PercentFormatterPreferences, options: PercentFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
@@ -78,7 +77,7 @@ impl PercentFormatter<DecimalFormatter> {
         PercentFormatter::try_new_with_decimal_formatter(prefs, decimal_formatter, options)
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: PercentFormatterPreferences,
@@ -160,7 +159,7 @@ where
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_decimal_formatter_unstable(
         provider: &(impl DataProvider<PercentEssentialsV1> + ?Sized),
         prefs: PercentFormatterPreferences,

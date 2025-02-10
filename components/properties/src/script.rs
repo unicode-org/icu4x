@@ -313,18 +313,17 @@ impl ScriptWithExtensions {
         ScriptWithExtensionsBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> result: Result<ScriptWithExtensions, DataError>,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1> + ?Sized),
     ) -> Result<Self, DataError> {

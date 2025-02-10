@@ -5,15 +5,12 @@
 //! Data provider always serving the same struct.
 
 use core::fmt;
-use icu_provider::any::MaybeSendSync;
 use icu_provider::prelude::*;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
 /// A data provider that returns clones of a fixed type-erased payload.
 ///
-/// [`FixedProvider`] implements [`AnyProvider`], so it can be used in
-/// `*_with_any_provider` constructors across ICU4X.
 /// # Examples
 ///
 /// ```
@@ -29,22 +26,12 @@ use yoke::Yokeable;
 ///     });
 ///
 /// // Check that it works:
-/// let formatter = HelloWorldFormatter::try_new_with_any_provider(
+/// let formatter = HelloWorldFormatter::try_new_unstable(
 ///     &provider,
 ///     Default::default(),
 /// )
 /// .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
-///
-/// data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
-/// // Requests for invalid markers get MissingDataMarker
-/// assert!(matches!(
-///     provider.load_any(DummyV1::INFO, Default::default()),
-///     Err(DataError {
-///         kind: DataErrorKind::MarkerNotFound,
-///         ..
-///     })
-/// ))
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct FixedProvider<M: DataMarker> {
@@ -75,20 +62,6 @@ impl<M: DataMarker> FixedProvider<M> {
         M::DataStruct: Default,
     {
         Self::from_owned(M::DataStruct::default())
-    }
-}
-
-impl<M: DataMarker> AnyProvider for FixedProvider<M>
-where
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
-    M::DataStruct: MaybeSendSync,
-{
-    fn load_any(&self, marker: DataMarkerInfo, _: DataRequest) -> Result<AnyResponse, DataError> {
-        marker.match_marker(M::INFO)?;
-        Ok(AnyResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: self.data.clone().wrap_into_any_payload(),
-        })
     }
 }
 

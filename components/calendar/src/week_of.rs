@@ -39,12 +39,12 @@ pub struct WeekCalculator {
 }
 
 impl WeekCalculator {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: WeekPreferences) -> error: DataError,
         /// Creates a new [`WeekCalculator`] from compiled data.
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::WeekDataV2> + ?Sized,

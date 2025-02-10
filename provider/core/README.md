@@ -35,18 +35,7 @@ representation of the [`DataMarker`] type.
 The [`DynamicDataProvider`] is still type-level parametrized by the type that it loads, and there are two
 implementations that should be called out
 
-- [`DynamicDataProvider<AnyMarker>`], and [`AnyProvider`] (a slightly optimized alternative) return data as `dyn Any` trait objects.
 - [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`](buf::BufferProvider) returns data as `[u8]` buffers.
-
-#### AnyProvider
-
-These providers are able to return structured data cast into `dyn Any` trait objects. Users
-can call [`as_downcasting()`] to get an object implementing [`DataProvider`] by downcasting
-the trait objects.
-
-Examples of AnyProviders:
-
-- [`FixedProvider`] wraps a specific data struct and returns it.
 
 #### BufferProvider
 
@@ -80,12 +69,10 @@ structs to borrow zero-copy data.
 
 [`FixedProvider`]: https://docs.rs/icu_provider_adapters/latest/fixed/any_payload/struct.FixedProvider.html
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
-[`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
 [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/index.html
 [`SourceDataProvider`]: https://docs.rs/icu_provider_source/latest/icu_provider_source/struct.SourceDataProvider.html
-[`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
 [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html

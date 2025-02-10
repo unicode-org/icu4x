@@ -96,12 +96,6 @@ macro_rules! cb {
             $($marker_ty,)+
             $(#[cfg(feature = "experimental")] $emarker_ty,)+
         ]);
-
-        #[cfg(test)]
-        icu_provider::dynutil::impl_dynamic_data_provider!(SourceDataProvider, [
-            $($marker_ty,)+
-            $(#[cfg(feature = "experimental")] $emarker_ty,)+
-        ], icu_provider::any::AnyMarker);
     }
 }
 extern crate alloc;
