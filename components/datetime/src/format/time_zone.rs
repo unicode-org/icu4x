@@ -227,7 +227,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
             sink.write_str(&essentials.offset_unknown)?;
             return Ok(Ok(()));
         };
-        Ok(if offset.is_zero() {
+        Ok(if offset.is_zero() && self.0 != FieldLength::Two {
             sink.write_str(&essentials.offset_zero)?;
             Ok(())
         } else {
@@ -246,7 +246,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     let fd = {
                         let mut fd = SignedFixedDecimal::from(self.offset.hours_part())
                             .with_sign_display(fixed_decimal::SignDisplay::Always);
-                        fd.pad_start(if self.length == FieldLength::Four {
+                        fd.pad_start(if self.length != FieldLength::One {
                             2
                         } else {
                             0
@@ -255,7 +255,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     };
                     self.fdf.format(&fd).write_to(sink)?;
 
-                    if self.length == FieldLength::Four
+                    if self.length != FieldLength::One
                         || self.offset.minutes_part() != 0
                         || self.offset.seconds_part() != 0
                     {

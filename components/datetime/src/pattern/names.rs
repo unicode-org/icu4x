@@ -2405,8 +2405,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     )?;
                 }
 
-                // O, OOOO
-                (FS::TimeZone(TimeZone::LocalizedOffset), One | Four) => {
+                // O, OO, OOOO
+                (FS::TimeZone(TimeZone::LocalizedOffset), One | Two | Four) => {
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
                     numeric_field = Some(field);
                 }
