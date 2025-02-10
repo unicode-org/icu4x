@@ -93,10 +93,9 @@ struct LocaleFallbackIteratorInner<'a> {
 /// Because the `Iterator` trait does not allow items to borrow from the iterator, this class does
 /// not implement that trait. Instead, use `.step()` and `.get()`.
 #[derive(Debug)]
-pub struct LocaleFallbackIterator<'a, 'b> {
+pub struct LocaleFallbackIterator<'a> {
     current: DataLocale,
     inner: LocaleFallbackIteratorInner<'a>,
-    phantom: core::marker::PhantomData<&'b ()>,
 }
 
 impl LocaleFallbacker {
@@ -218,7 +217,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     /// If you have a [`Locale`](icu_locale_core::Locale), call `.into()` to get a [`DataLocale`].
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
-    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
+    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a> {
         let mut default_script = None;
         self.normalize(&mut locale, &mut default_script);
         let max_script = locale.script.or(default_script);
@@ -233,12 +232,11 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 backup_region: None,
                 max_script,
             },
-            phantom: core::marker::PhantomData,
         }
     }
 }
 
-impl LocaleFallbackIterator<'_, '_> {
+impl LocaleFallbackIterator<'_> {
     /// Borrows the current [`DataLocale`] under fallback.
     pub fn get(&self) -> &DataLocale {
         &self.current
