@@ -54,7 +54,7 @@ pub mod ffi {
     /// An iterator over the locale under fallback.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::locale::fallback::LocaleFallbackIterator, Struct)]
-    pub struct LocaleFallbackIterator<'a>(pub icu_locale::fallback::LocaleFallbackIterator<'a, 'a>);
+    pub struct LocaleFallbackIterator<'a>(pub icu_locale::fallback::LocaleFallbackIterator<'a>);
 
     impl LocaleFallbacker {
         /// Creates a new `LocaleFallbacker` from compiled data.
