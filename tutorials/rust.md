@@ -47,7 +47,7 @@ If you wish to generate your own data in blob format and pass it into ICU4X, ena
 ```toml
 [dependencies]
 icu = { version = "2.0.0-beta1", features = ["serde"] }
-icu_provider_blob = "2.0.0-beta1"
+icu_provider_blob = {version = "2.0.0-beta1", features = ["alloc"] }
 ```
 
 To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data_management.md](./data_management.md).

@@ -20,12 +20,12 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-icu_provider = { workspace = true, features = ["alloc", "deserialize_postcard_1", "serde"] }
-postcard = { workspace = true, features = ["alloc"] }
-serde = { workspace = true, features = ["alloc"] }
+icu_provider = { workspace = true, features = ["deserialize_postcard_1", "serde"] }
+postcard = { workspace = true }
+serde = { workspace = true }
 writeable = {workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
-zerotrie = { workspace = true, features = ["serde", "zerovec", "alloc"] }
+zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 
 log = { workspace = true, optional = true }
 
@@ -45,7 +45,9 @@ criterion = { workspace = true }
 export = [
     "icu_provider/export",
     "log",
+    "alloc",
 ]
+alloc = ["icu_provider/alloc", "postcard/alloc", "zerotrie/alloc", "serde/alloc"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

@@ -46,7 +46,7 @@ icu_provider = { workspace = true }
 [dev-dependencies]
 icu_datetime = { path = "../../components/datetime", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
-icu_provider_blob = { path = "../../provider/blob" }
+icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 writeable = { path = "../../utils/writeable" }
 jiff = "0.1"
 
