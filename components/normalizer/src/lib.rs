@@ -113,10 +113,10 @@ struct CanonicalCombiningClass(pub(crate) u8);
 
 #[cfg(not(feature = "icu_properties"))]
 impl CanonicalCombiningClass {
-    fn from_icu4c_value(v: u8) -> Self {
+    const fn from_icu4c_value(v: u8) -> Self {
         Self(v)
     }
-    fn to_icu4c_value(self) -> u8 {
+    const fn to_icu4c_value(self) -> u8 {
         self.0
     }
 }
