@@ -69,7 +69,7 @@ macro_rules! ccc {
             if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
-            CanonicalCombiningClass::from_icu4c_value($num)
+            icu_properties::props::CanonicalCombiningClass::from_icu4c_value($num)
         };
         X
     }};
