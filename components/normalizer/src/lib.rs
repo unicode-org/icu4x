@@ -69,7 +69,7 @@ macro_rules! ccc {
             if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
-            $num
+            CanonicalCombiningClass::from_icu4c_value($num)
         };
         X
     }};
@@ -110,6 +110,13 @@ use zerovec::{zeroslice, ZeroSlice};
 #[cfg(not(feature = "icu_properties"))]
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
 struct CanonicalCombiningClass(pub(crate) u8);
+
+#[cfg(not(feature = "icu_properties"))]
+impl CanonicalCombiningClass {
+    pub(crate) fn from_icu4c_value(v: u8) -> Self {
+        Self(v)
+    }
+}
 
 const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
 const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
