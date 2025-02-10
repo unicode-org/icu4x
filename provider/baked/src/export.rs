@@ -287,27 +287,6 @@ impl BakedExporter {
             .map_err(|e| DataError::from(e).with_path_context(&path))
     }
 
-    fn print_deps(&mut self) {
-        let mut deps = core::mem::take(&mut self.dependencies)
-            .into_iter()
-            .collect::<BTreeSet<_>>();
-        if !self.use_separate_crates {
-            deps.retain(|&krate| {
-                !krate.starts_with("icu_")
-                    || krate == "icu_provider"
-                    || krate == "icu_locale_core"
-                    || krate == "icu_pattern"
-            });
-            deps.insert("icu");
-        }
-        deps.insert("icu_provider");
-
-        log::info!("The generated module requires the following crates:");
-        for crate_name in deps {
-            log::info!("{}", crate_name);
-        }
-    }
-
     fn write_impl_macros(
         &self,
         marker: DataMarkerInfo,
@@ -771,24 +750,40 @@ impl DataExporter for BakedExporter {
             },
         )?;
 
-        // TODO: Return the statistics instead of writing them out.
-        let mut file = crlify::BufWriterWithLineEndingFix::new(std::fs::File::create(
-            self.mod_directory.join("fingerprints.csv"),
-        )?);
-        for (marker, (_, stats)) in data {
-            if !marker.is_singleton {
-                writeln!(
-                    &mut file,
-                    "{marker:?}, <lookup>, {}B, {} identifiers",
-                    stats.lookup_struct_size, stats.identifiers_count
-                )?;
-            }
+        let statistics = data
+            .into_iter()
+            .map(|(marker, (_, stats))| (marker, stats))
+            .collect();
+
+        let mut required_crates = core::mem::take(&mut self.dependencies)
+            .into_iter()
+            .collect::<BTreeSet<_>>();
+        if !self.use_separate_crates {
+            required_crates.retain(|&krate| {
+                !krate.starts_with("icu_")
+                    || krate == "icu_provider"
+                    || krate == "icu_locale_core"
+                    || krate == "icu_pattern"
+            });
+            required_crates.insert("icu");
         }
+        required_crates.insert("icu_provider");
 
-        self.print_deps();
-
-        Ok(Default::default())
+        Ok(ExporterCloseMetadata(Some(Box::new(
+            BakedExporterCloseMetadata {
+                statistics,
+                required_crates,
+            },
+        ))))
     }
+}
+
+/// TODO
+pub struct BakedExporterCloseMetadata {
+    /// TODO
+    pub statistics: BTreeMap<DataMarkerInfo, Statistics>,
+    /// TODO
+    pub required_crates: BTreeSet<&'static str>,
 }
 
 macro_rules! cb {

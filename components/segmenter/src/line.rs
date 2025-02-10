@@ -134,7 +134,7 @@ const ZWJ: u8 = 54;
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#line-break-property>.
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub enum LineBreakStrictness {
     /// Breaks text using the least restrictive set of line-breaking rules.
     /// Typically used for short lines, such as in newspapers.
@@ -152,6 +152,7 @@ pub enum LineBreakStrictness {
     /// resolving class [CJ](https://www.unicode.org/reports/tr14/#CJ) to
     /// [NS](https://www.unicode.org/reports/tr14/#NS);
     /// see rule [LB1](https://www.unicode.org/reports/tr14/#LB1).
+    #[default]
     Strict,
 
     /// Breaks text assuming there is a soft wrap opportunity around every
@@ -168,10 +169,11 @@ pub enum LineBreakStrictness {
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#word-break-property>
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub enum LineBreakWordOption {
     /// Words break according to their customary rules. See the details in
     /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-normal>.
+    #[default]
     Normal,
 
     /// Breaking is allowed within "words".
@@ -185,13 +187,17 @@ pub enum LineBreakWordOption {
 
 /// Options to tailor line-breaking behavior.
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub struct LineBreakOptions<'a> {
     /// Strictness of line-breaking rules. See [`LineBreakStrictness`].
-    pub strictness: LineBreakStrictness,
+    ///
+    /// Default is [`LineBreakStrictness::Strict`]
+    pub strictness: Option<LineBreakStrictness>,
 
     /// Line break opportunities between letters. See [`LineBreakWordOption`].
-    pub word_option: LineBreakWordOption,
+    ///
+    /// Default is [`LineBreakStrictness::Normal`]
+    pub word_option: Option<LineBreakWordOption>,
 
     /// Content locale for line segmenter
     ///
@@ -200,16 +206,6 @@ pub struct LineBreakOptions<'a> {
     /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
     /// This option has no effect in Latin-1 mode.
     pub content_locale: Option<&'a LanguageIdentifier>,
-}
-
-impl Default for LineBreakOptions<'_> {
-    fn default() -> Self {
-        Self {
-            strictness: LineBreakStrictness::Strict,
-            word_option: LineBreakWordOption::Normal,
-            content_locale: None,
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -227,8 +223,8 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
             false
         };
         Self {
-            strictness: options.strictness,
-            word_option: options.word_option,
+            strictness: options.strictness.unwrap_or_default(),
+            word_option: options.word_option.unwrap_or_default(),
             ja_zh,
         }
     }
@@ -325,8 +321,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// };
 ///
 /// let mut options = LineBreakOptions::default();
-/// options.strictness = LineBreakStrictness::Strict;
-/// options.word_option = LineBreakWordOption::BreakAll;
+/// options.strictness = Some(LineBreakStrictness::Strict);
+/// options.word_option = Some(LineBreakWordOption::BreakAll);
 /// options.content_locale = None;
 /// let segmenter = LineSegmenter::new_auto(options);
 ///

@@ -50,14 +50,14 @@ pub trait DataExporter: Sync {
     /// markers have been fully dumped). This conceptually takes ownership, so
     /// clients *may not* interact with this object after close has been called.
     fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        Ok(ExporterCloseMetadata)
+        Ok(ExporterCloseMetadata::default())
     }
 }
 
-#[non_exhaustive]
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
+#[allow(clippy::exhaustive_structs)] // newtype
 /// Contains information about a successful export.
-pub struct ExporterCloseMetadata;
+pub struct ExporterCloseMetadata(pub Option<Box<dyn core::any::Any>>);
 
 /// Metadata for [`DataExporter::flush`]
 #[non_exhaustive]
@@ -201,9 +201,11 @@ impl DataExporter for MultiExporter {
     }
 
     fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
-        self.0.iter_mut().try_fold(ExporterCloseMetadata, |m, e| {
-            e.close()?;
-            Ok(m)
-        })
+        Ok(ExporterCloseMetadata(Some(Box::new(
+            self.0.iter_mut().try_fold(vec![], |mut m, e| {
+                m.push(e.close()?.0);
+                Ok::<_, DataError>(m)
+            })?,
+        ))))
     }
 }

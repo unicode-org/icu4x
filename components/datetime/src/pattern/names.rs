@@ -2202,7 +2202,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             return Ok(());
         }
         let mut options = DecimalFormatterOptions::default();
-        options.grouping_strategy = GroupingStrategy::Never;
+        options.grouping_strategy = Some(GroupingStrategy::Never);
         self.decimal_formatter = Some(DecimalFormatterLoader::load(
             loader,
             (&prefs).into(),

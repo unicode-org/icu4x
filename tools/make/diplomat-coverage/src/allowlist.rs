@@ -314,6 +314,7 @@ lazy_static::lazy_static! {
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
+        "icu::casemap::titlecase::TitlecaseMapperBorrowed",
         "icu::timezone::types::Time",
         "icu::timezone::types::DateTime",
         "icu::timezone::types::UtcOffset",
