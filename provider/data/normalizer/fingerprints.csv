@@ -1,7 +1,7 @@
-CanonicalCompositionsV1, <singleton>, 5332B, 5310B, dd048e68b718a993
-CanonicalDecompositionDataV2, <singleton>, 27948B, 27884B, 3931c41532b0befe
-CanonicalDecompositionTablesV1, <singleton>, 2177B, 2133B, 8818c6d23b22796a
-CompatibilityDecompositionDataV2, <singleton>, 43132B, 43068B, ee74fbe0e451077d
-CompatibilityDecompositionTablesV1, <singleton>, 5790B, 5746B, fff268445f2e8786
-NonRecursiveDecompositionSupplementV1, <singleton>, 4486B, 4403B, a587960aa6faa95c
-Uts46DecompositionDataV2, <singleton>, 56200B, 56141B, 178de54c1820e67d
+canonical/compositions/v1, <singleton>, 5332B, 5310B, dd048e68b718a993
+canonical/decomposition/data/v2, <singleton>, 27948B, 27884B, 3931c41532b0befe
+canonical/decomposition/tables/v1, <singleton>, 2177B, 2133B, 8818c6d23b22796a
+compatibility/decomposition/data/v2, <singleton>, 43132B, 43068B, ee74fbe0e451077d
+compatibility/decomposition/tables/v1, <singleton>, 5790B, 5746B, fff268445f2e8786
+non/recursive/decomposition/supplement/v1, <singleton>, 4486B, 4403B, a587960aa6faa95c
+uts46/decomposition/data/v2, <singleton>, 56200B, 56141B, 178de54c1820e67d
