@@ -112,7 +112,18 @@ macro_rules! make_enumerated_property {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct BidiClass(#[doc(hidden)] pub u8);
+pub struct BidiClass(pub(crate) u8);
+
+impl BidiClass {
+    /// Returns an ICU4C `TODO` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `TODO` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(non_upper_case_globals)]
@@ -662,7 +673,18 @@ impl From<GeneralCategoryGroup> for u32 {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct Script(pub u16);
+pub struct Script(pub(crate) u16);
+
+impl Script {
+    /// Returns an ICU4C `UScriptCode` value.
+    pub const fn to_icu4c_value(self) -> u16 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UScriptCode` value.
+    pub const fn from_icu4c_value(value: u16) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -875,7 +897,18 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct HangulSyllableType(#[doc(hidden)] pub u8);
+pub struct HangulSyllableType(pub(crate) u8);
+
+impl HangulSyllableType {
+    /// Returns an ICU4C `TODO` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `TODO` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(non_upper_case_globals)]
@@ -921,15 +954,24 @@ make_enumerated_property! {
 ///
 /// See "Definition" in UAX #11 for the summary of each property value:
 /// <https://www.unicode.org/reports/tr11/#Definitions>
-///
-/// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct EastAsianWidth(#[doc(hidden)] pub u8);
+pub struct EastAsianWidth(pub(crate) u8);
+
+impl EastAsianWidth {
+    /// Returns an ICU4C `UEastAsianWidth` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UEastAsianWidth` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -977,7 +1019,18 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct LineBreak(pub u8);
+pub struct LineBreak(pub(crate) u8);
+
+impl LineBreak {
+    /// Returns an ICU4C `ULineBreak` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `ULineBreak` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1064,15 +1117,24 @@ make_enumerated_property! {
 /// See "Default Grapheme Cluster Boundary Specification" in UAX #29 for the
 /// summary of each property value:
 /// <https://www.unicode.org/reports/tr29/#Default_Grapheme_Cluster_Table>
-///
-/// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[repr(transparent)]
-pub struct GraphemeClusterBreak(pub u8);
+pub struct GraphemeClusterBreak(pub(crate) u8);
+
+impl GraphemeClusterBreak {
+    /// Returns an ICU4C `UGraphemeClusterBreak` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UGraphemeClusterBreak` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1131,15 +1193,24 @@ make_enumerated_property! {
 /// See "Default Word Boundary Specification" in UAX #29 for the summary of
 /// each property value:
 /// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
-///
-/// The numeric value is compatible with `UWordBreakValues` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct WordBreak(#[doc(hidden)] pub u8);
+pub struct WordBreak(pub(crate) u8);
+
+impl WordBreak {
+    /// Returns an ICU4C `UWordBreakValues` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UWordBreakValues` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1202,15 +1273,24 @@ make_enumerated_property! {
 /// See "Default Sentence Boundary Specification" in UAX #29 for the summary of
 /// each property value:
 /// <https://www.unicode.org/reports/tr29/#Default_Word_Boundaries>.
-///
-/// The numeric value is compatible with `USentenceBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct SentenceBreak(#[doc(hidden)] pub u8);
+pub struct SentenceBreak(pub(crate) u8);
+
+impl SentenceBreak {
+    /// Returns an ICU4C `USentenceBreak` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `USentenceBreak` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1274,7 +1354,18 @@ make_enumerated_property! {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct CanonicalCombiningClass(#[doc(hidden)] pub u8);
+pub struct CanonicalCombiningClass(pub(crate) u8);
+
+impl CanonicalCombiningClass {
+    /// Returns an ICU4C `TODO` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `TODO` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 // These constant names come from PropertyValueAliases.txt
@@ -1369,15 +1460,24 @@ make_enumerated_property! {
 /// Property Indic_Syllabic_Category.
 /// See UAX #44:
 /// <https://www.unicode.org/reports/tr44/#Indic_Syllabic_Category>.
-///
-/// The numeric value is compatible with `UIndicSyllabicCategory` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct IndicSyllabicCategory(#[doc(hidden)] pub u8);
+pub struct IndicSyllabicCategory(pub(crate) u8);
+
+impl IndicSyllabicCategory {
+    /// Returns an ICU4C `UIndicSyllabicCategory` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UIndicSyllabicCategory` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.
@@ -1447,15 +1547,24 @@ make_enumerated_property! {
 /// Enumerated property Joining_Type.
 /// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of
 /// each property value.
-///
-/// The numeric value is compatible with `UJoiningType` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
-pub struct JoiningType(#[doc(hidden)] pub u8);
+pub struct JoiningType(pub(crate) u8);
+
+impl JoiningType {
+    /// Returns an ICU4C `UJoiningType` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UJoiningType` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
 
 create_const_array! {
 #[allow(missing_docs)] // These constants don't need individual documentation.

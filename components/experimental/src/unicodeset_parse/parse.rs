@@ -1409,7 +1409,6 @@ where
         let gcb_value = parser
             .as_borrowed()
             .get_loose(name)
-            .or_else(|| name.parse().ok().map(GraphemeClusterBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
@@ -1426,7 +1425,6 @@ where
         let sb_value = parser
             .as_borrowed()
             .get_loose(name)
-            .or_else(|| name.parse().ok().map(SentenceBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =
@@ -1443,7 +1441,6 @@ where
         let wb_value = parser
             .as_borrowed()
             .get_loose(name)
-            .or_else(|| name.parse().ok().map(WordBreak))
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map = CodePointMapData::<WordBreak>::try_new_unstable(self.property_provider)
@@ -1460,7 +1457,12 @@ where
         let value = parser
             .as_borrowed()
             .get_loose(name)
-            .or_else(|| name.parse().ok().map(CanonicalCombiningClass))
+            // TODO: make the property parser do this
+            .or_else(|| {
+                name.parse()
+                    .ok()
+                    .map(CanonicalCombiningClass::from_icu4c_value)
+            })
             .ok_or(PEK::UnknownProperty)?;
         // TODO(#3550): This could be cached; does not depend on name.
         let property_map =

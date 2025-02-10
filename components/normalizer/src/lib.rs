@@ -66,10 +66,10 @@ macro_rules! ccc {
     ($name:ident, $num:expr) => {{
         const X: CanonicalCombiningClass = {
             #[cfg(feature = "icu_properties")]
-            if icu_properties::props::CanonicalCombiningClass::$name.0 != $num {
+            if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
-            CanonicalCombiningClass($num)
+            CanonicalCombiningClass::from_icu4c_value($num)
         };
         X
     }};
@@ -183,7 +183,7 @@ fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
 /// See trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
-        CanonicalCombiningClass(trie_value as u8)
+        CanonicalCombiningClass::from_icu4c_value(trie_value as u8)
     } else {
         CCC_NOT_REORDERED
     }
@@ -426,7 +426,7 @@ struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
-        CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         CharacterAndClass(u32::from(c) | ((0xFF) << 24))
@@ -446,7 +446,7 @@ impl CharacterAndClass {
     }
     /// This method must exist for Pernosco to apply its special rendering.
     pub fn ccc(&self) -> CanonicalCombiningClass {
-        CanonicalCombiningClass((self.0 >> 24) as u8)
+        CanonicalCombiningClass::from_icu4c_value((self.0 >> 24) as u8)
     }
 
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
@@ -457,7 +457,8 @@ impl CharacterAndClass {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 =
+            ((ccc_from_trie_value(trie.get32_u32(scalar)).to_icu4c_value() as u32) << 24) | scalar;
     }
 }
 

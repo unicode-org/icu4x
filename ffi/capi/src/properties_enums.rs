@@ -1873,71 +1873,71 @@ mod test {
     #[test]
     fn test_all_cases_covered() {
         for prop in props::BidiClass::ALL_VALUES {
-            let ffi_prop = BidiClass::from_integer(prop.0)
+            let ffi_prop = BidiClass::from_integer(prop.to_icu4c_value())
                 .expect("Found BidiClass value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
         }
 
         for prop in props::Script::ALL_VALUES {
-            let ffi_prop =
-                Script::from_integer(prop.0).expect("Found Script value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            let ffi_prop = Script::from_integer(prop.to_icu4c_value())
+                .expect("Found Script value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::Script::from(ffi_prop));
         }
 
         for prop in props::HangulSyllableType::ALL_VALUES {
-            let ffi_prop = HangulSyllableType::from_integer(prop.0)
+            let ffi_prop = HangulSyllableType::from_integer(prop.to_icu4c_value())
                 .expect("Found HangulSyllableType value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::HangulSyllableType::from(ffi_prop));
         }
         for prop in props::EastAsianWidth::ALL_VALUES {
-            let ffi_prop = EastAsianWidth::from_integer(prop.0)
+            let ffi_prop = EastAsianWidth::from_integer(prop.to_icu4c_value())
                 .expect("Found EastAsianWidth value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::EastAsianWidth::from(ffi_prop));
         }
         for prop in props::LineBreak::ALL_VALUES {
-            let ffi_prop = LineBreak::from_integer(prop.0)
+            let ffi_prop = LineBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found LineBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::LineBreak::from(ffi_prop));
         }
         for prop in props::GraphemeClusterBreak::ALL_VALUES {
-            let ffi_prop = GraphemeClusterBreak::from_integer(prop.0)
+            let ffi_prop = GraphemeClusterBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found GraphemeClusterBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::GraphemeClusterBreak::from(ffi_prop));
         }
         for prop in props::WordBreak::ALL_VALUES {
-            let ffi_prop = WordBreak::from_integer(prop.0)
+            let ffi_prop = WordBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found WordBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::WordBreak::from(ffi_prop));
         }
         for prop in props::SentenceBreak::ALL_VALUES {
-            let ffi_prop = SentenceBreak::from_integer(prop.0)
+            let ffi_prop = SentenceBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found SentenceBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::SentenceBreak::from(ffi_prop));
         }
         for prop in props::CanonicalCombiningClass::ALL_VALUES {
-            let ffi_prop = CanonicalCombiningClass::from_integer(prop.0)
+            let ffi_prop = CanonicalCombiningClass::from_integer(prop.to_icu4c_value())
                 .expect("Found CanonicalCombiningClass value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::CanonicalCombiningClass::from(ffi_prop));
         }
         for prop in props::IndicSyllabicCategory::ALL_VALUES {
-            let ffi_prop = IndicSyllabicCategory::from_integer(prop.0)
+            let ffi_prop = IndicSyllabicCategory::from_integer(prop.to_icu4c_value())
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
-            let ffi_prop = JoiningType::from_integer(prop.0)
+            let ffi_prop = JoiningType::from_integer(prop.to_icu4c_value())
                 .expect("Found JoiningType value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::JoiningType::from(ffi_prop));
         }
         for prop in props::GeneralCategory::ALL_VALUES {
