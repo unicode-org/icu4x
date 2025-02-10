@@ -188,20 +188,6 @@ impl<P> LocaleFallbackProvider<P> {
     }
 }
 
-impl<P> AnyProvider for LocaleFallbackProvider<P>
-where
-    P: AnyProvider,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.run_fallback(
-            marker,
-            req,
-            |req| self.inner.load_any(marker, req),
-            |res| &mut res.metadata,
-        )
-    }
-}
-
 impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DynamicDataProvider<M>,

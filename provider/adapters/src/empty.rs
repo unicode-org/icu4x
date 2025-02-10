@@ -25,7 +25,7 @@ use icu_provider::prelude::*;
 /// let provider = EmptyDataProvider::new();
 ///
 /// assert!(matches!(
-///     provider.load_any(HelloWorldV1::INFO, Default::default()),
+///     DataProvider::<HelloWorldV1>::load(&provider, Default::default()),
 ///     Err(DataError {
 ///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
@@ -54,16 +54,6 @@ impl EmptyDataProvider {
     /// Creates a data provider that always returns the specified error kind.
     pub fn new_with_error_kind(error_kind: DataErrorKind) -> Self {
         Self { error_kind }
-    }
-}
-
-impl AnyProvider for EmptyDataProvider {
-    fn load_any(
-        &self,
-        marker: DataMarkerInfo,
-        base_req: DataRequest,
-    ) -> Result<AnyResponse, DataError> {
-        Err(self.error_kind.with_req(marker, base_req))
     }
 }
 

@@ -149,14 +149,8 @@ impl GeneralCategoryData {
         Ok(Self { gc })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -227,14 +221,8 @@ impl CombiningClassData {
         Ok(Self { ccc })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -268,14 +256,8 @@ impl MirroringData {
         Ok(Self { bidi })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -317,14 +299,8 @@ impl ScriptData {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -363,14 +339,8 @@ impl ComposeData {
         Ok(Self { comp })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -407,14 +377,8 @@ impl DecomposeData {
         Ok(Self { decomp })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {

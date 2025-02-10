@@ -357,18 +357,17 @@ impl CodePointSetData {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prop: &[u8]) -> result: Option<Result<Self, DataError>>,
         functions: [
             new_for_ecma262: skip,
             try_new_for_ecma262_with_buffer_provider,
-            try_new_for_ecma262_with_any_provider,
             try_new_for_ecma262_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_ecma262)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_ecma262)]
     pub fn try_new_for_ecma262_unstable<P>(
         provider: &P,
         prop: &[u8],

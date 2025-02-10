@@ -67,9 +67,7 @@ lazy_static::lazy_static! {
         // provider stuff not relevant to FFI
         "DynamicDataMarker",
         "DataMarker",
-        "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
-        "AsDynamicDataProviderAnyMarkerWrap",
         "IterableDynamicDataProvider",
         "IterableDataProvider",
         "ForkByErrorPredicate",
@@ -79,7 +77,6 @@ lazy_static::lazy_static! {
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
-        "AnyProvider",
 
         // We might expose these if someone asks for it
         "DryDataProvider",
@@ -102,8 +99,6 @@ lazy_static::lazy_static! {
     // Ignore if this is a substring of any path
     // keep this small
     pub static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
-        // compiled data constructors cover these
-        "_with_any_provider",
         // TODO-2.0 remove this
         "_with_buffer_provider",
         "_unstable",

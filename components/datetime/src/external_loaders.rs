@@ -51,33 +51,6 @@ impl AnyCalendarLoader for ExternalLoaderCompiledData {
     }
 }
 
-/// Loader for types from other crates using [`AnyProvider`].
-pub(crate) struct ExternalLoaderAny<'a, P: ?Sized>(pub &'a P);
-
-impl<P> DecimalFormatterLoader for ExternalLoaderAny<'_, P>
-where
-    P: ?Sized + AnyProvider,
-{
-    #[inline]
-    fn load(
-        &self,
-        prefs: DecimalFormatterPreferences,
-        options: DecimalFormatterOptions,
-    ) -> Result<DecimalFormatter, DataError> {
-        DecimalFormatter::try_new_with_any_provider(self.0, prefs, options)
-    }
-}
-
-impl<P> AnyCalendarLoader for ExternalLoaderAny<'_, P>
-where
-    P: ?Sized + AnyProvider,
-{
-    #[inline]
-    fn load(&self, prefs: AnyCalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_with_any_provider(self.0, prefs)
-    }
-}
-
 /// Loader for types from other crates using [`BufferProvider`].
 #[cfg(feature = "serde")]
 pub(crate) struct ExternalLoaderBuffer<'a, P: ?Sized>(pub &'a P);

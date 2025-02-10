@@ -260,7 +260,8 @@ impl BakedExporter {
 
         if !self.use_separate_crates {
             // Don't search the whole file, there should be a macro in the first 1000 bytes
-            if formatted[..1000].contains("macro_rules!") || formatted[..1000].contains("include!")
+            if formatted[..core::cmp::min(formatted.len(), 1000)].contains("macro_rules!")
+                || formatted[..core::cmp::min(formatted.len(), 1000)].contains("include!")
             {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
@@ -696,8 +697,6 @@ impl DataExporter for BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
-        let marker_bakes = data.keys().copied().map(bake_marker);
-
         let file_paths = data.values().map(|(i, _)| format!("{i}.rs.data"));
 
         let macro_idents = data
@@ -747,25 +746,6 @@ impl DataExporter for BakedExporter {
                             #macro_idents ! ($provider);
                         )*
                     };
-                }
-
-                // Not public because `impl_data_provider` isn't.
-                #[allow(unused_macros)]
-                macro_rules! impl_any_provider {
-                    ($provider:ty) => {
-                        #maybe_msrv
-                        impl icu_provider::any::AnyProvider for $provider {
-                            fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                match marker.id.hashed() {
-                                    #(
-                                        h if h == <#marker_bakes as icu_provider::DataMarker>::INFO.id.hashed() =>
-                                            icu_provider::DataProvider::<#marker_bakes>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                                    )*
-                                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
-                                }
-                            }
-                        }
-                    }
                 }
             },
         )?;
