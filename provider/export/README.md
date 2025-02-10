@@ -23,7 +23,7 @@ ExportDriver::new(
     DeduplicationStrategy::None.into(),
     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 )
-.with_markers([icu::list::provider::AndListV2::INFO])
+.with_markers([icu::list::provider::ListAndV2::INFO])
 .export(
     &provider,
     BlobExporter::new_with_sink(Box::new(

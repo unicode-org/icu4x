@@ -649,8 +649,8 @@ macro_rules! cb {
 
         #[test]
         fn test_lookup() {
-            assert_eq!(marker_lookup().get("AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
-            assert_eq!(marker_lookup().get("icu::list::provider::AndListV2"), Some(&Some(icu::list::provider::AndListV2::INFO)));
+            assert_eq!(marker_lookup().get("ListAndV2"), Some(&Some(icu::list::provider::ListAndV2::INFO)));
+            assert_eq!(marker_lookup().get("icu::list::provider::ListAndV2"), Some(&Some(icu::list::provider::ListAndV2::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 

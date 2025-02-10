@@ -75,21 +75,21 @@ impl ListFormatter {
         try_new_and,
         try_new_and_with_buffer_provider,
         try_new_and_unstable,
-        AndListV2,
+        ListAndV2,
         "and"
     );
     constructor!(
         try_new_or,
         try_new_or_with_buffer_provider,
         try_new_or_unstable,
-        OrListV2,
+        ListOrV2,
         "or"
     );
     constructor!(
         try_new_unit,
         try_new_unit_with_buffer_provider,
         try_new_unit_unstable,
-        UnitListV2,
+        ListUnitV2,
         "unit"
     );
 

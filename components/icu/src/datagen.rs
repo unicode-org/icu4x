@@ -25,8 +25,8 @@ macro_rules! cb {
         /// assert_eq!(
         ///     icu::markers_for_bin(&std::fs::read(Path::new("target/release/my-app"))?)?,
         ///     std::collections::BTreeSet::from_iter([
-        ///         icu::list::provider::AndListV2::INFO,
-        ///         icu::list::provider::OrListV2::INFO,
+        ///         icu::list::provider::ListAndV2::INFO,
+        ///         icu::list::provider::ListOrV2::INFO,
         ///     ]),
         /// );
         /// # Ok(())
