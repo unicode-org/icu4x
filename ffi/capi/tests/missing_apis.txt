@@ -142,6 +142,7 @@ icu::datetime::fieldsets::enums::TimeFieldSet::zone#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet#Enum
 icu::datetime::fieldsets::zone::ExemplarCity#Struct
 icu::datetime::fieldsets::zone::GenericLong#Struct
+icu::datetime::fieldsets::zone::LocalizedOffsetFixed#Struct
 icu::datetime::fieldsets::zone::LocalizedOffsetLong#Struct
 icu::datetime::fieldsets::zone::LocalizedOffsetShort#Struct
 icu::datetime::fieldsets::zone::Location#Struct
