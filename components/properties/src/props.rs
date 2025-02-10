@@ -115,11 +115,11 @@ macro_rules! make_enumerated_property {
 pub struct BidiClass(pub(crate) u8);
 
 impl BidiClass {
-    /// Returns an ICU4C `TODO` value.
+    /// Returns an ICU4C `UBidiClass` value.
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
-    /// Constructor from an ICU4C `TODO` value.
+    /// Constructor from an ICU4C `UBidiClass` value.
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -900,11 +900,11 @@ make_enumerated_property! {
 pub struct HangulSyllableType(pub(crate) u8);
 
 impl HangulSyllableType {
-    /// Returns an ICU4C `TODO` value.
+    /// Returns an ICU4C `UHangulSyllableType` value.
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
-    /// Constructor from an ICU4C `TODO` value.
+    /// Constructor from an ICU4C `UHangulSyllableType` value.
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1202,11 +1202,11 @@ make_enumerated_property! {
 pub struct WordBreak(pub(crate) u8);
 
 impl WordBreak {
-    /// Returns an ICU4C `UWordBreakValues` value.
+    /// Returns an ICU4C `UWordBreak` value.
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
-    /// Constructor from an ICU4C `UWordBreakValues` value.
+    /// Constructor from an ICU4C `UWordBreak` value.
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
@@ -1357,11 +1357,11 @@ make_enumerated_property! {
 pub struct CanonicalCombiningClass(pub(crate) u8);
 
 impl CanonicalCombiningClass {
-    /// Returns an ICU4C `TODO` value.
+    /// Returns an ICU4C `UCanonicalCombiningClass` value.
     pub const fn to_icu4c_value(self) -> u8 {
         self.0
     }
-    /// Constructor from an ICU4C `TODO` value.
+    /// Constructor from an ICU4C `UCanonicalCombiningClass` value.
     pub const fn from_icu4c_value(value: u8) -> Self {
         Self(value)
     }
