@@ -90,7 +90,7 @@
 //! builder.length = Some(Length::Short);
 //! builder.time_precision = Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3));
 //! builder.alignment = Some(Alignment::Column);
-//! builder.zone_style = Some(ZoneStyle::Z);
+//! builder.zone_style = Some(ZoneStyle::SpecificLong);
 //! let dynamic_field_set = builder.build_composite().unwrap();
 //!
 //! assert_eq!(
