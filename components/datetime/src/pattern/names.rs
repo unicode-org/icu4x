@@ -499,13 +499,13 @@ size_test!(
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::TypedDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::fieldsets::O;
+/// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
 /// use icu::timezone::{DateTime, TimeZoneInfo};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian, O> =
+/// let mut names: TypedDateTimeNames<Gregorian, LocalizedOffsetLong> =
 ///     TypedDateTimeNames::try_new(locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:

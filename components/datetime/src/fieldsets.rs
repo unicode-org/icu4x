@@ -287,7 +287,7 @@ macro_rules! impl_marker_with_options {
 }
 
 macro_rules! impl_combo_get_field {
-    ($type:ident, $composite:ident, $enum:ident, $variant:ident) => {
+    ($type:ident, $composite:ident, $enum:ident, $variant:path) => {
         impl GetField<CompositeFieldSet> for Combo<$type, $variant> {
             #[inline]
             fn get_field(&self) -> CompositeFieldSet {
@@ -313,66 +313,19 @@ macro_rules! impl_zone_combo_helpers {
         $enum:ident
     ) => {
         impl $type {
-            /// Associates this field set with a long specific non-location format time zone, as in
-            /// “Pacific Daylight Time”.
             #[inline]
-            pub fn with_zone_specific_long(self) -> Combo<Self, Z> {
-                Combo::new(self, Z::new())
-            }
-            /// Associates this field set with a short specific non-location format time zone, as in
-            /// “PDT”.
-            #[inline]
-            pub fn with_zone_specific(self) -> Combo<Self, Zs> {
-                Combo::new(self, Zs::new())
-            }
-            /// Associates this field set with a long offset format time zone, as in
-            /// “GMT−08:00”.
-            #[inline]
-            pub fn with_zone_offset_long(self) -> Combo<Self, O> {
-                Combo::new(self, O::new())
-            }
-            /// Associates this field set with a short offset format time zone, as in
-            /// “GMT−8”.
-            #[inline]
-            pub fn with_zone_offset(self) -> Combo<Self, Os> {
-                Combo::new(self, Os::new())
-            }
-            /// Associates this field set with a long generic non-location format time zone, as in
-            /// “Pacific Time”.
-            #[inline]
-            pub fn with_zone_generic_long(self) -> Combo<Self, V> {
-                Combo::new(self, V::new())
-            }
-            /// Associates this field set with a short generic non-location format time zone, as in
-            /// “PT”.
-            ///
-            /// Note: short time zones names are usually only available for time zones in the country
-            /// associated with a locale (so "PT" is in `en`, but not in `en-GB`). Most time zones will
-            /// fall back to the significantly longer location format (e.g. "Los Angeles Time" for `en-GB`).
-            #[inline]
-            pub fn with_zone_generic(self) -> Combo<Self, Vs> {
-                Combo::new(self, Vs::new())
-            }
-            /// Associates this field set with a location format time zone, as in
-            /// “Los Angeles time”.
-            #[inline]
-            pub fn with_zone_location(self) -> Combo<Self, L> {
-                Combo::new(self, L::new())
-            }
-            /// Associates this field set with an exemplar city format time zone, as in
-            /// “Los Angeles”.
-            #[inline]
-            pub fn with_zone_exemplar_city(self) -> Combo<Self, X> {
-                Combo::new(self, X::new())
+            /// Associates this field set with a time zone field set.
+            pub fn zone<Z: ZoneMarkers>(self, zone: Z) -> Combo<Self, Z> {
+                Combo::new(self, zone)
             }
         }
-        impl_combo_get_field!($type, $composite, $enum, Z);
-        impl_combo_get_field!($type, $composite, $enum, Zs);
-        impl_combo_get_field!($type, $composite, $enum, O);
-        impl_combo_get_field!($type, $composite, $enum, Os);
-        impl_combo_get_field!($type, $composite, $enum, V);
-        impl_combo_get_field!($type, $composite, $enum, Vs);
-        impl_combo_get_field!($type, $composite, $enum, L);
+        impl_combo_get_field!($type, $composite, $enum, zone::SpecificLong);
+        impl_combo_get_field!($type, $composite, $enum, zone::SpecificShort);
+        impl_combo_get_field!($type, $composite, $enum, zone::LocalizedOffsetLong);
+        impl_combo_get_field!($type, $composite, $enum, zone::LocalizedOffsetShort);
+        impl_combo_get_field!($type, $composite, $enum, zone::GenericLong);
+        impl_combo_get_field!($type, $composite, $enum, zone::GenericShort);
+        impl_combo_get_field!($type, $composite, $enum, zone::Location);
     };
 }
 
@@ -877,41 +830,40 @@ macro_rules! impl_zone_marker {
         // Whether to require the Local Time
         $(input_localtime = $localtime_input_yes:ident,)?
     ) => {
-        impl_marker_with_options!(
-            #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
-            ///
-            /// # Examples
-            ///
-            /// ```
-            /// use icu::calendar::Date;
-            /// use icu::timezone::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
-            /// use icu::datetime::TimeFormatter;
-            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
-            /// use icu::locale::locale;
-            /// use tinystr::tinystr;
-            /// use writeable::assert_writeable_eq;
-            ///
-            #[doc = concat!("let fmt = TimeFormatter::try_new(")]
-            ///     locale!("en").into(),
-            #[doc = concat!("    ", stringify!($type), "::new(),")]
-            /// )
-            /// .unwrap();
-            ///
-            /// // Time zone info for America/Chicago in the summer
-            /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
-            ///     .with_offset("-05".parse().ok())
-            ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-            ///     .with_zone_variant(ZoneVariant::Daylight);
-            ///
-            /// assert_writeable_eq!(
-            ///     fmt.format(&zone),
-            #[doc = concat!("    \"", $sample, "\"")]
-            /// );
-            /// ```
-            $(#[$attr])*
-            $type,
-            length_override: $length_override,
-        );
+        #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::timezone::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+        /// use icu::datetime::TimeFormatter;
+        #[doc = concat!("use icu::datetime::fieldsets::zone::", stringify!($type), ";")]
+        /// use icu::locale::locale;
+        /// use tinystr::tinystr;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let fmt = TimeFormatter::try_new(
+        ///     locale!("en").into(),
+        #[doc = concat!("    ", stringify!($type))]
+        /// )
+        /// .unwrap();
+        ///
+        /// // Time zone info for America/Chicago in the summer
+        /// let zone = TimeZoneBcp47Id(tinystr!(8, "uschi"))
+        ///     .with_offset("-05".parse().ok())
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
+        ///     .with_zone_variant(ZoneVariant::Daylight);
+        ///
+        /// assert_writeable_eq!(
+        ///     fmt.format(&zone),
+        #[doc = concat!("    \"", $sample, "\"")]
+        /// );
+        /// ```
+        $(#[$attr])*
+        #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+        #[allow(clippy::exhaustive_structs)] // singleton marker
+        pub struct $type;
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
             type YearNames = datetime_marker_helper!(@names/year,);
@@ -953,17 +905,8 @@ macro_rules! impl_zone_marker {
         }
         impl_composite!($type, Zone, ZoneFieldSet);
         impl $type {
-            /// Creates a new field set with default options.
-            pub const fn new() -> Self {
-                Self {}
-            }
             pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
                 $field
-            }
-        }
-        impl Default for $type {
-            fn default() -> Self {
-                Self::new()
             }
         }
     };
@@ -1208,424 +1151,428 @@ impl_time_marker!(
     input_nanosecond = yes,
 );
 
-impl_zone_marker!(
-    /// When a display name is unavailable, falls back to the localized offset format for short lengths, and
-    /// to the location format for long lengths:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::timezone::{ZonedDateTimeParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::{Z, Zs};
-    /// use icu::locale::locale;
-    /// use tinystr::tinystr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// // Time zone info for Europe/Istanbul in the winter
-    /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
-    ///     .with_offset("+02".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-    ///     .with_zone_variant(ZoneVariant::Standard);
-    ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     locale!("en").into(),
-    ///     Zs::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_writeable_eq!(
-    ///     fmt.format(&zone),
-    ///     "GMT+2"
-    /// );
-    ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     locale!("en").into(),
-    ///     Z::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_writeable_eq!(
-    ///     fmt.format(&zone),
-    ///     "Türkiye Standard Time"
-    /// );
-    /// ```
-    ///
-    /// This style requires a [`ZoneVariant`], so
-    /// only a full time zone info can be formatted with this style.
-    /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
-    ///
-    /// ```compile_fail,E0271
-    /// use icu::calendar::{Date, Iso};
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::Z;
-    /// use icu::locale::locale;
-    /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-    /// use tinystr::tinystr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
-    /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
-    ///
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     Z::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
-    /// formatter.format(&time_zone_at_time);
-    /// ```
-    Z,
-    description = "time zone in specific non-location format, long length",
-    length_override = Long,
-    sample = "Central Daylight Time",
-    field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
-    zone_essentials = yes,
-    zone_locations = yes,
-    zone_specific_long = yes,
-    metazone_periods = yes,
-    input_tzid = yes,
-    input_variant = yes,
-    input_localtime = yes,
-);
+/// Time zone field sets
+pub mod zone {
+    use super::*;
+    impl_zone_marker!(
+        /// When a display name is unavailable, falls back to the localized offset format for short lengths, and
+        /// to the location format for long lengths:
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::timezone::{ZonedDateTimeParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+        /// use icu::calendar::Gregorian;
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
+        /// use icu::locale::locale;
+        /// use tinystr::tinystr;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// // Time zone info for Europe/Istanbul in the winter
+        /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
+        ///     .with_offset("+02".parse().ok())
+        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
+        ///     .with_zone_variant(ZoneVariant::Standard);
+        ///
+        /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        ///     locale!("en").into(),
+        ///     SpecificShort,
+        /// )
+        /// .unwrap();
+        ///
+        /// assert_writeable_eq!(
+        ///     fmt.format(&zone),
+        ///     "GMT+2"
+        /// );
+        ///
+        /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        ///     locale!("en").into(),
+        ///     SpecificLong,
+        /// )
+        /// .unwrap();
+        ///
+        /// assert_writeable_eq!(
+        ///     fmt.format(&zone),
+        ///     "Türkiye Standard Time"
+        /// );
+        /// ```
+        ///
+        /// This style requires a [`ZoneVariant`], so
+        /// only a full time zone info can be formatted with this style.
+        /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
+        ///
+        /// ```compile_fail,E0271
+        /// use icu::calendar::{Date, Iso};
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::SpecificLong;
+        /// use icu::locale::locale;
+        /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+        /// use tinystr::tinystr;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
+        /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+        /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
+        ///
+        /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     SpecificLong,
+        /// )
+        /// .unwrap();
+        ///
+        /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
+        /// formatter.format(&time_zone_at_time);
+        /// ```
+        SpecificLong,
+        description = "time zone in specific non-location format, long length",
+        length_override = Long,
+        sample = "Central Daylight Time",
+        field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
+        zone_essentials = yes,
+        zone_locations = yes,
+        zone_specific_long = yes,
+        metazone_periods = yes,
+        input_tzid = yes,
+        input_variant = yes,
+        input_localtime = yes,
+    );
 
-impl_zone_marker!(
-    /// This style requires a [`ZoneVariant`], so
-    /// only a full time zone info can be formatted with this style.
-    /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
-    ///
-    /// ```compile_fail,E0271
-    /// use icu::calendar::{Date, Iso};
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::T;
-    /// use icu::locale::locale;
-    /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-    /// use tinystr::tinystr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
-    /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
-    ///
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     T::medium().with_zone_specific(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
-    /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
-    /// formatter.format(&time_zone_at_time);
-    /// ```
-    Zs,
-    description = "time zone in specific non-location format, short length",
-    length_override = Short,
-    sample = "CDT",
-    field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
-    zone_essentials = yes,
-    zone_specific_short = yes,
-    metazone_periods = yes,
-    input_tzid = yes,
-    input_variant = yes,
-    input_localtime = yes,
-);
+    impl_zone_marker!(
+        /// This style requires a [`ZoneVariant`], so
+        /// only a full time zone info can be formatted with this style.
+        /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
+        ///
+        /// ```compile_fail,E0271
+        /// use icu::calendar::{Date, Iso};
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::{T, zone::SpecificShort};
+        /// use icu::locale::locale;
+        /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+        /// use tinystr::tinystr;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
+        /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+        /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
+        ///
+        /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     T::medium().zone(SpecificShort),
+        /// )
+        /// .unwrap();
+        ///
+        /// // error[E0271]: type mismatch resolving `<AtTime as TimeZoneModel>::ZoneVariant == ZoneVariant`
+        /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
+        /// formatter.format(&time_zone_at_time);
+        /// ```
+        SpecificShort,
+        description = "time zone in specific non-location format, short length",
+        length_override = Short,
+        sample = "CDT",
+        field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::One),
+        zone_essentials = yes,
+        zone_specific_short = yes,
+        metazone_periods = yes,
+        input_tzid = yes,
+        input_variant = yes,
+        input_localtime = yes,
+    );
 
-impl_zone_marker!(
-    /// All shapes of time zones can be formatted with this style.
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldsets::O;
-    /// use icu::timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
-    /// use tinystr::tinystr;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let utc_offset = "-06".parse().unwrap();
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset(Some(utc_offset));
-    ///
-    /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
-    /// let time = Time::midnight();
-    /// let time_zone_at_time = time_zone_basic.at_time((date, time));
-    ///
-    /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
-    ///
-    /// let formatter = TimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     O::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&utc_offset),
-    ///     "GMT-06:00"
-    /// );
-    ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_zone_basic),
-    ///     "GMT-06:00"
-    /// );
-    ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_zone_at_time),
-    ///     "GMT-06:00"
-    /// );
-    ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&time_zone_full),
-    ///     "GMT-06:00"
-    /// );
-    /// ```
-    O,
-    description = "UTC offset, long length",
-    length_override = Long,
-    sample = "GMT-05:00",
-    field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Four),
-    zone_essentials = yes,
-);
+    impl_zone_marker!(
+        /// All shapes of time zones can be formatted with this style.
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
+        /// use icu::timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+        /// use tinystr::tinystr;
+        /// use icu::locale::locale;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let utc_offset = "-06".parse().unwrap();
+        /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset(Some(utc_offset));
+        ///
+        /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
+        /// let time = Time::midnight();
+        /// let time_zone_at_time = time_zone_basic.at_time((date, time));
+        ///
+        /// let time_zone_full = time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
+        ///
+        /// let formatter = TimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     LocalizedOffsetLong,
+        /// )
+        /// .unwrap();
+        ///
+        /// assert_writeable_eq!(
+        ///     formatter.format(&utc_offset),
+        ///     "GMT-06:00"
+        /// );
+        ///
+        /// assert_writeable_eq!(
+        ///     formatter.format(&time_zone_basic),
+        ///     "GMT-06:00"
+        /// );
+        ///
+        /// assert_writeable_eq!(
+        ///     formatter.format(&time_zone_at_time),
+        ///     "GMT-06:00"
+        /// );
+        ///
+        /// assert_writeable_eq!(
+        ///     formatter.format(&time_zone_full),
+        ///     "GMT-06:00"
+        /// );
+        /// ```
+        LocalizedOffsetLong,
+        description = "UTC offset, long length",
+        length_override = Long,
+        sample = "GMT-05:00",
+        field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Four),
+        zone_essentials = yes,
+    );
 
-impl_zone_marker!(
-    Os,
-    description = "UTC offset, short length",
-    length_override = Short,
-    sample = "GMT-5",
-    field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
-    zone_essentials = yes,
-);
+    impl_zone_marker!(
+        LocalizedOffsetShort,
+        description = "UTC offset, short length",
+        length_override = Short,
+        sample = "GMT-5",
+        field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
+        zone_essentials = yes,
+    );
 
-// TODO: Add short/long UTC offset?
+    // TODO: Add short/long UTC offset?
 
-impl_zone_marker!(
-    /// When a display name is unavailable, falls back to the location format:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::timezone::{Time, TimeZoneBcp47Id};
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::Vs;
-    /// use icu::locale::locale;
-    /// use tinystr::tinystr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// // Time zone info for Europe/Istanbul
-    /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
-    ///     .without_offset()
-    ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
-    ///
-    /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///     locale!("en").into(),
-    ///     Vs::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_writeable_eq!(
-    ///     fmt.format(&zone),
-    ///     "Türkiye Time"
-    /// );
-    /// ```
-    ///
-    /// Can also fall back to the UTC offset:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::timezone::{Time, TimeZoneIdMapper};
-    /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldsets::Vs;
-    /// use icu::datetime::DateTimeWriteError;
-    /// use icu::locale::locale;
-    /// use tinystr::tinystr;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// // Set up the formatter
-    /// let mut tzf = TimeFormatter::try_new(
-    ///     locale!("en").into(),
-    ///     Vs::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // "uschi" - has symbol data for short generic non-location
-    /// let time_zone = TimeZoneIdMapper::new()
-    ///     .iana_to_bcp47("America/Chicago")
-    ///     .with_offset("-05".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
-    /// assert_writeable_eq!(
-    ///     tzf.format(&time_zone),
-    ///     "CT"
-    /// );
-    ///
-    /// // "ushnl" - has time zone override symbol data for short generic non-location
-    /// let time_zone = TimeZoneIdMapper::new()
-    ///     .iana_to_bcp47("Pacific/Honolulu")
-    ///     .with_offset("-10".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
-    /// assert_writeable_eq!(
-    ///     tzf.format(&time_zone),
-    ///     "HST"
-    /// );
-    ///
-    /// // Mis-spelling of "America/Chicago" results in a fallback to offset format
-    /// let time_zone = TimeZoneIdMapper::new()
-    ///     .iana_to_bcp47("America/Chigagou")
-    ///     .with_offset("-05".parse().ok())
-    ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
-    /// assert_writeable_eq!(
-    ///     tzf.format(&time_zone),
-    ///     "GMT-5"
-    /// );
-    /// ```
-    ///
-    /// Since non-location names might change over time,
-    /// this time zone style requires a reference time.
-    ///
-    /// ```compile_fail,E0271
-    /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::TimeFormatter;
-    /// use icu::datetime::fieldsets::V;
-    /// use icu::timezone::TimeZoneBcp47Id;
-    /// use tinystr::tinystr;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).without_offset();
-    ///
-    /// let formatter = TimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     V::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
-    /// // note: required by a bound in `TimeFormatter::<C, FSet>::format`
-    /// formatter.format(&time_zone_basic);
-    /// ```
-    V,
-    description = "time zone in generic non-location format, long length",
-    length_override = Long,
-    sample = "Central Time",
-    field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
-    zone_essentials = yes,
-    zone_locations = yes,
-    zone_generic_long = yes,
-    metazone_periods = yes,
-    input_tzid = yes,
-    input_localtime = yes,
-);
+    impl_zone_marker!(
+        /// When a display name is unavailable, falls back to the location format:
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::timezone::{Time, TimeZoneBcp47Id};
+        /// use icu::calendar::Gregorian;
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::GenericShort;
+        /// use icu::locale::locale;
+        /// use tinystr::tinystr;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// // Time zone info for Europe/Istanbul
+        /// let zone = TimeZoneBcp47Id(tinystr!(8, "trist"))
+        ///     .without_offset()
+        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
+        ///
+        /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+        ///     locale!("en").into(),
+        ///     GenericShort,
+        /// )
+        /// .unwrap();
+        ///
+        /// assert_writeable_eq!(
+        ///     fmt.format(&zone),
+        ///     "Türkiye Time"
+        /// );
+        /// ```
+        ///
+        /// Can also fall back to the UTC offset:
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::timezone::{Time, TimeZoneIdMapper};
+        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::fieldsets::zone::GenericShort;
+        /// use icu::datetime::DateTimeWriteError;
+        /// use icu::locale::locale;
+        /// use tinystr::tinystr;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// // Set up the formatter
+        /// let mut tzf = TimeFormatter::try_new(
+        ///     locale!("en").into(),
+        ///     GenericShort,
+        /// )
+        /// .unwrap();
+        ///
+        /// // "uschi" - has symbol data for short generic non-location
+        /// let time_zone = TimeZoneIdMapper::new()
+        ///     .iana_to_bcp47("America/Chicago")
+        ///     .with_offset("-05".parse().ok())
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        /// assert_writeable_eq!(
+        ///     tzf.format(&time_zone),
+        ///     "CT"
+        /// );
+        ///
+        /// // "ushnl" - has time zone override symbol data for short generic non-location
+        /// let time_zone = TimeZoneIdMapper::new()
+        ///     .iana_to_bcp47("Pacific/Honolulu")
+        ///     .with_offset("-10".parse().ok())
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        /// assert_writeable_eq!(
+        ///     tzf.format(&time_zone),
+        ///     "HST"
+        /// );
+        ///
+        /// // Mis-spelling of "America/Chicago" results in a fallback to offset format
+        /// let time_zone = TimeZoneIdMapper::new()
+        ///     .iana_to_bcp47("America/Chigagou")
+        ///     .with_offset("-05".parse().ok())
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        /// assert_writeable_eq!(
+        ///     tzf.format(&time_zone),
+        ///     "GMT-5"
+        /// );
+        /// ```
+        ///
+        /// Since non-location names might change over time,
+        /// this time zone style requires a reference time.
+        ///
+        /// ```compile_fail,E0271
+        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::fieldsets::zone::GenericLong;
+        /// use icu::timezone::TimeZoneBcp47Id;
+        /// use tinystr::tinystr;
+        /// use icu::locale::locale;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).without_offset();
+        ///
+        /// let formatter = TimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     V::new(),
+        /// )
+        /// .unwrap();
+        ///
+        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+        /// // note: required by a bound in `TimeFormatter::<C, FSet>::format`
+        /// formatter.format(&time_zone_basic);
+        /// ```
+        GenericLong,
+        description = "time zone in generic non-location format, long length",
+        length_override = Long,
+        sample = "Central Time",
+        field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::Four),
+        zone_essentials = yes,
+        zone_locations = yes,
+        zone_generic_long = yes,
+        metazone_periods = yes,
+        input_tzid = yes,
+        input_localtime = yes,
+    );
 
-impl_zone_marker!(
-    /// Note: short time zones names are usually only available for time zones in the country
-    /// associated with a locale (so "PT" is in `en`, but not in `en-GB`). Most time zones will
-    /// fall back to the significantly longer location format (e.g. "Los Angeles Time" in `en-GB`).
-    ///
-    /// Since non-location names might change over time,
-    /// this time zone style requires a reference time.
-    ///
-    /// ```compile_fail,E0271
-    /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::Vs;
-    /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
-    /// use tinystr::tinystr;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
-    ///
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     Vs::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
-    /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
-    /// formatter.format(&time_zone_basic);
-    /// ```
-    Vs,
-    description = "time zone in generic non-location format, short length",
-    length_override = Short,
-    sample = "CT",
-    field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
-    zone_essentials = yes,
-    zone_locations = yes,
-    zone_generic_short = yes,
-    metazone_periods = yes,
-    input_tzid = yes,
-    input_localtime = yes,
-);
+    impl_zone_marker!(
+        /// Note: short time zones names are usually only available for time zones in the country
+        /// associated with a locale (so "PT" is in `en`, but not in `en-GB`). Most time zones will
+        /// fall back to the significantly longer location format (e.g. "Los Angeles Time" in `en-GB`).
+        ///
+        /// Since non-location names might change over time,
+        /// this time zone style requires a reference time.
+        ///
+        /// ```compile_fail,E0271
+        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::GenericShort;
+        /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
+        /// use tinystr::tinystr;
+        /// use icu::locale::locale;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let time_zone_basic = TimeZoneBcp47Id(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+        ///
+        /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     GenericShort,
+        /// )
+        /// .unwrap();
+        ///
+        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+        /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
+        /// formatter.format(&time_zone_basic);
+        /// ```
+        GenericShort,
+        description = "time zone in generic non-location format, short length",
+        length_override = Short,
+        sample = "CT",
+        field = (fields::TimeZone::GenericNonLocation, fields::FieldLength::One),
+        zone_essentials = yes,
+        zone_locations = yes,
+        zone_generic_short = yes,
+        metazone_periods = yes,
+        input_tzid = yes,
+        input_localtime = yes,
+    );
 
-impl_zone_marker!(
-    /// A time zone ID is required to format with this style.
-    /// For example, a raw [`UtcOffset`] cannot be used here.
-    ///
-    /// ```compile_fail,E0277
-    /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::L;
-    /// use icu::timezone::UtcOffset;
-    /// use tinystr::tinystr;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
-    ///
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     L::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<L>` is not satisfied
-    /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
-    /// formatter.format(&utc_offset);
-    /// ```
-    L,
-    description = "time zone in location format",
-    length_override = Long,
-    sample = "Chicago Time",
-    field = (fields::TimeZone::Location, fields::FieldLength::Four),
-    zone_essentials = yes,
-    zone_locations = yes,
-    input_tzid = yes,
-);
+    impl_zone_marker!(
+        /// A time zone ID is required to format with this style.
+        /// For example, a raw [`UtcOffset`] cannot be used here.
+        ///
+        /// ```compile_fail,E0277
+        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::Location;
+        /// use icu::timezone::UtcOffset;
+        /// use tinystr::tinystr;
+        /// use icu::locale::locale;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
+        ///
+        /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     Location,
+        /// )
+        /// .unwrap();
+        ///
+        /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<Location>` is not satisfied
+        /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
+        /// formatter.format(&utc_offset);
+        /// ```
+        Location,
+        description = "time zone in location format",
+        length_override = Long,
+        sample = "Chicago Time",
+        field = (fields::TimeZone::Location, fields::FieldLength::Four),
+        zone_essentials = yes,
+        zone_locations = yes,
+        input_tzid = yes,
+    );
 
-impl_zone_marker!(
-    /// A time zone ID is required to format with this style.
-    /// For example, a raw [`UtcOffset`] cannot be used here.
-    ///
-    /// ```compile_fail,E0277
-    /// use icu::calendar::{DateTime, Iso};
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::X;
-    /// use icu::timezone::UtcOffset;
-    /// use tinystr::tinystr;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
-    ///
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     locale!("en-US").into(),
-    ///     X::new(),
-    /// )
-    /// .unwrap();
-    ///
-    /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<X>` is not satisfied
-    /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
-    /// formatter.format(&utc_offset);
-    /// ```
-    X,
-    description = "time zone in exemplar city format",
-    length_override = Long,
-    sample = "Chicago",
-    field = (fields::TimeZone::Location, fields::FieldLength::Three),
-    zone_locations = yes,
-    zone_exemplars = yes,
-    input_tzid = yes,
-);
+    impl_zone_marker!(
+        /// A time zone ID is required to format with this style.
+        /// For example, a raw [`UtcOffset`] cannot be used here.
+        ///
+        /// ```compile_fail,E0277
+        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::FixedCalendarDateTimeFormatter;
+        /// use icu::datetime::fieldsets::zone::ExemplarCity;
+        /// use icu::timezone::UtcOffset;
+        /// use tinystr::tinystr;
+        /// use icu::locale::locale;
+        /// use writeable::assert_writeable_eq;
+        ///
+        /// let utc_offset = UtcOffset::try_from_str("-06").unwrap();
+        ///
+        /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+        ///     locale!("en-US").into(),
+        ///     ExemplarCity,
+        /// )
+        /// .unwrap();
+        ///
+        /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<ExemplarCity>` is not satisfied
+        /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
+        /// formatter.format(&utc_offset);
+        /// ```
+        ExemplarCity,
+        description = "time zone in exemplar city format",
+        length_override = Long,
+        sample = "Chicago",
+        field = (fields::TimeZone::Location, fields::FieldLength::Three),
+        zone_locations = yes,
+        zone_exemplars = yes,
+        input_tzid = yes,
+    );
+}
 
 impl_zone_combo_helpers!(DateFieldSet, DateZone, DateFieldSet);
 

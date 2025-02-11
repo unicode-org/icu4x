@@ -146,28 +146,28 @@ pub enum TimeFieldSet {
 pub enum ZoneFieldSet {
     /// The long specific non-location format, as in
     /// “Pacific Daylight Time”.
-    Z(fieldsets::Z),
+    SpecificLong(fieldsets::zone::SpecificLong),
     /// The short specific non-location format, as in
     /// “PDT”.
-    Zs(fieldsets::Zs),
+    SpecificShort(fieldsets::zone::SpecificShort),
     /// The long offset format, as in
     /// “GMT−8:00”.
-    O(fieldsets::O),
+    LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong),
     /// The short offset format, as in
     /// “GMT−8”.
-    Os(fieldsets::Os),
+    LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
     /// The long generic non-location format, as in
     /// “Pacific Time”.
-    V(fieldsets::V),
+    GenericLong(fieldsets::zone::GenericLong),
     /// The short generic non-location format, as in
     /// “PT”.
-    Vs(fieldsets::Vs),
+    GenericShort(fieldsets::zone::GenericShort),
     /// The location format, as in
     /// “Los Angeles Time”.
-    L(fieldsets::L),
+    Location(fieldsets::zone::Location),
     /// The exemplar city format, as in
     /// “Los Angeles.
-    X(fieldsets::X),
+    ExemplarCity(fieldsets::zone::ExemplarCity),
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -472,14 +472,14 @@ impl_attrs! {
     @zone,
     ZoneFieldSet,
     [
-        Z,
-        Zs,
-        O,
-        Os,
-        V,
-        Vs,
-        L,
-        X,
+        SpecificLong,
+        SpecificShort,
+        LocalizedOffsetLong,
+        LocalizedOffsetShort,
+        GenericLong,
+        GenericShort,
+        Location,
+        ExemplarCity,
     ]
 }
 

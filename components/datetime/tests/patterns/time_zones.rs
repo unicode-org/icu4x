@@ -18,14 +18,14 @@ pub struct TimeZoneTest {
 
 pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => ZoneFieldSet::V(fieldsets::V::new()),
-        "v" => ZoneFieldSet::Vs(fieldsets::Vs::new()),
-        "VVVV" => ZoneFieldSet::L(fieldsets::L::new()),
-        "zzzz" => ZoneFieldSet::Z(fieldsets::Z::new()),
-        "z" => ZoneFieldSet::Zs(fieldsets::Zs::new()),
-        "OOOO" => ZoneFieldSet::O(fieldsets::O::new()),
-        "O" => ZoneFieldSet::Os(fieldsets::Os::new()),
-        "VVV" => ZoneFieldSet::X(fieldsets::X::new()),
+        "vvvv" => ZoneFieldSet::GenericLong(fieldsets::zone::GenericLong),
+        "v" => ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort),
+        "VVVV" => ZoneFieldSet::Location(fieldsets::zone::Location),
+        "zzzz" => ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong),
+        "z" => ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort),
+        "OOOO" => ZoneFieldSet::LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong),
+        "O" => ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
+        "VVV" => ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity),
         _ => return None,
     })
 }

@@ -59,8 +59,10 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
     let prefs = locale!("en-GB-u-ca-japanese").into();
 
     // A medium-length year-month-day-time-specific-zone formatter
-    let formatter =
-        DateTimeFormatter::try_new(prefs, fieldsets::YMDT::medium().with_zone_specific_long())?;
+    let formatter = DateTimeFormatter::try_new(
+        prefs,
+        fieldsets::YMDT::medium().zone(fieldsets::zone::SpecificLong),
+    )?;
 
     println!("{}", formatter.format(&zoned_date_time)); // 11 Sept 6 Reiwa, 08:37:20 Japan Standard Time
 

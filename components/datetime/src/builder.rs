@@ -84,7 +84,7 @@
 //! let static_field_set = fieldsets::T::short()
 //!     .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F3))
 //!     .with_alignment(Alignment::Column)
-//!     .with_zone_specific_long();
+//!     .zone(fieldsets::zone::SpecificLong);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
@@ -438,14 +438,18 @@ impl FieldSetBuilder {
 
     fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
         let zone_field_set = match self.zone_style.take() {
-            Some(ZoneStyle::Z) => ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self)),
-            Some(ZoneStyle::Zs) => ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self)),
-            Some(ZoneStyle::O) => ZoneFieldSet::O(fieldsets::O::take_from_builder(self)),
-            Some(ZoneStyle::Os) => ZoneFieldSet::Os(fieldsets::Os::take_from_builder(self)),
-            Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
-            Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
-            Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
-            Some(ZoneStyle::X) => ZoneFieldSet::X(fieldsets::X::take_from_builder(self)),
+            Some(ZoneStyle::Zs) => ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort),
+            Some(ZoneStyle::Z) => ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong),
+            Some(ZoneStyle::O) => {
+                ZoneFieldSet::LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong)
+            }
+            Some(ZoneStyle::Os) => {
+                ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort)
+            }
+            Some(ZoneStyle::V) => ZoneFieldSet::GenericLong(fieldsets::zone::GenericLong),
+            Some(ZoneStyle::Vs) => ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort),
+            Some(ZoneStyle::L) => ZoneFieldSet::Location(fieldsets::zone::Location),
+            Some(ZoneStyle::X) => ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity),
             Option::None => return Err(BuilderError::InvalidFields),
         };
         Ok(zone_field_set)

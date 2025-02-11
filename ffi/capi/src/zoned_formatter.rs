@@ -7,7 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_datetime::fieldsets::{Combo, Vs, YMDT};
+    use icu_datetime::fieldsets::{zone::GenericShort, Combo, YMDT};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_datetime::options::Length;
 
@@ -32,9 +32,12 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
-    #[diplomat::rust_link(icu::datetime::fieldsets::Vs, Struct, compact)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct, compact)]
     pub struct GregorianZonedDateTimeFormatter(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, Combo<YMDT, Vs>>,
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
+            icu_calendar::Gregorian,
+            Combo<YMDT, GenericShort>,
+        >,
     );
 
     impl GregorianZonedDateTimeFormatter {
@@ -51,7 +54,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).zone(GenericShort);
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
@@ -70,7 +73,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<GregorianZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).zone(GenericShort);
 
             Ok(Box::new(GregorianZonedDateTimeFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
@@ -111,8 +114,10 @@ pub mod ffi {
     /// An object capable of formatting a date time with time zone to a string.
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::fieldsets::YMDT, Struct, compact)]
-    #[diplomat::rust_link(icu::datetime::fieldsets::Vs, Struct, compact)]
-    pub struct ZonedDateTimeFormatter(pub icu_datetime::DateTimeFormatter<Combo<YMDT, Vs>>);
+    #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct, compact)]
+    pub struct ZonedDateTimeFormatter(
+        pub icu_datetime::DateTimeFormatter<Combo<YMDT, GenericShort>>,
+    );
 
     impl ZonedDateTimeFormatter {
         /// Creates a new [`ZonedDateTimeFormatter`] from locale data using compiled data.
@@ -128,7 +133,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).zone(GenericShort);
 
             Ok(Box::new(ZonedDateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?,
@@ -147,7 +152,7 @@ pub mod ffi {
             length: DateTimeLength,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let options = YMDT::with_length(Length::from(length)).with_zone_generic();
+            let options = YMDT::with_length(Length::from(length)).zone(GenericShort);
 
             Ok(Box::new(ZonedDateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
