@@ -224,7 +224,7 @@ fn adjust_fraction_for_unit(fraction: Fraction, unit: u64) -> ParserResult<Fract
     let value = fraction
         .value
         .checked_mul(unit)
-        .ok_or(ParseError::DurationFractionExceededRange)?;
+        .ok_or(ParseError::DurationFractionalDigitsExceededRange)?;
     Ok(Fraction {
         digits: fraction.digits,
         value,
