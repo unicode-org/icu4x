@@ -84,13 +84,13 @@
 //! let static_field_set = fieldsets::T::short()
 //!     .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F3))
 //!     .with_alignment(Alignment::Column)
-//!     .with_zone_specific_long();
+//!     .zone(fieldsets::zone::SpecificLong);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
 //! builder.time_precision = Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3));
 //! builder.alignment = Some(Alignment::Column);
-//! builder.zone_style = Some(ZoneStyle::Z);
+//! builder.zone_style = Some(ZoneStyle::SpecificLong);
 //! let dynamic_field_set = builder.build_composite().unwrap();
 //!
 //! assert_eq!(
@@ -157,28 +157,28 @@ pub enum DateFields {
 pub enum ZoneStyle {
     /// The long specific non-location format, as in
     /// “Pacific Daylight Time”.
-    Z,
+    SpecificLong,
     /// The short specific non-location format, as in
     /// “PDT”.
-    Zs,
+    SpecificShort,
     /// The long offset format, as in
     /// “GMT−8:00”.
-    O,
+    LocalizedOffsetLong,
     /// The short offset format, as in
     /// “GMT−8”.
-    Os,
+    LocalizedOffsetShort,
     /// The long generic non-location format, as in
     /// “Pacific Time”.
-    V,
+    GenericLong,
     /// The short generic non-location format, as in
     /// “PT”.
-    Vs,
+    GenericShort,
     /// The location format, as in
     /// “Los Angeles time”.
-    L,
+    Location,
     /// The exemplar city format, as in
     /// “Los Angeles”.
-    X,
+    ExemplarCity,
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
@@ -438,14 +438,26 @@ impl FieldSetBuilder {
 
     fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
         let zone_field_set = match self.zone_style.take() {
-            Some(ZoneStyle::Z) => ZoneFieldSet::Z(fieldsets::Z::take_from_builder(self)),
-            Some(ZoneStyle::Zs) => ZoneFieldSet::Zs(fieldsets::Zs::take_from_builder(self)),
-            Some(ZoneStyle::O) => ZoneFieldSet::O(fieldsets::O::take_from_builder(self)),
-            Some(ZoneStyle::Os) => ZoneFieldSet::Os(fieldsets::Os::take_from_builder(self)),
-            Some(ZoneStyle::V) => ZoneFieldSet::V(fieldsets::V::take_from_builder(self)),
-            Some(ZoneStyle::Vs) => ZoneFieldSet::Vs(fieldsets::Vs::take_from_builder(self)),
-            Some(ZoneStyle::L) => ZoneFieldSet::L(fieldsets::L::take_from_builder(self)),
-            Some(ZoneStyle::X) => ZoneFieldSet::X(fieldsets::X::take_from_builder(self)),
+            Some(ZoneStyle::SpecificShort) => {
+                ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort)
+            }
+            Some(ZoneStyle::SpecificLong) => {
+                ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong)
+            }
+            Some(ZoneStyle::LocalizedOffsetLong) => {
+                ZoneFieldSet::LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong)
+            }
+            Some(ZoneStyle::LocalizedOffsetShort) => {
+                ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort)
+            }
+            Some(ZoneStyle::GenericLong) => ZoneFieldSet::GenericLong(fieldsets::zone::GenericLong),
+            Some(ZoneStyle::GenericShort) => {
+                ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort)
+            }
+            Some(ZoneStyle::Location) => ZoneFieldSet::Location(fieldsets::zone::Location),
+            Some(ZoneStyle::ExemplarCity) => {
+                ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity)
+            }
             Option::None => return Err(BuilderError::InvalidFields),
         };
         Ok(zone_field_set)
@@ -602,14 +614,14 @@ mod tests {
         &[DateFields::M, DateFields::YM, DateFields::Y];
 
     static ZONE_STYLES: &[ZoneStyle] = &[
-        ZoneStyle::Z,
-        ZoneStyle::Zs,
-        ZoneStyle::O,
-        ZoneStyle::Os,
-        ZoneStyle::V,
-        ZoneStyle::Vs,
-        ZoneStyle::L,
-        ZoneStyle::X,
+        ZoneStyle::SpecificLong,
+        ZoneStyle::SpecificShort,
+        ZoneStyle::LocalizedOffsetLong,
+        ZoneStyle::LocalizedOffsetShort,
+        ZoneStyle::GenericLong,
+        ZoneStyle::GenericShort,
+        ZoneStyle::Location,
+        ZoneStyle::ExemplarCity,
     ];
 
     #[cfg(all(feature = "serde", feature = "experimental"))]

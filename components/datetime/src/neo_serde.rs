@@ -580,45 +580,73 @@ impl FieldSetSerde {
     }
 
     fn from_zone_field_set(value: ZoneFieldSet, is_standalone: bool) -> (Self, RawOptions) {
+        let long = RawOptions {
+            length: Length::Long,
+            alignment: None,
+            year_style: None,
+            time_precision: None,
+        };
+        let short = RawOptions {
+            length: Length::Short,
+            alignment: None,
+            year_style: None,
+            time_precision: None,
+        };
         match (value, is_standalone) {
             // Standalone: return the field and length separately
-            (ZoneFieldSet::Z(v), true) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
-            (ZoneFieldSet::Zs(v), true) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
-            (ZoneFieldSet::O(v), true) => (Self::ZONE_OFFSET, v.to_raw_options()),
-            (ZoneFieldSet::Os(v), true) => (Self::ZONE_OFFSET, v.to_raw_options()),
-            (ZoneFieldSet::V(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
-            (ZoneFieldSet::Vs(v), true) => (Self::ZONE_GENERIC, v.to_raw_options()),
-            (ZoneFieldSet::L(v), true) => (Self::ZONE_LOCATION, v.to_raw_options()),
-            (ZoneFieldSet::X(v), true) => (Self::ZONE_EXEMPLAR, v.to_raw_options()),
+            (ZoneFieldSet::SpecificLong(..), true) => (Self::ZONE_SPECIFIC, long),
+            (ZoneFieldSet::SpecificShort(..), true) => (Self::ZONE_SPECIFIC, short),
+            (ZoneFieldSet::LocalizedOffsetLong(..), true) => (Self::ZONE_OFFSET, long),
+            (ZoneFieldSet::LocalizedOffsetShort(..), true) => (Self::ZONE_OFFSET, short),
+            (ZoneFieldSet::GenericLong(..), true) => (Self::ZONE_GENERIC, long),
+            (ZoneFieldSet::GenericShort(..), true) => (Self::ZONE_GENERIC, short),
+            (ZoneFieldSet::Location(..), true) => (Self::ZONE_LOCATION, long),
+            (ZoneFieldSet::ExemplarCity(..), true) => (Self::ZONE_EXEMPLAR, long),
             // Non-standalone: return the short as default and long as opt-in
-            (ZoneFieldSet::Z(v), false) => (Self::ZONE_SPECIFIC_LONG, v.to_raw_options()),
-            (ZoneFieldSet::Zs(v), false) => (Self::ZONE_SPECIFIC, v.to_raw_options()),
-            (ZoneFieldSet::O(v), false) => (Self::ZONE_OFFSET_LONG, v.to_raw_options()),
-            (ZoneFieldSet::Os(v), false) => (Self::ZONE_OFFSET, v.to_raw_options()),
-            (ZoneFieldSet::V(v), false) => (Self::ZONE_GENERIC_LONG, v.to_raw_options()),
-            (ZoneFieldSet::Vs(v), false) => (Self::ZONE_GENERIC, v.to_raw_options()),
-            (ZoneFieldSet::L(v), false) => (Self::ZONE_LOCATION, v.to_raw_options()),
-            (ZoneFieldSet::X(v), false) => (Self::ZONE_EXEMPLAR, v.to_raw_options()),
+            (ZoneFieldSet::SpecificLong(..), false) => (Self::ZONE_SPECIFIC_LONG, long),
+            (ZoneFieldSet::SpecificShort(..), false) => (Self::ZONE_SPECIFIC, short),
+            (ZoneFieldSet::LocalizedOffsetLong(..), false) => (Self::ZONE_OFFSET_LONG, long),
+            (ZoneFieldSet::LocalizedOffsetShort(..), false) => (Self::ZONE_OFFSET, short),
+            (ZoneFieldSet::GenericLong(..), false) => (Self::ZONE_GENERIC_LONG, long),
+            (ZoneFieldSet::GenericShort(..), false) => (Self::ZONE_GENERIC, short),
+            (ZoneFieldSet::Location(..), false) => (Self::ZONE_LOCATION, long),
+            (ZoneFieldSet::ExemplarCity(..), false) => (Self::ZONE_EXEMPLAR, long),
         }
     }
 
     fn to_zone_field_set(self, options: RawOptions, is_standalone: bool) -> Option<ZoneFieldSet> {
         use ZoneFieldSet::*;
         match (self, is_standalone, options.length) {
-            (Self::ZONE_SPECIFIC_LONG, _, _) => Some(Z(fieldsets::Z::new())),
-            (Self::ZONE_SPECIFIC, false, _) => Some(Zs(fieldsets::Zs::new())),
-            (Self::ZONE_SPECIFIC, true, Length::Long) => Some(Z(fieldsets::Z::new())),
-            (Self::ZONE_SPECIFIC, true, Length::Short) => Some(Zs(fieldsets::Zs::new())),
-            (Self::ZONE_OFFSET_LONG, _, _) => Some(O(fieldsets::O::new())),
-            (Self::ZONE_OFFSET, false, _) => Some(Os(fieldsets::Os::new())),
-            (Self::ZONE_OFFSET, true, Length::Long) => Some(O(fieldsets::O::new())),
-            (Self::ZONE_OFFSET, true, Length::Short) => Some(Os(fieldsets::Os::new())),
-            (Self::ZONE_GENERIC_LONG, _, _) => Some(V(fieldsets::V::new())),
-            (Self::ZONE_GENERIC, false, _) => Some(Vs(fieldsets::Vs::new())),
-            (Self::ZONE_GENERIC, true, Length::Long) => Some(V(fieldsets::V::new())),
-            (Self::ZONE_GENERIC, true, Length::Short) => Some(Vs(fieldsets::Vs::new())),
-            (Self::ZONE_LOCATION, _, _) => Some(L(fieldsets::L::new())),
-            (Self::ZONE_EXEMPLAR, _, _) => Some(X(fieldsets::X::new())),
+            (Self::ZONE_SPECIFIC_LONG, _, _) => Some(SpecificLong(fieldsets::zone::SpecificLong)),
+            (Self::ZONE_SPECIFIC, false, _) => Some(SpecificShort(fieldsets::zone::SpecificShort)),
+            (Self::ZONE_SPECIFIC, true, Length::Long) => {
+                Some(SpecificLong(fieldsets::zone::SpecificLong))
+            }
+            (Self::ZONE_SPECIFIC, true, Length::Short) => {
+                Some(SpecificShort(fieldsets::zone::SpecificShort))
+            }
+            (Self::ZONE_OFFSET_LONG, _, _) => {
+                Some(LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong))
+            }
+            (Self::ZONE_OFFSET, false, _) => {
+                Some(LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort))
+            }
+            (Self::ZONE_OFFSET, true, Length::Long) => {
+                Some(LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong))
+            }
+            (Self::ZONE_OFFSET, true, Length::Short) => {
+                Some(LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort))
+            }
+            (Self::ZONE_GENERIC_LONG, _, _) => Some(GenericLong(fieldsets::zone::GenericLong)),
+            (Self::ZONE_GENERIC, false, _) => Some(GenericShort(fieldsets::zone::GenericShort)),
+            (Self::ZONE_GENERIC, true, Length::Long) => {
+                Some(GenericLong(fieldsets::zone::GenericLong))
+            }
+            (Self::ZONE_GENERIC, true, Length::Short) => {
+                Some(GenericShort(fieldsets::zone::GenericShort))
+            }
+            (Self::ZONE_LOCATION, _, _) => Some(Location(fieldsets::zone::Location)),
+            (Self::ZONE_EXEMPLAR, _, _) => Some(ExemplarCity(fieldsets::zone::ExemplarCity)),
             (_, _, _) => None,
         }
     }
@@ -633,7 +661,7 @@ fn test_basic() {
             year_style: Some(YearStyle::WithEra),
             time_precision: Some(TimePrecision::FractionalSecond(FractionalSecondDigits::F3)),
         }),
-        ZoneFieldSet::Vs(fieldsets::Vs::new()),
+        ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort),
     ));
     let skeleton_serde = CompositeFieldSetSerde::from(skeleton);
 

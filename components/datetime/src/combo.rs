@@ -14,24 +14,24 @@ use crate::{provider::neo::*, scaffold::*};
 /// Only one way to construct a combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, E, L};
+/// use icu::datetime::fieldsets::{Combo, E, zone::Location};
 ///
-/// let field_set = E::long().with_zone_location();
+/// let field_set = E::long().zone(Location);
 /// ```
 ///
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::ZonedDateTimeParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
+/// let formatter = DateTimeFormatter::<Combo<ET, Location>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().with_zone_location(),
+///     ET::short().hm().zone(Location),
 /// )
 /// .unwrap();
 ///
@@ -49,16 +49,16 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::{ZonedDateTimeParser, ZonedDateTime};
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
+/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, Location>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().with_zone_location(),
+///     ET::short().hm().zone(Location),
 /// )
 /// .unwrap();
 ///
@@ -76,16 +76,16 @@ use crate::{provider::neo::*, scaffold::*};
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, Vs, YMD};
+/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, zone::GenericShort, YMD};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::ZonedDateTimeParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
+/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, GenericShort>>::try_new(
 ///     locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).with_zone_generic(),
+///     DateFieldSet::YMD(YMD::long()).zone(GenericShort),
 /// )
 /// .unwrap();
 ///
@@ -103,7 +103,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::fieldsets::{T, zone::SpecificLong};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::timezone::{ZonedDateTimeParser, ZonedDateTime};
@@ -111,7 +111,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     locale!("en-US").into(),
-///     T::medium().with_zone_specific_long(),
+///     T::medium().zone(SpecificLong),
 /// )
 /// .unwrap();
 ///
