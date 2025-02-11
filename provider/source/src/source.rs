@@ -181,6 +181,7 @@ impl AbstractFs {
                         Ok(r) => break r.into_reader(),
                         Err(e) if retry > 0 => {
                             log::warn!("Download error {e:?}, retrying...");
+                            std::thread::sleep(std::time::Duration::from_secs(2));
                             retry -= 1;
                         }
                         Err(e) => {
