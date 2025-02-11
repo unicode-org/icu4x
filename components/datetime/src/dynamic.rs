@@ -139,8 +139,8 @@ pub enum TimeFieldSet {
 /// Time zone names contribute a lot of data size. For resource-constrained
 /// environments, the following formats require the least amount of data:
 ///
-/// - [`fieldsets::Zs`]
-/// - [`fieldsets::O`]
+/// - [`fieldsets::zone::SpecificShort`]
+/// - [`fieldsets::zone::LocalizedOffsetLong`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ZoneFieldSet {
