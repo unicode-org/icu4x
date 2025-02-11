@@ -588,7 +588,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
         if trie_value_has_ccc(trie_value) {
             trie_value as u8
         } else {
-            ccc!(NotReordered, 0).0
+            ccc!(NotReordered, 0).to_icu4c_value()
         }
     }
 
@@ -598,7 +598,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     #[inline(always)]
     #[cfg(feature = "icu_properties")]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        CanonicalCombiningClass(self.get_u8(c))
+        CanonicalCombiningClass::from_icu4c_value(self.get_u8(c))
     }
 
     /// Look up the canonical combining class for a scalar value
@@ -608,7 +608,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     /// ✨ *Enabled with the `icu_properties` Cargo feature.*
     #[cfg(feature = "icu_properties")]
     pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        CanonicalCombiningClass(self.get32_u8(c))
+        CanonicalCombiningClass::from_icu4c_value(self.get32_u8(c))
     }
 }
 

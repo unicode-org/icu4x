@@ -41,7 +41,12 @@ impl DataProvider<ScriptWithExtensionsPropertyV1> for SourceDataProvider {
         // type of VZV<ZeroSlice<Script>>
         let ule_scx_array_data: Vec<ZeroVec<Script>> = scx_array_data
             .iter()
-            .map(|v| v.iter().map(|i| Script(*i)).collect::<ZeroVec<Script>>())
+            .map(|v| {
+                v.iter()
+                    .copied()
+                    .map(Script::from_icu4c_value)
+                    .collect::<ZeroVec<Script>>()
+            })
             .collect::<Vec<ZeroVec<Script>>>();
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
@@ -225,7 +230,7 @@ mod tests {
 
         // The ICU4J comment for this test says:
         // An unguarded implementation might go into an infinite loop.
-        assert!(!swe.has_script32(0x0640, Script(0xAFFE)));
+        assert!(!swe.has_script32(0x0640, Script::from_icu4c_value(0xAFFE)));
     }
 
     #[test]
