@@ -42,7 +42,7 @@ pub enum ParseError {
     InconsistentTimeZoneOffsets,
     /// There was an invalid Offset.
     InvalidOffsetError,
-    /// Parsed fraction had excessive precision beyond nanosecond.
+    /// Parsed fractional digits had excessive precision beyond nanosecond.
     ExcessivePrecision,
     /// The set of time zone fields was not expected for the given type.
     /// For example, if a named time zone was present with offset-only parsing,
