@@ -27,18 +27,6 @@ pub(crate) struct RawOptions {
     pub(crate) time_precision: Option<TimePrecision>,
 }
 
-impl RawOptions {
-    #[cfg(all(feature = "serde", feature = "experimental"))]
-    pub(crate) fn merge(self, other: RawOptions) -> Self {
-        Self {
-            length: self.length,
-            alignment: self.alignment.or(other.alignment),
-            year_style: self.year_style.or(other.year_style),
-            time_precision: self.time_precision.or(other.time_precision),
-        }
-    }
-}
-
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct RawPreferences {
     pub(crate) hour_cycle: Option<fields::Hour>,

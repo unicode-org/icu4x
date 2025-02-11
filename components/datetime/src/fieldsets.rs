@@ -73,19 +73,6 @@ use icu_timezone::{
     Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
-/// 🚧 \[Experimental\] Types for dealing with serialization of semantic skeletons.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/5825">#5825</a>
-/// </div>
-#[cfg(all(feature = "experimental", feature = "serde"))]
-pub mod serde {
-    pub use crate::neo_serde::CompositeFieldSetSerde;
-    pub use crate::neo_serde::CompositeFieldSetSerdeError;
-}
-
 #[cfg(doc)]
 use icu_timezone::TimeZoneInfo;
 
@@ -220,7 +207,6 @@ macro_rules! impl_marker_with_options {
             )?
         }
         impl $type {
-            #[allow(dead_code)]
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
                     length: yes_or!(self.length, $(Length::$length_override)?),
@@ -229,17 +215,7 @@ macro_rules! impl_marker_with_options {
                     time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
                 }
             }
-            #[allow(unused)]
-            pub(crate) fn from_raw_options(options: RawOptions) -> Self {
-                Self {
-                    $(length: yes_to!(options.length, $sample_length),)?
-                    $(alignment: yes_to!(options.alignment, $alignment_yes),)?
-                    $(year_style: yes_to!(options.year_style, $yearstyle_yes),)?
-                    $(time_precision: yes_to!(options.time_precision, $timeprecision_yes),)?
-                }
-            }
             /// Builds this field set, removing the needed options from the builder.
-            #[allow(unused)]
             pub(crate) fn take_from_builder(
                 options: &mut builder::FieldSetBuilder
             ) -> Self {
