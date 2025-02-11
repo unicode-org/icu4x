@@ -175,13 +175,21 @@ impl AbstractFs {
             if !root.exists() {
                 log::info!("Downloading {resource}");
                 std::fs::create_dir_all(root.parent().unwrap())?;
-                std::io::copy(
-                    &mut ureq::get(resource)
-                        .call()
-                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-                        .into_reader(),
-                    &mut BufWriter::new(File::create(&root)?),
-                )?;
+                let mut retry = 5;
+                let mut response: Box<dyn Read + Send + Sync + 'static> = loop {
+                    match ureq::get(resource).call() {
+                        Ok(r) => break r.into_reader(),
+                        Err(e) if retry > 0 => {
+                            log::warn!("Download error {e:?}, retrying...");
+                            std::thread::sleep(std::time::Duration::from_secs(2));
+                            retry -= 1;
+                        }
+                        Err(e) => {
+                            return Err(DataError::custom("Download").with_display_context(&e))
+                        }
+                    }
+                };
+                std::io::copy(&mut response, &mut BufWriter::new(File::create(&root)?))?;
             }
             Ok(root)
         }
