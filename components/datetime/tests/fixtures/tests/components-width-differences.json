@@ -8,7 +8,7 @@
                     "year": "two-digit"
                 },
                 "semantic": {
-                    "fieldSet": ["year"],
+                    "dateFields": "Y",
                     "length": "short"
                 }
             }
@@ -32,7 +32,7 @@
                     "era": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year"],
+                    "dateFields": "Y",
                     "length": "medium",
                     "yearStyle": "withEra"
                 }
@@ -97,7 +97,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "dateFields": "YMD",
                     "length": "short",
                     "yearStyle": "full"
                 }
@@ -124,7 +124,7 @@
                     "day": "two-digit-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "dateFields": "YMD",
                     "length": "short",
                     "alignment": "column"
                 }
@@ -151,7 +151,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "dateFields": "YMD",
                     "length": "medium"
                 }
             }
@@ -177,7 +177,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "dateFields": "YMD",
                     "length": "long"
                 }
             }

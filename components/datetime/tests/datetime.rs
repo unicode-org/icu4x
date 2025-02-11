@@ -57,18 +57,16 @@ fn test_fixture(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::new();
-        let japanext = JapaneseExtended::new();
-        let skeleton = match fx.input.options.semantic {
-            Some(semantic) => {
-                let semantic = CompositeFieldSet::try_from(semantic).unwrap();
-                match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
-                    Some(v) => v,
-                    None => {
-                        panic!("Cannot handle field sets with time zones in this fn: {semantic:?}");
-                    }
+        let skeleton = match fx.input.options.semantic.clone() {
+            Some(semantic) => match semantic.build_composite_datetime() {
+                Ok(v) => v,
+                Err(e) => {
+                    panic!(
+                        "Cannot handle field sets with time zones in this fn: {e:?} {:?}, {:?}",
+                        fx.input.options.semantic, fx.output.values
+                    );
                 }
-            }
+            },
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -100,8 +98,9 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let input_islamic_umm_al_qura =
             DateTime::try_from_str(&fx.input.value, IslamicUmmAlQura::new_always_calculating())
                 .unwrap();
-        let input_japanese = DateTime::try_from_str(&fx.input.value, japanese).unwrap();
-        let input_japanext = DateTime::try_from_str(&fx.input.value, japanext).unwrap();
+        let input_japanese = DateTime::try_from_str(&fx.input.value, Japanese::new()).unwrap();
+        let input_japanext =
+            DateTime::try_from_str(&fx.input.value, JapaneseExtended::new()).unwrap();
         let input_persian = DateTime::try_from_str(&fx.input.value, Persian).unwrap();
         let input_roc = DateTime::try_from_str(&fx.input.value, Roc).unwrap();
 
@@ -341,8 +340,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let skeleton = match fx.input.options.semantic {
-            Some(semantic) => CompositeFieldSet::try_from(semantic).unwrap(),
+        let skeleton = match fx.input.options.semantic.clone() {
+            Some(semantic) => semantic.build_composite().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -369,8 +368,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
             assert_writeable_eq!(
                 dtf.format(&zoned_datetime),
                 output_value.expectation(),
-                "{}",
-                description
+                "{}, {:?}",
+                description,
+                fx.input.options.semantic
             );
         }
     }
