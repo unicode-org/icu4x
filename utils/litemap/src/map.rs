@@ -1453,12 +1453,12 @@ mod test {
     #[test]
     fn extend2() {
         let mut map: LiteMap<usize, &str> = LiteMap::new();
-        map.extend(make_13().into_iter());
-        map.extend(make_24().into_iter());
-        map.extend(make_24().into_iter());
-        map.extend(make_46().into_iter());
-        map.extend(make_13().into_iter());
-        map.extend(make_46().into_iter());
+        map.extend(make_13());
+        map.extend(make_24());
+        map.extend(make_24());
+        map.extend(make_46());
+        map.extend(make_13());
+        map.extend(make_46());
         assert_eq!(map.len(), 5);
     }
 
