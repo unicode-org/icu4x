@@ -345,10 +345,10 @@ macro_rules! impl_zone_combo_helpers {
             }
             /// Associates this field set with a short generic non-location format time zone, as in
             /// “PT”.
-            /// 
+            ///
             /// Note: short time zones names are usually only available for time zones in the country
             /// associated with a locale (so "PT" is in `en`, but not in `en-GB`). Most time zones will
-            /// fall back to the significantly longer location format (e.g. "Los Angeles Time" for `en-GB`). 
+            /// fall back to the significantly longer location format (e.g. "Los Angeles Time" for `en-GB`).
             #[inline]
             pub fn with_zone_generic(self) -> Combo<Self, Vs> {
                 Combo::new(self, Vs::new())
