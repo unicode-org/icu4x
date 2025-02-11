@@ -157,28 +157,28 @@ pub enum DateFields {
 pub enum ZoneStyle {
     /// The long specific non-location format, as in
     /// “Pacific Daylight Time”.
-    Z,
+    SpecificLong,
     /// The short specific non-location format, as in
     /// “PDT”.
-    Zs,
+    SpecificShort,
     /// The long offset format, as in
     /// “GMT−8:00”.
-    O,
+    LocalizedOffsetLong,
     /// The short offset format, as in
     /// “GMT−8”.
-    Os,
+    LocalizedOffsetShort,
     /// The long generic non-location format, as in
     /// “Pacific Time”.
-    V,
+    GenericLong,
     /// The short generic non-location format, as in
     /// “PT”.
-    Vs,
+    GenericShort,
     /// The location format, as in
     /// “Los Angeles time”.
-    L,
+    Location,
     /// The exemplar city format, as in
     /// “Los Angeles”.
-    X,
+    ExemplarCity,
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
@@ -438,18 +438,26 @@ impl FieldSetBuilder {
 
     fn build_zone_without_checking_options(&mut self) -> Result<ZoneFieldSet, BuilderError> {
         let zone_field_set = match self.zone_style.take() {
-            Some(ZoneStyle::Zs) => ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort),
-            Some(ZoneStyle::Z) => ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong),
-            Some(ZoneStyle::O) => {
+            Some(ZoneStyle::SpecificShort) => {
+                ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort)
+            }
+            Some(ZoneStyle::SpecificLong) => {
+                ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong)
+            }
+            Some(ZoneStyle::LocalizedOffsetLong) => {
                 ZoneFieldSet::LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong)
             }
-            Some(ZoneStyle::Os) => {
+            Some(ZoneStyle::LocalizedOffsetShort) => {
                 ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort)
             }
-            Some(ZoneStyle::V) => ZoneFieldSet::GenericLong(fieldsets::zone::GenericLong),
-            Some(ZoneStyle::Vs) => ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort),
-            Some(ZoneStyle::L) => ZoneFieldSet::Location(fieldsets::zone::Location),
-            Some(ZoneStyle::X) => ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity),
+            Some(ZoneStyle::GenericLong) => ZoneFieldSet::GenericLong(fieldsets::zone::GenericLong),
+            Some(ZoneStyle::GenericShort) => {
+                ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort)
+            }
+            Some(ZoneStyle::Location) => ZoneFieldSet::Location(fieldsets::zone::Location),
+            Some(ZoneStyle::ExemplarCity) => {
+                ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity)
+            }
             Option::None => return Err(BuilderError::InvalidFields),
         };
         Ok(zone_field_set)
@@ -606,14 +614,14 @@ mod tests {
         &[DateFields::M, DateFields::YM, DateFields::Y];
 
     static ZONE_STYLES: &[ZoneStyle] = &[
-        ZoneStyle::Z,
-        ZoneStyle::Zs,
-        ZoneStyle::O,
-        ZoneStyle::Os,
-        ZoneStyle::V,
-        ZoneStyle::Vs,
-        ZoneStyle::L,
-        ZoneStyle::X,
+        ZoneStyle::SpecificLong,
+        ZoneStyle::SpecificShort,
+        ZoneStyle::LocalizedOffsetLong,
+        ZoneStyle::LocalizedOffsetShort,
+        ZoneStyle::GenericLong,
+        ZoneStyle::GenericShort,
+        ZoneStyle::Location,
+        ZoneStyle::ExemplarCity,
     ];
 
     #[cfg(all(feature = "serde", feature = "experimental"))]
