@@ -13,7 +13,7 @@ use icu::{
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
     let ts: jiff::Timestamp = "2024-09-10T23:37:20.123456789Z".parse()?;
-    let zoned: jiff::Zoned = ts.intz("Asia/Tokyo")?;
+    let zoned: jiff::Zoned = ts.in_tz("Asia/Tokyo")?;
 
     // Convert to ICU types
     let date = Date::try_new_iso(
@@ -40,7 +40,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
         // Central Time), so the ICU timezone needs a reference date and time.
         .at_time((date, time))
         // And finally, the zone variant is also required for formatting
-        .with_zone_variant(match zoned.time_zone().to_offset(zoned.timestamp()).1 {
+        .with_zone_variant(match zoned.time_zone().to_offset_info(zoned.timestamp()).dst() {
             jiff::tz::Dst::Yes => ZoneVariant::Daylight,
             jiff::tz::Dst::No => ZoneVariant::Standard,
         });
