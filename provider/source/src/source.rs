@@ -476,7 +476,7 @@ impl TzdbCache {
                 while i < lines.len() {
                     match section {
                         Section::Normal => {
-                            if lines[i].starts_with("# Vanguard section, for zic and other parsers that support negative DST") {
+                            if lines[i].starts_with("# Vanguard section") {
                                 lines.remove(i);
                                 section = Section::Vanguard;
                             } else if lines[i].starts_with('#') {
@@ -486,7 +486,7 @@ impl TzdbCache {
                             }
                         }
                         Section::Vanguard => {
-                            if lines[i].starts_with("# Rearguard section, for parsers lacking negative DST") {
+                            if lines[i].starts_with("# Rearguard section") {
                                 section = Section::Rearguard;
                             }
                             lines.remove(i);
@@ -496,13 +496,16 @@ impl TzdbCache {
                                 section = Section::Normal;
                                 lines.remove(i);
                             } else {
-                                lines[i] = lines[i].strip_prefix('#').unwrap().into();
-                                if lines[i].starts_with(' ') {
-                                    // Rearguard comments have a space after the #, 
-                                    // everything else has letters or tabs.
-                                    lines.remove(i);
-                                } else {
+                                // Rearguard lines mighht start with a # not followed by a space (that's a comment), or
+                                // they might not ¯\_(ツ)_/¯.
+                                if (lines[i].starts_with('#') && !lines[i].starts_with("# "))
+                                    || !lines[i].contains('#')
+                                {
+                                    lines[i] =
+                                        lines[i].strip_prefix('#').unwrap_or(&lines[i]).into();
                                     i += 1;
+                                } else {
+                                    lines.remove(i);
                                 }
                             }
                         }
