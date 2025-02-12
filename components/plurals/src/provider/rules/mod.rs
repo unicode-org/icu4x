@@ -156,10 +156,7 @@
 pub mod runtime;
 
 // The reference module is used internally, but is only needed externally in datagen mode
-#[cfg(feature = "datagen")]
 pub mod reference;
-#[cfg(not(feature = "datagen"))]
-pub(crate) mod reference;
 
 // Need to expose it for datagen, but we don't
 // have a reason to make it fully public, so hiding docs for now.
