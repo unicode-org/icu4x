@@ -39,11 +39,13 @@ export default {
 			{
 				name: "Model Type (Auto, LSTM, or Dictionary)",
 				type: "string",
+				typeUse: "string",
 				defaultValue: "Auto"
 			},
 			{
 				name: "Text",
 				type: "string",
+				typeUse: "string",
 				defaultValue: "โดยที่การยอมรับนับถือเกียรติศักดิ์ประจำตัว และสิทธิเท่าเทียมกันและโอนมิได้ของบรรดา สมาชิก ทั้ง หลายแห่งครอบครัว มนุษย์เป็นหลักมูลเหตุแห่งอิสรภาพ ความยุติธรรม และสันติภาพในโลก"
 			}
 		]
