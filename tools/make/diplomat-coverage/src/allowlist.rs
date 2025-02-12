@@ -180,6 +180,12 @@ lazy_static::lazy_static! {
         "icu::locale::preferences::LocalePreferences",
         "icu::plurals::PluralRulesPreferences",
         "icu::locale::preferences::PreferenceKey",
+        // And the preference enums
+        "icu::calendar::preferences",
+        "icu::collator::preferences",
+        "icu::datetime::preferences",
+        "icu::decimal::preferences",
+
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locale::LanguageIdentifier",
