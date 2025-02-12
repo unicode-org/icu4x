@@ -408,14 +408,6 @@ macro_rules! impl_attrs {
                     alignment,
                 })
             }
-            #[cfg(all(feature = "serde", feature = "experimental"))]
-            pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawOptions) -> Self {
-                match date_field_set {
-                    $(
-                        DateFieldSet::$d_variant(_) => Self::$variant(fieldsets::$variant::from_raw_options(options)),
-                    )+
-                }
-            }
         }
     };
 }

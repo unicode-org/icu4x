@@ -6,9 +6,6 @@
 
 use icu_timezone::scaffold::IntoOption;
 
-#[cfg(all(feature = "serde", feature = "experimental"))]
-use crate::neo_serde::TimePrecisionSerde;
-
 /// The length of a formatted date/time string.
 ///
 /// Length settings are always a hint, not a guarantee. For example, certain locales and
@@ -444,6 +441,103 @@ impl IntoOption<TimePrecision> for TimePrecision {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
+    }
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+#[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+enum TimePrecisionSerde {
+    Hour,
+    Minute,
+    Second,
+    SecondF1,
+    SecondF2,
+    SecondF3,
+    SecondF4,
+    SecondF5,
+    SecondF6,
+    SecondF7,
+    SecondF8,
+    SecondF9,
+    MinuteOptional,
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+impl From<TimePrecision> for TimePrecisionSerde {
+    fn from(value: TimePrecision) -> Self {
+        match value {
+            TimePrecision::Hour => TimePrecisionSerde::Hour,
+            TimePrecision::Minute => TimePrecisionSerde::Minute,
+            TimePrecision::Second => TimePrecisionSerde::Second,
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F1) => {
+                TimePrecisionSerde::SecondF1
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F2) => {
+                TimePrecisionSerde::SecondF2
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F3) => {
+                TimePrecisionSerde::SecondF3
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F4) => {
+                TimePrecisionSerde::SecondF4
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F5) => {
+                TimePrecisionSerde::SecondF5
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F6) => {
+                TimePrecisionSerde::SecondF6
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F7) => {
+                TimePrecisionSerde::SecondF7
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F8) => {
+                TimePrecisionSerde::SecondF8
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F9) => {
+                TimePrecisionSerde::SecondF9
+            }
+            TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
+        }
+    }
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+impl From<TimePrecisionSerde> for TimePrecision {
+    fn from(value: TimePrecisionSerde) -> Self {
+        match value {
+            TimePrecisionSerde::Hour => TimePrecision::Hour,
+            TimePrecisionSerde::Minute => TimePrecision::Minute,
+            TimePrecisionSerde::Second => TimePrecision::Second,
+            TimePrecisionSerde::SecondF1 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F1)
+            }
+            TimePrecisionSerde::SecondF2 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F2)
+            }
+            TimePrecisionSerde::SecondF3 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F3)
+            }
+            TimePrecisionSerde::SecondF4 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F4)
+            }
+            TimePrecisionSerde::SecondF5 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F5)
+            }
+            TimePrecisionSerde::SecondF6 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F6)
+            }
+            TimePrecisionSerde::SecondF7 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F7)
+            }
+            TimePrecisionSerde::SecondF8 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F8)
+            }
+            TimePrecisionSerde::SecondF9 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
+            }
+            TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
+        }
     }
 }
 
