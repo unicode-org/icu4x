@@ -6,7 +6,7 @@ mod fixtures;
 
 use fixed_decimal::SignedFixedDecimal;
 #[cfg(feature = "experimental")]
-use icu_plurals::rules::RawPluralOperands;
+use icu_plurals::provider::rules::RawPluralOperands;
 use icu_plurals::PluralOperands;
 
 #[test]

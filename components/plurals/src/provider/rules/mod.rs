@@ -61,8 +61,8 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu::plurals::rules::reference::ast::*;
-//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::provider::rules::reference::ast::*;
+//! use icu::plurals::provider::rules::reference::parse_condition;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
@@ -95,8 +95,8 @@
 //! matches:
 //!
 //! ```
-//! use icu::plurals::rules::reference::parse_condition;
-//! use icu::plurals::rules::reference::test_condition;
+//! use icu::plurals::provider::rules::reference::parse_condition;
+//! use icu::plurals::provider::rules::reference::test_condition;
 //! use icu::plurals::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";

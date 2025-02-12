@@ -61,7 +61,7 @@ impl core::error::Error for LexerError {}
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::Lexer;
+/// use icu::plurals::provider::rules::reference::Lexer;
 ///
 /// let input = b"i = 5";
 /// let lexer = Lexer::new(input);
@@ -79,7 +79,7 @@ impl<'l> Lexer<'l> {
     /// # Examples
     ///
     /// ```
-    /// use icu::plurals::rules::reference::Lexer;
+    /// use icu::plurals::provider::rules::reference::Lexer;
     ///
     /// Lexer::new(b"n = 1");
     /// ```

@@ -68,7 +68,7 @@ pub enum PluralOperandsInput {
 #[cfg(feature = "experimental")]
 impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
-        use icu_plurals::rules::RawPluralOperands;
+        use icu_plurals::provider::rules::RawPluralOperands;
         match input {
             PluralOperandsInput::List(operands) => PluralOperands::from(RawPluralOperands {
                 i: operands.1,

@@ -9,7 +9,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_provider::prelude::*;
 
 fn parser(c: &mut Criterion) {
-    use icu_plurals::rules::reference::parse_condition;
+    use icu_plurals::provider::rules::reference::parse_condition;
 
     let fixture_data =
         serde_json::from_str::<fixtures::PluralsFixture>(include_str!("fixtures/plurals.json"))
@@ -49,7 +49,7 @@ fn parser(c: &mut Criterion) {
     });
 
     c.bench_function("plurals/parser/lex", |b| {
-        use icu_plurals::rules::reference::Lexer;
+        use icu_plurals::provider::rules::reference::Lexer;
         b.iter(|| {
             for rule in &rules {
                 let _ = Lexer::new(black_box(rule.as_bytes())).count();

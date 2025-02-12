@@ -62,7 +62,7 @@ impl core::error::Error for ParseError {}
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::parse;
+/// use icu::plurals::provider::rules::reference::parse;
 ///
 /// let input = b"i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
 /// assert!(parse(input).is_ok());
@@ -96,7 +96,7 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParseError> {
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::parse_condition;
+/// use icu::plurals::provider::rules::reference::parse_condition;
 ///
 /// let input = b"i = 0 or n = 1";
 /// assert!(parse_condition(input).is_ok());
