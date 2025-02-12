@@ -2,16 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] APIs and Data Structures for Plural Rules
+//! 🚧 \[Unstable\] APIs and Data Structures for Plural Rules
 //!
 //! A single Plural Rule is an expression which tests the value of [`PluralOperands`]
 //! against a condition. If the condition is truthful, then the [`PluralCategory`]
 //! to which the Rule is assigned should be used.
 //!
 //! <div class="stab unstable">
-//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. Use with caution.
-//! <a href="https://github.com/unicode-org/icu4x/issues/1091">#1091</a>
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+//! guaranteed to match with this version's `*_unstable` providers. Use with caution.
 //! </div>
 //!
 //! # Examples
@@ -153,13 +153,11 @@
 //! [`Sample`]: super::rules::reference::ast::Samples
 //! [`AST`]: super::rules::reference::ast
 
-#[doc(hidden)]
 pub mod reference;
 // Need to expose it for datagen, but we don't
 // have a reason to make it fully public, so hiding docs for now.
 #[cfg(feature = "experimental")]
 mod raw_operands;
-#[doc(hidden)]
 pub mod runtime;
 
 #[cfg(feature = "experimental")]

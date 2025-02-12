@@ -6,6 +6,12 @@
 //! the output of [`parse`] method that is used in [`test_condition`] method
 //! to evaluate whether a given [`PluralCategory`] should be used.
 //!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+//! guaranteed to match with this version's `*_unstable` providers. Use with caution.
+//! </div>
+//!
 //! # Examples
 //!
 //! ```
@@ -38,6 +44,12 @@ use core::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
 /// Comprises a vector of [`AndConditions`] and optionally a set of [`Samples`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
@@ -89,6 +101,12 @@ pub struct Rule {
 
 /// A complete AST representation of a plural rule's condition. Comprises a vector of [`AndConditions`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```
@@ -126,6 +144,12 @@ pub struct Rule {
 pub struct Condition(pub Vec<AndCondition>);
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
@@ -167,6 +191,12 @@ pub struct Condition(pub Vec<AndCondition>);
 pub struct AndCondition(pub Vec<Relation>);
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
@@ -213,6 +243,12 @@ pub struct Relation {
 /// | --------------| ----------------- |------------------------------------------------|
 /// | `Eq`          | "="               | is contained within the following interval set |
 /// | `NotEq`       | "!="              | complement of `Eq` ("is _not_ contained..."")  |
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Operator {
@@ -225,6 +261,12 @@ pub enum Operator {
 }
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Operand`] and an optional modulo.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
@@ -256,6 +298,12 @@ pub struct Expression {
 }
 
 /// An incomplete AST representation of a plural rule. Comprises a [`char`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
@@ -297,6 +345,12 @@ pub enum Operand {
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`RangeListItems`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
@@ -328,6 +382,12 @@ pub struct RangeList(pub Vec<RangeListItem>);
 /// See [`RangeInclusive`] and [`Value`] for additional details.
 /// A range comprises two values: an inclusive lower and upper limit.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -354,6 +414,12 @@ pub enum RangeListItem {
 
 /// An incomplete AST representation of a plural rule, representing one integer.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
@@ -375,6 +441,12 @@ pub enum RangeListItem {
 pub struct Value(pub u64);
 
 /// A sample of example values that match the given rule.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
@@ -414,6 +486,12 @@ pub struct Samples {
 
 /// A list of values used in samples.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -443,6 +521,12 @@ pub struct SampleList {
 
 /// A value range used in samples.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -469,6 +553,12 @@ pub struct SampleRange {
 }
 
 /// A decimal value used in samples.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///

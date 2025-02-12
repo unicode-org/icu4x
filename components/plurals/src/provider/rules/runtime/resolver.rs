@@ -5,6 +5,11 @@
 use crate::operands::PluralOperands;
 use crate::provider::rules::runtime::ast;
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[inline]
 pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {
     // This algorithm is a simple non-recursive interpreter of the

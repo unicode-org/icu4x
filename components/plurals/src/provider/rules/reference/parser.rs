@@ -11,6 +11,12 @@ use alloc::vec::Vec;
 use core::iter::Peekable;
 use displaydoc::Display;
 
+
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[derive(Display, Debug, PartialEq, Eq, Copy, Clone)]
 #[allow(clippy::enum_variant_names)]
 #[non_exhaustive]
@@ -47,6 +53,12 @@ impl core::error::Error for ParseError {}
 ///
 /// At runtime, only the [`Condition`] is used and for that, consider using [`parse_condition`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```
@@ -74,6 +86,12 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParseError> {
 ///
 /// That [`AST`] can be then used by the [`test_condition`] to test
 /// against [`PluralOperands`], to find the appropriate [`PluralCategory`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 ///
 /// # Examples
 ///
