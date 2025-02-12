@@ -58,6 +58,7 @@ pub(crate) enum RangeOrValue {
     Value(u32),
 }
 
+/// Represent a a single "relation" in a plural rule
 #[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[zerovec::make_varule(RelationULE)]
 pub struct Relation<'data> {
@@ -278,6 +279,7 @@ impl fmt::Display for Rule<'_> {
 }
 
 impl RelationULE {
+    /// Convert to a Relation
     #[inline]
     pub fn as_relation(&self) -> Relation {
         zerofrom::ZeroFrom::zero_from(self)

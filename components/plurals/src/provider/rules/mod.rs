@@ -146,7 +146,7 @@
 //! [`PluralCategory::Other`]: super::PluralCategory::Other
 //! [`PluralOperands`]: super::PluralOperands
 //! [`PluralRules::categories`]: super::PluralRules::categories
-//! [`PluralRuleType::Cardinal`]: super::PluralRuleType::Cardinal
+//! [`PluralRuleType::Cardinal`]: crate::PluralRuleType::Cardinal
 //! [`Rule`]: super::rules::reference::ast::Rule
 //! [`Rules`]: super::rules::reference::ast::Rule
 //! [`Condition`]: super::rules::reference::ast::Condition
