@@ -57,16 +57,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let skeleton = match fx.input.options.semantic.clone() {
-            Some(semantic) => match semantic.build_composite_datetime() {
-                Ok(v) => v,
-                Err(e) => {
-                    panic!(
-                        "Cannot handle field sets with time zones in this fn: {e:?} {:?}, {:?}",
-                        fx.input.options.semantic, fx.output.values
-                    );
-                }
-            },
+        let skeleton = match fx.input.options.semantic {
+            Some(semantic) => semantic.build_composite_datetime().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -340,7 +332,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let skeleton = match fx.input.options.semantic.clone() {
+        let fset = match fx.input.options.semantic {
             Some(semantic) => semantic.build_composite().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
@@ -362,15 +354,14 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
             }
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton)
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), fset)
                     .unwrap()
             };
             assert_writeable_eq!(
                 dtf.format(&zoned_datetime),
                 output_value.expectation(),
-                "{}, {:?}",
+                "{}",
                 description,
-                fx.input.options.semantic
             );
         }
     }

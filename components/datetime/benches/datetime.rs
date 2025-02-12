@@ -5,7 +5,7 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
 use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
@@ -48,13 +48,18 @@ fn datetime_benches(c: &mut Criterion) {
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
-                        let skeleton =
-                            CompositeFieldSet::try_from(setup.options.semantic.unwrap()).unwrap();
+                        let fset = setup
+                            .options
+                            .semantic
+                            .clone()
+                            .unwrap()
+                            .build_composite()
+                            .unwrap();
 
                         let dtf = {
                             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
                                 locale.into(),
-                                skeleton,
+                                fset,
                             )
                             .expect("Failed to create FixedCalendarDateTimeFormatter.")
                         };

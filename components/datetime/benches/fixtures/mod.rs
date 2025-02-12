@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{fieldsets::serde::CompositeFieldSetSerde, provider::fields::components};
+use icu_datetime::{fieldsets::builder::FieldSetBuilder, provider::fields::components};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -24,7 +24,7 @@ pub struct TestInput {
 pub struct TestOptions {
     pub length: Option<TestOptionsLength>,
     pub components: Option<TestComponentsBag>,
-    pub semantic: Option<CompositeFieldSetSerde>,
+    pub semantic: Option<FieldSetBuilder>,
     #[serde(rename = "hourCycle")]
     pub hour_cycle: Option<TestHourCycle>,
 }
