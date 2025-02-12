@@ -80,6 +80,16 @@ mod operands;
 mod options;
 pub mod provider;
 
+
+// Need to expose it for datagen, but we don't
+// have a reason to make it fully public, so hiding docs for now.
+#[cfg(feature = "experimental")]
+mod raw_operands;
+
+#[cfg(feature = "experimental")]
+pub use raw_operands::RawPluralOperands;
+
+
 use core::cmp::{Ord, PartialOrd};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;

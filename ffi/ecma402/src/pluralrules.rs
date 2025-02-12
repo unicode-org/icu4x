@@ -134,7 +134,7 @@ pub(crate) mod internal {
     mod testing {
         use super::*;
         use ecma402_traits::pluralrules::options::Type;
-        use icu::plurals::provider::rules::RawPluralOperands;
+        use icu::plurals::RawPluralOperands;
 
         fn opt(
             minimum_integer_digits: u8,
