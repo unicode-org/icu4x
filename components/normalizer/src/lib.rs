@@ -58,7 +58,6 @@
 //! assert!(!nfd.is_normalized("ä"));
 //! ```
 
-#[cfg(feature = "alloc")]
 extern crate alloc;
 
 // We don't depend on icu_properties to minimize deps, but we want to be able
@@ -85,9 +84,7 @@ use crate::provider::CanonicalDecompositionDataV2;
 use crate::provider::CompatibilityDecompositionDataV2;
 use crate::provider::DecompositionData;
 use crate::provider::Uts46DecompositionDataV2;
-#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
-#[cfg(feature = "alloc")]
 use alloc::string::String;
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::Char16Trie;
@@ -1452,7 +1449,6 @@ macro_rules! decomposing_normalize_to {
 macro_rules! normalizer_methods {
     () => {
         /// Normalize a string slice into a `Cow<'a, str>`.
-        #[cfg(feature = "alloc")]
         pub fn normalize<'a>(&self, text: &'a str) -> Cow<'a, str> {
             let (head, tail) = self.split_normalized(text);
             if tail.is_empty() {
@@ -1496,7 +1492,6 @@ macro_rules! normalizer_methods {
         ///
         /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
-        #[cfg(feature = "alloc")]
         pub fn normalize_utf16<'a>(&self, text: &'a [u16]) -> Cow<'a, [u16]> {
             let (head, tail) = self.split_normalized_utf16(text);
             if tail.is_empty() {
@@ -1550,7 +1545,6 @@ macro_rules! normalizer_methods {
         ///
         /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
-        #[cfg(feature = "alloc")]
         pub fn normalize_utf8<'a>(&self, text: &'a [u8]) -> Cow<'a, str> {
             let (head, tail) = self.split_normalized_utf8(text);
             if tail.is_empty() {

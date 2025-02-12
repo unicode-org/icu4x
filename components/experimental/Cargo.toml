@@ -31,7 +31,7 @@ icu_locale_core = { workspace = true }
 icu_decimal = { workspace = true }
 icu_list = { workspace = true }
 icu_locale = { workspace = true }
-icu_normalizer = { workspace = true, features = ["alloc"] }
+icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true, features = ["alloc"] }
 
