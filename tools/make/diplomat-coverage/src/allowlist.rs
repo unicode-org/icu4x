@@ -264,8 +264,6 @@ lazy_static::lazy_static! {
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
 
-        "icu::plurals::provider::rules",
-
         "icu::plurals::PluralRulesWithRanges",
         "icu::plurals::PluralRulesWithRanges::categories",
         "icu::plurals::PluralRulesWithRanges::category_for",
