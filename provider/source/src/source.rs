@@ -461,9 +461,55 @@ impl TzdbCache {
                         self.root
                             .read_to_string(file)?
                             .lines()
-                            .map(ToOwned::to_owned)
-                            .map(strip_comments),
+                            .map(ToOwned::to_owned),
                     );
+                }
+
+                enum Section {
+                    Normal,
+                    Vanguard,
+                    Rearguard,
+                }
+                let mut i = 0;
+                let mut section = Section::Normal;
+
+                while i < lines.len() {
+                    match section {
+                        Section::Normal => {
+                            if lines[i].starts_with("# Vanguard section, for zic and other parsers that support negative DST") {
+                                lines.remove(i);
+                                section = Section::Vanguard;
+                            } else if lines[i].starts_with('#') {
+                                lines.remove(i);
+                            } else {
+                                i += 1;
+                            }
+                        }
+                        Section::Vanguard => {
+                            if lines[i].starts_with("# Rearguard section, for parsers lacking negative DST") {
+                                section = Section::Rearguard;
+                            }
+                            lines.remove(i);
+                        }
+                        Section::Rearguard => {
+                            if lines[i].starts_with("# End of rearguard section") {
+                                section = Section::Normal;
+                                lines.remove(i);
+                            } else {
+                                lines[i] = lines[i].strip_prefix('#').unwrap().into();
+                                if lines[i].trim().starts_with('#') || 
+                                    // These are comments in a rearguard section, that are only prefixed with one '#',
+                                    // making them look like data.
+                                    lines[i].trim().starts_with("From Paul Eggert (2017-04-07)") || 
+                                    lines[i].trim().starts_with("The official date of the 2017 rule change was 2017-10-24") || 
+                                    lines[i].trim().starts_with("http://www.lac.org.na/laws/annoSTAT/Namibian%20Time%20Act%209%20of%202017.pdf") {
+                                    lines.remove(i);
+                                } else {
+                                    i += 1;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 #[allow(deprecated)] // no alternative?!
