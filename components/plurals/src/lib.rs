@@ -79,7 +79,6 @@ extern crate alloc;
 mod operands;
 mod options;
 pub mod provider;
-pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
 use icu_locale_core::preferences::define_preferences;

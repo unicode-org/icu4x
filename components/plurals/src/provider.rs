@@ -34,6 +34,8 @@ use zerovec::ule::VarULE;
 use zerovec::ule::ULE;
 use zerovec::VarZeroSlice;
 
+pub mod rules;
+
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
