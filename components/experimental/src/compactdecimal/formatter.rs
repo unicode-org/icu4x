@@ -15,9 +15,7 @@ use alloc::borrow::Cow;
 use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
@@ -31,7 +29,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: NumberingSystem
+        numbering_system: super::preferences::NumberingSystem
     }
 );
 
