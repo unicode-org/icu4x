@@ -1245,7 +1245,7 @@ pub mod zone {
         /// ```compile_fail,E0271
         /// use icu::calendar::{Date, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
-        /// use icu::datetime::fieldsets::zone::{T, zone::SpecificShort};
+        /// use icu::datetime::fieldsets::{T, zone::SpecificShort};
         /// use icu::locale::locale;
         /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
         /// use tinystr::tinystr;
@@ -1428,7 +1428,6 @@ pub mod zone {
         /// this time zone style requires a reference time.
         ///
         /// ```compile_fail,E0271
-        /// use icu::calendar::{DateTime, Iso};
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericLong;
         /// use icu::timezone::TimeZoneBcp47Id;
@@ -1440,7 +1439,7 @@ pub mod zone {
         ///
         /// let formatter = TimeFormatter::try_new(
         ///     locale!("en-US").into(),
-        ///     V::new(),
+        ///     GenericLong,
         /// )
         /// .unwrap();
         ///
@@ -1470,10 +1469,9 @@ pub mod zone {
         /// this time zone style requires a reference time.
         ///
         /// ```compile_fail,E0271
-        /// use icu::calendar::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
-        /// use icu::timezone::{TimeZoneBcp47Id, UtcOffset};
+        /// use icu::timezone::TimeZoneBcp47Id;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
