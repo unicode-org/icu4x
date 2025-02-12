@@ -105,6 +105,7 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParseError> {
 /// [`test_condition`]: super::test_condition
 /// [`PluralOperands`]: crate::PluralOperands
 /// [`PluralCategory`]: crate::PluralCategory
+#[cfg(feature = "datagen")]
 pub fn parse_condition(input: &[u8]) -> Result<ast::Condition, ParseError> {
     let parser = Parser::new(input);
     parser.parse_condition()
@@ -125,6 +126,7 @@ impl<'p> Parser<'p> {
         self.get_rule()
     }
 
+    #[cfg(feature = "datagen")]
     pub fn parse_condition(mut self) -> Result<ast::Condition, ParseError> {
         self.get_condition()
     }
