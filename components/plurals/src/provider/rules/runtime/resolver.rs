@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::operands::PluralOperands;
-use crate::rules::runtime::ast;
+use crate::provider::rules::runtime::ast;
 
 #[inline]
 pub fn test_rule(rule: &ast::Rule, operands: &PluralOperands) -> bool {

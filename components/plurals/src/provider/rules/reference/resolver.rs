@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::operands::PluralOperands;
-use crate::rules::reference::ast;
+use crate::provider::rules::reference::ast;
 
 /// Function used to test [`Condition`] against [`PluralOperands`] to identify
 /// the appropriate [`PluralCategory`].

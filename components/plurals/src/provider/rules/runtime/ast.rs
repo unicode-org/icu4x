@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::rules::reference;
+use crate::provider::rules::reference;
 use core::{
     convert::{TryFrom, TryInto},
     fmt, num,
@@ -446,8 +446,8 @@ mod serde {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::rules::reference;
-    use crate::rules::runtime::test_rule;
+    use crate::provider::rules::reference;
+    use crate::provider::rules::runtime::test_rule;
     use crate::PluralOperands;
 
     #[test]

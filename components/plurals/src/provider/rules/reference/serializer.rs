@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::rules::reference::ast;
+use crate::provider::rules::reference::ast;
 use core::fmt;
 use core::ops::RangeInclusive;
 

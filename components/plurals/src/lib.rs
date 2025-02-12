@@ -86,10 +86,10 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 pub use options::*;
+use provider::rules::runtime::test_rule;
 use provider::CardinalV1;
 use provider::OrdinalV1;
 use provider::PluralRulesData;
-use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
 use provider::PluralRangesV1;
