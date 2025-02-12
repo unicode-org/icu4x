@@ -230,6 +230,7 @@ Whether to swap the ordering of uppercase and lowercase.
 ```rust
 use core::cmp::Ordering;
 use icu::collator::*;
+use icu::collator::preferences::*;
 
 // Use the locale's default.
 
@@ -265,6 +266,7 @@ numeric value.
 ```rust
 use core::cmp::Ordering;
 use icu::collator::*;
+use icu::collator::preferences::*;
 
 // Numerical sorting off
 
