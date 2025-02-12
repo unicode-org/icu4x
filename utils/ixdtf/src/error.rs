@@ -102,6 +102,8 @@ pub enum ParseError {
     DateDurationPartOrder,
     #[displaydoc("Invalid time duration part order.")]
     TimeDurationPartOrder,
+    #[displaydoc("Duration part fraction exceeded a representable range.")]
+    DurationFractionalDigitsExceededRange,
     #[displaydoc("Invalid time duration designator.")]
     TimeDurationDesignator,
 }

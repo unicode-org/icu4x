@@ -55,7 +55,7 @@ pub struct TimeRecord {
     /// A second value.
     pub second: u8,
     /// A nanosecond value representing all sub-second components.
-    pub nanosecond: u32,
+    pub fraction: Fraction,
 }
 
 /// A `TimeZoneAnnotation` that represents a parsed `TimeZoneRecord` and its critical flag.
@@ -111,7 +111,7 @@ pub struct UtcOffsetRecord {
     /// The second value of the `UtcOffsetRecord`.
     pub second: u8,
     /// Any nanosecond value of the `UTCOffsetRecord`.
-    pub nanosecond: u32,
+    pub fraction: Fraction,
 }
 
 impl UtcOffsetRecord {
@@ -122,7 +122,10 @@ impl UtcOffsetRecord {
             hour: 0,
             minute: 0,
             second: 0,
-            nanosecond: 0,
+            fraction: Fraction {
+                digits: 0,
+                value: 0,
+            },
         }
     }
 }
@@ -144,7 +147,7 @@ impl UtcOffsetRecordOrZ {
                 hour: 0,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: Fraction::default(),
             },
         }
     }
@@ -191,7 +194,7 @@ pub enum TimeDurationRecord {
         /// Hours value.
         hours: u64,
         /// The parsed fraction value in nanoseconds.
-        fraction: u64,
+        fraction: Fraction,
     },
     // A Minutes Time duration record.
     Minutes {
@@ -200,7 +203,7 @@ pub enum TimeDurationRecord {
         /// Minutes value.
         minutes: u64,
         /// The parsed fraction value in nanoseconds.
-        fraction: u64,
+        fraction: Fraction,
     },
     // A Seconds Time duration record.
     Seconds {
@@ -211,6 +214,46 @@ pub enum TimeDurationRecord {
         /// Seconds value.
         seconds: u64,
         /// The parsed fraction value in nanoseconds.
-        fraction: u32,
+        fraction: Fraction,
     },
+}
+
+/// A fraction value in nanoseconds or lower value.
+///
+/// # Precision note
+///
+/// `ixdtf` parses a fraction value to a precision of 18 digits of precision, but
+/// preserves the fraction's digit length
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // A fraction is only a value and its digit length.
+pub struct Fraction {
+    // The count of fraction digits, i.e. the fraction's digit length.
+    pub digits: u8,
+    // The parsed fraction value.
+    pub value: u64,
+}
+
+impl Fraction {
+    /// Returns Some(`u32`) representing the `Fraction` as it's computed
+    /// nanosecond value or `None` if the digits exceeds 9 digits.
+    pub fn to_nanoseconds(&self) -> Option<u32> {
+        if self.digits <= 9 {
+            10u32
+                .checked_pow(9 - u32::from(self.digits))
+                .map(|x| x * self.value as u32)
+        } else {
+            None
+        }
+    }
+
+    /// Returns a `u64` representing the `Fraction` as it's computed
+    /// nanosecond value, truncating any value beyond 9 digits to
+    /// nanoseconds
+    pub fn to_truncated_nanoseconds(&self) -> u64 {
+        if self.digits <= 9 {
+            self.value
+        } else {
+            self.value / 10u64.pow(u32::from(self.digits - 9))
+        }
+    }
 }
