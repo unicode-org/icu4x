@@ -5,7 +5,6 @@
 use super::ast;
 use displaydoc::Display;
 
-
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
@@ -31,7 +30,6 @@ pub enum Token {
     Tilde,
     E,
 }
-
 
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
