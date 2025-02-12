@@ -6,7 +6,7 @@
 
 /// A collection of configuration options that determine the formatting behavior of
 /// [`CurrencyFormatter`](crate::dimension::currency::formatter::CurrencyFormatter).
-#[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {
     /// The width of the currency format.
@@ -19,7 +19,7 @@ impl From<Width> for CurrencyFormatterOptions {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
 #[non_exhaustive]
 pub enum Width {
     /// Format the currency with the standard (short) currency symbol.
