@@ -5,9 +5,9 @@
 mod fixtures;
 
 use fixed_decimal::SignedFixedDecimal;
+use icu_plurals::PluralOperands;
 #[cfg(feature = "experimental")]
 use icu_plurals::RawPluralOperands;
-use icu_plurals::PluralOperands;
 
 #[test]
 fn test_parsing_operands() {

@@ -23,7 +23,7 @@ use crate::PluralOperands;
 /// changes (ex: a new Plural Operand needs to be supported).
 ///
 /// Most users with numerical data inputs for places where [`PluralOperands`] is
-/// accepted, like [`PluralRules::category_for`](super::super::PluralRules::category_for), should convert to [`PluralOperands`].
+/// accepted, like [`PluralRules::category_for`](super::PluralRules::category_for), should convert to [`PluralOperands`].
 /// See [`PluralOperands`] for details.
 ///
 /// <div class="stab unstable">
