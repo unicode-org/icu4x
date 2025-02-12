@@ -497,12 +497,9 @@ impl TzdbCache {
                                 lines.remove(i);
                             } else {
                                 lines[i] = lines[i].strip_prefix('#').unwrap().into();
-                                if lines[i].trim().starts_with('#') || 
-                                    // These are comments in a rearguard section, that are only prefixed with one '#',
-                                    // making them look like data.
-                                    lines[i].trim().starts_with("From Paul Eggert (2017-04-07)") || 
-                                    lines[i].trim().starts_with("The official date of the 2017 rule change was 2017-10-24") || 
-                                    lines[i].trim().starts_with("http://www.lac.org.na/laws/annoSTAT/Namibian%20Time%20Act%209%20of%202017.pdf") {
+                                if lines[i].starts_with(' ') {
+                                    // Rearguard comments have a space after the #, 
+                                    // everything else has letters or tabs.
                                     lines.remove(i);
                                 } else {
                                     i += 1;
