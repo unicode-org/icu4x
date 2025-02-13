@@ -53,16 +53,19 @@ pub const MARKERS: &[DataMarkerInfo] = &[ListAndV2::INFO, ListOrV2::INFO, ListUn
 data_marker!(
     /// Marker for and lists
     ListAndV2,
+    "list/and/v2",
     ListFormatterPatterns<'static>,
 );
 data_marker!(
     /// Marker for or lists
     ListOrV2,
+    "list/or/v2",
     ListFormatterPatterns<'static>,
 );
 data_marker!(
     /// Marker for unit lists
     ListUnitV2,
+    "list/unit/v2",
     ListFormatterPatterns<'static>,
 );
 
