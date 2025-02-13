@@ -372,8 +372,8 @@ impl FromStr for UtcOffset {
 /// * `Europe/Dublin` (since 1968-10-27) sets the `isdst` flag during winter (UTC+0),
 ///   and does not set it during daylight saving time in summer (UTC+1). This leads
 ///   to incorrect display names in variant-sensitive formats:
-///     * ⚠️ "Western European Time" and "Greenwhich Mean Time" in summer (UTC+1)
-///     * ⚠️ "Western European Summer Time" and "Ireland Standard Time" (the summer time name) in winter (UTC+0)
+///     * ⚠️ "Greenwhich Mean Time" in summer (UTC+1)
+///     * ⚠️ "Ireland Standard Time" (the summer time name) in winter (UTC+0)
 ///
 ///   This is especially problematic as Northern Ireland (`Europe/Belfast`), like the rest of Europe,
 ///   sets the `isdst` flag during DST (UTC+1), thus differing from the Republic of Ireland.
@@ -381,14 +381,14 @@ impl FromStr for UtcOffset {
 ///   flag during winter (UTC+1), and does not set it during daylight saving
 ///   time in summer (UTC+2). This leads to incorrect display names in
 ///   variant-sensitive formats:
-///   * ⚠️ "West Africa Standard Time" and "Namibia Standard Time" in summer (UTC+2)
-///   * ⚠️ "West Africa Summer Time" and "Namibia Daylight Time" in winter (UTC+1)
+///   * ⚠️ "West Africa Standard Time" in summer (UTC+2)
+///   * ⚠️ "West Africa Summer Time" in winter (UTC+1)
 /// * `Africa/Casablanca` (and its alias `Africa/El_Aaiun`) since 2018-10-28
 ///   sets the `isdst` flag during Ramadan (UTC+0), and does not set it
 ///   during daylight saving time (rest of the year, UTC+1). This leads
 ///   to incorrect display names in variant-sensitive formats:
-///   * ⚠️ "Western European Summer Time" and "Morroco Daylight Time" during Ramadan (UTC+0)
-///   * ⚠️ "Western European Standard Time" and "Morocco Standard Time" the rest of the year (UTC+1)
+///   * ⚠️ "Western European Summer Time" during Ramadan (UTC+0)
+///   * ⚠️ "Western European Standard Time" the rest of the year (UTC+1)
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(ZoneVariantULE)]
 #[repr(u8)]
