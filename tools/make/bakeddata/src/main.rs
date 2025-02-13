@@ -75,7 +75,8 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new_latest_tested();
+    let source = SourceDataProvider::new_latest_tested()
+        .with_timezone_horizon(icu::calendar::Date::try_new_iso(2015, 1, 1).unwrap());
 
     let driver = ExportDriver::new(
         source

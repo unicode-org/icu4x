@@ -9,31 +9,10 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "Acre Summer Time"
-    ],
-    [
-      [
         6,
         "Standard"
       ],
       "West Africa Standard Time"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "West Africa Summer Time"
-    ],
-    [
-      [
-        7,
-        "Daylight"
-      ],
-      "Almaty Summer Time"
     ],
     [
       [
@@ -55,13 +34,6 @@
         "Standard"
       ],
       "Amazon Standard Time"
-    ],
-    [
-      [
-        9,
-        "Daylight"
-      ],
-      "Amazon Summer Time"
     ],
     [
       [
@@ -121,27 +93,6 @@
     ],
     [
       [
-        14,
-        "Daylight"
-      ],
-      "Anadyr Summer Time"
-    ],
-    [
-      [
-        16,
-        "Standard"
-      ],
-      "Aqtau Standard Time"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "Aqtau Summer Time"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -149,45 +100,10 @@
     ],
     [
       [
-        18,
-        "Daylight"
-      ],
-      "Arabian Daylight Time"
-    ],
-    [
-      [
         19,
         "Standard"
       ],
       "Argentina Standard Time"
-    ],
-    [
-      [
-        19,
-        "Daylight"
-      ],
-      "Argentina Summer Time"
-    ],
-    [
-      [
-        20,
-        "Daylight"
-      ],
-      "Armenia Summer Time"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "Western Argentina Standard Time"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Western Argentina Summer Time"
     ],
     [
       [
@@ -226,13 +142,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "Australian Central Western Daylight Time"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -254,20 +163,6 @@
     ],
     [
       [
-        26,
-        "Daylight"
-      ],
-      "Australian Western Daylight Time"
-    ],
-    [
-      [
-        27,
-        "Daylight"
-      ],
-      "Azerbaijan Summer Time"
-    ],
-    [
-      [
         28,
         "Daylight"
       ],
@@ -275,31 +170,10 @@
     ],
     [
       [
-        29,
-        "Daylight"
-      ],
-      "Bangladesh Summer Time"
-    ],
-    [
-      [
         32,
         "Standard"
       ],
       "Brasilia Standard Time"
-    ],
-    [
-      [
-        32,
-        "Daylight"
-      ],
-      "Brasilia Summer Time"
-    ],
-    [
-      [
-        38,
-        "Standard"
-      ],
-      "Chile Standard Time"
     ],
     [
       [
@@ -314,20 +188,6 @@
         "Standard"
       ],
       "China Standard Time"
-    ],
-    [
-      [
-        42,
-        "Daylight"
-      ],
-      "Colombia Summer Time"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "Cook Islands Summer Time"
     ],
     [
       [
@@ -380,41 +240,6 @@
     ],
     [
       [
-        54,
-        "Daylight"
-      ],
-      "Falkland Islands Summer Time"
-    ],
-    [
-      [
-        55,
-        "Daylight"
-      ],
-      "Fiji Summer Time"
-    ],
-    [
-      [
-        60,
-        "Daylight"
-      ],
-      "Georgia Summer Time"
-    ],
-    [
-      [
-        62,
-        "Standard"
-      ],
-      "East Greenland Standard Time"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "East Greenland Summer Time"
-    ],
-    [
-      [
         63,
         "Standard"
       ],
@@ -426,20 +251,6 @@
         "Daylight"
       ],
       "Greenland Summer Time"
-    ],
-    [
-      [
-        64,
-        "Standard"
-      ],
-      "West Greenland Standard Time"
-    ],
-    [
-      [
-        64,
-        "Daylight"
-      ],
-      "West Greenland Summer Time"
     ],
     [
       [
@@ -457,55 +268,6 @@
     ],
     [
       [
-        69,
-        "Daylight"
-      ],
-      "Hong Kong Summer Time"
-    ],
-    [
-      [
-        70,
-        "Daylight"
-      ],
-      "Hovd Summer Time"
-    ],
-    [
-      [
-        78,
-        "Standard"
-      ],
-      "Irkutsk Standard Time"
-    ],
-    [
-      [
-        78,
-        "Daylight"
-      ],
-      "Irkutsk Summer Time"
-    ],
-    [
-      [
-        79,
-        "Standard"
-      ],
-      "Israel Standard Time"
-    ],
-    [
-      [
-        79,
-        "Daylight"
-      ],
-      "Israel Daylight Time"
-    ],
-    [
-      [
-        82,
-        "Daylight"
-      ],
-      "Kamchatka Summer Time"
-    ],
-    [
-      [
         85,
         "Standard"
       ],
@@ -513,24 +275,10 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "Korean Daylight Time"
-    ],
-    [
-      [
         87,
         "Standard"
       ],
       "Krasnoyarsk Standard Time"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "Krasnoyarsk Summer Time"
     ],
     [
       [
@@ -548,34 +296,6 @@
     ],
     [
       [
-        92,
-        "Daylight"
-      ],
-      "Macao Summer Time"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Magadan Standard Time"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "Magadan Summer Time"
-    ],
-    [
-      [
-        98,
-        "Daylight"
-      ],
-      "Mauritius Summer Time"
-    ],
-    [
-      [
         100,
         "Standard"
       ],
@@ -583,38 +303,10 @@
     ],
     [
       [
-        100,
-        "Daylight"
-      ],
-      "Mexican Pacific Daylight Time"
-    ],
-    [
-      [
-        102,
-        "Daylight"
-      ],
-      "Ulaanbaatar Summer Time"
-    ],
-    [
-      [
         103,
         "Standard"
       ],
       "Moscow Standard Time"
-    ],
-    [
-      [
-        103,
-        "Daylight"
-      ],
-      "Moscow Summer Time"
-    ],
-    [
-      [
-        106,
-        "Daylight"
-      ],
-      "New Caledonia Summer Time"
     ],
     [
       [
@@ -646,87 +338,10 @@
     ],
     [
       [
-        113,
-        "Daylight"
-      ],
-      "Fernando de Noronha Summer Time"
-    ],
-    [
-      [
-        114,
-        "Standard"
-      ],
-      "Novosibirsk Standard Time"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "Novosibirsk Summer Time"
-    ],
-    [
-      [
-        115,
-        "Daylight"
-      ],
-      "Omsk Summer Time"
-    ],
-    [
-      [
-        116,
-        "Daylight"
-      ],
-      "Pakistan Summer Time"
-    ],
-    [
-      [
-        119,
-        "Daylight"
-      ],
-      "Paraguay Summer Time"
-    ],
-    [
-      [
-        120,
-        "Daylight"
-      ],
-      "Peru Summer Time"
-    ],
-    [
-      [
         121,
         "Standard"
       ],
       "Philippine Standard Time"
-    ],
-    [
-      [
-        121,
-        "Daylight"
-      ],
-      "Philippine Summer Time"
-    ],
-    [
-      [
-        127,
-        "Daylight"
-      ],
-      "Qyzylorda Summer Time"
-    ],
-    [
-      [
-        130,
-        "Daylight"
-      ],
-      "Sakhalin Summer Time"
-    ],
-    [
-      [
-        131,
-        "Daylight"
-      ],
-      "Samara Summer Time"
     ],
     [
       [
@@ -737,45 +352,10 @@
     ],
     [
       [
-        143,
-        "Daylight"
-      ],
-      "Tonga Summer Time"
-    ],
-    [
-      [
-        145,
-        "Daylight"
-      ],
-      "Turkmenistan Summer Time"
-    ],
-    [
-      [
-        147,
-        "Daylight"
-      ],
-      "Uruguay Summer Time"
-    ],
-    [
-      [
         148,
         "Standard"
       ],
       "Uzbekistan Standard Time"
-    ],
-    [
-      [
-        148,
-        "Daylight"
-      ],
-      "Uzbekistan Summer Time"
-    ],
-    [
-      [
-        149,
-        "Daylight"
-      ],
-      "Vanuatu Summer Time"
     ],
     [
       [
@@ -786,38 +366,10 @@
     ],
     [
       [
-        151,
-        "Daylight"
-      ],
-      "Vladivostok Summer Time"
-    ],
-    [
-      [
-        152,
-        "Daylight"
-      ],
-      "Volgograd Summer Time"
-    ],
-    [
-      [
         156,
         "Standard"
       ],
       "Yakutsk Standard Time"
-    ],
-    [
-      [
-        156,
-        "Daylight"
-      ],
-      "Yakutsk Summer Time"
-    ],
-    [
-      [
-        157,
-        "Daylight"
-      ],
-      "Yekaterinburg Summer Time"
     ]
   ],
   "overrides": [
@@ -851,7 +403,6 @@
     30,
     31,
     33,
-    34,
     36,
     40,
     41,
@@ -859,7 +410,6 @@
     46,
     48,
     49,
-    52,
     56,
     57,
     58,
@@ -873,12 +423,9 @@
     74,
     75,
     76,
-    81,
-    83,
     84,
     86,
     88,
-    89,
     90,
     94,
     95,
@@ -890,13 +437,11 @@
     105,
     107,
     110,
-    111,
     117,
     118,
     122,
     124,
     125,
-    126,
     128,
     129,
     133,
