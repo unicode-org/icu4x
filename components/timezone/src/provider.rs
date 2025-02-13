@@ -114,12 +114,19 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 
 /// Storage type for storing UTC offsets as eights of an hour.
 pub type EighthsOfHourOffset = i8;
-/// Storage type for storing `DateTime<Iso>` as minutes since [`EPOCH`].
+/// Storage type for storing `(Date<Iso>, Time)`.
 pub type IsoMinutesSinceEpoch = i32;
-/// The epoch for [`IsoMinutesSinceEpoch`].
-///
-/// This is 1970-01-01, but this is coincidental to anything UNIX and should be changed to 0 in the future.
-pub const EPOCH: RataDie = RataDie::new(719163);
+
+/// Produces [`IsoMinutesSinceEpoch`] from a date and a time.
+pub fn to_iso_minutes_since_epoch(
+    (d, t): (icu_calendar::Date<icu_calendar::Iso>, crate::Time),
+) -> IsoMinutesSinceEpoch {
+    // This is 1970-01-01, but this is coincidental to anything UNIX and could be changed to 0 in the future.
+    const EPOCH: RataDie = RataDie::new(719163);
+
+    (d.to_fixed() - EPOCH) as i32 * 24 * 60
+        + (t.hour.number() as i32 * 60 + t.minute.number() as i32)
+}
 
 /// An ICU4X mapping to the time zone offsets at a given period.
 ///
