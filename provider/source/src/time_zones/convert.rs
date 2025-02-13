@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::MzVariant;
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
@@ -310,7 +311,7 @@ impl SourceDataProvider {
             .map_err(|&e| e)
     }
 
-    fn offset_period(&self) -> Result<&ZoneOffsetPeriod<'static>, DataError> {
+    pub(crate) fn offset_period(&self) -> Result<&ZoneOffsetPeriod<'static>, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
 
         self.cldr()?
@@ -659,8 +660,7 @@ impl DataProvider<MetazoneGenericNamesLongV1> for SourceDataProvider {
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
             .filter(|&(mz, v)| {
-                let Some(tzs) = reverse_metazones.get(&mz) else {
-                    log::warn!("No tzs for {mz:?}");
+                let Some(tzs) = reverse_metazones.get(&(mz, MzVariant::Generic)) else {
                     return false;
                 };
                 tzs.iter().any(|tz| {
@@ -717,8 +717,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
             .filter(|&((mz, zv), v)| {
-                let Some(tzs) = reverse_metazones.get(&mz) else {
-                    log::warn!("No tzs for {mz:?}");
+                let Some(tzs) = reverse_metazones.get(&(mz, zv.into())) else {
                     return false;
                 };
                 tzs.iter().any(|tz| {
