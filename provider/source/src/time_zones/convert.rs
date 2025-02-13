@@ -266,17 +266,11 @@ impl SourceDataProvider {
                                         )
                                     }
 
-                                    let to_fixed = |(date, time): (Date<Iso>, Time)| {
-                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
-                                            + (time.hour.number() as i32 * 60
-                                                + time.minute.number() as i32)
-                                    };
-
                                     [
                                         // join the metazone
                                         Some((
                                             bcp47,
-                                            to_fixed(parse_mzone_date(
+                                            to_minutes_since_epoch(parse_mzone_date(
                                                 period
                                                     .uses_meta_zone
                                                     .from
@@ -297,7 +291,7 @@ impl SourceDataProvider {
                                             .to
                                             .as_deref()
                                             .map(parse_mzone_date)
-                                            .map(to_fixed)
+                                            .map(to_minutes_since_epoch)
                                             .map(|m| (bcp47, m, NichedOption(None))),
                                     ]
                                 })

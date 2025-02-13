@@ -114,12 +114,19 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 
 /// Storage type for storing UTC offsets as eights of an hour.
 pub type EighthsOfHourOffset = i8;
-/// Storage type for storing `DateTime<Iso>` as minutes since [`EPOCH`].
+/// Storage type for storing `(Date<Iso>, Time)`.
 pub type MinutesSinceEpoch = i32;
-/// The epoch for [`MinutesSinceEpoch`].
-///
-/// This is 1970-01-01, but this is coincidental to anything UNIX and should be changed to 0 in the future.
-pub const EPOCH: RataDie = RataDie::new(719163);
+
+/// Produces [`MinutesSinceEpoch`] from a date and a time.
+pub fn to_minutes_since_epoch(
+    (d, t): (icu_calendar::Date<icu_calendar::Iso>, crate::Time),
+) -> MinutesSinceEpoch {
+    // This is 1970-01-01, but that is coincidental to anything UNIX and could be changed to 0 in the future.
+    const EPOCH: RataDie = RataDie::new(719163);
+
+    (d.to_fixed() - EPOCH) as i32 * 24 * 60
+        + (t.hour.number() as i32 * 60 + t.minute.number() as i32)
+}
 
 /// An ICU4X mapping to the time zone offsets at a given period.
 ///
@@ -135,8 +142,8 @@ pub const EPOCH: RataDie = RataDie::new(719163);
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ZoneOffsetPeriod<'data>(
-    /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local [`EPOCH`]. It represents when the offsets ended to be used.
+    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded by
+    /// [`to_iso_minutes_since_epoch`]. It represents when the offsets ended to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
