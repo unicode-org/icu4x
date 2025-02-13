@@ -25,6 +25,7 @@ pub use calendar::NoDataCalMarkers;
 pub(crate) use fieldset_traits::datetime_marker_helper;
 pub use fieldset_traits::AllAnyCalendarExternalDataMarkers;
 pub use fieldset_traits::AllAnyCalendarFormattingDataMarkers;
+pub use fieldset_traits::AllAnyCalendarPatternDataMarkers;
 pub use fieldset_traits::AllFixedCalendarExternalDataMarkers;
 pub use fieldset_traits::AllFixedCalendarFormattingDataMarkers;
 pub use fieldset_traits::AllInputMarkers;
