@@ -512,6 +512,31 @@ impl TzdbCache {
                     }
                 }
 
+                // Morocco doesn't have have rearguard data in the text file, so we have to replicate the transform from
+                // ziguard.awk: https://github.com/eggert/tz/blob/271a5784a59e454b659d85948b5e65c17c11516a/ziguard.awk#L261-L299
+                for line in lines.iter_mut() {
+                    if line.starts_with("Rule\tMorocco") {
+                        let mut parts = line.split('\t').skip(2);
+                        let from = parts.next().unwrap();
+                        let to = parts.next().unwrap();
+                        let _type = parts.next().unwrap();
+                        let month = parts.next().unwrap();
+                        let _day = parts.next().unwrap();
+                        let _time = parts.next().unwrap();
+                        let save = parts.next().unwrap();
+                        if to == "2018" && month == "Oct" {
+                            *line = line.replace("2018", "2017");
+                        } else if from.parse::<i32>().unwrap() >= 2019 {
+                            if save.trim() == "0" {
+                                *line = line.replace("\t0\t", "\t1:00\t");
+                            } else {
+                                *line = line.replace("\t-1:00\t", "\t0\t");
+                            }
+                        }
+                    }
+                    *line = line.replace("1:00\tMorocco\t%z", "0:00\tMorocco\t+00/+01");
+                }
+
                 #[allow(deprecated)] // no alternative?!
                 let parser = LineParser::new();
                 let mut table = TableBuilder::new();

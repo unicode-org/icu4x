@@ -1,4 +1,4 @@
 bcp47/to/iana/map/v1, <singleton>, 7622B, 7600B, 35e1d2b320b41234
 iana/to/bcp47/map/v3, <singleton>, 9543B, 9500B, 7218ae639c063764
 windows/zones/to/bcp47/map/v1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd
-zone/offset/period/v1, <singleton>, 13410B, 13322B, 365de2348b6c56dc
+zone/offset/period/v1, <singleton>, 13410B, 13322B, dda8d1981591b7cc
