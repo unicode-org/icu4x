@@ -9,13 +9,6 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "Hora de verano de Acre"
-    ],
-    [
-      [
         2,
         "Standard"
       ],
@@ -51,13 +44,6 @@
     ],
     [
       [
-        6,
-        "Daylight"
-      ],
-      "hora de verano de África occidental"
-    ],
-    [
-      [
         8,
         "Standard"
       ],
@@ -76,13 +62,6 @@
         "Standard"
       ],
       "hora estándar del Amazonas"
-    ],
-    [
-      [
-        9,
-        "Daylight"
-      ],
-      "hora de verano del Amazonas"
     ],
     [
       [
@@ -149,24 +128,10 @@
     ],
     [
       [
-        14,
-        "Daylight"
-      ],
-      "hora de verano de Anadyr"
-    ],
-    [
-      [
         15,
         "Standard"
       ],
       "hora estándar de Apia"
-    ],
-    [
-      [
-        15,
-        "Daylight"
-      ],
-      "horario de verano de Apia"
     ],
     [
       [
@@ -177,24 +142,10 @@
     ],
     [
       [
-        18,
-        "Daylight"
-      ],
-      "hora de verano de Arabia"
-    ],
-    [
-      [
         19,
         "Standard"
       ],
       "hora estándar de Argentina"
-    ],
-    [
-      [
-        19,
-        "Daylight"
-      ],
-      "hora de verano de Argentina"
     ],
     [
       [
@@ -233,13 +184,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "hora de verano de Australia centroccidental"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -258,13 +202,6 @@
         "Standard"
       ],
       "hora estándar de Australia occidental"
-    ],
-    [
-      [
-        26,
-        "Daylight"
-      ],
-      "hora de verano de Australia occidental"
     ],
     [
       [
@@ -303,13 +240,6 @@
     ],
     [
       [
-        32,
-        "Daylight"
-      ],
-      "hora de verano de Brasilia"
-    ],
-    [
-      [
         33,
         "Standard"
       ],
@@ -331,13 +261,6 @@
     ],
     [
       [
-        39,
-        "Daylight"
-      ],
-      "hora de verano de China"
-    ],
-    [
-      [
         40,
         "Standard"
       ],
@@ -356,13 +279,6 @@
         "Standard"
       ],
       "hora estándar de las islas Cook"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "hora de verano media de las islas Cook"
     ],
     [
       [
@@ -447,13 +363,6 @@
         "Standard"
       ],
       "hora estándar de las Islas Malvinas"
-    ],
-    [
-      [
-        54,
-        "Daylight"
-      ],
-      "hora de verano de las Islas Malvinas"
     ],
     [
       [
@@ -576,13 +485,6 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "hora de verano de Corea"
-    ],
-    [
-      [
         86,
         "Standard"
       ],
@@ -594,13 +496,6 @@
         "Standard"
       ],
       "hora estándar de Krasnoyarsk"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "hora de verano de Krasnoyarsk"
     ],
     [
       [
@@ -660,13 +555,6 @@
     ],
     [
       [
-        100,
-        "Daylight"
-      ],
-      "hora de verano del Pacífico de México"
-    ],
-    [
-      [
         101,
         "Standard"
       ],
@@ -678,13 +566,6 @@
         "Standard"
       ],
       "hora estándar de Moscú"
-    ],
-    [
-      [
-        103,
-        "Daylight"
-      ],
-      "hora de verano de Moscú"
     ],
     [
       [
@@ -870,13 +751,6 @@
     ],
     [
       [
-        140,
-        "Daylight"
-      ],
-      "hora de verano de Taipéi"
-    ],
-    [
-      [
         141,
         "Standard"
       ],
@@ -912,13 +786,6 @@
     ],
     [
       [
-        148,
-        "Daylight"
-      ],
-      "hora de verano de Uzbekistán"
-    ],
-    [
-      [
         150,
         "Standard"
       ],
@@ -930,13 +797,6 @@
         "Standard"
       ],
       "hora estándar de Vladivostok"
-    ],
-    [
-      [
-        151,
-        "Daylight"
-      ],
-      "hora de verano de Vladivostok"
     ],
     [
       [
@@ -965,13 +825,6 @@
         "Standard"
       ],
       "hora estándar de Yakutsk"
-    ],
-    [
-      [
-        156,
-        "Daylight"
-      ],
-      "hora de verano de Yakutsk"
     ],
     [
       [

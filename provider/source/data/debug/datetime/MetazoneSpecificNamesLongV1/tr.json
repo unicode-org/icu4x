@@ -9,13 +9,6 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "Acre Yaz Saati"
-    ],
-    [
-      [
         2,
         "Standard"
       ],
@@ -51,13 +44,6 @@
     ],
     [
       [
-        6,
-        "Daylight"
-      ],
-      "Batı Afrika Yaz Saati"
-    ],
-    [
-      [
         8,
         "Standard"
       ],
@@ -76,13 +62,6 @@
         "Standard"
       ],
       "Amazon Standart Saati"
-    ],
-    [
-      [
-        9,
-        "Daylight"
-      ],
-      "Amazon Yaz Saati"
     ],
     [
       [
@@ -149,13 +128,6 @@
     ],
     [
       [
-        15,
-        "Daylight"
-      ],
-      "Apia Yaz Saati"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -163,24 +135,10 @@
     ],
     [
       [
-        18,
-        "Daylight"
-      ],
-      "Arabistan Yaz Saati"
-    ],
-    [
-      [
         19,
         "Standard"
       ],
       "Arjantin Standart Saati"
-    ],
-    [
-      [
-        19,
-        "Daylight"
-      ],
-      "Arjantin Yaz Saati"
     ],
     [
       [
@@ -219,13 +177,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "İç Batı Avustralya Yaz Saati"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -244,13 +195,6 @@
         "Standard"
       ],
       "Batı Avustralya Standart Saati"
-    ],
-    [
-      [
-        26,
-        "Daylight"
-      ],
-      "Batı Avustralya Yaz Saati"
     ],
     [
       [
@@ -289,13 +233,6 @@
     ],
     [
       [
-        32,
-        "Daylight"
-      ],
-      "Brasilia Yaz Saati"
-    ],
-    [
-      [
         33,
         "Standard"
       ],
@@ -324,13 +261,6 @@
     ],
     [
       [
-        39,
-        "Daylight"
-      ],
-      "Çin Yaz Saati"
-    ],
-    [
-      [
         40,
         "Standard"
       ],
@@ -342,13 +272,6 @@
         "Standard"
       ],
       "Cocos Adaları Saati"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "Cook Adaları Yarı Yaz Saati"
     ],
     [
       [
@@ -534,13 +457,6 @@
     ],
     [
       [
-        82,
-        "Daylight"
-      ],
-      "Petropavlovsk-Kamçatski Yaz Saati"
-    ],
-    [
-      [
         84,
         "Standard"
       ],
@@ -555,13 +471,6 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "Kore Yaz Saati"
-    ],
-    [
-      [
         86,
         "Standard"
       ],
@@ -573,13 +482,6 @@
         "Standard"
       ],
       "Krasnoyarsk Standart Saati"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "Krasnoyarsk Yaz Saati"
     ],
     [
       [
@@ -639,13 +541,6 @@
     ],
     [
       [
-        100,
-        "Daylight"
-      ],
-      "Meksika Pasifik Kıyısı Yaz Saati"
-    ],
-    [
-      [
         101,
         "Standard"
       ],
@@ -657,13 +552,6 @@
         "Standard"
       ],
       "Moskova Standart Saati"
-    ],
-    [
-      [
-        103,
-        "Daylight"
-      ],
-      "Moskova Yaz Saati"
     ],
     [
       [
@@ -828,13 +716,6 @@
     ],
     [
       [
-        140,
-        "Daylight"
-      ],
-      "Taipei Yaz Saati"
-    ],
-    [
-      [
         141,
         "Standard"
       ],
@@ -870,13 +751,6 @@
     ],
     [
       [
-        148,
-        "Daylight"
-      ],
-      "Özbekistan Yaz Saati"
-    ],
-    [
-      [
         150,
         "Standard"
       ],
@@ -888,13 +762,6 @@
         "Standard"
       ],
       "Vladivostok Standart Saati"
-    ],
-    [
-      [
-        151,
-        "Daylight"
-      ],
-      "Vladivostok Yaz Saati"
     ],
     [
       [
@@ -923,13 +790,6 @@
         "Standard"
       ],
       "Yakutsk Standart Saati"
-    ],
-    [
-      [
-        156,
-        "Daylight"
-      ],
-      "Yakutsk Yaz Saati"
     ],
     [
       [

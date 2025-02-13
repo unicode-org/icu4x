@@ -10,6 +10,7 @@ use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
 use icu::timezone::provider::*;
+use icu::timezone::Time;
 use icu::timezone::ZoneVariant;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
@@ -85,6 +86,17 @@ impl SourceDataProvider {
 
                     let mut curr_offset = offsets.next().unwrap();
                     let mut curr_mz = mzs.next().unwrap();
+
+                    let horizon =
+                        to_iso_minutes_since_epoch((self.timezone_horizon, Time::midnight()));
+
+                    while curr_mz.0 < horizon && mzs.peek().is_some() {
+                        curr_mz = mzs.next().unwrap();
+                    }
+                    while curr_offset.0 < horizon && offsets.peek().is_some() {
+                        curr_offset = offsets.next().unwrap();
+                    }
+
                     loop {
                         if let Some(mz) = curr_mz.1 .0 {
                             // The generic and Standard names are always required
