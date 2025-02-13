@@ -292,16 +292,9 @@ impl SourceDataProvider {
                             fn store_offsets(
                                 data: &mut Vec<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>,
                                 end_time: IsoMinutesSinceEpoch,
-                                mut utc_offset: i64,
-                                mut dst_offset_relative: i64,
+                                utc_offset: i64,
+                                dst_offset_relative: i64,
                             ) {
-                                // TZDB uses negative DST offsets (i.e. DST in the winter for some zones,
-                                // such as `Europe/Dublin`. In ICU4X, we normalize all time zones to have
-                                // positive DST offsets, during the summer.
-                                if dst_offset_relative < 0 {
-                                    utc_offset += dst_offset_relative;
-                                    dst_offset_relative = -dst_offset_relative;
-                                }
                                 data.push((
                                     end_time,
                                     (

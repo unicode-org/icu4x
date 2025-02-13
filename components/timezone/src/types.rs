@@ -364,10 +364,32 @@ impl FromStr for UtcOffset {
     }
 }
 
-/// A time zone variant, representing the currently observed relative offset.
+/// A time zone variant, such as Standard Time, or Daylight/Summer Time.
 ///
-/// The semantics vary from time zone to time zone and could represent concepts
-/// such as Standard time, Daylight time, Summer time, or Ramadan time.
+/// This currently corresponds to the `isdst` flag that is exposed in TZIF files built
+/// using the `DATAFORM=rearguard` compatibility option. On systems that do not
+/// use this option, known discrepancies are:
+/// * `Europe/Dublin` (since 1968-10-27) sets the `isdst` flag during winter (UTC+0),
+///   and does not set it during daylight saving time in summer (UTC+1). This leads
+///   to incorrect display names in variant-sensitive formats:
+///     * ⚠️ "Greenwhich Mean Time" in summer (UTC+1)
+///     * ⚠️ "Ireland Standard Time" (the summer time name) in winter (UTC+0)
+///
+///   This is especially problematic as Northern Ireland (`Europe/Belfast`) sets the `isdst`
+///   flag during DST (UTC+1), so it correctly uses "Greenwhich Mean Time" in the winter (and
+///   "British Summer Time" in the summer).
+/// * `Africa/Winkhoek` between 1994-03-20 and 2017-10-24 sets the `isdst`
+///   flag during winter (UTC+1), and does not set it during daylight saving
+///   time in summer (UTC+2). This leads to incorrect display names in
+///   variant-sensitive formats:
+///   * ⚠️ "West Africa Standard Time" in summer (UTC+2)
+///   * ⚠️ "West Africa Summer Time" in winter (UTC+1)
+/// * `Africa/Casablanca` (and its alias `Africa/El_Aaiun`) since 2018-10-28
+///   sets the `isdst` flag during Ramadan (UTC+0), and does not set it
+///   during daylight saving time (rest of the year, UTC+1). This leads
+///   to incorrect display names in variant-sensitive formats:
+///   * ⚠️ "Western European Summer Time" during Ramadan (UTC+0)
+///   * ⚠️ "Western European Standard Time" the rest of the year (UTC+1)
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(ZoneVariantULE)]
 #[repr(u8)]
