@@ -9,7 +9,6 @@ use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::calendar::Date;
-use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::timezone::provider::*;
@@ -245,27 +244,62 @@ impl SourceDataProvider {
                                 .collect::<Vec<_>>(),
                         })
                         .flat_map(|(iana, periods)| {
-                            periods.iter().flat_map(move |period| {
-                                Some((
-                                    bcp47_tzid_data.get(&iana)?,
-                                    period
-                                        .uses_meta_zone
-                                        .from
-                                        .as_deref()
-                                        .map(parse_mzone_from)
-                                        .map(|(date, time)| {
-                                            (date.to_fixed() - EPOCH) as i32 * 24 * 60
-                                                + (time.hour.number() as i32 * 60
-                                                    + time.minute.number() as i32)
-                                        })
-                                        .unwrap_or_default(),
-                                    NichedOption(
-                                        meta_zone_id_data
-                                            .get(&period.uses_meta_zone.mzone)
-                                            .copied(),
-                                    ),
-                                ))
-                            })
+                            let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
+                            periods
+                                .iter()
+                                .flat_map(move |period| {
+                                    fn parse_mzone_date_into_minutes_since_epoch(
+                                        from: &str,
+                                    ) -> IsoMinutesSinceEpoch {
+                                        // TODO(#2127): Ideally this parsing can move into a library function
+                                        let mut parts = from.split(' ');
+                                        let date = parts.next().unwrap();
+                                        let time = parts.next().unwrap();
+                                        let mut date_parts = date.split('-');
+                                        let year = date_parts.next().unwrap().parse::<i32>().unwrap();
+                                        let month = date_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let day = date_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let mut time_parts = time.split(':');
+                                        let hour = time_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let minute = time_parts.next().unwrap().parse::<u8>().unwrap();
+
+                                        let date = Date::try_new_iso(year, month, day).unwrap();
+                                        let time = Time::try_new(hour, minute, 0, 0).unwrap();
+
+                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
+                                            + (time.hour.number() as i32 * 60
+                                                + time.minute.number() as i32)
+                                    }
+
+                                    [
+                                        // join the metazone
+                                        Some((
+                                            bcp47,
+                                            parse_mzone_date_into_minutes_since_epoch(
+                                                period
+                                                    .uses_meta_zone
+                                                    .from
+                                                    .as_deref()
+                                                    .unwrap_or("1970-01-01 00:00"),
+                                            ),
+                                            NichedOption(
+                                                meta_zone_id_data
+                                                    .get(&period.uses_meta_zone.mzone)
+                                                    .copied(),
+                                            ),
+                                        )),
+                                        // leave the metazone if there's a `to` date
+                                        // because we collect this into a ZeroMap2d, if the next entry starts on the same
+                                        // day that we leave, this entry will be replaced.
+                                        period
+                                            .uses_meta_zone
+                                            .to
+                                            .as_deref()
+                                            .map(parse_mzone_date_into_minutes_since_epoch)
+                                            .map(|m| (bcp47, m, NichedOption(None))),
+                                    ]
+                                })
+                                .flatten()
                         })
                         .collect(),
                 })
@@ -888,22 +922,4 @@ fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneV
                 value.as_str(),
             ))
         })
-}
-
-fn parse_mzone_from(from: &str) -> (Date<Iso>, Time) {
-    // TODO(#2127): Ideally this parsing can move into a library function
-    let parts: Vec<String> = from.split(' ').map(|s| s.to_string()).collect();
-    let date = &parts[0];
-    let time = &parts[1];
-    let date_parts: Vec<String> = date.split('-').map(|s| s.to_string()).collect();
-    let year = date_parts[0].parse::<i32>().unwrap();
-    let month = date_parts[1].parse::<u8>().unwrap();
-    let day = date_parts[2].parse::<u8>().unwrap();
-    let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
-    let hour = time_parts[0].parse::<u8>().unwrap();
-    let minute = time_parts[1].parse::<u8>().unwrap();
-    (
-        Date::try_new_iso(year, month, day).unwrap(),
-        Time::try_new(hour, minute, 0, 0).unwrap(),
-    )
 }
