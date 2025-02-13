@@ -9,6 +9,7 @@ use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::calendar::Date;
+use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::timezone::provider::*;
@@ -248,40 +249,46 @@ impl SourceDataProvider {
                             periods
                                 .iter()
                                 .flat_map(move |period| {
-                                    fn parse_mzone_date_into_minutes_since_epoch(
-                                        from: &str,
-                                    ) -> IsoMinutesSinceEpoch {
+                                    fn parse_mzone_date(from: &str) -> (Date<Iso>, Time) {
                                         // TODO(#2127): Ideally this parsing can move into a library function
                                         let mut parts = from.split(' ');
                                         let date = parts.next().unwrap();
                                         let time = parts.next().unwrap();
                                         let mut date_parts = date.split('-');
-                                        let year = date_parts.next().unwrap().parse::<i32>().unwrap();
-                                        let month = date_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let year =
+                                            date_parts.next().unwrap().parse::<i32>().unwrap();
+                                        let month =
+                                            date_parts.next().unwrap().parse::<u8>().unwrap();
                                         let day = date_parts.next().unwrap().parse::<u8>().unwrap();
                                         let mut time_parts = time.split(':');
-                                        let hour = time_parts.next().unwrap().parse::<u8>().unwrap();
-                                        let minute = time_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let hour =
+                                            time_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let minute =
+                                            time_parts.next().unwrap().parse::<u8>().unwrap();
 
-                                        let date = Date::try_new_iso(year, month, day).unwrap();
-                                        let time = Time::try_new(hour, minute, 0, 0).unwrap();
+                                        (
+                                            Date::try_new_iso(year, month, day).unwrap(),
+                                            Time::try_new(hour, minute, 0, 0).unwrap(),
+                                        )
+                                    }
 
+                                    let to_fixed = |(date, time): (Date<Iso>, Time)| {
                                         (date.to_fixed() - EPOCH) as i32 * 24 * 60
                                             + (time.hour.number() as i32 * 60
                                                 + time.minute.number() as i32)
-                                    }
+                                    };
 
                                     [
                                         // join the metazone
                                         Some((
                                             bcp47,
-                                            parse_mzone_date_into_minutes_since_epoch(
+                                            to_fixed(parse_mzone_date(
                                                 period
                                                     .uses_meta_zone
                                                     .from
                                                     .as_deref()
                                                     .unwrap_or("1970-01-01 00:00"),
-                                            ),
+                                            )),
                                             NichedOption(
                                                 meta_zone_id_data
                                                     .get(&period.uses_meta_zone.mzone)
@@ -295,7 +302,8 @@ impl SourceDataProvider {
                                             .uses_meta_zone
                                             .to
                                             .as_deref()
-                                            .map(parse_mzone_date_into_minutes_since_epoch)
+                                            .map(parse_mzone_date)
+                                            .map(to_fixed)
                                             .map(|m| (bcp47, m, NichedOption(None))),
                                     ]
                                 })
