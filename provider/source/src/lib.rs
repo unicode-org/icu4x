@@ -19,6 +19,7 @@
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
+use icu::calendar::{Date, Iso};
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
@@ -81,6 +82,7 @@ pub struct SourceDataProvider {
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
+    pub(crate) timezone_horizon: Date<Iso>,
     #[allow(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
@@ -151,6 +153,7 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             trie_type: Default::default(),
+            timezone_horizon: Date::try_new_iso(1970, 1, 1).unwrap(),
             collation_han_database: Default::default(),
             requests_cache: Default::default(),
         }
@@ -342,6 +345,17 @@ impl SourceDataProvider {
     pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
             collation_han_database,
+            ..self
+        }
+    }
+
+    /// Set the timezone horizon.
+    ///
+    /// Timezone data for before this date is not returned. Defaults to 1970-01-01,
+    /// i.e. which is the date where TZDB and CLDR coverage begins.
+    pub fn with_timezone_horizon(self, timezone_horizon: Date<Iso>) -> Self {
+        Self {
+            timezone_horizon,
             ..self
         }
     }

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use icu::calendar::Date;
 use icu::locale::{langid, LanguageIdentifier};
 use icu_provider::dynutil::UpcastDataPayload;
 use icu_provider::export::*;
@@ -54,7 +55,8 @@ fn make_testdata() {
         ]))
     };
 
-    let provider = SourceDataProvider::new_testing();
+    let provider = SourceDataProvider::new_testing()
+        .with_timezone_horizon(Date::try_new_iso(2200, 1, 1).unwrap());
 
     ExportDriver::new(
         LOCALES

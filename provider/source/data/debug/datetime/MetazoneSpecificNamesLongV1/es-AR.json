@@ -170,27 +170,6 @@
     ],
     [
       [
-        16,
-        "Standard"
-      ],
-      "Hora estándar de Aktau"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "Hora de verano de Aktau"
-    ],
-    [
-      [
-        17,
-        "Standard"
-      ],
-      "Hora estándar de Aktobe"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -216,20 +195,6 @@
         "Daylight"
       ],
       "hora de verano de Argentina"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "hora estándar de Argentina occidental"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "hora de verano de Argentina occidental"
     ],
     [
       [
@@ -359,24 +324,17 @@
     ],
     [
       [
-        38,
-        "Standard"
-      ],
-      "hora estándar de Chile"
-    ],
-    [
-      [
-        38,
-        "Daylight"
-      ],
-      "hora de verano de Chile"
-    ],
-    [
-      [
         39,
         "Standard"
       ],
       "hora estándar de China"
+    ],
+    [
+      [
+        39,
+        "Daylight"
+      ],
+      "hora de verano de China"
     ],
     [
       [
@@ -471,13 +429,6 @@
     ],
     [
       [
-        52,
-        "Standard"
-      ],
-      "horario del lejano este de Europa"
-    ],
-    [
-      [
         53,
         "Standard"
       ],
@@ -538,41 +489,6 @@
         "Standard"
       ],
       "hora de Islas Gilbert"
-    ],
-    [
-      [
-        62,
-        "Standard"
-      ],
-      "hora estándar de Groenlandia oriental"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "hora de verano de Groenlandia oriental"
-    ],
-    [
-      [
-        64,
-        "Standard"
-      ],
-      "hora estándar de Groenlandia occidental"
-    ],
-    [
-      [
-        64,
-        "Daylight"
-      ],
-      "hora de verano de Groenlandia occidental"
-    ],
-    [
-      [
-        65,
-        "Standard"
-      ],
-      "Hora estándar de Guam"
     ],
     [
       [
@@ -646,41 +562,6 @@
     ],
     [
       [
-        78,
-        "Standard"
-      ],
-      "hora estándar de Irkutsk"
-    ],
-    [
-      [
-        79,
-        "Standard"
-      ],
-      "hora estándar de Israel"
-    ],
-    [
-      [
-        79,
-        "Daylight"
-      ],
-      "hora de verano de Israel"
-    ],
-    [
-      [
-        81,
-        "Standard"
-      ],
-      "hora de Kazajistán oriental"
-    ],
-    [
-      [
-        83,
-        "Standard"
-      ],
-      "hora de Kazajistán occidental"
-    ],
-    [
-      [
         84,
         "Standard"
       ],
@@ -730,45 +611,10 @@
     ],
     [
       [
-        89,
-        "Standard"
-      ],
-      "Hora de Sri Lanka"
-    ],
-    [
-      [
         90,
         "Standard"
       ],
       "hora de las Espóradas Ecuatoriales"
-    ],
-    [
-      [
-        92,
-        "Standard"
-      ],
-      "Hora estándar de Macao"
-    ],
-    [
-      [
-        92,
-        "Daylight"
-      ],
-      "Hora de verano de Macao"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "hora estándar de Magadán"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "hora de verano de Magadán"
     ],
     [
       [
@@ -898,13 +744,6 @@
     ],
     [
       [
-        111,
-        "Standard"
-      ],
-      "Hora de las Islas Marianas del Norte"
-    ],
-    [
-      [
         112,
         "Standard"
       ],
@@ -916,20 +755,6 @@
         "Daylight"
       ],
       "hora de verano de la Isla Norfolk"
-    ],
-    [
-      [
-        114,
-        "Standard"
-      ],
-      "hora estándar de Novosibirsk"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "hora de verano de Novosibirsk"
     ],
     [
       [
@@ -965,27 +790,6 @@
         "Standard"
       ],
       "hora de Pohnpei"
-    ],
-    [
-      [
-        126,
-        "Standard"
-      ],
-      "hora de Pionyang"
-    ],
-    [
-      [
-        127,
-        "Standard"
-      ],
-      "Hora estándar de Qyzylorda"
-    ],
-    [
-      [
-        127,
-        "Daylight"
-      ],
-      "Hora de verano de Qyzylorda"
     ],
     [
       [

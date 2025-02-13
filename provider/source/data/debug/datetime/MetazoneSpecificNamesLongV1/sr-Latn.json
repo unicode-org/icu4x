@@ -58,20 +58,6 @@
     ],
     [
       [
-        7,
-        "Standard"
-      ],
-      "Almati standardno vreme"
-    ],
-    [
-      [
-        7,
-        "Daylight"
-      ],
-      "Almati letnje računanje vremena"
-    ],
-    [
-      [
         8,
         "Standard"
       ],
@@ -184,27 +170,6 @@
     ],
     [
       [
-        16,
-        "Standard"
-      ],
-      "Akvatau standardno vreme"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "Akvatau letnje računanje vremena"
-    ],
-    [
-      [
-        17,
-        "Standard"
-      ],
-      "Akutobe standardno vreme"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -230,20 +195,6 @@
         "Daylight"
       ],
       "Argentina, letnje vreme"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "Zapadna Argentina, standardno vreme"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Zapadna Argentina, letnje vreme"
     ],
     [
       [
@@ -359,24 +310,17 @@
     ],
     [
       [
-        38,
-        "Standard"
-      ],
-      "Čile, standardno vreme"
-    ],
-    [
-      [
-        38,
-        "Daylight"
-      ],
-      "Čile, letnje vreme"
-    ],
-    [
-      [
         39,
         "Standard"
       ],
       "Kinesko standardno vreme"
+    ],
+    [
+      [
+        39,
+        "Daylight"
+      ],
+      "Kina, letnje vreme"
     ],
     [
       [
@@ -478,13 +422,6 @@
     ],
     [
       [
-        52,
-        "Standard"
-      ],
-      "Vreme daljeg istoka Evrope"
-    ],
-    [
-      [
         53,
         "Standard"
       ],
@@ -545,41 +482,6 @@
         "Standard"
       ],
       "Gilbert ostrva vreme"
-    ],
-    [
-      [
-        62,
-        "Standard"
-      ],
-      "Istočni Grenland, standardno vreme"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "Istočni Grenland, letnje vreme"
-    ],
-    [
-      [
-        64,
-        "Standard"
-      ],
-      "Zapadni Grenland, standardno vreme"
-    ],
-    [
-      [
-        64,
-        "Daylight"
-      ],
-      "Zapadni Grenland, letnje vreme"
-    ],
-    [
-      [
-        65,
-        "Standard"
-      ],
-      "Guam standardno vreme"
     ],
     [
       [
@@ -667,13 +569,6 @@
     ],
     [
       [
-        78,
-        "Standard"
-      ],
-      "Irkuck, standardno vreme"
-    ],
-    [
-      [
         79,
         "Standard"
       ],
@@ -695,13 +590,6 @@
     ],
     [
       [
-        81,
-        "Standard"
-      ],
-      "Istočno-kazahstansko vreme"
-    ],
-    [
-      [
         82,
         "Standard"
       ],
@@ -713,13 +601,6 @@
         "Daylight"
       ],
       "Petropavlovsko-kamčatsko letnje računanje vremena"
-    ],
-    [
-      [
-        83,
-        "Standard"
-      ],
-      "Zapadno-kazahstansko vreme"
     ],
     [
       [
@@ -772,13 +653,6 @@
     ],
     [
       [
-        89,
-        "Standard"
-      ],
-      "Šri Lanka vreme"
-    ],
-    [
-      [
         90,
         "Standard"
       ],
@@ -797,34 +671,6 @@
         "Daylight"
       ],
       "Lord Hov, letnje vreme"
-    ],
-    [
-      [
-        92,
-        "Standard"
-      ],
-      "Makao standardno vreme"
-    ],
-    [
-      [
-        92,
-        "Daylight"
-      ],
-      "Makao letnje računanje vremena"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Magadan, standardno vreme"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "Magadan, letnje vreme"
     ],
     [
       [
@@ -954,13 +800,6 @@
     ],
     [
       [
-        111,
-        "Standard"
-      ],
-      "Severna Marijanska Ostrva vreme"
-    ],
-    [
-      [
         112,
         "Standard"
       ],
@@ -986,20 +825,6 @@
         "Daylight"
       ],
       "Fernando de Noronja, letnje vreme"
-    ],
-    [
-      [
-        114,
-        "Standard"
-      ],
-      "Novosibirsk, standardno vreme"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "Novosibirsk, letnje vreme"
     ],
     [
       [
@@ -1035,27 +860,6 @@
         "Standard"
       ],
       "Ponpej vreme"
-    ],
-    [
-      [
-        126,
-        "Standard"
-      ],
-      "Pjongjanško vreme"
-    ],
-    [
-      [
-        127,
-        "Standard"
-      ],
-      "Kizilorda standardno vreme"
-    ],
-    [
-      [
-        127,
-        "Daylight"
-      ],
-      "Kizilorda letnje računanje vremena"
     ],
     [
       [

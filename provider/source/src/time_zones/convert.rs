@@ -247,7 +247,7 @@ impl SourceDataProvider {
                         })
                         .flat_map(|(iana, periods)| {
                             let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
-                            periods
+                            let mut periods = periods
                                 .iter()
                                 .flat_map(move |period| {
                                     fn parse_mzone_date(from: &str) -> (Date<Iso>, Time) {
@@ -277,13 +277,13 @@ impl SourceDataProvider {
                                         // join the metazone
                                         Some((
                                             bcp47,
-                                            to_iso_minutes_since_epoch(parse_mzone_date(
+                                            parse_mzone_date(
                                                 period
                                                     .uses_meta_zone
                                                     .from
                                                     .as_deref()
                                                     .unwrap_or("1970-01-01 00:00"),
-                                            )),
+                                            ),
                                             NichedOption(
                                                 meta_zone_id_data
                                                     .get(&period.uses_meta_zone.mzone)
@@ -291,18 +291,35 @@ impl SourceDataProvider {
                                             ),
                                         )),
                                         // leave the metazone if there's a `to` date
-                                        // because we collect this into a ZeroMap2d, if the next entry starts on the same
-                                        // day that we leave, this entry will be replaced.
                                         period
                                             .uses_meta_zone
                                             .to
                                             .as_deref()
                                             .map(parse_mzone_date)
-                                            .map(to_iso_minutes_since_epoch)
                                             .map(|m| (bcp47, m, NichedOption(None))),
                                     ]
                                 })
                                 .flatten()
+                                .collect::<Vec<_>>();
+
+                            let mut i = 0;
+                            while i < periods.len() {
+                                if i + 1 < periods.len() && periods[i].1 == periods[i + 1].1 {
+                                    // The next period starts at the same time
+                                    periods.remove(i);
+                                } else if i + 1 < periods.len()
+                                    && periods[i + 1].1 .0 <= self.timezone_horizon
+                                {
+                                    // This next period starts before the horizon, so we can drop this one
+                                    periods.remove(i);
+                                } else {
+                                    i += 1;
+                                }
+                            }
+
+                            periods
+                                .into_iter()
+                                .map(|(b, dt, mz)| (b, to_iso_minutes_since_epoch(dt), mz))
                         })
                         .collect(),
                 })

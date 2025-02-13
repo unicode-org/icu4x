@@ -184,20 +184,6 @@
     ],
     [
       [
-        21,
-        "Standard"
-      ],
-      "Batı Arjantin Standart Saati"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Batı Arjantin Yaz Saati"
-    ],
-    [
-      [
         22,
         "Standard"
       ],
@@ -317,13 +303,6 @@
     ],
     [
       [
-        34,
-        "Standard"
-      ],
-      "Casey Saati"
-    ],
-    [
-      [
         35,
         "Standard"
       ],
@@ -338,24 +317,17 @@
     ],
     [
       [
-        38,
-        "Standard"
-      ],
-      "Şili Standart Saati"
-    ],
-    [
-      [
-        38,
-        "Daylight"
-      ],
-      "Şili Yaz Saati"
-    ],
-    [
-      [
         39,
         "Standard"
       ],
       "Çin Standart Saati"
+    ],
+    [
+      [
+        39,
+        "Daylight"
+      ],
+      "Çin Yaz Saati"
     ],
     [
       [
@@ -436,13 +408,6 @@
     ],
     [
       [
-        52,
-        "Standard"
-      ],
-      "İleri Doğu Avrupa Saati"
-    ],
-    [
-      [
         53,
         "Standard"
       ],
@@ -489,34 +454,6 @@
         "Standard"
       ],
       "Gilbert Adaları Saati"
-    ],
-    [
-      [
-        62,
-        "Standard"
-      ],
-      "Doğu Grönland Standart Saati"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "Doğu Grönland Yaz Saati"
-    ],
-    [
-      [
-        64,
-        "Standard"
-      ],
-      "Batı Grönland Standart Saati"
-    ],
-    [
-      [
-        64,
-        "Daylight"
-      ],
-      "Batı Grönland Yaz Saati"
     ],
     [
       [
@@ -590,34 +527,6 @@
     ],
     [
       [
-        78,
-        "Standard"
-      ],
-      "İrkutsk Standart Saati"
-    ],
-    [
-      [
-        79,
-        "Standard"
-      ],
-      "İsrail Standart Saati"
-    ],
-    [
-      [
-        79,
-        "Daylight"
-      ],
-      "İsrail Yaz Saati"
-    ],
-    [
-      [
-        81,
-        "Standard"
-      ],
-      "Doğu Kazakistan Saati"
-    ],
-    [
-      [
         82,
         "Standard"
       ],
@@ -629,13 +538,6 @@
         "Daylight"
       ],
       "Petropavlovsk-Kamçatski Yaz Saati"
-    ],
-    [
-      [
-        83,
-        "Standard"
-      ],
-      "Batı Kazakistan Saati"
     ],
     [
       [
@@ -688,31 +590,10 @@
     ],
     [
       [
-        89,
-        "Standard"
-      ],
-      "Lanka Saati"
-    ],
-    [
-      [
         90,
         "Standard"
       ],
       "Line Adaları Saati"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Magadan Standart Saati"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "Magadan Yaz Saati"
     ],
     [
       [
@@ -842,27 +723,6 @@
     ],
     [
       [
-        111,
-        "Standard"
-      ],
-      "Kuzey Mariana Adaları Saati"
-    ],
-    [
-      [
-        114,
-        "Standard"
-      ],
-      "Novosibirsk Standart Saati"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "Novosibirsk Yaz Saati"
-    ],
-    [
-      [
         117,
         "Standard"
       ],
@@ -895,13 +755,6 @@
         "Standard"
       ],
       "Ponape Saati"
-    ],
-    [
-      [
-        126,
-        "Standard"
-      ],
-      "Pyongyang Saati"
     ],
     [
       [

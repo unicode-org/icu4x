@@ -191,20 +191,6 @@
     ],
     [
       [
-        21,
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Argentina"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Oras sa Tag-init ng Kanlurang Argentina"
-    ],
-    [
-      [
         22,
         "Standard"
       ],
@@ -346,13 +332,6 @@
     [
       [
         38,
-        "Standard"
-      ],
-      "Standard na Oras sa Chile"
-    ],
-    [
-      [
-        38,
         "Daylight"
       ],
       "Oras sa Tag-init ng Chile"
@@ -478,13 +457,6 @@
     ],
     [
       [
-        52,
-        "Standard"
-      ],
-      "Oras sa Pinaka-silangang Europe"
-    ],
-    [
-      [
         53,
         "Standard"
       ],
@@ -552,34 +524,6 @@
         "Standard"
       ],
       "Oras sa Gilbert Islands"
-    ],
-    [
-      [
-        62,
-        "Standard"
-      ],
-      "Standard na Oras sa Silangang Greenland"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "Oras sa Tag-init ng Silangang Greenland"
-    ],
-    [
-      [
-        64,
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Greenland"
-    ],
-    [
-      [
-        64,
-        "Daylight"
-      ],
-      "Oras sa Tag-init ng Kanlurang Greenland"
     ],
     [
       [
@@ -675,13 +619,6 @@
     [
       [
         78,
-        "Standard"
-      ],
-      "Standard na Oras sa Irkutsk"
-    ],
-    [
-      [
-        78,
         "Daylight"
       ],
       "Oras sa Tag-init ng Irkutsk"
@@ -689,23 +626,9 @@
     [
       [
         79,
-        "Standard"
-      ],
-      "Standard na Oras sa Israel"
-    ],
-    [
-      [
-        79,
         "Daylight"
       ],
       "Daylight Time sa Israel"
-    ],
-    [
-      [
-        81,
-        "Standard"
-      ],
-      "Oras sa Silangang Kazakhstan"
     ],
     [
       [
@@ -720,13 +643,6 @@
         "Daylight"
       ],
       "Summer Time sa Petropavlovsk-Kamchatski"
-    ],
-    [
-      [
-        83,
-        "Standard"
-      ],
-      "Oras sa Kanlurang Kazakhstan"
     ],
     [
       [
@@ -790,13 +706,6 @@
         "Daylight"
       ],
       "Daylight Time sa Lorde Howe"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Standard na Oras sa Magadan"
     ],
     [
       [
@@ -976,13 +885,6 @@
     [
       [
         114,
-        "Standard"
-      ],
-      "Standard na Oras sa Novosibirsk"
-    ],
-    [
-      [
-        114,
         "Daylight"
       ],
       "Oras sa Tag-init ng Novosibirsk"
@@ -1070,13 +972,6 @@
         "Standard"
       ],
       "Oras sa Ponape"
-    ],
-    [
-      [
-        126,
-        "Standard"
-      ],
-      "Oras sa Pyongyang"
     ],
     [
       [

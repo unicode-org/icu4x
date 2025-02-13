@@ -58,20 +58,6 @@
     ],
     [
       [
-        7,
-        "Standard"
-      ],
-      "heure normale d’Alma Ata"
-    ],
-    [
-      [
-        7,
-        "Daylight"
-      ],
-      "heure d’été d’Alma Ata"
-    ],
-    [
-      [
         8,
         "Standard"
       ],
@@ -184,27 +170,6 @@
     ],
     [
       [
-        16,
-        "Standard"
-      ],
-      "heure normale d’Aktaou"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "heure d’été d’Aktaou"
-    ],
-    [
-      [
-        17,
-        "Standard"
-      ],
-      "heure normale d’Aqtöbe"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -244,20 +209,6 @@
         "Daylight"
       ],
       "heure d’été d’Arménie"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "heure normale de l’Ouest argentin"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "heure d’été de l’Ouest argentin"
     ],
     [
       [
@@ -590,13 +541,6 @@
     ],
     [
       [
-        52,
-        "Standard"
-      ],
-      "heure de Kaliningrad"
-    ],
-    [
-      [
         53,
         "Standard"
       ],
@@ -685,41 +629,6 @@
         "Standard"
       ],
       "heure des îles Gilbert"
-    ],
-    [
-      [
-        62,
-        "Standard"
-      ],
-      "heure normale de l’Est du Groenland"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "heure d’été de l’Est du Groenland"
-    ],
-    [
-      [
-        64,
-        "Standard"
-      ],
-      "heure normale de l’Ouest du Groenland"
-    ],
-    [
-      [
-        64,
-        "Daylight"
-      ],
-      "heure d’été de l’Ouest du Groenland"
-    ],
-    [
-      [
-        65,
-        "Standard"
-      ],
-      "heure de Guam"
     ],
     [
       [
@@ -870,13 +779,6 @@
     ],
     [
       [
-        81,
-        "Standard"
-      ],
-      "heure de l’Est du Kazakhstan"
-    ],
-    [
-      [
         82,
         "Standard"
       ],
@@ -888,13 +790,6 @@
         "Daylight"
       ],
       "heure d’été de Petropavlovsk-Kamchatski"
-    ],
-    [
-      [
-        83,
-        "Standard"
-      ],
-      "heure de l’Ouest du Kazakhstan"
     ],
     [
       [
@@ -1150,13 +1045,6 @@
     ],
     [
       [
-        111,
-        "Standard"
-      ],
-      "heure des îles Mariannes du Nord"
-    ],
-    [
-      [
         112,
         "Standard"
       ],
@@ -1315,13 +1203,6 @@
         "Standard"
       ],
       "heure de l’île de Pohnpei"
-    ],
-    [
-      [
-        126,
-        "Standard"
-      ],
-      "heure de Pyongyang"
     ],
     [
       [
