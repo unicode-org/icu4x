@@ -378,7 +378,7 @@ impl FromStr for UtcOffset {
 ///   This is especially problematic as Northern Ireland (`Europe/Belfast`) sets the `isdst`
 ///   flag during DST (UTC+1), so it correctly uses "Greenwhich Mean Time" in the winter (and
 ///   "British Summer Time" in the summer).
-/// * `Africa/Winkhoek` between 1994-03-20 and 2017-10-24 sets the `isdst`
+/// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24 sets the `isdst`
 ///   flag during winter (UTC+1), and does not set it during daylight saving
 ///   time in summer (UTC+2). This leads to incorrect display names in
 ///   variant-sensitive formats:
