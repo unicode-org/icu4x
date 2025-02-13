@@ -6,8 +6,7 @@ use crate::{
     provider::{names::IanaToBcp47MapV3, ZoneOffsetPeriodV1},
     time_zone::models,
     DateTime, InvalidOffsetError, Time, TimeZoneBcp47Id, TimeZoneIdMapper,
-    TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneOffsets,
-    ZoneVariant, ZonedDateTime,
+    TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZonedDateTime,
 };
 use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
@@ -395,28 +394,11 @@ impl<'a> Intermediate<'a> {
             self.time.nanosecond,
         )?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        let zone_variant = match zone_offset_calculator
-            .compute_offsets_from_time_zone(time_zone_id, (date, time))
-        {
-            Some(ZoneOffsets { standard, daylight }) => {
-                if offset == standard {
-                    ZoneVariant::Standard
-                } else if Some(offset) == daylight {
-                    ZoneVariant::Daylight
-                } else {
-                    return Err(ParseError::InvalidOffsetError);
-                }
-            }
-            None => {
-                // time_zone_id not found; Etc/Unknown?
-                debug_assert_eq!(time_zone_id.0.as_str(), "unk");
-                ZoneVariant::Standard
-            }
-        };
-        Ok(time_zone_id
+        time_zone_id
             .with_offset(Some(offset))
             .at_time((date, time))
-            .with_zone_variant(zone_variant))
+            .try_infer_zone_variant(zone_offset_calculator)
+            .ok_or(ParseError::InvalidOffsetError)
     }
 }
 

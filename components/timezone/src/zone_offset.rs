@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{ZoneOffsetPeriodV1, EPOCH};
-use crate::{Time, TimeZoneBcp47Id, UtcOffset};
+use crate::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
 use icu_calendar::Date;
 use icu_calendar::Iso;
 use icu_provider::prelude::*;
@@ -139,4 +139,16 @@ pub struct ZoneOffsets {
     pub standard: UtcOffset,
     /// The daylight-saving offset, if used.
     pub daylight: Option<UtcOffset>,
+}
+
+impl ZoneOffsets {
+    pub(crate) fn zone_variant(self, offset: UtcOffset) -> Option<ZoneVariant> {
+        if self.standard == offset {
+            Some(ZoneVariant::Standard)
+        } else if self.daylight == Some(offset) {
+            Some(ZoneVariant::Daylight)
+        } else {
+            None
+        }
+    }
 }
