@@ -199,6 +199,43 @@ where
             )
         })
     }
+    /// Transform this cursor into an ordered iterator over keys1 for a particular key0.
+    ///
+    /// The values are returned as copy types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let zm2d: ZeroMap2d<str, u8, u16> =
+    ///     [("a", 0u8, 1u16), ("b", 1u8, 1000u16), ("b", 2u8, 2000u16)]
+    ///         .into_iter()
+    ///         .collect();
+    ///
+    /// let mut total_value = 0;
+    ///
+    /// for cursor in zm2d.iter0() {
+    ///     for (_, value) in cursor.into_iter1_copied() {
+    ///         total_value += value;
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(total_value, 3001);
+    /// ```
+    pub fn into_iter1_copied(
+        self,
+    ) -> impl DoubleEndedIterator<Item = (&'l <K1 as ZeroMapKV<'a>>::GetType, V)> + ExactSizeIterator
+    {
+        let range = self.get_range();
+        #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
+        range.map(move |idx| {
+            (
+                self.keys1.zvl_get(idx).unwrap(),
+                self.get1_copied_at(idx).unwrap(),
+            )
+        })
+    }
 
     fn get1_copied_at(&self, index: usize) -> Option<V> {
         let ule = self.values.zvl_get(index)?;
