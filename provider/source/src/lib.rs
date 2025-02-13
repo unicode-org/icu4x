@@ -352,7 +352,7 @@ impl SourceDataProvider {
     /// Set the timezone horizon.
     ///
     /// Timezone data for before this date is not returned. Defaults to 1970-01-01,
-    /// i.e. which is the date where TZDB and CLDR coverage begins.
+    /// which is the date where TZDB and CLDR coverage begins.
     pub fn with_timezone_horizon(self, timezone_horizon: Date<Iso>) -> Self {
         Self {
             timezone_horizon,

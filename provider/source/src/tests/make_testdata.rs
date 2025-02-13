@@ -56,7 +56,7 @@ fn make_testdata() {
     };
 
     let provider = SourceDataProvider::new_testing()
-        .with_timezone_horizon(Date::try_new_iso(2200, 1, 1).unwrap());
+        .with_timezone_horizon(Date::try_new_iso(2025, 1, 1).unwrap());
 
     ExportDriver::new(
         LOCALES

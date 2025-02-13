@@ -142,8 +142,8 @@ pub fn to_iso_minutes_since_epoch(
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ZoneOffsetPeriod<'data>(
-    /// The default mapping between period and offsets. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local [`EPOCH`]. It represents when the offsets ended to be used.
+    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded by
+    /// [`to_iso_minutes_since_epoch`]. It represents when the offsets ended to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
