@@ -375,8 +375,9 @@ impl FromStr for UtcOffset {
 ///     * ⚠️ "Greenwhich Mean Time" in summer (UTC+1)
 ///     * ⚠️ "Ireland Standard Time" (the summer time name) in winter (UTC+0)
 ///
-///   This is especially problematic as Northern Ireland (`Europe/Belfast`), like the rest of Europe,
-///   sets the `isdst` flag during DST (UTC+1), thus differing from the Republic of Ireland.
+///   This is especially problematic as Northern Ireland (`Europe/Belfast`) sets the `isdst`
+///   flag during DST (UTC+1), so it correctly uses "Greenwhich Mean Time" in the winter (and
+///   "British Summer Time" in the summer).
 /// * `Africa/Winkhoek` between 1994-03-20 and 2017-10-24 sets the `isdst`
 ///   flag during winter (UTC+1), and does not set it during daylight saving
 ///   time in summer (UTC+2). This leads to incorrect display names in
