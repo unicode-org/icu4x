@@ -175,12 +175,15 @@ impl TimeZoneInfo<models::AtTime> {
 
     /// Tries to set the zone variant by calculating it using a [`ZoneOffsetCalculator`].
     ///
-    /// This fails if `offset()` is `None`, or if it doesn't match either of the 
+    /// This fails if `offset()` is `None`, or if it doesn't match either of the
     /// timezone's standard or daylight offset around `local_time()`.
     pub fn try_infer_zone_variant(
         self,
         calculator: &ZoneOffsetCalculator,
     ) -> Option<TimeZoneInfo<models::Full>> {
+        if self.time_zone_id == TimeZoneBcp47Id::unknown() {
+            return Some(self.with_zone_variant(ZoneVariant::Standard));
+        }
         Some(
             self.with_zone_variant(
                 calculator

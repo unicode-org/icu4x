@@ -385,14 +385,14 @@ pub enum ZoneVariant {
     ///
     /// The semantics vary from time zone to time zone. The time zone display
     /// name of this variant may or may not be called "Standard Time".
-    /// 
+    ///
     /// This is the variant with the lower UTC offset.
     Standard = 0,
     /// The variant corresponding to `"daylight"` in CLDR.
     ///
     /// The semantics vary from time zone to time zone. The time zone display
     /// name of this variant may or may not be called "Daylight Time".
-    /// 
+    ///
     /// This is the variant with the higher UTC offset.
     Daylight = 1,
 }
