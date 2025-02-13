@@ -151,12 +151,37 @@ impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
     }
 
     /// Extends this store with items from an iterator.
+    ///
+    /// It uses a three-pass approach to avoid any potential quadratic costs.
+    /// The asymptotic worst case complexity of this method is O((n + m) log(n + m)),
+    /// where `n` is the number of elements already in `self` and `m` is the number
+    /// of elements in the iterator.
+    ///
+    /// Example:
+    ///   self:         [1,3,5]
+    ///   incoming:     [2,2,4,1,6]
+    ///
+    /// After First Pass
+    ///   self:         [1,3,5,6] <- 6 was directly appended
+    ///   out_of_order: [2,2,1,4] <- elements that couldn't be directly appended
+    ///
+    /// Second Pass
+    ///   1) sort out_of_order → [1,2,2,4]
+    ///   2) merge into self   → [1,3,5,6,2,4]
+    ///                           |       |--> second sorted run starts here but it's deduplicated
+    ///                           |--> 1 was already in self and was updated in place
+    ///
+    /// Third Pass
+    ///   sort self → [1,2,3,4,5,6]
+    ///
+    /// In practice the function can exit early, skipping the second and/or third passes.
     #[inline]
     fn lm_extend<I>(&mut self, iter: I)
     where
         I: IntoIterator<Item = (K, V)>,
         K: Ord,
     {
+        // Pre-allocate space to minimize reallocations
         // From HashBrown's implementation:
         // Keys may be already present or show multiple times in the iterator.
         // Reserve the entire hint lower bound if the map is empty (e.g. from_iter).
@@ -171,51 +196,57 @@ impl<K, V> StoreIntoIterator<K, V> for Vec<(K, V)> {
         };
         self.reserve_exact(reserve);
 
-        // We'll use a two-pass approach to avoid any potential quadratic behavior.
-        // For that we'll need scratch space for out of order elements.
-        let mut scratch = Vec::new();
+        // Scratch space for elements that can't be directly appended.
+        let mut out_of_order = Vec::new();
 
+        // First pass: fast-path append or collect out-of-order elements
         for (key, value) in iter {
             // The fast path checks if the incoming key is >= the last key in self.
             match self.last_mut().map(|l| (key.cmp(&l.0), l)) {
+                // Empty vector or new key is greater than last: append
                 None | Some((Ordering::Greater, _)) => self.push((key, value)),
+                // Key equals last: update in place
                 Some((Ordering::Equal, l)) => *l = (key, value),
+                // Key is less than last: collect for second pass
                 // Note: Attempting to update existing keys here hurts performance.
                 // Likely because of cache misses during search. We'll perform
                 // updates later, after sorting the scratch space.
-                _ => scratch.push((key, value)),
+                _ => out_of_order.push((key, value)),
             }
         }
-        // If we have no out of order elements, we're done.
-        if scratch.is_empty() {
+
+        // If everything was in order, we're done
+        if out_of_order.is_empty() {
             return;
         }
-        // Stable sort in order to sort and preserve the order of any repeated keys.
-        scratch.sort_by(|a, b| a.0.cmp(&b.0));
-        // Extend the sorted self with the sorted scratch space, potentially creating a second sorted run.
-        // The scratch may have elements that already exist in self that need to be updated.
-        // We'll perform the updates eagerly to avoid a costly deduplication operation in the end.
+
+        // Second pass: handle out-of-order elements
+        // Elements already in self are already sorted.
         let sorted_len = self.len();
-        for pair in scratch {
+        // Stable sort out_of_order to preserve the order of any repeated keys.
+        out_of_order.sort_by(|a, b| a.0.cmp(&b.0));
+        // Extend the sorted self with the out_of_order (now sorted).
+        // The scratch may have elements that already exist in self that need to be updated.
+        // We'll perform the updates in place to avoid a costly deduplication operation in the end.
+        // This process may create a second sorted run in self that we'll sort later.
+        for pair in out_of_order {
             // We need to look for the key in the sorted section of self but also the last position
             // of self to prevent adding duplicated elements from the scratch space.
             #[allow(clippy::indexing_slicing)]
-            // `sorted_len` remains valid as we do not remove items from self
-            if let Ok(idx) = self[..sorted_len].binary_search_by(|(k, _)| k.cmp(&pair.0)) {
+            if let Some((Ordering::Equal, last)) = self.last_mut().map(|l| (l.0.cmp(&pair.0), l)) {
+                *last = pair;
+            } else if let Ok(idx) = self[..sorted_len].binary_search_by(|(k, _)| k.cmp(&pair.0)) {
+                // `sorted_len` remains valid as we do not remove items from self and only update existing keys in place.
                 // Note: Attempting to reduce the range of the search slice hurts performance.
                 // Likely due to less predictable memory access.
                 self[idx] = pair
-            } else if let Some((Ordering::Equal, last)) =
-                self.last_mut().map(|l| (l.0.cmp(&pair.0), l))
-            {
-                *last = pair;
             } else {
                 self.push(pair);
             }
         }
-        // If we end up with two sorted runs in self, merge them.
-        // While this could be sort_unstable the stable sort is faster when merging two sorted runs.
+        // If we pushed new items above we ended up with two sorted runs in self.
         if self.len() != sorted_len {
+            // While this could be sort_unstable the stable sort is faster when merging two sorted runs.
             self.sort_by(|a, b| a.0.cmp(&b.0));
         }
     }
