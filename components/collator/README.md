@@ -230,11 +230,12 @@ Whether to swap the ordering of uppercase and lowercase.
 ```rust
 use core::cmp::Ordering;
 use icu::collator::*;
+use icu::collator::preferences::*;
 
 // Use the locale's default.
 
 let mut prefs_no_case = CollatorPreferences::default();
-prefs_no_case.case_first = Some(CaseFirst::False);
+prefs_no_case.case_first = Some(CollationCaseFirst::False);
 let collator_no_case =
     Collator::try_new(prefs_no_case, Default::default()).unwrap();
 assert_eq!(collator_no_case.compare("ab", "AB"), Ordering::Less);
@@ -242,7 +243,7 @@ assert_eq!(collator_no_case.compare("ab", "AB"), Ordering::Less);
 // Lowercase is less
 
 let mut prefs_lower_less = CollatorPreferences::default();
-prefs_lower_less.case_first = Some(CaseFirst::Lower);
+prefs_lower_less.case_first = Some(CollationCaseFirst::Lower);
 let collator_lower_less =
     Collator::try_new(prefs_lower_less, Default::default()).unwrap();
 assert_eq!(collator_lower_less.compare("ab", "AB"), Ordering::Less);
@@ -250,7 +251,7 @@ assert_eq!(collator_lower_less.compare("ab", "AB"), Ordering::Less);
 // Uppercase is less
 
 let mut prefs_upper_greater = CollatorPreferences::default();
-prefs_upper_greater.case_first = Some(CaseFirst::Upper);
+prefs_upper_greater.case_first = Some(CollationCaseFirst::Upper);
 let collator_upper_greater =
     Collator::try_new(prefs_upper_greater, Default::default()).unwrap();
 assert_eq!(collator_upper_greater.compare("AB", "ab"), Ordering::Less);
@@ -265,11 +266,12 @@ numeric value.
 ```rust
 use core::cmp::Ordering;
 use icu::collator::*;
+use icu::collator::preferences::*;
 
 // Numerical sorting off
 
 let mut prefs_num_off = CollatorPreferences::default();
-prefs_num_off.numeric_ordering = Some(NumericOrdering::False);
+prefs_num_off.numeric_ordering = Some(CollationNumericOrdering::False);
 let collator_num_off =
     Collator::try_new(prefs_num_off, Default::default()).unwrap();
 assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
@@ -277,7 +279,7 @@ assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 // Numerical sorting on
 
 let mut prefs_num_on = CollatorPreferences::default();
-prefs_num_on.numeric_ordering = Some(NumericOrdering::True);
+prefs_num_on.numeric_ordering = Some(CollationNumericOrdering::True);
 let collator_num_on =
     Collator::try_new(prefs_num_on, Default::default()).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);

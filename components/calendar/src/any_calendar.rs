@@ -20,11 +20,9 @@ use crate::persian::Persian;
 use crate::roc::Roc;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
+use crate::preferences::{CalendarAlgorithm, IslamicCalendarAlgorithm};
 use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::preferences::extensions::unicode::keywords::{
-    CalendarAlgorithm, IslamicCalendarAlgorithm,
-};
 use icu_locale_core::subtags::language;
 use icu_locale_core::Locale;
 use icu_provider::prelude::*;

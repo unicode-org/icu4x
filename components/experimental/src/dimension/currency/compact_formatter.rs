@@ -12,9 +12,7 @@ use crate::{
 };
 use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::DecimalFormatterPreferences;
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
 
 use super::{
@@ -32,7 +30,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: NumberingSystem
+        numbering_system: super::super::preferences::NumberingSystem
     }
 );
 

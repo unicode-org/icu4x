@@ -10,6 +10,7 @@ use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::pattern::*;
+use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -23,9 +24,6 @@ use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
-use icu_locale_core::preferences::extensions::unicode::keywords::{
-    CalendarAlgorithm, HourCycle, NumberingSystem,
-};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
 use writeable::{impl_display_with_writeable, Writeable};
