@@ -190,10 +190,10 @@ mod test {
     fn test_buddhist_roundtrip_near_rd_zero() {
         for i in -10000..=10000 {
             let rd = RataDie::new(i);
-            let iso1 = Iso::iso_from_fixed(rd);
+            let iso1 = Iso::from_fixed(rd);
             let buddhist = iso1.to_calendar(Buddhist);
             let iso2 = buddhist.to_calendar(Iso);
-            let result = Iso::fixed_from_iso(iso2.inner);
+            let result = Iso::to_fixed(iso2);
             assert_eq!(rd, result);
         }
     }
@@ -203,10 +203,10 @@ mod test {
         // Buddhist epoch start RD: -198326
         for i in -208326..=-188326 {
             let rd = RataDie::new(i);
-            let iso1 = Iso::iso_from_fixed(rd);
+            let iso1 = Iso::from_fixed(rd);
             let buddhist = iso1.to_calendar(Buddhist);
             let iso2 = buddhist.to_calendar(Iso);
-            let result = Iso::fixed_from_iso(iso2.inner);
+            let result = Iso::to_fixed(iso2);
             assert_eq!(rd, result);
         }
     }
@@ -215,8 +215,8 @@ mod test {
     fn test_buddhist_directionality_near_rd_zero() {
         for i in -100..=100 {
             for j in -100..=100 {
-                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
-                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+                let iso_i = Iso::from_fixed(RataDie::new(i));
+                let iso_j = Iso::from_fixed(RataDie::new(j));
 
                 let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
                 let buddhist_j = Date::new_from_iso(iso_j, Buddhist);
@@ -241,8 +241,8 @@ mod test {
         // Buddhist epoch start RD: -198326
         for i in -198426..=-198226 {
             for j in -198426..=-198226 {
-                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
-                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+                let iso_i = Iso::from_fixed(RataDie::new(i));
+                let iso_j = Iso::from_fixed(RataDie::new(j));
 
                 let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
                 let buddhist_j = Date::new_from_iso(iso_j, Buddhist);

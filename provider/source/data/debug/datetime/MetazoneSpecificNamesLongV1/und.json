@@ -1,4 +1,5 @@
 {
   "defaults": {},
-  "overrides": {}
+  "overrides": {},
+  "use_generic_standard": []
 }
