@@ -188,7 +188,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`Time`](icu_time::Time)
 /// - [`DateTime`](icu_time::DateTime)
 /// - [`ZonedDateTime`](icu_time::ZonedDateTime)
-/// - [`UtcOffset`](icu_time::UtcOffset)
+/// - [`UtcOffset`](icu_time::zone::UtcOffset)
 /// - [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
