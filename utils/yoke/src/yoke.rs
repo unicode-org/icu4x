@@ -7,7 +7,6 @@ use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::kinda_sorta_dangling::KindaSortaDangling;
-use crate::trait_hack::YokeTraitHack;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
