@@ -173,73 +173,50 @@ impl TimeZoneInfo<models::AtTime> {
         }
     }
 
-    /// Tries to set the zone variant by calculating it using a [`ZoneOffsetCalculator`].
+    /// Sets the zone variant by calculating it using a [`ZoneOffsetCalculator`].
     ///
-    /// This fails if `offset()` is `None`, or if it doesn't match either of the
-    /// timezone's standard or daylight offset around `local_time()`.
-    pub fn try_infer_zone_variant(
+    /// If `offset()` is `None`, or if it doesn't match either of the
+    /// timezone's standard or daylight offset around `local_time()`,
+    /// the variant will be set to [`ZoneVariant::Stanard`] and the time zone
+    /// to [`TimeZoneBcp47Id::unknown()`].
+    pub fn infer_zone_variant(
         self,
         calculator: &ZoneOffsetCalculator,
-    ) -> Option<TimeZoneInfo<models::Full>> {
-        if self.time_zone_id == TimeZoneBcp47Id::unknown() {
-            return Some(self.with_zone_variant(ZoneVariant::Standard));
-        }
-        Some(
-            self.with_zone_variant(
-                calculator
-                    .compute_offsets_from_time_zone(self.time_zone_id, self.local_time)?
-                    .zone_variant(self.offset?)?,
-            ),
-        )
+    ) -> TimeZoneInfo<models::Full> {
+        let Some(offset) = self.offset else {
+            return TimeZoneBcp47Id::unknown()
+                .without_offset()
+                .at_time(self.local_time)
+                .with_zone_variant(ZoneVariant::Standard);
+        };
+        let Some(zone_variant) = calculator
+            .compute_offsets_from_time_zone(self.time_zone_id, self.local_time)
+            .and_then(|x| x.zone_variant(offset))
+        else {
+            return TimeZoneBcp47Id::unknown()
+                .without_offset()
+                .at_time(self.local_time)
+                .with_zone_variant(ZoneVariant::Standard);
+        };
+        self.with_zone_variant(zone_variant)
     }
 
     /// Sets a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with
     /// `DATAFORM=rearguard`.
     ///
-    /// This is a cheap method, as [`ZoneVariant`] uses `rearguard` semantics.
+    /// If it is known that the database was *not* built with `rearguard`, a caller can try to adjust
+    /// for the differences. This is a moving target, for example the known differences for 2025a are:
     ///
-    /// Use [`Self::with_vanguard_isdst`] if the TZDB is known to use `vanguard` semantics, or
-    /// [`Self::try_infer_zone_variant`] otherwise.
+    /// * `Europe/Dublin` since 1968-10-27
+    /// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24
+    /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
+    ///
+    /// If the TZDB build mode is unknown or variable, use [`Self::infer_zone_variant`]. 
     pub const fn with_rearguard_isdst(self, isdst: bool) -> TimeZoneInfo<models::Full> {
         self.with_zone_variant(if isdst {
             ZoneVariant::Daylight
         } else {
             ZoneVariant::Standard
         })
-    }
-
-    /// Sets a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with
-    /// `DATAFORM=vanguard`.
-    ///
-    /// This method corrects the cases where `vanguard` and `rearguard` disagree (as of TZDB 2025a):
-    ///
-    /// * `Europe/Dublin` since 1968-10-27
-    /// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24
-    /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
-    ///
-    /// Use [`Self::with_rearguard_isdst`] if the TZDB is known to use `rearguard` semantics, or
-    /// [`Self::try_infer_zone_variant`] otherwise.
-    pub fn with_vanguard_isdst(self, isdst: bool) -> TimeZoneInfo<models::Full> {
-        #[allow(clippy::unwrap_used)] // valid dates/times
-        self.with_rearguard_isdst(
-            isdst
-                ^ (self.time_zone_id.0 == "iedub"
-                    || (self.time_zone_id.0 == "nawdh"
-                        && (
-                            Date::try_new_iso(1994, 3, 20).unwrap(),
-                            Time::try_new(22, 0, 0, 0).unwrap(),
-                        ) < (self.local_time.0, self.local_time.1)
-                        && (self.local_time.0, self.local_time.1)
-                            < (
-                                Date::try_new_iso(2017, 10, 23).unwrap(),
-                                Time::try_new(22, 0, 0, 0).unwrap(),
-                            ))
-                    || (self.time_zone_id.0 == "macas" || self.time_zone_id.0 == "eheai")
-                        && (self.local_time.0, self.local_time.1)
-                            > (
-                                Date::try_new_iso(2018, 10, 28).unwrap(),
-                                Time::try_new(2, 0, 0, 0).unwrap(),
-                            )),
-        )
     }
 }

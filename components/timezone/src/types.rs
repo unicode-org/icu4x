@@ -371,8 +371,7 @@ use crate::TimeZoneInfo;
 ///
 /// This should not generally be constructed by client code. Instead, use
 /// * [`TimeZoneInfo::with_rearguard_isdst`]
-/// * [`TimeZoneInfo::with_vanguard_isdst`]
-/// * [`TimeZoneInfo::try_infer_zone_variant`]
+/// * [`TimeZoneInfo::infer_zone_variant`]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(ZoneVariantULE)]
 #[repr(u8)]

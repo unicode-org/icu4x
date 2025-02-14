@@ -394,11 +394,10 @@ impl<'a> Intermediate<'a> {
             self.time.nanosecond,
         )?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        time_zone_id
+        Ok(time_zone_id
             .with_offset(Some(offset))
             .at_time((date, time))
-            .try_infer_zone_variant(zone_offset_calculator)
-            .ok_or(ParseError::InvalidOffsetError)
+            .infer_zone_variant(zone_offset_calculator))
     }
 }
 
