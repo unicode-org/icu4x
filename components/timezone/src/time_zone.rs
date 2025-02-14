@@ -177,7 +177,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///
     /// If `offset()` is `None`, or if it doesn't match either of the
     /// timezone's standard or daylight offset around `local_time()`,
-    /// the variant will be set to [`ZoneVariant::Stanard`] and the time zone
+    /// the variant will be set to [`ZoneVariant::Standard`] and the time zone
     /// to [`TimeZoneBcp47Id::unknown()`].
     pub fn infer_zone_variant(
         self,
