@@ -53,7 +53,7 @@ impl ExtractedInput {
             + GetField<T::NanosecondInput>
             + GetField<Z::TimeZoneIdInput>
             + GetField<Z::TimeZoneOffsetInput>
-            + GetField<Z::TimeTimeZoneVariantInput>
+            + GetField<Z::TimeZoneVariantInput>
             + GetField<Z::TimeZoneLocalTimeInput>,
     {
         Self {
@@ -68,7 +68,7 @@ impl ExtractedInput {
             subsecond: GetField::<T::NanosecondInput>::get_field(input).into_option(),
             time_zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
             offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
-            zone_variant: GetField::<Z::TimeTimeZoneVariantInput>::get_field(input).into_option(),
+            zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
             local_time: GetField::<Z::TimeZoneLocalTimeInput>::get_field(input).into_option(),
         }
     }

@@ -689,7 +689,7 @@ macro_rules! impl_time_marker {
         // Whether the input should contain seconds.
         $(input_second = $second_yes:ident,)?
         // Whether the input should contain fractional seconds.
-        $(input_Nanosecond = $Nanosecond_yes:ident,)?
+        $(input_subsecond = $Nanosecond_yes:ident,)?
     ) => {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -861,7 +861,7 @@ macro_rules! impl_zone_marker {
         impl ZoneMarkers for $type {
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, $($tzid_input_yes)?);
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
-            type TimeTimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
+            type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
             type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
             type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1 = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
@@ -1125,7 +1125,7 @@ impl_time_marker!(
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
-    input_Nanosecond = yes,
+    input_subsecond = yes,
 );
 
 /// Time zone field sets

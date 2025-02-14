@@ -170,7 +170,7 @@ impl DateTimeNamesMarker for ZoneFieldSet {
 impl ZoneMarkers for ZoneFieldSet {
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
-    type TimeTimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
+    type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
     type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
     type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, yes);
     type LocationsV1 = datetime_marker_helper!(@data/zone/locations, yes);

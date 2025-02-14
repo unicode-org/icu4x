@@ -125,7 +125,7 @@ pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone offset input field.
     type TimeZoneOffsetInput: IntoOption<UtcOffset>;
     /// Marker for resolving the time zone variant input field.
-    type TimeTimeZoneVariantInput: IntoOption<TimeZoneVariant>;
+    type TimeZoneVariantInput: IntoOption<TimeZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
     type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
     /// Marker for loading core time zone data.
@@ -205,7 +205,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::T as TimeMarkers>::NanosecondInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeTimeZoneVariantInput>
+    + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
 where
     R::D: DateInputMarkers,
@@ -231,7 +231,7 @@ where
         + GetField<<R::T as TimeMarkers>::NanosecondInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeTimeZoneVariantInput>
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
 {
 }
@@ -588,7 +588,7 @@ impl TimeMarkers for () {
 impl ZoneMarkers for () {
     type TimeZoneIdInput = ();
     type TimeZoneOffsetInput = ();
-    type TimeTimeZoneVariantInput = ();
+    type TimeZoneVariantInput = ();
     type TimeZoneLocalTimeInput = ();
     type EssentialsV1 = NeverMarker<tz::Essentials<'static>>;
     type LocationsV1 = NeverMarker<tz::Locations<'static>>;
