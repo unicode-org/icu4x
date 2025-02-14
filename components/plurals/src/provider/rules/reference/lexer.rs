@@ -5,6 +5,11 @@
 use super::ast;
 use displaydoc::Display;
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq)]
 pub enum Token {
     Operand(ast::Operand),
@@ -26,6 +31,11 @@ pub enum Token {
     E,
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[derive(Display, Debug)]
 #[non_exhaustive]
 pub enum LexerError {
@@ -40,10 +50,16 @@ impl core::error::Error for LexerError {}
 /// Unicode Plural Rule lexer is an iterator
 /// over tokens produced from an input string.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::Lexer;
+/// use icu::plurals::provider::rules::reference::Lexer;
 ///
 /// let input = b"i = 5";
 /// let lexer = Lexer::new(input);
@@ -61,7 +77,7 @@ impl<'l> Lexer<'l> {
     /// # Examples
     ///
     /// ```
-    /// use icu::plurals::rules::reference::Lexer;
+    /// use icu::plurals::provider::rules::reference::Lexer;
     ///
     /// Lexer::new(b"n = 1");
     /// ```

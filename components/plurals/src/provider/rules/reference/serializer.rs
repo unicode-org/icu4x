@@ -2,18 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::rules::reference::ast;
+use crate::provider::rules::reference::ast;
 use core::fmt;
 use core::ops::RangeInclusive;
 
 /// Unicode Plural Rule serializer converts an [`AST`] to a [`String`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast;
-/// use icu::plurals::rules::reference::parse;
-/// use icu::plurals::rules::reference::serialize;
+/// use icu::plurals::provider::rules::reference::ast;
+/// use icu::plurals::provider::rules::reference::parse;
+/// use icu::plurals::provider::rules::reference::serialize;
 ///
 /// let input = "i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
 ///
@@ -44,6 +50,11 @@ pub fn serialize(rule: &ast::Rule, w: &mut impl fmt::Write) -> fmt::Result {
     Ok(())
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub fn serialize_condition(cond: &ast::Condition, w: &mut impl fmt::Write) -> fmt::Result {
     let mut first = true;
 
@@ -141,6 +152,11 @@ fn serialize_value(value: &ast::Value, w: &mut impl fmt::Write) -> fmt::Result {
     write!(w, "{}", value.0)
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub fn serialize_samples(samples: &ast::Samples, w: &mut impl fmt::Write) -> fmt::Result {
     if let Some(sample_list) = &samples.integer {
         w.write_str(" @integer ")?;
@@ -153,6 +169,11 @@ pub fn serialize_samples(samples: &ast::Samples, w: &mut impl fmt::Write) -> fmt
     Ok(())
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub fn serialize_sample_list(samples: &ast::SampleList, w: &mut impl fmt::Write) -> fmt::Result {
     let mut first = true;
 
@@ -171,6 +192,11 @@ pub fn serialize_sample_list(samples: &ast::SampleList, w: &mut impl fmt::Write)
     Ok(())
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub fn serialize_sample_range(
     sample_range: &ast::SampleRange,
     w: &mut impl fmt::Write,
@@ -183,6 +209,11 @@ pub fn serialize_sample_range(
     Ok(())
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub fn serialize_decimal_value(val: &ast::DecimalValue, w: &mut impl fmt::Write) -> fmt::Result {
     w.write_str(&val.0)
 }

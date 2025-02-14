@@ -6,11 +6,17 @@
 //! the output of [`parse`] method that is used in [`test_condition`] method
 //! to evaluate whether a given [`PluralCategory`] should be used.
 //!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+//! guaranteed to match with this version's `*_unstable` providers. Use with caution.
+//! </div>
+//!
 //! # Examples
 //!
 //! ```
-//! use icu::plurals::rules::reference::ast::*;
-//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::provider::rules::reference::ast::*;
+//! use icu::plurals::provider::rules::reference::parse_condition;
 //!
 //! let input = "i = 1";
 //!
@@ -39,11 +45,17 @@ use core::ops::RangeInclusive;
 /// A complete AST representation of a plural rule.
 /// Comprises a vector of [`AndConditions`] and optionally a set of [`Samples`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
-/// use icu::plurals::rules::reference::{parse, parse_condition};
+/// use icu::plurals::provider::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::{parse, parse_condition};
 ///
 /// let condition =
 ///     parse_condition(b"i = 5 or v = 2").expect("Parsing failed.");
@@ -89,11 +101,17 @@ pub struct Rule {
 
 /// A complete AST representation of a plural rule's condition. Comprises a vector of [`AndConditions`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
-/// use icu::plurals::rules::reference::parse_condition;
+/// use icu::plurals::provider::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::parse_condition;
 ///
 /// let condition = Condition(vec![
 ///     AndCondition(vec![Relation {
@@ -127,10 +145,16 @@ pub struct Condition(pub Vec<AndCondition>);
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
+/// AST using the [`parse()`](crate::provider::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i = 3 and v = 0"
@@ -139,7 +163,7 @@ pub struct Condition(pub Vec<AndCondition>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 ///
 /// AndCondition(vec![
 ///     Relation {
@@ -168,10 +192,16 @@ pub struct AndCondition(pub Vec<Relation>);
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
+/// AST using the [`parse()`](crate::provider::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i = 3"
@@ -180,7 +210,7 @@ pub struct AndCondition(pub Vec<Relation>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 ///
 /// Relation {
 ///     expression: Expression {
@@ -213,6 +243,12 @@ pub struct Relation {
 /// | --------------| ----------------- |------------------------------------------------|
 /// | `Eq`          | "="               | is contained within the following interval set |
 /// | `NotEq`       | "!="              | complement of `Eq` ("is _not_ contained..."")  |
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Operator {
@@ -226,10 +262,16 @@ pub enum Operator {
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Operand`] and an optional modulo.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
+/// AST using the [`parse()`](crate::provider::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i % 100"
@@ -238,7 +280,7 @@ pub enum Operator {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 ///
 /// Expression {
 ///     operand: Operand::I,
@@ -257,10 +299,16 @@ pub struct Expression {
 
 /// An incomplete AST representation of a plural rule. Comprises a [`char`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
+/// AST using the [`parse()`](crate::provider::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "i"
@@ -269,7 +317,7 @@ pub struct Expression {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::Operand;
+/// use icu::plurals::provider::rules::reference::ast::Operand;
 ///
 /// Operand::I;
 /// ```
@@ -297,10 +345,16 @@ pub enum Operand {
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`RangeListItems`].
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
+/// AST using the [`parse()`](crate::provider::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "5, 7, 9"
@@ -309,7 +363,7 @@ pub enum Operand {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 ///
 /// RangeList(vec![
 ///     RangeListItem::Value(Value(5)),
@@ -328,6 +382,12 @@ pub struct RangeList(pub Vec<RangeListItem>);
 /// See [`RangeInclusive`] and [`Value`] for additional details.
 /// A range comprises two values: an inclusive lower and upper limit.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -338,7 +398,7 @@ pub struct RangeList(pub Vec<RangeListItem>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 ///
 /// let _ = RangeListItem::Value(Value(5));
 /// let _ = RangeListItem::Range(Value(11)..=Value(15));
@@ -354,10 +414,16 @@ pub enum RangeListItem {
 
 /// An incomplete AST representation of a plural rule, representing one integer.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
-/// AST using the [`parse()`](crate::rules::reference::parser::parse()) function.
+/// AST using the [`parse()`](crate::provider::rules::reference::parser::parse()) function.
 ///
 /// ```text
 /// "99"
@@ -366,7 +432,7 @@ pub enum RangeListItem {
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 ///
 /// RangeListItem::Value(Value(99));
 /// ```
@@ -376,6 +442,12 @@ pub struct Value(pub u64);
 
 /// A sample of example values that match the given rule.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -383,7 +455,7 @@ pub struct Value(pub u64);
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 /// Samples {
 ///     integer: Some(SampleList {
 ///         sample_ranges: vec![SampleRange {
@@ -414,6 +486,12 @@ pub struct Samples {
 
 /// A list of values used in samples.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -421,7 +499,7 @@ pub struct Samples {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 /// SampleList {
 ///     sample_ranges: vec![SampleRange {
 ///         lower_val: DecimalValue("0.0".to_string()),
@@ -443,6 +521,12 @@ pub struct SampleList {
 
 /// A value range used in samples.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -450,7 +534,7 @@ pub struct SampleList {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 /// SampleRange {
 ///     lower_val: DecimalValue("0.0".to_string()),
 ///     upper_val: Some(DecimalValue("1.5".to_string())),
@@ -470,6 +554,12 @@ pub struct SampleRange {
 
 /// A decimal value used in samples.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+///
 /// # Examples
 ///
 /// ```text
@@ -477,7 +567,7 @@ pub struct SampleRange {
 /// ```
 ///
 /// ```
-/// use icu::plurals::rules::reference::ast::*;
+/// use icu::plurals::provider::rules::reference::ast::*;
 /// DecimalValue("1.00".to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]

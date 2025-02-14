@@ -2,16 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] APIs and Data Structures for Plural Rules
+//! 🚧 \[Unstable\] APIs and Data Structures for Plural Rules
 //!
 //! A single Plural Rule is an expression which tests the value of [`PluralOperands`]
 //! against a condition. If the condition is truthful, then the [`PluralCategory`]
 //! to which the Rule is assigned should be used.
 //!
 //! <div class="stab unstable">
-//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. Use with caution.
-//! <a href="https://github.com/unicode-org/icu4x/issues/1091">#1091</a>
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+//! guaranteed to match with this version's `*_unstable` providers. Use with caution.
 //! </div>
 //!
 //! # Examples
@@ -61,8 +61,8 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu::plurals::rules::reference::ast::*;
-//! use icu::plurals::rules::reference::parse_condition;
+//! use icu::plurals::provider::rules::reference::ast::*;
+//! use icu::plurals::provider::rules::reference::parse_condition;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
@@ -95,8 +95,8 @@
 //! matches:
 //!
 //! ```
-//! use icu::plurals::rules::reference::parse_condition;
-//! use icu::plurals::rules::reference::test_condition;
+//! use icu::plurals::provider::rules::reference::parse_condition;
+//! use icu::plurals::provider::rules::reference::test_condition;
 //! use icu::plurals::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
@@ -146,21 +146,14 @@
 //! [`PluralCategory::Other`]: super::PluralCategory::Other
 //! [`PluralOperands`]: super::PluralOperands
 //! [`PluralRules::categories`]: super::PluralRules::categories
-//! [`PluralRuleType::Cardinal`]: super::PluralRuleType::Cardinal
+//! [`PluralRuleType::Cardinal`]: crate::PluralRuleType::Cardinal
 //! [`Rule`]: super::rules::reference::ast::Rule
 //! [`Rules`]: super::rules::reference::ast::Rule
 //! [`Condition`]: super::rules::reference::ast::Condition
 //! [`Sample`]: super::rules::reference::ast::Samples
 //! [`AST`]: super::rules::reference::ast
 
-#[doc(hidden)]
-pub mod reference;
-// Need to expose it for datagen, but we don't
-// have a reason to make it fully public, so hiding docs for now.
-#[cfg(feature = "experimental")]
-mod raw_operands;
-#[doc(hidden)]
 pub mod runtime;
 
-#[cfg(feature = "experimental")]
-pub use raw_operands::RawPluralOperands;
+// The reference module is used internally, but is only needed externally in datagen mode
+pub mod reference;

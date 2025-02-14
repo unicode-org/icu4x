@@ -15,7 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::rules::runtime::ast::Rule;
+use crate::provider::rules::runtime::ast::Rule;
 use crate::{PluralCategory, PluralElements, PluralElementsInner, PluralOperands, PluralRules};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
@@ -33,6 +33,8 @@ use zerovec::ule::UleError;
 use zerovec::ule::VarULE;
 use zerovec::ule::ULE;
 use zerovec::VarZeroSlice;
+
+pub mod rules;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]

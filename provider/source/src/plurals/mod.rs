@@ -8,7 +8,7 @@ use std::collections::HashSet;
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::plurals::rules::runtime::ast::Rule;
+use icu::plurals::provider::rules::runtime::ast::Rule;
 use icu::plurals::{provider::*, PluralCategory};
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;

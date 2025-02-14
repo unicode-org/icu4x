@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::rules::reference;
+use crate::provider::rules::reference;
 use core::{
     convert::{TryFrom, TryInto},
     fmt, num,
@@ -13,9 +13,14 @@ use zerovec::{
     {VarZeroVec, ZeroVec},
 };
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_plurals::rules::runtime::ast))]
+#[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider::rules::runtime::ast))]
 #[allow(clippy::exhaustive_structs)] // Reference AST is non-public and this type is stable
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
@@ -53,6 +58,7 @@ pub(crate) enum RangeOrValue {
     Value(u32),
 }
 
+/// Represent a a single "relation" in a plural rule
 #[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[zerovec::make_varule(RelationULE)]
 pub struct Relation<'data> {
@@ -273,6 +279,7 @@ impl fmt::Display for Rule<'_> {
 }
 
 impl RelationULE {
+    /// Convert to a Relation
     #[inline]
     pub fn as_relation(&self) -> Relation {
         zerofrom::ZeroFrom::zero_from(self)
@@ -446,8 +453,8 @@ mod serde {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::rules::reference;
-    use crate::rules::runtime::test_rule;
+    use crate::provider::rules::reference;
+    use crate::provider::rules::runtime::test_rule;
     use crate::PluralOperands;
 
     #[test]
