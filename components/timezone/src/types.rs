@@ -364,32 +364,14 @@ impl FromStr for UtcOffset {
     }
 }
 
+#[cfg(doc)]
+use crate::TimeZoneInfo;
+
 /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
 ///
-/// This currently corresponds to the `isdst` flag that is exposed in TZIF files built
-/// using the `DATAFORM=rearguard` compatibility option. On systems that do not
-/// use this option, known discrepancies are:
-/// * `Europe/Dublin` (since 1968-10-27) sets the `isdst` flag during winter (UTC+0),
-///   and does not set it during daylight saving time in summer (UTC+1). This leads
-///   to incorrect display names in variant-sensitive formats:
-///     * ⚠️ "Greenwich Mean Time" in summer (UTC+1)
-///     * ⚠️ "Ireland Standard Time" (the summer time name) in winter (UTC+0)
-///
-///   This is especially problematic as Northern Ireland (`Europe/Belfast`) sets the `isdst`
-///   flag during DST (UTC+1), so it correctly uses "Greenwich Mean Time" in the winter (and
-///   "British Summer Time" in the summer).
-/// * `Africa/Winkhoek` between 1994-03-20 and 2017-10-24 sets the `isdst`
-///   flag during winter (UTC+1), and does not set it during daylight saving
-///   time in summer (UTC+2). This leads to incorrect display names in
-///   variant-sensitive formats:
-///   * ⚠️ "West Africa Standard Time" in summer (UTC+2)
-///   * ⚠️ "West Africa Summer Time" in winter (UTC+1)
-/// * `Africa/Casablanca` (and its alias `Africa/El_Aaiun`) since 2018-10-28
-///   sets the `isdst` flag during Ramadan (UTC+0), and does not set it
-///   during daylight saving time (rest of the year, UTC+1). This leads
-///   to incorrect display names in variant-sensitive formats:
-///   * ⚠️ "Morocco Daylight Time" during Ramadan (UTC+0)
-///   * ⚠️ "Morocco Standard Time" the rest of the year (UTC+1)
+/// This should not generally be constructed by client code. Instead, use
+/// * [`TimeZoneInfo::with_rearguard_isdst`]
+/// * [`TimeZoneInfo::infer_zone_variant`]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(ZoneVariantULE)]
 #[repr(u8)]
@@ -402,10 +384,14 @@ pub enum ZoneVariant {
     ///
     /// The semantics vary from time zone to time zone. The time zone display
     /// name of this variant may or may not be called "Standard Time".
+    ///
+    /// This is the variant with the lower UTC offset.
     Standard = 0,
     /// The variant corresponding to `"daylight"` in CLDR.
     ///
     /// The semantics vary from time zone to time zone. The time zone display
     /// name of this variant may or may not be called "Daylight Time".
+    ///
+    /// This is the variant with the higher UTC offset.
     Daylight = 1,
 }

@@ -6,9 +6,7 @@ use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    timezone::{
-        Time, TimeZoneIdMapper, UtcOffset, ZoneVariant, ZonedDateTime, ZonedDateTimeParser,
-    },
+    timezone::{Time, TimeZoneIdMapper, UtcOffset, ZonedDateTime, ZonedDateTimeParser},
 };
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
@@ -40,10 +38,8 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
         // Central Time), so the ICU timezone needs a reference date and time.
         .at_time((date, time))
         // And finally, the zone variant is also required for formatting
-        .with_zone_variant(match zoned.time_zone().to_offset_info(zoned.timestamp()).dst() {
-            jiff::tz::Dst::Yes => ZoneVariant::Daylight,
-            jiff::tz::Dst::No => ZoneVariant::Standard,
-        });
+        // TODO(jiff#258): Jiff does not currently guarantee rearguard semantics
+        .with_rearguard_isdst(zoned.time_zone().to_offset_info(zoned.timestamp()).dst().is_dst());
 
     let zoned_date_time = ZonedDateTime { date, time, zone };
 

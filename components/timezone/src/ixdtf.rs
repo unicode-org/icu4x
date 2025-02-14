@@ -6,8 +6,7 @@ use crate::{
     provider::{names::IanaToBcp47MapV3, ZoneOffsetPeriodV1},
     time_zone::models,
     DateTime, InvalidOffsetError, Time, TimeZoneBcp47Id, TimeZoneIdMapper,
-    TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZoneOffsets,
-    ZoneVariant, ZonedDateTime,
+    TimeZoneIdMapperBorrowed, TimeZoneInfo, UtcOffset, ZoneOffsetCalculator, ZonedDateTime,
 };
 use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
@@ -395,28 +394,10 @@ impl<'a> Intermediate<'a> {
             self.time.nanosecond,
         )?;
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
-        let zone_variant = match zone_offset_calculator
-            .compute_offsets_from_time_zone(time_zone_id, (date, time))
-        {
-            Some(ZoneOffsets { standard, daylight }) => {
-                if offset == standard {
-                    ZoneVariant::Standard
-                } else if Some(offset) == daylight {
-                    ZoneVariant::Daylight
-                } else {
-                    return Err(ParseError::InvalidOffsetError);
-                }
-            }
-            None => {
-                // time_zone_id not found; Etc/Unknown?
-                debug_assert_eq!(time_zone_id.0.as_str(), "unk");
-                ZoneVariant::Standard
-            }
-        };
         Ok(time_zone_id
             .with_offset(Some(offset))
             .at_time((date, time))
-            .with_zone_variant(zone_variant))
+            .infer_zone_variant(zone_offset_calculator))
     }
 }
 
@@ -637,13 +618,17 @@ impl ZonedDateTimeParser {
     /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), ZoneVariant::Daylight);
     /// let (_, _) = consistent_tz_from_both.zone.local_time();
     ///
-    /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
+    /// // There is no name for America/Los_Angeles never at -05:00 (at least in 2024), so either the
+    /// // time zone or the offset are wrong.
+    /// // The only valid way to display this zoned datetime is "GMT-5", so we drop the time zone.
     /// assert_eq!(
-    ///     ZonedDateTimeParser::new().parse("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso).unwrap_err(),
-    ///     ParseError::InvalidOffsetError
+    ///     ZonedDateTimeParser::new().parse("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso)
+    ///     .unwrap().zone.time_zone_id(),
+    ///     TimeZoneBcp47Id::unknown()
     /// );
     ///
-    /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August
+    /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August, but we have a
+    /// // name for Los Angeles at -8 (Pacific Standard Time), so this parses successfully.
     /// assert!(
     ///     ZonedDateTimeParser::new().parse("2024-08-08T12:08:19-08:00[America/Los_Angeles]", Iso).is_ok()
     /// );

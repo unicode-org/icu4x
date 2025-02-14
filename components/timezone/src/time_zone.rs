@@ -4,7 +4,9 @@
 
 use core::fmt;
 
-use crate::{scaffold::IntoOption, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use crate::{
+    scaffold::IntoOption, Time, TimeZoneBcp47Id, UtcOffset, ZoneOffsetCalculator, ZoneVariant,
+};
 use icu_calendar::{Date, Iso};
 
 mod private {
@@ -169,5 +171,60 @@ impl TimeZoneInfo<models::AtTime> {
             local_time: self.local_time,
             zone_variant,
         }
+    }
+
+    /// Sets the zone variant by calculating it using a [`ZoneOffsetCalculator`].
+    ///
+    /// If `offset()` is `None`, or if it doesn't match either of the
+    /// timezone's standard or daylight offset around `local_time()`,
+    /// the variant will be set to [`ZoneVariant::Standard`] and the time zone
+    /// to [`TimeZoneBcp47Id::unknown()`].
+    pub fn infer_zone_variant(
+        self,
+        calculator: &ZoneOffsetCalculator,
+    ) -> TimeZoneInfo<models::Full> {
+        let Some(offset) = self.offset else {
+            return TimeZoneBcp47Id::unknown()
+                .with_offset(self.offset)
+                .at_time(self.local_time)
+                .with_zone_variant(ZoneVariant::Standard);
+        };
+        let Some(zone_variant) = calculator
+            .compute_offsets_from_time_zone(self.time_zone_id, self.local_time)
+            .and_then(|os| {
+                if os.standard == offset {
+                    Some(ZoneVariant::Standard)
+                } else if os.daylight == Some(offset) {
+                    Some(ZoneVariant::Daylight)
+                } else {
+                    None
+                }
+            })
+        else {
+            return TimeZoneBcp47Id::unknown()
+                .with_offset(self.offset)
+                .at_time(self.local_time)
+                .with_zone_variant(ZoneVariant::Standard);
+        };
+        self.with_zone_variant(zone_variant)
+    }
+
+    /// Sets a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with
+    /// `DATAFORM=rearguard`.
+    ///
+    /// If it is known that the database was *not* built with `rearguard`, a caller can try to adjust
+    /// for the differences. This is a moving target, for example the known differences for 2025a are:
+    ///
+    /// * `Europe/Dublin` since 1968-10-27
+    /// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24
+    /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
+    ///
+    /// If the TZDB build mode is unknown or variable, use [`Self::infer_zone_variant`].
+    pub const fn with_rearguard_isdst(self, isdst: bool) -> TimeZoneInfo<models::Full> {
+        self.with_zone_variant(if isdst {
+            ZoneVariant::Daylight
+        } else {
+            ZoneVariant::Standard
+        })
     }
 }
