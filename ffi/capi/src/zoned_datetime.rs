@@ -45,12 +45,8 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<ZonedDateTimeParser>, DataError> {
             Ok(Box::new(ZonedDateTimeParser(
-                icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(
-                    provider.get()?,
-                )?,
-                icu_time::zone::UtcOffsetCalculator::try_new_with_buffer_provider(
-                    provider.get()?,
-                )?,
+                icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(provider.get()?)?,
+                icu_time::zone::UtcOffsetCalculator::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
     }

@@ -29,8 +29,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<IsoDateTime, CalendarParseError> {
-            let icu_time::DateTime { date, time } =
-                icu_time::DateTime::try_from_utf8(v, Iso)?;
+            let icu_time::DateTime { date, time } = icu_time::DateTime::try_from_utf8(v, Iso)?;
             Ok(IsoDateTime {
                 date: Box::new(IsoDate(date)),
                 time: Box::new(Time(time)),

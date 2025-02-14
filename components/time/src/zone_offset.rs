@@ -66,8 +66,8 @@ impl UtcOffsetCalculator {
     /// use icu::calendar::Date;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use icu::time::UtcOffset;
-    /// use icu::time::UtcOffsetCalculator;
+    /// use icu::time::zone::UtcOffset;
+    /// use icu::time::zone::UtcOffsetCalculator;
     /// use tinystr::tinystr;
     ///
     /// let zoc = UtcOffsetCalculator::new();

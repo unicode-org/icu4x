@@ -53,7 +53,7 @@ pub enum ParseError {
     /// # Example
     /// ```
     /// use icu::calendar::Iso;
-    /// use icu::time::{ZonedDateTime, ParseError, IanaParser};
+    /// use icu::time::{ZonedDateTime, ParseError, zone::IanaParser};
     ///
     /// // This timestamp is in UTC, and requires a time zone calculation in order to display a Zurich time.
     /// assert_eq!(
@@ -456,7 +456,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// ```
     /// use icu_calendar::cal::Hebrew;
     /// use icu_time::{
-    ///     ZonedDateTime, TimeZone, TimeZoneInfo, UtcOffset, TimeZoneVariant, IanaParser, UtcOffsetCalculator
+    ///     ZonedDateTime, TimeZone, TimeZoneInfo, zone::{UtcOffset, TimeZoneVariant, IanaParser, UtcOffsetCalculator}
     /// };
     /// use tinystr::tinystr;
     ///
@@ -478,7 +478,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(zoneddatetime.time.hour.number(), 12);
     /// assert_eq!(zoneddatetime.time.minute.number(), 8);
     /// assert_eq!(zoneddatetime.time.second.number(), 19);
-    /// assert_eq!(zoneddatetime.time.nanosecond.number(), 0);
+    /// assert_eq!(zoneddatetime.time.subsecond.number(), 0);
     /// assert_eq!(
     ///     zoneddatetime.zone.time_zone_id(),
     ///     TimeZone(tinystr!(8, "uschi"))
@@ -503,7 +503,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_time::{ZonedDateTime, TimeZoneInfo, UtcOffset};
+    /// use icu_time::{ZonedDateTime, TimeZoneInfo, zone::UtcOffset};
     ///
     /// let tz_from_offset = ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00", Iso)
     ///     .unwrap();
@@ -521,7 +521,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// ```
     /// use icu_calendar::Iso;
     /// use icu_time::{
-    ///     ZonedDateTime, TimeZone, TimeZoneInfo, UtcOffset, TimeZoneVariant, IanaParser
+    ///     ZonedDateTime, TimeZone, TimeZoneInfo, zone::{UtcOffset, TimeZoneVariant, IanaParser}
     /// };
     /// use tinystr::tinystr;
     ///
@@ -553,7 +553,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_time::{TimeZoneInfo, ZonedDateTime, UtcOffset, TimeZone, TimeZoneVariant, ParseError, IanaParser, UtcOffsetCalculator};
+    /// use icu_time::{TimeZoneInfo, ZonedDateTime, TimeZone, ParseError, zone::{UtcOffset, TimeZoneVariant, IanaParser, UtcOffsetCalculator}};
     /// use tinystr::tinystr;
     ///
     /// let consistent_tz_from_both = ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Iso, IanaParser::new(), &UtcOffsetCalculator::new()).unwrap();
@@ -587,7 +587,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// ```
     /// use icu_calendar::Iso;
     /// use icu_time::{
-    ///     ZonedDateTime, ParseError, TimeZone, TimeZoneInfo, UtcOffset,
+    ///     ZonedDateTime, ParseError, TimeZone, TimeZoneInfo, zone::UtcOffset,
     /// };
     /// use tinystr::tinystr;
     ///
@@ -669,7 +669,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// assert_eq!(datetime.time.hour.number(), 16);
     /// assert_eq!(datetime.time.minute.number(), 1);
     /// assert_eq!(datetime.time.second.number(), 17);
-    /// assert_eq!(datetime.time.nanosecond.number(), 45000000);
+    /// assert_eq!(datetime.time.subsecond.number(), 45000000);
     /// ```
     pub fn try_from_str(ixdtf_str: &str, calendar: A) -> Result<Self, ParseError> {
         Self::try_from_utf8(ixdtf_str.as_bytes(), calendar)
@@ -705,7 +705,7 @@ impl Time {
     /// assert_eq!(time.hour.number(), 16);
     /// assert_eq!(time.minute.number(), 1);
     /// assert_eq!(time.second.number(), 17);
-    /// assert_eq!(time.nanosecond.number(), 45000000);
+    /// assert_eq!(time.subsecond.number(), 45000000);
     /// ```
     pub fn try_from_str(ixdtf_str: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(ixdtf_str.as_bytes())

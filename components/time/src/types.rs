@@ -213,7 +213,7 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::UtcOffset;
+    /// use icu::time::zone::UtcOffset;
     ///
     /// assert_eq!(
     ///     UtcOffset::try_from_str("-0600").unwrap(),
@@ -242,7 +242,7 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::time::UtcOffset;
+    /// use icu::time::zone::UtcOffset;
     ///
     /// let offset0: UtcOffset = UtcOffset::try_from_str("Z").unwrap();
     /// let offset1: UtcOffset = UtcOffset::try_from_str("+05").unwrap();

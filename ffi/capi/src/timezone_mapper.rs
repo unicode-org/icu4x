@@ -43,9 +43,7 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<IanaParser>, DataError> {
             Ok(Box::new(IanaParser(
-                icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(
-                    provider.get()?,
-                )?,
+                icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
 
@@ -147,10 +145,7 @@ pub mod ffi {
             )))
         }
 
-        #[diplomat::rust_link(
-            icu::time::IanaParserExtendedBorrowed::canonicalize_iana,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::time::IanaParserExtendedBorrowed::canonicalize_iana, FnInStruct)]
         pub fn canonicalize_iana(
             &self,
             value: &str,

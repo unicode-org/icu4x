@@ -106,7 +106,7 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     ///
     /// ```rust
     /// use icu::locale::subtags::region;
-    /// use icu::time::{TimeZone, WindowsTimeZoneMapper};
+    /// use icu::time::{TimeZone, zone::WindowsTimeZoneMapper};
     /// use tinystr::tinystr;
     ///
     /// let win_tz_mapper = WindowsTimeZoneMapper::new();
