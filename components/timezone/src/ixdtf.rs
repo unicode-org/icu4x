@@ -618,13 +618,17 @@ impl ZonedDateTimeParser {
     /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), ZoneVariant::Daylight);
     /// let (_, _) = consistent_tz_from_both.zone.local_time();
     ///
-    /// // We know that America/Los_Angeles never used a -05:00 offset at any time of the year 2024
+    /// // There is no name for America/Los_Angeles never at -05:00 (at least in 2024), so either the
+    /// // time zone or the offset are wrong.
+    /// // The only valid way to display this zoned datetime is "GMT-5", so we drop the time zone.
     /// assert_eq!(
-    ///     ZonedDateTimeParser::new().parse("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso).unwrap_err(),
-    ///     ParseError::InvalidOffsetError
+    ///     ZonedDateTimeParser::new().parse("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso)
+    ///     .unwrap().zone.time_zone_id(),
+    ///     TimeZoneBcp47Id::unknown()
     /// );
     ///
-    /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August
+    /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August, but we have a
+    /// // name for Los Angeles at -8 (Pacific Standard Time), so this parses successfully.
     /// assert!(
     ///     ZonedDateTimeParser::new().parse("2024-08-08T12:08:19-08:00[America/Los_Angeles]", Iso).is_ok()
     /// );
