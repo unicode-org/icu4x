@@ -7999,8 +7999,8 @@ exemplar/cities/root/v1, yue, 3622B, 3578B, 3a4da3572f8c81b0
 exemplar/cities/root/v1, yue-Hans, 3621B, 3577B, 7b3f7f288f0b99a6
 exemplar/cities/root/v1, zh, -> yue-Hans
 exemplar/cities/root/v1, zh-Hant, -> yue
-exemplar/cities/v1, <lookup>, 784B, 149 identifiers
-exemplar/cities/v1, <total>, 248116B, 241695B, 145 unique payloads
+exemplar/cities/v1, <lookup>, 845B, 162 identifiers
+exemplar/cities/v1, <total>, 248266B, 241799B, 146 unique payloads
 exemplar/cities/v1, af, 882B, 838B, 1f378152ac0f4a7f
 exemplar/cities/v1, ak, 1941B, 1897B, 3f1fb20add456e1d
 exemplar/cities/v1, as, 5552B, 5508B, 48089a1876e5778f
@@ -8009,7 +8009,7 @@ exemplar/cities/v1, az, 2422B, 2378B, 1d0557d21117e03d
 exemplar/cities/v1, bal-Latn, 3048B, 3004B, c19e07568475340
 exemplar/cities/v1, be, 3032B, 2988B, d05c760d578b9bac
 exemplar/cities/v1, bg, 2012B, 1968B, 5224e2694544e1d
-exemplar/cities/v1, bgc, 65B, 19B, 9a473cbea33a417b
+exemplar/cities/v1, bgc, 82B, 36B, e194e4cc24cadcc0
 exemplar/cities/v1, bho, -> bgc
 exemplar/cities/v1, blo, 3418B, 3374B, d5078bbca013cc9f
 exemplar/cities/v1, br, 1087B, 1043B, 2e918051fb93c5c5
@@ -8031,7 +8031,7 @@ exemplar/cities/v1, el-polyton, 307B, 262B, 536f506b784459f5
 exemplar/cities/v1, en-001, 105B, 59B, aab86643e417093c
 exemplar/cities/v1, en-AU, 147B, 101B, c2173c10a0d31639
 exemplar/cities/v1, en-CA, 146B, 100B, 752fe9df76dfa67
-exemplar/cities/v1, eo, 804B, 760B, 8dded184924cbdcb
+exemplar/cities/v1, eo, 821B, 777B, 387d79c93c97921d
 exemplar/cities/v1, es, 1742B, 1698B, 6686bb2f1f193689
 exemplar/cities/v1, es-419, 1754B, 1710B, 6001e777cb922eff
 exemplar/cities/v1, es-MX, 1751B, 1707B, c476331fadeff56b
@@ -8047,6 +8047,7 @@ exemplar/cities/v1, fr, 1137B, 1093B, 9742b95e7390aaca
 exemplar/cities/v1, fr-CA, 1217B, 1173B, fcb9205f0711ff87
 exemplar/cities/v1, fy, 1027B, 983B, d6c45dcdfda4efcb
 exemplar/cities/v1, ga, 1577B, 1533B, 8b39e018ca61b8f0
+exemplar/cities/v1, gaa, 65B, 19B, d7868012f94a3415
 exemplar/cities/v1, gd, 1114B, 1070B, 4dec8e84a8772229
 exemplar/cities/v1, gl, 1345B, 1301B, e8dd8cbde96941f
 exemplar/cities/v1, ha, 812B, 768B, 618866396e80839a
@@ -8056,7 +8057,7 @@ exemplar/cities/v1, hsb, 1082B, 1038B, dcc4d21e2affd27c
 exemplar/cities/v1, hu, 1329B, 1285B, c47c97ad53f48a98
 exemplar/cities/v1, ia, 564B, 520B, 77990893d1205d8b
 exemplar/cities/v1, id, 614B, 570B, 3e55d577bf7260d3
-exemplar/cities/v1, ie, 213B, 167B, 83a27158fdf530e0
+exemplar/cities/v1, ie, 230B, 184B, b6eb0df8486471c5
 exemplar/cities/v1, ig, 252B, 206B, daf2af6cc57c1212
 exemplar/cities/v1, is, 1297B, 1253B, 10d6989ec2a07494
 exemplar/cities/v1, it, 984B, 940B, 85bc013dfcbcbed6
@@ -8065,6 +8066,7 @@ exemplar/cities/v1, kea, 749B, 705B, 6f1722c26db9fd82
 exemplar/cities/v1, kgp, 3840B, 3796B, 842d2cbe732a37ef
 exemplar/cities/v1, kk, 295B, 250B, eefedb9a6cc3c08e
 exemplar/cities/v1, kok, 3984B, 3940B, 9e09a1889cf56c40
+exemplar/cities/v1, kok-Latn, -> gaa
 exemplar/cities/v1, ks, 5235B, 5191B, 49314b83fda1528a
 exemplar/cities/v1, ks-Deva, 197B, 151B, 8434d8c2f55efd78
 exemplar/cities/v1, ku, 1537B, 1493B, 5d01668bcaf5c0b9
@@ -8074,7 +8076,8 @@ exemplar/cities/v1, kxv-Orya, 3951B, 3907B, 1b3ae55dd956afd7
 exemplar/cities/v1, kxv-Telu, 622B, 578B, a24749d625310af1
 exemplar/cities/v1, ky, 1741B, 1697B, ec8404ac0a05c0bb
 exemplar/cities/v1, lb, 855B, 811B, 557be37af841c614
-exemplar/cities/v1, lij, 64B, 18B, c40019ee46af3950
+exemplar/cities/v1, lij, 81B, 35B, b5044f5b33b77f6e
+exemplar/cities/v1, lmo, -> gaa
 exemplar/cities/v1, lt, 3128B, 3084B, 9910c9c6feccacb9
 exemplar/cities/v1, lv, 2645B, 2601B, a4956133c7c475ee
 exemplar/cities/v1, mai, 4202B, 4158B, ca3c49907de302ed
@@ -8085,13 +8088,17 @@ exemplar/cities/v1, mni, 206B, 160B, 101ac79db09ea1f
 exemplar/cities/v1, mr, 4456B, 4412B, 1b674c66515c4aed
 exemplar/cities/v1, ms, 329B, 284B, b0b956736a46d449
 exemplar/cities/v1, mt, 807B, 763B, ec86a46b26f82a4d
+exemplar/cities/v1, nds, -> gaa
 exemplar/cities/v1, ne, 5713B, 5669B, f3311678b8c1f1ae
 exemplar/cities/v1, nl, 932B, 888B, 3df6893d090fcacb
 exemplar/cities/v1, nn, 777B, 733B, 59929c294d4ac425
 exemplar/cities/v1, no, 740B, 696B, cfb2b50fdb2ca12f
-exemplar/cities/v1, om, 974B, 930B, 1fea72aa1c8653cc
+exemplar/cities/v1, nso, -> gaa
+exemplar/cities/v1, oc, -> gaa
+exemplar/cities/v1, om, 991B, 947B, 61a9570fd786bf3a
 exemplar/cities/v1, pcm, 3526B, 3482B, ee69c379c9509e84
 exemplar/cities/v1, pl, 1635B, 1591B, 6655bfb454ad7578
+exemplar/cities/v1, prg, -> gaa
 exemplar/cities/v1, ps, 4132B, 4088B, 3eb42e392f978023
 exemplar/cities/v1, ps-PK, 4148B, 4104B, a9154eefdeb79e58
 exemplar/cities/v1, pt, 1492B, 1448B, d83c5e2e84cb9c77
@@ -8101,6 +8108,7 @@ exemplar/cities/v1, raj, -> bgc
 exemplar/cities/v1, rm, 1284B, 1240B, a3e5aee2995580ae
 exemplar/cities/v1, ro, 868B, 824B, c75389f6566a5417
 exemplar/cities/v1, ru-UA, 82B, 36B, 903cf95fcc288516
+exemplar/cities/v1, rw, -> gaa
 exemplar/cities/v1, sa, 200B, 154B, b2fcdc461fc0bf04
 exemplar/cities/v1, sah, 349B, 305B, 4ae6d9fabacb87c7
 exemplar/cities/v1, sc, 1081B, 1037B, 2395e3b2788f10c
@@ -8117,14 +8125,17 @@ exemplar/cities/v1, sr-Latn-BA, 2220B, 2176B, 8b788775d5686544
 exemplar/cities/v1, sr-Latn-XK, 2241B, 2197B, 8fd89fff347eb9f9
 exemplar/cities/v1, sr-ME, 2213B, 2169B, 926800b07f976900
 exemplar/cities/v1, sr-XK, 2891B, 2847B, 602cc984ebf43ada
+exemplar/cities/v1, st, -> gaa
 exemplar/cities/v1, su, 74B, 28B, 1aa11217ec4c957f
 exemplar/cities/v1, sv, 958B, 914B, ed7a64cc0520835b
 exemplar/cities/v1, sw, 450B, 406B, df397a934e71951e
 exemplar/cities/v1, sw-CD, 506B, 462B, 809f508638f08659
 exemplar/cities/v1, sw-KE, 591B, 547B, de4d6e39fd8c3a03
+exemplar/cities/v1, szl, -> gaa
 exemplar/cities/v1, tg, 2000B, 1956B, 5823cb079df20db9
 exemplar/cities/v1, ti, 2451B, 2407B, e6b2c6829a8bd4e0
 exemplar/cities/v1, tk, 2256B, 2212B, edcfb864abb7dce7
+exemplar/cities/v1, tn, -> gaa
 exemplar/cities/v1, to, 1253B, 1209B, eb7cda1998fd0ebc
 exemplar/cities/v1, tr, 1211B, 1167B, 576df8b673a12334
 exemplar/cities/v1, tt, 923B, 879B, 3f21f779dfcbbd5e
@@ -8137,6 +8148,7 @@ exemplar/cities/v1, uz, 2105B, 2061B, c2f86053f994c5e0
 exemplar/cities/v1, uz-Cyrl, 4023B, 3979B, 38ece9432611eecd
 exemplar/cities/v1, vec, 2072B, 2028B, 4bd1a509ad0e07a7
 exemplar/cities/v1, vi, 348B, 303B, b955b3ec83cff273
+exemplar/cities/v1, vmw, -> gaa
 exemplar/cities/v1, wo, 965B, 921B, 6942b05bea6a5314
 exemplar/cities/v1, xh, 969B, 925B, d8722d712b486846
 exemplar/cities/v1, xnr, 550B, 506B, b1843caa8f459eb6
@@ -8147,6 +8159,7 @@ exemplar/cities/v1, yrl-CO, 3321B, 3277B, da595a1e5b5e3e2
 exemplar/cities/v1, yrl-VE, -> yrl-CO
 exemplar/cities/v1, yue, 303B, 258B, f108f1bdcbe2237f
 exemplar/cities/v1, yue-Hans, 1698B, 1654B, 6a5ae15a0c4b7640
+exemplar/cities/v1, za, -> gaa
 exemplar/cities/v1, zh-HK, 1472B, 1428B, 67fbe9ce6a5840ef
 exemplar/cities/v1, zh-MO, -> zh-HK
 exemplar/cities/v1, zu, 3593B, 3549B, f35cfc651704fcfd
@@ -21897,7 +21910,7 @@ japanese/year/names/v1, zu/3, -> ceb/3
 japanese/year/names/v1, zu/4, -> ceb/4
 japanese/year/names/v1, zu/5, -> ceb/3
 locations/root/v1, <lookup>, 383B, 74 identifiers
-locations/root/v1, <total>, 434313B, 429825B, 33 unique payloads
+locations/root/v1, <total>, 434305B, 429817B, 33 unique payloads
 locations/root/v1, am, 11075B, 10939B, c4b7db670a14b5e3
 locations/root/v1, ar, 11010B, 10874B, 8ee446c2bbadcd3b
 locations/root/v1, as, 16430B, 16294B, 9d4142240d9b8f8
@@ -21942,7 +21955,7 @@ locations/root/v1, mni, -> as
 locations/root/v1, mr, -> bgc
 locations/root/v1, my, 17285B, 17149B, ece80a5b31872c34
 locations/root/v1, ne, -> bgc
-locations/root/v1, nqo, 12345B, 12209B, 3fd7096b951a4aed
+locations/root/v1, nqo, 12340B, 12204B, 991699e48cd34f6d
 locations/root/v1, or, -> kxv-Orya
 locations/root/v1, pa, 14295B, 14159B, 22a3c88e26f8e2d9
 locations/root/v1, ps, -> ar
@@ -21955,7 +21968,7 @@ locations/root/v1, sd, -> ar
 locations/root/v1, sd-Deva, -> bgc
 locations/root/v1, si, 16284B, 16148B, 1644128bc9c49af2
 locations/root/v1, sr, -> be
-locations/root/v1, syr, 10913B, 10777B, 90933db323d091ce
+locations/root/v1, syr, 10910B, 10774B, aded41a475d4913b
 locations/root/v1, ta, 16761B, 16625B, 3df96e2b66415d41
 locations/root/v1, te, -> kxv-Telu
 locations/root/v1, tg, -> be
@@ -21973,7 +21986,7 @@ locations/root/v1, yue-Hans, 9130B, 8994B, 8e7a3b849401980e
 locations/root/v1, zh, -> yue-Hans
 locations/root/v1, zh-Hant, -> yue
 locations/v1, <lookup>, 1097B, 218 identifiers
-locations/v1, <total>, 920293B, 892469B, 204 unique payloads
+locations/v1, <total>, 920197B, 892373B, 204 unique payloads
 locations/v1, af, 3765B, 3629B, 7224f23499632ab5
 locations/v1, ak, 5735B, 5599B, db8c4787c5615982
 locations/v1, am, 218B, 80B, 8ba0fd77e5364c34
@@ -21988,7 +22001,7 @@ locations/v1, be, 9984B, 9848B, 6decef0a444f19b7
 locations/v1, bg, 6946B, 6810B, b46c277823632747
 locations/v1, bgc, 7716B, 7580B, 48485d0d5bd3152
 locations/v1, bho, 7720B, 7584B, ebb6d7cea578922
-locations/v1, blo, 8753B, 8617B, 47d9c7ff28ceb291
+locations/v1, blo, 8736B, 8600B, 480c46f92bc292bf
 locations/v1, bn, 226B, 88B, f226d6cac1ae6f55
 locations/v1, br, 3236B, 3100B, fee6e648621a1b9d
 locations/v1, brx, 14037B, 13901B, c85f967653c16414
@@ -21999,7 +22012,7 @@ locations/v1, ceb, 647B, 511B, 66fc026a3a47f8c7
 locations/v1, chr, 230B, 92B, 78eea54b8119b2
 locations/v1, cs, 4694B, 4558B, 84fe178b13094503
 locations/v1, csw, 244B, 106B, f7670f3324d1d69f
-locations/v1, cv, 4705B, 4569B, 74dfc9d05f1f09d6
+locations/v1, cv, 4702B, 4566B, 2215b14ee7da2ade
 locations/v1, cy, 3057B, 2921B, 9bb7b69d736f67b8
 locations/v1, da, 2989B, 2853B, ea6f391b6b621b40
 locations/v1, de, 3573B, 3437B, 49317b5e64ad357f
@@ -22082,10 +22095,10 @@ locations/v1, kok-Latn, 3382B, 3246B, 4c75e21ccffc6094
 locations/v1, ks, 11538B, 11402B, 3f7adf4b3eff37a5
 locations/v1, ks-Deva, 7761B, 7625B, 5f6c6e33702ba718
 locations/v1, ku, 5033B, 4897B, eb5185fe36c0b7a8
-locations/v1, kxv, 8405B, 8269B, 956c1a80b051b6ac
-locations/v1, kxv-Deva, 5881B, 5745B, 755b48e7ffb7a87c
-locations/v1, kxv-Orya, 10990B, 10854B, 1f9a9efebda9b6a8
-locations/v1, kxv-Telu, 3941B, 3805B, ec4fe3ca2cee2103
+locations/v1, kxv, 8387B, 8251B, 163e378de516f31f
+locations/v1, kxv-Deva, 5875B, 5739B, 5de77c8f1056f616
+locations/v1, kxv-Orya, 10981B, 10845B, ca57b1f71033a119
+locations/v1, kxv-Telu, 3932B, 3796B, 66623464008cf75f
 locations/v1, ky, 5270B, 5134B, 8555bb3646ba9f6c
 locations/v1, lb, 3303B, 3167B, 55c57de1537bd360
 locations/v1, lij, 3382B, 3246B, 1074f97c5e8d504b
@@ -22157,14 +22170,14 @@ locations/v1, syr, 216B, 78B, a8b49dcfa499e945
 locations/v1, szl, 3374B, 3238B, 3924b130d0762022
 locations/v1, ta, 241B, 103B, c47870f5bfe03d00
 locations/v1, te, 257B, 119B, bb30f7492b216a45
-locations/v1, tg, 6689B, 6553B, 4dc80f8acf291598
+locations/v1, tg, 6686B, 6550B, 5eded71d68bac8dd
 locations/v1, th, 227B, 89B, 110852097909e7de
 locations/v1, ti, 7540B, 7404B, d1b15856384a923d
 locations/v1, tk, 7085B, 6949B, a953e43f9b830b02
 locations/v1, tn, 3327B, 3191B, 1f40ea562bd807e
 locations/v1, to, 5354B, 5218B, 3dd60d0c0eb7af18
 locations/v1, tr, 4344B, 4208B, eb8f45bcc2198dfd
-locations/v1, tt, 4912B, 4776B, 6d375a229d54f48
+locations/v1, tt, 4909B, 4773B, 493eca105514f0f7
 locations/v1, ug, 10481B, 10345B, c3a35af3c449c22b
 locations/v1, uk, 8449B, 8313B, 5b22d85e9feb50f4
 locations/v1, und, 3344B, 3208B, 859d1c5ad7430fa4
@@ -22172,12 +22185,12 @@ locations/v1, ur, 10864B, 10728B, fae2fe54bd1735a2
 locations/v1, ur-IN, 10801B, 10665B, 508da4a32ada1aa8
 locations/v1, uz, 6757B, 6621B, e151705292ad9faf
 locations/v1, uz-Cyrl, 7039B, 6903B, 65e7fc1915b59c41
-locations/v1, vec, 5262B, 5126B, 2398436d6368d001
+locations/v1, vec, 5240B, 5104B, 58a623483c28e742
 locations/v1, vi, 2427B, 2291B, 98c9996979f1511e
 locations/v1, vmw, 3388B, 3252B, 753521eb9493bff2
 locations/v1, wo, 4403B, 4267B, 399cd74a21347709
 locations/v1, xh, 4967B, 4831B, b9d3301d208faea7
-locations/v1, xnr, 2496B, 2360B, 1644714f2dab3c55
+locations/v1, xnr, 2490B, 2354B, 5dd57ee6dab78b85
 locations/v1, yo, 6816B, 6680B, a134757b07270cb9
 locations/v1, yo-BJ, 6700B, 6564B, 9bab8bd31bd5afe6
 locations/v1, yrl, 8388B, 8252B, f687ae66de805311
