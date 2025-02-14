@@ -16,7 +16,7 @@ fn main() {
     let prefs = locale!("en").into();
 
     let offset_formatter =
-        TimeFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetLong).unwrap();
+        TimeFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetFixed).unwrap();
     let non_location_formatter =
         TimeFormatter::try_new(prefs, fieldsets::zone::GenericLong).unwrap();
     let city_formatter = TimeFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
