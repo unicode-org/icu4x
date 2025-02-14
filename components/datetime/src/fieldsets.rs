@@ -1136,7 +1136,7 @@ pub mod zone {
         ///
         /// ```
         /// use icu::calendar::Date;
-        /// use icu::timezone::{ZonedDateTimeParser, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+        /// use icu::timezone::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
