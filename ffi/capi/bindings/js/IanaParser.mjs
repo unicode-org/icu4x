@@ -10,13 +10,13 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
 *It also supports normalizing and canonicalizing the IANA strings.
 *
-*See the [Rust documentation for `TimeZoneIdMapperWithFastCanonicalization`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html) for more information.
+*See the [Rust documentation for `IanaParser`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParser.html) for more information.
 */
-const TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_destroy_mv1(ptr);
+const IanaParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_IanaParser_destroy_mv1(ptr);
 });
 
-export class TimeZoneIdMapperWithFastCanonicalization {
+export class IanaParser {
     
     // Internal ptr reference:
     #ptr = null;
@@ -27,7 +27,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("TimeZoneIdMapperWithFastCanonicalization is an Opaque type. You cannot call its constructor.");
+            console.error("IanaParser is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -36,7 +36,7 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            TimeZoneIdMapperWithFastCanonicalization_box_destroy_registry.register(this, this.#ptr);
+            IanaParser_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -46,10 +46,10 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     }
 
     #defaultConstructor() {
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_mv1();
+        const result = wasm.icu4x_IanaParser_create_mv1();
     
         try {
-            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.internalConstructor, result, []);
+            return new IanaParser(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -58,14 +58,14 @@ export class TimeZoneIdMapperWithFastCanonicalization {
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_IanaParser_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new TimeZoneIdMapperWithFastCanonicalization(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new IanaParser(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -73,14 +73,33 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         }
     }
 
-    canonicalizeIana(value) {
+    ianaToBcp47(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
+        
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_IanaParser_iana_to_bcp47_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+    
+        try {
+            return write.readString8();
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            write.free();
+        }
+    }
+
+    normalizeIana(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+        const result = wasm.icu4x_IanaParser_normalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             return result === 0 ? null : write.readString8();
@@ -93,14 +112,34 @@ export class TimeZoneIdMapperWithFastCanonicalization {
         }
     }
 
-    canonicalIanaFromBcp47(value) {
+    canonicalizeIana(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_TimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+        const result = wasm.icu4x_IanaParser_canonicalize_iana_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
+    
+        try {
+            return result === 0 ? null : write.readString8();
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            write.free();
+        }
+    }
+
+    findCanonicalIanaFromBcp47(value) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
+        
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        
+        const result = wasm.icu4x_IanaParser_find_canonical_iana_from_bcp47_mv1(this.ffiValue, ...valueSlice.splat(), write.buffer);
     
         try {
             return result === 0 ? null : write.readString8();

@@ -5,7 +5,7 @@ import { Locale } from "icu4x"
 import { Time } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, dateCalendarLocaleName, timeHour, timeMinute, timeSecond, timeNanosecond, zoneBcp47Id, zoneOffsetSeconds, zoneDst) {
+export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, dateCalendarLocaleName, timeHour, timeMinute, timeSecond, timeSubsecond, zoneBcp47Id, zoneOffsetSeconds, zoneDst) {
     
     let zonedDateTimeFormatterLocale = Locale.fromString(zonedDateTimeFormatterLocaleName);
     
@@ -17,7 +17,7 @@ export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterL
     
     let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
     
-    let time = new Time(timeHour,timeMinute,timeSecond,timeNanosecond);
+    let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
     let zone = new TimeZoneInfo(zoneBcp47Id,zoneOffsetSeconds,zoneDst);
     
@@ -26,7 +26,7 @@ export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterL
 
     return out;
 }
-export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeNanosecond, zoneBcp47Id, zoneOffsetSeconds, zoneDst) {
+export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneBcp47Id, zoneOffsetSeconds, zoneDst) {
     
     let zonedDateTimeFormatterLocale = Locale.fromString(zonedDateTimeFormatterLocaleName);
     
@@ -34,7 +34,7 @@ export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatt
     
     let date = new IsoDate(dateYear,dateMonth,dateDay);
     
-    let time = new Time(timeHour,timeMinute,timeSecond,timeNanosecond);
+    let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
     let zone = new TimeZoneInfo(zoneBcp47Id,zoneOffsetSeconds,zoneDst);
     

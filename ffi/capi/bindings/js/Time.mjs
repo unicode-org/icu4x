@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 *
-*See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html) for more information.
+*See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
 */
 const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Time_destroy_mv1(ptr);
@@ -42,10 +42,10 @@ export class Time {
         return this.#ptr;
     }
 
-    #defaultConstructor(hour, minute, second, nanosecond) {
+    #defaultConstructor(hour, minute, second, subsecond) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, nanosecond);
+        const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, subsecond);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -132,8 +132,8 @@ export class Time {
         finally {}
     }
 
-    get nanosecond() {
-        const result = wasm.icu4x_Time_nanosecond_mv1(this.ffiValue);
+    get subsecond() {
+        const result = wasm.icu4x_Time_subsecond_mv1(this.ffiValue);
     
         try {
             return result;
@@ -142,7 +142,7 @@ export class Time {
         finally {}
     }
 
-    constructor(hour, minute, second, nanosecond) {
+    constructor(hour, minute, second, subsecond) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
         } else if (arguments[0] === diplomatRuntime.internalConstructor) {

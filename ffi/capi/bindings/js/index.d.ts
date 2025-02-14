@@ -174,9 +174,9 @@ export { Time } from "./Time"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
-export { TimeZoneIdMapper } from "./TimeZoneIdMapper"
+export { IanaParser } from "./IanaParser"
 
-export { TimeZoneIdMapperWithFastCanonicalization } from "./TimeZoneIdMapperWithFastCanonicalization"
+export { IanaParserExtended } from "./IanaParserExtended"
 
 export { MeasureUnit } from "./MeasureUnit"
 

@@ -321,11 +321,6 @@ lazy_static::lazy_static! {
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
-        "icu::time::types::Time",
-        "icu::time::types::DateTime",
-        "icu::time::types::UtcOffset",
-        "icu::time::types::TimeZoneVariant",
-        "icu::time::types::ZonedDateTime",
         "icu::datetime::input::Date",
         "icu::datetime::input::DateTime",
         "icu::datetime::input::Time",
@@ -333,6 +328,8 @@ lazy_static::lazy_static! {
         "icu::datetime::input::TimeZoneInfo",
         "icu::datetime::input::UtcOffset",
         "icu::datetime::input::ZonedDateTime",
+        "icu::time::zone::IanaParser",
+        "icu::time::zone::WindowsParser",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -377,10 +374,10 @@ lazy_static::lazy_static! {
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",
-        "icu::time::types::IsoHour",
-        "icu::time::types::IsoMinute",
-        "icu::time::types::IsoSecond",
-        "icu::time::types::NanoSecond",
+        "icu::time::Hour",
+        "icu::time::Minute",
+        "icu::time::Second",
+        "icu::time::Nanosecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.

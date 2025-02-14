@@ -74,10 +74,10 @@ pub mod ffi {
         pub fn second(&self) -> u8 {
             self.0.second.into()
         }
-        /// Returns the nanosecond in this time
-        #[diplomat::rust_link(icu::time::Time::nanosecond, StructField)]
+        /// Returns the subsecond in this time as nanoseconds
+        #[diplomat::rust_link(icu::time::Time::subsecond, StructField)]
         #[diplomat::attr(auto, getter)]
-        pub fn nanosecond(&self) -> u32 {
+        pub fn subsecond(&self) -> u32 {
             self.0.subsecond.into()
         }
     }

@@ -11,12 +11,12 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
+namespace capi { struct IanaParser; }
+class IanaParser;
 namespace capi { struct IsoDate; }
 class IsoDate;
 namespace capi { struct Time; }
 class Time;
-namespace capi { struct TimeZoneIdMapper; }
-class TimeZoneIdMapper;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 struct IsoDateTime;
@@ -64,7 +64,7 @@ public:
 
   inline void set_time_zone_id(std::string_view id);
 
-  inline void set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id);
+  inline void set_iana_time_zone_id(const icu4x::IanaParser& mapper, std::string_view id);
 
   inline std::string time_zone_id() const;
 

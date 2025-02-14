@@ -9,23 +9,19 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
 *It also supports normalizing and canonicalizing the IANA strings.
 *
-*See the [Rust documentation for `TimeZoneIdMapper`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapper.html) for more information.
+*See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
 */
 
 
-export class TimeZoneIdMapper {
+export class IanaParserExtended {
     
     get ffiValue(): pointer;
 
-    static createWithProvider(provider: DataProvider): TimeZoneIdMapper;
-
-    ianaToBcp47(value: string): string;
-
-    normalizeIana(value: string): string | null;
+    static createWithProvider(provider: DataProvider): IanaParserExtended;
 
     canonicalizeIana(value: string): string | null;
 
-    findCanonicalIanaFromBcp47(value: string): string | null;
+    canonicalIanaFromBcp47(value: string): string | null;
 
     constructor();
 }
