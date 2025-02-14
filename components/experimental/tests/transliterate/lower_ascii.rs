@@ -15,6 +15,7 @@ struct TransliteratorMultiSourceProvider<'a>(
         icu_properties::provider::Baked,
         icu_normalizer::provider::Baked,
         icu_casemap::provider::Baked,
+        icu_locale::provider::Baked,
     >,
 );
 
@@ -26,6 +27,7 @@ where
         icu_properties::provider::Baked,
         icu_normalizer::provider::Baked,
         icu_casemap::provider::Baked,
+        icu_locale::provider::Baked,
     >: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -69,6 +71,7 @@ fn test_lower_ascii() {
     );
     let provider = TransliteratorMultiSourceProvider(collection.as_provider());
     let t = Transliterator::try_new_unstable(
+        &provider,
         &provider,
         &provider,
         &provider,
