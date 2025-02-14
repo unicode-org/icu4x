@@ -247,6 +247,7 @@ where
             .map_err(|e| e.0)
     }
 
+    #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
     pub(crate) fn try_new_internal_with_names<P0, P1, L>(
         provider_p: &P0,
         provider: &P1,
@@ -498,6 +499,7 @@ where
         .map_err(|e| e.0)
     }
 
+    #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
     pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
         provider_p: &P0,
         provider: &P1,

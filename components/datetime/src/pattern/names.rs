@@ -859,6 +859,7 @@ where
     ///     "12:00 a.m."
     /// );
     /// ```
+    #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(
         self,
@@ -879,6 +880,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
     pub fn try_into_formatter_unstable<P>(
         self,
         provider: &P,
@@ -899,6 +901,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "serde")]
     pub fn try_into_formatter_with_buffer_provider<P>(
         self,
@@ -1042,6 +1045,7 @@ where
     ///     "12:00 a.m."
     /// );
     /// ```
+    #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(
         self,
@@ -1063,6 +1067,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
     pub fn try_into_formatter_unstable<P>(
         self,
         provider: &P,
@@ -1084,6 +1089,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "serde")]
     pub fn try_into_formatter_with_buffer_provider<P>(
         self,
