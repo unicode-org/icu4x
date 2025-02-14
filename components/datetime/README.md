@@ -27,7 +27,7 @@ The formatters accept input types from the [`calendar`](icu_calendar) and
 1. [`Date`](icu_calendar::Date)
 2. [`DateTime`](icu_time::DateTime)
 3. [`Time`](icu_time::Time)
-4. [`UtcOffset`](icu_time::UtcOffset)
+4. [`UtcOffset`](icu_time::zone::UtcOffset)
 5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 6. [`ZonedDateTime`](icu_time::ZonedDateTime)
 
