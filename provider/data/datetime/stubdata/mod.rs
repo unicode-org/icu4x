@@ -27,6 +27,7 @@ include!("islamic_date_neo_skeleton_patterns_v1.rs.data");
 include!("dangi_date_neo_skeleton_patterns_v1.rs.data");
 include!("metazone_specific_names_long_v1.rs.data");
 include!("metazone_generic_names_short_v1.rs.data");
+include!("metazone_generic_standard_names_long_v1.rs.data");
 include!("gregorian_month_names_v1.rs.data");
 include!("hebrew_year_names_v1.rs.data");
 include!("japanese_extended_date_neo_skeleton_patterns_v1.rs.data");
@@ -109,6 +110,7 @@ macro_rules! impl_data_provider {
         impl_dangi_date_neo_skeleton_patterns_v1!($provider);
         impl_metazone_specific_names_long_v1!($provider);
         impl_metazone_generic_names_short_v1!($provider);
+        impl_metazone_generic_standard_names_long_v1!($provider);
         impl_gregorian_month_names_v1!($provider);
         impl_hebrew_year_names_v1!($provider);
         impl_japanese_extended_date_neo_skeleton_patterns_v1!($provider);
