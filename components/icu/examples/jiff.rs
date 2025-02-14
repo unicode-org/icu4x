@@ -6,7 +6,7 @@ use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    timezone::{Time, TimeZoneIdMapper, UtcOffset, ZonedDateTime, ZonedDateTimeParser},
+    timezone::{Time, TimeZoneIdMapper, UtcOffset, ZoneOffsetCalculator, ZonedDateTime},
 };
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
@@ -45,9 +45,13 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
 
     // Alternatively, the ICU ZonedDateTime can be parsed from a serialized IXDTF string.
     assert_eq!(
-        ZonedDateTimeParser::new()
-            .parse(&zoned.to_string(), icu::calendar::Iso)
-            .unwrap(),
+        ZonedDateTime::try_from_str(
+            &zoned.to_string(),
+            icu::calendar::Iso,
+            TimeZoneIdMapper::new(),
+            &ZoneOffsetCalculator::new()
+        )
+        .unwrap(),
         zoned_date_time
     );
 
