@@ -10,7 +10,6 @@ use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
 use icu::time::provider::*;
-use icu::time::zone::TimeZoneVariant;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -32,31 +31,19 @@ pub(crate) struct Caches {
     primary_zones: Cache<BTreeMap<TimeZone, Region>>,
     mz_period: Cache<MetazonePeriod<'static>>,
     offset_period: Cache<<TimeZoneOffsetsV1 as DynamicDataMarker>::DataStruct>,
-    reverse_metazones: Cache<BTreeMap<(MetazoneId, MzVariant), Vec<TimeZone>>>,
+    reverse_metazones: Cache<BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>>,
 }
 
 #[derive(PartialEq, Eq, Ord, PartialOrd, Clone, Copy, Debug)]
-enum MzVariant {
-    Generic,
-    Standard,
+enum MzMembership {
+    Any,
     Daylight,
-}
-
-impl From<TimeZoneVariant> for MzVariant {
-    fn from(value: TimeZoneVariant) -> Self {
-        match value {
-            TimeZoneVariant::Daylight => Self::Daylight,
-            TimeZoneVariant::Standard => Self::Standard,
-            // tilde dep on icu_timezone
-            _ => unreachable!(),
-        }
-    }
 }
 
 impl SourceDataProvider {
     fn reverse_metazones(
         &self,
-    ) -> Result<&BTreeMap<(MetazoneId, MzVariant), Vec<TimeZone>>, DataError> {
+    ) -> Result<&BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>, DataError> {
         self.cldr()?
             .tz_caches
             .reverse_metazones
@@ -65,7 +52,7 @@ impl SourceDataProvider {
                 let offset_periods = self.offset_period()?;
 
                 let mut reverse_metazones =
-                    BTreeMap::<(MetazoneId, MzVariant), Vec<TimeZone>>::new();
+                    BTreeMap::<(MetazoneId, MzMembership), Vec<TimeZone>>::new();
 
                 for c in mz_period.list.iter0() {
                     let &tz = c.key0();
@@ -76,7 +63,6 @@ impl SourceDataProvider {
                         .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
                         .peekable();
                     let mut offsets = offset_periods
-                        .0
                         .get0(&tz)
                         .unwrap()
                         .into_iter1_copied()
@@ -87,19 +73,14 @@ impl SourceDataProvider {
                     let mut curr_mz = mzs.next().unwrap();
                     loop {
                         if let Some(mz) = curr_mz.1 .0 {
-                            // The generic and Standard names are always required
                             reverse_metazones
-                                .entry((mz, MzVariant::Generic))
-                                .or_default()
-                                .push(tz);
-                            reverse_metazones
-                                .entry((mz, MzVariant::Standard))
+                                .entry((mz, MzMembership::Any))
                                 .or_default()
                                 .push(tz);
                             // The daylight name is only required if a zone usign this metazone actually observes DST
                             if curr_offset.1 .1 != 0 {
                                 reverse_metazones
-                                    .entry((mz, MzVariant::Daylight))
+                                    .entry((mz, MzMembership::Daylight))
                                     .or_default()
                                     .push(tz);
                             }
@@ -337,6 +318,7 @@ impl_iterable_data_provider!(
     ExemplarCitiesV1,
     ExemplarCitiesRootV1,
     MetazoneGenericNamesLongV1,
+    MetazoneStandardNamesLongV1,
     MetazoneGenericNamesShortV1,
     MetazoneSpecificNamesLongV1,
     MetazoneSpecificNamesShortV1
@@ -429,48 +411,64 @@ mod tests {
                 .unwrap()
         };
 
-        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1> =
-            provider.load(en).unwrap();
+        let generic_names_long: DataPayload<MetazoneGenericNamesLongV1> =
+            provider.load(en).unwrap().payload;
+
+        let generic_standard_names_long: DataPayload<MetazoneStandardNamesLongV1> =
+            provider.load(en).unwrap().payload;
+
         assert_eq!(
             "Australian Central Western Time",
             generic_names_long
-                .payload
                 .get()
                 .defaults
                 .get(&metazone_now(TimeZone(tinystr!(8, "aueuc"))))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .defaults
+                    .get(&metazone_now(TimeZone(tinystr!(8, "aueuc")))))
                 .unwrap()
         );
         assert_eq!(
             "Coordinated Universal Time",
             generic_names_long
-                .payload
                 .get()
                 .overrides
                 .get(&TimeZone(tinystr!(8, "utc")))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .overrides
+                    .get(&TimeZone(tinystr!(8, "utc"))))
                 .unwrap()
         );
 
-        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1> =
-            provider.load(en).unwrap();
+        let specific_names_long: DataPayload<MetazoneSpecificNamesLongV1> =
+            provider.load(en).unwrap().payload;
         assert_eq!(
             "Australian Central Western Standard Time",
             specific_names_long
-                .payload
                 .get()
                 .defaults
                 .get(&(
                     metazone_now(TimeZone(tinystr!(8, "aueuc"))),
                     TimeZoneVariant::Standard
                 ))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .defaults
+                    .get(&metazone_now(TimeZone(tinystr!(8, "aueuc")))))
                 .unwrap()
         );
         assert_eq!(
             "Coordinated Universal Time",
             specific_names_long
-                .payload
                 .get()
                 .overrides
                 .get(&(TimeZone(tinystr!(8, "utc")), TimeZoneVariant::Standard))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .overrides
+                    .get(&TimeZone(tinystr!(8, "utc"))))
                 .unwrap()
         );
 

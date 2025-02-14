@@ -7,7 +7,7 @@
 use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use zerovec::{ule::NichedOption, ZeroMap, ZeroMap2d};
+use zerovec::{ule::NichedOption, ZeroMap, ZeroMap2d, ZeroVec};
 
 use icu_time::{provider::MinutesSinceEpoch, zone::TimeZoneVariant, TimeZone};
 
@@ -162,7 +162,8 @@ pub struct ExemplarCities<'data> {
 /// </div>
 #[icu_provider::data_struct(
     marker(MetazoneGenericNamesLongV1, "time_zone/generic_long@1", has_checksum),
-    marker(MetazoneGenericNamesShortV1, "time_zone/generic_short@1", has_checksum)
+    marker(MetazoneGenericNamesShortV1, "time_zone/generic_short@1", has_checksum),
+    marker(MetazoneStandardNamesLongV1, "time_zone/standard_long@1", has_checksum)
 )]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -209,6 +210,9 @@ pub struct MetazoneSpecificNames<'data> {
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub overrides: ZeroMap<'data, (TimeZone, TimeZoneVariant), str>,
+    /// The metazones for which the standard name is in `MetazoneGenericStandardNames*V1`
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub use_standard: ZeroVec<'data, MetazoneId>,
 }
 
 /// Metazone ID in a compact format

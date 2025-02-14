@@ -645,6 +645,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     exemplars_root: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
     exemplars: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
     mz_generic_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_generic_standard_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
     mz_generic_short: OptionalNames<(), &'l tz::MzGeneric<'l>>,
     mz_specific_long: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
@@ -2250,6 +2251,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             exemplars_root: self.exemplars_root.get().inner,
             exemplars: self.exemplars.get().inner,
             mz_generic_long: self.mz_generic_long.get().inner,
+            mz_generic_standard_long: self.mz_generic_long.get().inner,
             mz_generic_short: self.mz_generic_short.get().inner,
             mz_specific_long: self.mz_specific_long.get().inner,
             mz_specific_short: self.mz_specific_short.get().inner,
@@ -3048,6 +3050,8 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) exemplars: Option<&'a tz::ExemplarCities<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(crate) mz_generic_long: Option<&'a tz::MzGeneric<'a>>,
+    /// The long metazone names shared between generic and standard, e.g. Gulf Standard Time
+    pub(crate) mz_standard_long: Option<&'a tz::MzGeneric<'a>>,
     /// The generic short metazone names, e.g. PT
     pub(crate) mz_generic_short: Option<&'a tz::MzGeneric<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
@@ -3067,6 +3071,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             exemplars: self.exemplars.get_option(),
             exemplars_root: self.exemplars_root.get_option(),
             mz_generic_long: self.mz_generic_long.get_option(),
+            mz_standard_long: self.mz_generic_standard_long.get_option(),
             mz_generic_short: self.mz_generic_short.get_option(),
             mz_specific_long: self.mz_specific_long.get_option(),
             mz_specific_short: self.mz_specific_short.get_option(),

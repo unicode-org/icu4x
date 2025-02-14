@@ -45,6 +45,7 @@ include!("persian_month_names_v1.rs.data");
 include!("time_zone_essentials_v1.rs.data");
 include!("locations_v1.rs.data");
 include!("islamic_year_names_v1.rs.data");
+include!("metazone_standard_names_long_v1.rs.data");
 include!("time_neo_skeleton_patterns_v1.rs.data");
 include!("day_period_names_v1.rs.data");
 include!("chinese_month_names_v1.rs.data");
@@ -127,6 +128,7 @@ macro_rules! impl_data_provider {
         impl_time_zone_essentials_v1!($provider);
         impl_locations_v1!($provider);
         impl_islamic_year_names_v1!($provider);
+        impl_metazone_standard_names_long_v1!($provider);
         impl_time_neo_skeleton_patterns_v1!($provider);
         impl_day_period_names_v1!($provider);
         impl_chinese_month_names_v1!($provider);

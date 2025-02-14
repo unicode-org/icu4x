@@ -22205,219 +22205,181 @@ locations/v1, zh-Hant, 171B, 33B, ce01450708914514
 locations/v1, zh-MO, -> zh-HK
 locations/v1, zh-SG, 213B, 75B, 7d6a3ad8fbe1615
 locations/v1, zu, 8939B, 8803B, 4ffe068623c9adb7
-metazone/generic/names/long/v1, <lookup>, 1053B, 211 identifiers
-metazone/generic/names/long/v1, <total>, 614187B, 596865B, 191 unique payloads
-metazone/generic/names/long/v1, af, 1747B, 1656B, 689f883a6dd46f98
-metazone/generic/names/long/v1, ak, 2958B, 2868B, 3dbb1d48550987e9
-metazone/generic/names/long/v1, am, 5820B, 5730B, 3ce495b785438626
-metazone/generic/names/long/v1, ar, 3330B, 3239B, ce4650e9306ae373
-metazone/generic/names/long/v1, ar-LY, 3300B, 3209B, 8d98c67475ce9cc
+metazone/generic/names/long/v1, <lookup>, 877B, 173 identifiers
+metazone/generic/names/long/v1, <total>, 324780B, 309490B, 168 unique payloads
+metazone/generic/names/long/v1, af, 978B, 887B, 138f14f59bd51efe
+metazone/generic/names/long/v1, ak, 1546B, 1455B, e0996c7b1d2bb4d6
+metazone/generic/names/long/v1, am, 3357B, 3266B, 927f8d316528ea4d
+metazone/generic/names/long/v1, ar, 1943B, 1852B, ec70c8a4a6e10923
+metazone/generic/names/long/v1, ar-LY, 1913B, 1822B, 1f90e973386f897e
 metazone/generic/names/long/v1, ar-SA, -> ar-LY
-metazone/generic/names/long/v1, as, 7465B, 7375B, 5dbc2a14e6d51d6b
-metazone/generic/names/long/v1, ast, 2799B, 2708B, e1fe1379a891980
-metazone/generic/names/long/v1, az, 2229B, 2138B, 8efe37cd8c7119de
-metazone/generic/names/long/v1, bal-Latn, 3288B, 3198B, b793f450d45b90a3
-metazone/generic/names/long/v1, be, 5299B, 5209B, 95ff36b36288cb78
-metazone/generic/names/long/v1, bg, 4679B, 4588B, 12ce9b67b4de23f2
-metazone/generic/names/long/v1, bgc, 146B, 54B, 31eb283c46797017
-metazone/generic/names/long/v1, bho, -> bgc
-metazone/generic/names/long/v1, blo, 3083B, 2992B, af0e984a8ef5e291
-metazone/generic/names/long/v1, bn, 5837B, 5746B, 1625744e120dfb09
-metazone/generic/names/long/v1, br, 1787B, 1696B, f5f7c141e4bc1834
-metazone/generic/names/long/v1, brx, 5884B, 5793B, c186256d103779f8
-metazone/generic/names/long/v1, bs, 4065B, 3975B, 17d76ea961b4184a
-metazone/generic/names/long/v1, bs-Cyrl, 6141B, 6051B, a44dc3702de88e2b
-metazone/generic/names/long/v1, ca, 3630B, 3540B, d140bbb53fad671e
-metazone/generic/names/long/v1, ceb, 1870B, 1779B, 6eea7b9377cdd2e3
-metazone/generic/names/long/v1, chr, 3698B, 3607B, fa03f5df77dbb0d8
-metazone/generic/names/long/v1, cs, 3642B, 3552B, c21dfc21e447d1d
-metazone/generic/names/long/v1, csw, 155B, 63B, 7987626a47352394
-metazone/generic/names/long/v1, cv, 5282B, 5192B, e26cb24a6ab796db
-metazone/generic/names/long/v1, cy, 1930B, 1839B, 780217644e61ad14
-metazone/generic/names/long/v1, da, 2036B, 1945B, 5ddd73a3268e6392
-metazone/generic/names/long/v1, de, 3171B, 3081B, 62b406aa828fa40e
-metazone/generic/names/long/v1, de-CH, 3164B, 3074B, 326181002c557efb
-metazone/generic/names/long/v1, doi, 696B, 605B, b5b0b0c62009ed3a
-metazone/generic/names/long/v1, dsb, 3068B, 2978B, b33e6e8974088423
-metazone/generic/names/long/v1, ee, 3669B, 3579B, 7d3f02959da8e48c
-metazone/generic/names/long/v1, el, 5045B, 4955B, b8c93ba046586269
-metazone/generic/names/long/v1, en, 1584B, 1493B, 44e5b6e519b6217a
-metazone/generic/names/long/v1, en-001, 1597B, 1506B, 13c27afdc13c2a9f
-metazone/generic/names/long/v1, en-CA, 1599B, 1508B, 508f5363c6bdda2d
-metazone/generic/names/long/v1, en-IN, 1614B, 1523B, e8fbf3e1dc08b7c5
-metazone/generic/names/long/v1, eo, 127B, 35B, 15ba080ade827a7c
-metazone/generic/names/long/v1, es, 2308B, 2217B, d3af4abec6a01071
-metazone/generic/names/long/v1, es-419, 2151B, 2060B, 8edeeb851664b53c
-metazone/generic/names/long/v1, es-AR, 2176B, 2085B, 9d2aa994527ca98d
-metazone/generic/names/long/v1, es-BO, -> es-AR
-metazone/generic/names/long/v1, es-CL, -> es-AR
-metazone/generic/names/long/v1, es-CO, -> es-AR
-metazone/generic/names/long/v1, es-CR, -> es-AR
-metazone/generic/names/long/v1, es-DO, -> es-AR
-metazone/generic/names/long/v1, es-EC, -> es-AR
-metazone/generic/names/long/v1, es-GT, -> es-AR
-metazone/generic/names/long/v1, es-HN, -> es-AR
-metazone/generic/names/long/v1, es-MX, 2184B, 2093B, a36f5f7ac5cf03a3
-metazone/generic/names/long/v1, es-NI, -> es-AR
-metazone/generic/names/long/v1, es-PA, -> es-AR
-metazone/generic/names/long/v1, es-PE, -> es-AR
-metazone/generic/names/long/v1, es-PY, -> es-AR
-metazone/generic/names/long/v1, es-US, 2271B, 2180B, c43b60024e1893fa
-metazone/generic/names/long/v1, es-VE, -> es-AR
-metazone/generic/names/long/v1, et, 2964B, 2874B, f6ecfe6a32454f82
-metazone/generic/names/long/v1, eu, 3740B, 3650B, 7a438695f720c5ad
-metazone/generic/names/long/v1, fa, 2677B, 2586B, 2cafb1715b74f8fa
-metazone/generic/names/long/v1, fa-AF, 2986B, 2895B, 1441be21d9c4c768
-metazone/generic/names/long/v1, ff-Adlm, 11758B, 11668B, 275aaef504c328d9
-metazone/generic/names/long/v1, fi, 3217B, 3127B, a23ea735ee6d7ab3
-metazone/generic/names/long/v1, fil, 2106B, 2015B, 8d53a9d6c9f4c3c5
-metazone/generic/names/long/v1, fo, 1671B, 1580B, 67744a0d1e1df0ef
-metazone/generic/names/long/v1, fr, 3922B, 3832B, fd0ee49ff559d5a3
-metazone/generic/names/long/v1, fr-CA, 3856B, 3766B, 930a8634f5872634
-metazone/generic/names/long/v1, fy, 2894B, 2804B, e83cc23e82f5bc2
-metazone/generic/names/long/v1, ga, 3273B, 3183B, 4a2820f4b5440c34
-metazone/generic/names/long/v1, gaa, 133B, 41B, fa86a25031eb24e5
-metazone/generic/names/long/v1, gd, 3290B, 3200B, 4e642a46e69d329e
-metazone/generic/names/long/v1, gl, 3439B, 3349B, 250cce2d60d73765
-metazone/generic/names/long/v1, gu, 5082B, 4991B, 25ae93dbcb3fb5cb
-metazone/generic/names/long/v1, ha, 3360B, 3270B, 5a334a0a4378369e
-metazone/generic/names/long/v1, he, 2779B, 2688B, 67b9a5e880f6db49
-metazone/generic/names/long/v1, hi, 4539B, 4448B, 2052316a0d93a427
-metazone/generic/names/long/v1, hi-Latn, 1685B, 1594B, 2bea3003791768a1
-metazone/generic/names/long/v1, hr, 3795B, 3705B, ab2d2cbbe937bd74
-metazone/generic/names/long/v1, hsb, 3089B, 2999B, ac92c1b66afcae7f
-metazone/generic/names/long/v1, hu, 3457B, 3367B, ffc059ea236d8bd2
-metazone/generic/names/long/v1, hy, 6342B, 6252B, b35380ca84efa2a9
-metazone/generic/names/long/v1, ia, 2256B, 2165B, f4435869cf290a40
-metazone/generic/names/long/v1, id, 1886B, 1795B, 2c301ba1edb70312
-metazone/generic/names/long/v1, ie, 127B, 35B, 3707be007fdfc704
-metazone/generic/names/long/v1, ig, 2129B, 2038B, eb46633455490bdd
-metazone/generic/names/long/v1, ii, 117B, 25B, a4dd505210e3e0e7
-metazone/generic/names/long/v1, is, 3238B, 3148B, 159c926c6f01e7ba
-metazone/generic/names/long/v1, it, 3497B, 3407B, 865318fa73f292ec
-metazone/generic/names/long/v1, ja, 2290B, 2199B, 7580026f2ff85423
-metazone/generic/names/long/v1, jv, 2082B, 1991B, e1daeb59b8bf9483
-metazone/generic/names/long/v1, ka, 7528B, 7438B, 3de86e14ba471183
-metazone/generic/names/long/v1, kea, 737B, 646B, 3b5327830c69aeb5
-metazone/generic/names/long/v1, kgp, 3813B, 3723B, 9a232bf2acb15564
-metazone/generic/names/long/v1, kk, 3498B, 3407B, be2e6a5147b66790
-metazone/generic/names/long/v1, km, 8919B, 8829B, 7f672251e2d5ec2a
-metazone/generic/names/long/v1, kn, 6167B, 6076B, d4510add248c4541
-metazone/generic/names/long/v1, ko, 2359B, 2268B, f02f1d0de8a4aa25
-metazone/generic/names/long/v1, ko-KP, 2353B, 2262B, 9896d6f8900810f1
-metazone/generic/names/long/v1, kok, 4620B, 4529B, dd60dfb0afe49f1c
-metazone/generic/names/long/v1, kok-Latn, 118B, 26B, 7c9d7cef100b8923
-metazone/generic/names/long/v1, ks, 5257B, 5167B, 4cb5de394326cbbf
-metazone/generic/names/long/v1, ks-Deva, 502B, 411B, 52ce5a66390ef651
-metazone/generic/names/long/v1, ku, 3434B, 3344B, 81d0e3675f3c3a61
-metazone/generic/names/long/v1, kxv, 3046B, 2956B, 43facb2c3e484c41
-metazone/generic/names/long/v1, kxv-Deva, 5045B, 4954B, 2a5d2c9b81949eb9
-metazone/generic/names/long/v1, kxv-Orya, 5854B, 5763B, 2598b48614f548b5
-metazone/generic/names/long/v1, kxv-Telu, 5966B, 5875B, b310efdae1dd8a79
-metazone/generic/names/long/v1, ky, 4343B, 4252B, e51632e0a12b7a83
-metazone/generic/names/long/v1, lb, 3025B, 2935B, c7bd7f178ff542e1
-metazone/generic/names/long/v1, lij, 126B, 34B, bac96148e7de915a
-metazone/generic/names/long/v1, lmo, 121B, 29B, efd9cc1a8b1ab3b6
-metazone/generic/names/long/v1, lo, 7747B, 7657B, 22c2f29b13731b43
-metazone/generic/names/long/v1, lt, 3572B, 3482B, 67f37d2a17e7781
-metazone/generic/names/long/v1, lv, 3281B, 3191B, e0a41f6e3c051dc3
-metazone/generic/names/long/v1, mai, 5457B, 5366B, 8b5a26f2b74fdc25
-metazone/generic/names/long/v1, mi, 2841B, 2751B, 573c73270e23c399
-metazone/generic/names/long/v1, mk, 3736B, 3645B, 5482f681d6169e06
-metazone/generic/names/long/v1, ml, 6074B, 5983B, 7b5f86faaa1e3874
-metazone/generic/names/long/v1, mn, 4913B, 4823B, 14b708ce02ff9234
-metazone/generic/names/long/v1, mni, 825B, 734B, 245fc42285c69319
-metazone/generic/names/long/v1, mr, 5175B, 5084B, 634e01173da3458a
-metazone/generic/names/long/v1, ms, 1894B, 1803B, 202ab73bba2e4d02
-metazone/generic/names/long/v1, mt, 143B, 51B, 72569406df23bee2
-metazone/generic/names/long/v1, my, 5621B, 5530B, 7648b29959642331
-metazone/generic/names/long/v1, nds, 120B, 28B, 9f747a2342b96f1e
-metazone/generic/names/long/v1, ne, 5632B, 5541B, 36524b689cf8c234
-metazone/generic/names/long/v1, nl, 3224B, 3134B, ff2be6f6cc553636
-metazone/generic/names/long/v1, nn, 2777B, 2686B, 5dac1ddb53b8c1fe
-metazone/generic/names/long/v1, no, 2839B, 2749B, ceb4e9a46924fe0a
-metazone/generic/names/long/v1, nqo, 6305B, 6215B, 37988f2203afc4aa
-metazone/generic/names/long/v1, nso, 125B, 33B, 294158f35166418b
-metazone/generic/names/long/v1, oc, 127B, 35B, 27f159829a23fa12
-metazone/generic/names/long/v1, om, 3116B, 3025B, 99defef353425a43
-metazone/generic/names/long/v1, or, 5772B, 5681B, 885a4981b40bb215
-metazone/generic/names/long/v1, pa, 5185B, 5094B, 4e590fdf3f6a6156
-metazone/generic/names/long/v1, pcm, 2269B, 2178B, 85c5d17048ed52aa
-metazone/generic/names/long/v1, pl, 2981B, 2891B, 93fd77f198b2eb77
-metazone/generic/names/long/v1, prg, 115B, 23B, 6a906cf29f2da0ff
-metazone/generic/names/long/v1, ps, 4127B, 4037B, aa490ad97a7a8a1d
-metazone/generic/names/long/v1, ps-PK, 4124B, 4034B, 2b03fd1c1010e25a
-metazone/generic/names/long/v1, pt, 4169B, 4079B, b469737c8a07b864
-metazone/generic/names/long/v1, pt-PT, 2927B, 2836B, 8a469a76b988df10
-metazone/generic/names/long/v1, qu, 3279B, 3189B, 47b2881543533e
-metazone/generic/names/long/v1, raj, 147B, 55B, e9cd4a657c1a396d
-metazone/generic/names/long/v1, rm, 319B, 228B, 5b647ed749fa5ffa
-metazone/generic/names/long/v1, ro, 2287B, 2196B, e7882ef252d1c8c6
-metazone/generic/names/long/v1, ru, 2667B, 2576B, 476e292b49e8c699
-metazone/generic/names/long/v1, ru-UA, 2726B, 2635B, ee36ec12630e5a6d
-metazone/generic/names/long/v1, rw, -> kok-Latn
-metazone/generic/names/long/v1, sa, 710B, 619B, 9acbb8b58ce85400
-metazone/generic/names/long/v1, sah, 956B, 865B, 4fe9f337127b3f5
-metazone/generic/names/long/v1, sat, 771B, 680B, f9ea7854c2635463
-metazone/generic/names/long/v1, sc, 3888B, 3798B, feb2781a85001c8d
-metazone/generic/names/long/v1, sd, 4803B, 4713B, 6dfaa8bfc5b63347
-metazone/generic/names/long/v1, sd-Deva, 541B, 450B, 5c85bd07dc992e2
-metazone/generic/names/long/v1, si, 6925B, 6835B, ef0d673bc0b09c04
-metazone/generic/names/long/v1, sk, 3599B, 3509B, 45f7bbd624309a7a
-metazone/generic/names/long/v1, sl, 3185B, 3095B, 8804f5e474dac5c0
-metazone/generic/names/long/v1, so, 3012B, 2921B, b51611c94b3e08ef
-metazone/generic/names/long/v1, sq, 3647B, 3557B, 3b3d4c2c20666cf
-metazone/generic/names/long/v1, sr, 5605B, 5515B, 1d2323e8366cd20f
-metazone/generic/names/long/v1, sr-BA, 6175B, 6085B, 9137638d35ad0693
-metazone/generic/names/long/v1, sr-Latn, 3254B, 3164B, 26a745837f681b4f
-metazone/generic/names/long/v1, sr-Latn-BA, 3539B, 3449B, 6e50524a4b4a6eb7
-metazone/generic/names/long/v1, sr-Latn-XK, 3275B, 3185B, b387f12fe9a2a383
+metazone/generic/names/long/v1, as, 4026B, 3935B, 4cadd9dc1b7cfd59
+metazone/generic/names/long/v1, ast, 1547B, 1456B, 8d00416a9a302d8d
+metazone/generic/names/long/v1, az, 1197B, 1106B, 966790292b100168
+metazone/generic/names/long/v1, bal-Latn, 1715B, 1624B, 4b9026ed1f7aff69
+metazone/generic/names/long/v1, be, 2708B, 2617B, a847f4aa5d8b2471
+metazone/generic/names/long/v1, bg, 2884B, 2793B, 21015637776f5e9e
+metazone/generic/names/long/v1, blo, 1703B, 1612B, 2164668d500fed5b
+metazone/generic/names/long/v1, bn, 3125B, 3034B, 9d580025e7e20890
+metazone/generic/names/long/v1, br, 913B, 822B, 59723893ab08b3bc
+metazone/generic/names/long/v1, brx, 3095B, 3004B, fa021bb46ae2f132
+metazone/generic/names/long/v1, bs, 2133B, 2042B, 726df1c6823fa8e2
+metazone/generic/names/long/v1, bs-Cyrl, 3266B, 3175B, 17da13c69c52b4a4
+metazone/generic/names/long/v1, ca, 1952B, 1861B, 36c8c7c3f982f2f
+metazone/generic/names/long/v1, ceb, 957B, 866B, 263aecf0a2e94bf
+metazone/generic/names/long/v1, chr, 1938B, 1847B, fead00630da3ca12
+metazone/generic/names/long/v1, cs, 1932B, 1841B, b1dded9750a7bdd6
+metazone/generic/names/long/v1, cv, 2760B, 2669B, 41af1ad76c4323d0
+metazone/generic/names/long/v1, cy, 1086B, 995B, 4caab3cf55b738c1
+metazone/generic/names/long/v1, da, 1156B, 1065B, 36a792ae3e53aaa1
+metazone/generic/names/long/v1, de, 1759B, 1668B, 3dcbb1b1371acaf1
+metazone/generic/names/long/v1, doi, 589B, 498B, 6d687df412f6613b
+metazone/generic/names/long/v1, dsb, 1671B, 1580B, fa13355b41d45193
+metazone/generic/names/long/v1, ee, 1984B, 1893B, 2477d6fc2d4c78cd
+metazone/generic/names/long/v1, el, 2688B, 2597B, 7b4dac8400db3e88
+metazone/generic/names/long/v1, en, 880B, 789B, 17a452d7d8f575fe
+metazone/generic/names/long/v1, en-001, 893B, 802B, 14030ab4b97495ba
+metazone/generic/names/long/v1, en-CA, 893B, 802B, 4d25cce5a16afa32
+metazone/generic/names/long/v1, en-IN, 910B, 819B, bd13edc5bb81d2ad
+metazone/generic/names/long/v1, es, 1230B, 1139B, 62ae9113ba291c7c
+metazone/generic/names/long/v1, es-419, 1219B, 1128B, 7b59ec247f647fe7
+metazone/generic/names/long/v1, es-MX, 1163B, 1072B, d1e46fa79ad1bb9a
+metazone/generic/names/long/v1, es-US, -> es
+metazone/generic/names/long/v1, et, 1613B, 1522B, eacada5d0e34c6ff
+metazone/generic/names/long/v1, eu, 2001B, 1910B, 8ffde8303ccaa877
+metazone/generic/names/long/v1, fa, 1464B, 1373B, e246218c246e3919
+metazone/generic/names/long/v1, fa-AF, 1637B, 1546B, 9a3719cfa2c01698
+metazone/generic/names/long/v1, ff-Adlm, 6415B, 6324B, e1875eed381d5261
+metazone/generic/names/long/v1, fi, 1762B, 1671B, aaeba14adeca303f
+metazone/generic/names/long/v1, fil, 1165B, 1074B, 4969df087d8cc4bb
+metazone/generic/names/long/v1, fo, 955B, 864B, 67f7a172fc046e71
+metazone/generic/names/long/v1, fr, 2136B, 2045B, 605c1103189da861
+metazone/generic/names/long/v1, fr-CA, 2093B, 2002B, a32d65e9c92e718d
+metazone/generic/names/long/v1, fy, 1499B, 1408B, 968b9ee621e52076
+metazone/generic/names/long/v1, ga, 1728B, 1637B, 69efdf99878ced57
+metazone/generic/names/long/v1, gd, 1783B, 1692B, 21568b8fdb84ab2
+metazone/generic/names/long/v1, gl, 1884B, 1793B, 1bcf783c8344bd81
+metazone/generic/names/long/v1, gu, 2693B, 2602B, ab578686cb5fa7fc
+metazone/generic/names/long/v1, ha, 1796B, 1705B, a9ad9f49d4136310
+metazone/generic/names/long/v1, he, 1473B, 1382B, bb752be711d1cf0e
+metazone/generic/names/long/v1, hi, 2453B, 2362B, 6774da6a4dbcaf69
+metazone/generic/names/long/v1, hi-Latn, 953B, 862B, 8bc2abf461f8e2b7
+metazone/generic/names/long/v1, hr, 2043B, 1952B, 2e0cf85574550518
+metazone/generic/names/long/v1, hsb, 1657B, 1566B, 26bc2feab9259c6b
+metazone/generic/names/long/v1, hu, 1864B, 1773B, aeb71f1586d09bac
+metazone/generic/names/long/v1, hy, 3322B, 3231B, 84ec19d11d9b546b
+metazone/generic/names/long/v1, ia, 1167B, 1076B, 44fb533afa1b98b6
+metazone/generic/names/long/v1, id, 1007B, 916B, d00e75ae07cdcba1
+metazone/generic/names/long/v1, ig, 1162B, 1071B, 5f31caf5a433945
+metazone/generic/names/long/v1, is, 1790B, 1699B, 82e53f9effcc10b7
+metazone/generic/names/long/v1, it, 1874B, 1783B, aaeb9ff16ad0a419
+metazone/generic/names/long/v1, ja, 1335B, 1244B, d5434c6b8da0c58e
+metazone/generic/names/long/v1, jv, 1116B, 1025B, 947fdf5de6e0c6a2
+metazone/generic/names/long/v1, ka, 3973B, 3882B, 75fab2422b4f188c
+metazone/generic/names/long/v1, kea, 588B, 497B, 3e6c1ebf8b931a62
+metazone/generic/names/long/v1, kgp, 2057B, 1966B, 893982a44ecadee2
+metazone/generic/names/long/v1, kk, 1813B, 1722B, 60f9fc8ef07ddf06
+metazone/generic/names/long/v1, km, 4775B, 4684B, 5f4a5d35c67df6f4
+metazone/generic/names/long/v1, kn, 3211B, 3120B, 82635b1be017a13e
+metazone/generic/names/long/v1, ko, 1363B, 1272B, d45ad532bc40bf6a
+metazone/generic/names/long/v1, ko-KP, 1357B, 1266B, ca722940f9734b9c
+metazone/generic/names/long/v1, kok, 2487B, 2396B, 66634df7597b42c4
+metazone/generic/names/long/v1, ks, 2818B, 2727B, 15164b5d8cc62d44
+metazone/generic/names/long/v1, ks-Deva, 383B, 292B, 1e5edcf2b8f84a47
+metazone/generic/names/long/v1, ku, 1810B, 1719B, 5b4e9392f87b9922
+metazone/generic/names/long/v1, kxv, 1613B, 1522B, 4df557e007f28501
+metazone/generic/names/long/v1, kxv-Deva, 2668B, 2577B, a68b537e59245b29
+metazone/generic/names/long/v1, kxv-Orya, 3126B, 3035B, 1d452072d2086733
+metazone/generic/names/long/v1, kxv-Telu, 3138B, 3047B, 9004bbc9d93b9602
+metazone/generic/names/long/v1, ky, 2321B, 2230B, afd5d5550656526f
+metazone/generic/names/long/v1, lb, 1732B, 1641B, e18359ec4ee07009
+metazone/generic/names/long/v1, lo, 4128B, 4037B, c42ffd9e70819337
+metazone/generic/names/long/v1, lt, 1973B, 1882B, 357c4803b68f5e17
+metazone/generic/names/long/v1, lv, 1763B, 1672B, 3ea848fe20ee3f38
+metazone/generic/names/long/v1, mai, 3440B, 3349B, 20ffab159d678d6d
+metazone/generic/names/long/v1, mi, 1435B, 1344B, ba669abd3533d6b0
+metazone/generic/names/long/v1, mk, 1990B, 1899B, 9b480c36a8e14825
+metazone/generic/names/long/v1, ml, 3239B, 3148B, 80e4630954a0165
+metazone/generic/names/long/v1, mn, 2501B, 2410B, 697f85b0d6ce8e5c
+metazone/generic/names/long/v1, mni, 682B, 591B, b9f1550eb545dc9
+metazone/generic/names/long/v1, mr, 2754B, 2663B, d2a66ac1a549bd6c
+metazone/generic/names/long/v1, ms, 993B, 902B, 9fb25a681b99a547
+metazone/generic/names/long/v1, mt, 121B, 29B, 5ef7de102c02df8d
+metazone/generic/names/long/v1, my, 2942B, 2851B, 107d43e29693a2d9
+metazone/generic/names/long/v1, ne, 3068B, 2977B, 7e2b8b5c115f90d6
+metazone/generic/names/long/v1, nl, 1715B, 1624B, 386e1d7efdd4a590
+metazone/generic/names/long/v1, nn, 1647B, 1556B, caa117d970563565
+metazone/generic/names/long/v1, no, 1650B, 1559B, 4502ab51f0db018e
+metazone/generic/names/long/v1, nqo, 3285B, 3194B, bc0fffa122eb3703
+metazone/generic/names/long/v1, om, 1543B, 1452B, b4d24a85db3c6d3d
+metazone/generic/names/long/v1, or, 2901B, 2810B, b4bd300f84b8179
+metazone/generic/names/long/v1, pa, 2715B, 2624B, 4abff51465a33b91
+metazone/generic/names/long/v1, pcm, 1299B, 1208B, 2d66171e6da8058d
+metazone/generic/names/long/v1, pl, 1619B, 1528B, bf158a833435f61f
+metazone/generic/names/long/v1, ps, 2138B, 2047B, 118866502fe80292
+metazone/generic/names/long/v1, ps-PK, 2136B, 2045B, 818f9c442c9339da
+metazone/generic/names/long/v1, pt, 2239B, 2148B, 4df167e668f2aeba
+metazone/generic/names/long/v1, pt-PT, 1556B, 1465B, 5bd0cac9210f6883
+metazone/generic/names/long/v1, qu, 1708B, 1617B, 2f02a7ccc2cba89f
+metazone/generic/names/long/v1, rm, 268B, 177B, 285d838ea5857c13
+metazone/generic/names/long/v1, ro, 1318B, 1227B, b8cbd0d5f0059816
+metazone/generic/names/long/v1, ru, 1585B, 1494B, 7c6af484926b77c
+metazone/generic/names/long/v1, sa, 593B, 502B, 78976d4719757693
+metazone/generic/names/long/v1, sah, 797B, 706B, cfba929b4123d644
+metazone/generic/names/long/v1, sat, 640B, 549B, f0e1cc410e3e1bd7
+metazone/generic/names/long/v1, sc, 2034B, 1943B, b940e7c20e9392ed
+metazone/generic/names/long/v1, sd, 2483B, 2392B, f1820c2bfdbd34aa
+metazone/generic/names/long/v1, sd-Deva, 428B, 337B, 549c6c65575032fe
+metazone/generic/names/long/v1, si, 3609B, 3518B, f45cbdb2cf3172f
+metazone/generic/names/long/v1, sk, 1913B, 1822B, 873ee3a06d971e54
+metazone/generic/names/long/v1, sl, 1687B, 1596B, 7e35d2fc3af2655
+metazone/generic/names/long/v1, so, 1695B, 1604B, 79a085a5de05326e
+metazone/generic/names/long/v1, sq, 2007B, 1916B, 18c322113a5344b6
+metazone/generic/names/long/v1, sr, 2971B, 2880B, aa2566d7c03851a8
+metazone/generic/names/long/v1, sr-BA, 3255B, 3164B, 9d0d06e6b4488d73
+metazone/generic/names/long/v1, sr-Latn, 1736B, 1645B, 46fb1c79a94f4c9d
+metazone/generic/names/long/v1, sr-Latn-BA, 1878B, 1787B, 51eec53140e83eb1
+metazone/generic/names/long/v1, sr-Latn-XK, 1757B, 1666B, 9c618cd19bead7af
 metazone/generic/names/long/v1, sr-ME, -> sr-Latn-XK
-metazone/generic/names/long/v1, sr-XK, 5641B, 5551B, d488863c07b799ab
-metazone/generic/names/long/v1, st, -> kok-Latn
-metazone/generic/names/long/v1, su, 334B, 243B, 5d624fd8e42827b2
-metazone/generic/names/long/v1, sv, 2134B, 2043B, 20dbc6f8d138383b
-metazone/generic/names/long/v1, sw, 2158B, 2067B, 963c85e9b6401acd
-metazone/generic/names/long/v1, sw-CD, 2223B, 2132B, a25005386afa055f
-metazone/generic/names/long/v1, sw-KE, 2108B, 2017B, b17b4f0f25279e56
-metazone/generic/names/long/v1, syr, 5210B, 5120B, b257b1daa46c4113
-metazone/generic/names/long/v1, szl, 118B, 26B, 280bcbf1e4c53cdc
-metazone/generic/names/long/v1, ta, 6170B, 6079B, a3bf65b875036287
-metazone/generic/names/long/v1, te, 5883B, 5792B, 9873feac89c1c467
-metazone/generic/names/long/v1, tg, 3408B, 3317B, c7ab54faaeff1ffd
-metazone/generic/names/long/v1, th, 4490B, 4399B, c554ad86d4b9137d
-metazone/generic/names/long/v1, ti, 4976B, 4886B, e797d581c48d50ba
-metazone/generic/names/long/v1, tk, 1941B, 1850B, 34a07619e69fc140
-metazone/generic/names/long/v1, tn, 148B, 56B, 8748069a371520b6
-metazone/generic/names/long/v1, to, 3896B, 3806B, 905fdbab7b738d57
-metazone/generic/names/long/v1, tr, 1861B, 1770B, ce4f90cc86dfadf4
-metazone/generic/names/long/v1, tt, 3566B, 3475B, 90af8e7dfab16860
-metazone/generic/names/long/v1, ug, 4156B, 4065B, 7dfba1ff2ca27123
-metazone/generic/names/long/v1, uk, 7659B, 7569B, b7d63e60d42f748f
+metazone/generic/names/long/v1, sr-XK, 3007B, 2916B, 3aef512ab8c31ea8
+metazone/generic/names/long/v1, su, 259B, 168B, 497467473f23e080
+metazone/generic/names/long/v1, sv, 1228B, 1137B, 532f692d2a0d33c3
+metazone/generic/names/long/v1, sw, 1172B, 1081B, f85e3ba423ea227d
+metazone/generic/names/long/v1, sw-KE, 1142B, 1051B, a3a76def22c6ac4c
+metazone/generic/names/long/v1, syr, 2788B, 2697B, ac6cc25ea4a3c6af
+metazone/generic/names/long/v1, ta, 3346B, 3255B, e276bb0167e4d2ee
+metazone/generic/names/long/v1, te, 3164B, 3073B, 555daf8be8cc94fe
+metazone/generic/names/long/v1, tg, 1793B, 1702B, 3d23d32dcbc8dc3a
+metazone/generic/names/long/v1, th, 2545B, 2454B, df23ffcae6ac51ed
+metazone/generic/names/long/v1, ti, 2646B, 2555B, 385902242dad5a02
+metazone/generic/names/long/v1, tk, 1089B, 998B, 6378330930f880fc
+metazone/generic/names/long/v1, to, 2242B, 2151B, 8ad6b573b0dad387
+metazone/generic/names/long/v1, tr, 1004B, 913B, 298078140caf7eea
+metazone/generic/names/long/v1, tt, 1904B, 1813B, 5054d7517d3b8e8e
+metazone/generic/names/long/v1, ug, 2334B, 2243B, a8299631d1360851
+metazone/generic/names/long/v1, uk, 4015B, 3924B, 256305964321a109
 metazone/generic/names/long/v1, und, 96B, 4B, 7bf55e51b22b9698
-metazone/generic/names/long/v1, ur, 4679B, 4589B, a2034605ca60f742
-metazone/generic/names/long/v1, ur-IN, 4564B, 4474B, cd42641bea49e78a
-metazone/generic/names/long/v1, uz, 3073B, 2983B, 11631b72a814868
-metazone/generic/names/long/v1, uz-Cyrl, 3598B, 3507B, bb9671e1d8a5b6
-metazone/generic/names/long/v1, vec, 3730B, 3640B, b16300d2a9c31c4e
-metazone/generic/names/long/v1, vi, 2184B, 2093B, 7de56818d744033d
-metazone/generic/names/long/v1, vmw, 127B, 35B, 9106d1af63e4b29e
-metazone/generic/names/long/v1, wo, 2807B, 2717B, 13e36ada905ab29d
-metazone/generic/names/long/v1, xh, 2416B, 2325B, ec41288becf8a680
-metazone/generic/names/long/v1, xnr, 7592B, 7502B, 76ef02a5b43acec4
-metazone/generic/names/long/v1, yo, 3775B, 3685B, 20015905080a7344
-metazone/generic/names/long/v1, yo-BJ, 3738B, 3648B, b8538d6b661d2cc4
-metazone/generic/names/long/v1, yrl, 3880B, 3790B, 277c593cddba07a4
-metazone/generic/names/long/v1, yrl-CO, 3878B, 3788B, fb1833899ebd6d55
+metazone/generic/names/long/v1, ur, 2474B, 2383B, b063ac318ed0fa46
+metazone/generic/names/long/v1, ur-IN, 2421B, 2330B, 73fe102a00037388
+metazone/generic/names/long/v1, uz, 1603B, 1512B, bf0130fc290bd95d
+metazone/generic/names/long/v1, uz-Cyrl, 1950B, 1859B, 29ea12745bb3569a
+metazone/generic/names/long/v1, vec, 1931B, 1840B, 9df8aa9eede87cf7
+metazone/generic/names/long/v1, vi, 1145B, 1054B, 5222f9932aaeb131
+metazone/generic/names/long/v1, wo, 1520B, 1429B, c133ef9c85780664
+metazone/generic/names/long/v1, xh, 1275B, 1184B, bdb7ed74f435713b
+metazone/generic/names/long/v1, xnr, 4031B, 3940B, 4b081a5c7ecdd486
+metazone/generic/names/long/v1, yo, 1967B, 1876B, b4e7d398c3a38443
+metazone/generic/names/long/v1, yo-BJ, 1950B, 1859B, 9b8623cc86fdbb3a
+metazone/generic/names/long/v1, yrl, 2121B, 2030B, e9125ccfb00d4038
+metazone/generic/names/long/v1, yrl-CO, 2120B, 2029B, d684039995e7912d
 metazone/generic/names/long/v1, yrl-VE, -> yrl-CO
-metazone/generic/names/long/v1, yue, 1979B, 1888B, f8435c37186c9dfd
-metazone/generic/names/long/v1, yue-Hans, 1958B, 1867B, 11e6e9f7e4ddbb9e
-metazone/generic/names/long/v1, za, 130B, 38B, f98005857d7e6bf5
-metazone/generic/names/long/v1, zh, 2050B, 1959B, 8765719ec8733b09
-metazone/generic/names/long/v1, zh-HK, 1985B, 1894B, 1d038e03e51aaa91
-metazone/generic/names/long/v1, zh-Hant, 1937B, 1846B, 84159d3cd2e6a965
+metazone/generic/names/long/v1, yue, 1165B, 1074B, 857146fb142d28cb
+metazone/generic/names/long/v1, yue-Hans, 1144B, 1053B, 14c0fbf700bfda35
+metazone/generic/names/long/v1, zh, 1080B, 989B, 9a8939c956061a9e
+metazone/generic/names/long/v1, zh-HK, 1063B, 972B, e52695db1fdacc3c
+metazone/generic/names/long/v1, zh-Hant, 1087B, 996B, 7e8908b660d72056
 metazone/generic/names/long/v1, zh-MO, -> zh-HK
-metazone/generic/names/long/v1, zu, 4377B, 4287B, 504114f111dddbba
+metazone/generic/names/long/v1, zu, 2343B, 2252B, 28a44a5a3366440d
 metazone/generic/names/short/v1, <lookup>, 652B, 134 identifiers
 metazone/generic/names/short/v1, <total>, 8332B, 2813B, 60 unique payloads
 metazone/generic/names/short/v1, af, 134B, 42B, c70e0737b3bb5591
@@ -22555,257 +22517,256 @@ metazone/generic/names/short/v1, yrl, -> kgp
 metazone/generic/names/short/v1, zh-Hant, 152B, 60B, 7df8afdf8c7361dc
 metazone/generic/names/short/v1, zh-SG, -> ta-MY
 metazone/period/v1, <singleton>, 8551B, 8463B, 24e0750cc7382229
-metazone/specific/names/long/v1, <lookup>, 979B, 196 identifiers
-metazone/specific/names/long/v1, <total>, 1322890B, 1305787B, 190 unique payloads
-metazone/specific/names/long/v1, af, 4488B, 4398B, 63a78b06af9c1535
-metazone/specific/names/long/v1, ak, 5621B, 5531B, 57a2d3e0d388dcb7
-metazone/specific/names/long/v1, am, 11505B, 11416B, 7e5c2cb60da060c6
-metazone/specific/names/long/v1, ar, 7729B, 7639B, c014720cb6b2e1b3
-metazone/specific/names/long/v1, ar-LY, 7641B, 7551B, 4233bd90bdd2d2a8
+metazone/specific/names/long/v1, <lookup>, 955B, 195 identifiers
+metazone/specific/names/long/v1, <total>, 996922B, 977516B, 172 unique payloads
+metazone/specific/names/long/v1, af, 3324B, 3211B, e9d3abd22498805a
+metazone/specific/names/long/v1, ak, 4269B, 4156B, a00257e081bde8d7
+metazone/specific/names/long/v1, am, 9120B, 9008B, e1ac5bda6d0bedf1
+metazone/specific/names/long/v1, ar, 5502B, 5389B, aceb5ee9c69ea5aa
+metazone/specific/names/long/v1, ar-LY, 5414B, 5301B, 798f577f588a3b39
 metazone/specific/names/long/v1, ar-SA, -> ar-LY
-metazone/specific/names/long/v1, as, 14790B, 14701B, 2e7a8bacfbe01a4
-metazone/specific/names/long/v1, ast, 5998B, 5908B, 5a56b91ec24fb82b
-metazone/specific/names/long/v1, az, 4620B, 4530B, 54d3eac114f6818d
-metazone/specific/names/long/v1, bal-Latn, 6377B, 6287B, d29584be1b995214
-metazone/specific/names/long/v1, be, 10586B, 10497B, d9699c17ea00b87d
-metazone/specific/names/long/v1, bg, 11290B, 11201B, fd94f154aaeb04ec
-metazone/specific/names/long/v1, bgc, 147B, 55B, 15373013de757baa
+metazone/specific/names/long/v1, as, 11327B, 11215B, 5a405aa94b1779f9
+metazone/specific/names/long/v1, ast, 4422B, 4309B, d7b1f767a6ba4db9
+metazone/specific/names/long/v1, az, 3234B, 3121B, 8ba060477000e9c5
+metazone/specific/names/long/v1, bal-Latn, 4861B, 4748B, 912b6cf4722aaf3
+metazone/specific/names/long/v1, be, 8085B, 7973B, 8692ee3cdb1cfe71
+metazone/specific/names/long/v1, bg, 9166B, 9054B, f190cfc895936665
+metazone/specific/names/long/v1, bgc, 121B, 6B, ef8834cd00888f21
 metazone/specific/names/long/v1, bho, -> bgc
-metazone/specific/names/long/v1, blo, 6843B, 6753B, a842b7fc9d8b77e6
-metazone/specific/names/long/v1, bn, 13625B, 13536B, af1ff4c5e8d329b6
-metazone/specific/names/long/v1, br, 3851B, 3761B, 1e097cf593e1a6ac
-metazone/specific/names/long/v1, brx, 13519B, 13430B, c597028d57e8baba
-metazone/specific/names/long/v1, bs, 7940B, 7850B, fb472d9c64e4d83d
-metazone/specific/names/long/v1, bs-Cyrl, 13595B, 13506B, c00506ff02de9059
-metazone/specific/names/long/v1, ca, 7425B, 7335B, e1cf1a16bab2730a
-metazone/specific/names/long/v1, ceb, 5449B, 5359B, 1f191b08b474bda3
-metazone/specific/names/long/v1, chr, 8902B, 8812B, 23624b0c9a7a1bd8
-metazone/specific/names/long/v1, cs, 7294B, 7204B, b4a1e30287a98774
-metazone/specific/names/long/v1, csw, 156B, 64B, 8e86e7affc3c3536
-metazone/specific/names/long/v1, cv, 8183B, 8094B, cc62cdcea73e4704
-metazone/specific/names/long/v1, cy, 4217B, 4127B, 3622512432cae11
-metazone/specific/names/long/v1, da, 4335B, 4245B, f5d9496fefef24e2
-metazone/specific/names/long/v1, de, 6072B, 5982B, aec74cdd3d9dbbfa
-metazone/specific/names/long/v1, de-CH, 6065B, 5975B, cc032a19d460391
-metazone/specific/names/long/v1, doi, 1631B, 1541B, 62b7eddccfcacbc4
-metazone/specific/names/long/v1, dsb, 6518B, 6428B, 85914e9c8fc5a06a
-metazone/specific/names/long/v1, ee, 7027B, 6937B, 814386ae8ee583ee
-metazone/specific/names/long/v1, el, 10455B, 10366B, 51595d8e4bc43f5a
-metazone/specific/names/long/v1, en, 4720B, 4630B, 91e905f5b3a1acdd
-metazone/specific/names/long/v1, en-001, 4743B, 4653B, 366052860e09b55f
-metazone/specific/names/long/v1, en-AU, 4784B, 4694B, 47ffeda41f18e693
-metazone/specific/names/long/v1, en-CA, 4917B, 4827B, e04971d6a9b2c872
-metazone/specific/names/long/v1, en-IN, 4771B, 4681B, f07228bb96889218
-metazone/specific/names/long/v1, eo, 128B, 36B, fdd20f9741fc3089
-metazone/specific/names/long/v1, es, 7248B, 7158B, af9a2a4f739642a3
-metazone/specific/names/long/v1, es-419, 5138B, 5048B, d50009a7aff5bd0
-metazone/specific/names/long/v1, es-MX, 5118B, 5028B, 78a89fb82d9d80c5
-metazone/specific/names/long/v1, es-US, 5218B, 5128B, 65e570804f59b7b6
-metazone/specific/names/long/v1, et, 5701B, 5611B, 1a308c2e05715dd9
-metazone/specific/names/long/v1, eu, 7225B, 7135B, 3588d74b447cff1
-metazone/specific/names/long/v1, fa, 6238B, 6148B, 36089483f8b7ef1b
-metazone/specific/names/long/v1, fa-AF, 6772B, 6682B, fc586b6dd5454a6
-metazone/specific/names/long/v1, ff-Adlm, 23098B, 23010B, 61c1e118eb92dde9
-metazone/specific/names/long/v1, fi, 6204B, 6114B, 9913b5ace719e098
-metazone/specific/names/long/v1, fil, 6059B, 5969B, c9b4d890f184f045
-metazone/specific/names/long/v1, fo, 3935B, 3845B, a782ddadf7070b0e
-metazone/specific/names/long/v1, fr, 7621B, 7531B, 7eec2b25e0024c79
-metazone/specific/names/long/v1, fr-CA, 7436B, 7346B, 3a1e92a6ca2c5390
-metazone/specific/names/long/v1, fy, 6052B, 5962B, a1c29b0457baaffc
-metazone/specific/names/long/v1, ga, 7168B, 7078B, 6a7268699665fe66
-metazone/specific/names/long/v1, gaa, 134B, 42B, 8bfc328771da0b44
-metazone/specific/names/long/v1, gd, 6554B, 6464B, 42aae53e47219869
-metazone/specific/names/long/v1, gl, 6994B, 6904B, b5fadc86d3cbe03f
-metazone/specific/names/long/v1, gu, 12228B, 12139B, d7fffc04ea774d19
-metazone/specific/names/long/v1, ha, 6720B, 6630B, b6a93afb15751ef0
-metazone/specific/names/long/v1, he, 6288B, 6198B, 4789e674c2b1f032
-metazone/specific/names/long/v1, hi, 11976B, 11887B, 1906f195a2a9a31
-metazone/specific/names/long/v1, hi-Latn, 4859B, 4769B, f5461be3bf2ed092
-metazone/specific/names/long/v1, hr, 7477B, 7387B, f0b6b7ced38afc9a
-metazone/specific/names/long/v1, hsb, 6223B, 6133B, fec6954c9f48925e
-metazone/specific/names/long/v1, hu, 6360B, 6270B, d919ab7969969b66
-metazone/specific/names/long/v1, hy, 12346B, 12257B, e25fe570bae7e11e
-metazone/specific/names/long/v1, ia, 5357B, 5267B, c877613f35000e37
-metazone/specific/names/long/v1, id, 4434B, 4344B, e87cecfde1291b57
-metazone/specific/names/long/v1, ie, 128B, 36B, 86106e800065cd33
-metazone/specific/names/long/v1, ig, 5257B, 5167B, b8def3da27ad049f
-metazone/specific/names/long/v1, ii, 118B, 26B, 79d50aed2edc264a
-metazone/specific/names/long/v1, is, 6489B, 6399B, d28855d58c13e095
-metazone/specific/names/long/v1, it, 6785B, 6695B, 9a03f3ffba7dcf05
-metazone/specific/names/long/v1, ja, 4762B, 4672B, c675a47c88ff37dc
-metazone/specific/names/long/v1, jv, 4460B, 4370B, da20f3429c93c1c7
-metazone/specific/names/long/v1, ka, 16115B, 16026B, e4e32175adf62585
-metazone/specific/names/long/v1, kea, 1661B, 1570B, cc0137705293116f
-metazone/specific/names/long/v1, kgp, 7066B, 6976B, 2ba30d306f1dc9ae
-metazone/specific/names/long/v1, kk, 7726B, 7637B, 31b8f7b9d57d05cc
-metazone/specific/names/long/v1, km, 18233B, 18145B, 776c770faa6b41f4
-metazone/specific/names/long/v1, kn, 13627B, 13538B, ee31f129fba1bb08
-metazone/specific/names/long/v1, ko, 4983B, 4893B, c7d5db89396ee448
-metazone/specific/names/long/v1, ko-KP, 5004B, 4914B, d599f00d91011c49
-metazone/specific/names/long/v1, kok, 11319B, 11230B, 5bf172b72364978
-metazone/specific/names/long/v1, kok-Latn, 119B, 27B, 61716ef3f0d8f183
-metazone/specific/names/long/v1, ks, 10460B, 10370B, e2602cd7c4d1c015
-metazone/specific/names/long/v1, ks-Deva, 1185B, 1094B, a7d496712ab00c07
-metazone/specific/names/long/v1, ku, 7106B, 7016B, 3e31e48380f70fb2
-metazone/specific/names/long/v1, kxv, 6279B, 6189B, 3042dec16f3ddbeb
-metazone/specific/names/long/v1, kxv-Deva, 14254B, 14164B, 1daa5b3b3f8960c0
-metazone/specific/names/long/v1, kxv-Orya, 12688B, 12599B, c9682f680dc979a9
-metazone/specific/names/long/v1, kxv-Telu, 13509B, 13420B, 6e49f02ee23e4eaa
-metazone/specific/names/long/v1, ky, 10805B, 10716B, 3858a82d53c54463
-metazone/specific/names/long/v1, lb, 5842B, 5752B, 5f4b9255726c0818
-metazone/specific/names/long/v1, lij, 127B, 35B, f9f5c075823ca7d2
-metazone/specific/names/long/v1, lmo, 122B, 30B, ee229e70cebe548b
-metazone/specific/names/long/v1, lo, 16417B, 16328B, f9affb86809f951f
-metazone/specific/names/long/v1, lt, 7023B, 6933B, bbfeae8e8ae1bd9
-metazone/specific/names/long/v1, lv, 6354B, 6264B, a29c55897f34f939
-metazone/specific/names/long/v1, mai, 10842B, 10752B, 95032af0e99c5224
-metazone/specific/names/long/v1, mi, 5816B, 5726B, ce72fe1b1e877914
-metazone/specific/names/long/v1, mk, 12944B, 12855B, 80ed0e9537b4bca7
-metazone/specific/names/long/v1, ml, 15633B, 15544B, 3269cbb2a08bf3f1
-metazone/specific/names/long/v1, mn, 9563B, 9474B, edb2dc940d3aaf19
-metazone/specific/names/long/v1, mni, 1802B, 1711B, 3dbbbdf4cb7bc04
-metazone/specific/names/long/v1, mr, 12762B, 12673B, 8dbdcfffcf78c835
-metazone/specific/names/long/v1, ms, 5180B, 5090B, 43987bb6cb90370d
-metazone/specific/names/long/v1, mt, 189B, 97B, 4b8312481ae73e1c
-metazone/specific/names/long/v1, my, 13719B, 13630B, ea1cfc636b5bd807
-metazone/specific/names/long/v1, nds, 121B, 29B, 825788ea1da7e437
-metazone/specific/names/long/v1, ne, 13109B, 13020B, 2968e3e40e5c9009
-metazone/specific/names/long/v1, nl, 6247B, 6157B, 4b8c7ca6c1fe7755
-metazone/specific/names/long/v1, nn, 6428B, 6338B, e1fd85af53e45b66
-metazone/specific/names/long/v1, no, 6422B, 6332B, 7a21d1def9dd276e
-metazone/specific/names/long/v1, nqo, 11977B, 11888B, 56afbfc6adc9c5be
-metazone/specific/names/long/v1, nso, 126B, 34B, ea27a2c6923fbc33
-metazone/specific/names/long/v1, oc, 128B, 36B, 9ceaa29c8869548b
-metazone/specific/names/long/v1, om, 7703B, 7613B, 48061018b1d65b93
-metazone/specific/names/long/v1, or, 13927B, 13838B, 62da40bba6fba0ab
-metazone/specific/names/long/v1, pa, 12195B, 12106B, b5e8a711ab1f4ea7
-metazone/specific/names/long/v1, pcm, 5839B, 5749B, dd1f48ef077d9646
-metazone/specific/names/long/v1, pl, 4326B, 4236B, 8a3c7fe5b747d737
-metazone/specific/names/long/v1, prg, 116B, 24B, d6c92023c48023d1
-metazone/specific/names/long/v1, ps, 8358B, 8268B, d9fabce04454a97
-metazone/specific/names/long/v1, ps-PK, 8290B, 8200B, aa86591bfcf05c40
-metazone/specific/names/long/v1, pt, 8032B, 7942B, ce25398017ce1aa8
-metazone/specific/names/long/v1, pt-PT, 6575B, 6485B, 1937ac815fe5a91d
-metazone/specific/names/long/v1, qu, 6550B, 6460B, 55da0b4646b3175d
-metazone/specific/names/long/v1, raj, 148B, 56B, 7ff5297e5d2f09ed
-metazone/specific/names/long/v1, rm, 702B, 611B, 791dcbfe7f6c8e57
-metazone/specific/names/long/v1, ro, 5389B, 5299B, 54855f1ffe0a4365
-metazone/specific/names/long/v1, ru, 7793B, 7704B, d01576c400456904
-metazone/specific/names/long/v1, rw, -> kok-Latn
-metazone/specific/names/long/v1, sa, 1482B, 1391B, 5ff1902898ecd871
-metazone/specific/names/long/v1, sah, 2270B, 2179B, 7a2c454bd0fc69e
-metazone/specific/names/long/v1, sat, 1866B, 1775B, 16a58acd242035c3
-metazone/specific/names/long/v1, sc, 7472B, 7382B, a96910895b0fbf73
-metazone/specific/names/long/v1, sd, 9744B, 9654B, 57d7eae56b06578c
-metazone/specific/names/long/v1, sd-Deva, 1242B, 1151B, 2223ee0bb2642aa1
-metazone/specific/names/long/v1, si, 13924B, 13835B, 87c9813f3aca1771
-metazone/specific/names/long/v1, sk, 7327B, 7237B, ea92fa5901e34653
-metazone/specific/names/long/v1, sl, 6498B, 6408B, 1b864450c075f906
-metazone/specific/names/long/v1, so, 7131B, 7041B, 6db4bdba9f54fbf4
-metazone/specific/names/long/v1, sq, 7206B, 7116B, 22fc0634cab5206a
-metazone/specific/names/long/v1, sr, 9136B, 9047B, 2a45288cca1bdd26
-metazone/specific/names/long/v1, sr-BA, 9795B, 9706B, f04830e5243a6314
-metazone/specific/names/long/v1, sr-Latn, 5355B, 5265B, adba04596a28e07e
-metazone/specific/names/long/v1, sr-Latn-BA, 5730B, 5640B, 7cbc7e61b88cb6f5
-metazone/specific/names/long/v1, sr-Latn-XK, 5471B, 5381B, 8a444c06ca70845d
-metazone/specific/names/long/v1, sr-ME, 5431B, 5341B, e3069ddbe70ceebc
-metazone/specific/names/long/v1, sr-XK, 9338B, 9249B, 36138bd1317e2518
-metazone/specific/names/long/v1, st, -> kok-Latn
-metazone/specific/names/long/v1, su, 689B, 598B, 8302b94cc1cd4121
-metazone/specific/names/long/v1, sv, 5640B, 5550B, 6f4087d58333bfa0
-metazone/specific/names/long/v1, sw, 7027B, 6937B, f3c43f6956cd8b1d
-metazone/specific/names/long/v1, sw-KE, 7014B, 6924B, 1366589c697537e5
-metazone/specific/names/long/v1, syr, 11217B, 11128B, a30ab42a2bf90369
-metazone/specific/names/long/v1, szl, 119B, 27B, d35e1e8c18831b2c
-metazone/specific/names/long/v1, ta, 13983B, 13894B, 127f7f215c29340c
-metazone/specific/names/long/v1, te, 14170B, 14081B, e919228e40fbebfc
-metazone/specific/names/long/v1, tg, 9065B, 8976B, 74eed619d320c92a
-metazone/specific/names/long/v1, th, 12675B, 12586B, 9615e8a9d3ee539a
-metazone/specific/names/long/v1, ti, 9931B, 9841B, 577438bfe6f8f8e7
-metazone/specific/names/long/v1, tk, 4315B, 4225B, d6c95e4e244723a8
-metazone/specific/names/long/v1, tn, 149B, 57B, 926bbbcd2af18657
-metazone/specific/names/long/v1, to, 8357B, 8267B, a22f477a2bb477b
-metazone/specific/names/long/v1, tr, 4065B, 3975B, 69774449430a9e9c
-metazone/specific/names/long/v1, tt, 9610B, 9521B, 8c52dfc2dc86d3a1
-metazone/specific/names/long/v1, ug, 9268B, 9178B, 4395090c0b3a31b1
-metazone/specific/names/long/v1, uk, 14585B, 14496B, da8ca4034d21e931
-metazone/specific/names/long/v1, und, 96B, 4B, 7bf55e51b22b9698
-metazone/specific/names/long/v1, ur, 9411B, 9321B, f6cc9049703d1968
-metazone/specific/names/long/v1, ur-IN, 9179B, 9089B, f48d5270add0ba1c
-metazone/specific/names/long/v1, uz, 5940B, 5850B, 8c368beb5a459813
-metazone/specific/names/long/v1, uz-Cyrl, 8391B, 8301B, a05c972283e831ec
-metazone/specific/names/long/v1, vec, 7126B, 7036B, 683f95182ecc4c94
-metazone/specific/names/long/v1, vi, 6416B, 6326B, d33fd81e746c9c01
-metazone/specific/names/long/v1, vmw, 128B, 36B, 50e2d9b07f539530
-metazone/specific/names/long/v1, wo, 5691B, 5601B, 74e7fd2a4b38aeb0
-metazone/specific/names/long/v1, xh, 5290B, 5200B, ab27a34802f5357f
-metazone/specific/names/long/v1, xnr, 15585B, 15496B, 7810d4d0c831a779
-metazone/specific/names/long/v1, yo, 7420B, 7330B, a218485d1c61b2af
-metazone/specific/names/long/v1, yo-BJ, 7223B, 7133B, b868d9bb8021795a
-metazone/specific/names/long/v1, yrl, 7710B, 7620B, 9e03d318de74ce9a
-metazone/specific/names/long/v1, yrl-CO, 7707B, 7617B, eb870d27ff5ad603
+metazone/specific/names/long/v1, blo, 4346B, 4233B, e1255d43a4c38f
+metazone/specific/names/long/v1, bn, 10351B, 10239B, 1a813716c3b63be0
+metazone/specific/names/long/v1, br, 2611B, 2498B, 8d38ba17b5411ca8
+metazone/specific/names/long/v1, brx, 10245B, 10133B, 8ca875b1def9be04
+metazone/specific/names/long/v1, bs, 6071B, 5958B, c0f7536d973fe0df
+metazone/specific/names/long/v1, bs-Cyrl, 10816B, 10704B, 3a2f06bfaf9793e
+metazone/specific/names/long/v1, ca, 5806B, 5693B, a67b914a44516588
+metazone/specific/names/long/v1, ceb, 3994B, 3881B, c35d0f1f3bffead6
+metazone/specific/names/long/v1, chr, 6314B, 6201B, 30be5751f04d5934
+metazone/specific/names/long/v1, cs, 5646B, 5533B, 6e3395a1e1716f71
+metazone/specific/names/long/v1, csw, -> bgc
+metazone/specific/names/long/v1, cv, 5762B, 5650B, 959f94e8dd8184e7
+metazone/specific/names/long/v1, cy, 2867B, 2754B, 722abc7a008d172c
+metazone/specific/names/long/v1, da, 3168B, 3055B, 9d365b3711be466a
+metazone/specific/names/long/v1, de, 4715B, 4602B, 15ff4285859ca591
+metazone/specific/names/long/v1, doi, 1605B, 1492B, 8d08cc015e396777
+metazone/specific/names/long/v1, dsb, 5183B, 5070B, 47fb47813273b385
+metazone/specific/names/long/v1, ee, 5401B, 5288B, 4d5b862dd21fb83
+metazone/specific/names/long/v1, el, 8182B, 8070B, b2c5bcc31dc7eea1
+metazone/specific/names/long/v1, en, 3429B, 3316B, faabc866b381a33a
+metazone/specific/names/long/v1, en-001, 3452B, 3339B, ce594d089d3da35a
+metazone/specific/names/long/v1, en-AU, 3493B, 3380B, 6b522a1e909749d3
+metazone/specific/names/long/v1, en-CA, 3622B, 3509B, 264e1957ada9a208
+metazone/specific/names/long/v1, en-IN, 3480B, 3367B, 8d39562e86bf3e6c
+metazone/specific/names/long/v1, eo, -> bgc
+metazone/specific/names/long/v1, es, 5613B, 5500B, 173dab58c000059d
+metazone/specific/names/long/v1, es-419, 3526B, 3413B, 64d240f8ae1c7717
+metazone/specific/names/long/v1, es-MX, 3484B, 3371B, 74941df5d71e45f
+metazone/specific/names/long/v1, es-US, 3584B, 3471B, 96b1759b113b7ac8
+metazone/specific/names/long/v1, et, 4409B, 4296B, c14f66d9cd4d78b3
+metazone/specific/names/long/v1, eu, 5547B, 5434B, 3bbeaea0712b9b6c
+metazone/specific/names/long/v1, fa, 4287B, 4174B, d986648768268826
+metazone/specific/names/long/v1, fa-AF, 4821B, 4708B, 1024ed738f7d4946
+metazone/specific/names/long/v1, ff-Adlm, 17899B, 17788B, 85d49df09f3783af
+metazone/specific/names/long/v1, fi, 4796B, 4683B, f44cf7061fee7b09
+metazone/specific/names/long/v1, fil, 4614B, 4501B, 18263bfaa95e6952
+metazone/specific/names/long/v1, fo, 2607B, 2494B, 6f5d69d07888101f
+metazone/specific/names/long/v1, fr, 5895B, 5782B, c67d08d48e76363e
+metazone/specific/names/long/v1, fr-CA, 5733B, 5620B, 37983305700be410
+metazone/specific/names/long/v1, fy, 4681B, 4568B, 204e07782bfd6ba4
+metazone/specific/names/long/v1, ga, 5677B, 5564B, 705cec2e106c96bd
+metazone/specific/names/long/v1, gaa, -> bgc
+metazone/specific/names/long/v1, gd, 5117B, 5004B, e0875658d26b5c5e
+metazone/specific/names/long/v1, gl, 5498B, 5385B, 5d61b2797880caa5
+metazone/specific/names/long/v1, gu, 9123B, 9011B, 30fcebf927a94998
+metazone/specific/names/long/v1, ha, 5213B, 5100B, 86f7e1fa69c9ae1e
+metazone/specific/names/long/v1, he, 4239B, 4126B, c1377aa841400a26
+metazone/specific/names/long/v1, hi, 8975B, 8863B, 11f529ee34f699f4
+metazone/specific/names/long/v1, hi-Latn, 3569B, 3456B, 3e7dba8fa714b35c
+metazone/specific/names/long/v1, hr, 5788B, 5675B, 3750a76400d8382
+metazone/specific/names/long/v1, hsb, 4851B, 4738B, 1f9d4f9894e0d557
+metazone/specific/names/long/v1, hu, 4823B, 4710B, 3fcf4779d7168890
+metazone/specific/names/long/v1, hy, 9426B, 9314B, 7f1f2d71ba76f832
+metazone/specific/names/long/v1, ia, 3845B, 3732B, 4d6d71b89b1eee2d
+metazone/specific/names/long/v1, id, 3071B, 2958B, 4ef6f9774e22024a
+metazone/specific/names/long/v1, ie, -> bgc
+metazone/specific/names/long/v1, ig, 3924B, 3811B, 8f351712bbde0fa1
+metazone/specific/names/long/v1, ii, -> bgc
+metazone/specific/names/long/v1, is, 5106B, 4993B, 8076cc4ac85c0aca
+metazone/specific/names/long/v1, it, 5223B, 5110B, 14091b754fa4489b
+metazone/specific/names/long/v1, ja, 2992B, 2879B, 2ecf98a690049847
+metazone/specific/names/long/v1, jv, 3123B, 3010B, 3d404aedd1935a99
+metazone/specific/names/long/v1, ka, 12668B, 12556B, a19c4ebbe4013778
+metazone/specific/names/long/v1, kea, 1569B, 1455B, 159971c5921e71c8
+metazone/specific/names/long/v1, kgp, 5371B, 5258B, b423a5aa4d8cc1ad
+metazone/specific/names/long/v1, kk, 5173B, 5061B, 3259422bb0011eb8
+metazone/specific/names/long/v1, km, 14189B, 14077B, 4056cf49df135b4e
+metazone/specific/names/long/v1, kn, 10414B, 10302B, d4c56b01ce4112db
+metazone/specific/names/long/v1, ko, 3405B, 3292B, aa2c46ff5cb14e7
+metazone/specific/names/long/v1, ko-KP, 3426B, 3313B, b703577e3cba0ea4
+metazone/specific/names/long/v1, kok, 8454B, 8342B, efe3b61a350bc8c6
+metazone/specific/names/long/v1, kok-Latn, -> bgc
+metazone/specific/names/long/v1, ks, 8099B, 7986B, 7755fc7ea87e7626
+metazone/specific/names/long/v1, ks-Deva, 1165B, 1051B, 15d668c1f6a79dea
+metazone/specific/names/long/v1, ku, 5543B, 5430B, 4282dd0a7a5eb9a3
+metazone/specific/names/long/v1, kxv, 4865B, 4752B, 941beededa803a5d
+metazone/specific/names/long/v1, kxv-Deva, 10999B, 10886B, a70f99fe4cb6926c
+metazone/specific/names/long/v1, kxv-Orya, 9586B, 9474B, a156c73e91029691
+metazone/specific/names/long/v1, kxv-Telu, 10247B, 10135B, ead6d8e777d4441b
+metazone/specific/names/long/v1, ky, 8073B, 7961B, f1911b87c21309e6
+metazone/specific/names/long/v1, lb, 4573B, 4460B, 990f64cce61817b8
+metazone/specific/names/long/v1, lij, -> bgc
+metazone/specific/names/long/v1, lmo, -> bgc
+metazone/specific/names/long/v1, lo, 12886B, 12774B, e68f2aeff3cce87a
+metazone/specific/names/long/v1, lt, 5486B, 5373B, bd18b3b3e63a5e43
+metazone/specific/names/long/v1, lv, 4903B, 4790B, c3f7d3ca464a1ca6
+metazone/specific/names/long/v1, mai, 8912B, 8799B, 9a91504bf8975762
+metazone/specific/names/long/v1, mi, 4463B, 4350B, 28db435bd4b7b1ba
+metazone/specific/names/long/v1, mk, 10261B, 10149B, 13287117b05d0794
+metazone/specific/names/long/v1, ml, 12131B, 12019B, f3bf00aaa58c47c9
+metazone/specific/names/long/v1, mn, 7240B, 7128B, bc39c5742ba09ec3
+metazone/specific/names/long/v1, mni, 1776B, 1662B, b7b1d3993378867a
+metazone/specific/names/long/v1, mr, 9747B, 9635B, 14ad85f11cbae3b9
+metazone/specific/names/long/v1, ms, 3839B, 3726B, 6a94781c53b1e9c2
+metazone/specific/names/long/v1, mt, 191B, 76B, f9ad3bc8feb6c46b
+metazone/specific/names/long/v1, my, 9915B, 9803B, 4a734a0a9880d8a8
+metazone/specific/names/long/v1, nds, -> bgc
+metazone/specific/names/long/v1, ne, 10157B, 10045B, bb72a93c72783311
+metazone/specific/names/long/v1, nl, 4798B, 4685B, 39356b5368e34d4
+metazone/specific/names/long/v1, nn, 4894B, 4781B, b932349add0ab915
+metazone/specific/names/long/v1, no, 4887B, 4774B, 2290c1e99b6b1c94
+metazone/specific/names/long/v1, nqo, 9045B, 8933B, 24424d56ddfa7a52
+metazone/specific/names/long/v1, nso, -> bgc
+metazone/specific/names/long/v1, oc, -> bgc
+metazone/specific/names/long/v1, om, 5754B, 5641B, 100269ab07f93751
+metazone/specific/names/long/v1, or, 10641B, 10529B, 5c0e6ab9e9c1543d
+metazone/specific/names/long/v1, pa, 9083B, 8971B, c21ccae87144a31
+metazone/specific/names/long/v1, pcm, 4448B, 4335B, 3e69f445f79180f1
+metazone/specific/names/long/v1, pl, 3027B, 2914B, 2b04f22e255d872a
+metazone/specific/names/long/v1, prg, -> bgc
+metazone/specific/names/long/v1, ps, 6433B, 6320B, af4129590354dd36
+metazone/specific/names/long/v1, ps-PK, 6366B, 6253B, 315b6fdf9fdf0d9a
+metazone/specific/names/long/v1, pt, 6165B, 6052B, 2526a804385d6026
+metazone/specific/names/long/v1, pt-PT, 5017B, 4904B, 65d46acc286e58cf
+metazone/specific/names/long/v1, qu, 5042B, 4929B, 1902bf36b62dfcbd
+metazone/specific/names/long/v1, raj, -> bgc
+metazone/specific/names/long/v1, rm, 709B, 595B, 9e392f429b37f260
+metazone/specific/names/long/v1, ro, 3955B, 3842B, 88d5e8deff7e944f
+metazone/specific/names/long/v1, ru, 6036B, 5924B, 500d6da49f53c78a
+metazone/specific/names/long/v1, rw, -> bgc
+metazone/specific/names/long/v1, sa, 1456B, 1342B, 35811b553f31bd09
+metazone/specific/names/long/v1, sah, 2135B, 2021B, 24c41299456cd678
+metazone/specific/names/long/v1, sat, 1843B, 1729B, ccb5a74b20b2f4c7
+metazone/specific/names/long/v1, sc, 5680B, 5567B, be3cc5b08c13ce7c
+metazone/specific/names/long/v1, sd, 7486B, 7373B, 1a2a062d5b9d6211
+metazone/specific/names/long/v1, sd-Deva, 1210B, 1096B, f59e9930465c2386
+metazone/specific/names/long/v1, si, 10441B, 10329B, 22e28b878be6d1e
+metazone/specific/names/long/v1, sk, 5702B, 5589B, 7c26ab36e1d87054
+metazone/specific/names/long/v1, sl, 5063B, 4950B, 33b0d118c409561e
+metazone/specific/names/long/v1, so, 5615B, 5502B, 29832f22eb963279
+metazone/specific/names/long/v1, sq, 5627B, 5514B, f9326c75ad05a84e
+metazone/specific/names/long/v1, sr, 6646B, 6534B, 29c159ce5e2878ca
+metazone/specific/names/long/v1, sr-BA, 7027B, 6915B, ff2bc96c6d60ac08
+metazone/specific/names/long/v1, sr-Latn, 3930B, 3817B, 5793a6dc6f5f1df8
+metazone/specific/names/long/v1, sr-Latn-BA, 4166B, 4053B, 7cf7fc6eac1e9bc0
+metazone/specific/names/long/v1, sr-Latn-XK, 4046B, 3933B, 410be07787c3e2d
+metazone/specific/names/long/v1, sr-ME, 4006B, 3893B, 1e6abb0f1253a031
+metazone/specific/names/long/v1, sr-XK, 6848B, 6736B, 57dde8281ddce99d
+metazone/specific/names/long/v1, st, -> bgc
+metazone/specific/names/long/v1, su, 677B, 563B, 348b36d1bee15118
+metazone/specific/names/long/v1, sv, 4451B, 4338B, 78de157cb5f355ec
+metazone/specific/names/long/v1, sw, 5551B, 5438B, e53f1a995ff834f3
+metazone/specific/names/long/v1, sw-KE, 5562B, 5449B, 73d3277661a004d0
+metazone/specific/names/long/v1, syr, 8869B, 8757B, b022e8ef055e325f
+metazone/specific/names/long/v1, szl, -> bgc
+metazone/specific/names/long/v1, ta, 10257B, 10145B, f3a2ac3ec7d24769
+metazone/specific/names/long/v1, te, 10777B, 10665B, edfcb1712a76b98e
+metazone/specific/names/long/v1, tg, 6727B, 6615B, a36efc438d6b0b87
+metazone/specific/names/long/v1, th, 9405B, 9293B, 72daf6ba709e07d3
+metazone/specific/names/long/v1, ti, 7673B, 7560B, 3f91c873c6e9b48
+metazone/specific/names/long/v1, tk, 2896B, 2783B, 30251e529e66ed70
+metazone/specific/names/long/v1, tn, -> bgc
+metazone/specific/names/long/v1, to, 6755B, 6642B, e05a8a3d7eb6da12
+metazone/specific/names/long/v1, tr, 2691B, 2578B, 56a008aa6a4570e
+metazone/specific/names/long/v1, tt, 7031B, 6919B, 52b5ac8fccbb593f
+metazone/specific/names/long/v1, ug, 6823B, 6710B, 63a38cc66947f940
+metazone/specific/names/long/v1, uk, 11038B, 10926B, 975b5a1daa7fd2cf
+metazone/specific/names/long/v1, und, 120B, 5B, fd5d54cb7ad1d0d8
+metazone/specific/names/long/v1, ur, 7286B, 7173B, bce5da118527878b
+metazone/specific/names/long/v1, ur-IN, 7116B, 7003B, e4cb58366b31b361
+metazone/specific/names/long/v1, uz, 4531B, 4418B, 89dfc15467d3c77b
+metazone/specific/names/long/v1, uz-Cyrl, 6219B, 6106B, 753f38a2dcc6e1da
+metazone/specific/names/long/v1, vec, 5386B, 5273B, a1e06fec0f675a07
+metazone/specific/names/long/v1, vi, 4915B, 4802B, 6a65b54c2611e15d
+metazone/specific/names/long/v1, vmw, -> bgc
+metazone/specific/names/long/v1, wo, 4449B, 4336B, 9fc0c5f2d01f4a60
+metazone/specific/names/long/v1, xh, 4024B, 3911B, 167cd763fc51cbde
+metazone/specific/names/long/v1, xnr, 12115B, 12003B, d641f1f7ec38faf5
+metazone/specific/names/long/v1, yo, 5675B, 5562B, 7453ab0109dd935a
+metazone/specific/names/long/v1, yo-BJ, 5497B, 5384B, 52e8ac4e7f0c9007
+metazone/specific/names/long/v1, yrl, 6020B, 5907B, e597b19ec549d7ce
+metazone/specific/names/long/v1, yrl-CO, 6018B, 5905B, a1e58c666419b932
 metazone/specific/names/long/v1, yrl-VE, -> yrl-CO
-metazone/specific/names/long/v1, yue, 4543B, 4453B, 2ba505d8fd63581c
-metazone/specific/names/long/v1, yue-Hans, 6246B, 6156B, 903e54205c4e3f6e
-metazone/specific/names/long/v1, za, 131B, 39B, 41028ff39af7610c
-metazone/specific/names/long/v1, zh, 4241B, 4151B, fc1cfe1bd31c068d
-metazone/specific/names/long/v1, zh-HK, 4295B, 4205B, 71629590b06a8e58
-metazone/specific/names/long/v1, zh-Hant, 6246B, 6156B, dbd0c05309e3f91a
+metazone/specific/names/long/v1, yue, 3145B, 3032B, d4a3288651e4601a
+metazone/specific/names/long/v1, yue-Hans, 4803B, 4690B, 8e47e6f9b2d36432
+metazone/specific/names/long/v1, za, -> bgc
+metazone/specific/names/long/v1, zh, 2802B, 2689B, af01a63e207845bd
+metazone/specific/names/long/v1, zh-HK, 2888B, 2775B, fe48c91be6523414
+metazone/specific/names/long/v1, zh-Hant, 4797B, 4684B, 48e65fa9199e839e
 metazone/specific/names/long/v1, zh-MO, -> zh-HK
-metazone/specific/names/long/v1, zu, 8466B, 8376B, 340c9110950575f9
+metazone/specific/names/long/v1, zu, 6497B, 6384B, 31f100db616c54a5
 metazone/specific/names/short/v1, <lookup>, 648B, 134 identifiers
-metazone/specific/names/short/v1, <total>, 10298B, 4873B, 59 unique payloads
-metazone/specific/names/short/v1, af, 147B, 55B, ccfb7524f9bcc59a
-metazone/specific/names/short/v1, ar, 117B, 25B, 3395f04217273534
-metazone/specific/names/short/v1, as, 126B, 34B, 11ad65d280dd915
-metazone/specific/names/short/v1, ast, 247B, 155B, b7326d1920c150a9
-metazone/specific/names/short/v1, blo, 117B, 25B, 7814806d594c071c
-metazone/specific/names/short/v1, bn, 117B, 25B, cbdfe13ff93c3ef1
+metazone/specific/names/short/v1, <total>, 11714B, 4932B, 59 unique payloads
+metazone/specific/names/short/v1, af, 171B, 56B, 979bd7635beb00c1
+metazone/specific/names/short/v1, ar, 141B, 26B, f37c5a5d06534504
+metazone/specific/names/short/v1, as, 150B, 35B, b93f11f686c641c9
+metazone/specific/names/short/v1, ast, 271B, 156B, 55c03c6c1365d6b8
+metazone/specific/names/short/v1, blo, 141B, 26B, 183e180a2202d88c
+metazone/specific/names/short/v1, bn, 141B, 26B, ae5e9b47a286a89
 metazone/specific/names/short/v1, brx, -> bn
-metazone/specific/names/short/v1, bs, 162B, 70B, d72216a6acb8351c
+metazone/specific/names/short/v1, bs, 186B, 71B, a703c9900f78a6ca
 metazone/specific/names/short/v1, ca, -> bs
-metazone/specific/names/short/v1, chr, 240B, 148B, 8b63269a2215f637
-metazone/specific/names/short/v1, cs, 241B, 149B, 54b02f37288098db
+metazone/specific/names/short/v1, chr, 264B, 149B, c4e9ecbc77ae6e57
+metazone/specific/names/short/v1, cs, 265B, 150B, 69dfb17f4361cd7e
 metazone/specific/names/short/v1, cy, -> bs
-metazone/specific/names/short/v1, da, 155B, 63B, 3d8b0071222043e6
-metazone/specific/names/short/v1, de, 155B, 63B, f952cc3724b77c0f
+metazone/specific/names/short/v1, da, 179B, 64B, dcc388aa7ebd6c7e
+metazone/specific/names/short/v1, de, 179B, 64B, 113b84a749082961
 metazone/specific/names/short/v1, dsb, -> de
 metazone/specific/names/short/v1, ee, -> af
 metazone/specific/names/short/v1, el, -> da
 metazone/specific/names/short/v1, en, -> ast
-metazone/specific/names/short/v1, en-001, 117B, 25B, 928dcb48bda6fbf
+metazone/specific/names/short/v1, en-001, 141B, 26B, 55244135d3d7ee26
 metazone/specific/names/short/v1, en-150, -> bs
-metazone/specific/names/short/v1, en-AE, 124B, 32B, 4dd27649043d7e57
-metazone/specific/names/short/v1, en-AU, 215B, 123B, eb6bdb58348b9892
-metazone/specific/names/short/v1, en-BW, 154B, 62B, a5709e4359647c8b
-metazone/specific/names/short/v1, en-CA, 580B, 489B, f09025e8405e9a7b
+metazone/specific/names/short/v1, en-AE, 148B, 33B, 83951d25e78689ec
+metazone/specific/names/short/v1, en-AU, 239B, 124B, 199de5cedf90725a
+metazone/specific/names/short/v1, en-BW, 178B, 63B, 3b686ed2877c386f
+metazone/specific/names/short/v1, en-CA, 604B, 490B, 213c48d8848de4fe
 metazone/specific/names/short/v1, en-CM, -> en-BW
 metazone/specific/names/short/v1, en-ER, -> en-BW
-metazone/specific/names/short/v1, en-GB, 183B, 91B, 275dfa585690a9f2
+metazone/specific/names/short/v1, en-GB, 207B, 92B, 63e2e31dadd0d75e
 metazone/specific/names/short/v1, en-GH, -> en-BW
 metazone/specific/names/short/v1, en-GM, -> en-BW
-metazone/specific/names/short/v1, en-GU, 255B, 163B, 5be190b5a0edc4bc
-metazone/specific/names/short/v1, en-GY, 124B, 32B, 39f008588bc0c8d5
-metazone/specific/names/short/v1, en-HK, 132B, 40B, 886943622fbae648
-metazone/specific/names/short/v1, en-ID, 139B, 47B, 7f7e8d0652b81469
-metazone/specific/names/short/v1, en-IE, 131B, 39B, c967bd735bc74a63
-metazone/specific/names/short/v1, en-IN, 131B, 39B, f4613657ee69eb82
+metazone/specific/names/short/v1, en-GU, 279B, 164B, 58710c336c63bda
+metazone/specific/names/short/v1, en-GY, 148B, 33B, 2f2a03fec9430dce
+metazone/specific/names/short/v1, en-HK, 156B, 41B, f57085db20a2226c
+metazone/specific/names/short/v1, en-ID, 163B, 48B, 37dc3b13630e9bc4
+metazone/specific/names/short/v1, en-IE, 155B, 40B, c361af23fe46e258
+metazone/specific/names/short/v1, en-IN, 155B, 40B, 346c07937b94713b
 metazone/specific/names/short/v1, en-KE, -> en-BW
 metazone/specific/names/short/v1, en-LR, -> en-BW
 metazone/specific/names/short/v1, en-LS, -> en-BW
 metazone/specific/names/short/v1, en-MG, -> en-BW
 metazone/specific/names/short/v1, en-MH, -> en-001
-metazone/specific/names/short/v1, en-MO, 146B, 54B, 47151e80fa05dcbe
+metazone/specific/names/short/v1, en-MO, 170B, 55B, 40d21398b6f83a00
 metazone/specific/names/short/v1, en-MP, -> en-001
 metazone/specific/names/short/v1, en-MU, -> en-BW
 metazone/specific/names/short/v1, en-MW, -> en-BW
-metazone/specific/names/short/v1, en-MY, 124B, 32B, d6d6c3581de75ed9
+metazone/specific/names/short/v1, en-MY, 148B, 33B, eda191d2263e77c5
 metazone/specific/names/short/v1, en-NA, -> en-BW
 metazone/specific/names/short/v1, en-NG, -> en-BW
-metazone/specific/names/short/v1, en-NZ, 233B, 141B, 3231c2b10262978d
+metazone/specific/names/short/v1, en-NZ, 257B, 142B, 6c41745608e0d2d5
 metazone/specific/names/short/v1, en-RW, -> en-BW
 metazone/specific/names/short/v1, en-SD, -> en-BW
-metazone/specific/names/short/v1, en-SG, 131B, 39B, 5135fcd350f83e02
+metazone/specific/names/short/v1, en-SG, 155B, 40B, 9cf18383249d6bbb
 metazone/specific/names/short/v1, en-SL, -> en-BW
 metazone/specific/names/short/v1, en-SS, -> en-BW
 metazone/specific/names/short/v1, en-SZ, -> en-BW
@@ -22815,37 +22776,37 @@ metazone/specific/names/short/v1, en-ZA, -> en-BW
 metazone/specific/names/short/v1, en-ZM, -> en-BW
 metazone/specific/names/short/v1, en-ZW, -> en-BW
 metazone/specific/names/short/v1, es, -> bs
-metazone/specific/names/short/v1, es-419, 110B, 18B, 7b5221d441ff111a
-metazone/specific/names/short/v1, es-AR, 142B, 50B, e2de22572595649d
-metazone/specific/names/short/v1, es-BO, 117B, 25B, a2c0bc525c20dd65
-metazone/specific/names/short/v1, es-CL, 125B, 33B, 8a52ba52bf556710
-metazone/specific/names/short/v1, es-CO, 125B, 33B, 51836dfe6012bd8b
-metazone/specific/names/short/v1, es-EC, 117B, 25B, 32b7e5d7a93bbab1
-metazone/specific/names/short/v1, es-PE, 125B, 33B, 81f29a20df4f4910
+metazone/specific/names/short/v1, es-419, 134B, 19B, 7fdd9657e03455f1
+metazone/specific/names/short/v1, es-AR, 166B, 51B, 1c06e5514209ccfb
+metazone/specific/names/short/v1, es-BO, 141B, 26B, 7c79fdebcee5c8f4
+metazone/specific/names/short/v1, es-CL, 149B, 34B, 8d0e137edefe4015
+metazone/specific/names/short/v1, es-CO, 149B, 34B, 6e70899ed45c6add
+metazone/specific/names/short/v1, es-EC, 141B, 26B, ae518e3bce35063
+metazone/specific/names/short/v1, es-PE, 149B, 34B, d2dd217af08401ca
 metazone/specific/names/short/v1, es-US, -> chr
-metazone/specific/names/short/v1, es-UY, 125B, 33B, 20e228ed9c456fe8
-metazone/specific/names/short/v1, es-VE, 117B, 25B, d4bb5e107c715703
-metazone/specific/names/short/v1, eu, 292B, 200B, f28d18e77d42f228
-metazone/specific/names/short/v1, ff-Adlm, 165B, 73B, 4557eb011ae55c90
-metazone/specific/names/short/v1, fr-CA, 180B, 88B, f9b8525960bcfbca
-metazone/specific/names/short/v1, fr-GF, 117B, 25B, b5266783fdd5061f
+metazone/specific/names/short/v1, es-UY, 149B, 34B, 880f0653e533f015
+metazone/specific/names/short/v1, es-VE, 141B, 26B, 1206e5d9869cf3b2
+metazone/specific/names/short/v1, eu, 316B, 201B, d07f1aba2e45b6e4
+metazone/specific/names/short/v1, ff-Adlm, 189B, 74B, 4d0a0fe2318ada5e
+metazone/specific/names/short/v1, fr-CA, 204B, 89B, bc9afc2d15c00a96
+metazone/specific/names/short/v1, fr-GF, 141B, 26B, 1c10859b6cf684fc
 metazone/specific/names/short/v1, fy, -> da
-metazone/specific/names/short/v1, ga, 207B, 115B, 7e7efdf63405b8db
-metazone/specific/names/short/v1, gd, 331B, 239B, d07dab6f82982877
+metazone/specific/names/short/v1, ga, 231B, 116B, 8686c7756eaee80f
+metazone/specific/names/short/v1, gd, 355B, 240B, cf7b4de5f2237fd3
 metazone/specific/names/short/v1, gl, -> bs
 metazone/specific/names/short/v1, gu, -> bn
-metazone/specific/names/short/v1, hi, 160B, 68B, 5f66295a9540f009
+metazone/specific/names/short/v1, hi, 184B, 69B, 5c776cd5196142d8
 metazone/specific/names/short/v1, hr, -> bs
 metazone/specific/names/short/v1, hsb, -> de
 metazone/specific/names/short/v1, hu, -> bs
-metazone/specific/names/short/v1, id, 308B, 217B, a7f3f5fa07a7f8d1
+metazone/specific/names/short/v1, id, 332B, 218B, 77f91caa5129719a
 metazone/specific/names/short/v1, it, -> da
-metazone/specific/names/short/v1, ja, 124B, 32B, d4edf3e673513f9a
-metazone/specific/names/short/v1, kgp, 155B, 63B, 9ec2e1b131bb7053
-metazone/specific/names/short/v1, kk, 125B, 33B, d6dd2c5212a9c534
+metazone/specific/names/short/v1, ja, 148B, 33B, 88190272427774da
+metazone/specific/names/short/v1, kgp, 179B, 64B, 7dd4a025a61b8a81
+metazone/specific/names/short/v1, kk, 149B, 34B, eb9d543fb8b43755
 metazone/specific/names/short/v1, kn, -> bn
 metazone/specific/names/short/v1, kok, -> bn
-metazone/specific/names/short/v1, ku, 284B, 193B, 8b138c1ca38a95d2
+metazone/specific/names/short/v1, ku, 308B, 194B, c37726243dbe32bc
 metazone/specific/names/short/v1, lv, -> da
 metazone/specific/names/short/v1, mk, -> da
 metazone/specific/names/short/v1, ml, -> bn
@@ -22854,10 +22815,10 @@ metazone/specific/names/short/v1, ms, -> en-SG
 metazone/specific/names/short/v1, mt, -> bs
 metazone/specific/names/short/v1, ne-IN, -> bn
 metazone/specific/names/short/v1, nl, -> eu
-metazone/specific/names/short/v1, nl-SR, 299B, 207B, b61daec4f9d03340
+metazone/specific/names/short/v1, nl-SR, 323B, 208B, ec5d23d3614ed3d2
 metazone/specific/names/short/v1, no, -> eu
-metazone/specific/names/short/v1, om, 211B, 119B, 18f5686835a513ff
-metazone/specific/names/short/v1, or, 124B, 32B, 7c425f27e254fdc9
+metazone/specific/names/short/v1, om, 235B, 120B, b9951bebd25ac6d
+metazone/specific/names/short/v1, or, 148B, 33B, a955c82bdd656796
 metazone/specific/names/short/v1, pa, -> bn
 metazone/specific/names/short/v1, pl, -> da
 metazone/specific/names/short/v1, pt, -> kgp
@@ -22866,29 +22827,234 @@ metazone/specific/names/short/v1, pt-CV, -> es-419
 metazone/specific/names/short/v1, pt-GW, -> es-419
 metazone/specific/names/short/v1, pt-MO, -> es-419
 metazone/specific/names/short/v1, pt-MZ, -> es-419
-metazone/specific/names/short/v1, pt-PT, 172B, 80B, 73ee5e084a56d6e5
+metazone/specific/names/short/v1, pt-PT, 196B, 81B, b65844ff4dd3fafa
 metazone/specific/names/short/v1, pt-ST, -> es-419
 metazone/specific/names/short/v1, pt-TL, -> es-419
 metazone/specific/names/short/v1, qu, -> es-PE
 metazone/specific/names/short/v1, qu-BO, -> es-BO
 metazone/specific/names/short/v1, qu-EC, -> es-EC
 metazone/specific/names/short/v1, ro, -> bs
-metazone/specific/names/short/v1, sc, 233B, 141B, 3f5bff3e9fb771f7
-metazone/specific/names/short/v1, sd, 115B, 23B, 978cbb48f19d1010
-metazone/specific/names/short/v1, sk, 155B, 63B, b36b2fe9826b68e6
-metazone/specific/names/short/v1, so, 134B, 42B, 69d85475ff018773
+metazone/specific/names/short/v1, sc, 257B, 142B, eef478e5c311b35
+metazone/specific/names/short/v1, sd, 139B, 24B, ad244b0a47943a28
+metazone/specific/names/short/v1, sk, 179B, 64B, ba8e62d4f6aab757
+metazone/specific/names/short/v1, so, 158B, 43B, 403057e3cc7da01c
 metazone/specific/names/short/v1, sr, -> bs
 metazone/specific/names/short/v1, sr-Latn, -> bs
-metazone/specific/names/short/v1, sv, 218B, 126B, 34561bac7ed5f880
+metazone/specific/names/short/v1, sv, 242B, 127B, 5eccd026e4a67660
 metazone/specific/names/short/v1, ta, -> bn
-metazone/specific/names/short/v1, ta-MY, 124B, 32B, 966adf3129de443e
+metazone/specific/names/short/v1, ta-MY, 148B, 33B, d33339ebb9d7477c
 metazone/specific/names/short/v1, ta-SG, -> ta-MY
 metazone/specific/names/short/v1, te, -> bn
 metazone/specific/names/short/v1, und, -> es-419
 metazone/specific/names/short/v1, vi, -> chr
 metazone/specific/names/short/v1, yrl, -> kgp
-metazone/specific/names/short/v1, zh-Hant, 219B, 127B, 5a72ff093c2d5b22
+metazone/specific/names/short/v1, zh-Hant, 243B, 128B, 88e1615e5abccd60
 metazone/specific/names/short/v1, zh-SG, -> ta-MY
+metazone/standard/names/long/v1, <lookup>, 1008B, 203 identifiers
+metazone/standard/names/long/v1, <total>, 290413B, 273641B, 184 unique payloads
+metazone/standard/names/long/v1, af, 865B, 774B, e2c33c5ca2b5d8b8
+metazone/standard/names/long/v1, ak, 1508B, 1417B, 699a555b3adbb9d2
+metazone/standard/names/long/v1, am, 2559B, 2468B, c9d4261c1c88d9f9
+metazone/standard/names/long/v1, ar, 1483B, 1392B, b3c6086f5d561086
+metazone/standard/names/long/v1, as, 3535B, 3444B, 586f64f74805565c
+metazone/standard/names/long/v1, ast, 1348B, 1257B, ae296b59b3c46ef0
+metazone/standard/names/long/v1, az, 1128B, 1037B, 174ab20b8eee34c0
+metazone/standard/names/long/v1, bal-Latn, 1669B, 1578B, cf61083ca0dbb9ee
+metazone/standard/names/long/v1, be, 2687B, 2596B, fc2b6047584af0f2
+metazone/standard/names/long/v1, bg, 1891B, 1800B, 70fae3d77e00c03d
+metazone/standard/names/long/v1, bgc, 146B, 54B, 31eb283c46797017
+metazone/standard/names/long/v1, bho, -> bgc
+metazone/standard/names/long/v1, blo, 1476B, 1385B, bc5c75f8105ff7da
+metazone/standard/names/long/v1, bn, 2808B, 2717B, 8a946678f955049c
+metazone/standard/names/long/v1, br, 970B, 879B, 7d4df4f850d5999b
+metazone/standard/names/long/v1, brx, 2885B, 2794B, 21ed9c8f36559184
+metazone/standard/names/long/v1, bs, 2028B, 1937B, b3409c9cbdaeb485
+metazone/standard/names/long/v1, bs-Cyrl, 2971B, 2880B, 36a0cedc8a94bbc0
+metazone/standard/names/long/v1, ca, 1774B, 1683B, ed0684f60576d06c
+metazone/standard/names/long/v1, ceb, 1009B, 918B, a921d662ad11ff11
+metazone/standard/names/long/v1, chr, 1856B, 1765B, 115e50fec152b1ff
+metazone/standard/names/long/v1, cs, 1806B, 1715B, accc70787eff6346
+metazone/standard/names/long/v1, csw, 155B, 63B, 7987626a47352394
+metazone/standard/names/long/v1, cv, 2618B, 2527B, a52fd426c01684bc
+metazone/standard/names/long/v1, cy, 940B, 849B, e0055c813a9713fd
+metazone/standard/names/long/v1, da, 976B, 885B, 630139b1039507aa
+metazone/standard/names/long/v1, de, 1508B, 1417B, 8a4334eba285ca6a
+metazone/standard/names/long/v1, de-CH, 1501B, 1410B, 2993f3485ca3afb0
+metazone/standard/names/long/v1, doi, 203B, 111B, 95d54fb213f58691
+metazone/standard/names/long/v1, dsb, 1493B, 1402B, e6ff89b245e599b
+metazone/standard/names/long/v1, ee, 1781B, 1690B, fec81afde0b1ba72
+metazone/standard/names/long/v1, el, 2453B, 2362B, 6baa9f7d50d1ad88
+metazone/standard/names/long/v1, en, 800B, 709B, 44d6dd32c92651f6
+metazone/standard/names/long/v1, en-CA, 802B, 711B, 8a0aa31325df90c7
+metazone/standard/names/long/v1, eo, 127B, 35B, 15ba080ade827a7c
+metazone/standard/names/long/v1, es, 1174B, 1083B, 1a0b57a349ed27fd
+metazone/standard/names/long/v1, es-419, 1028B, 937B, 2aae92b848bd4968
+metazone/standard/names/long/v1, es-AR, 1053B, 962B, 6fd4edd6103d060
+metazone/standard/names/long/v1, es-BO, -> es-AR
+metazone/standard/names/long/v1, es-CL, -> es-AR
+metazone/standard/names/long/v1, es-CO, -> es-AR
+metazone/standard/names/long/v1, es-CR, -> es-AR
+metazone/standard/names/long/v1, es-DO, -> es-AR
+metazone/standard/names/long/v1, es-EC, -> es-AR
+metazone/standard/names/long/v1, es-GT, -> es-AR
+metazone/standard/names/long/v1, es-HN, -> es-AR
+metazone/standard/names/long/v1, es-MX, 1117B, 1026B, 9e6b44c06acee5a7
+metazone/standard/names/long/v1, es-NI, -> es-AR
+metazone/standard/names/long/v1, es-PA, -> es-AR
+metazone/standard/names/long/v1, es-PE, -> es-AR
+metazone/standard/names/long/v1, es-PY, -> es-AR
+metazone/standard/names/long/v1, es-US, 1137B, 1046B, fba2be71538ccff3
+metazone/standard/names/long/v1, es-VE, -> es-AR
+metazone/standard/names/long/v1, et, 1447B, 1356B, b2fee191dae3108d
+metazone/standard/names/long/v1, eu, 1835B, 1744B, 8831cc97123269d7
+metazone/standard/names/long/v1, fa, 1309B, 1218B, 1ba5e9745868420f
+metazone/standard/names/long/v1, fa-AF, 1445B, 1354B, 611851b3af5f4c56
+metazone/standard/names/long/v1, ff-Adlm, 5439B, 5348B, b73091e1c4ff38d8
+metazone/standard/names/long/v1, fi, 1551B, 1460B, 278e8f898a39e68f
+metazone/standard/names/long/v1, fil, 1037B, 946B, 64b113d05ae47333
+metazone/standard/names/long/v1, fo, 812B, 721B, e9a22259cbcc93c3
+metazone/standard/names/long/v1, fr, 1882B, 1791B, 766a7d5c8591673e
+metazone/standard/names/long/v1, fr-CA, 1859B, 1768B, d2e9eaa065f3ead6
+metazone/standard/names/long/v1, fy, 1491B, 1400B, 43f7a12ff72b9f80
+metazone/standard/names/long/v1, ga, 1641B, 1550B, b0a066bc1d8f0af5
+metazone/standard/names/long/v1, gaa, 133B, 41B, fa86a25031eb24e5
+metazone/standard/names/long/v1, gd, 1603B, 1512B, cf72c5f13fbd4f74
+metazone/standard/names/long/v1, gl, 1651B, 1560B, d5f96820d97f0e90
+metazone/standard/names/long/v1, gu, 2485B, 2394B, 78414df832fc92b7
+metazone/standard/names/long/v1, ha, 1660B, 1569B, 7cad26697520fb92
+metazone/standard/names/long/v1, he, 1402B, 1311B, 6f86b462163554ad
+metazone/standard/names/long/v1, hi, 2182B, 2091B, bff83a81ccbe7106
+metazone/standard/names/long/v1, hi-Latn, 828B, 737B, 5571a5f1ce34fba6
+metazone/standard/names/long/v1, hr, 1848B, 1757B, 3bca2a99f35a5038
+metazone/standard/names/long/v1, hsb, 1528B, 1437B, 9f442c7332a40f7c
+metazone/standard/names/long/v1, hu, 1689B, 1598B, 17e87c3715d4a9db
+metazone/standard/names/long/v1, hy, 3116B, 3025B, b002a42d5da5c683
+metazone/standard/names/long/v1, ia, 1185B, 1094B, e756ec21e809ed67
+metazone/standard/names/long/v1, id, 975B, 884B, 90362cda5236c105
+metazone/standard/names/long/v1, ie, 127B, 35B, 3707be007fdfc704
+metazone/standard/names/long/v1, ig, 1063B, 972B, 6feb1b2fec8e1762
+metazone/standard/names/long/v1, ii, 117B, 25B, a4dd505210e3e0e7
+metazone/standard/names/long/v1, is, 1544B, 1453B, be12128aeece6b69
+metazone/standard/names/long/v1, it, 1719B, 1628B, ddcb3dcf3c33e880
+metazone/standard/names/long/v1, ja, 1051B, 960B, b259b705d52153be
+metazone/standard/names/long/v1, jv, 1062B, 971B, 1648e80282fb56d7
+metazone/standard/names/long/v1, ka, 3651B, 3560B, 2351b951711bb4f1
+metazone/standard/names/long/v1, kea, 245B, 153B, f588ac487a1066b
+metazone/standard/names/long/v1, kgp, 1852B, 1761B, 8b64bd398d7309ec
+metazone/standard/names/long/v1, kk, 1781B, 1690B, 672a90f454537e43
+metazone/standard/names/long/v1, km, 4240B, 4149B, 46fae3c24e18a94d
+metazone/standard/names/long/v1, kn, 3052B, 2961B, 3d7c01f99e9f4fb9
+metazone/standard/names/long/v1, ko, 1092B, 1001B, a587b5e2e10fcbe1
+metazone/standard/names/long/v1, kok, 2229B, 2138B, 37041f80a97b28e0
+metazone/standard/names/long/v1, kok-Latn, 118B, 26B, 7c9d7cef100b8923
+metazone/standard/names/long/v1, ks, 2535B, 2444B, ed60e75a273b42bc
+metazone/standard/names/long/v1, ks-Deva, 215B, 123B, b35873bf41f52f57
+metazone/standard/names/long/v1, ku, 1720B, 1629B, 7268aa8e55ef7ef6
+metazone/standard/names/long/v1, kxv, 1529B, 1438B, 81635facea2ce717
+metazone/standard/names/long/v1, kxv-Deva, 2473B, 2382B, 82cf2cfeb696aeb7
+metazone/standard/names/long/v1, kxv-Orya, 2824B, 2733B, 4b059ed0a0172de0
+metazone/standard/names/long/v1, kxv-Telu, 2924B, 2833B, 391b784e3a0dd3f
+metazone/standard/names/long/v1, ky, 2118B, 2027B, b9db9181326771b6
+metazone/standard/names/long/v1, lb, 1389B, 1298B, 40ae27d804968359
+metazone/standard/names/long/v1, lij, 126B, 34B, bac96148e7de915a
+metazone/standard/names/long/v1, lmo, 121B, 29B, efd9cc1a8b1ab3b6
+metazone/standard/names/long/v1, lo, 3715B, 3624B, 27563820c86d7692
+metazone/standard/names/long/v1, lt, 1695B, 1604B, 83dbe79787ce55b2
+metazone/standard/names/long/v1, lv, 1614B, 1523B, 917ff2cd70177273
+metazone/standard/names/long/v1, mai, 2113B, 2022B, 3990048b2b53f214
+metazone/standard/names/long/v1, mi, 1502B, 1411B, c029ab53ec0599af
+metazone/standard/names/long/v1, mk, 1842B, 1751B, 221aa3681b9a55cf
+metazone/standard/names/long/v1, ml, 2931B, 2840B, 3579fb87b4516e
+metazone/standard/names/long/v1, mn, 2508B, 2417B, a79d6f99de130a27
+metazone/standard/names/long/v1, mni, 239B, 147B, 6b3016e725777aed
+metazone/standard/names/long/v1, mr, 2517B, 2426B, ed5f22a6d6812179
+metazone/standard/names/long/v1, ms, 997B, 906B, b1f727b2f1a5c2f2
+metazone/standard/names/long/v1, mt, -> kok-Latn
+metazone/standard/names/long/v1, my, 2775B, 2684B, 80897692aaa31943
+metazone/standard/names/long/v1, nds, 120B, 28B, 9f747a2342b96f1e
+metazone/standard/names/long/v1, ne, 2660B, 2569B, e17aad428b752e8
+metazone/standard/names/long/v1, nl, 1605B, 1514B, ba8db31383f3059f
+metazone/standard/names/long/v1, nn, 1226B, 1135B, 661cada25a1e8980
+metazone/standard/names/long/v1, no, 1285B, 1194B, 7bef0310392fba
+metazone/standard/names/long/v1, nqo, 3116B, 3025B, 6e0f86259b837a3e
+metazone/standard/names/long/v1, nso, 125B, 33B, 294158f35166418b
+metazone/standard/names/long/v1, oc, 127B, 35B, 27f159829a23fa12
+metazone/standard/names/long/v1, om, 1669B, 1578B, 67d72c4fc1adacfc
+metazone/standard/names/long/v1, or, 2967B, 2876B, dc4c333383edb2ea
+metazone/standard/names/long/v1, pa, 2566B, 2475B, 427e38d2ad3d8b79
+metazone/standard/names/long/v1, pcm, 1066B, 975B, cc53f3cd2b24d258
+metazone/standard/names/long/v1, pl, 1458B, 1367B, f73db0fc0d1c4482
+metazone/standard/names/long/v1, prg, 115B, 23B, 6a906cf29f2da0ff
+metazone/standard/names/long/v1, ps, 2085B, 1994B, 9b649939c1f06622
+metazone/standard/names/long/v1, ps-PK, 2084B, 1993B, 4851011a820a7c86
+metazone/standard/names/long/v1, pt, 2026B, 1935B, d3472275d4589b55
+metazone/standard/names/long/v1, pt-PT, 1467B, 1376B, 6b51da03d28bb236
+metazone/standard/names/long/v1, qu, 1667B, 1576B, c24d91e57afe37c9
+metazone/standard/names/long/v1, raj, 147B, 55B, e9cd4a657c1a396d
+metazone/standard/names/long/v1, rm, 147B, 55B, f881b0820db6be98
+metazone/standard/names/long/v1, ro, 1065B, 974B, 162e663016f9d2af
+metazone/standard/names/long/v1, ru, 1178B, 1087B, 127cd7d7ba702837
+metazone/standard/names/long/v1, ru-UA, 1237B, 1146B, 1d6cd946bbc8459f
+metazone/standard/names/long/v1, rw, -> kok-Latn
+metazone/standard/names/long/v1, sa, 213B, 121B, 6be6677caaf30dd3
+metazone/standard/names/long/v1, sah, 255B, 164B, 89f8dde3fa775ca8
+metazone/standard/names/long/v1, sat, 227B, 135B, 7aed55b280c268cb
+metazone/standard/names/long/v1, sc, 1950B, 1859B, a4fabad2dc3232ec
+metazone/standard/names/long/v1, sd, 2416B, 2325B, 5047470ce1bb0c4f
+metazone/standard/names/long/v1, sd-Deva, 209B, 117B, 3f79d91b47324aa7
+metazone/standard/names/long/v1, si, 3412B, 3321B, ee7a9421d16ab612
+metazone/standard/names/long/v1, sk, 1782B, 1691B, cabd066a1b2778bc
+metazone/standard/names/long/v1, sl, 1594B, 1503B, 25afb3860402feef
+metazone/standard/names/long/v1, so, 1413B, 1322B, b5cea520d16927ca
+metazone/standard/names/long/v1, sq, 1736B, 1645B, 2cd83f971e06dd2
+metazone/standard/names/long/v1, sr, 2730B, 2639B, f63484a6f7ba338b
+metazone/standard/names/long/v1, sr-BA, 3016B, 2925B, 7e2c591b1ea9d292
+metazone/standard/names/long/v1, sr-Latn, 1614B, 1523B, 7f3a86b55a2eaff2
+metazone/standard/names/long/v1, sr-Latn-BA, 1757B, 1666B, 658f67e20754300c
+metazone/standard/names/long/v1, st, -> kok-Latn
+metazone/standard/names/long/v1, su, 171B, 79B, 6d96809aca9af323
+metazone/standard/names/long/v1, sv, 1002B, 911B, 4a812449f3a2704e
+metazone/standard/names/long/v1, sw, 1082B, 991B, 77b8af663e55ec3a
+metazone/standard/names/long/v1, sw-CD, 1147B, 1056B, 4e36d115761cbd9a
+metazone/standard/names/long/v1, sw-KE, 1062B, 971B, f795e4fc8cae00b7
+metazone/standard/names/long/v1, syr, 2518B, 2427B, 77026bee8d9e137f
+metazone/standard/names/long/v1, szl, 118B, 26B, 280bcbf1e4c53cdc
+metazone/standard/names/long/v1, ta, 2920B, 2829B, a4e3809348e29af0
+metazone/standard/names/long/v1, te, 2815B, 2724B, bd99325dbab0d617
+metazone/standard/names/long/v1, tg, 1711B, 1620B, 50a7ff76dd72fe6
+metazone/standard/names/long/v1, th, 2041B, 1950B, 1f991c7bbbe4e911
+metazone/standard/names/long/v1, ti, 2426B, 2335B, 19d01474dad63e6b
+metazone/standard/names/long/v1, tk, 948B, 857B, 5f097ec7d8c18c84
+metazone/standard/names/long/v1, tn, 148B, 56B, 8748069a371520b6
+metazone/standard/names/long/v1, to, 1750B, 1659B, 540ddef0534dd997
+metazone/standard/names/long/v1, tr, 953B, 862B, 70a9ea034ba576a6
+metazone/standard/names/long/v1, tt, 1758B, 1667B, f0aa772de4f736fc
+metazone/standard/names/long/v1, ug, 1918B, 1827B, 1465bc0443822818
+metazone/standard/names/long/v1, uk, 3740B, 3649B, bf3e80a04c5aaae6
+metazone/standard/names/long/v1, und, 96B, 4B, 7bf55e51b22b9698
+metazone/standard/names/long/v1, ur, 2301B, 2210B, 9e838e20888dded1
+metazone/standard/names/long/v1, ur-IN, 2239B, 2148B, b4fbe1578a9f6282
+metazone/standard/names/long/v1, uz, 1566B, 1475B, a106709f4a219592
+metazone/standard/names/long/v1, uz-Cyrl, 1744B, 1653B, 1a87a7208aa00319
+metazone/standard/names/long/v1, vec, 1895B, 1804B, a788dc03a14a8b6
+metazone/standard/names/long/v1, vi, 1135B, 1044B, 81056498a2381230
+metazone/standard/names/long/v1, vmw, 127B, 35B, 9106d1af63e4b29e
+metazone/standard/names/long/v1, wo, 1383B, 1292B, afc90831906283db
+metazone/standard/names/long/v1, xh, 1237B, 1146B, 80a53a48615b885e
+metazone/standard/names/long/v1, xnr, 3657B, 3566B, acac92d318b60481
+metazone/standard/names/long/v1, yo, 1904B, 1813B, f34ea4f3834205f4
+metazone/standard/names/long/v1, yo-BJ, 1884B, 1793B, 5ed4d861f27d2e4b
+metazone/standard/names/long/v1, yrl, 1855B, 1764B, 4243a22b7b10f35f
+metazone/standard/names/long/v1, yrl-CO, 1854B, 1763B, 427d34a69955bc46
+metazone/standard/names/long/v1, yrl-VE, -> yrl-CO
+metazone/standard/names/long/v1, yue, 910B, 819B, 365b2cc21849247e
+metazone/standard/names/long/v1, yue-Hans, 910B, 819B, ce33492b2c5069ec
+metazone/standard/names/long/v1, za, 130B, 38B, f98005857d7e6bf5
+metazone/standard/names/long/v1, zh, 1066B, 975B, 36ddfa7697bbeb52
+metazone/standard/names/long/v1, zh-HK, 1018B, 927B, c6882834975677bd
+metazone/standard/names/long/v1, zh-Hant, 946B, 855B, 2abf1e3826527664
+metazone/standard/names/long/v1, zh-MO, -> zh-HK
+metazone/standard/names/long/v1, zu, 2130B, 2039B, f32ad8d02aac3ac8
 persian/date/neo/skeleton/patterns/v1, <lookup>, 6489B, 1304 identifiers
 persian/date/neo/skeleton/patterns/v1, <total>, 60934B, 43481B, 587 unique payloads
 persian/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004

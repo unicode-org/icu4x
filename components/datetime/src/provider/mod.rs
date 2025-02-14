@@ -119,6 +119,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::ExemplarCitiesV1::INFO,
     time_zones::ExemplarCitiesRootV1::INFO,
     time_zones::MetazoneGenericNamesLongV1::INFO,
+    time_zones::MetazoneStandardNamesLongV1::INFO,
     time_zones::MetazoneGenericNamesShortV1::INFO,
     time_zones::MetazonePeriodV1::INFO,
     time_zones::MetazoneSpecificNamesLongV1::INFO,

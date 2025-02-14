@@ -121,8 +121,14 @@ impl FormatTimeZone for GenericNonLocationFormat {
         let Some(local_time) = input.local_time else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
         };
-        let Some(names) = (match self.0 {
+        let Some(generic_names) = (match self.0 {
             FieldLength::Four => data_payloads.mz_generic_long.as_ref(),
+            _ => data_payloads.mz_generic_short.as_ref(),
+        }) else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(standard_names) = (match self.0 {
+            FieldLength::Four => data_payloads.mz_standard_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
         }) else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
@@ -131,11 +137,18 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(name) = names.overrides.get(&time_zone_id).or_else(|| {
-            names
-                .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?)
-        }) else {
+        let Some(name) = generic_names
+            .overrides
+            .get(&time_zone_id)
+            .or_else(|| standard_names.overrides.get(&time_zone_id))
+            .or_else(|| {
+                let mz = metazone_period.resolve(time_zone_id, local_time)?;
+                generic_names
+                    .defaults
+                    .get(&mz)
+                    .or_else(|| standard_names.defaults.get(&mz))
+            })
+        else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -168,7 +181,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::MissingInputField("local_time")));
         };
 
-        let Some(names) = (match self.0 {
+        let Some(specific) = (match self.0 {
             FieldLength::Four => data_payloads.mz_specific_long.as_ref(),
             _ => data_payloads.mz_specific_short.as_ref(),
         }) else {
@@ -178,16 +191,44 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(name) = names
+        let name = if zone_variant == TimeZoneVariant::Standard && self.0 == FieldLength::Four {
+            let Some(standard_names) = data_payloads.mz_standard_long.as_ref() else {
+                return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+            };
+            if let Some(n) = specific
+                .overrides
+                .get(&(time_zone_id, TimeZoneVariant::Standard))
+            {
+                n
+            } else if let Some(mz) = metazone_period.resolve(time_zone_id, local_time) {
+                if specific.use_standard.binary_search(&mz).is_ok() {
+                    if let Some(n) = standard_names.defaults.get(&mz) {
+                        n
+                    } else {
+                        // The only reason why the name is not in GenericStandard even though we expect it
+                        // to be, is that it was deduplicated against the generic location format.
+                        return GenericLocationFormat.format(sink, input, data_payloads, _fdf);
+                    }
+                } else if let Some(n) = specific.defaults.get(&(mz, TimeZoneVariant::Standard)) {
+                    n
+                } else {
+                    return Ok(Err(FormatTimeZoneError::Fallback));
+                }
+            } else {
+                return Ok(Err(FormatTimeZoneError::Fallback));
+            }
+        } else if let Some(n) = specific
             .overrides
             .get(&(time_zone_id, zone_variant))
             .or_else(|| {
-                names.defaults.get(&(
+                specific.defaults.get(&(
                     metazone_period.resolve(time_zone_id, local_time)?,
                     zone_variant,
                 ))
             })
-        else {
+        {
+            n
+        } else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
