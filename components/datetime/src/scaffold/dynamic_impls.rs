@@ -11,7 +11,7 @@ use icu_calendar::{
 };
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{
-    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    types::{Hour, Minute, Nanosecond, Second},
     Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
@@ -136,7 +136,7 @@ impl TimeMarkers for TimeFieldSet {
     type HourInput = datetime_marker_helper!(@input/hour, yes);
     type MinuteInput = datetime_marker_helper!(@input/minute, yes);
     type SecondInput = datetime_marker_helper!(@input/second, yes);
-    type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
+    type NanosecondInput = datetime_marker_helper!(@input/Nanosecond, yes);
 }
 
 impl DateTimeMarkers for TimeFieldSet {

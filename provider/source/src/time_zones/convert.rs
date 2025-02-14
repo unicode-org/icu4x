@@ -329,11 +329,11 @@ impl SourceDataProvider {
                         .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
                         .flat_map(|(bcp47, zoneset)| {
                             let mut data =
-                                Vec::<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>::new();
+                                Vec::<(MinutesSinceEpoch, (UtcOffset, UtcOffset))>::new();
 
                             fn store_offsets(
-                                data: &mut Vec<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>,
-                                end_time: IsoMinutesSinceEpoch,
+                                data: &mut Vec<(MinutesSinceEpoch, (UtcOffset, UtcOffset))>,
+                                end_time: MinutesSinceEpoch,
                                 utc_offset: i64,
                                 dst_offset_relative: i64,
                             ) {
@@ -354,8 +354,8 @@ impl SourceDataProvider {
                                     // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
                                     // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
                                     // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
-                                    .map(|t| (t.to_timestamp() / 60) as IsoMinutesSinceEpoch)
-                                    .unwrap_or(IsoMinutesSinceEpoch::MAX);
+                                    .map(|t| (t.to_timestamp() / 60) as MinutesSinceEpoch)
+                                    .unwrap_or(MinutesSinceEpoch::MAX);
 
                                 if local_end_time <= 0 {
                                     continue;
@@ -404,7 +404,7 @@ impl SourceDataProvider {
                                                                 zone_info.offset,
                                                                 rule.time_to_add,
                                                             ) / 60)
-                                                                as IsoMinutesSinceEpoch
+                                                                as MinutesSinceEpoch
                                                         }
                                                     },
                                                     rule.time_to_add,

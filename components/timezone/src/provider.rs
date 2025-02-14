@@ -115,8 +115,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 /// Storage type for storing UTC offsets as eights of an hour.
 pub type EighthsOfHourOffset = i8;
 /// Storage type for storing `DateTime<Iso>` as minutes since [`EPOCH`].
-pub type IsoMinutesSinceEpoch = i32;
-/// The epoch for [`IsoMinutesSinceEpoch`].
+pub type MinutesSinceEpoch = i32;
+/// The epoch for [`MinutesSinceEpoch`].
 ///
 /// This is 1970-01-01, but this is coincidental to anything UNIX and should be changed to 0 in the future.
 pub const EPOCH: RataDie = RataDie::new(719163);
@@ -144,7 +144,7 @@ pub struct ZoneOffsetPeriod<'data>(
     pub  ZeroMap2d<
         'data,
         TimeZoneBcp47Id,
-        IsoMinutesSinceEpoch,
+        MinutesSinceEpoch,
         (EighthsOfHourOffset, EighthsOfHourOffset),
     >,
 );

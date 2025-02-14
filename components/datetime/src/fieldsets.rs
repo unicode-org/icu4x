@@ -69,7 +69,7 @@ use icu_calendar::{
 };
 use icu_provider::marker::NeverMarker;
 use icu_timezone::{
-    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
+    types::{Hour, Minute, Nanosecond, Second},
     Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
 };
 
@@ -601,7 +601,7 @@ macro_rules! impl_date_marker {
             type HourInput = datetime_marker_helper!(@input/hour, yes);
             type MinuteInput = datetime_marker_helper!(@input/minute, yes);
             type SecondInput = datetime_marker_helper!(@input/second, yes);
-            type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
+            type NanosecondInput = datetime_marker_helper!(@input/Nanosecond, yes);
         }
         impl DateTimeMarkers for $type_time {
             type D = Self;
@@ -689,7 +689,7 @@ macro_rules! impl_time_marker {
         // Whether the input should contain seconds.
         $(input_second = $second_yes:ident,)?
         // Whether the input should contain fractional seconds.
-        $(input_nanosecond = $nanosecond_yes:ident,)?
+        $(input_Nanosecond = $Nanosecond_yes:ident,)?
     ) => {
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
@@ -750,7 +750,7 @@ macro_rules! impl_time_marker {
             type HourInput = datetime_marker_helper!(@input/hour, $($hour_yes)?);
             type MinuteInput = datetime_marker_helper!(@input/minute, $($minute_yes)?);
             type SecondInput = datetime_marker_helper!(@input/second, $($second_yes)?);
-            type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, $($nanosecond_yes)?);
+            type NanosecondInput = datetime_marker_helper!(@input/Nanosecond, $($Nanosecond_yes)?);
         }
         impl DateTimeMarkers for $type {
             type D = ();
@@ -1125,7 +1125,7 @@ impl_time_marker!(
     input_hour = yes,
     input_minute = yes,
     input_second = yes,
-    input_nanosecond = yes,
+    input_Nanosecond = yes,
 );
 
 /// Time zone field sets

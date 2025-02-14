@@ -67,28 +67,28 @@ impl IntoOption<AnyCalendarKind> for AnyCalendarKind {
     }
 }
 
-impl IntoOption<IsoHour> for IsoHour {
+impl IntoOption<Hour> for Hour {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<IsoMinute> for IsoMinute {
+impl IntoOption<Minute> for Minute {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<IsoSecond> for IsoSecond {
+impl IntoOption<Second> for Second {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<NanoSecond> for NanoSecond {
+impl IntoOption<Nanosecond> for Nanosecond {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

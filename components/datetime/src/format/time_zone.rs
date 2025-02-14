@@ -492,7 +492,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
 
 /// Whether the minutes field should be optional or required in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
-enum IsoMinutes {
+enum Minutes {
     /// Minutes are always displayed.
     Required,
 
@@ -502,7 +502,7 @@ enum IsoMinutes {
 
 /// Whether the seconds field should be optional or excluded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
-enum IsoSeconds {
+enum Seconds {
     /// Seconds are displayed only if they are non-zero.
     Optional,
 
@@ -516,8 +516,8 @@ pub(crate) struct Iso8601Format {
     extended: bool,
     // 00:00 vs Z
     z: bool,
-    minutes: IsoMinutes,
-    seconds: IsoSeconds,
+    minutes: Minutes,
+    seconds: Seconds,
 }
 
 impl Iso8601Format {
@@ -526,32 +526,32 @@ impl Iso8601Format {
             FieldLength::One => Self {
                 extended: false,
                 z: true,
-                minutes: IsoMinutes::Optional,
-                seconds: IsoSeconds::Never,
+                minutes: Minutes::Optional,
+                seconds: Seconds::Never,
             },
             FieldLength::Two => Self {
                 extended: false,
                 z: true,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
+                minutes: Minutes::Required,
+                seconds: Seconds::Never,
             },
             FieldLength::Three => Self {
                 extended: true,
                 z: true,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
+                minutes: Minutes::Required,
+                seconds: Seconds::Never,
             },
             FieldLength::Four => Self {
                 extended: false,
                 z: true,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
+                minutes: Minutes::Required,
+                seconds: Seconds::Optional,
             },
             _ => Self {
                 extended: true,
                 z: true,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
+                minutes: Minutes::Required,
+                seconds: Seconds::Optional,
             },
         }
     }
@@ -561,32 +561,32 @@ impl Iso8601Format {
             FieldLength::One => Self {
                 extended: false,
                 z: false,
-                minutes: IsoMinutes::Optional,
-                seconds: IsoSeconds::Never,
+                minutes: Minutes::Optional,
+                seconds: Seconds::Never,
             },
             FieldLength::Two => Self {
                 extended: false,
                 z: false,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
+                minutes: Minutes::Required,
+                seconds: Seconds::Never,
             },
             FieldLength::Three => Self {
                 extended: true,
                 z: false,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Never,
+                minutes: Minutes::Required,
+                seconds: Seconds::Never,
             },
             FieldLength::Four => Self {
                 extended: false,
                 z: false,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
+                minutes: Minutes::Required,
+                seconds: Seconds::Optional,
             },
             _ => Self {
                 extended: true,
                 z: false,
-                minutes: IsoMinutes::Required,
-                seconds: IsoSeconds::Optional,
+                minutes: Minutes::Required,
+                seconds: Seconds::Optional,
             },
         }
     }
@@ -602,8 +602,8 @@ impl FormatTimeZone for Iso8601Format {
     /// - Basic    e.g. +0800
     /// - Extended e.g. +08:00
     ///
-    /// [`IsoMinutes`] can be required or optional.
-    /// [`IsoSeconds`] can be optional or never.
+    /// [`Minutes`] can be required or optional.
+    /// [`Seconds`] can be optional or never.
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
@@ -638,8 +638,8 @@ impl Iso8601Format {
         }
         .write_to(sink)?;
 
-        if self.minutes == IsoMinutes::Required
-            || (self.minutes == IsoMinutes::Optional && offset.minutes_part() != 0)
+        if self.minutes == Minutes::Required
+            || (self.minutes == Minutes::Optional && offset.minutes_part() != 0)
         {
             if self.extended {
                 sink.write_char(':')?;
@@ -652,7 +652,7 @@ impl Iso8601Format {
             .write_to(sink)?;
         }
 
-        if self.seconds == IsoSeconds::Optional && offset.seconds_part() != 0 {
+        if self.seconds == Seconds::Optional && offset.seconds_part() != 0 {
             if self.extended {
                 sink.write_char(':')?;
             }

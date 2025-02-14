@@ -3007,7 +3007,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
-        hour: icu_timezone::types::IsoHour,
+        hour: icu_timezone::types::Hour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;

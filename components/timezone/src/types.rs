@@ -83,7 +83,7 @@ macro_rules! dt_unit {
 }
 
 dt_unit!(
-    IsoHour,
+    Hour,
     u8,
     23,
     /// An ISO-8601 hour component, for use with ISO calendars.
@@ -92,7 +92,7 @@ dt_unit!(
 );
 
 dt_unit!(
-    IsoMinute,
+    Minute,
     u8,
     59,
     /// An ISO-8601 minute component, for use with ISO calendars.
@@ -101,7 +101,7 @@ dt_unit!(
 );
 
 dt_unit!(
-    IsoSecond,
+    Second,
     u8,
     60,
     /// An ISO-8601 second component, for use with ISO calendars.
@@ -110,7 +110,7 @@ dt_unit!(
 );
 
 dt_unit!(
-    NanoSecond,
+    Nanosecond,
     u32,
     999_999_999,
     /// A fractional second component, stored as nanoseconds.
@@ -123,41 +123,36 @@ dt_unit!(
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
     /// Hour
-    pub hour: IsoHour,
+    pub hour: Hour,
 
     /// Minute
-    pub minute: IsoMinute,
+    pub minute: Minute,
 
     /// Second
-    pub second: IsoSecond,
+    pub second: Second,
 
-    /// Fractional second
-    pub nanosecond: NanoSecond,
+    /// Subsecond
+    pub subsecond: Nanosecond,
 }
 
 impl Time {
     /// Construct a new [`Time`], without validating that all components are in range
-    pub const fn new(
-        hour: IsoHour,
-        minute: IsoMinute,
-        second: IsoSecond,
-        nanosecond: NanoSecond,
-    ) -> Self {
+    pub const fn new(hour: Hour, minute: Minute, second: Second, subsecond: Nanosecond) -> Self {
         Self {
             hour,
             minute,
             second,
-            nanosecond,
+            subsecond,
         }
     }
 
     /// Construct a new [`Time`] representing midnight (00:00.000)
     pub const fn midnight() -> Self {
         Self {
-            hour: IsoHour::zero(),
-            minute: IsoMinute::zero(),
-            second: IsoSecond::zero(),
-            nanosecond: NanoSecond::zero(),
+            hour: Hour::zero(),
+            minute: Minute::zero(),
+            second: Second::zero(),
+            subsecond: Nanosecond::zero(),
         }
     }
 
@@ -167,7 +162,7 @@ impl Time {
             hour: hour.try_into()?,
             minute: minute.try_into()?,
             second: second.try_into()?,
-            nanosecond: nanosecond.try_into()?,
+            subsecond: nanosecond.try_into()?,
         })
     }
 }

@@ -24,17 +24,17 @@ pub mod ffi {
             hour: u8,
             minute: u8,
             second: u8,
-            nanosecond: u32,
+            subsecond: u32,
         ) -> Result<Box<Time>, CalendarError> {
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
             let second = second.try_into()?;
-            let nanosecond = nanosecond.try_into()?;
+            let subsecond = subsecond.try_into()?;
             let time = icu_timezone::Time {
                 hour,
                 minute,
                 second,
-                nanosecond,
+                subsecond,
             };
             Ok(Box::new(Time(time)))
         }
@@ -78,7 +78,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::Time::nanosecond, StructField)]
         #[diplomat::attr(auto, getter)]
         pub fn nanosecond(&self) -> u32 {
-            self.0.nanosecond.into()
+            self.0.subsecond.into()
         }
     }
 }
