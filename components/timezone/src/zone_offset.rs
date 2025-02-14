@@ -140,15 +140,3 @@ pub struct ZoneOffsets {
     /// The daylight-saving offset, if used.
     pub daylight: Option<UtcOffset>,
 }
-
-impl ZoneOffsets {
-    pub(crate) fn zone_variant(self, offset: UtcOffset) -> Option<ZoneVariant> {
-        if self.standard == offset {
-            Some(ZoneVariant::Standard)
-        } else if self.daylight == Some(offset) {
-            Some(ZoneVariant::Daylight)
-        } else {
-            None
-        }
-    }
-}
