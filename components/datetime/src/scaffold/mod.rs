@@ -28,6 +28,7 @@ pub use fieldset_traits::AllAnyCalendarFormattingDataMarkers;
 pub use fieldset_traits::AllAnyCalendarPatternDataMarkers;
 pub use fieldset_traits::AllFixedCalendarExternalDataMarkers;
 pub use fieldset_traits::AllFixedCalendarFormattingDataMarkers;
+pub use fieldset_traits::AllFixedCalendarPatternDataMarkers;
 pub use fieldset_traits::AllInputMarkers;
 pub use fieldset_traits::DateDataMarkers;
 pub use fieldset_traits::DateInputMarkers;

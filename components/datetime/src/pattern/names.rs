@@ -754,7 +754,50 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
 
 impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// Creates an instance with the names loaded in a [`FixedCalendarDateTimeFormatter`].
-    pub fn from_fixed_calendar_formatter(
+    ///
+    /// This function requires passing in the [`DateTimeFormatterPreferences`] because it is not
+    /// retained in the formatter. Pass the same value or else unexpected behavior may occur.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::timezone::{DateTime, Time};
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, YMDT};
+    /// use icu::datetime::pattern::{TypedDateTimeNames, DayPeriodNameLength};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let prefs = locale!("es-MX").into();
+    ///
+    /// let formatter =
+    ///     FixedCalendarDateTimeFormatter::try_new(
+    ///         prefs,
+    ///         YMD::long(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian(2025, 2, 13).unwrap()),
+    ///     "13 de febrero de 2025"
+    /// );
+    ///
+    /// // Change the YMD formatter to a YMDT formatter, after loading day period names.
+    /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
+    /// let mut names = TypedDateTimeNames::from_formatter(prefs, formatter).with_fset::<YMDT>();
+    /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// let formatter = names.try_into_formatter(YMDT::long().hm()).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&DateTime {
+    ///         date: Date::try_new_gregorian(2025, 2, 13).unwrap(),
+    ///         time: Time::midnight(),
+    ///     }),
+    ///     "13 de febrero de 2025, 12:00 a.m."
+    /// );
+    /// ```
+    pub fn from_formatter(
         prefs: DateTimeFormatterPreferences,
         formatter: FixedCalendarDateTimeFormatter<C, FSet>,
     ) -> Self {
@@ -765,12 +808,74 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         }
     }
 
+    fn from_parts(prefs: DateTimeFormatterPreferences, inner: RawDateTimeNames<FSet>) -> Self {
+        Self {
+            prefs,
+            inner,
+            _calendar: PhantomData,
+        }
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeMarkers> TypedDateTimeNames<C, FSet>
+where
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    FSet: GetField<CompositeFieldSet>,
+{
+    /// Loads a pattern for the given field set and returns a [`FixedCalendarDateTimeFormatter`].
+    ///
+    /// The names in the current [`TypedDateTimeNames`] _must_ be sufficient for the field set.
+    /// If not, the input object will be returned with an error.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::Time;
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::pattern::{TypedDateTimeNames, DayPeriodNameLength};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let names = TypedDateTimeNames::<(), _>::new_without_number_formatting(
+    ///     locale!("es-MX").into(),
+    /// );
+    ///
+    /// let field_set = T::long().hm();
+    ///
+    /// // Cannot convert yet: no names are loaded
+    /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
+    ///
+    /// // Load the data we need:
+    /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// names.include_decimal_formatter().unwrap();
+    ///
+    /// // Now the conversion is successful:
+    /// let formatter = names.try_into_formatter(field_set).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::midnight()),
+    ///     "12:00 a.m."
+    /// );
+    /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_into_fixed_calendar_formatter(
+    pub fn try_into_formatter(
         self,
         field_set: FSet,
-    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, DateTimeFormatterLoadError> {
-        todo!()
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        crate::provider::Baked: AllFixedCalendarPatternDataMarkers<C, FSet>,
+    {
+        FixedCalendarDateTimeFormatter::try_new_internal_with_names(
+            &crate::provider::Baked,
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.prefs,
+            field_set.get_field(),
+            self.inner,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
     }
 }
 

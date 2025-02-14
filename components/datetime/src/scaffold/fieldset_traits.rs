@@ -237,18 +237,50 @@ where
 }
 
 /// Trait to consolidate data provider markers defined by this crate
+/// for datetime skeleton patterns with a fixed calendar.
+///
+/// This trait is implemented on all providers that support datetime skeleton patterns,
+/// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
+#[rustfmt::skip]
+pub trait AllFixedCalendarPatternDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
+DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1>
+    + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
+    + DataProvider<FSet::GluePatternV1>
+where
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+{
+}
+
+#[rustfmt::skip]
+impl<T, C, FSet> AllFixedCalendarPatternDataMarkers<C, FSet> for T
+where
+    C: CldrCalendar,
+    FSet: DateTimeMarkers,
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    T: ?Sized
+        + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1>
+        + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
+        + DataProvider<FSet::GluePatternV1>,
+{
+}
+
+/// Trait to consolidate data provider markers defined by this crate
 /// for datetime formatting with a fixed calendar.
 ///
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
 // This trait is implicitly sealed due to sealed supertraits
+#[rustfmt::skip]
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1>
-    + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1>
     + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1>
-    + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1>
@@ -259,7 +291,7 @@ pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeM
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-    + DataProvider<FSet::GluePatternV1>
+    + AllFixedCalendarPatternDataMarkers<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -267,6 +299,7 @@ where
 {
 }
 
+#[rustfmt::skip]
 impl<T, C, FSet> AllFixedCalendarFormattingDataMarkers<C, FSet> for T
 where
     C: CldrCalendar,
@@ -291,7 +324,8 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-        + DataProvider<FSet::GluePatternV1>,
+        + DataProvider<FSet::GluePatternV1>
+        + AllFixedCalendarPatternDataMarkers<C, FSet>
 {
 }
 
@@ -475,7 +509,7 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-        + AllAnyCalendarPatternDataMarkers<FSet>,
+        + AllAnyCalendarPatternDataMarkers<FSet>
 {
 }
 

@@ -242,36 +242,58 @@ where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
         L: DecimalFormatterLoader,
     {
+        let names = RawDateTimeNames::new_without_number_formatting();
+        Self::try_new_internal_with_names(provider, provider, loader, prefs, field_set, names)
+            .map_err(|e| e.0)
+    }
+
+    pub(crate) fn try_new_internal_with_names<P0, P1, L>(
+        provider_p: &P0,
+        provider: &P1,
+        loader: &L,
+        prefs: DateTimeFormatterPreferences,
+        field_set: CompositeFieldSet,
+        mut names: RawDateTimeNames<FSet>,
+    ) -> Result<Self, (DateTimeFormatterLoadError, RawDateTimeNames<FSet>)>
+    where
+        P0: ?Sized + AllFixedCalendarPatternDataMarkers<C, FSet>,
+        P1: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        L: DecimalFormatterLoader,
+    {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
-            &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1::bind(provider),
-            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider),
-            &FSet::GluePatternV1::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1::bind(provider_p),
+            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
+            &FSet::GluePatternV1::bind(provider_p),
             prefs,
             field_set,
-        )
-        .map_err(DateTimeFormatterLoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_number_formatting();
-        names
-            .load_for_pattern(
-                &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1::bind(provider),
-                &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1::bind(provider),
-                &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1::bind(provider),
-                &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
-                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
-                loader, // fixed decimal formatter
-                prefs,
-                selection.pattern_items_for_data_loading(),
-            )
-            .map_err(DateTimeFormatterLoadError::Names)?;
+        );
+        let selection = match selection {
+            Ok(selection) => selection,
+            Err(e) => return Err((DateTimeFormatterLoadError::Data(e), names)),
+        };
+        let result = names.load_for_pattern(
+            &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1::bind(provider),
+            &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
+            loader, // fixed decimal formatter
+            prefs,
+            selection.pattern_items_for_data_loading(),
+        );
+        match result {
+            Ok(()) => (),
+            Err(e) => return Err((DateTimeFormatterLoadError::Names(e), names)),
+        };
         Ok(Self {
             selection,
             names,
