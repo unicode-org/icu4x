@@ -13,7 +13,7 @@ components/collator/              @hsivonen @echeran
 components/collections/           @echeran
 components/datetime/              @sffc @zbraniecki
 components/decimal/               @sffc
-components/experimental/src/compactdecimal/      @eggrobin
+components/experimental/src/compactdecimal/      @younies
 components/experimental/src/dimension/           @younies
 components/experimental/src/displaynames/        @sffc @snktd
 components/experimental/src/relativetime/        @pdogr
