@@ -505,7 +505,7 @@ macro_rules! impl_date_marker {
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
-            /// use icu::timezone::{DateTime, Time};
+            /// use icu::datetime::input::{DateTime, Time};
             /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = DateTimeFormatter::try_new(")]
@@ -529,7 +529,7 @@ macro_rules! impl_date_marker {
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
-            /// use icu::timezone::{DateTime, Time};
+            /// use icu::datetime::input::{DateTime, Time};
             /// use writeable::assert_writeable_eq;
             ///
             #[doc = concat!("let fmt = FixedCalendarDateTimeFormatter::try_new(")]
@@ -697,7 +697,7 @@ macro_rules! impl_time_marker {
             /// # Examples
             ///
             /// ```
-            /// use icu::timezone::Time;
+            /// use icu::datetime::input::Time;
             /// use icu::datetime::TimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -812,8 +812,9 @@ macro_rules! impl_zone_marker {
         ///
         /// ```
         /// use icu::calendar::Date;
-        /// use icu::timezone::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+        /// use icu::datetime::input::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::TimeFormatter;
+        /// use icu::timezone::ZoneVariant;
         #[doc = concat!("use icu::datetime::fieldsets::zone::", stringify!($type), ";")]
         /// use icu::locale::locale;
         /// use tinystr::tinystr;
@@ -1033,7 +1034,7 @@ impl_time_marker!(
     /// or [`DateTimeFormatterPreferences`].
     ///
     /// ```
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
@@ -1086,7 +1087,7 @@ impl_time_marker!(
     /// Hour cycles `h11` and `h24` are supported, too:
     ///
     /// ```
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::TimeFormatter;
     /// use icu::locale::locale;
@@ -1136,11 +1137,12 @@ pub mod zone {
         ///
         /// ```
         /// use icu::calendar::Date;
-        /// use icu::timezone::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZoneVariant};
+        /// use icu::datetime::input::{Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
         /// use icu::locale::locale;
+        /// use icu::timezone::ZoneVariant;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1182,7 +1184,8 @@ pub mod zone {
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificLong;
         /// use icu::locale::locale;
-        /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+        /// use icu::datetime::input::{DateTime, Time, TimeZoneBcp47Id, UtcOffset};
+        /// use icu::timezone::ZoneVariant;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1223,7 +1226,8 @@ pub mod zone {
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::{T, zone::SpecificShort};
         /// use icu::locale::locale;
-        /// use icu::timezone::{DateTime, Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+        /// use icu::datetime::input::{DateTime, Time, TimeZoneBcp47Id, UtcOffset};
+        /// use icu::timezone::ZoneVariant;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1261,7 +1265,8 @@ pub mod zone {
         /// use icu::calendar::Date;
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
-        /// use icu::timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+        /// use icu::datetime::input::{Time, TimeZoneBcp47Id, UtcOffset};
+        /// use icu::timezone::ZoneVariant;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
@@ -1325,7 +1330,7 @@ pub mod zone {
         ///
         /// ```
         /// use icu::calendar::Date;
-        /// use icu::timezone::{Time, TimeZoneBcp47Id};
+        /// use icu::datetime::input::{Time, TimeZoneBcp47Id};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
@@ -1354,11 +1359,12 @@ pub mod zone {
         ///
         /// ```
         /// use icu::calendar::Date;
-        /// use icu::timezone::{Time, TimeZoneIdMapper};
+        /// use icu::datetime::input::Time;
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::datetime::DateTimeWriteError;
         /// use icu::locale::locale;
+        /// use icu::timezone::TimeZoneIdMapper;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1406,7 +1412,7 @@ pub mod zone {
         /// ```compile_fail,E0271
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericLong;
-        /// use icu::timezone::TimeZoneBcp47Id;
+        /// use icu::datetime::input::TimeZoneBcp47Id;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
@@ -1447,7 +1453,7 @@ pub mod zone {
         /// ```compile_fail,E0271
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
-        /// use icu::timezone::TimeZoneBcp47Id;
+        /// use icu::datetime::input::TimeZoneBcp47Id;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
@@ -1485,7 +1491,7 @@ pub mod zone {
         /// use icu::calendar::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
-        /// use icu::timezone::UtcOffset;
+        /// use icu::datetime::input::UtcOffset;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
@@ -1520,7 +1526,7 @@ pub mod zone {
         /// use icu::calendar::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
-        /// use icu::timezone::UtcOffset;
+        /// use icu::datetime::input::UtcOffset;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;

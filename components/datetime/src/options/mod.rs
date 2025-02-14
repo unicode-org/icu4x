@@ -328,7 +328,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::Time;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;
@@ -554,7 +554,7 @@ impl From<TimePrecisionSerde> for TimePrecision {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::timezone::Time;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;

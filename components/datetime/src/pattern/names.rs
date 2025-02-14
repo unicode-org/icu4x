@@ -399,7 +399,7 @@ size_test!(
 /// use icu::datetime::pattern::WeekdayNameLength;
 /// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
-/// use icu::timezone::{DateTime, Time};
+/// use icu::datetime::input::{DateTime, Time};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -433,7 +433,8 @@ size_test!(
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{Time, TimeZoneInfo, TimeZoneIdMapper, ZonedDateTime, ZoneOffsetCalculator};
+/// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+/// use icu::datetime::input::{Time, TimeZoneInfo, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -502,7 +503,7 @@ size_test!(
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
-/// use icu::timezone::{DateTime, TimeZoneInfo};
+/// use icu::datetime::input::{DateTime, TimeZoneInfo};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -762,7 +763,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{DateTime, Time};
+    /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, YMDT};
     /// use icu::datetime::pattern::{TypedDateTimeNames, DayPeriodNameLength};
@@ -832,7 +833,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::pattern::{TypedDateTimeNames, DayPeriodNameLength};
     /// use icu::locale::locale;
@@ -944,7 +945,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::timezone::{DateTime, Time};
+    /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, YMDT};
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
@@ -1017,7 +1018,7 @@ where
     ///
     /// ```
     /// use icu::calendar::AnyCalendar;
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
     /// use icu::locale::locale;
@@ -1404,7 +1405,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1514,7 +1516,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1577,7 +1580,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1640,7 +1644,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1712,7 +1717,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1784,7 +1790,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1856,7 +1863,8 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
+    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, TimeZoneIdMapper::new(), &ZoneOffsetCalculator::new())
@@ -1914,7 +1922,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -2024,7 +2032,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{DateTime, Time};
+    /// use icu::datetime::input::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
@@ -2100,7 +2108,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::timezone::{DateTime, Time};
+    /// use icu::datetime::input::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated month names:

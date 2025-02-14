@@ -25,7 +25,8 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper};
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::timezone::TimeZoneIdMapper;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -55,7 +56,8 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper};
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::timezone::TimeZoneIdMapper;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -81,7 +83,8 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, zone::GenericShort, YMD};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::{ZonedDateTime, TimeZoneIdMapper};
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::timezone::TimeZoneIdMapper;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -111,7 +114,8 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::fieldsets::{T, zone::SpecificLong};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::{ZonedDateTime, ZoneOffsetCalculator, TimeZoneIdMapper};
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::timezone::{ZoneOffsetCalculator, TimeZoneIdMapper};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
