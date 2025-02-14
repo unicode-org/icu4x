@@ -107,7 +107,7 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
@@ -157,14 +157,13 @@ where
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::ZonedDateTimeParser;
+    /// use icu::datetime::input::ZonedDateTime;
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = ZonedDateTimeParser::new()
-    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap();
-    /// let mut london_summer = ZonedDateTimeParser::new()
-    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap();
     ///
     /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
@@ -237,7 +236,7 @@ mod tests {
     use super::super::*;
     use icu_calendar::{Date, Gregorian};
     use icu_locale_core::locale;
-    use icu_timezone::{DateTime, Time};
+    use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
 
     #[test]

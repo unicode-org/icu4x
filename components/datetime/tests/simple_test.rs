@@ -10,7 +10,7 @@ use icu_datetime::fieldsets::enums::{
 use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
-use icu_timezone::{DateTime, Time};
+use icu_time::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[

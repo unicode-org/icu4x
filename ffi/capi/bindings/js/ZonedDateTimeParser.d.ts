@@ -8,7 +8,7 @@ import type { ZonedIsoDateTime } from "./ZonedIsoDateTime"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html) for more information.
+/** See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTimeParser.html) for more information.
 */
 
 

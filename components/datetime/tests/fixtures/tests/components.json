@@ -14,7 +14,7 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
                     "timePrecision": "second",
                     "yearStyle": "withEra"
@@ -72,7 +72,7 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
                     "timePrecision": "second",
                     "yearStyle": "withEra"
@@ -102,7 +102,7 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
                     "timePrecision": "second",
                     "yearStyle": "withEra"
@@ -128,8 +128,6 @@
                     "fractional_second": 0
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
-                    "length": "short",
                     "timePrecision": "second"
                 },
                 "hourCycle": "h23"
@@ -152,8 +150,6 @@
                     "fractional_second": 9
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
-                    "length": "short",
                     "timePrecision": "secondF9"
                 },
                 "hourCycle": "h23"

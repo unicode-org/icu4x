@@ -16,10 +16,10 @@ use icu_calendar::{
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{
-    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
-    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+use icu_time::scaffold::IntoOption;
+use icu_time::{
+    zone::{TimeZoneVariant, UtcOffset},
+    Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
 // TODO: Add WeekCalculator and DecimalFormatter optional bindings here
@@ -97,13 +97,13 @@ pub trait DateDataMarkers: UnstableSealed {
 /// </div>
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
-    type HourInput: IntoOption<IsoHour>;
+    type HourInput: IntoOption<Hour>;
     /// Marker for resolving the day-of-week input field.
-    type MinuteInput: IntoOption<IsoMinute>;
+    type MinuteInput: IntoOption<Minute>;
     /// Marker for resolving the day-of-year input field.
-    type SecondInput: IntoOption<IsoSecond>;
+    type SecondInput: IntoOption<Second>;
     /// Marker for resolving the any-calendar-kind input field.
-    type NanoSecondInput: IntoOption<NanoSecond>;
+    type NanosecondInput: IntoOption<Nanosecond>;
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
     /// Marker for loading day period names.
@@ -121,11 +121,11 @@ pub trait TimeMarkers: UnstableSealed {
 /// </div>
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
-    type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
+    type TimeZoneIdInput: IntoOption<TimeZone>;
     /// Marker for resolving the time zone offset input field.
     type TimeZoneOffsetInput: IntoOption<UtcOffset>;
     /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: IntoOption<ZoneVariant>;
+    type TimeZoneVariantInput: IntoOption<TimeZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
     type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
     /// Marker for loading core time zone data.
@@ -185,11 +185,11 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// The following types implement this trait:
 ///
 /// - [`Date`](icu_calendar::Date)
-/// - [`Time`](icu_timezone::Time)
-/// - [`DateTime`](icu_timezone::DateTime)
-/// - [`ZonedDateTime`](icu_timezone::ZonedDateTime)
-/// - [`UtcOffset`](icu_timezone::UtcOffset)
-/// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
+/// - [`Time`](icu_time::Time)
+/// - [`DateTime`](icu_time::DateTime)
+/// - [`ZonedDateTime`](icu_time::ZonedDateTime)
+/// - [`UtcOffset`](icu_time::zone::UtcOffset)
+/// - [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
 // This trait is implicitly sealed due to sealed supertraits
@@ -202,7 +202,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
-    + GetField<<R::T as TimeMarkers>::NanoSecondInput>
+    + GetField<<R::T as TimeMarkers>::NanosecondInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
@@ -228,11 +228,44 @@ where
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
-        + GetField<<R::T as TimeMarkers>::NanoSecondInput>
+        + GetField<<R::T as TimeMarkers>::NanosecondInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
+{
+}
+
+/// Trait to consolidate data provider markers defined by this crate
+/// for datetime skeleton patterns with a fixed calendar.
+///
+/// This trait is implemented on all providers that support datetime skeleton patterns,
+/// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
+#[rustfmt::skip]
+pub trait AllFixedCalendarPatternDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
+DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1>
+    + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
+    + DataProvider<FSet::GluePatternV1>
+where
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+{
+}
+
+#[rustfmt::skip]
+impl<T, C, FSet> AllFixedCalendarPatternDataMarkers<C, FSet> for T
+where
+    C: CldrCalendar,
+    FSet: DateTimeMarkers,
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    T: ?Sized
+        + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1>
+        + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
+        + DataProvider<FSet::GluePatternV1>,
 {
 }
 
@@ -242,13 +275,12 @@ where
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
 // This trait is implicitly sealed due to sealed supertraits
+#[rustfmt::skip]
 pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeMarkers>:
     DataProvider<<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1>
-    + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1>
     + DataProvider<<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1>
     + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1>
-    + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1>
@@ -259,7 +291,7 @@ pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeM
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-    + DataProvider<FSet::GluePatternV1>
+    + AllFixedCalendarPatternDataMarkers<C, FSet>
 where
     FSet::D: TypedDateDataMarkers<C>,
     FSet::T: TimeMarkers,
@@ -267,6 +299,7 @@ where
 {
 }
 
+#[rustfmt::skip]
 impl<T, C, FSet> AllFixedCalendarFormattingDataMarkers<C, FSet> for T
 where
     C: CldrCalendar,
@@ -291,7 +324,72 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-        + DataProvider<FSet::GluePatternV1>,
+        + DataProvider<FSet::GluePatternV1>
+        + AllFixedCalendarPatternDataMarkers<C, FSet>
+{
+}
+
+/// Trait to consolidate data provider markers defined by this crate
+/// for datetime skeleton patterns with any calendar.
+///
+/// This trait is implemented on all providers that support datetime skeleton patterns,
+/// including [`crate::provider::Baked`].
+// This trait is implicitly sealed due to sealed supertraits
+#[rustfmt::skip]
+pub trait AllAnyCalendarPatternDataMarkers<FSet: DateTimeMarkers>:
+    DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Buddhist>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Chinese>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::EthiopianAmeteAlem>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicCivil>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicObservational>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicTabular>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::JapaneseExtended>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
+    + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
+    + DataProvider<FSet::GluePatternV1>
+where
+    FSet::D: DateDataMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+{
+}
+
+#[rustfmt::skip]
+impl<T, FSet> AllAnyCalendarPatternDataMarkers<FSet> for T
+where
+    FSet: DateTimeMarkers,
+    FSet::D: DateDataMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    T: ?Sized
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Buddhist>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Chinese>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::EthiopianAmeteAlem>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicCivil>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicObservational>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicTabular>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::JapaneseExtended>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
+        + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
+        + DataProvider<FSet::GluePatternV1>
 {
 }
 
@@ -301,6 +399,7 @@ where
 /// This trait is implemented on all providers that support datetime formatting,
 /// including [`crate::provider::Baked`].
 // This trait is implicitly sealed due to sealed supertraits
+#[rustfmt::skip]
 pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Buddhist>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Chinese>
@@ -336,26 +435,8 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::JapaneseExtended>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Roc>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Buddhist>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Chinese>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::EthiopianAmeteAlem>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicUmmAlQura>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::JapaneseExtended>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
     + DataProvider<<FSet::D as DateDataMarkers>::WeekdayNamesV1>
     + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1>
-    + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1>
@@ -366,7 +447,7 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-    + DataProvider<FSet::GluePatternV1>
+    + AllAnyCalendarPatternDataMarkers<FSet>
 where
     FSet::D: DateDataMarkers,
     FSet::T: TimeMarkers,
@@ -374,6 +455,7 @@ where
 {
 }
 
+#[rustfmt::skip]
 impl<T, FSet> AllAnyCalendarFormattingDataMarkers<FSet> for T
 where
     FSet: DateTimeMarkers,
@@ -415,26 +497,8 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::JapaneseExtended>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Roc>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Buddhist>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Chinese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::EthiopianAmeteAlem>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicUmmAlQura>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::JapaneseExtended>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
         + DataProvider<<FSet::D as DateDataMarkers>::WeekdayNamesV1>
         + DataProvider<<FSet::T as TimeMarkers>::DayPeriodNamesV1>
-        + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::EssentialsV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::LocationsV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::LocationsRootV1>
@@ -445,7 +509,7 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
-        + DataProvider<FSet::GluePatternV1>
+        + AllAnyCalendarPatternDataMarkers<FSet>
 {
 }
 
@@ -516,7 +580,7 @@ impl TimeMarkers for () {
     type HourInput = ();
     type MinuteInput = ();
     type SecondInput = ();
-    type NanoSecondInput = ();
+    type NanosecondInput = ();
     type TimeSkeletonPatternsV1 = NeverMarker<PackedPatterns<'static>>;
     type DayPeriodNamesV1 = NeverMarker<LinearNames<'static>>;
 }
@@ -627,25 +691,25 @@ macro_rules! datetime_marker_helper {
         DayOfYearInfo
     };
     (@input/hour, yes) => {
-        IsoHour
+        Hour
     };
     (@input/minute, yes) => {
-        IsoMinute
+        Minute
     };
     (@input/second, yes) => {
-        IsoSecond
+        Second
     };
-    (@input/nanosecond, yes) => {
-        NanoSecond
+    (@input/Nanosecond, yes) => {
+        Nanosecond
     };
     (@input/timezone/id, yes) => {
-        TimeZoneBcp47Id
+        TimeZone
     };
     (@input/timezone/offset, yes) => {
         Option<UtcOffset>
     };
     (@input/timezone/variant, yes) => {
-        ZoneVariant
+        TimeZoneVariant
     };
     (@input/timezone/local_time, yes) => {
         (Date<Iso>, Time)

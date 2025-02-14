@@ -10,7 +10,9 @@
 
 use crate::{
     elements::{CASE_MASK, TERTIARY_MASK},
-    CaseFirst, CollatorPreferences, NumericOrdering,
+    preferences::CollationCaseFirst,
+    preferences::CollationNumericOrdering,
+    CollatorPreferences,
 };
 
 /// The collation strength that indicates how many levels to compare.
@@ -373,7 +375,7 @@ impl From<ResolvedCollatorOptions> for CollatorPreferences {
     /// those are only relevant when loading the collation data.
     ///
     /// [`LocalePreferences`]: icu_locale_core::preferences::LocalePreferences
-    /// [`CollationType`]: crate::CollationType
+    /// [`CollationType`]: crate::preferences::CollationType
     fn from(options: ResolvedCollatorOptions) -> CollatorPreferences {
         CollatorPreferences {
             case_first: Some(options.case_first),
@@ -394,13 +396,13 @@ pub struct ResolvedCollatorOptions {
     /// Resolved alternate handling collation option.
     pub alternate_handling: AlternateHandling,
     /// Resolved case first collation option.
-    pub case_first: CaseFirst,
+    pub case_first: CollationCaseFirst,
     /// Resolved max variable collation option.
     pub max_variable: MaxVariable,
     /// Resolved case level collation option.
     pub case_level: CaseLevel,
     /// Resolved numeric collation option.
-    pub numeric: NumericOrdering,
+    pub numeric: CollationNumericOrdering,
     /// Resolved backward second level collation option.
     pub backward_second_level: BackwardSecondLevel,
 }
@@ -418,9 +420,9 @@ impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
                 CaseLevel::Off
             },
             numeric: if options.numeric() {
-                NumericOrdering::True
+                CollationNumericOrdering::True
             } else {
-                NumericOrdering::False
+                CollationNumericOrdering::False
             },
             backward_second_level: if options.backward_second_level() {
                 BackwardSecondLevel::On
@@ -599,15 +601,15 @@ impl CollatorOptionsBitField {
         }
     }
 
-    fn case_first(self) -> CaseFirst {
+    fn case_first(self) -> CollationCaseFirst {
         if (self.0 & CollatorOptionsBitField::CASE_FIRST_MASK) != 0 {
             if (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0 {
-                CaseFirst::Upper
+                CollationCaseFirst::Upper
             } else {
-                CaseFirst::Lower
+                CollationCaseFirst::Lower
             }
         } else {
-            CaseFirst::False
+            CollationCaseFirst::False
         }
     }
 
@@ -615,17 +617,17 @@ impl CollatorOptionsBitField {
     /// level.
     ///
     /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
-    pub fn set_case_first(&mut self, case_first: Option<CaseFirst>) {
+    pub fn set_case_first(&mut self, case_first: Option<CollationCaseFirst>) {
         self.0 &=
             !(CollatorOptionsBitField::CASE_FIRST_MASK | CollatorOptionsBitField::UPPER_FIRST_MASK);
         if let Some(case_first) = case_first {
             self.0 |= CollatorOptionsBitField::EXPLICIT_CASE_FIRST_MASK;
             match case_first {
-                CaseFirst::False => {}
-                CaseFirst::Lower => {
+                CollationCaseFirst::False => {}
+                CollationCaseFirst::Lower => {
                     self.0 |= CollatorOptionsBitField::CASE_FIRST_MASK;
                 }
-                CaseFirst::Upper => {
+                CollationCaseFirst::Upper => {
                     self.0 |= CollatorOptionsBitField::CASE_FIRST_MASK;
                     self.0 |= CollatorOptionsBitField::UPPER_FIRST_MASK;
                 }
@@ -693,12 +695,12 @@ impl CollatorOptionsBitField {
         }
     }
 
-    pub fn set_numeric_from_enum(&mut self, numeric: Option<NumericOrdering>) {
+    pub fn set_numeric_from_enum(&mut self, numeric: Option<CollationNumericOrdering>) {
         match numeric {
-            Some(NumericOrdering::True) => {
+            Some(CollationNumericOrdering::True) => {
                 self.set_numeric(Some(true));
             }
-            Some(NumericOrdering::False) => {
+            Some(CollationNumericOrdering::False) => {
                 self.set_numeric(Some(false));
             }
             Some(_) => {

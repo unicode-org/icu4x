@@ -93,7 +93,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let zdt = icu_timezone::ZonedDateTime {
+            let zdt = icu_time::ZonedDateTime {
                 date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
                 time: time.0,
                 zone: zone
@@ -172,7 +172,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let zdt = icu_timezone::ZonedDateTime {
+            let zdt = icu_time::ZonedDateTime {
                 date: date.0.wrap_calendar_in_ref(),
                 time: time.0,
                 zone: zone
@@ -198,7 +198,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeFormatError> {
-            let zdt = icu_timezone::ZonedDateTime {
+            let zdt = icu_time::ZonedDateTime {
                 date: date.0,
                 time: time.0,
                 zone: zone

@@ -7,10 +7,10 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "IanaParser.d.h"
 #include "IsoDate.d.h"
 #include "IsoDateTime.d.h"
 #include "Time.d.h"
-#include "TimeZoneIdMapper.d.h"
 
 #include "TimeZoneInfo.d.h"
 
@@ -58,7 +58,7 @@ icu4x_TimeZoneInfo_offset_seconds_part_mv1_result icu4x_TimeZoneInfo_offset_seco
 
 void icu4x_TimeZoneInfo_set_time_zone_id_mv1(TimeZoneInfo* self, DiplomatStringView id);
 
-void icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(TimeZoneInfo* self, const TimeZoneIdMapper* mapper, DiplomatStringView id);
+void icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(TimeZoneInfo* self, const IanaParser* mapper, DiplomatStringView id);
 
 void icu4x_TimeZoneInfo_time_zone_id_mv1(const TimeZoneInfo* self, DiplomatWrite* write);
 

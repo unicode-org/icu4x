@@ -8,8 +8,8 @@
 #include <icu4x/TimeFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
-#include <icu4x/TimeZoneIdMapper.hpp>
-#include <icu4x/TimeZoneIdMapperWithFastCanonicalization.hpp>
+#include <icu4x/IanaParser.hpp>
+#include <icu4x/IanaParserExtended.hpp>
 #include <icu4x/GregorianZonedDateTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
 
@@ -126,7 +126,7 @@ int main() {
     std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2020, 10, 5, *cal.get()).ok().value();
     std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
 
-    std::unique_ptr<TimeZoneIdMapper> mapper = TimeZoneIdMapper::create();
+    std::unique_ptr<IanaParser> mapper = IanaParser::create();
     std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
     if (normalized_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
@@ -142,7 +142,7 @@ int main() {
         std::cout << "Time zone ID does not roundtrip (slow): " << slow_recovered_iana_id << std::endl;
         return 1;
     }
-    std::unique_ptr<TimeZoneIdMapperWithFastCanonicalization> reverse_mapper = TimeZoneIdMapperWithFastCanonicalization::create();
+    std::unique_ptr<IanaParserExtended> reverse_mapper = IanaParserExtended::create();
     std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").value();
     if (fast_recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not roundtrip (fast): " << fast_recovered_iana_id << std::endl;

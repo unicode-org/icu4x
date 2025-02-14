@@ -149,7 +149,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_segmenter",
- "icu_timezone",
+ "icu_time",
  "log",
  "potential_utf",
  "simple_logger",
@@ -231,7 +231,7 @@ dependencies = [
  "icu_pattern",
  "icu_plurals",
  "icu_provider",
- "icu_timezone",
+ "icu_time",
  "litemap",
  "potential_utf",
  "smallvec",
@@ -502,14 +502,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_timezone"
+name = "icu_time"
 version = "2.0.0-beta1"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar",
  "icu_provider",
- "icu_timezone_data",
+ "icu_time_data",
  "ixdtf",
  "tinystr",
  "writeable",
@@ -518,7 +518,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_timezone_data"
+name = "icu_time_data"
 version = "2.0.0-beta1"
 dependencies = [
  "icu_provider_baked",

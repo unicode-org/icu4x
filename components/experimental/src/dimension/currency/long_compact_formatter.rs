@@ -16,9 +16,7 @@ use crate::{
         currency_patterns::CurrencyPatternsDataV1, extended_currency::CurrencyExtendedDataV1,
     },
 };
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 
 use super::{long_compact_format::FormattedLongCompactCurrency, CurrencyCode};
 
@@ -29,7 +27,7 @@ define_preferences!(
     [Copy]
     LongCompactCurrencyFormatterPreferences,
     {
-        numbering_system: NumberingSystem
+        numbering_system: super::super::preferences::NumberingSystem
     }
 );
 

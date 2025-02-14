@@ -19,6 +19,7 @@ use crate::error::ErrorField;
 pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
+pub use names::DateTimeNames;
 pub use names::DayPeriodNameLength;
 pub use names::MonthNameLength;
 pub(crate) use names::RawDateTimeNames;

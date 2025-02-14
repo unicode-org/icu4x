@@ -22541,7 +22541,7 @@ metazone/generic/names/short/v1, vi, 165B, 73B, 697c163dd1857f14
 metazone/generic/names/short/v1, yrl, -> kgp
 metazone/generic/names/short/v1, zh-Hant, 152B, 60B, 7df8afdf8c7361dc
 metazone/generic/names/short/v1, zh-SG, -> ta-MY
-metazone/period/v1, <singleton>, 8421B, 8333B, 990e5c346db2276d
+metazone/period/v1, <singleton>, 8551B, 8463B, 24e0750cc7382229
 metazone/specific/names/long/v1, <lookup>, 979B, 196 identifiers
 metazone/specific/names/long/v1, <total>, 1342950B, 1325847B, 190 unique payloads
 metazone/specific/names/long/v1, af, 4549B, 4459B, cc9b3bd70738162

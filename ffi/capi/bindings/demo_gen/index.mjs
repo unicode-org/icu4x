@@ -29,10 +29,10 @@ import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 import * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
 export * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
-import * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
-export * as TimeZoneIdMapperDemo from "./TimeZoneIdMapper.mjs";
-import * as TimeZoneIdMapperWithFastCanonicalizationDemo from "./TimeZoneIdMapperWithFastCanonicalization.mjs";
-export * as TimeZoneIdMapperWithFastCanonicalizationDemo from "./TimeZoneIdMapperWithFastCanonicalization.mjs";
+import * as IanaParserDemo from "./IanaParser.mjs";
+export * as IanaParserDemo from "./IanaParser.mjs";
+import * as IanaParserExtendedDemo from "./IanaParserExtended.mjs";
+export * as IanaParserExtendedDemo from "./IanaParserExtended.mjs";
 import * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 export * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 import * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
@@ -408,7 +408,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Value:Nanosecond",
+                name: "Value:Subsecond",
                 type: "number",
                 typeUse: "number"
             }
@@ -681,7 +681,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Time:Nanosecond",
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             }
@@ -768,7 +768,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Time:Nanosecond",
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             }
@@ -849,7 +849,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Time:Nanosecond",
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             }
@@ -914,10 +914,10 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneIdMapper.ianaToBcp47": {
-        func: TimeZoneIdMapperDemo.ianaToBcp47,
+    "IanaParser.ianaToBcp47": {
+        func: IanaParserDemo.ianaToBcp47,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneIdMapper.ianaToBcp47",
+        funcName: "IanaParser.ianaToBcp47",
         parameters: [
             
             {
@@ -929,10 +929,10 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneIdMapper.normalizeIana": {
-        func: TimeZoneIdMapperDemo.normalizeIana,
+    "IanaParser.normalizeIana": {
+        func: IanaParserDemo.normalizeIana,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneIdMapper.normalizeIana",
+        funcName: "IanaParser.normalizeIana",
         parameters: [
             
             {
@@ -944,10 +944,10 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneIdMapper.canonicalizeIana": {
-        func: TimeZoneIdMapperDemo.canonicalizeIana,
+    "IanaParser.canonicalizeIana": {
+        func: IanaParserDemo.canonicalizeIana,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneIdMapper.canonicalizeIana",
+        funcName: "IanaParser.canonicalizeIana",
         parameters: [
             
             {
@@ -959,10 +959,10 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneIdMapper.findCanonicalIanaFromBcp47": {
-        func: TimeZoneIdMapperDemo.findCanonicalIanaFromBcp47,
+    "IanaParser.findCanonicalIanaFromBcp47": {
+        func: IanaParserDemo.findCanonicalIanaFromBcp47,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneIdMapper.findCanonicalIanaFromBcp47",
+        funcName: "IanaParser.findCanonicalIanaFromBcp47",
         parameters: [
             
             {
@@ -974,10 +974,10 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneIdMapperWithFastCanonicalization.canonicalizeIana": {
-        func: TimeZoneIdMapperWithFastCanonicalizationDemo.canonicalizeIana,
+    "IanaParserExtended.canonicalizeIana": {
+        func: IanaParserExtendedDemo.canonicalizeIana,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneIdMapperWithFastCanonicalization.canonicalizeIana",
+        funcName: "IanaParserExtended.canonicalizeIana",
         parameters: [
             
             {
@@ -989,10 +989,10 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneIdMapperWithFastCanonicalization.canonicalIanaFromBcp47": {
-        func: TimeZoneIdMapperWithFastCanonicalizationDemo.canonicalIanaFromBcp47,
+    "IanaParserExtended.canonicalIanaFromBcp47": {
+        func: IanaParserExtendedDemo.canonicalIanaFromBcp47,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneIdMapperWithFastCanonicalization.canonicalIanaFromBcp47",
+        funcName: "IanaParserExtended.canonicalIanaFromBcp47",
         parameters: [
             
             {
@@ -1059,7 +1059,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Time:Nanosecond",
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             },
@@ -1146,7 +1146,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Time:Nanosecond",
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             },
@@ -1227,7 +1227,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Time:Nanosecond",
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             },

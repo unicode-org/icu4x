@@ -180,6 +180,12 @@ lazy_static::lazy_static! {
         "icu::locale::preferences::LocalePreferences",
         "icu::plurals::PluralRulesPreferences",
         "icu::locale::preferences::PreferenceKey",
+        // And the preference enums
+        "icu::calendar::preferences",
+        "icu::collator::preferences",
+        "icu::datetime::preferences",
+        "icu::decimal::preferences",
+
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locale::LanguageIdentifier",
@@ -264,7 +270,7 @@ lazy_static::lazy_static! {
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
 
-        "icu::plurals::rules",
+        "icu::plurals::RawPluralOperands",
 
         "icu::plurals::PluralRulesWithRanges",
         "icu::plurals::PluralRulesWithRanges::categories",
@@ -285,7 +291,7 @@ lazy_static::lazy_static! {
 
         // Scaffolding modules
         "icu::datetime::scaffold",
-        "icu::timezone::scaffold",
+        "icu::time::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -301,13 +307,13 @@ lazy_static::lazy_static! {
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
-        "icu::timezone::provider",
+        "icu::time::provider",
         "icu::transliterate::provider",
 
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
-        "icu::timezone::types::ZoneVariantULE",
+        "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
@@ -315,11 +321,15 @@ lazy_static::lazy_static! {
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
-        "icu::timezone::types::Time",
-        "icu::timezone::types::DateTime",
-        "icu::timezone::types::UtcOffset",
-        "icu::timezone::types::ZoneVariant",
-        "icu::timezone::types::ZonedDateTime",
+        "icu::datetime::input::Date",
+        "icu::datetime::input::DateTime",
+        "icu::datetime::input::Time",
+        "icu::datetime::input::TimeZone",
+        "icu::datetime::input::TimeZoneInfo",
+        "icu::datetime::input::UtcOffset",
+        "icu::datetime::input::ZonedDateTime",
+        "icu::time::zone::IanaParser",
+        "icu::time::zone::WindowsParser",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -364,10 +374,10 @@ lazy_static::lazy_static! {
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",
-        "icu::timezone::types::IsoHour",
-        "icu::timezone::types::IsoMinute",
-        "icu::timezone::types::IsoSecond",
-        "icu::timezone::types::NanoSecond",
+        "icu::time::Hour",
+        "icu::time::Minute",
+        "icu::time::Second",
+        "icu::time::Nanosecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.
@@ -386,7 +396,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
 
         // Specialized constructor for separately constructed instances
-        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
+        "icu::time::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

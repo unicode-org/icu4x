@@ -14,7 +14,7 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "medium",
                     "timePrecision": "minute"
                 },
@@ -45,7 +45,7 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
                     "timePrecision": "minute"
                 },

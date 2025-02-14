@@ -79,7 +79,14 @@ extern crate alloc;
 mod operands;
 mod options;
 pub mod provider;
-pub mod rules;
+
+// Need to expose it for datagen, but we don't
+// have a reason to make it fully public, so hiding docs for now.
+#[cfg(feature = "experimental")]
+mod raw_operands;
+
+#[cfg(feature = "experimental")]
+pub use raw_operands::RawPluralOperands;
 
 use core::cmp::{Ord, PartialOrd};
 use icu_locale_core::preferences::define_preferences;
@@ -87,10 +94,10 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 pub use options::*;
+use provider::rules::runtime::test_rule;
 use provider::CardinalV1;
 use provider::OrdinalV1;
 use provider::PluralRulesData;
-use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
 use provider::PluralRangesV1;

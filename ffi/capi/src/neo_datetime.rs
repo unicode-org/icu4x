@@ -515,7 +515,7 @@ pub mod ffi {
             time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = icu_timezone::DateTime {
+            let value = icu_time::DateTime {
                 date: date.0,
                 time: time.0,
             };
@@ -531,7 +531,7 @@ pub mod ffi {
             time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let value = icu_timezone::DateTime {
+            let value = icu_time::DateTime {
                 date: date.0.wrap_calendar_in_ref(),
                 time: time.0,
             };
@@ -998,7 +998,7 @@ pub mod ffi {
             time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = icu_timezone::DateTime {
+            let value = icu_time::DateTime {
                 date: date.0.to_calendar(Gregorian),
                 time: time.0,
             };

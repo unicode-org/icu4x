@@ -172,9 +172,9 @@ export { Time } from "./Time.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
-export { TimeZoneIdMapper } from "./TimeZoneIdMapper.mjs"
+export { IanaParser } from "./IanaParser.mjs"
 
-export { TimeZoneIdMapperWithFastCanonicalization } from "./TimeZoneIdMapperWithFastCanonicalization.mjs"
+export { IanaParserExtended } from "./IanaParserExtended.mjs"
 
 export { MeasureUnit } from "./MeasureUnit.mjs"
 

@@ -32,7 +32,7 @@ icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true, features = ["alloc"] }
 icu_segmenter = { workspace = true }
-icu_timezone = { workspace = true }
+icu_time = { workspace = true }
 icu_experimental = { workspace = true, optional = true }
 icu_pattern = { workspace = true, optional = true }
 
@@ -63,7 +63,7 @@ default = [
     "icu_plurals/default",
     "icu_properties/default",
     "icu_segmenter/default",
-    "icu_timezone/default",
+    "icu_time/default",
     "icu_experimental?/default",
     "icu_pattern?/default",
 ]
@@ -80,7 +80,7 @@ serde = [
     "icu_plurals/serde",
     "icu_properties/serde",
     "icu_segmenter/serde",
-    "icu_timezone/serde",
+    "icu_time/serde",
     "icu_experimental?/serde",
     "icu_pattern?/serde",
 ]
@@ -96,7 +96,7 @@ compiled_data = [
     "icu_plurals/compiled_data",
     "icu_properties/compiled_data",
     "icu_segmenter/compiled_data",
-    "icu_timezone/compiled_data",
+    "icu_time/compiled_data",
     "icu_experimental?/compiled_data",
 ]
 datagen = [
@@ -113,7 +113,7 @@ datagen = [
     "icu_plurals/datagen",
     "icu_properties/datagen",
     "icu_segmenter/datagen",
-    "icu_timezone/datagen",
+    "icu_time/datagen",
     "icu_experimental?/datagen",
 ]
 serde_human = [

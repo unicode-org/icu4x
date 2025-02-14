@@ -28,7 +28,7 @@ namespace icu4x {
 class Time {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t subsecond);
 
   inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarParseError> from_string(std::string_view v);
 
@@ -40,7 +40,7 @@ public:
 
   inline uint8_t second() const;
 
-  inline uint32_t nanosecond() const;
+  inline uint32_t subsecond() const;
 
   inline const icu4x::capi::Time* AsFFI() const;
   inline icu4x::capi::Time* AsFFI();

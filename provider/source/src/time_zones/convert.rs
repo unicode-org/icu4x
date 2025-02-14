@@ -12,10 +12,10 @@ use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
-use icu::timezone::provider::*;
-use icu::timezone::Time;
-use icu::timezone::UtcOffset;
-use icu::timezone::ZoneVariant;
+use icu::time::provider::*;
+use icu::time::zone::TimeZoneVariant;
+use icu::time::zone::UtcOffset;
+use icu::time::Time;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -67,13 +67,7 @@ impl SourceDataProvider {
     fn calculate_locations(
         &self,
         locale: &DataLocale,
-    ) -> Result<
-        (
-            BTreeMap<TimeZoneBcp47Id, String>,
-            BTreeMap<TimeZoneBcp47Id, String>,
-        ),
-        DataError,
-    > {
+    ) -> Result<(BTreeMap<TimeZone, String>, BTreeMap<TimeZone, String>), DataError> {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
@@ -245,27 +239,69 @@ impl SourceDataProvider {
                                 .collect::<Vec<_>>(),
                         })
                         .flat_map(|(iana, periods)| {
-                            periods.iter().flat_map(move |period| {
-                                Some((
-                                    bcp47_tzid_data.get(&iana)?,
-                                    period
-                                        .uses_meta_zone
-                                        .from
-                                        .as_deref()
-                                        .map(parse_mzone_from)
-                                        .map(|(date, time)| {
-                                            (date.to_fixed() - EPOCH) as i32 * 24 * 60
-                                                + (time.hour.number() as i32 * 60
-                                                    + time.minute.number() as i32)
-                                        })
-                                        .unwrap_or_default(),
-                                    NichedOption(
-                                        meta_zone_id_data
-                                            .get(&period.uses_meta_zone.mzone)
-                                            .copied(),
-                                    ),
-                                ))
-                            })
+                            let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
+                            periods
+                                .iter()
+                                .flat_map(move |period| {
+                                    fn parse_mzone_date(from: &str) -> (Date<Iso>, Time) {
+                                        // TODO(#2127): Ideally this parsing can move into a library function
+                                        let mut parts = from.split(' ');
+                                        let date = parts.next().unwrap();
+                                        let time = parts.next().unwrap();
+                                        let mut date_parts = date.split('-');
+                                        let year =
+                                            date_parts.next().unwrap().parse::<i32>().unwrap();
+                                        let month =
+                                            date_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let day = date_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let mut time_parts = time.split(':');
+                                        let hour =
+                                            time_parts.next().unwrap().parse::<u8>().unwrap();
+                                        let minute =
+                                            time_parts.next().unwrap().parse::<u8>().unwrap();
+
+                                        (
+                                            Date::try_new_iso(year, month, day).unwrap(),
+                                            Time::try_new(hour, minute, 0, 0).unwrap(),
+                                        )
+                                    }
+
+                                    let to_fixed = |(date, time): (Date<Iso>, Time)| {
+                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
+                                            + (time.hour.number() as i32 * 60
+                                                + time.minute.number() as i32)
+                                    };
+
+                                    [
+                                        // join the metazone
+                                        Some((
+                                            bcp47,
+                                            to_fixed(parse_mzone_date(
+                                                period
+                                                    .uses_meta_zone
+                                                    .from
+                                                    .as_deref()
+                                                    .unwrap_or("1970-01-01 00:00"),
+                                            )),
+                                            NichedOption(
+                                                meta_zone_id_data
+                                                    .get(&period.uses_meta_zone.mzone)
+                                                    .copied(),
+                                            ),
+                                        )),
+                                        // leave the metazone if there's a `to` date
+                                        // because we collect this into a ZeroMap2d, if the next entry starts on the same
+                                        // day that we leave, this entry will be replaced.
+                                        period
+                                            .uses_meta_zone
+                                            .to
+                                            .as_deref()
+                                            .map(parse_mzone_date)
+                                            .map(to_fixed)
+                                            .map(|m| (bcp47, m, NichedOption(None))),
+                                    ]
+                                })
+                                .flatten()
                         })
                         .collect(),
                 })
@@ -287,21 +323,14 @@ impl SourceDataProvider {
                         .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
                         .flat_map(|(bcp47, zoneset)| {
                             let mut data =
-                                Vec::<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>::new();
+                                Vec::<(MinutesSinceEpoch, (UtcOffset, UtcOffset))>::new();
 
                             fn store_offsets(
-                                data: &mut Vec<(IsoMinutesSinceEpoch, (UtcOffset, UtcOffset))>,
-                                end_time: IsoMinutesSinceEpoch,
-                                mut utc_offset: i64,
-                                mut dst_offset_relative: i64,
+                                data: &mut Vec<(MinutesSinceEpoch, (UtcOffset, UtcOffset))>,
+                                end_time: MinutesSinceEpoch,
+                                utc_offset: i64,
+                                dst_offset_relative: i64,
                             ) {
-                                // TZDB uses negative DST offsets (i.e. DST in the winter for some zones,
-                                // such as `Europe/Dublin`. In ICU4X, we normalize all time zones to have
-                                // positive DST offsets, during the summer.
-                                if dst_offset_relative < 0 {
-                                    utc_offset += dst_offset_relative;
-                                    dst_offset_relative = -dst_offset_relative;
-                                }
                                 data.push((
                                     end_time,
                                     (
@@ -319,8 +348,8 @@ impl SourceDataProvider {
                                     // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
                                     // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
                                     // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
-                                    .map(|t| (t.to_timestamp() / 60) as IsoMinutesSinceEpoch)
-                                    .unwrap_or(IsoMinutesSinceEpoch::MAX);
+                                    .map(|t| (t.to_timestamp() / 60) as MinutesSinceEpoch)
+                                    .unwrap_or(MinutesSinceEpoch::MAX);
 
                                 if local_end_time <= 0 {
                                     continue;
@@ -369,7 +398,7 @@ impl SourceDataProvider {
                                                                 zone_info.offset,
                                                                 rule.time_to_add,
                                                             ) / 60)
-                                                                as IsoMinutesSinceEpoch
+                                                                as MinutesSinceEpoch
                                                         }
                                                     },
                                                     rule.time_to_add,
@@ -696,7 +725,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
                     let Some(location) = locations.get(tz) else {
                         return true;
                     };
-                    if zv == ZoneVariant::Daylight {
+                    if zv == TimeZoneVariant::Daylight {
                         writeable::cmp_utf8(
                             &time_zone_names_resource
                                 .region_format_dt
@@ -704,7 +733,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
                                 .interpolate([location]),
                             v.as_bytes(),
                         ) != Ordering::Equal
-                    } else if zv == ZoneVariant::Standard {
+                    } else if zv == TimeZoneVariant::Standard {
                         writeable::cmp_utf8(
                             &time_zone_names_resource
                                 .region_format_st
@@ -713,7 +742,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
                             v.as_bytes(),
                         ) != Ordering::Equal
                     } else {
-                        // tilde dep on icu_timezone
+                        // tilde dep on icu_time
                         unreachable!()
                     }
                 })
@@ -830,9 +859,9 @@ fn iter_mz_defaults<'a>(
 
 fn iter_mz_overrides<'a>(
     time_zone_names_resource: &'a TimeZoneNames,
-    bcp47_tzid_data: &'a BTreeMap<String, TimeZoneBcp47Id>,
+    bcp47_tzid_data: &'a BTreeMap<String, TimeZone>,
     is_long: bool,
-) -> impl Iterator<Item = (TimeZoneBcp47Id, &'a ZoneFormat)> {
+) -> impl Iterator<Item = (TimeZone, &'a ZoneFormat)> {
     time_zone_names_resource
         .zone
         .0
@@ -880,7 +909,7 @@ fn zone_variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
         .map(|s| s.as_str())
 }
 
-fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneVariant, &str)> {
+fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (TimeZoneVariant, &str)> {
     zone_format
         .0
         .iter()
@@ -888,29 +917,11 @@ fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneV
         .flat_map(move |(variant, value)| {
             Some((
                 match variant.as_str() {
-                    "standard" => ZoneVariant::Standard,
-                    "daylight" => ZoneVariant::Daylight,
+                    "standard" => TimeZoneVariant::Standard,
+                    "daylight" => TimeZoneVariant::Daylight,
                     _ => return None,
                 },
                 value.as_str(),
             ))
         })
-}
-
-fn parse_mzone_from(from: &str) -> (Date<Iso>, Time) {
-    // TODO(#2127): Ideally this parsing can move into a library function
-    let parts: Vec<String> = from.split(' ').map(|s| s.to_string()).collect();
-    let date = &parts[0];
-    let time = &parts[1];
-    let date_parts: Vec<String> = date.split('-').map(|s| s.to_string()).collect();
-    let year = date_parts[0].parse::<i32>().unwrap();
-    let month = date_parts[1].parse::<u8>().unwrap();
-    let day = date_parts[2].parse::<u8>().unwrap();
-    let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
-    let hour = time_parts[0].parse::<u8>().unwrap();
-    let minute = time_parts[1].parse::<u8>().unwrap();
-    (
-        Date::try_new_iso(year, month, day).unwrap(),
-        Time::try_new(hour, minute, 0, 0).unwrap(),
-    )
 }

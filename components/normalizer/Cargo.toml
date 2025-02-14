@@ -55,7 +55,6 @@ datagen = ["serde", "dep:databake", "icu_properties", "icu_collections/databake"
 experimental = []
 compiled_data = ["dep:icu_normalizer_data", "icu_properties?/compiled_data"]
 icu_properties = ["dep:icu_properties"]
-alloc = []
 # For dealing with UTF16 strings
 utf16_iter = ["dep:utf16_iter", "write16"]
 # For dealing with potentially ill-formed UTF8 strings

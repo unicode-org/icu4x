@@ -27,6 +27,10 @@ pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
         "OO" => ZoneFieldSet::LocalizedOffsetFixed(fieldsets::zone::LocalizedOffsetFixed),
         "O" => ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
         "VVV" => ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity),
-        _ => return None,
+        // ISO currently untested
+        "x" | "xx" | "xxx" | "xxxx" | "xxxxx" | "X" | "XX" | "XXX" | "XXXX" | "XXXXX" => {
+            return None
+        }
+        _ => panic!("unhandled test {p}"),
     })
 }

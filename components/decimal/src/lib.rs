@@ -106,9 +106,7 @@ pub use format::FormattedDecimal;
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
 use icu_locale_core::locale;
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem,
-};
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
@@ -126,9 +124,16 @@ define_preferences!(
         ///
         /// To get the resolved numbering system, you can inspect the data provider.
         /// See the [`provider`] module for an example.
-        numbering_system: NumberingSystem
+        numbering_system: preferences::NumberingSystem
     }
 );
+
+/// Locale preferences used by this crate
+pub mod preferences {
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
 
 /// A formatter for [`SignedFixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///

@@ -8,9 +8,7 @@ use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::{
     options::DecimalFormatterOptions, DecimalFormatter, DecimalFormatterPreferences,
 };
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 
@@ -29,7 +27,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: NumberingSystem
+        numbering_system: super::super::preferences::NumberingSystem
     }
 );
 

@@ -33,7 +33,7 @@
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
-//! use icu::timezone::{DateTime, Time};
+//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
@@ -410,14 +410,6 @@ macro_rules! impl_attrs {
                     time_precision,
                     alignment,
                 })
-            }
-            #[cfg(all(feature = "serde", feature = "experimental"))]
-            pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawOptions) -> Self {
-                match date_field_set {
-                    $(
-                        DateFieldSet::$d_variant(_) => Self::$variant(fieldsets::$variant::from_raw_options(options)),
-                    )+
-                }
             }
         }
     };

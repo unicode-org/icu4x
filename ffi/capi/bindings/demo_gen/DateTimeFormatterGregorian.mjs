@@ -2,7 +2,7 @@ import { DateTimeFormatterGregorian } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
-export function formatIso(dateTimeFormatterGregorianLocaleName, dateTimeFormatterGregorianLength, dateTimeFormatterGregorianTimePrecision, dateTimeFormatterGregorianAlignment, dateTimeFormatterGregorianYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeNanosecond) {
+export function formatIso(dateTimeFormatterGregorianLocaleName, dateTimeFormatterGregorianLength, dateTimeFormatterGregorianTimePrecision, dateTimeFormatterGregorianAlignment, dateTimeFormatterGregorianYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond) {
     
     let dateTimeFormatterGregorianLocale = Locale.fromString(dateTimeFormatterGregorianLocaleName);
     
@@ -10,7 +10,7 @@ export function formatIso(dateTimeFormatterGregorianLocaleName, dateTimeFormatte
     
     let date = new IsoDate(dateYear,dateMonth,dateDay);
     
-    let time = new Time(timeHour,timeMinute,timeSecond,timeNanosecond);
+    let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
     let out = dateTimeFormatterGregorian.formatIso(date,time);
     

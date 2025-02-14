@@ -43,7 +43,7 @@ pub enum TimeGranularity {
     Minutes,
     /// Smallest time unit = seconds.
     Seconds,
-    /// Smallest time unit = nanoseconds.
+    /// Smallest time unit = Nanoseconds.
     Nanoseconds,
 }
 
@@ -58,12 +58,12 @@ impl TimeGranularity {
     /// the top of the hour, otherwise returns [`false`].
     /// e.g. `12:00:00` is at the top of the hour for any display granularity.
     /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
-    pub fn is_top_of_hour(self, minute: u8, second: u8, nanosecond: u32) -> bool {
+    pub fn is_top_of_hour(self, minute: u8, second: u8, subsecond: u32) -> bool {
         match self {
             Self::None | Self::Hours => true,
             Self::Minutes => minute == 0,
-            Self::Seconds => minute + second == 0,
-            Self::Nanoseconds => minute as u32 + second as u32 + nanosecond == 0,
+            Self::Seconds => minute == 0 && second == 0,
+            Self::Nanoseconds => minute == 0 && second == 0 && subsecond == 0,
         }
     }
 
