@@ -433,7 +433,7 @@ size_test!(
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::time::{IanaParser, UtcOffsetCalculator};
+/// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
 /// use icu::datetime::input::{Time, TimeZoneInfo, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
@@ -1405,7 +1405,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1516,7 +1516,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1580,7 +1580,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1644,7 +1644,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1717,7 +1717,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1790,7 +1790,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -1863,7 +1863,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
