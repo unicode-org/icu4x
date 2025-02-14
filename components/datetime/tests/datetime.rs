@@ -28,7 +28,7 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{
+use icu_time::{
     zone::{IanaParser, UtcOffset},
     DateTime, TimeZoneInfo, ZonedDateTime,
 };

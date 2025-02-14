@@ -107,7 +107,7 @@
         - Fixes to segmentation algorithm (unicode-org#5001)
         - Add LocaleData parameter for word/sentence segmenter (unicode-org#5318)
         - Add content_locale member to LineBreakOptions (unicode-org#5565)
-    - `icu_timezone`
+    - `icu_time`
         - Implement `ixdtf` for `CustomTimeZone` and `CustomZonedDateTime` (unicode-org#5349)
         - GMT -> UTC (unicode-org#5512)
         - Clean up Windows mapper API (unicode-org#5735)
@@ -306,7 +306,7 @@
     - Updated sentence segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
     - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
     - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segment in complex script (https://github.com/unicode-org/icu4x/pull/4903)
-  - `icu_timezone`
+  - `icu_time`
     - Added `IanaParser` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
   - `icu_datagen`
@@ -521,7 +521,7 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Compiled data functions added to `sets` and `maps` without `load_` prefix: `icu::properties::sets::basic_emoji()`
   - `icu_segmenter`
     - Algorithmic bug fixes such as https://github.com/unicode-org/icu4x/pull/3392
-  - `icu_timezone`
+  - `icu_time`
     - New `IanaToBcp47Mapper` for converting between IANA time zone names and BCP-47 time zone names (https://github.com/unicode-org/icu4x/pull/2909)
  - Utils:
     - `calendrical_calculations`: New crate: 0.1.0
@@ -691,7 +691,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Silencing expected `DataError`s (#3262)
     - Fix SB10 rule (#3126)
     - Polished docs and examples
-  - `icu_timezone`: No other changes
+  - `icu_time`: No other changes
  - Utils:
   - `crlify`: No change (still at 1.0.1)
   - `databake`: 1.1.3 -> 1.1.4
@@ -817,7 +817,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   * Remove unnecessary language check for East Asian language (SA property) (#2705)
   * internal and doc improvements
 
-* `icu_timezone`
+* `icu_time`
   * Adds a bytes parsing API for `GMTOffset` for `CustomTimeZone` and FFI (#2943, #2955)
   * doc improvements
 

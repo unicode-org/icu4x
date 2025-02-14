@@ -18,7 +18,7 @@ use icu_calendar::cal::{
 use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_timezone::{
+use icu_time::{
     zone::{models::TimeZoneModel, UtcOffset},
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };

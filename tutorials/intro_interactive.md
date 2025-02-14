@@ -224,7 +224,7 @@ Now we would also like to format the current time.
 
 ### Rust Part 4
 
-Use the API documentation for [`icu::timezone::DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) and [`icu::datetime::DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) to expand your app to format both date and time.
+Use the API documentation for [`icu::time::DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) and [`icu::datetime::DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) to expand your app to format both date and time.
 
 Hint: You can use `Default::default()` for the `DateTimeFormatterOptions` argument.
 

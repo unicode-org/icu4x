@@ -9,8 +9,8 @@ use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
 use icu_calendar::types::DayOfYearInfo;
 pub use icu_calendar::Date;
 use icu_calendar::Iso;
-use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{
+use icu_time::scaffold::IntoOption;
+use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };

@@ -8,11 +8,11 @@
 use icu::calendar::{Date, Gregorian};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::TimeZoneInfo;
+use icu::time::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_datetime::fieldsets::{self, YMDT};
 use icu_datetime::FixedCalendarDateTimeFormatter;
-use icu_timezone::{Time, ZonedDateTime};
+use icu_time::{Time, ZonedDateTime};
 use std::env;
 
 fn main() {

@@ -9,7 +9,7 @@ use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 use zerovec::{ule::NichedOption, ZeroMap, ZeroMap2d};
 
-use icu_timezone::{provider::MinutesSinceEpoch, zone::TimeZoneVariant, TimeZone};
+use icu_time::{provider::MinutesSinceEpoch, zone::TimeZoneVariant, TimeZone};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
@@ -243,7 +243,7 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriod<'data> {
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
+    /// the number of minutes since the local [`EPOCH`](icu_time::provider::EPOCH). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub list: ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
 }

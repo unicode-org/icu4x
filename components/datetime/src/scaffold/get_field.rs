@@ -6,7 +6,7 @@ use icu_calendar::{
     types::{DayOfMonth, DayOfYearInfo, IsoWeekday, MonthInfo, YearInfo},
     AsCalendar, Calendar, Date, Iso,
 };
-use icu_timezone::{
+use icu_time::{
     zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };

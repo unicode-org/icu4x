@@ -19,39 +19,39 @@ pub mod ffi {
     /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
     /// It also supports normalizing and canonicalizing the IANA strings.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::timezone::IanaParser, Struct)]
-    #[diplomat::rust_link(icu::timezone::IanaParser::as_borrowed, FnInStruct, hidden)]
-    #[diplomat::rust_link(icu::timezone::IanaParserBorrowed, Struct, hidden)]
-    #[diplomat::rust_link(icu::timezone::IanaParserBorrowed::new, FnInStruct, hidden)]
-    #[diplomat::rust_link(icu::timezone::NormalizedIana, Struct, hidden)]
-    pub struct IanaParser(pub icu_timezone::zone::iana::IanaParser);
+    #[diplomat::rust_link(icu::time::IanaParser, Struct)]
+    #[diplomat::rust_link(icu::time::IanaParser::as_borrowed, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::time::IanaParserBorrowed, Struct, hidden)]
+    #[diplomat::rust_link(icu::time::IanaParserBorrowed::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::time::NormalizedIana, Struct, hidden)]
+    pub struct IanaParser(pub icu_time::zone::iana::IanaParser);
 
     impl IanaParser {
         /// Create a new [`IanaParser`] using compiled data
-        #[diplomat::rust_link(icu::timezone::IanaParser::new, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParser::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<IanaParser> {
             Box::new(IanaParser(
-                icu_timezone::zone::iana::IanaParser::new().static_to_owned(),
+                icu_time::zone::iana::IanaParser::new().static_to_owned(),
             ))
         }
 
         /// Create a new [`IanaParser`] using a particular data source
-        #[diplomat::rust_link(icu::timezone::IanaParser::new, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParser::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<IanaParser>, DataError> {
             Ok(Box::new(IanaParser(
-                icu_timezone::zone::iana::IanaParser::try_new_with_buffer_provider(
+                icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,
             )))
         }
 
-        #[diplomat::rust_link(icu::timezone::IanaParserBorrowed::iana_to_bcp47, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserBorrowed::iana_to_bcp47, FnInStruct)]
         #[diplomat::rust_link(
-            icu::timezone::IanaParserBorrowed::iana_bytes_to_bcp47,
+            icu::time::IanaParserBorrowed::iana_bytes_to_bcp47,
             FnInStruct,
             hidden
         )]
@@ -65,7 +65,7 @@ pub mod ffi {
             let _infallible = bcp47.0.write_to(write);
         }
 
-        #[diplomat::rust_link(icu::timezone::IanaParserBorrowed::normalize_iana, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserBorrowed::normalize_iana, FnInStruct)]
         pub fn normalize_iana(
             &self,
             value: &str,
@@ -77,7 +77,7 @@ pub mod ffi {
             Some(())
         }
 
-        #[diplomat::rust_link(icu::timezone::IanaParserBorrowed::canonicalize_iana, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserBorrowed::canonicalize_iana, FnInStruct)]
         pub fn canonicalize_iana(
             &self,
             value: &str,
@@ -90,7 +90,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::timezone::IanaParserBorrowed::find_canonical_iana_from_bcp47,
+            icu::time::IanaParserBorrowed::find_canonical_iana_from_bcp47,
             FnInStruct
         )]
         pub fn find_canonical_iana_from_bcp47(
@@ -101,7 +101,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let iana = TinyAsciiStr::try_from_utf8(value)
                 .ok()
-                .and_then(|s| handle.find_canonical_iana_from_bcp47(icu_timezone::TimeZone(s)))?;
+                .and_then(|s| handle.find_canonical_iana_from_bcp47(icu_time::TimeZone(s)))?;
             let _infallible = iana.write_to(write);
             Some(())
         }
@@ -112,43 +112,43 @@ pub mod ffi {
     /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
     /// It also supports normalizing and canonicalizing the IANA strings.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::timezone::IanaParserExtended, Struct)]
-    #[diplomat::rust_link(icu::timezone::IanaParserExtended::as_borrowed, FnInStruct, hidden)]
-    #[diplomat::rust_link(icu::timezone::IanaParserExtended::inner, FnInStruct, hidden)]
-    #[diplomat::rust_link(icu::timezone::IanaParserExtendedBorrowed, Struct, hidden)]
-    #[diplomat::rust_link(icu::timezone::IanaParserExtendedBorrowed::inner, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::time::IanaParserExtended, Struct)]
+    #[diplomat::rust_link(icu::time::IanaParserExtended::as_borrowed, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::time::IanaParserExtended::inner, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::time::IanaParserExtendedBorrowed, Struct, hidden)]
+    #[diplomat::rust_link(icu::time::IanaParserExtendedBorrowed::inner, FnInStruct, hidden)]
     pub struct IanaParserExtended(
-        pub icu_timezone::zone::iana::IanaParserExtended<icu_timezone::zone::iana::IanaParser>,
+        pub icu_time::zone::iana::IanaParserExtended<icu_time::zone::iana::IanaParser>,
     );
 
     impl IanaParserExtended {
         /// Create a new [`IanaParserExtended`] using compiled data
-        #[diplomat::rust_link(icu::timezone::IanaParserExtended::new, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::IanaParserExtendedBorrowed::new, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserExtended::new, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserExtendedBorrowed::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<IanaParserExtended> {
             Box::new(IanaParserExtended(
-                icu_timezone::zone::iana::IanaParserExtended::new().static_to_owned(),
+                icu_time::zone::iana::IanaParserExtended::new().static_to_owned(),
             ))
         }
         /// Create a new [`IanaParserExtended`] using a particular data source
-        #[diplomat::rust_link(icu::timezone::IanaParserExtended::new, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::IanaParserExtendedBorrowed::new, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserExtended::new, FnInStruct)]
+        #[diplomat::rust_link(icu::time::IanaParserExtendedBorrowed::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<IanaParserExtended>, DataError> {
             Ok(Box::new(IanaParserExtended(
-                icu_timezone::zone::iana::IanaParserExtended::try_new_with_buffer_provider(
+                icu_time::zone::iana::IanaParserExtended::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,
             )))
         }
 
         #[diplomat::rust_link(
-            icu::timezone::IanaParserExtendedBorrowed::canonicalize_iana,
+            icu::time::IanaParserExtendedBorrowed::canonicalize_iana,
             FnInStruct
         )]
         pub fn canonicalize_iana(
@@ -163,7 +163,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::timezone::IanaParserExtendedBorrowed::canonical_iana_from_bcp47,
+            icu::time::IanaParserExtendedBorrowed::canonical_iana_from_bcp47,
             FnInStruct
         )]
         pub fn canonical_iana_from_bcp47(
@@ -174,7 +174,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             let iana = TinyAsciiStr::try_from_utf8(value)
                 .ok()
-                .map(icu_timezone::TimeZone)
+                .map(icu_time::TimeZone)
                 .and_then(|t| handle.canonical_iana_from_bcp47(t))?;
             let _infallible = iana.write_to(write);
             Some(())

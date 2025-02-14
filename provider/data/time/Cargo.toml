@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_timezone_data"
-description = "Data for the icu_timezone crate"
+name = "icu_time_data"
+description = "Data for the icu_time crate"
 license = "Unicode-3.0"
 version.workspace = true
 

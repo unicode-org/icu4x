@@ -39,9 +39,9 @@ pub struct Baked;
 #[cfg(feature = "compiled_data")]
 #[allow(unused_imports)]
 const _: () = {
-    use icu_timezone_data::*;
+    use icu_time_data::*;
     pub mod icu {
-        pub use crate as timezone;
+        pub use crate as time;
     }
     make_provider!(Baked);
     impl_bcp47_to_iana_map_v1!(Baked);
@@ -69,7 +69,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZone(pub TinyAsciiStr<8>);
 
@@ -131,7 +131,7 @@ pub const EPOCH: RataDie = RataDie::new(719163);
 #[icu_provider::data_struct(marker(ZoneOffsetPeriodV1, "time_zone/offset_period@1", singleton))]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ZoneOffsetPeriod<'data>(

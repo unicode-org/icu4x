@@ -9,7 +9,7 @@ use icu_datetime::FixedCalendarDateTimeFormatter;
 
 use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
+use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]

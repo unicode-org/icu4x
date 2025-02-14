@@ -19,7 +19,7 @@ use ixdtf::{
     ParseError as IxdtfParseError,
 };
 
-/// The error type for parsing IXDTF syntax strings in `icu_timezone`.
+/// The error type for parsing IXDTF syntax strings in `icu_time`.
 #[derive(Debug, PartialEq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseError {
@@ -53,7 +53,7 @@ pub enum ParseError {
     /// # Example
     /// ```
     /// use icu::calendar::Iso;
-    /// use icu::timezone::{ZonedDateTime, ParseError, IanaParser};
+    /// use icu::time::{ZonedDateTime, ParseError, IanaParser};
     ///
     /// // This timestamp is in UTC, and requires a time zone calculation in order to display a Zurich time.
     /// assert_eq!(
@@ -455,7 +455,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::cal::Hebrew;
-    /// use icu_timezone::{
+    /// use icu_time::{
     ///     ZonedDateTime, TimeZone, TimeZoneInfo, UtcOffset, TimeZoneVariant, IanaParser, UtcOffsetCalculator
     /// };
     /// use tinystr::tinystr;
@@ -503,7 +503,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_timezone::{ZonedDateTime, TimeZoneInfo, UtcOffset};
+    /// use icu_time::{ZonedDateTime, TimeZoneInfo, UtcOffset};
     ///
     /// let tz_from_offset = ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00", Iso)
     ///     .unwrap();
@@ -520,7 +520,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_timezone::{
+    /// use icu_time::{
     ///     ZonedDateTime, TimeZone, TimeZoneInfo, UtcOffset, TimeZoneVariant, IanaParser
     /// };
     /// use tinystr::tinystr;
@@ -553,7 +553,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_timezone::{TimeZoneInfo, ZonedDateTime, UtcOffset, TimeZone, TimeZoneVariant, ParseError, IanaParser, UtcOffsetCalculator};
+    /// use icu_time::{TimeZoneInfo, ZonedDateTime, UtcOffset, TimeZone, TimeZoneVariant, ParseError, IanaParser, UtcOffsetCalculator};
     /// use tinystr::tinystr;
     ///
     /// let consistent_tz_from_both = ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Iso, IanaParser::new(), &UtcOffsetCalculator::new()).unwrap();
@@ -586,7 +586,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_timezone::{
+    /// use icu_time::{
     ///     ZonedDateTime, ParseError, TimeZone, TimeZoneInfo, UtcOffset,
     /// };
     /// use tinystr::tinystr;
@@ -654,7 +654,7 @@ impl<A: AsCalendar> DateTime<A> {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::timezone::DateTime;
+    /// use icu::time::DateTime;
     ///
     /// let datetime =
     ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]", Hebrew).unwrap();
@@ -698,7 +698,7 @@ impl Time {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::Time;
+    /// use icu::time::Time;
     ///
     /// let time = Time::try_from_str("16:01:17.045").unwrap();
     ///

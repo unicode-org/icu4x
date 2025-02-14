@@ -1,4 +1,4 @@
-# icu_timezone [![crates.io](https://img.shields.io/crates/v/icu_timezone)](https://crates.io/crates/icu_timezone)
+# icu_time [![crates.io](https://img.shields.io/crates/v/icu_time)](https://crates.io/crates/icu_time)
 
 <!-- cargo-rdme start -->
 
@@ -59,10 +59,10 @@ formats may be unsupported.
 
 ```rust
 use icu::calendar::Date;
-use icu::timezone::Time;
-use icu::timezone::TimeZone;
-use icu::timezone::IanaParser;
-use icu::timezone::TimeZoneVariant;
+use icu::time::Time;
+use icu::time::TimeZone;
+use icu::time::IanaParser;
+use icu::time::TimeZoneVariant;
 use tinystr::tinystr;
 
 // Parse the IANA ID

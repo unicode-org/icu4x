@@ -38,7 +38,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
         REPO_VERSION,
     ),
     ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
-    ("timezone", icu::timezone::provider::MARKERS, REPO_VERSION),
+    ("timezone", icu::time::provider::MARKERS, REPO_VERSION),
     (
         "experimental",
         icu::experimental::provider::MARKERS,

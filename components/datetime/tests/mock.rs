@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::Gregorian;
-use icu_timezone::{
+use icu_time::{
     zone::{models, IanaParser, TimeZoneVariant, UtcOffsetCalculator},
     TimeZoneInfo, ZonedDateTime,
 };
@@ -38,7 +38,7 @@ pub fn parse_zoned_gregorian_from_str(
         &UtcOffsetCalculator::new(),
     ) {
         Ok(zdt) => zdt,
-        Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
+        Err(icu_time::ParseError::MismatchedTimeZoneFields) => {
             match ZonedDateTime::try_loose_from_str(input, Gregorian, IanaParser::new()) {
                 Ok(zdt) => {
                     ZonedDateTime {

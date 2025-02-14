@@ -16,7 +16,7 @@
 use icu::calendar::{Date, Gregorian};
 use icu::datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
 use icu::locale::locale;
-use icu::timezone::{DateTime, Time};
+use icu::time::{DateTime, Time};
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {

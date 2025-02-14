@@ -213,7 +213,7 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::UtcOffset;
+    /// use icu::time::UtcOffset;
     ///
     /// assert_eq!(
     ///     UtcOffset::try_from_str("-0600").unwrap(),
@@ -242,7 +242,7 @@ impl UtcOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::UtcOffset;
+    /// use icu::time::UtcOffset;
     ///
     /// let offset0: UtcOffset = UtcOffset::try_from_str("Z").unwrap();
     /// let offset1: UtcOffset = UtcOffset::try_from_str("+05").unwrap();
@@ -371,7 +371,7 @@ use crate::TimeZoneInfo;
 #[zerovec::make_ule(TimeZoneVariantULE)]
 #[repr(u8)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_timezone))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum TimeZoneVariant {

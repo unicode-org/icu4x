@@ -158,7 +158,7 @@ where
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::datetime::input::ZonedDateTime;
-    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::{IanaParser, UtcOffsetCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
@@ -236,7 +236,7 @@ mod tests {
     use super::super::*;
     use icu_calendar::{Date, Gregorian};
     use icu_locale_core::locale;
-    use icu_timezone::{DateTime, Time};
+    use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
 
     #[test]

@@ -30,7 +30,7 @@ icu_pattern = { path = "../components/pattern" }
 icu_plurals = { path = "../components/plurals" }
 icu_properties = { path = "../components/properties" }
 icu_segmenter = { path = "../components/segmenter" }
-icu_timezone = { path = "../components/timezone" }
+icu_time = { path = "../components/timezone" }
 
 # FFI
 icu_capi = { path = "../ffi/capi" }
@@ -62,7 +62,7 @@ icu_normalizer_data = { path = "../provider/data/normalizer" }
 icu_plurals_data = { path = "../provider/data/plurals" }
 icu_properties_data = { path = "../provider/data/properties"}
 icu_segmenter_data = { path = "../provider/data/segmenter" }
-icu_timezone_data = { path = "../provider/data/timezone" }
+icu_time_data = { path = "../provider/data/timezone" }
 
 bies = { path = "../utils/bies" }
 crlify = { path = "../utils/crlify" }

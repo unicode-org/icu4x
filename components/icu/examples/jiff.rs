@@ -6,7 +6,7 @@ use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    timezone::{
+    time::{
         zone::{IanaParser, UtcOffset, UtcOffsetCalculator},
         Time, ZonedDateTime,
     },

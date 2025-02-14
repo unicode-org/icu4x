@@ -10,7 +10,7 @@ use icu_calendar::{
     Date, Iso,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{
+use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };

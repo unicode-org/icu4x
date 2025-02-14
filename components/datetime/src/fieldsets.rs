@@ -68,13 +68,13 @@ use icu_calendar::{
     Date, Iso,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{
+use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
 #[cfg(doc)]
-use icu_timezone::TimeZoneInfo;
+use icu_time::TimeZoneInfo;
 
 /// Maps the token `yes` to the given ident
 macro_rules! yes_to {
@@ -814,7 +814,7 @@ macro_rules! impl_zone_marker {
         /// use icu::calendar::Date;
         /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::TimeFormatter;
-        /// use icu::timezone::TimeZoneVariant;
+        /// use icu::time::TimeZoneVariant;
         #[doc = concat!("use icu::datetime::fieldsets::zone::", stringify!($type), ";")]
         /// use icu::locale::locale;
         /// use tinystr::tinystr;
@@ -1142,7 +1142,7 @@ pub mod zone {
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
         /// use icu::locale::locale;
-        /// use icu::timezone::TimeZoneVariant;
+        /// use icu::time::TimeZoneVariant;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1185,7 +1185,7 @@ pub mod zone {
         /// use icu::datetime::fieldsets::zone::SpecificLong;
         /// use icu::locale::locale;
         /// use icu::datetime::input::{DateTime, Time, TimeZone, UtcOffset};
-        /// use icu::timezone::TimeZoneVariant;
+        /// use icu::time::TimeZoneVariant;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1227,7 +1227,7 @@ pub mod zone {
         /// use icu::datetime::fieldsets::{T, zone::SpecificShort};
         /// use icu::locale::locale;
         /// use icu::datetime::input::{DateTime, Time, TimeZone, UtcOffset};
-        /// use icu::timezone::TimeZoneVariant;
+        /// use icu::time::TimeZoneVariant;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
@@ -1266,7 +1266,7 @@ pub mod zone {
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
         /// use icu::datetime::input::{Time, TimeZone, UtcOffset};
-        /// use icu::timezone::TimeZoneVariant;
+        /// use icu::time::TimeZoneVariant;
         /// use tinystr::tinystr;
         /// use icu::locale::locale;
         /// use writeable::assert_writeable_eq;
@@ -1364,7 +1364,7 @@ pub mod zone {
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::datetime::DateTimeWriteError;
         /// use icu::locale::locale;
-        /// use icu::timezone::IanaParser;
+        /// use icu::time::IanaParser;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///

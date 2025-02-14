@@ -16,8 +16,8 @@ use icu_calendar::{
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{
+use icu_time::scaffold::IntoOption;
+use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
@@ -185,11 +185,11 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// The following types implement this trait:
 ///
 /// - [`Date`](icu_calendar::Date)
-/// - [`Time`](icu_timezone::Time)
-/// - [`DateTime`](icu_timezone::DateTime)
-/// - [`ZonedDateTime`](icu_timezone::ZonedDateTime)
-/// - [`UtcOffset`](icu_timezone::UtcOffset)
-/// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
+/// - [`Time`](icu_time::Time)
+/// - [`DateTime`](icu_time::DateTime)
+/// - [`ZonedDateTime`](icu_time::ZonedDateTime)
+/// - [`UtcOffset`](icu_time::UtcOffset)
+/// - [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
 // This trait is implicitly sealed due to sealed supertraits

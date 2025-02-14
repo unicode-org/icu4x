@@ -12,10 +12,10 @@ use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
-use icu::timezone::provider::*;
-use icu::timezone::zone::TimeZoneVariant;
-use icu::timezone::zone::UtcOffset;
-use icu::timezone::Time;
+use icu::time::provider::*;
+use icu::time::zone::TimeZoneVariant;
+use icu::time::zone::UtcOffset;
+use icu::time::Time;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -742,7 +742,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
                             v.as_bytes(),
                         ) != Ordering::Equal
                     } else {
-                        // tilde dep on icu_timezone
+                        // tilde dep on icu_time
                         unreachable!()
                     }
                 })

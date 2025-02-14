@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::timezone::provider::names::*;
-use icu::timezone::TimeZone;
+use icu::time::provider::names::*;
+use icu::time::TimeZone;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
@@ -41,7 +41,7 @@ impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
                         format!(
                             "{}{iana}",
                             char::from_u32(
-                                icu::timezone::provider::names::NON_REGION_CITY_PREFIX as u32
+                                icu::time::provider::names::NON_REGION_CITY_PREFIX as u32
                             )
                             .unwrap()
                         )
@@ -204,7 +204,7 @@ fn test_normalize_canonicalize_iana_coverage() {
 
     let iana2bcp = provider.iana_to_bcp47_map().unwrap();
 
-    let mapper = icu::timezone::zone::IanaParser::try_new_unstable(&provider).unwrap();
+    let mapper = icu::time::zone::IanaParser::try_new_unstable(&provider).unwrap();
     let mapper = mapper.as_borrowed();
 
     for iana_id in iana2bcp.keys() {

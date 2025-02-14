@@ -59,8 +59,8 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::TimeZone;
-/// use icu::timezone::IanaParser;
+/// use icu::time::TimeZone;
+/// use icu::time::IanaParser;
 /// use tinystr::tinystr;
 ///
 /// let mapper = IanaParser::new();
@@ -211,8 +211,8 @@ impl IanaParserBorrowed<'_> {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::TimeZone;
-    /// use icu_timezone::IanaParser;
+    /// use icu_time::TimeZone;
+    /// use icu_time::IanaParser;
     ///
     /// let mapper = IanaParser::new();
     ///
@@ -248,8 +248,8 @@ impl IanaParserBorrowed<'_> {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::TimeZone;
-    /// use icu_timezone::IanaParser;
+    /// use icu_time::TimeZone;
+    /// use icu_time::IanaParser;
     /// use std::borrow::Cow;
     ///
     /// let mapper = IanaParser::new();
@@ -286,8 +286,8 @@ impl IanaParserBorrowed<'_> {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::TimeZone;
-    /// use icu_timezone::IanaParser;
+    /// use icu_time::TimeZone;
+    /// use icu_time::IanaParser;
     /// use std::borrow::Cow;
     ///
     /// let mapper = IanaParser::new();
@@ -349,8 +349,8 @@ impl IanaParserBorrowed<'_> {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::TimeZone;
-    /// use icu_timezone::IanaParser;
+    /// use icu_time::TimeZone;
+    /// use icu_time::IanaParser;
     /// use std::borrow::Cow;
     /// use tinystr::tinystr;
     ///
@@ -500,7 +500,7 @@ impl IanaParserBorrowed<'_> {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::IanaParser;
+    /// use icu::time::IanaParser;
     ///
     /// let ids = IanaParser::new()
     ///     .iter_bcp47()
@@ -723,8 +723,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::TimeZone;
-    /// use icu_timezone::IanaParserExtended;
+    /// use icu_time::TimeZone;
+    /// use icu_time::IanaParserExtended;
     /// use std::borrow::Cow;
     ///
     /// let mapper = IanaParserExtended::new();
@@ -762,8 +762,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_timezone::TimeZone;
-    /// use icu_timezone::IanaParserExtended;
+    /// use icu_time::TimeZone;
+    /// use icu_time::IanaParserExtended;
     /// use std::borrow::Cow;
     /// use tinystr::tinystr;
     ///
@@ -795,7 +795,7 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::IanaParserExtended;
+    /// use icu::time::IanaParserExtended;
     ///
     /// let ids = IanaParserExtended::new()
     ///     .iter_canonical_iana()

@@ -291,7 +291,7 @@ lazy_static::lazy_static! {
 
         // Scaffolding modules
         "icu::datetime::scaffold",
-        "icu::timezone::scaffold",
+        "icu::time::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -307,13 +307,13 @@ lazy_static::lazy_static! {
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
-        "icu::timezone::provider",
+        "icu::time::provider",
         "icu::transliterate::provider",
 
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
-        "icu::timezone::types::TimeZoneVariantULE",
+        "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
@@ -321,11 +321,11 @@ lazy_static::lazy_static! {
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
-        "icu::timezone::types::Time",
-        "icu::timezone::types::DateTime",
-        "icu::timezone::types::UtcOffset",
-        "icu::timezone::types::TimeZoneVariant",
-        "icu::timezone::types::ZonedDateTime",
+        "icu::time::types::Time",
+        "icu::time::types::DateTime",
+        "icu::time::types::UtcOffset",
+        "icu::time::types::TimeZoneVariant",
+        "icu::time::types::ZonedDateTime",
         "icu::datetime::input::Date",
         "icu::datetime::input::DateTime",
         "icu::datetime::input::Time",
@@ -377,10 +377,10 @@ lazy_static::lazy_static! {
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",
-        "icu::timezone::types::IsoHour",
-        "icu::timezone::types::IsoMinute",
-        "icu::timezone::types::IsoSecond",
-        "icu::timezone::types::NanoSecond",
+        "icu::time::types::IsoHour",
+        "icu::time::types::IsoMinute",
+        "icu::time::types::IsoSecond",
+        "icu::time::types::NanoSecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.
@@ -399,7 +399,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
 
         // Specialized constructor for separately constructed instances
-        "icu::timezone::IanaParserExtended::try_new_with_mapper",
+        "icu::time::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

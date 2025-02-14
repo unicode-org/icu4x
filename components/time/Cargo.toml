@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_timezone"
+name = "icu_time"
 description = "API for resolving and manipulating time zone information"
 
 authors.workspace = true
@@ -33,7 +33,7 @@ writeable = { workspace = true }
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
-icu_timezone_data = { workspace = true, optional = true }
+icu_time_data = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -43,4 +43,4 @@ default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake"]
-compiled_data = ["dep:icu_timezone_data", "icu_calendar/compiled_data"]
+compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data"]

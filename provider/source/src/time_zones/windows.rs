@@ -5,7 +5,7 @@
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 use crate::{cldr_serde, SourceDataProvider};
-use icu::timezone::{
+use icu::time::{
     provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1},
     TimeZone,
 };
@@ -85,7 +85,7 @@ impl crate::IterableDataProviderCached<WindowsZonesToBcp47MapV1> for SourceDataP
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::{provider::windows::WindowsZonesToBcp47MapV1, TimeZone};
+    use icu::time::{provider::windows::WindowsZonesToBcp47MapV1, TimeZone};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
     use tinystr::tinystr;
 

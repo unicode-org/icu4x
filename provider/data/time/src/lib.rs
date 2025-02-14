@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data for the `icu_timezone` crate
+//! Data for the `icu_time` crate
 //!
 //! This data was generated with CLDR version 47.0.0-ALPHA1, ICU version icu4x/2024-12-16/76.x, and
 //! LSTM segmenter version v0.1.0.

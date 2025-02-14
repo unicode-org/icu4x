@@ -26,7 +26,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_plurals",
     "icu_properties",
     "icu_segmenter",
-    "icu_timezone",
+    "icu_time",
     // ICU4X utils
     "calendrical_calculations",
     "fixed_decimal",
@@ -88,7 +88,7 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
     "icu_plurals_data",
     "icu_properties_data",
     "icu_segmenter_data",
-    "icu_timezone_data",
+    "icu_time_data",
 ];
 
 /// Dependencies allowed when opting in to experimental code

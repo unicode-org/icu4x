@@ -8,7 +8,7 @@ use crate::SourceDataProvider;
 use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
-use icu::timezone::provider::*;
+use icu::time::provider::*;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -272,7 +272,7 @@ impl IterableDataProviderCached<ZoneOffsetPeriodV1> for SourceDataProvider {
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::zone::TimeZoneVariant;
+    use icu::time::zone::TimeZoneVariant;
     use tinystr::tinystr;
 
     use super::*;

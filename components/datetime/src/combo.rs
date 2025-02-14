@@ -26,7 +26,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::IanaParser;
+/// use icu::time::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -57,7 +57,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::IanaParser;
+/// use icu::time::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -84,7 +84,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::IanaParser;
+/// use icu::time::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -115,7 +115,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::{UtcOffsetCalculator, IanaParser};
+/// use icu::time::{UtcOffsetCalculator, IanaParser};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(

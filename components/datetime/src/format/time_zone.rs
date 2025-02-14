@@ -11,8 +11,8 @@ use core::fmt;
 use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::{Date, Iso};
 use icu_decimal::DecimalFormatter;
-use icu_timezone::provider::EPOCH;
-use icu_timezone::{
+use icu_time::provider::EPOCH;
+use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Time, TimeZone,
 };
@@ -376,7 +376,7 @@ impl FormatTimeZone for SpecificLocationFormat {
         match zone_variant {
             TimeZoneVariant::Standard => &locations.pattern_standard,
             TimeZoneVariant::Daylight => &locations.pattern_daylight,
-            // Compiles out due to tilde dependency on `icu_timezone`
+            // Compiles out due to tilde dependency on `icu_time`
             _ => unreachable!(),
         }
         .interpolate([location])
