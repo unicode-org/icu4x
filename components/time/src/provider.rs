@@ -133,16 +133,6 @@ impl From<(Date<Iso>, Time)> for MinutesSinceEpoch {
 impl MinutesSinceEpoch {
     // This is 1970-01-01, but that is coincidental to anything UNIX and could be changed to 0 in the future.
     const EPOCH: RataDie = RataDie::new(719163);
-
-    fn to_dt(self) -> (Date<Iso>, Time) {
-        let minute = self.0 % 60;
-        let hour = self.0 / 60 % 24;
-        let days = self.0 / 60 / 24;
-        let date = Iso::from_fixed(Self::EPOCH + days as i64);
-        #[allow(clippy::unwrap_used)] // by %
-        let time = Time::try_new(hour as u8, minute as u8, 0, 0).unwrap();
-        (date, time)
-    }
 }
 
 impl AsULE for MinutesSinceEpoch {
@@ -171,12 +161,13 @@ impl serde::Serialize for MinutesSinceEpoch {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            let (date, time) = self.to_dt();
+            let minute = self.0 % 60;
+            let hour = self.0 / 60 % 24;
+            let days = self.0 / 60 / 24;
+            let date = Iso::from_fixed(Self::EPOCH + days as i64);
             let year = date.year().extended_year;
             let month = date.month().month_number();
             let day = date.day_of_month().0;
-            let hour = time.hour.number();
-            let minute = time.minute.number();
             serializer.serialize_str(&alloc::format!(
                 "{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}"
             ))
@@ -232,8 +223,8 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct ZoneOffsetPeriod<'data>(
-    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded by
-    /// [`to_iso_minutes_since_epoch`]. It represents when the offsets ended to be used.
+    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
+    /// [`MinutesSinceEpoch`]. It represents when the offsets started to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
