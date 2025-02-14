@@ -94,8 +94,10 @@ impl SourceDataProvider {
             .filter_map(|(&bcp47, bcp47_tzid_data)| {
                 let canonical_alias = bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap(); // non-empty
 
-                // Etc zones don't have locations, which the exception of Unknown, which we still want to skip in root
-                if canonical_alias.starts_with("Etc/") && !(canonical_alias == "Etc/Unknown" && !locale.is_default()) {
+                // Etc zones don't have locations, with the exception of Unknown, which we still want to skip in root
+                if canonical_alias.starts_with("Etc/")
+                    && (canonical_alias != "Etc/Unknown" || locale.is_default())
+                {
                     return None;
                 }
 
