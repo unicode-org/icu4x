@@ -1112,13 +1112,17 @@ where
     }
 }
 
-impl<FSet: DateTimeNamesMarker> AsRef<FixedCalendarDateTimeNames<(), FSet>> for DateTimeNames<FSet> {
+impl<FSet: DateTimeNamesMarker> AsRef<FixedCalendarDateTimeNames<(), FSet>>
+    for DateTimeNames<FSet>
+{
     fn as_ref(&self) -> &FixedCalendarDateTimeNames<(), FSet> {
         &self.inner
     }
 }
 
-impl<FSet: DateTimeNamesMarker> AsMut<FixedCalendarDateTimeNames<(), FSet>> for DateTimeNames<FSet> {
+impl<FSet: DateTimeNamesMarker> AsMut<FixedCalendarDateTimeNames<(), FSet>>
+    for DateTimeNames<FSet>
+{
     fn as_mut(&mut self) -> &mut FixedCalendarDateTimeNames<(), FSet> {
         &mut self.inner
     }
@@ -2147,7 +2151,9 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// // error[E0277]: the trait bound `(): From<DataPayloadWithVariables<DayPeriodNamesV1, FieldLength>>` is not satisfied
     /// let narrow_names = composite_names.cast_into_fset::<DateFieldSet>();
     /// ```
-    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> FixedCalendarDateTimeNames<C, FSet2> {
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(
+        self,
+    ) -> FixedCalendarDateTimeNames<C, FSet2> {
         FixedCalendarDateTimeNames {
             prefs: self.prefs,
             inner: self.inner.cast_into_fset(),
