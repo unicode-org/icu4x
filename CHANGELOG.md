@@ -107,7 +107,7 @@
         - Fixes to segmentation algorithm (unicode-org#5001)
         - Add LocaleData parameter for word/sentence segmenter (unicode-org#5318)
         - Add content_locale member to LineBreakOptions (unicode-org#5565)
-    - `icu_time`
+    - `icu_timezone`
         - Implement `ixdtf` for `CustomTimeZone` and `CustomZonedDateTime` (unicode-org#5349)
         - GMT -> UTC (unicode-org#5512)
         - Clean up Windows mapper API (unicode-org#5735)
@@ -117,11 +117,11 @@
         - Make an `IxdtfParser` type (unicode-org#5736)
         - Fewer overlapping constructors for `TimeZoneInfo` (unicode-org#5747)
         - Private fields for `TimeZoneInfo` (unicode-org#5747)
-        - Return type for `UtcOffsetCalculator`
+        - Return type for `ZoneOffsetCalculator`
         - Remove generic metazone values that match location values (unicode-org#5751)
         - Special-case `Z`, `Z[Etc/UTC]` and `Z[Etc/GMT]` in IXDTF parser (unicode-org#5757)
         - Deduplicate tz locations against root (unicode-org#5759)
-        - Make `TimeZoneVariant` a closed, non-exhaustive enum (unicode-org#5760)
+        - Make `ZoneVariant` a closed, non-exhaustive enum (unicode-org#5760)
         - Replace `CustomTimeZone` with `TimeZoneInfo` (unicode-org#5691)
 - Data model and providers
     - `icu_provider_adapters`
@@ -306,8 +306,8 @@
     - Updated sentence segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
     - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
     - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segment in complex script (https://github.com/unicode-org/icu4x/pull/4903)
-  - `icu_time`
-    - Added `IanaParser` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
+  - `icu_timezone`
+    - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
   - `icu_datagen`
     - Add new API structure to `DatagenDriver` to better express the different aspects of `FallbackMode` (https://github.com/unicode-org/icu4x/issues/4629)
@@ -521,7 +521,7 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Compiled data functions added to `sets` and `maps` without `load_` prefix: `icu::properties::sets::basic_emoji()`
   - `icu_segmenter`
     - Algorithmic bug fixes such as https://github.com/unicode-org/icu4x/pull/3392
-  - `icu_time`
+  - `icu_timezone`
     - New `IanaToBcp47Mapper` for converting between IANA time zone names and BCP-47 time zone names (https://github.com/unicode-org/icu4x/pull/2909)
  - Utils:
     - `calendrical_calculations`: New crate: 0.1.0
@@ -691,7 +691,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Silencing expected `DataError`s (#3262)
     - Fix SB10 rule (#3126)
     - Polished docs and examples
-  - `icu_time`: No other changes
+  - `icu_timezone`: No other changes
  - Utils:
   - `crlify`: No change (still at 1.0.1)
   - `databake`: 1.1.3 -> 1.1.4
@@ -817,7 +817,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   * Remove unnecessary language check for East Asian language (SA property) (#2705)
   * internal and doc improvements
 
-* `icu_time`
+* `icu_timezone`
   * Adds a bytes parsing API for `GMTOffset` for `CustomTimeZone` and FFI (#2943, #2955)
   * doc improvements
 
@@ -1027,7 +1027,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Convert metazone period from string to i32 (#2085)
     - Improvements to `MetaZoneCalculator` (#2274)
     - Add `TimeVariant` wrapper (#2289)
-    - TimeVariant -> TimeZoneVariant with a few more docs (#2427)
+    - TimeVariant -> ZoneVariant with a few more docs (#2427)
     - Assorted TimeZone fixes (#2478)
  - Utils:
   - `crlify`: No updates
