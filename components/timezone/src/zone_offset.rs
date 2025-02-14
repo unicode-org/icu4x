@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{ZoneOffsetPeriodV1, EPOCH};
-use crate::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use crate::{Time, TimeZoneBcp47Id, UtcOffset};
 use icu_calendar::Date;
 use icu_calendar::Iso;
 use icu_provider::prelude::*;
