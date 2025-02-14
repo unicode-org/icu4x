@@ -9,7 +9,7 @@ use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 use zerovec::{ule::NichedOption, ZeroMap, ZeroMap2d};
 
-use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant};
+use icu_time::{provider::MinutesSinceEpoch, zone::TimeZoneVariant, TimeZone};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
@@ -87,7 +87,7 @@ pub struct TimeZoneEssentials<'data> {
 pub struct Locations<'data> {
     /// Per-zone location display name
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
+    pub locations: ZeroMap<'data, TimeZone, str>,
     /// The format string for a region's generic time.
     #[cfg_attr(
         feature = "serde",
@@ -147,7 +147,7 @@ pub struct ExemplarCities<'data> {
     /// Per-zone exemplar city name. This is deduplicated against `Locations.locations`, so it
     /// only contains time zones that don't use the exemplar city in the location format.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub exemplars: ZeroMap<'data, TimeZoneBcp47Id, str>,
+    pub exemplars: ZeroMap<'data, TimeZone, str>,
 }
 
 /// An ICU4X mapping to generic metazone names.
@@ -175,7 +175,7 @@ pub struct MetazoneGenericNames<'data> {
     pub defaults: ZeroMap<'data, MetazoneId, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
+    pub overrides: ZeroMap<'data, TimeZone, str>,
 }
 
 /// An ICU4X mapping to specific metazone names.
@@ -205,10 +205,10 @@ pub struct MetazoneGenericNames<'data> {
 pub struct MetazoneSpecificNames<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
+    pub defaults: ZeroMap<'data, (MetazoneId, TimeZoneVariant), str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, (TimeZoneBcp47Id, ZoneVariant), str>,
+    pub overrides: ZeroMap<'data, (TimeZone, TimeZoneVariant), str>,
 }
 
 /// Metazone ID in a compact format
@@ -243,7 +243,7 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriod<'data> {
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
+    /// the number of minutes since the local [`EPOCH`](icu_time::provider::EPOCH). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub list: ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
+    pub list: ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
 }

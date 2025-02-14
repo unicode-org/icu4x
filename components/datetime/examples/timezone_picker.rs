@@ -7,11 +7,11 @@ use std::collections::BTreeMap;
 use icu::calendar::Date;
 use icu::datetime::{fieldsets, TimeFormatter};
 use icu::locale::locale;
-use icu::timezone::Time;
+use icu::time::Time;
 
 fn main() {
-    let mapper = icu::timezone::TimeZoneIdMapper::new();
-    let offsets = icu::timezone::ZoneOffsetCalculator::new();
+    let mapper = icu::time::zone::IanaParser::new();
+    let offsets = icu::time::zone::UtcOffsetCalculator::new();
 
     let prefs = locale!("en").into();
 

@@ -4,7 +4,7 @@
 
 //! Options types for date/time formatting.
 
-use icu_timezone::scaffold::IntoOption;
+use icu_time::scaffold::IntoOption;
 
 /// The length of a formatted date/time string.
 ///

@@ -16,10 +16,10 @@ use icu_calendar::{
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_timezone::scaffold::IntoOption;
-use icu_timezone::{
-    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
-    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+use icu_time::scaffold::IntoOption;
+use icu_time::{
+    zone::{TimeZoneVariant, UtcOffset},
+    Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
 // TODO: Add WeekCalculator and DecimalFormatter optional bindings here
@@ -97,13 +97,13 @@ pub trait DateDataMarkers: UnstableSealed {
 /// </div>
 pub trait TimeMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
-    type HourInput: IntoOption<IsoHour>;
+    type HourInput: IntoOption<Hour>;
     /// Marker for resolving the day-of-week input field.
-    type MinuteInput: IntoOption<IsoMinute>;
+    type MinuteInput: IntoOption<Minute>;
     /// Marker for resolving the day-of-year input field.
-    type SecondInput: IntoOption<IsoSecond>;
+    type SecondInput: IntoOption<Second>;
     /// Marker for resolving the any-calendar-kind input field.
-    type NanoSecondInput: IntoOption<NanoSecond>;
+    type NanosecondInput: IntoOption<Nanosecond>;
     /// Marker for loading time skeleton patterns.
     type TimeSkeletonPatternsV1: DataMarker<DataStruct = PackedPatterns<'static>>;
     /// Marker for loading day period names.
@@ -121,11 +121,11 @@ pub trait TimeMarkers: UnstableSealed {
 /// </div>
 pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone id input field.
-    type TimeZoneIdInput: IntoOption<TimeZoneBcp47Id>;
+    type TimeZoneIdInput: IntoOption<TimeZone>;
     /// Marker for resolving the time zone offset input field.
     type TimeZoneOffsetInput: IntoOption<UtcOffset>;
     /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: IntoOption<ZoneVariant>;
+    type TimeZoneVariantInput: IntoOption<TimeZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
     type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
     /// Marker for loading core time zone data.
@@ -185,11 +185,11 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// The following types implement this trait:
 ///
 /// - [`Date`](icu_calendar::Date)
-/// - [`Time`](icu_timezone::Time)
-/// - [`DateTime`](icu_timezone::DateTime)
-/// - [`ZonedDateTime`](icu_timezone::ZonedDateTime)
-/// - [`UtcOffset`](icu_timezone::UtcOffset)
-/// - [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
+/// - [`Time`](icu_time::Time)
+/// - [`DateTime`](icu_time::DateTime)
+/// - [`ZonedDateTime`](icu_time::ZonedDateTime)
+/// - [`UtcOffset`](icu_time::zone::UtcOffset)
+/// - [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
 // This trait is implicitly sealed due to sealed supertraits
@@ -202,7 +202,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
-    + GetField<<R::T as TimeMarkers>::NanoSecondInput>
+    + GetField<<R::T as TimeMarkers>::NanosecondInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
@@ -228,7 +228,7 @@ where
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
-        + GetField<<R::T as TimeMarkers>::NanoSecondInput>
+        + GetField<<R::T as TimeMarkers>::NanosecondInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
@@ -580,7 +580,7 @@ impl TimeMarkers for () {
     type HourInput = ();
     type MinuteInput = ();
     type SecondInput = ();
-    type NanoSecondInput = ();
+    type NanosecondInput = ();
     type TimeSkeletonPatternsV1 = NeverMarker<PackedPatterns<'static>>;
     type DayPeriodNamesV1 = NeverMarker<LinearNames<'static>>;
 }
@@ -691,25 +691,25 @@ macro_rules! datetime_marker_helper {
         DayOfYearInfo
     };
     (@input/hour, yes) => {
-        IsoHour
+        Hour
     };
     (@input/minute, yes) => {
-        IsoMinute
+        Minute
     };
     (@input/second, yes) => {
-        IsoSecond
+        Second
     };
-    (@input/nanosecond, yes) => {
-        NanoSecond
+    (@input/Nanosecond, yes) => {
+        Nanosecond
     };
     (@input/timezone/id, yes) => {
-        TimeZoneBcp47Id
+        TimeZone
     };
     (@input/timezone/offset, yes) => {
         Option<UtcOffset>
     };
     (@input/timezone/variant, yes) => {
-        ZoneVariant
+        TimeZoneVariant
     };
     (@input/timezone/local_time, yes) => {
         (Date<Iso>, Time)

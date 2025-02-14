@@ -22,14 +22,14 @@ options, and calendar systems. Additional formatter types are available to devel
 resource-constrained environments.
 
 The formatters accept input types from the [`calendar`](icu_calendar) and
-[`timezone`](icu_timezone) crates:
+[`timezone`](icu_time) crates:
 
 1. [`Date`](icu_calendar::Date)
-2. [`DateTime`](icu_timezone::DateTime)
-3. [`Time`](icu_timezone::Time)
-4. [`UtcOffset`](icu_timezone::UtcOffset)
-5. [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
-6. [`ZonedDateTime`](icu_timezone::ZonedDateTime)
+2. [`DateTime`](icu_time::DateTime)
+3. [`Time`](icu_time::Time)
+4. [`UtcOffset`](icu_time::zone::UtcOffset)
+5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
+6. [`ZonedDateTime`](icu_time::ZonedDateTime)
 
 Not all inputs are valid for all field sets.
 

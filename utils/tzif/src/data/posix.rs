@@ -7,7 +7,7 @@ use super::time::Seconds;
 /// A struct to hold a time-zone variant name and its offset.
 /// The offset is how many hours must be added to the time to reach UTC.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ZoneVariantInfo {
+pub struct TimeZoneVariantInfo {
     /// The name of the time-zone variant.
     pub name: String,
     /// The offset time in seconds that must be added to reach UTC.
@@ -50,7 +50,7 @@ pub enum TransitionDay {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DstTransitionInfo {
     /// The zone variant info including name and offset.
-    pub variant_info: ZoneVariantInfo,
+    pub variant_info: TimeZoneVariantInfo,
 
     /// The DST transition start date.
     pub start_date: TransitionDate,
@@ -63,7 +63,7 @@ pub struct DstTransitionInfo {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PosixTzString {
     /// The variant info of the STD time-zone variant.
-    pub std_info: ZoneVariantInfo,
+    pub std_info: TimeZoneVariantInfo,
 
     /// The variant info of the DST time-zone variant if present.
     pub dst_info: Option<DstTransitionInfo>,

@@ -70,7 +70,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
-    #[diplomat::rust_link(icu::timezone::ParseError, Enum, compact)]
+    #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
     pub enum CalendarParseError {
         Unknown = 0x00,
@@ -81,7 +81,7 @@ pub mod ffi {
     }
 
     #[derive(Debug, PartialEq, Eq)]
-    #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
+    #[diplomat::rust_link(icu::time::InvalidOffsetError, Struct, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone"))]
     pub struct TimeZoneInvalidOffsetError;
 
@@ -185,13 +185,13 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-impl From<icu_timezone::ParseError> for CalendarParseError {
-    fn from(e: icu_timezone::ParseError) -> Self {
+impl From<icu_time::ParseError> for CalendarParseError {
+    fn from(e: icu_time::ParseError) -> Self {
         match e {
-            icu_timezone::ParseError::Syntax(_) => Self::InvalidSyntax,
-            icu_timezone::ParseError::MissingFields => Self::MissingFields,
-            icu_timezone::ParseError::Range(_) => Self::OutOfRange,
-            icu_timezone::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            icu_time::ParseError::Syntax(_) => Self::InvalidSyntax,
+            icu_time::ParseError::MissingFields => Self::MissingFields,
+            icu_time::ParseError::Range(_) => Self::OutOfRange,
+            icu_time::ParseError::UnknownCalendar => Self::UnknownCalendar,
             // TODO
             _ => Self::Unknown,
         }
@@ -300,8 +300,8 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 }
 
 #[cfg(any(feature = "timezone", feature = "datetime"))]
-impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
-    fn from(_: icu_timezone::InvalidOffsetError) -> Self {
+impl From<icu_time::InvalidOffsetError> for TimeZoneInvalidOffsetError {
+    fn from(_: icu_time::InvalidOffsetError) -> Self {
         Self
     }
 }

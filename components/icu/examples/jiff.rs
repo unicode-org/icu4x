@@ -6,7 +6,10 @@ use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    timezone::{Time, TimeZoneIdMapper, UtcOffset, ZoneOffsetCalculator, ZonedDateTime},
+    time::{
+        zone::{IanaParser, UtcOffset, UtcOffsetCalculator},
+        Time, ZonedDateTime,
+    },
 };
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
@@ -31,7 +34,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
 
     let zone =
         // ICU uses BCP47 time zone IDs
-        TimeZoneIdMapper::new().iana_to_bcp47(zoned.time_zone().iana_name().unwrap_or("Etc/Unknown"))
+        IanaParser::new().iana_to_bcp47(zoned.time_zone().iana_name().unwrap_or("Etc/Unknown"))
         // In ICU's model, a time zone has a fixed offset, as that's required for formatting
         .with_offset(UtcOffset::try_from_seconds(zoned.offset().seconds()).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to
@@ -48,8 +51,8 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
         ZonedDateTime::try_from_str(
             &zoned.to_string(),
             icu::calendar::Iso,
-            TimeZoneIdMapper::new(),
-            &ZoneOffsetCalculator::new()
+            IanaParser::new(),
+            &UtcOffsetCalculator::new()
         )
         .unwrap(),
         zoned_date_time

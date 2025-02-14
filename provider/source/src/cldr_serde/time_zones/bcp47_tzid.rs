@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json>
 
-use icu::timezone::TimeZoneBcp47Id;
+use icu::time::TimeZone;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -16,7 +16,7 @@ pub(crate) struct Bcp47TzidAliasData {
     #[serde(rename = "_deprecated")]
     pub(crate) deprecated: Option<bool>,
     #[serde(rename = "_preferred")]
-    pub(crate) preferred: Option<TimeZoneBcp47Id>,
+    pub(crate) preferred: Option<TimeZone>,
     #[serde(rename = "_description")]
     pub(crate) description: String,
     #[serde(rename = "_alias")]
@@ -32,7 +32,7 @@ pub(crate) struct Bcp47TimeZoneIds {
     pub(crate) _alias: String,
     pub(crate) _description: String,
     #[serde(flatten)]
-    pub(crate) values: BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    pub(crate) values: BTreeMap<TimeZone, Bcp47TzidAliasData>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

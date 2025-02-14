@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::time::ffi::Time;
 
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
-    #[diplomat::rust_link(icu::timezone::DateTime, Struct)]
+    #[diplomat::rust_link(icu::time::DateTime, Struct)]
     #[diplomat::out]
     pub struct IsoDateTime {
         pub date: Box<IsoDate>,
@@ -24,13 +24,12 @@ pub mod ffi {
 
     impl IsoDateTime {
         /// Creates a new [`IsoDateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::timezone::DateTime::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::DateTime::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::DateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::DateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<IsoDateTime, CalendarParseError> {
-            let icu_timezone::DateTime { date, time } =
-                icu_timezone::DateTime::try_from_utf8(v, Iso)?;
+            let icu_time::DateTime { date, time } = icu_time::DateTime::try_from_utf8(v, Iso)?;
             Ok(IsoDateTime {
                 date: Box::new(IsoDate(date)),
                 time: Box::new(Time(time)),
@@ -39,7 +38,7 @@ pub mod ffi {
     }
 
     /// An ICU4X DateTime object capable of containing a date and time for any calendar.
-    #[diplomat::rust_link(icu::timezone::DateTime, Struct)]
+    #[diplomat::rust_link(icu::time::DateTime, Struct)]
     #[diplomat::out]
     pub struct DateTime {
         pub date: Box<Date>,
@@ -48,16 +47,16 @@ pub mod ffi {
 
     impl DateTime {
         /// Creates a new [`DateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::timezone::DateTime::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::timezone::DateTime::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::timezone::DateTime::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::DateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::DateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
         ) -> Result<DateTime, CalendarParseError> {
-            let icu_timezone::DateTime { date, time } =
-                icu_timezone::DateTime::try_from_utf8(v, calendar.0.clone())?;
+            let icu_time::DateTime { date, time } =
+                icu_time::DateTime::try_from_utf8(v, calendar.0.clone())?;
             Ok(DateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),

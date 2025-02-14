@@ -9,7 +9,7 @@ use icu_datetime::FixedCalendarDateTimeFormatter;
 
 use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{DateTime, Time, TimeZoneInfo, ZoneVariant, ZonedDateTime};
+use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
@@ -41,7 +41,7 @@ fn datetime_benches(c: &mut Criterion) {
                                             Date::try_new_iso(2024, 1, 1).unwrap(),
                                             Time::midnight(),
                                         ))
-                                        .with_zone_variant(ZoneVariant::Standard),
+                                        .with_zone_variant(TimeZoneVariant::Standard),
                                 }
                             }
                         })

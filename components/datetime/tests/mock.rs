@@ -5,8 +5,9 @@
 //! Some useful parsing functions for tests.
 
 use icu_calendar::Gregorian;
-use icu_timezone::{
-    models, TimeZoneIdMapper, TimeZoneInfo, ZoneOffsetCalculator, ZoneVariant, ZonedDateTime,
+use icu_time::{
+    zone::{models, IanaParser, TimeZoneVariant, UtcOffsetCalculator},
+    TimeZoneInfo, ZonedDateTime,
 };
 
 /// Parse a [`DateTime`] and [`TimeZoneInfo`] from a string.
@@ -33,18 +34,18 @@ pub fn parse_zoned_gregorian_from_str(
     match ZonedDateTime::try_from_str(
         input,
         Gregorian,
-        TimeZoneIdMapper::new(),
-        &ZoneOffsetCalculator::new(),
+        IanaParser::new(),
+        &UtcOffsetCalculator::new(),
     ) {
         Ok(zdt) => zdt,
-        Err(icu_timezone::ParseError::MismatchedTimeZoneFields) => {
-            match ZonedDateTime::try_loose_from_str(input, Gregorian, TimeZoneIdMapper::new()) {
+        Err(icu_time::ParseError::MismatchedTimeZoneFields) => {
+            match ZonedDateTime::try_loose_from_str(input, Gregorian, IanaParser::new()) {
                 Ok(zdt) => {
                     ZonedDateTime {
                         date: zdt.date,
                         time: zdt.time,
                         // For fixture tests, set the zone variant to standard here
-                        zone: zdt.zone.with_zone_variant(ZoneVariant::Standard),
+                        zone: zdt.zone.with_zone_variant(TimeZoneVariant::Standard),
                     }
                 }
                 Err(e) => panic!("could not parse input: {input}: {e:?}"),

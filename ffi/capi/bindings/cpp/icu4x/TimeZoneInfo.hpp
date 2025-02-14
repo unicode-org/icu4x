@@ -11,10 +11,10 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
+#include "IanaParser.hpp"
 #include "IsoDate.hpp"
 #include "IsoDateTime.hpp"
 #include "Time.hpp"
-#include "TimeZoneIdMapper.hpp"
 #include "TimeZoneInvalidOffsetError.hpp"
 
 
@@ -61,7 +61,7 @@ namespace capi {
     
     void icu4x_TimeZoneInfo_set_time_zone_id_mv1(icu4x::capi::TimeZoneInfo* self, diplomat::capi::DiplomatStringView id);
     
-    void icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(icu4x::capi::TimeZoneInfo* self, const icu4x::capi::TimeZoneIdMapper* mapper, diplomat::capi::DiplomatStringView id);
+    void icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IanaParser* mapper, diplomat::capi::DiplomatStringView id);
     
     void icu4x_TimeZoneInfo_time_zone_id_mv1(const icu4x::capi::TimeZoneInfo* self, diplomat::capi::DiplomatWrite* write);
     
@@ -169,7 +169,7 @@ inline void icu4x::TimeZoneInfo::set_time_zone_id(std::string_view id) {
     {id.data(), id.size()});
 }
 
-inline void icu4x::TimeZoneInfo::set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id) {
+inline void icu4x::TimeZoneInfo::set_iana_time_zone_id(const icu4x::IanaParser& mapper, std::string_view id) {
   icu4x::capi::icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(this->AsFFI(),
     mapper.AsFFI(),
     {id.data(), id.size()});
