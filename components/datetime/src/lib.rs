@@ -53,7 +53,7 @@
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
-//! use icu::timezone::{DateTime, Time};
+//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:

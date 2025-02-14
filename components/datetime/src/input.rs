@@ -7,12 +7,15 @@
 
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
 use icu_calendar::types::DayOfYearInfo;
-use icu_calendar::{Date, Iso};
+use icu_calendar::Iso;
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{
     types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
-    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+    ZoneVariant,
 };
+
+pub use icu_calendar::Date;
+pub use icu_timezone::{DateTime, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZonedDateTime};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, IsoWeekday, MonthInfo, YearInfo};

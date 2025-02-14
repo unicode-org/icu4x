@@ -16,7 +16,8 @@
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
 //! use icu::locale::locale;
-//! use icu::timezone::{ZonedDateTime, Time, TimeZoneIdMapper, ZoneOffsetCalculator};
+//! use icu::datetime::input::{ZonedDateTime, Time};
+//! use icu::timezone::{TimeZoneIdMapper, ZoneOffsetCalculator};
 //! use writeable::assert_writeable_parts_eq;
 //!
 //! let dtf = DateTimeFormatter::try_new(

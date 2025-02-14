@@ -326,6 +326,13 @@ lazy_static::lazy_static! {
         "icu::timezone::types::UtcOffset",
         "icu::timezone::types::ZoneVariant",
         "icu::timezone::types::ZonedDateTime",
+        "icu::datetime::input::Date",
+        "icu::datetime::input::DateTime",
+        "icu::datetime::input::Time",
+        "icu::datetime::input::TimeZoneBcp47Id",
+        "icu::datetime::input::TimeZoneInfo",
+        "icu::datetime::input::UtcOffset",
+        "icu::datetime::input::ZonedDateTime",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
