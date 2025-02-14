@@ -266,8 +266,13 @@ impl Iso {
 
     // Fixed is day count representation of calendars starting from Jan 1st of year 1.
     // The fixed calculations algorithms are from the Calendrical Calculations book.
-    pub(crate) fn fixed_from_iso(date: IsoDateInner) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(date.0.year, date.0.month, date.0.day)
+    #[doc(hidden)]
+    pub fn to_fixed(date: Date<Iso>) -> RataDie {
+        calendrical_calculations::iso::fixed_from_iso(
+            date.inner.0.year,
+            date.inner.0.month,
+            date.inner.0.day,
+        )
     }
 
     pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> Date<Iso> {
@@ -288,7 +293,8 @@ impl Iso {
         #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
         Date::try_new_iso(year, month, day).unwrap()
     }
-    pub(crate) fn iso_from_fixed(date: RataDie) -> Date<Iso> {
+    #[doc(hidden)]
+    pub fn from_fixed(date: RataDie) -> Date<Iso> {
         let (year, month, day) = match calendrical_calculations::iso::iso_from_fixed(date) {
             Err(I32CastError::BelowMin) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
@@ -366,7 +372,7 @@ mod test {
             saturating: bool,
         }
         // Calculates the max possible year representable using i32::MAX as the fixed date
-        let max_year = Iso::iso_from_fixed(RataDie::new(i32::MAX as i64))
+        let max_year = Iso::from_fixed(RataDie::new(i32::MAX as i64))
             .year()
             .era_year()
             .unwrap();
@@ -495,9 +501,9 @@ mod test {
         for case in cases {
             let date = Date::try_new_iso(case.year, case.month, case.day).unwrap();
             if !case.saturating {
-                assert_eq!(Iso::fixed_from_iso(date.inner), case.fixed, "{case:?}");
+                assert_eq!(Iso::to_fixed(date), case.fixed, "{case:?}");
             }
-            assert_eq!(Iso::iso_from_fixed(case.fixed), date, "{case:?}");
+            assert_eq!(Iso::from_fixed(case.fixed), date, "{case:?}");
         }
     }
 
@@ -505,7 +511,7 @@ mod test {
     #[test]
     fn min_year() {
         assert_eq!(
-            Iso::iso_from_fixed(RataDie::big_negative())
+            Iso::from_fixed(RataDie::big_negative())
                 .year()
                 .era_year_or_extended(),
             i32::MIN
@@ -666,7 +672,7 @@ mod test {
             let fixed = RataDie::new(fixed);
 
             assert_eq!(
-                Iso::iso_from_fixed(fixed),
+                Iso::from_fixed(fixed),
                 Date::try_new_iso(year, month, day).unwrap(),
                 "fixed: {fixed:?}"
             );

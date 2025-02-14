@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{to_minutes_since_epoch, ZoneOffsetPeriodV1};
+use crate::provider::{MinutesSinceEpoch, ZoneOffsetPeriodV1};
 use crate::{zone::UtcOffset, Time, TimeZone};
 use icu_calendar::Date;
 use icu_calendar::Iso;
@@ -110,9 +110,9 @@ impl UtcOffsetCalculator {
         match self.offset_period.get().0.get0(&time_zone_id) {
             Some(cursor) => {
                 let mut offsets = None;
-                let minutes_since_epoch_walltime = to_minutes_since_epoch(dt);
+                let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);
                 for (minutes, id) in cursor.iter1_copied() {
-                    if minutes_since_epoch_walltime >= i32::from_unaligned(*minutes) {
+                    if minutes_since_epoch_walltime >= MinutesSinceEpoch::from_unaligned(*minutes) {
                         offsets = Some(id);
                     } else {
                         break;

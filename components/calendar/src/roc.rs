@@ -252,7 +252,7 @@ mod test {
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_fixed = Iso::iso_from_fixed(case.fixed_date);
+        let iso_from_fixed = Iso::from_fixed(case.fixed_date);
         let roc_from_fixed = Date::new_from_iso(iso_from_fixed, Roc);
         assert_eq!(roc_from_fixed.year().era_year().unwrap(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
@@ -409,8 +409,8 @@ mod test {
         let rd_epoch_start = 697978;
         for i in (rd_epoch_start - 100)..=(rd_epoch_start + 100) {
             for j in (rd_epoch_start - 100)..=(rd_epoch_start + 100) {
-                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
-                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+                let iso_i = Iso::from_fixed(RataDie::new(i));
+                let iso_j = Iso::from_fixed(RataDie::new(j));
 
                 let roc_i = iso_i.to_calendar(Roc);
                 let roc_j = iso_j.to_calendar(Roc);
@@ -434,8 +434,8 @@ mod test {
         // Same as `test_directionality_near_epoch`, but with a focus around RD 0
         for i in -100..=100 {
             for j in -100..100 {
-                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
-                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+                let iso_i = Iso::from_fixed(RataDie::new(i));
+                let iso_j = Iso::from_fixed(RataDie::new(j));
 
                 let roc_i = iso_i.to_calendar(Roc);
                 let roc_j = iso_j.to_calendar(Roc);

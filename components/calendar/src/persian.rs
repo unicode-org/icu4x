@@ -105,13 +105,13 @@ impl Calendar for Persian {
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
         Self::fast_persian_from_fixed(fixed_iso)
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let fixed_persian = Persian::fixed_from_fast_persian(*date);
-        Iso::iso_from_fixed(fixed_persian)
+        Iso::from_fixed(fixed_persian)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
