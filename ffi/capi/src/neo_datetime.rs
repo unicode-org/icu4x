@@ -89,7 +89,7 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -121,7 +121,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -150,7 +150,7 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -181,7 +181,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -214,7 +214,7 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision))
                 .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -248,7 +248,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -277,7 +277,7 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -308,7 +308,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -337,7 +337,7 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -368,7 +368,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -404,7 +404,7 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision))
                 .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -442,7 +442,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -471,7 +471,7 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
             )))
         }
 
@@ -502,7 +502,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -572,7 +572,8 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -604,7 +605,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -633,7 +634,8 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -664,7 +666,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -697,7 +699,8 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision))
                 .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -731,7 +734,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -760,7 +763,8 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -791,7 +795,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -820,7 +824,8 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -851,7 +856,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -887,7 +892,8 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision))
                 .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -925,7 +931,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 
@@ -954,7 +960,8 @@ pub mod ffi {
                 .with_alignment(map_or_default(alignment))
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatterGregorian(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?.with_fset(),
+                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
+                    .cast_into_fset(),
             )))
         }
 
@@ -985,7 +992,7 @@ pub mod ffi {
                     prefs,
                     options,
                 )?
-                .with_fset(),
+                .cast_into_fset(),
             )))
         }
 

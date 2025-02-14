@@ -18,7 +18,7 @@ use icu_calendar::{
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
 use icu_datetime::{
-    pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
+    pattern::DateTimePattern, pattern::FixedCalendarDateTimeNames, DateTimeFormatter,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::{
@@ -385,11 +385,13 @@ fn test_dayperiod_patterns() {
                     for pattern_input in patterns {
                         let parsed_pattern =
                             DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
-                        let mut pattern_formatter =
-                            TypedDateTimeNames::<Gregorian, CompositeDateTimeFieldSet>::try_new(
-                                (&locale).into(),
-                            )
-                            .unwrap();
+                        let mut pattern_formatter = FixedCalendarDateTimeNames::<
+                            Gregorian,
+                            CompositeDateTimeFieldSet,
+                        >::try_new(
+                            (&locale).into()
+                        )
+                        .unwrap();
                         let formatted_datetime = pattern_formatter
                             .include_for_pattern(&parsed_pattern)
                             .unwrap()
@@ -492,7 +494,7 @@ fn test_time_zone_patterns() {
             }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
-                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
+                FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
             let formatted_datetime = pattern_formatter
                 .include_for_pattern(&parsed_pattern)
                 .unwrap()
