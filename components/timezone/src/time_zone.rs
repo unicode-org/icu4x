@@ -185,7 +185,7 @@ impl TimeZoneInfo<models::AtTime> {
     ) -> TimeZoneInfo<models::Full> {
         let Some(offset) = self.offset else {
             return TimeZoneBcp47Id::unknown()
-                .without_offset()
+                .with_offset(self.offset)
                 .at_time(self.local_time)
                 .with_zone_variant(ZoneVariant::Standard);
         };
@@ -202,7 +202,7 @@ impl TimeZoneInfo<models::AtTime> {
             })
         else {
             return TimeZoneBcp47Id::unknown()
-                .without_offset()
+                .with_offset(self.offset)
                 .at_time(self.local_time)
                 .with_zone_variant(ZoneVariant::Standard);
         };
