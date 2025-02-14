@@ -26,7 +26,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::TimeZoneIdMapper;
+/// use icu::timezone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -39,7 +39,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// let zdt = ZonedDateTime::try_location_only_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",
 ///     formatter.calendar(),
-///     TimeZoneIdMapper::new(),
+///     IanaParser::new(),
 /// )
 /// .unwrap();
 ///
@@ -57,7 +57,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::TimeZoneIdMapper;
+/// use icu::timezone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -67,7 +67,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = ZonedDateTime::try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", Gregorian, TimeZoneIdMapper::new())
+/// let zdt = ZonedDateTime::try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", Gregorian, IanaParser::new())
 ///     .unwrap();
 ///
 /// assert_writeable_eq!(
@@ -84,7 +84,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::TimeZoneIdMapper;
+/// use icu::timezone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
@@ -97,7 +97,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// let zdt = ZonedDateTime::try_location_only_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",
 ///     formatter.calendar(),
-///     TimeZoneIdMapper::new(),
+///     IanaParser::new(),
 /// )
 /// .unwrap();
 ///
@@ -115,7 +115,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use icu::datetime::input::ZonedDateTime;
-/// use icu::timezone::{ZoneOffsetCalculator, TimeZoneIdMapper};
+/// use icu::timezone::{ZoneOffsetCalculator, IanaParser};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -127,7 +127,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// let zdt = ZonedDateTime::try_from_str(
 ///     "2024-10-18T15:44-0700[America/Los_Angeles]",
 ///     Gregorian,
-///     TimeZoneIdMapper::new(),
+///     IanaParser::new(),
 ///     &ZoneOffsetCalculator::new(),
 /// )
 /// .unwrap();

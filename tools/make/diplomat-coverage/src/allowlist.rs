@@ -399,7 +399,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
 
         // Specialized constructor for separately constructed instances
-        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
+        "icu::timezone::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

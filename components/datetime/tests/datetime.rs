@@ -28,7 +28,7 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{DateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZonedDateTime};
+use icu_timezone::{DateTime, IanaParser, TimeZoneInfo, UtcOffset, ZonedDateTime};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,
@@ -464,7 +464,7 @@ fn test_time_zone_format_offset_fallback() {
             .unwrap();
     assert_writeable_eq!(
         tzf.format(
-            &TimeZoneIdMapper::new()
+            &IanaParser::new()
                 .iana_to_bcp47("America/Los_Angeles")
                 .with_offset(None)
         ),

@@ -24,7 +24,7 @@
 //! 2. BCP-47 time zone IDs, like `"uschi"`
 //!
 //! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
-//! IANA time zone, use [`TimeZoneIdMapper`].
+//! IANA time zone, use [`IanaParser`].
 //!
 //! ## UTC Offset
 //!
@@ -61,12 +61,12 @@
 //! use icu::calendar::Date;
 //! use icu::timezone::Time;
 //! use icu::timezone::TimeZoneBcp47Id;
-//! use icu::timezone::TimeZoneIdMapper;
+//! use icu::timezone::IanaParser;
 //! use icu::timezone::ZoneVariant;
 //! use tinystr::tinystr;
 //!
 //! // Parse the IANA ID
-//! let id = TimeZoneIdMapper::new().iana_to_bcp47("America/Chicago");
+//! let id = IanaParser::new().iana_to_bcp47("America/Chicago");
 //!
 //! // Alternatively, use the BCP47 ID directly
 //! let id = TimeZoneBcp47Id(tinystr!(8, "uschi"));
@@ -117,8 +117,8 @@ mod ixdtf;
 
 pub use error::InvalidOffsetError;
 pub use ids::{
-    TimeZoneBcp47Iter, TimeZoneCanonicalIanaIter, TimeZoneIdMapper, TimeZoneIdMapperBorrowed,
-    TimeZoneIdMapperWithFastCanonicalization, TimeZoneIdMapperWithFastCanonicalizationBorrowed,
+    TimeZoneBcp47Iter, TimeZoneCanonicalIanaIter, IanaParser, IanaParserBorrowed,
+    IanaParserExtended, IanaParserExtendedBorrowed,
 };
 pub use provider::TimeZoneBcp47Id;
 pub use time_zone::models;

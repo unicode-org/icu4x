@@ -10,7 +10,7 @@ use icu::locale::locale;
 use icu::timezone::Time;
 
 fn main() {
-    let mapper = icu::timezone::TimeZoneIdMapper::new();
+    let mapper = icu::timezone::IanaParser::new();
     let offsets = icu::timezone::ZoneOffsetCalculator::new();
 
     let prefs = locale!("en").into();

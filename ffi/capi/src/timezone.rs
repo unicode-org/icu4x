@@ -199,7 +199,7 @@ pub mod ffi {
         /// the corresponding BCP-47 string.
         pub fn set_iana_time_zone_id(
             &mut self,
-            mapper: &crate::timezone_mapper::ffi::TimeZoneIdMapper,
+            mapper: &crate::timezone_mapper::ffi::IanaParser,
             id: &DiplomatStr,
         ) {
             self.time_zone_id = mapper.0.as_borrowed().iana_bytes_to_bcp47(id);

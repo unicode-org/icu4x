@@ -307,7 +307,7 @@
     - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
     - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segment in complex script (https://github.com/unicode-org/icu4x/pull/4903)
   - `icu_timezone`
-    - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
+    - Added `IanaParser` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
 - Data model and providers
   - `icu_datagen`
     - Add new API structure to `DatagenDriver` to better express the different aspects of `FallbackMode` (https://github.com/unicode-org/icu4x/issues/4629)

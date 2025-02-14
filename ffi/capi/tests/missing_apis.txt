@@ -209,8 +209,8 @@ icu::timezone::TimeZoneBcp47Iter#Struct
 icu::timezone::TimeZoneBcp47Iter::next#FnInStruct
 icu::timezone::TimeZoneCanonicalIanaIter#Struct
 icu::timezone::TimeZoneCanonicalIanaIter::next#FnInStruct
-icu::timezone::TimeZoneIdMapperBorrowed::iter_bcp47#FnInStruct
-icu::timezone::TimeZoneIdMapperWithFastCanonicalizationBorrowed::iter_canonical_iana#FnInStruct
+icu::timezone::IanaParserBorrowed::iter_bcp47#FnInStruct
+icu::timezone::IanaParserExtendedBorrowed::iter_canonical_iana#FnInStruct
 icu::timezone::TimeZoneInfo::infer_zone_variant#FnInStruct
 icu::timezone::TimeZoneInfo::with_rearguard_isdst#FnInStruct
 icu::timezone::WindowsTimeZoneMapper#Struct

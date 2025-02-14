@@ -204,7 +204,7 @@ fn test_normalize_canonicalize_iana_coverage() {
 
     let iana2bcp = provider.iana_to_bcp47_map().unwrap();
 
-    let mapper = icu::timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
+    let mapper = icu::timezone::IanaParser::try_new_unstable(&provider).unwrap();
     let mapper = mapper.as_borrowed();
 
     for iana_id in iana2bcp.keys() {
