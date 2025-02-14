@@ -11,7 +11,7 @@ use icu_provider::{
 
 use crate::{
     provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1},
-    TimeZoneBcp47Id,
+    TimeZone,
 };
 
 /// A mapper between Windows time zone identifier and a BCP-47 ID.
@@ -106,28 +106,28 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     ///
     /// ```rust
     /// use icu::locale::subtags::region;
-    /// use icu::timezone::{TimeZoneBcp47Id, WindowsTimeZoneMapper};
+    /// use icu::timezone::{TimeZone, WindowsTimeZoneMapper};
     /// use tinystr::tinystr;
     ///
     /// let win_tz_mapper = WindowsTimeZoneMapper::new();
     ///
     /// let bcp47_id =
     ///     win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", None);
-    /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
     ///
     /// let bcp47_id = win_tz_mapper
     ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("US")));
-    /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
     ///
     /// let bcp47_id = win_tz_mapper
     ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("CA")));
-    /// assert_eq!(bcp47_id, Some(TimeZoneBcp47Id(tinystr!(8, "cawnp"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "cawnp"))));
     /// ```
     pub fn windows_tz_to_bcp47_id(
         self,
         windows_tz: &str,
         region: Option<Region>,
-    ) -> Option<TimeZoneBcp47Id> {
+    ) -> Option<TimeZone> {
         let mut cursor = self.data.map.cursor();
         // Returns None if input is non-ASCII
         cursor.write_str(windows_tz).ok()?;
@@ -150,15 +150,15 @@ mod tests {
         let win_map = WindowsTimeZoneMapper::new();
 
         let result = win_map.windows_tz_to_bcp47_id("Central Standard Time", None);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "uschi"))));
 
         let result = win_map.windows_tz_to_bcp47_id("Eastern Standard Time", None);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "usnyc"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "usnyc"))));
 
         let result = win_map.windows_tz_to_bcp47_id("Eastern Standard Time", Some(region!("CA")));
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "cator"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "cator"))));
 
         let result = win_map.windows_tz_to_bcp47_id("GMT Standard Time", None);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "gblon"))));
     }
 }

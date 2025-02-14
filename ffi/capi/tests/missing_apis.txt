@@ -218,10 +218,10 @@ icu::timezone::WindowsTimeZoneMapper::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed#Struct
 icu::timezone::WindowsTimeZoneMapperBorrowed::new#FnInStruct
 icu::timezone::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct
-icu::timezone::ZoneOffsetCalculator#Struct
-icu::timezone::ZoneOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
-icu::timezone::ZoneOffsetCalculator::new#FnInStruct
-icu::timezone::ZoneOffsets#Struct
+icu::timezone::UtcOffsetCalculator#Struct
+icu::timezone::UtcOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
+icu::timezone::UtcOffsetCalculator::new#FnInStruct
+icu::timezone::UtcOffsets#Struct
 icu::timezone::ZonedDateTime::try_location_only_from_str#FnInStruct
 icu::timezone::ZonedDateTime::try_location_only_from_utf8#FnInStruct
 icu::timezone::ZonedDateTime::try_loose_from_str#FnInStruct

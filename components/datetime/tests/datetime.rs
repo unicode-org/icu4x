@@ -28,7 +28,10 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{DateTime, IanaParser, TimeZoneInfo, UtcOffset, ZonedDateTime};
+use icu_timezone::{
+    zone::{IanaParser, UtcOffset},
+    DateTime, TimeZoneInfo, ZonedDateTime,
+};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,

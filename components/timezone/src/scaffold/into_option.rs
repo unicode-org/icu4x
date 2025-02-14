@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{types::*, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use crate::{
+    zone::{TimeZoneVariant, UtcOffset},
+    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+};
 use icu_calendar::{types::*, AnyCalendarKind, Date, Iso};
 
 /// Converts Self to an `Option<T>`, either `Some(T)` if able or `None`
@@ -95,7 +98,7 @@ impl IntoOption<Nanosecond> for Nanosecond {
     }
 }
 
-impl IntoOption<TimeZoneBcp47Id> for TimeZoneBcp47Id {
+impl IntoOption<TimeZone> for TimeZone {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
@@ -109,7 +112,7 @@ impl IntoOption<UtcOffset> for UtcOffset {
     }
 }
 
-impl IntoOption<ZoneVariant> for ZoneVariant {
+impl IntoOption<TimeZoneVariant> for TimeZoneVariant {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

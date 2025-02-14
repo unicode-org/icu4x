@@ -71,9 +71,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
+pub struct TimeZone(pub TinyAsciiStr<8>);
 
-impl TimeZoneBcp47Id {
+impl TimeZone {
     /// The synthetic `Etc/Unknown` time zone.
     ///
     /// This is the result of parsing unknown zones. It's important that such parsing does not
@@ -83,7 +83,7 @@ impl TimeZoneBcp47Id {
     }
 }
 
-impl Deref for TimeZoneBcp47Id {
+impl Deref for TimeZone {
     type Target = TinyAsciiStr<8>;
 
     fn deref(&self) -> &Self::Target {
@@ -91,7 +91,7 @@ impl Deref for TimeZoneBcp47Id {
     }
 }
 
-impl AsULE for TimeZoneBcp47Id {
+impl AsULE for TimeZone {
     type ULE = Self;
 
     #[inline]
@@ -105,11 +105,11 @@ impl AsULE for TimeZoneBcp47Id {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
-    type Container = ZeroVec<'a, TimeZoneBcp47Id>;
-    type Slice = ZeroSlice<TimeZoneBcp47Id>;
-    type GetType = TimeZoneBcp47Id;
-    type OwnedType = TimeZoneBcp47Id;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
+    type Container = ZeroVec<'a, TimeZone>;
+    type Slice = ZeroSlice<TimeZone>;
+    type GetType = TimeZone;
+    type OwnedType = TimeZone;
 }
 
 /// Storage type for storing UTC offsets as eights of an hour.
@@ -141,10 +141,5 @@ pub struct ZoneOffsetPeriod<'data>(
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub  ZeroMap2d<
-        'data,
-        TimeZoneBcp47Id,
-        MinutesSinceEpoch,
-        (EighthsOfHourOffset, EighthsOfHourOffset),
-    >,
+    pub ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
 );

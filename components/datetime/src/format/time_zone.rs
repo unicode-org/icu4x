@@ -12,13 +12,16 @@ use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::{Date, Iso};
 use icu_decimal::DecimalFormatter;
 use icu_timezone::provider::EPOCH;
-use icu_timezone::{Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant};
+use icu_timezone::{
+    zone::{TimeZoneVariant, UtcOffset},
+    Time, TimeZone,
+};
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriod<'_> {
     fn resolve(
         &self,
-        time_zone_id: TimeZoneBcp47Id,
+        time_zone_id: TimeZone,
         (date, time): (Date<Iso>, Time),
     ) -> Option<MetazoneId> {
         let cursor = self.list.get0(&time_zone_id)?;
@@ -371,8 +374,8 @@ impl FormatTimeZone for SpecificLocationFormat {
         };
 
         match zone_variant {
-            ZoneVariant::Standard => &locations.pattern_standard,
-            ZoneVariant::Daylight => &locations.pattern_daylight,
+            TimeZoneVariant::Standard => &locations.pattern_standard,
+            TimeZoneVariant::Daylight => &locations.pattern_daylight,
             // Compiles out due to tilde dependency on `icu_timezone`
             _ => unreachable!(),
         }
@@ -419,8 +422,8 @@ impl FormatTimeZone for ExemplarCityFormat {
             .or_else(|| exemplars_root.exemplars.get(&time_zone_id))
             .or_else(|| locations.locations.get(&time_zone_id))
             .or_else(|| locations_root.locations.get(&time_zone_id))
-            .or_else(|| exemplars.exemplars.get(&TimeZoneBcp47Id::unknown()))
-            .or_else(|| exemplars_root.exemplars.get(&TimeZoneBcp47Id::unknown()))
+            .or_else(|| exemplars.exemplars.get(&TimeZone::unknown()))
+            .or_else(|| exemplars_root.exemplars.get(&TimeZone::unknown()))
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -681,7 +684,7 @@ impl FormatTimeZone for Bcp47IdFormat {
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
         let time_zone_id = input
             .time_zone_id
-            .unwrap_or(TimeZoneBcp47Id(tinystr::tinystr!(8, "unk")));
+            .unwrap_or(TimeZone(tinystr::tinystr!(8, "unk")));
 
         sink.write_str(&time_zone_id)?;
 

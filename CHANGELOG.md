@@ -117,11 +117,11 @@
         - Make an `IxdtfParser` type (unicode-org#5736)
         - Fewer overlapping constructors for `TimeZoneInfo` (unicode-org#5747)
         - Private fields for `TimeZoneInfo` (unicode-org#5747)
-        - Return type for `ZoneOffsetCalculator`
+        - Return type for `UtcOffsetCalculator`
         - Remove generic metazone values that match location values (unicode-org#5751)
         - Special-case `Z`, `Z[Etc/UTC]` and `Z[Etc/GMT]` in IXDTF parser (unicode-org#5757)
         - Deduplicate tz locations against root (unicode-org#5759)
-        - Make `ZoneVariant` a closed, non-exhaustive enum (unicode-org#5760)
+        - Make `TimeZoneVariant` a closed, non-exhaustive enum (unicode-org#5760)
         - Replace `CustomTimeZone` with `TimeZoneInfo` (unicode-org#5691)
 - Data model and providers
     - `icu_provider_adapters`
@@ -1027,7 +1027,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Convert metazone period from string to i32 (#2085)
     - Improvements to `MetaZoneCalculator` (#2274)
     - Add `TimeVariant` wrapper (#2289)
-    - TimeVariant -> ZoneVariant with a few more docs (#2427)
+    - TimeVariant -> TimeZoneVariant with a few more docs (#2427)
     - Assorted TimeZone fixes (#2478)
  - Utils:
   - `crlify`: No updates

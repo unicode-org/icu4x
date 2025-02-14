@@ -368,13 +368,13 @@ use crate::TimeZoneInfo;
 /// * [`TimeZoneInfo::with_rearguard_isdst`]
 /// * [`TimeZoneInfo::infer_zone_variant`]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[zerovec::make_ule(ZoneVariantULE)]
+#[zerovec::make_ule(TimeZoneVariantULE)]
 #[repr(u8)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_timezone))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum ZoneVariant {
+pub enum TimeZoneVariant {
     /// The variant corresponding to `"standard"` in CLDR.
     ///
     /// The semantics vary from time zone to time zone. The time zone display

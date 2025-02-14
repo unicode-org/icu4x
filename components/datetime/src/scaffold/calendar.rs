@@ -18,7 +18,10 @@ use icu_calendar::cal::{
 use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_timezone::{DateTime, Time, TimeZoneInfo, TimeZoneModel, UtcOffset, ZonedDateTime};
+use icu_timezone::{
+    zone::{models::TimeZoneModel, UtcOffset},
+    DateTime, Time, TimeZoneInfo, ZonedDateTime,
+};
 
 mod private {
     pub trait Sealed {}

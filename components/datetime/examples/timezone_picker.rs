@@ -10,8 +10,8 @@ use icu::locale::locale;
 use icu::timezone::Time;
 
 fn main() {
-    let mapper = icu::timezone::IanaParser::new();
-    let offsets = icu::timezone::ZoneOffsetCalculator::new();
+    let mapper = icu::timezone::zone::IanaParser::new();
+    let offsets = icu::timezone::zone::UtcOffsetCalculator::new();
 
     let prefs = locale!("en").into();
 

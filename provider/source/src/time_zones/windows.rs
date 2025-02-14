@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 use crate::{cldr_serde, SourceDataProvider};
 use icu::timezone::{
     provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1},
-    TimeZoneBcp47Id,
+    TimeZone,
 };
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -24,8 +24,8 @@ impl DataProvider<WindowsZonesToBcp47MapV1> for SourceDataProvider {
 
         let windows_zones = &resource.supplemental.windows_zones;
 
-        let mut bcp47_set: BTreeSet<TimeZoneBcp47Id> = BTreeSet::default();
-        let intermediary: Vec<(String, TimeZoneBcp47Id)> = windows_zones
+        let mut bcp47_set: BTreeSet<TimeZone> = BTreeSet::default();
+        let intermediary: Vec<(String, TimeZone)> = windows_zones
             .mapped_zones
             .iter()
             .map(|zone| {
@@ -46,7 +46,7 @@ impl DataProvider<WindowsZonesToBcp47MapV1> for SourceDataProvider {
             })
             .collect();
 
-        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp47_set.iter().copied().collect();
+        let bcp47_ids: ZeroVec<TimeZone> = bcp47_set.iter().copied().collect();
 
         let windows2bcp_map: BTreeMap<Vec<u8>, usize> = intermediary
             .iter()
@@ -85,7 +85,7 @@ impl crate::IterableDataProviderCached<WindowsZonesToBcp47MapV1> for SourceDataP
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::{provider::windows::WindowsZonesToBcp47MapV1, TimeZoneBcp47Id};
+    use icu::timezone::{provider::windows::WindowsZonesToBcp47MapV1, TimeZone};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
     use tinystr::tinystr;
 
@@ -100,30 +100,30 @@ mod tests {
 
         let index = windows_zones.map.get("Eastern Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "usnyc"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "usnyc"))));
 
         let index = windows_zones.map.get("Central Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "uschi"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "uschi"))));
 
         let index = windows_zones.map.get("Hawaiian Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "ushnl"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "ushnl"))));
 
         let index = windows_zones
             .map
             .get("Central Europe Standard Time/001")
             .unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "hubud"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "hubud"))));
 
         let index = windows_zones.map.get("GMT Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "gblon"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "gblon"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "thbkk"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "thbkk"))));
     }
 
     #[test]
@@ -135,33 +135,33 @@ mod tests {
 
         let index = windows_zones.map.get("Eastern Standard Time/BS").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "bsnas"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "bsnas"))));
 
         let index = windows_zones.map.get("Central Standard Time/MX").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "mxmam"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "mxmam"))));
 
         let index = windows_zones
             .map
             .get("Central Europe Standard Time/CZ")
             .unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "czprg"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "czprg"))));
 
         let index = windows_zones.map.get("GMT Standard Time/IE").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "iedub"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "iedub"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/AQ").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "aqdav"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "aqdav"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/KH").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "khpnh"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "khpnh"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/VN").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZoneBcp47Id(tinystr!(8, "vnsgn"))));
+        assert_eq!(result, Some(TimeZone(tinystr!(8, "vnsgn"))));
     }
 }

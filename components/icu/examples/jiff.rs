@@ -6,7 +6,10 @@ use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    timezone::{Time, IanaParser, UtcOffset, ZoneOffsetCalculator, ZonedDateTime},
+    timezone::{
+        zone::{IanaParser, UtcOffset, UtcOffsetCalculator},
+        Time, ZonedDateTime,
+    },
 };
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
@@ -49,7 +52,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
             &zoned.to_string(),
             icu::calendar::Iso,
             IanaParser::new(),
-            &ZoneOffsetCalculator::new()
+            &UtcOffsetCalculator::new()
         )
         .unwrap(),
         zoned_date_time

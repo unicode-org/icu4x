@@ -433,7 +433,7 @@ size_test!(
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+/// use icu::timezone::{IanaParser, UtcOffsetCalculator};
 /// use icu::datetime::input::{Time, TimeZoneInfo, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
@@ -452,7 +452,7 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
 ///
-/// let mut dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new()).unwrap();
+/// let mut dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new()).unwrap();
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
@@ -1405,14 +1405,14 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1516,11 +1516,11 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1580,11 +1580,11 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1644,14 +1644,14 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1717,14 +1717,14 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1790,14 +1790,14 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -1863,14 +1863,14 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::{IanaParser, ZoneOffsetCalculator};
+    /// use icu::timezone::{IanaParser, UtcOffsetCalculator};
     /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &ZoneOffsetCalculator::new())
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap()
     ///     .zone;
     ///
@@ -3007,7 +3007,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
-        hour: icu_timezone::types::Hour,
+        hour: icu_timezone::Hour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;

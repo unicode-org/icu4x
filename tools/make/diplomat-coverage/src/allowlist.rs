@@ -313,7 +313,7 @@ lazy_static::lazy_static! {
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
-        "icu::timezone::types::ZoneVariantULE",
+        "icu::timezone::types::TimeZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
@@ -324,12 +324,12 @@ lazy_static::lazy_static! {
         "icu::timezone::types::Time",
         "icu::timezone::types::DateTime",
         "icu::timezone::types::UtcOffset",
-        "icu::timezone::types::ZoneVariant",
+        "icu::timezone::types::TimeZoneVariant",
         "icu::timezone::types::ZonedDateTime",
         "icu::datetime::input::Date",
         "icu::datetime::input::DateTime",
         "icu::datetime::input::Time",
-        "icu::datetime::input::TimeZoneBcp47Id",
+        "icu::datetime::input::TimeZone",
         "icu::datetime::input::TimeZoneInfo",
         "icu::datetime::input::UtcOffset",
         "icu::datetime::input::ZonedDateTime",

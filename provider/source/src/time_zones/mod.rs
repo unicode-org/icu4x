@@ -24,23 +24,23 @@ type Cache<T> = OnceLock<Result<T, DataError>>;
 
 #[derive(Debug, Default)]
 pub(crate) struct Caches {
-    iana_to_bcp47: Cache<BTreeMap<String, TimeZoneBcp47Id>>,
-    bcp47_to_canonical_iana: Cache<BTreeMap<TimeZoneBcp47Id, String>>,
+    iana_to_bcp47: Cache<BTreeMap<String, TimeZone>>,
+    bcp47_to_canonical_iana: Cache<BTreeMap<TimeZone, String>>,
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
-    primary_zones: Cache<BTreeMap<TimeZoneBcp47Id, Region>>,
+    primary_zones: Cache<BTreeMap<TimeZone, Region>>,
     mz_period: Cache<MetazonePeriod<'static>>,
     offset_period: Cache<ZoneOffsetPeriod<'static>>,
-    reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZoneBcp47Id>>>,
+    reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZone>>>,
 }
 
 impl SourceDataProvider {
-    fn reverse_metazones(&self) -> Result<&BTreeMap<MetazoneId, Vec<TimeZoneBcp47Id>>, DataError> {
+    fn reverse_metazones(&self) -> Result<&BTreeMap<MetazoneId, Vec<TimeZone>>, DataError> {
         self.cldr()?
             .tz_caches
             .reverse_metazones
             .get_or_init(|| {
                 let mz_period = self.metazone_period()?;
-                let mut reverse_metazones = BTreeMap::<MetazoneId, Vec<TimeZoneBcp47Id>>::new();
+                let mut reverse_metazones = BTreeMap::<MetazoneId, Vec<TimeZone>>::new();
                 for cursor in mz_period.list.iter0() {
                     let tz = *cursor.key0();
                     for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
@@ -56,7 +56,7 @@ impl SourceDataProvider {
     /// Returns a map from time zone long identifier to time zone BCP-47 ID.
     ///
     /// For example: "America/Chicago" to "uschi"
-    fn iana_to_bcp47_map(&self) -> Result<&BTreeMap<String, TimeZoneBcp47Id>, DataError> {
+    fn iana_to_bcp47_map(&self) -> Result<&BTreeMap<String, TimeZone>, DataError> {
         self.cldr()?
             .tz_caches
             .iana_to_bcp47
@@ -93,7 +93,7 @@ impl SourceDataProvider {
     /// Returns a map from BCP-47 ID to a single canonical long identifier.
     ///
     /// For example: "inccu" to "Asia/Kolkata"
-    fn bcp47_to_canonical_iana_map(&self) -> Result<&BTreeMap<TimeZoneBcp47Id, String>, DataError> {
+    fn bcp47_to_canonical_iana_map(&self) -> Result<&BTreeMap<TimeZone, String>, DataError> {
         self.cldr()?
             .tz_caches
             .bcp47_to_canonical_iana
@@ -178,7 +178,7 @@ impl SourceDataProvider {
             .map_err(|&e| e)
     }
 
-    fn primary_zones_map(&self) -> Result<&BTreeMap<TimeZoneBcp47Id, Region>, DataError> {
+    fn primary_zones_map(&self) -> Result<&BTreeMap<TimeZone, Region>, DataError> {
         self.cldr()?
             .tz_caches
             .primary_zones
@@ -272,7 +272,7 @@ impl IterableDataProviderCached<ZoneOffsetPeriodV1> for SourceDataProvider {
 
 #[cfg(test)]
 mod tests {
-    use icu::timezone::ZoneVariant;
+    use icu::timezone::zone::TimeZoneVariant;
     use tinystr::tinystr;
 
     use super::*;
@@ -306,7 +306,7 @@ mod tests {
                 .payload
                 .get()
                 .locations
-                .get(&TimeZoneBcp47Id(tinystr!(8, "fmpni")))
+                .get(&TimeZone(tinystr!(8, "fmpni")))
                 .unwrap()
         );
         assert_eq!(
@@ -315,7 +315,7 @@ mod tests {
                 .payload
                 .get()
                 .locations
-                .get(&TimeZoneBcp47Id(tinystr!(8, "iedub")))
+                .get(&TimeZone(tinystr!(8, "iedub")))
                 .unwrap()
         );
 
@@ -326,7 +326,7 @@ mod tests {
                 .payload
                 .get()
                 .locations
-                .get(&TimeZoneBcp47Id(tinystr!(8, "itrom")))
+                .get(&TimeZone(tinystr!(8, "itrom")))
                 .unwrap()
         );
 
@@ -353,7 +353,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&metazone_now(TimeZoneBcp47Id(tinystr!(8, "aueuc"))))
+                .get(&metazone_now(TimeZone(tinystr!(8, "aueuc"))))
                 .unwrap()
         );
         assert_eq!(
@@ -362,7 +362,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .get(&TimeZone(tinystr!(8, "utc")))
                 .unwrap()
         );
 
@@ -375,8 +375,8 @@ mod tests {
                 .get()
                 .defaults
                 .get(&(
-                    metazone_now(TimeZoneBcp47Id(tinystr!(8, "aueuc"))),
-                    ZoneVariant::Standard
+                    metazone_now(TimeZone(tinystr!(8, "aueuc"))),
+                    TimeZoneVariant::Standard
                 ))
                 .unwrap()
         );
@@ -386,7 +386,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
+                .get(&(TimeZone(tinystr!(8, "utc")), TimeZoneVariant::Standard))
                 .unwrap()
         );
 
@@ -398,7 +398,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&metazone_now(TimeZoneBcp47Id(tinystr!(8, "uslax"))))
+                .get(&metazone_now(TimeZone(tinystr!(8, "uslax"))))
                 .unwrap()
         );
         assert_eq!(
@@ -407,7 +407,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&TimeZoneBcp47Id(tinystr!(8, "utc")))
+                .get(&TimeZone(tinystr!(8, "utc")))
                 .unwrap()
         );
 
@@ -420,8 +420,8 @@ mod tests {
                 .get()
                 .defaults
                 .get(&(
-                    metazone_now(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-                    ZoneVariant::Daylight
+                    metazone_now(TimeZone(tinystr!(8, "uslax"))),
+                    TimeZoneVariant::Daylight
                 ))
                 .unwrap()
         );
@@ -431,7 +431,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZoneBcp47Id(tinystr!(8, "utc")), ZoneVariant::Standard))
+                .get(&(TimeZone(tinystr!(8, "utc")), TimeZoneVariant::Standard))
                 .unwrap()
         );
     }

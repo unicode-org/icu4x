@@ -13,9 +13,9 @@ use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::timezone::provider::*;
+use icu::timezone::zone::TimeZoneVariant;
+use icu::timezone::zone::UtcOffset;
 use icu::timezone::Time;
-use icu::timezone::UtcOffset;
-use icu::timezone::ZoneVariant;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -67,13 +67,7 @@ impl SourceDataProvider {
     fn calculate_locations(
         &self,
         locale: &DataLocale,
-    ) -> Result<
-        (
-            BTreeMap<TimeZoneBcp47Id, String>,
-            BTreeMap<TimeZoneBcp47Id, String>,
-        ),
-        DataError,
-    > {
+    ) -> Result<(BTreeMap<TimeZone, String>, BTreeMap<TimeZone, String>), DataError> {
         let time_zone_names = &self
             .cldr()?
             .dates("gregorian")
@@ -731,7 +725,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
                     let Some(location) = locations.get(tz) else {
                         return true;
                     };
-                    if zv == ZoneVariant::Daylight {
+                    if zv == TimeZoneVariant::Daylight {
                         writeable::cmp_utf8(
                             &time_zone_names_resource
                                 .region_format_dt
@@ -739,7 +733,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
                                 .interpolate([location]),
                             v.as_bytes(),
                         ) != Ordering::Equal
-                    } else if zv == ZoneVariant::Standard {
+                    } else if zv == TimeZoneVariant::Standard {
                         writeable::cmp_utf8(
                             &time_zone_names_resource
                                 .region_format_st
@@ -865,9 +859,9 @@ fn iter_mz_defaults<'a>(
 
 fn iter_mz_overrides<'a>(
     time_zone_names_resource: &'a TimeZoneNames,
-    bcp47_tzid_data: &'a BTreeMap<String, TimeZoneBcp47Id>,
+    bcp47_tzid_data: &'a BTreeMap<String, TimeZone>,
     is_long: bool,
-) -> impl Iterator<Item = (TimeZoneBcp47Id, &'a ZoneFormat)> {
+) -> impl Iterator<Item = (TimeZone, &'a ZoneFormat)> {
     time_zone_names_resource
         .zone
         .0
@@ -915,7 +909,7 @@ fn zone_variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
         .map(|s| s.as_str())
 }
 
-fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneVariant, &str)> {
+fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (TimeZoneVariant, &str)> {
     zone_format
         .0
         .iter()
@@ -923,8 +917,8 @@ fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (ZoneV
         .flat_map(move |(variant, value)| {
             Some((
                 match variant.as_str() {
-                    "standard" => ZoneVariant::Standard,
-                    "daylight" => ZoneVariant::Daylight,
+                    "standard" => TimeZoneVariant::Standard,
+                    "daylight" => TimeZoneVariant::Daylight,
                     _ => return None,
                 },
                 value.as_str(),

@@ -7,15 +7,13 @@
 
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
 use icu_calendar::types::DayOfYearInfo;
+pub use icu_calendar::Date;
 use icu_calendar::Iso;
 use icu_timezone::scaffold::IntoOption;
 use icu_timezone::{
-    types::{Hour, Minute, Nanosecond, Second},
-    ZoneVariant,
+    zone::{TimeZoneVariant, UtcOffset},
+    Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
-
-pub use icu_calendar::Date;
-pub use icu_timezone::{DateTime, Time, TimeZoneBcp47Id, TimeZoneInfo, UtcOffset, ZonedDateTime};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, IsoWeekday, MonthInfo, YearInfo};
@@ -31,9 +29,9 @@ pub(crate) struct ExtractedInput {
     pub(crate) minute: Option<Minute>,
     pub(crate) second: Option<Second>,
     pub(crate) subsecond: Option<Nanosecond>,
-    pub(crate) time_zone_id: Option<TimeZoneBcp47Id>,
+    pub(crate) time_zone_id: Option<TimeZone>,
     pub(crate) offset: Option<UtcOffset>,
-    pub(crate) zone_variant: Option<ZoneVariant>,
+    pub(crate) zone_variant: Option<TimeZoneVariant>,
     pub(crate) local_time: Option<(Date<Iso>, Time)>,
 }
 
@@ -56,7 +54,7 @@ impl ExtractedInput {
             + GetField<T::NanosecondInput>
             + GetField<Z::TimeZoneIdInput>
             + GetField<Z::TimeZoneOffsetInput>
-            + GetField<Z::TimeZoneVariantInput>
+            + GetField<Z::TimeTimeZoneVariantInput>
             + GetField<Z::TimeZoneLocalTimeInput>,
     {
         Self {
@@ -71,7 +69,7 @@ impl ExtractedInput {
             subsecond: GetField::<T::NanosecondInput>::get_field(input).into_option(),
             time_zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
             offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
-            zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
+            zone_variant: GetField::<Z::TimeTimeZoneVariantInput>::get_field(input).into_option(),
             local_time: GetField::<Z::TimeZoneLocalTimeInput>::get_field(input).into_option(),
         }
     }

@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-use super::TimeZoneBcp47Id;
+use super::TimeZone;
 
 /// A mapping from Windows Timezone names to the corresponding BCP-47 IDs.
 ///
@@ -41,5 +41,5 @@ pub struct WindowsZonesToBcp47Map<'data> {
 
     /// A sorted list of BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
+    pub bcp47_ids: ZeroVec<'data, TimeZone>,
 }

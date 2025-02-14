@@ -22,8 +22,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::timezone::ZonedDateTimeParser, Struct)]
     #[diplomat::opaque]
     pub struct ZonedDateTimeParser(
-        icu_timezone::IanaParser,
-        icu_timezone::ZoneOffsetCalculator,
+        icu_timezone::zone::iana::IanaParser,
+        icu_timezone::zone::UtcOffsetCalculator,
     );
 
     impl ZonedDateTimeParser {
@@ -33,8 +33,8 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<ZonedDateTimeParser> {
             Box::new(ZonedDateTimeParser(
-                icu_timezone::IanaParser::new().static_to_owned(),
-                icu_timezone::ZoneOffsetCalculator::new(),
+                icu_timezone::zone::iana::IanaParser::new().static_to_owned(),
+                icu_timezone::zone::UtcOffsetCalculator::new(),
             ))
         }
         /// Construct a new [`ZonedDateTimeParser`] instance using a particular data source.
@@ -45,8 +45,12 @@ pub mod ffi {
             provider: &DataProvider,
         ) -> Result<Box<ZonedDateTimeParser>, DataError> {
             Ok(Box::new(ZonedDateTimeParser(
-                icu_timezone::IanaParser::try_new_with_buffer_provider(provider.get()?)?,
-                icu_timezone::ZoneOffsetCalculator::try_new_with_buffer_provider(provider.get()?)?,
+                icu_timezone::zone::iana::IanaParser::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
+                icu_timezone::zone::UtcOffsetCalculator::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
             )))
         }
     }

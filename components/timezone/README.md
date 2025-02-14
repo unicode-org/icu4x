@@ -60,16 +60,16 @@ formats may be unsupported.
 ```rust
 use icu::calendar::Date;
 use icu::timezone::Time;
-use icu::timezone::TimeZoneBcp47Id;
+use icu::timezone::TimeZone;
 use icu::timezone::IanaParser;
-use icu::timezone::ZoneVariant;
+use icu::timezone::TimeZoneVariant;
 use tinystr::tinystr;
 
 // Parse the IANA ID
 let id = IanaParser::new().iana_to_bcp47("America/Chicago");
 
 // Alternatively, use the BCP47 ID directly
-let id = TimeZoneBcp47Id(tinystr!(8, "uschi"));
+let id = TimeZone(tinystr!(8, "uschi"));
 
 // Create a TimeZoneInfo<Base> by associating the ID with an offset
 let time_zone = id.with_offset("-0600".parse().ok());
@@ -80,7 +80,7 @@ let time_zone_at_time = time_zone
 
 // Extend to a TimeZoneInfo<Full> by adding a zone variant
 let time_zone_with_variant =
-    time_zone_at_time.with_zone_variant(ZoneVariant::Standard);
+    time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
 ```
 
 <!-- cargo-rdme end -->
