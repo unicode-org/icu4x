@@ -91,48 +91,34 @@ impl SourceDataProvider {
 
         let mut exemplar_cities = bcp47_tzids
             .iter()
-            .filter_map(|(bcp47, bcp47_tzid_data)| {
-                bcp47_tzid_data
-                    .alias
-                    .as_ref()
-                    .map(|aliases| (bcp47, aliases))
-            })
-            // Montreal is meant to be deprecated, but pre-43 the deprecation
-            // fallback was not set, which is why it might show up here.
-            .filter(|(bcp47, _)| bcp47.0 != "camtr")
-            .filter_map(|(bcp47, aliases)| {
-                aliases
-                    .split(' ')
-                    .filter_map(|alias| {
-                        let mut alias_parts = alias.split('/');
-                        let continent = alias_parts.next().expect("split non-empty");
-                        let location_or_subregion = alias_parts.next()?;
-                        let location_in_subregion = alias_parts.next();
-                        time_zone_names
-                            .zone
-                            .0
-                            .get(continent)
-                            .and_then(|x| x.0.get(location_or_subregion))
-                            .and_then(|x| match x {
-                                LocationOrSubRegion::Location(place) => Some(place),
-                                LocationOrSubRegion::SubRegion(region) => {
-                                    region.get(location_in_subregion?)
-                                }
-                            })
-                            .and_then(|p| p.exemplar_city.clone())
+            .filter_map(|(&bcp47, bcp47_tzid_data)| {
+                let canonical_alias = bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap(); // non-empty
+
+                // Etc zones don't have locations, which the exception of Unknown, which we still want to skip in root
+                if canonical_alias.starts_with("Etc/") && !(canonical_alias == "Etc/Unknown" && !locale.is_default()) {
+                    return None;
+                }
+
+                let mut alias_parts = canonical_alias.split('/');
+                let exemplar = time_zone_names
+                    .zone
+                    .0
+                    .get(alias_parts.next().expect("split non-empty"))
+                    .and_then(|x| x.0.get(alias_parts.next()?))
+                    .and_then(|x| match x {
+                        LocationOrSubRegion::Location(place) => place.exemplar_city.clone(),
+                        LocationOrSubRegion::SubRegion(region) => {
+                            region.get(alias_parts.next()?)?.exemplar_city.clone()
+                        }
                     })
-                    .next()
-                    .or_else(|| {
-                        let canonical_alias = aliases.split(' ').next().expect("split non-empty");
-                        let mut alias_parts = canonical_alias.split('/');
-                        (alias_parts.next() != Some("Etc")).then(|| {
-                            alias_parts
-                                .next_back()
-                                .expect("split non-empty")
-                                .replace('_', " ")
-                        })
-                    })
-                    .map(|name| (*bcp47, name))
+                    .unwrap_or_else(|| {
+                        canonical_alias
+                            .split('/')
+                            .next_back()
+                            .expect("split non-empty")
+                            .replace('_', " ")
+                    });
+                Some((bcp47, exemplar))
             })
             .collect::<BTreeMap<_, _>>();
 
