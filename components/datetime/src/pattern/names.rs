@@ -877,6 +877,47 @@ where
         )
         .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
     }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
+    pub fn try_into_formatter_unstable<P>(
+        self,
+        provider: &P,
+        field_set: FSet,
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        P: AllFixedCalendarPatternDataMarkers<C, FSet> + ?Sized,
+    {
+        FixedCalendarDateTimeFormatter::try_new_internal_with_names(
+            provider,
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.prefs,
+            field_set.get_field(),
+            self.inner,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
+    #[cfg(feature = "serde")]
+    pub fn try_into_formatter_with_buffer_provider<P>(
+        self,
+        provider: &P,
+        field_set: FSet,
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        P: BufferProvider + ?Sized,
+    {
+        FixedCalendarDateTimeFormatter::try_new_internal_with_names(
+            &provider.as_deserializing(),
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.prefs,
+            field_set.get_field(),
+            self.inner,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
+    }
 }
 
 impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
