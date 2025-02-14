@@ -14,14 +14,14 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
         marker: PhantomData,
     };
 
-    let mut rata_die = date.to_fixed();
+    let mut rata_die = Iso::to_fixed(date.to_iso());
     let mut weekday = date.day_of_week();
     let mut year = date.year();
     let mut is_in_leap_year = date.is_in_leap_year();
 
     for _ in 0..(366 * 20) {
         let next_date = date.added(one_day_duration);
-        let next_rata_die = next_date.to_fixed();
+        let next_rata_die = Iso::to_fixed(next_date.to_iso());
         assert_eq!(next_rata_die, rata_die + 1, "{next_date:?}");
         let next_weekday = next_date.day_of_week();
         let next_year = next_date.year();
@@ -51,12 +51,12 @@ fn check_every_250_days<A: AsCalendar>(mut date: Date<A>) {
         marker: PhantomData,
     };
 
-    let mut rata_die = date.to_fixed();
+    let mut rata_die = Iso::to_fixed(date.to_iso());
 
     for _ in 0..2000 {
         let next_date = date.added(one_thousand_days_duration);
         let next_iso = next_date.to_iso();
-        let next_rata_die = next_iso.to_fixed();
+        let next_rata_die = Iso::to_fixed(next_iso.to_iso());
         assert_eq!(next_rata_die, rata_die + 250, "{next_date:?}");
         let next_date_roundtrip = next_iso.to_calendar(Ref(next_date.calendar()));
         assert_eq!(next_date, next_date_roundtrip, "{next_date:?}");

@@ -11,7 +11,7 @@ use core::fmt;
 use fixed_decimal::SignedFixedDecimal;
 use icu_calendar::{Date, Iso};
 use icu_decimal::DecimalFormatter;
-use icu_time::provider::EPOCH;
+use icu_time::provider::MinutesSinceEpoch;
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Time, TimeZone,
@@ -19,19 +19,13 @@ use icu_time::{
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriod<'_> {
-    fn resolve(
-        &self,
-        time_zone_id: TimeZone,
-        (date, time): (Date<Iso>, Time),
-    ) -> Option<MetazoneId> {
+    fn resolve(&self, time_zone_id: TimeZone, dt: (Date<Iso>, Time)) -> Option<MetazoneId> {
+        use zerovec::ule::AsULE;
         let cursor = self.list.get0(&time_zone_id)?;
         let mut metazone_id = None;
-        let minutes_since_epoch_walltime = (date.to_fixed() - EPOCH) as i32 * 24 * 60
-            + (time.hour.number() as i32 * 60 + time.minute.number() as i32);
+        let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);
         for (minutes, id) in cursor.iter1() {
-            if minutes_since_epoch_walltime
-                >= <i32 as zerovec::ule::AsULE>::from_unaligned(*minutes)
-            {
+            if minutes_since_epoch_walltime >= MinutesSinceEpoch::from_unaligned(*minutes) {
                 metazone_id = id.get()
             } else {
                 break;
