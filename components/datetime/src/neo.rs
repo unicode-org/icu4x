@@ -764,7 +764,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// );
     ///
     /// // Make a more general formatter:
-    /// let general_formatter = specific_formatter.with_fset::<DateFieldSet>();
+    /// let general_formatter = specific_formatter.cast_into_fset::<DateFieldSet>();
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
@@ -772,12 +772,12 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///     "20 déc. 2024"
     /// );
     /// ```
-    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(
         self,
     ) -> FixedCalendarDateTimeFormatter<C, FSet2> {
         FixedCalendarDateTimeFormatter {
             selection: self.selection,
-            names: self.names.with_fset(),
+            names: self.names.cast_into_fset(),
             _calendar: PhantomData,
         }
     }
@@ -880,7 +880,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// );
     ///
     /// // Make a more general formatter:
-    /// let general_formatter = specific_formatter.with_fset::<DateFieldSet>();
+    /// let general_formatter = specific_formatter.cast_into_fset::<DateFieldSet>();
     ///
     /// // Test that it still works:
     /// assert_writeable_eq!(
@@ -888,10 +888,10 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///     "20 déc. 2024"
     /// );
     /// ```
-    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
         DateTimeFormatter {
             selection: self.selection,
-            names: self.names.with_fset(),
+            names: self.names.cast_into_fset(),
             calendar: self.calendar,
         }
     }

@@ -610,7 +610,7 @@ impl<FSet: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<FSet> {
 }
 
 impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
-    pub(crate) fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> RawDateTimeNames<FSet2> {
+    pub(crate) fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> RawDateTimeNames<FSet2> {
         RawDateTimeNames {
             year_names: FSet2::map_year_names(self.year_names),
             month_names: FSet2::map_month_names(self.month_names),
@@ -785,7 +785,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// // Change the YMD formatter to a YMDT formatter, after loading day period names.
     /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
-    /// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).with_fset::<YMDT>();
+    /// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
     /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
     /// let formatter = names.try_into_formatter(YMDT::long().hm()).unwrap();
     ///
@@ -967,7 +967,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     ///
     /// // Change the YMD formatter to a YMDT formatter, after loading day period names.
     /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
-    /// let mut names = DateTimeNames::from_formatter(prefs, formatter).with_fset::<YMDT>();
+    /// let mut names = DateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
     /// names.as_mut().include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
     /// let formatter = names.try_into_formatter(YMDT::long().hm()).unwrap();
     ///
@@ -2129,7 +2129,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
     ///
     /// // Convert the field set to `CompositeDateTimeFieldSet`:
-    /// let composite_names = names.with_fset::<CompositeDateTimeFieldSet>();
+    /// let composite_names = names.cast_into_fset::<CompositeDateTimeFieldSet>();
     ///
     /// // It should still work:
     /// assert_try_writeable_eq!(composite_names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
@@ -2145,12 +2145,12 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// let composite_names: FixedCalendarDateTimeNames<Gregorian, CompositeDateTimeFieldSet> = todo!();
     ///
     /// // error[E0277]: the trait bound `(): From<DataPayloadWithVariables<DayPeriodNamesV1, FieldLength>>` is not satisfied
-    /// let narrow_names = composite_names.with_fset::<DateFieldSet>();
+    /// let narrow_names = composite_names.cast_into_fset::<DateFieldSet>();
     /// ```
-    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> FixedCalendarDateTimeNames<C, FSet2> {
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> FixedCalendarDateTimeNames<C, FSet2> {
         FixedCalendarDateTimeNames {
             prefs: self.prefs,
-            inner: self.inner.with_fset(),
+            inner: self.inner.cast_into_fset(),
             _calendar: PhantomData,
         }
     }
@@ -2164,9 +2164,9 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     ///
     /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
-    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeNames<FSet2> {
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeNames<FSet2> {
         DateTimeNames {
-            inner: self.inner.with_fset(),
+            inner: self.inner.cast_into_fset(),
             calendar: self.calendar,
         }
     }

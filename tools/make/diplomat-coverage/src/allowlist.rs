@@ -334,8 +334,8 @@ lazy_static::lazy_static! {
         "icu::calendar::AsCalendar",
         "icu::calendar::Ref",
         "icu::datetime::CldrCalendar",
-        "icu::datetime::DateTimeFormatter::with_fset",
-        "icu::datetime::FixedCalendarDateTimeFormatter::with_fset",
+        "icu::datetime::DateTimeFormatter::cast_into_fset",
+        "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
