@@ -10,18 +10,21 @@ const ID_SEPARATOR: u8 = 0x1E;
 use icu_provider::prelude::*;
 pub use icu_provider::DynamicDataMarker;
 pub use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::VarZeroVec;
+
+#[cfg(feature = "export")]
+pub(crate) enum BakedValue<'a> {
+    VarULE(&'a [u8]),
+    Struct(databake::TokenStream),
+}
 
 #[cfg(feature = "export")]
 pub(crate) fn bake(
     marker_bake: &databake::TokenStream,
-    bakes_to_ids: Vec<(
-        databake::TokenStream,
-        std::collections::BTreeSet<DataIdentifierCow>,
-    )>,
+    bakes_to_ids: &[(BakedValue, &std::collections::BTreeSet<DataIdentifierCow>)],
+    ctx: &databake::CrateEnv,
 ) -> (databake::TokenStream, usize) {
     use databake::*;
-
-    let bakes = bakes_to_ids.iter().map(|(bake, _)| bake);
 
     // Safety invariant upheld: the only values being added to the trie are `baked_index`
     // values, which come from `bakes`
@@ -39,13 +42,47 @@ pub(crate) fn bake(
     ));
 
     let baked_trie = trie.as_borrowed_slice().bake(&Default::default());
+    let baked_trie = quote! {
+        const TRIE: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider_baked:: #baked_trie;
+    };
+
+    let baked_values = if matches!(bakes_to_ids.first(), Some((BakedValue::Struct(_), _))) {
+        let bakes = bakes_to_ids.iter().map(|(bake, _)| match bake {
+            BakedValue::Struct(tokens) => tokens,
+            BakedValue::VarULE(_) => {
+                unreachable!(
+                    "All instances should equivalently return Some or None in MaybeAsVarULE"
+                )
+            }
+        });
+        quote! {
+            const VALUES: &'static [<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
+        }
+    } else {
+        let byteses = bakes_to_ids
+            .iter()
+            .map(|(bake, _)| match bake {
+                BakedValue::VarULE(bytes) => *bytes,
+                BakedValue::Struct(_) => {
+                    unreachable!(
+                        "All instances should equivalently return Some or None in MaybeAsVarULE"
+                    )
+                }
+            })
+            .collect::<Vec<&[u8]>>();
+        let vzv = VarZeroVec::<[u8]>::from(&byteses);
+        let vzv_bytes = vzv.as_bytes().bake(ctx);
+        quote! {
+            const VALUES_VZV: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeAsVarULE>::VarULE> = unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#vzv_bytes) };
+        }
+    };
 
     (
         quote! {
             // Safety invariant upheld: see above
             icu_provider_baked::zerotrie::Data<#marker_bake> = {
-                const TRIE: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider_baked:: #baked_trie;
-                const VALUES: &'static [<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
+                #baked_trie
+                #baked_values
                 unsafe {
                     icu_provider_baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES)
                 }
