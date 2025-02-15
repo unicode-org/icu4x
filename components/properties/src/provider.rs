@@ -476,6 +476,8 @@ pub enum PropertyCodePointMap<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
+icu_provider::marker::does_not_deref_to_varule!(<T: TrieValue> PropertyCodePointMap<'_, T>);
+
 macro_rules! data_struct_generic {
     ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
         $(

@@ -9,6 +9,7 @@
 use crate as icu_provider;
 
 use crate::prelude::*;
+use crate::marker::does_not_deref_to_varule;
 use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
 use alloc::string::String;
@@ -40,6 +41,8 @@ impl Default for HelloWorld<'_> {
         }
     }
 }
+
+does_not_deref_to_varule!(HelloWorld<'_>);
 
 data_marker!(
     /// Marker type for [`HelloWorld`].

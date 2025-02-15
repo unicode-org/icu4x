@@ -108,6 +108,45 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
     }
 }
 
+/// This trait should be implemented on all data structs.
+///
+/// For most data structs, a default implementation available via
+/// [`does_not_deref_to_varule`] can be used.
+pub trait MaybeAsVarULE {
+    /// The [`VarULE`] type for this data struct.
+    type VarULE: VarULE + ?Sized;
+
+    /// If `self` can be wholy represented as [`Self::VarULE`],
+    /// returns it as a reference.
+    /// 
+    /// Otherwise, returns `None`.
+    fn maybe_as_varule(&self) -> Option<&Self::VarULE>;
+}
+
+/// Implements [`MaybeAsVarULE`] on a type that is NOT representable
+/// as a [`VarULE`].
+#[macro_export]
+macro_rules! does_not_deref_to_varule {
+    (<$generic:ident: $bound:tt> $ty:path) => {
+        impl<$generic: $bound> $crate::marker::MaybeAsVarULE for $ty {
+            type VarULE = [()];
+            fn maybe_as_varule(&self) -> Option<&[()]> {
+                None
+            }
+        }
+    };
+    ($ty:path) => {
+        impl $crate::marker::MaybeAsVarULE for $ty {
+            type VarULE = [()];
+            fn maybe_as_varule(&self) -> Option<&[()]> {
+                None
+            }
+        }
+    };
+}
+
+pub use does_not_deref_to_varule;
+
 /// A [`DynamicDataMarker`] that never returns data.
 ///
 /// All types that have non-blanket impls of `DataProvider<M>` are expected to explicitly

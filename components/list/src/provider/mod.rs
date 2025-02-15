@@ -69,6 +69,8 @@ data_marker!(
     ListFormatterPatterns<'static>,
 );
 
+icu_provider::marker::does_not_deref_to_varule!(ListFormatterPatterns<'_>);
+
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///
 /// <div class="stab unstable">

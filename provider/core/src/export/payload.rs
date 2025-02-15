@@ -4,11 +4,12 @@
 
 use core::any::Any;
 
-use crate::dynutil::UpcastDataPayload;
+use crate::{dynutil::UpcastDataPayload, marker::MaybeAsVarULE};
 use crate::prelude::*;
 use alloc::sync::Arc;
 use databake::{Bake, BakeSize, CrateEnv, TokenStream};
 use yoke::*;
+use zerovec::ule::VarULE;
 
 trait ExportableDataPayload {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
@@ -17,13 +18,14 @@ trait ExportableDataPayload {
         &self,
         serializer: &mut dyn erased_serde::Serializer,
     ) -> Result<(), DataError>;
+    fn maybe_as_varule_bytes(&self) -> Option<&[u8]>;
     fn as_any(&self) -> &dyn Any;
     fn eq_dyn(&self, other: &dyn ExportableDataPayload) -> bool;
 }
 
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize + PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize + MaybeAsVarULE + PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -42,6 +44,10 @@ where
             .erased_serialize(serializer)
             .map_err(|e| DataError::custom("Serde export").with_display_context(&e))?;
         Ok(())
+    }
+
+    fn maybe_as_varule_bytes(&self) -> Option<&[u8]> {
+        self.get().maybe_as_varule().map(VarULE::as_bytes)
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -90,7 +96,7 @@ impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DynamicDataMarker,
     M::DataStruct: Sync + Send,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize + PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize + MaybeAsVarULE + PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
@@ -168,6 +174,12 @@ impl DataPayload<ExportMarker> {
     /// ```
     pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {
         self.get().payload.bake_yoke(env)
+    }
+
+    /// If this type can be dereferenced as a [`VarULE`], returns bytes
+    /// valid as a [`MaybeAsVarULE::VarULE`].
+    pub fn maybe_as_varule_bytes(&self) -> Option<&[u8]> {
+        self.get().payload.maybe_as_varule_bytes()
     }
 
     /// Returns the data size using postcard encoding
