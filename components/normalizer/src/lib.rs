@@ -1767,10 +1767,10 @@ impl DecomposingNormalizerBorrowed<'static> {
     }
 }
 
-impl DecomposingNormalizerBorrowed<'_> {
+impl<'data> DecomposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
-    pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
+    pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<'data, I> {
         Decomposition::new_with_supplements(
             iter,
             self.decompositions,
@@ -2333,10 +2333,10 @@ impl ComposingNormalizerBorrowed<'static> {
     }
 }
 
-impl ComposingNormalizerBorrowed<'_> {
+impl<'data> ComposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
-    pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<I> {
+    pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<'data, I> {
         self.normalize_iter_private(iter, IgnorableBehavior::Unsupported)
     }
 
@@ -2344,7 +2344,7 @@ impl ComposingNormalizerBorrowed<'_> {
         &self,
         iter: I,
         ignorable_behavior: IgnorableBehavior,
-    ) -> Composition<I> {
+    ) -> Composition<'data, I> {
         Composition::new(
             Decomposition::new_with_supplements(
                 iter,
