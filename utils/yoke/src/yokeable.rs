@@ -42,12 +42,6 @@ use core::{marker::PhantomData, mem};
 ///
 /// There are further constraints on implementation safety on individual methods.
 ///
-/// # Trait bounds
-///
-/// [Compiler bug #85636](https://github.com/rust-lang/rust/issues/85636) makes it tricky to add
-/// trait bounds on `Yokeable::Output`. For more information and for workarounds, see
-/// [`crate::trait_hack`].
-///
 /// # Implementation example
 ///
 /// Implementing this trait manually is unsafe. Where possible, you should use the safe
