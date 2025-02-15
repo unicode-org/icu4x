@@ -9,7 +9,7 @@
 use crate as icu_provider;
 
 use crate::prelude::*;
-use crate::marker::does_not_deref_to_varule;
+use crate::marker::MaybeAsVarULE;
 use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
 use alloc::string::String;
@@ -42,7 +42,12 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-does_not_deref_to_varule!(HelloWorld<'_>);
+impl MaybeAsVarULE for HelloWorld<'_> {
+    type VarULE = str;
+    fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
+        Some(&self.message)
+    }
+}
 
 data_marker!(
     /// Marker type for [`HelloWorld`].
