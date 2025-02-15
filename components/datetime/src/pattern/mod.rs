@@ -21,11 +21,11 @@ pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
 pub use names::DateTimeNames;
 pub use names::DayPeriodNameLength;
+pub use names::FixedCalendarDateTimeNames;
 pub use names::MonthNameLength;
 pub(crate) use names::RawDateTimeNames;
 pub(crate) use names::RawDateTimeNamesBorrowed;
 pub(crate) use names::TimeZoneDataPayloadsBorrowed;
-pub use names::TypedDateTimeNames;
 pub use names::WeekdayNameLength;
 pub use names::YearNameLength;
 pub use pattern::DateTimePattern;
@@ -64,7 +64,7 @@ pub(crate) enum MonthPlaceholderValue<'a> {
     NumericPattern(&'a SinglePlaceholderPattern),
 }
 
-/// Error returned from [`TypedDateTimeNames`]'s pattern load methods.
+/// Error returned from [`FixedCalendarDateTimeNames`]'s pattern load methods.
 #[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum PatternLoadError {
@@ -83,7 +83,7 @@ pub enum PatternLoadError {
     /// The specific type does not support this field.
     ///
     /// This happens for example when trying to load a month field
-    /// on a [`TypedDateTimeNames<Gregorian, ZoneFieldSet>`].
+    /// on a [`FixedCalendarDateTimeNames<Gregorian, ZoneFieldSet>`].
     #[displaydoc("The specific type does not support the field {0:?}.")]
     TypeTooSpecific(ErrorField),
     /// An error arising from the [`data provider`](icu_provider) for loading names.
