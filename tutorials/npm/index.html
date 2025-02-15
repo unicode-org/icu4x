@@ -87,6 +87,9 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-seg" type="button" role="tab" aria-controls="pills-seg" aria-selected="false">Segmenter</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-ech" type="button" role="tab" aria-controls="pills-ech" aria-selected="false">Exemplar Characters</button>
+                    </li>
                 </ul>
             </div>
 
@@ -231,6 +234,59 @@
                             <div class="card-header">Segmented</div>
                             <div class="card-body">
                                 <p id="seg-segmented" class="card-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="pills-ech" role="tabpanel" aria-labelledby="pills-ech-tab" tabindex="0">
+                    <div class="vstack gap-2">
+                        <label>
+                            Locale
+                            <div class="btn-toolbar" role="toolbar" aria-label="Fixed Decimal Formatting options">
+                                <div class="btn-group" role="group" aria-label="Fixed Decimal Formatting Locale">
+                                    <input type="radio" class="btn-check" name="ech-locale" id="ech-locale-en" value="en" checked>
+                                    <label class="btn btn-outline-primary" for="ech-locale-en">en</label>
+
+                                    <input type="radio" class="btn-check" name="ech-locale" id="ech-locale-bn" value="bn">
+                                    <label class="btn btn-outline-primary" for="ech-locale-bn">bn</label>
+
+                                    <div class="input-group">
+                                        <input type="radio" class="btn-check" name="ech-locale" id="ech-locale-other" value="other">
+                                        <label class="btn btn-outline-primary" for="ech-locale-other">other</label>
+                                        <input type="text" id="ech-locale-other-input" class="form-control" placeholder="Locale ID">
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <div class="card">
+                            <div class="card-header">Main</div>
+                            <div class="card-body">
+                                <p id="ech-output-main" class="card-text"></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Auxiliary</div>
+                            <div class="card-body">
+                                <p id="ech-output-auxiliary" class="card-text"></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Punctuation</div>
+                            <div class="card-body">
+                                <p id="ech-output-punctuation" class="card-text"></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Numbers</div>
+                            <div class="card-body">
+                                <p id="ech-output-numbers" class="card-text"></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Index</div>
+                            <div class="card-body">
+                                <p id="ech-output-index" class="card-text"></p>
                             </div>
                         </div>
                     </div>
