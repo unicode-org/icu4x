@@ -1966,6 +1966,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_locale_core",
  "postcard",
+ "rand 0.9.0",
  "rkyv",
  "serde",
  "serde_json",

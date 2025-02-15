@@ -1410,6 +1410,16 @@ where
     }
 }
 
+impl<K, V, S> Extend<(K, V)> for LiteMap<K, V, S>
+where
+    K: Ord,
+    S: StoreMut<K, V>,
+{
+    fn extend<T: IntoIterator<Item = (K, V)>>(&mut self, iter: T) {
+        self.values.lm_extend(iter)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -1434,6 +1444,39 @@ mod test {
         .collect::<LiteMap<_, _>>();
 
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn extend() {
+        let mut expected: LiteMap<i32, &str> = LiteMap::with_capacity(4);
+        expected.insert(1, "updated-one");
+        expected.insert(2, "original-two");
+        expected.insert(3, "original-three");
+        expected.insert(4, "updated-four");
+
+        let mut actual: LiteMap<i32, &str> = LiteMap::new();
+        actual.insert(1, "original-one");
+        actual.extend([
+            (2, "original-two"),
+            (4, "original-four"),
+            (4, "updated-four"),
+            (1, "updated-one"),
+            (3, "original-three"),
+        ]);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn extend2() {
+        let mut map: LiteMap<usize, &str> = LiteMap::new();
+        map.extend(make_13());
+        map.extend(make_24());
+        map.extend(make_24());
+        map.extend(make_46());
+        map.extend(make_13());
+        map.extend(make_46());
+        assert_eq!(map.len(), 5);
     }
 
     fn make_13() -> LiteMap<usize, &'static str> {
