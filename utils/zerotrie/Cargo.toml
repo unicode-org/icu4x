@@ -19,10 +19,6 @@ rust-version.workspace = true
 [package.metadata.docs.rs]
 all-features = true
 
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
 [dependencies]
 databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { workspace = true }
@@ -54,7 +50,6 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 default = []
-bench = ["litemap"]
 alloc = []
 databake = ["dep:databake", "zerovec?/databake"]
 litemap = ["dep:litemap", "alloc"]

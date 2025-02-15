@@ -26,7 +26,7 @@ use icu_provider::DynamicDryDataProvider;
 /// let id = DataIdentifierCow::from_locale(langid!("ja-JP").into());
 ///
 /// // The provider does not have data for "ja-JP":
-/// DataProvider::<HelloWorldV1Marker>::load(
+/// DataProvider::<HelloWorldV1>::load(
 ///     &provider,
 ///     DataRequest {
 ///         id: id.as_borrowed(),
@@ -42,7 +42,7 @@ use icu_provider::DynamicDryDataProvider;
 /// );
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
-/// let response = DataProvider::<HelloWorldV1Marker>::load(
+/// let response = DataProvider::<HelloWorldV1>::load(
 ///     &provider,
 ///     DataRequest {
 ///         id: id.as_borrowed(),
@@ -80,7 +80,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// let id = DataIdentifierCow::from_locale(langid!("de-CH").into());
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
-    /// DataProvider::<HelloWorldV1Marker>::load(
+    /// DataProvider::<HelloWorldV1>::load(
     ///     &provider,
     ///     DataRequest {
     ///         id: id.as_borrowed(),
@@ -98,7 +98,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// );
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
-    /// let german_hello_world: DataResponse<HelloWorldV1Marker> = provider
+    /// let german_hello_world: DataResponse<HelloWorldV1> = provider
     ///     .load(DataRequest {
     ///         id: id.as_borrowed(),
     ///         ..Default::default()
@@ -153,7 +153,7 @@ impl<P> LocaleFallbackProvider<P> {
         let mut fallback_iterator = self
             .fallbacker
             .for_config(marker.fallback_config)
-            .fallback_for(base_req.id.locale.clone());
+            .fallback_for(*base_req.id.locale);
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
@@ -185,20 +185,6 @@ impl<P> LocaleFallbackProvider<P> {
         }
         base_req.metadata.silent = base_silent;
         Err(DataErrorKind::IdentifierNotFound.with_req(marker, base_req))
-    }
-}
-
-impl<P> AnyProvider for LocaleFallbackProvider<P>
-where
-    P: AnyProvider,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.run_fallback(
-            marker,
-            req,
-            |req| self.inner.load_any(marker, req),
-            |res| &mut res.metadata,
-        )
     }
 }
 
@@ -270,13 +256,13 @@ fn dry_test() {
     use icu_provider::hello_world::*;
 
     struct TestProvider;
-    impl DataProvider<HelloWorldV1Marker> for TestProvider {
-        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1> for TestProvider {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
             panic!("pretend this is super expensive")
         }
     }
 
-    impl DryDataProvider<HelloWorldV1Marker> for TestProvider {
+    impl DryDataProvider<HelloWorldV1> for TestProvider {
         fn dry_load(&self, req: DataRequest) -> Result<DataResponseMetadata, DataError> {
             // We support all languages except English, and no regional variants. This is cheap to check.
             if req.id.locale.region.is_some() || req.id.locale.language.as_str() == "en" {

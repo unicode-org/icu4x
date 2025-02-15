@@ -14,7 +14,7 @@ fn check_with_options(
     mut expect_utf16: Vec<usize>,
     options: LineBreakOptions,
 ) {
-    let segmenter = LineSegmenter::new_dictionary_with_options(options);
+    let segmenter = LineSegmenter::new_dictionary(options);
 
     let iter = segmenter.segment_str(s);
     let result: Vec<usize> = iter.collect();
@@ -32,32 +32,32 @@ static JA: LanguageIdentifier = langid!("ja");
 
 fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Strict;
-    options.word_option = LineBreakWordOption::Normal;
+    options.strictness = Some(LineBreakStrictness::Strict);
+    options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
 fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Normal;
-    options.word_option = LineBreakWordOption::Normal;
+    options.strictness = Some(LineBreakStrictness::Normal);
+    options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
 fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Loose;
-    options.word_option = LineBreakWordOption::Normal;
+    options.strictness = Some(LineBreakStrictness::Loose);
+    options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
 
 fn anywhere(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.strictness = LineBreakStrictness::Anywhere;
-    options.word_option = LineBreakWordOption::Normal;
+    options.strictness = Some(LineBreakStrictness::Anywhere);
+    options.word_option = Some(LineBreakWordOption::Normal);
     options.content_locale = ja_zh.then_some(&JA);
     check_with_options(s, expect_utf8, expect_utf16, options);
 }

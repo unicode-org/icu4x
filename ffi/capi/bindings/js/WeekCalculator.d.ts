@@ -11,12 +11,13 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
 */
+
+
 export class WeekCalculator {
     
-
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider, locale: Locale): WeekCalculator;
+    static createWithProvider(provider: DataProvider, locale: Locale): WeekCalculator;
 
     static fromFirstDayOfWeekAndMinWeekDays(firstWeekday: IsoWeekday, minWeekDays: number): WeekCalculator;
 
@@ -25,4 +26,6 @@ export class WeekCalculator {
     get minWeekDays(): number;
 
     get weekend(): WeekendContainsDay;
+
+    constructor(locale: Locale);
 }

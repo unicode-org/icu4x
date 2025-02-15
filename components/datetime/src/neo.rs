@@ -10,6 +10,7 @@ use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::input::ExtractedInput;
 use crate::pattern::*;
+use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -22,10 +23,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
 use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
-use icu_decimal::FixedDecimalFormatterPreferences;
-use icu_locale_core::preferences::extensions::unicode::keywords::{
-    CalendarAlgorithm, HourCycle, NumberingSystem,
-};
+use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
 use writeable::{impl_display_with_writeable, Writeable};
@@ -46,8 +44,9 @@ define_preferences!(
     ///
     /// let prefs1: DateTimeFormatterPreferences = Locale::try_from_str("fr-u-ca-buddhist-hc-h12").unwrap().into();
     ///
+    /// let locale = Locale::try_from_str("fr").unwrap();
     /// let mut prefs2 = DateTimeFormatterPreferences::default();
-    /// prefs2.locale_prefs.language = Language::try_from_str("fr").unwrap();
+    /// prefs2.locale_preferences = (&locale).into();
     /// prefs2.hour_cycle = Some(HourCycle::H12);
     /// prefs2.calendar_algorithm = Some(CalendarAlgorithm::Buddhist);
     ///
@@ -56,45 +55,41 @@ define_preferences!(
     [Copy]
     DateTimeFormatterPreferences,
     {
-        /// The user's preferred numbering system
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`icu_decimal::provider`] module for an example.
         numbering_system: NumberingSystem,
-        /// The user's preferred hour cycle
+        /// The user's preferred hour cycle.
+        ///
+        /// Corresponds to the `-u-hc` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved hour cycle, you can inspect the formatting pattern.
+        /// See [`DateTimePattern`](crate::pattern::DateTimePattern) for an example.
         hour_cycle: HourCycle,
         /// The user's preferred calendar system
+        ///
+        /// Corresponds to the `-u-ca` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved calendar system, use [`DateTimeFormatter::calendar_kind()`].
         calendar_algorithm: CalendarAlgorithm
     }
 );
 
-prefs_convert!(
-    DateTimeFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 
 prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
     calendar_algorithm
 });
 
 /// Helper macro for generating any/buffer constructors in this file.
-macro_rules! gen_any_buffer_constructors_with_external_loader {
-    (@runtime_fset, $fset:ident, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
-        pub fn $any_fn<P>(
-            provider: &P,
-            prefs: DateTimeFormatterPreferences,
-            field_set: $fset,
-        ) -> Result<Self, DateTimeFormatterLoadError>
-        where
-            P: AnyProvider + ?Sized,
-        {
-            Self::$internal_fn(
-                &provider.as_downcasting(),
-                &ExternalLoaderAny(provider),
-                prefs,
-                field_set.get_field(),
-            )
-        }
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+macro_rules! gen_buffer_constructors_with_external_loader {
+    (@runtime_fset, $fset:ident, $compiled_fn:ident $buffer_fn:ident, $internal_fn:ident) => {
+        #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
@@ -112,24 +107,8 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
             )
         }
     };
-    (@compiletime_fset, $fset:ident, $compiled_fn:ident, $any_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::$compiled_fn)]
-        pub fn $any_fn<P>(
-            provider: &P,
-            prefs: DateTimeFormatterPreferences,
-            field_set: $fset,
-        ) -> Result<Self, DateTimeFormatterLoadError>
-        where
-            P: AnyProvider + ?Sized,
-        {
-            Self::$internal_fn(
-                &provider.as_downcasting(),
-                &ExternalLoaderAny(provider),
-                prefs,
-                field_set.get_field(),
-            )
-        }
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
+    (@compiletime_fset, $fset:ident, $compiled_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
+        #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
         pub fn $buffer_fn<P>(
             provider: &P,
@@ -149,7 +128,7 @@ macro_rules! gen_any_buffer_constructors_with_external_loader {
     };
 }
 
-size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldsets::YMD>, typed_neo_year_month_day_formatter_size, 344);
+size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fieldsets::YMD>, typed_neo_year_month_day_formatter_size, 328);
 
 /// [`FixedCalendarDateTimeFormatter`] is a formatter capable of formatting dates and/or times from
 /// a calendar selected at compile time.
@@ -159,7 +138,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 #[derive(Debug)]
 pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
-    names: RawDateTimeNames<FSet>,
+    pub(crate) names: RawDateTimeNames<FSet>,
     _calendar: PhantomData<C>,
 }
 
@@ -217,16 +196,15 @@ where
         )
     }
 
-    gen_any_buffer_constructors_with_external_loader!(
+    gen_buffer_constructors_with_external_loader!(
         @compiletime_fset,
         FSet,
         try_new,
-        try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
@@ -260,35 +238,61 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
-        L: FixedDecimalFormatterLoader,
+        L: DecimalFormatterLoader,
+    {
+        let names = RawDateTimeNames::new_without_number_formatting();
+        Self::try_new_internal_with_names(provider, provider, loader, prefs, field_set, names)
+            .map_err(|e| e.0)
+    }
+
+    #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
+    pub(crate) fn try_new_internal_with_names<P0, P1, L>(
+        provider_p: &P0,
+        provider: &P1,
+        loader: &L,
+        prefs: DateTimeFormatterPreferences,
+        field_set: CompositeFieldSet,
+        mut names: RawDateTimeNames<FSet>,
+    ) -> Result<Self, (DateTimeFormatterLoadError, RawDateTimeNames<FSet>)>
+    where
+        P0: ?Sized + AllFixedCalendarPatternDataMarkers<C, FSet>,
+        P1: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
+        L: DecimalFormatterLoader,
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
-            &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1Marker::bind(provider),
-            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
-            &FSet::GluePatternV1Marker::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::DateSkeletonPatternsV1::bind(provider_p),
+            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
+            &FSet::GluePatternV1::bind(provider_p),
             prefs,
             field_set,
-        )
-        .map_err(DateTimeFormatterLoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_number_formatting();
-        names
-            .load_for_pattern(
-                &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1Marker::bind(provider),
-                &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1Marker::bind(provider),
-                &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1Marker::bind(provider),
-                &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
-                loader, // fixed decimal formatter
-                prefs,
-                selection.pattern_items_for_data_loading(),
-            )
-            .map_err(DateTimeFormatterLoadError::Names)?;
+        );
+        let selection = match selection {
+            Ok(selection) => selection,
+            Err(e) => return Err((DateTimeFormatterLoadError::Data(e), names)),
+        };
+        let result = names.load_for_pattern(
+            &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::MonthNamesV1::bind(provider),
+            &<FSet::D as TypedDateDataMarkers<C>>::WeekdayNamesV1::bind(provider),
+            &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
+            loader, // fixed decimal formatter
+            prefs,
+            selection.pattern_items_for_data_loading(),
+        );
+        match result {
+            Ok(()) => (),
+            Err(e) => return Err((DateTimeFormatterLoadError::Names(e), names)),
+        };
         Ok(Self {
             selection,
             names,
@@ -329,8 +333,8 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
-    /// use icu::calendar::Time;
+    /// ```compile_fail,E0277
+    /// use icu::datetime::input::Time;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
@@ -343,9 +347,8 @@ where
     ///     )
     ///     .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// formatter.format(&Time::midnight());
     /// ```
     pub fn format<I>(&self, input: &I) -> FormattedDateTime
     where
@@ -363,7 +366,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
-    400
+    384
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from
@@ -374,8 +377,8 @@ size_test!(
 #[derive(Debug)]
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
-    names: RawDateTimeNames<FSet>,
-    calendar: AnyCalendar,
+    pub(crate) names: RawDateTimeNames<FSet>,
+    pub(crate) calendar: AnyCalendar,
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
@@ -405,11 +408,10 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime};
+    /// use icu::calendar::Date;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
-    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
@@ -418,10 +420,10 @@ where
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_iso(2024, 5, 8, 0, 0, 0).unwrap();
+    /// let date = Date::try_new_iso(2024, 5, 8).unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&datetime),
+    ///     formatter.format(&date),
     ///     "30 Nisan 5784"
     /// );
     /// ```
@@ -444,16 +446,15 @@ where
         )
     }
 
-    gen_any_buffer_constructors_with_external_loader!(
+    gen_buffer_constructors_with_external_loader!(
         @compiletime_fset,
         FSet,
         try_new,
-        try_new_with_any_provider,
         try_new_with_buffer_provider,
         try_new_internal
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
@@ -485,38 +486,73 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
-        L: FixedDecimalFormatterLoader + AnyCalendarLoader,
+        L: DecimalFormatterLoader + AnyCalendarLoader,
     {
         let calendar = AnyCalendarLoader::load(loader, (&prefs).into())
             .map_err(DateTimeFormatterLoadError::Data)?;
+        let names = RawDateTimeNames::new_without_number_formatting();
+        Self::try_new_internal_with_calendar_and_names(
+            provider, provider, loader, prefs, field_set, calendar, names,
+        )
+        .map_err(|e| e.0)
+    }
+
+    #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
+    pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
+        provider_p: &P0,
+        provider: &P1,
+        loader: &L,
+        prefs: DateTimeFormatterPreferences,
+        field_set: CompositeFieldSet,
+        calendar: AnyCalendar,
+        mut names: RawDateTimeNames<FSet>,
+    ) -> Result<
+        Self,
+        (
+            DateTimeFormatterLoadError,
+            (AnyCalendar, RawDateTimeNames<FSet>),
+        ),
+    >
+    where
+        P0: ?Sized + AllAnyCalendarPatternDataMarkers<FSet>,
+        P1: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
+        L: DecimalFormatterLoader,
+    {
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider, kind),
-            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1Marker::bind(provider),
-            &FSet::GluePatternV1Marker::bind(provider),
+            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider_p, kind),
+            &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
+            &FSet::GluePatternV1::bind(provider_p),
             prefs,
             field_set,
-        )
-        .map_err(DateTimeFormatterLoadError::Data)?;
-        let mut names = RawDateTimeNames::new_without_number_formatting();
-        names
-            .load_for_pattern(
-                &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),
-                &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(provider, kind),
-                &<FSet::D as DateDataMarkers>::WeekdayNamesV1Marker::bind(provider),
-                &<FSet::T as TimeMarkers>::DayPeriodNamesV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::EssentialsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::LocationsV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::GenericShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificLongV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::SpecificShortV1Marker::bind(provider),
-                &<FSet::Z as ZoneMarkers>::MetazonePeriodV1Marker::bind(provider),
-                loader, // fixed decimal formatter
-                prefs,
-                selection.pattern_items_for_data_loading(),
-            )
-            .map_err(DateTimeFormatterLoadError::Names)?;
+        );
+        let selection = match selection {
+            Ok(selection) => selection,
+            Err(e) => return Err((DateTimeFormatterLoadError::Data(e), (calendar, names))),
+        };
+        let result = names.load_for_pattern(
+            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),
+            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(provider, kind),
+            &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
+            &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::LocationsV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::LocationsRootV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::ExemplarCitiesV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::GenericLongV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::GenericShortV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::SpecificLongV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::SpecificShortV1::bind(provider),
+            &<FSet::Z as ZoneMarkers>::MetazonePeriodV1::bind(provider),
+            loader, // fixed decimal formatter
+            prefs,
+            selection.pattern_items_for_data_loading(),
+        );
+        match result {
+            Ok(()) => (),
+            Err(e) => return Err((DateTimeFormatterLoadError::Names(e), (calendar, names))),
+        };
         Ok(Self {
             selection,
             names,
@@ -563,21 +599,20 @@ where
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
-    /// use icu::calendar::Time;
+    /// ```compile_fail,E0277
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     Length::Long.into(),
+    ///     YMD::long(),
     /// )
     /// .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_same_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// formatter.format_same_calendar(&Time::midnight());
     /// ```
     pub fn format_same_calendar<I>(
         &self,
@@ -619,28 +654,27 @@ where
     ///
     /// let date = Date::try_new_roc(113, 5, 8).unwrap();
     ///
-    /// assert_writeable_eq!(formatter.format_any_calendar(&date), "30 Nisan 5784");
+    /// assert_writeable_eq!(formatter.format(&date), "30 Nisan 5784");
     /// ```
     ///
     /// A time cannot be passed into the formatter when a date is expected:
     ///
-    /// ```compile_fail
-    /// use icu::calendar::Time;
+    /// ```compile_fail,E0277
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
     ///
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("es-MX").into(),
-    ///     Length::Long.into(),
+    ///     YMD::long(),
     /// )
     /// .unwrap();
     ///
-    /// // the trait `GetField<AnyCalendarKind>`
-    /// // is not implemented for `icu::icu_calendar::Time`
-    /// formatter.format_any_calendar(&Time::try_new(0, 0, 0, 0).unwrap());
+    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// formatter.format(&Time::midnight());
     /// ```
-    pub fn format_any_calendar<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
+    pub fn format<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
         I: ?Sized + ConvertCalendar,
         I::Converted<'a>: Sized + AllInputMarkers<FSet>,
@@ -684,7 +718,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format_any_calendar(&date),
+    ///     formatter.format(&date),
     ///     "12 Tishri 5785"
     /// );
     /// ```
@@ -696,6 +730,55 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
             selection: self.selection,
             names: self.names,
             calendar: calendar.to_any(),
+        }
+    }
+
+    /// Maps a [`FixedCalendarDateTimeFormatter`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
+    ///
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let specific_formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("fr").into(),
+    ///     YMD::medium(),
+    /// )
+    /// .unwrap();
+    ///
+    /// // Test that the specific formatter works:
+    /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
+    /// assert_writeable_eq!(
+    ///     specific_formatter.format(&date),
+    ///     "20 déc. 2024"
+    /// );
+    ///
+    /// // Make a more general formatter:
+    /// let general_formatter = specific_formatter.with_fset::<DateFieldSet>();
+    ///
+    /// // Test that it still works:
+    /// assert_writeable_eq!(
+    ///     general_formatter.format(&date),
+    ///     "20 déc. 2024"
+    /// );
+    /// ```
+    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(
+        self,
+    ) -> FixedCalendarDateTimeFormatter<C, FSet2> {
+        FixedCalendarDateTimeFormatter {
+            selection: self.selection,
+            names: self.names.with_fset(),
+            _calendar: PhantomData,
         }
     }
 }
@@ -765,6 +848,83 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
             _calendar: PhantomData,
         })
     }
+
+    /// Maps a [`DateTimeFormatter`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
+    ///
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let specific_formatter = DateTimeFormatter::try_new(
+    ///     locale!("fr").into(),
+    ///     YMD::medium(),
+    /// )
+    /// .unwrap();
+    ///
+    /// // Test that the specific formatter works:
+    /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
+    /// assert_writeable_eq!(
+    ///     specific_formatter.format(&date),
+    ///     "20 déc. 2024"
+    /// );
+    ///
+    /// // Make a more general formatter:
+    /// let general_formatter = specific_formatter.with_fset::<DateFieldSet>();
+    ///
+    /// // Test that it still works:
+    /// assert_writeable_eq!(
+    ///     general_formatter.format(&date),
+    ///     "20 déc. 2024"
+    /// );
+    /// ```
+    pub fn with_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
+        DateTimeFormatter {
+            selection: self.selection,
+            names: self.names.with_fset(),
+            calendar: self.calendar,
+        }
+    }
+
+    /// Returns the calendar used in this formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::AnyCalendarKind;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = DateTimeFormatter::try_new(
+    ///     locale!("th").into(),
+    ///     YMD::long(),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_iso(2024, 12, 16).unwrap()),
+    ///     "16 ธันวาคม 2567"
+    /// );
+    ///
+    /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
+    /// assert_eq!(formatter.calendar().kind().as_bcp47_string(), "buddhist");
+    /// ```
+    pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
+        icu_calendar::Ref(&self.calendar)
+    }
 }
 
 /// A formatter optimized for time and time zone formatting.
@@ -816,7 +976,7 @@ impl Writeable for FormattedDateTime<'_> {
             self.pattern.iter_items(),
             &self.input,
             &self.names,
-            self.names.fixed_decimal_formatter,
+            self.names.decimal_formatter,
             sink,
         );
         // A DateTimeWriteError should not occur in normal usage because DateTimeFormatter
@@ -840,6 +1000,9 @@ impl_display_with_writeable!(FormattedDateTime<'_>);
 
 impl FormattedDateTime<'_> {
     /// Gets the pattern used in this formatted value.
+    ///
+    /// From the pattern, one can check the properties of the included components, such as
+    /// the hour cycle being used for formatting. See [`DateTimePattern`].
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
     }

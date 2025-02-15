@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
@@ -40,36 +41,43 @@ pub mod ffi {
     pub struct SentenceBreakIteratorLatin1<'a>(icu_segmenter::SentenceBreakIteratorLatin1<'a, 'a>);
 
     impl SentenceSegmenter {
-        /// Construct an [`SentenceSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct, hidden)]
-        pub fn create(provider: &DataProvider) -> Result<Box<SentenceSegmenter>, DataError> {
-            Ok(Box::new(SentenceSegmenter(call_constructor!(
-                icu_segmenter::SentenceSegmenter::new [r => Ok(r)],
-                icu_segmenter::SentenceSegmenter::try_new_with_any_provider,
-                icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider,
-                provider,
-            )?)))
+        /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakInvariantOptions, Struct, hidden)]
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<SentenceSegmenter> {
+            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new(
+                Default::default(),
+            )))
+        }
+        /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_content_locale")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<SentenceSegmenter>, DataError> {
+            Ok(Box::new(SentenceSegmenter(
+                icu_segmenter::SentenceSegmenter::try_new(locale.into())?,
+            )))
         }
 
-        /// Construct an [`SentenceSegmenter`].
-        #[diplomat::rust_link(
-            icu::segmenter::SentenceSegmenter::try_new_with_options,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "with_content_locale")]
-        pub fn create_with_content_locale(
+        /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<SentenceSegmenter>, DataError> {
-            Ok(Box::new(SentenceSegmenter(call_constructor!(
-                icu_segmenter::SentenceSegmenter::try_new_with_options,
-                icu_segmenter::SentenceSegmenter::try_new_with_options_with_any_provider,
-                icu_segmenter::SentenceSegmenter::try_new_with_options_with_buffer_provider,
-                provider,
-                locale.into(),
-            )?)))
+            Ok(Box::new(SentenceSegmenter(
+                icu_segmenter::SentenceSegmenter::try_new_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
         }
 
         /// Segments a string.

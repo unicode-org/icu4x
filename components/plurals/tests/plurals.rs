@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::{langid, locale};
-use icu_plurals::{provider::CardinalV1Marker, PluralCategory, PluralRules};
+use icu_plurals::{provider::CardinalV1, PluralCategory, PluralRules};
 use icu_provider::prelude::*;
 
 #[test]
@@ -18,7 +18,7 @@ fn test_plural_rules() {
 
 #[test]
 fn test_static_load_works() {
-    DataProvider::<CardinalV1Marker>::load(
+    DataProvider::<CardinalV1>::load(
         &icu_plurals::provider::Baked,
         DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),

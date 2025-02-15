@@ -158,7 +158,7 @@ fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]>
 
         if is_hyphen(potential_value_char) {
             assert_syntax!(
-                cursor.peek().map_or(false, is_annotation_value_component),
+                cursor.peek().is_some_and(is_annotation_value_component),
                 AnnotationValueCharPostHyphen,
             );
             cursor.advance();

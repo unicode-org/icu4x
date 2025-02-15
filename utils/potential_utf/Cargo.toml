@@ -5,7 +5,7 @@
 [package]
 name = "potential_utf"
 description = "Unvalidated string and character types"
-version = "0.1.0"
+version = "0.1.1-dev"
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -26,8 +26,8 @@ serde_json = { workspace = true }
 bincode = { workspace = true }
 
 [features]
-alloc = ["serde?/alloc"]
+alloc = ["serde?/alloc", "zerovec?/alloc"]
 databake = ["dep:databake"]
 serde = ["dep:serde"]
 writeable = ["dep:writeable", "alloc"]
-zerovec = ["dep:zerovec", "alloc"]
+zerovec = ["dep:zerovec"]

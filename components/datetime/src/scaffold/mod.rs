@@ -25,8 +25,10 @@ pub use calendar::NoDataCalMarkers;
 pub(crate) use fieldset_traits::datetime_marker_helper;
 pub use fieldset_traits::AllAnyCalendarExternalDataMarkers;
 pub use fieldset_traits::AllAnyCalendarFormattingDataMarkers;
+pub use fieldset_traits::AllAnyCalendarPatternDataMarkers;
 pub use fieldset_traits::AllFixedCalendarExternalDataMarkers;
 pub use fieldset_traits::AllFixedCalendarFormattingDataMarkers;
+pub use fieldset_traits::AllFixedCalendarPatternDataMarkers;
 pub use fieldset_traits::AllInputMarkers;
 pub use fieldset_traits::DateDataMarkers;
 pub use fieldset_traits::DateInputMarkers;
@@ -39,10 +41,11 @@ pub use get_field::GetField;
 
 pub use names_storage::DataPayloadWithVariables;
 pub use names_storage::DataPayloadWithVariablesBorrowed;
-pub use names_storage::DateTimeNamesHolderTrait;
+pub use names_storage::DateTimeNamesFrom;
 pub use names_storage::DateTimeNamesMarker;
 pub use names_storage::MaybePayload;
 pub use names_storage::MaybePayloadError;
+pub use names_storage::NamesContainer;
 pub(crate) use names_storage::OptionalNames;
 
 /// Trait marking other traits that are considered unstable and should not generally be
@@ -50,6 +53,6 @@ pub(crate) use names_storage::OptionalNames;
 ///
 /// <div class="stab unstable">
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
 pub trait UnstableSealed {}

@@ -18,7 +18,16 @@ use utf8_iter::Utf8CharIndices;
 pub struct SentenceBreakOptions<'a> {
     /// Content locale for sentence segmenter.
     pub content_locale: Option<&'a LanguageIdentifier>,
+    /// Options independent of the locale
+    pub invariant_options: SentenceBreakInvariantOptions,
 }
+
+/// Locale-independent options to tailor sentence breaking behavior
+///
+/// Currently empty but may grow in the future
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+pub struct SentenceBreakInvariantOptions {}
 
 /// Implements the [`Iterator`] trait over the sentence boundaries of the given string.
 ///
@@ -68,8 +77,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::SentenceSegmenter;
-/// let segmenter = SentenceSegmenter::new();
+/// use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+/// let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -79,8 +88,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::SentenceSegmenter;
-/// let segmenter = SentenceSegmenter::new();
+/// use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+/// let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -92,8 +101,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu::segmenter::SentenceSegmenter;
-/// # let segmenter = SentenceSegmenter::new();
+/// # use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+/// # let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 /// use itertools::Itertools;
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
 /// let sentences: Vec<&str> = segmenter
@@ -108,15 +117,8 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {
-    payload: DataPayload<SentenceBreakDataV2Marker>,
-    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1Marker>>,
-}
-
-#[cfg(feature = "compiled_data")]
-impl Default for SentenceSegmenter {
-    fn default() -> Self {
-        Self::new()
-    }
+    payload: DataPayload<SentenceBreakDataV2>,
+    payload_locale_override: Option<DataPayload<SentenceBreakDataOverrideV1>>,
 }
 
 impl SentenceSegmenter {
@@ -126,58 +128,33 @@ impl SentenceSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
+    pub fn new(_options: SentenceBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_SENTENCE_BREAK_DATA_V2,
             ),
             payload_locale_override: None,
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-        ]
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<SentenceBreakDataV2Marker> + ?Sized,
-    {
-        let payload = provider.load(Default::default())?.payload;
-        Ok(Self {
-            payload,
-            payload_locale_override: None,
-        })
-    }
-
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: SentenceBreakOptions) -> error: DataError,
         /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
         functions: [
-            try_new_with_options,
-            try_new_with_options_with_any_provider,
-            try_new_with_options_with_buffer_provider,
-            try_new_with_options_unstable,
+            try_new,
+                        try_new_with_buffer_provider,
+            try_new_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_options)]
-    pub fn try_new_with_options_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D>(
         provider: &D,
         options: SentenceBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SentenceBreakDataV2Marker>
-            + DataProvider<SentenceBreakDataOverrideV1Marker>
-            + ?Sized,
+        D: DataProvider<SentenceBreakDataV2> + DataProvider<SentenceBreakDataOverrideV1> + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
         let payload_locale_override = if let Some(locale) = options.content_locale {
@@ -294,7 +271,7 @@ impl SentenceSegmenter {
 #[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
-    let segmenter = SentenceSegmenter::new();
+    let segmenter = SentenceSegmenter::new(Default::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }

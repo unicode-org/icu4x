@@ -8,8 +8,10 @@
 use crate::props::Script;
 use crate::provider::*;
 
+#[cfg(feature = "alloc")]
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
+#[cfg(feature = "alloc")]
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
@@ -23,7 +25,7 @@ const SCRIPT_VAL_LENGTH: u16 = 10;
 const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
-/// the trie of the special data structure [`ScriptWithExtensionsPropertyV1`].
+/// the trie of the special data structure [`ScriptWithExtensionsProperty`].
 ///
 /// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
@@ -35,13 +37,13 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
 #[doc(hidden)]
-// `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
+// `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsProperty` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsProperty` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
 }
@@ -60,7 +62,7 @@ impl AsULE for ScriptWithExt {
     }
 }
 
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsProperty` constructor
 impl ScriptWithExt {
     /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
     /// also indicates a Script value of [`Script::Common`].
@@ -291,14 +293,14 @@ impl<'a> ScriptExtensionsSet<'a> {
 /// ```
 #[derive(Debug)]
 pub struct ScriptWithExtensions {
-    data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
+    data: DataPayload<ScriptWithExtensionsPropertyV1>,
 }
 
 /// A borrowed wrapper around script extension data, returned by
 /// [`ScriptWithExtensions::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct ScriptWithExtensionsBorrowed<'a> {
-    data: &'a ScriptWithExtensionsPropertyV1<'a>,
+    data: &'a ScriptWithExtensionsProperty<'a>,
 }
 
 impl ScriptWithExtensions {
@@ -313,20 +315,19 @@ impl ScriptWithExtensions {
         ScriptWithExtensionsBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> result: Result<ScriptWithExtensions, DataError>,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
+        provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1> + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(ScriptWithExtensions::from_data(
             provider.load(Default::default())?.payload,
@@ -347,7 +348,7 @@ impl ScriptWithExtensions {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_script_with_extensions_unstable()`] instead
-    pub(crate) fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1Marker>) -> Self {
+    pub(crate) fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1>) -> Self {
         Self { data }
     }
 }
@@ -642,6 +643,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert!(syriac.contains('\u{1DFA}')); // COMBINING DOT BELOW LEFT
     /// assert!(!syriac.contains('\u{1DFB}')); // COMBINING DELETION MARK
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_script_extensions_set(self, script: Script) -> CodePointInversionList<'a> {
         CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
@@ -663,7 +665,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1_MARKER,
+            data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1,
         }
     }
 

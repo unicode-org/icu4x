@@ -11,6 +11,72 @@
 //! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
+//!
+//! # Examples
+//!
+//! ## Get the resolved numbering system
+//!
+//! In a constructor call, the _last_ request for [`DecimalDigitsV1`]
+//! contains the resolved numbering system as its attribute:
+//!
+//! ```
+//! use icu_provider::prelude::*;
+//! use icu::decimal::DecimalFormatter;
+//! use icu::decimal::provider::DecimalDigitsV1;
+//! use icu::locale::locale;
+//! use std::any::TypeId;
+//! use std::cell::RefCell;
+//!
+//! struct NumberingSystemInspectionProvider<P> {
+//!     inner: P,
+//!     numbering_system: RefCell<Option<Box<DataMarkerAttributes>>>,
+//! }
+//!
+//! impl<M, P> DataProvider<M> for NumberingSystemInspectionProvider<P>
+//! where
+//!     M: DataMarker,
+//!     P: DataProvider<M>,
+//! {
+//!     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+//!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1>() {
+//!             *self.numbering_system.try_borrow_mut().unwrap() = Some(req.id.marker_attributes.to_owned());
+//!         }
+//!         self.inner.load(req)
+//!     }
+//! }
+//!
+//! let provider = NumberingSystemInspectionProvider {
+//!     inner: icu::decimal::provider::Baked,
+//!     numbering_system: RefCell::new(None),
+//! };
+//!
+//! let df = DecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
+//!
+//! let df = DecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th-u-nu-thai").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
+//!
+//! let df = DecimalFormatter::try_new_unstable(
+//!     &provider,
+//!     locale!("th-u-nu-adlm").into(),
+//!     Default::default(),
+//! )
+//! .unwrap();
+//!
+//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("adlm"));
+//! ```
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
@@ -40,13 +106,13 @@ const _: () = {
         pub use icu_decimal_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_decimal_symbols_v2_marker!(Baked);
-    impl_decimal_digits_v1_marker!(Baked);
+    impl_decimal_symbols_v2!(Baked);
+    impl_decimal_digits_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDigitsV1Marker::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2::INFO, DecimalDigitsV1::INFO];
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
@@ -60,7 +126,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2Marker::INFO, DecimalDi
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct GroupingSizesV1 {
+pub struct GroupingSizes {
     /// The size of the first (lowest-magnitude) group.
     ///
     /// If 0, grouping separators will never be shown.
@@ -76,7 +142,7 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// A stack representation of the strings used in [`DecimalSymbolsV2`], i.e. a builder type
+/// A stack representation of the strings used in [`DecimalSymbols`], i.e. a builder type
 /// for [`DecimalSymbolsStrs`]. This type can be obtained from a [`DecimalSymbolsStrs`]
 /// the `From`/`Into` traits.
 ///
@@ -125,7 +191,7 @@ pub struct DecimalSymbolStrsBuilder<'data> {
     pub numsys: Cow<'data, str>,
 }
 
-impl<'data> DecimalSymbolStrsBuilder<'data> {
+impl DecimalSymbolStrsBuilder<'_> {
     /// Build a [`DecimalSymbolsStrs`]
     pub fn build(&self) -> VarZeroCow<'static, DecimalSymbolsStrs> {
         VarZeroCow::from_encodeable(self)
@@ -139,20 +205,20 @@ impl<'data> DecimalSymbolStrsBuilder<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@2")]
+#[icu_provider::data_struct(DecimalSymbolsV2 = "decimal/symbols@2")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct DecimalSymbolsV2<'data> {
+pub struct DecimalSymbols<'data> {
     /// String data for the symbols: +/- affixes and separators
     #[cfg_attr(feature = "serde", serde(borrow))]
-    // We use a VarZeroCow here to reduce the stack size of DecimalSymbolsV2: instead of serializing multiple strs,
+    // We use a VarZeroCow here to reduce the stack size of DecimalSymbols: instead of serializing multiple strs,
     // this type will now serialize as a single u8 buffer with optimized indexing that packs all the data together
     pub strings: VarZeroCow<'data, DecimalSymbolsStrs>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
-    pub grouping_sizes: GroupingSizesV1,
+    pub grouping_sizes: GroupingSizes,
 }
 
 /// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
@@ -163,18 +229,22 @@ pub struct DecimalSymbolsV2<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalDigitsV1Marker = "decimal/digits@1")]
+#[icu_provider::data_struct(marker(
+    DecimalDigitsV1,
+    "decimal/digits@1",
+    attributes_domain = "numbering_system"
+))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct DecimalDigitsV1 {
+pub struct DecimalDigits {
     /// Digit characters for the current numbering system. In most systems, these digits are
     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
     pub digits: [char; 10],
 }
 
-impl<'data> DecimalSymbolsV2<'data> {
+impl DecimalSymbols<'_> {
     /// Return (prefix, suffix) for the minus sign
     pub fn minus_sign_affixes(&self) -> (&str, &str) {
         (
@@ -204,7 +274,7 @@ impl<'data> DecimalSymbolsV2<'data> {
     }
 }
 
-impl DecimalSymbolsV2<'static> {
+impl DecimalSymbols<'static> {
     #[cfg(test)]
     /// Create a new en-US format for use in testing
     pub(crate) fn new_en_for_testing() -> Self {
@@ -219,7 +289,7 @@ impl DecimalSymbolsV2<'static> {
         };
         Self {
             strings: VarZeroCow::from_encodeable(&strings),
-            grouping_sizes: GroupingSizesV1 {
+            grouping_sizes: GroupingSizes {
                 primary: 3,
                 secondary: 3,
                 min_grouping: 1,

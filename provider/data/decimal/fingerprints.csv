@@ -1,283 +1,294 @@
-decimal/digits@1, <lookup>, 207B, 27 identifiers
-decimal/digits@1, <total>, 1080B, 1060B, 27 unique payloads
-decimal/digits@1, und/adlm, 40B, 50B, 3ea0af81a698e8ad
-decimal/digits@1, und/arab, 40B, 30B, 77d40924fb675834
-decimal/digits@1, und/arabext, 40B, 30B, bfaed987e2f62f2c
-decimal/digits@1, und/beng, 40B, 40B, ee517e6bc6574d71
-decimal/digits@1, und/cakm, 40B, 50B, f95ae3461fe856f8
-decimal/digits@1, und/deva, 40B, 40B, 6383e23b0f3d8431
-decimal/digits@1, und/gujr, 40B, 40B, b1ed8d58e1a563c8
-decimal/digits@1, und/guru, 40B, 40B, 9f53f8925a39f220
-decimal/digits@1, und/hanidec, 40B, 40B, ce3065f12c3729a9
-decimal/digits@1, und/hmnp, 40B, 50B, 4f1395f5bce7f2b9
-decimal/digits@1, und/java, 40B, 40B, 8ff1a9ce3993061b
-decimal/digits@1, und/khmr, 40B, 40B, a6b20eabe1cf3de3
-decimal/digits@1, und/knda, 40B, 40B, 3412d2d6b2e026fb
-decimal/digits@1, und/laoo, 40B, 40B, 97bfca02ebb3f82e
-decimal/digits@1, und/latn, 40B, 20B, f4ec9b3243bd12d6
-decimal/digits@1, und/mlym, 40B, 40B, e928475af35561f3
-decimal/digits@1, und/mong, 40B, 40B, 9c4ef19ca3026714
-decimal/digits@1, und/mtei, 40B, 40B, 3465420d655cb7f5
-decimal/digits@1, und/mymr, 40B, 40B, b36187a5ed8561b4
-decimal/digits@1, und/nkoo, 40B, 30B, be691171b4c503e8
-decimal/digits@1, und/olck, 40B, 40B, 2f4395f723df9345
-decimal/digits@1, und/orya, 40B, 40B, fe3e4ac71f64eb3b
-decimal/digits@1, und/tamldec, 40B, 40B, 398c9fdaf81fa0b8
-decimal/digits@1, und/telu, 40B, 40B, 4084dfba70dc949
-decimal/digits@1, und/thai, 40B, 40B, 470541c261160c5a
-decimal/digits@1, und/tibt, 40B, 40B, a199e0054f3d55b9
-decimal/digits@1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols@2, <lookup>, 1316B, 252 identifiers
-decimal/symbols@2, <total>, 2363B, 991B, 49 unique payloads
-decimal/symbols@2, af, 47B, 19B, 3e51d5d2bbc1f2d7
-decimal/symbols@2, ar, 52B, 24B, c3d6103c042fed33
-decimal/symbols@2, ar-BH, 52B, 24B, 2f8a9cd9917f6d84
-decimal/symbols@2, ar-BH/latn, -> ar
-decimal/symbols@2, ar-DJ, -> ar-BH
-decimal/symbols@2, ar-DJ/latn, -> ar
-decimal/symbols@2, ar-DZ, 52B, 24B, b9d70020255e4983
-decimal/symbols@2, ar-EG, -> ar-BH
-decimal/symbols@2, ar-EG/latn, -> ar
-decimal/symbols@2, ar-ER, -> ar-BH
-decimal/symbols@2, ar-ER/latn, -> ar
-decimal/symbols@2, ar-IL, -> ar-BH
-decimal/symbols@2, ar-IL/latn, -> ar
-decimal/symbols@2, ar-IQ, -> ar-BH
-decimal/symbols@2, ar-IQ/latn, -> ar
-decimal/symbols@2, ar-JO, -> ar-BH
-decimal/symbols@2, ar-JO/latn, -> ar
-decimal/symbols@2, ar-KM, -> ar-BH
-decimal/symbols@2, ar-KM/latn, -> ar
-decimal/symbols@2, ar-KW, -> ar-BH
-decimal/symbols@2, ar-KW/latn, -> ar
-decimal/symbols@2, ar-LB, -> ar-BH
-decimal/symbols@2, ar-LB/latn, -> ar-DZ
-decimal/symbols@2, ar-LY, -> ar-DZ
-decimal/symbols@2, ar-MA, -> ar-DZ
-decimal/symbols@2, ar-MR, -> ar-BH
-decimal/symbols@2, ar-MR/latn, -> ar-DZ
-decimal/symbols@2, ar-OM, -> ar-BH
-decimal/symbols@2, ar-OM/latn, -> ar
-decimal/symbols@2, ar-PS, -> ar-BH
-decimal/symbols@2, ar-PS/latn, -> ar
-decimal/symbols@2, ar-QA, -> ar-BH
-decimal/symbols@2, ar-QA/latn, -> ar
-decimal/symbols@2, ar-SA, -> ar-BH
-decimal/symbols@2, ar-SA/latn, -> ar
-decimal/symbols@2, ar-SD, -> ar-BH
-decimal/symbols@2, ar-SD/latn, -> ar
-decimal/symbols@2, ar-SO, -> ar-BH
-decimal/symbols@2, ar-SO/latn, -> ar
-decimal/symbols@2, ar-SS, -> ar-BH
-decimal/symbols@2, ar-SS/latn, -> ar
-decimal/symbols@2, ar-SY, -> ar-BH
-decimal/symbols@2, ar-SY/latn, -> ar
-decimal/symbols@2, ar-TD, -> ar-BH
-decimal/symbols@2, ar-TD/latn, -> ar
-decimal/symbols@2, ar-TN, -> ar-DZ
-decimal/symbols@2, ar-YE, -> ar-BH
-decimal/symbols@2, ar-YE/latn, -> ar
-decimal/symbols@2, ar/arab, -> ar-BH
-decimal/symbols@2, as, 46B, 18B, f6bf51484d97ea22
-decimal/symbols@2, as/latn, 46B, 18B, da7b508812a3f4
-decimal/symbols@2, ast, 46B, 18B, a1c6d58e8b50443f
-decimal/symbols@2, az, -> ast
-decimal/symbols@2, be, 47B, 19B, 3cff846ce4ce37a4
-decimal/symbols@2, bg, -> be
-decimal/symbols@2, bgc, 46B, 18B, 5e6b26d3a438d679
-decimal/symbols@2, bgc/latn, 46B, 18B, 3fb007994296856a
-decimal/symbols@2, bho, -> bgc
-decimal/symbols@2, bho/latn, -> bgc/latn
-decimal/symbols@2, blo, -> af
-decimal/symbols@2, bn, -> as
-decimal/symbols@2, bn/latn, -> as/latn
-decimal/symbols@2, br, -> af
-decimal/symbols@2, brx, -> as/latn
-decimal/symbols@2, brx/deva, 46B, 18B, c5f3fa3c4634eeae
-decimal/symbols@2, bs, -> ast
-decimal/symbols@2, bs-Cyrl, -> ast
-decimal/symbols@2, ca, -> ast
-decimal/symbols@2, cs, -> af
-decimal/symbols@2, cv, -> af
-decimal/symbols@2, da, -> ast
-decimal/symbols@2, de, -> ast
-decimal/symbols@2, de-AT, -> af
-decimal/symbols@2, de-CH, 48B, 20B, 60e85d5edf297fce
-decimal/symbols@2, de-LI, -> de-CH
-decimal/symbols@2, doi/deva, -> bgc
-decimal/symbols@2, dsb, -> ast
-decimal/symbols@2, ee, 46B, 18B, 96f6d7ff706bd606
-decimal/symbols@2, el, -> ast
-decimal/symbols@2, en-AT, -> ast
-decimal/symbols@2, en-BE, -> ast
-decimal/symbols@2, en-CH, -> de-CH
-decimal/symbols@2, en-DE, -> ast
-decimal/symbols@2, en-DK, -> ast
-decimal/symbols@2, en-FI, -> af
-decimal/symbols@2, en-ID, -> ast
-decimal/symbols@2, en-IN, -> as/latn
-decimal/symbols@2, en-NL, -> ast
-decimal/symbols@2, en-SE, -> af
-decimal/symbols@2, en-SI, -> ast
-decimal/symbols@2, en-ZA, -> af
-decimal/symbols@2, eo, -> af
-decimal/symbols@2, es, 46B, 18B, 28dd4136886d5f01
-decimal/symbols@2, es-419, -> bgc/latn
-decimal/symbols@2, es-AR, -> ast
-decimal/symbols@2, es-BO, -> ast
-decimal/symbols@2, es-CL, -> ast
-decimal/symbols@2, es-CO, -> ast
-decimal/symbols@2, es-CR, -> af
-decimal/symbols@2, es-EC, -> ast
-decimal/symbols@2, es-PY, -> ast
-decimal/symbols@2, es-UY, -> ast
-decimal/symbols@2, es-VE, -> ast
-decimal/symbols@2, et, 49B, 21B, 17eeb2279e0080cb
-decimal/symbols@2, eu, 48B, 20B, ad715ee6fa0d32be
-decimal/symbols@2, fa, 59B, 31B, 139fa2364f3d601c
-decimal/symbols@2, fa/latn, 54B, 26B, e8fbac20e1da766d
-decimal/symbols@2, ff-Adlm, 48B, 20B, c153d250f8687d46
-decimal/symbols@2, ff-Adlm/latn, 48B, 20B, 9f80f00a097ffc5d
-decimal/symbols@2, fi, 49B, 21B, 6bbabd47c5fe3c2c
-decimal/symbols@2, fo, -> eu
-decimal/symbols@2, fr, 48B, 20B, 1bf992c0a6d711d8
-decimal/symbols@2, fr-CA, -> af
-decimal/symbols@2, fr-LU, -> ast
-decimal/symbols@2, fr-MA, -> ast
-decimal/symbols@2, fy, -> ast
-decimal/symbols@2, gl, -> ast
-decimal/symbols@2, gu, -> as/latn
-decimal/symbols@2, gu/gujr, 46B, 18B, a3b95d46b60f8d2
-decimal/symbols@2, he, -> ar
-decimal/symbols@2, hi, -> as/latn
-decimal/symbols@2, hi/deva, -> brx/deva
-decimal/symbols@2, hr, -> eu
-decimal/symbols@2, hsb, -> ast
-decimal/symbols@2, hu, -> be
-decimal/symbols@2, hy, -> af
-decimal/symbols@2, ia, -> es
-decimal/symbols@2, id, -> ast
-decimal/symbols@2, ie, -> be
-decimal/symbols@2, is, -> ast
-decimal/symbols@2, it, -> es
-decimal/symbols@2, it-CH, 48B, 20B, 28639acbc41a3089
-decimal/symbols@2, jv, -> ast
-decimal/symbols@2, jv/java, 46B, 18B, bf61d3593419f8ee
-decimal/symbols@2, ka, -> be
-decimal/symbols@2, kea, -> af
-decimal/symbols@2, kgp, -> ast
-decimal/symbols@2, kk, -> af
-decimal/symbols@2, km/khmr, 46B, 18B, 639d7584f216a328
-decimal/symbols@2, kn/knda, 46B, 18B, 55186077ed4475ea
-decimal/symbols@2, kok-Latn, -> as/latn
-decimal/symbols@2, kok/deva, -> bgc
-decimal/symbols@2, ks, 63B, 35B, 5354253e2e088025
-decimal/symbols@2, ks/latn, 47B, 19B, 734f3b733c7aeb1f
-decimal/symbols@2, ku, -> ast
-decimal/symbols@2, kxv, -> as/latn
-decimal/symbols@2, kxv-Deva, -> as/latn
-decimal/symbols@2, kxv-Deva/deva, -> brx/deva
-decimal/symbols@2, kxv-Orya, -> as/latn
-decimal/symbols@2, kxv-Orya/orya, 46B, 18B, 81de90c9b7152ec2
-decimal/symbols@2, kxv-Telu, -> as/latn
-decimal/symbols@2, kxv-Telu/telu, 46B, 18B, 62e3bf87d9863250
-decimal/symbols@2, ky, -> af
-decimal/symbols@2, lb, -> ast
-decimal/symbols@2, lij, -> ast
-decimal/symbols@2, lmo, 48B, 20B, c15a5de689deaa7e
-decimal/symbols@2, lo, -> ast
-decimal/symbols@2, lo/laoo, 46B, 18B, c7da81f6bae79e2f
-decimal/symbols@2, lt, -> fi
-decimal/symbols@2, lv, -> be
-decimal/symbols@2, mai/deva, -> bgc
-decimal/symbols@2, mk, -> ast
-decimal/symbols@2, ml, -> as/latn
-decimal/symbols@2, ml/mlym, 46B, 18B, ec0a0a0ea7aa2aa1
-decimal/symbols@2, mni, 46B, 18B, 6face689d17e1391
-decimal/symbols@2, mni/latn, -> bgc/latn
-decimal/symbols@2, mr, -> brx/deva
-decimal/symbols@2, mr/latn, -> as/latn
-decimal/symbols@2, ms-BN, -> ast
-decimal/symbols@2, ms-ID, -> ast
-decimal/symbols@2, my, 46B, 18B, 7b74e13d1b741a24
-decimal/symbols@2, my/latn, -> bgc/latn
-decimal/symbols@2, nds, -> ast
-decimal/symbols@2, ne, -> brx/deva
-decimal/symbols@2, ne/latn, -> as/latn
-decimal/symbols@2, nl, -> ast
-decimal/symbols@2, no, -> fi
-decimal/symbols@2, nqo, 47B, 19B, ef62427eefd124d0
-decimal/symbols@2, nqo/latn, -> ks/latn
-decimal/symbols@2, nso, 47B, 19B, 9f9f10fc53ebd3a9
-decimal/symbols@2, oc, -> af
-decimal/symbols@2, or, -> as/latn
-decimal/symbols@2, or/orya, -> kxv-Orya/orya
-decimal/symbols@2, pa, -> as/latn
-decimal/symbols@2, pa/guru, 46B, 18B, 14d76079b3cbe52
-decimal/symbols@2, pl, -> be
-decimal/symbols@2, prg, -> af
-decimal/symbols@2, ps, -> ks
-decimal/symbols@2, ps/latn, 54B, 26B, 1582078748090142
-decimal/symbols@2, pt, -> ast
-decimal/symbols@2, pt-AO, -> af
-decimal/symbols@2, pt-PT, -> be
-decimal/symbols@2, qu-BO, -> ast
-decimal/symbols@2, raj, -> bgc
-decimal/symbols@2, raj/latn, -> bgc/latn
-decimal/symbols@2, rm, 50B, 22B, fb0eaaf69b93514b
-decimal/symbols@2, ro, -> ast
-decimal/symbols@2, ru, -> af
-decimal/symbols@2, ru-UA, -> be
-decimal/symbols@2, rw, -> ast
-decimal/symbols@2, sa, -> brx/deva
-decimal/symbols@2, sa/latn, -> as/latn
-decimal/symbols@2, sah, -> af
-decimal/symbols@2, sat, 46B, 18B, 7eeb196209a7f333
-decimal/symbols@2, sat/latn, -> bgc/latn
-decimal/symbols@2, sc, -> ast
-decimal/symbols@2, sd, 51B, 23B, f32b8f4014d07bc3
-decimal/symbols@2, sd/latn, -> bgc/latn
-decimal/symbols@2, sk, -> af
-decimal/symbols@2, sl, 48B, 20B, 1a089dcd9290020d
-decimal/symbols@2, sq, -> be
-decimal/symbols@2, sr, -> ast
-decimal/symbols@2, sr-Latn, -> ast
-decimal/symbols@2, su, -> ast
-decimal/symbols@2, sv, -> fi
-decimal/symbols@2, sw-CD, -> ast
-decimal/symbols@2, szl, -> af
-decimal/symbols@2, ta, -> as/latn
-decimal/symbols@2, ta-MY, -> bgc/latn
-decimal/symbols@2, ta-MY/tamldec, 49B, 21B, 79a79d2c94a58a70
-decimal/symbols@2, ta-SG, -> bgc/latn
-decimal/symbols@2, ta-SG/tamldec, -> ta-MY/tamldec
-decimal/symbols@2, ta/tamldec, 49B, 21B, a84d766c0745857e
-decimal/symbols@2, te, -> as/latn
-decimal/symbols@2, te/telu, 46B, 18B, ef82a6f750157aa3
-decimal/symbols@2, tg, -> af
-decimal/symbols@2, th/thai, 46B, 18B, 248ee3f85aefc52d
-decimal/symbols@2, tk, -> af
-decimal/symbols@2, tn, -> de-CH
-decimal/symbols@2, tr, -> ast
-decimal/symbols@2, tt, -> af
-decimal/symbols@2, ug/arabext, -> ks
-decimal/symbols@2, uk, -> af
-decimal/symbols@2, und, -> bgc/latn
-decimal/symbols@2, ur, -> ar
-decimal/symbols@2, ur-IN, -> ks
-decimal/symbols@2, ur-IN/latn, -> ar
-decimal/symbols@2, ur/arabext, -> ks
-decimal/symbols@2, uz, -> af
-decimal/symbols@2, uz-Cyrl, -> af
-decimal/symbols@2, vec, -> fr
-decimal/symbols@2, vi, -> ast
-decimal/symbols@2, vmw, -> ast
-decimal/symbols@2, wo, -> ast
-decimal/symbols@2, xh, -> nso
-decimal/symbols@2, xnr, -> as/latn
-decimal/symbols@2, xnr/deva, -> brx/deva
-decimal/symbols@2, yrl, -> ast
-decimal/symbols@2, yue-Hans/hanidec, 49B, 21B, 153bf65b64d812c4
-decimal/symbols@2, yue/hanidec, -> yue-Hans/hanidec
-decimal/symbols@2, zh-Hant/hanidec, -> yue-Hans/hanidec
-decimal/symbols@2, zh/hanidec, -> yue-Hans/hanidec
+decimal/digits/v1, <lookup>, 207B, 27 identifiers
+decimal/digits/v1, <total>, 1080B, 1060B, 27 unique payloads
+decimal/digits/v1, und/adlm, 40B, 50B, 3ea0af81a698e8ad
+decimal/digits/v1, und/arab, 40B, 30B, 77d40924fb675834
+decimal/digits/v1, und/arabext, 40B, 30B, bfaed987e2f62f2c
+decimal/digits/v1, und/beng, 40B, 40B, ee517e6bc6574d71
+decimal/digits/v1, und/cakm, 40B, 50B, f95ae3461fe856f8
+decimal/digits/v1, und/deva, 40B, 40B, 6383e23b0f3d8431
+decimal/digits/v1, und/gujr, 40B, 40B, b1ed8d58e1a563c8
+decimal/digits/v1, und/guru, 40B, 40B, 9f53f8925a39f220
+decimal/digits/v1, und/hanidec, 40B, 40B, ce3065f12c3729a9
+decimal/digits/v1, und/hmnp, 40B, 50B, 4f1395f5bce7f2b9
+decimal/digits/v1, und/java, 40B, 40B, 8ff1a9ce3993061b
+decimal/digits/v1, und/khmr, 40B, 40B, a6b20eabe1cf3de3
+decimal/digits/v1, und/knda, 40B, 40B, 3412d2d6b2e026fb
+decimal/digits/v1, und/laoo, 40B, 40B, 97bfca02ebb3f82e
+decimal/digits/v1, und/latn, 40B, 20B, f4ec9b3243bd12d6
+decimal/digits/v1, und/mlym, 40B, 40B, e928475af35561f3
+decimal/digits/v1, und/mong, 40B, 40B, 9c4ef19ca3026714
+decimal/digits/v1, und/mtei, 40B, 40B, 3465420d655cb7f5
+decimal/digits/v1, und/mymr, 40B, 40B, b36187a5ed8561b4
+decimal/digits/v1, und/nkoo, 40B, 30B, be691171b4c503e8
+decimal/digits/v1, und/olck, 40B, 40B, 2f4395f723df9345
+decimal/digits/v1, und/orya, 40B, 40B, fe3e4ac71f64eb3b
+decimal/digits/v1, und/tamldec, 40B, 40B, 398c9fdaf81fa0b8
+decimal/digits/v1, und/telu, 40B, 40B, 4084dfba70dc949
+decimal/digits/v1, und/thai, 40B, 40B, 470541c261160c5a
+decimal/digits/v1, und/tibt, 40B, 40B, a199e0054f3d55b9
+decimal/digits/v1, und/vaii, 40B, 40B, f3247f156118e197
+decimal/symbols/v2, <lookup>, 1356B, 263 identifiers
+decimal/symbols/v2, <total>, 2363B, 991B, 49 unique payloads
+decimal/symbols/v2, af, 47B, 19B, 3e51d5d2bbc1f2d7
+decimal/symbols/v2, ar, 52B, 24B, c3d6103c042fed33
+decimal/symbols/v2, ar-BH, 52B, 24B, 2f8a9cd9917f6d84
+decimal/symbols/v2, ar-BH/latn, -> ar
+decimal/symbols/v2, ar-DJ, -> ar-BH
+decimal/symbols/v2, ar-DJ/latn, -> ar
+decimal/symbols/v2, ar-DZ, 52B, 24B, b9d70020255e4983
+decimal/symbols/v2, ar-EG, -> ar-BH
+decimal/symbols/v2, ar-EG/latn, -> ar
+decimal/symbols/v2, ar-ER, -> ar-BH
+decimal/symbols/v2, ar-ER/latn, -> ar
+decimal/symbols/v2, ar-IL, -> ar-BH
+decimal/symbols/v2, ar-IL/latn, -> ar
+decimal/symbols/v2, ar-IQ, -> ar-BH
+decimal/symbols/v2, ar-IQ/latn, -> ar
+decimal/symbols/v2, ar-JO, -> ar-BH
+decimal/symbols/v2, ar-JO/latn, -> ar
+decimal/symbols/v2, ar-KM, -> ar-BH
+decimal/symbols/v2, ar-KM/latn, -> ar
+decimal/symbols/v2, ar-KW, -> ar-BH
+decimal/symbols/v2, ar-KW/latn, -> ar
+decimal/symbols/v2, ar-LB, -> ar-BH
+decimal/symbols/v2, ar-LB/latn, -> ar-DZ
+decimal/symbols/v2, ar-LY, -> ar-DZ
+decimal/symbols/v2, ar-MA, -> ar-DZ
+decimal/symbols/v2, ar-MR, -> ar-BH
+decimal/symbols/v2, ar-MR/latn, -> ar-DZ
+decimal/symbols/v2, ar-OM, -> ar-BH
+decimal/symbols/v2, ar-OM/latn, -> ar
+decimal/symbols/v2, ar-PS, -> ar-BH
+decimal/symbols/v2, ar-PS/latn, -> ar
+decimal/symbols/v2, ar-QA, -> ar-BH
+decimal/symbols/v2, ar-QA/latn, -> ar
+decimal/symbols/v2, ar-SA, -> ar-BH
+decimal/symbols/v2, ar-SA/latn, -> ar
+decimal/symbols/v2, ar-SD, -> ar-BH
+decimal/symbols/v2, ar-SD/latn, -> ar
+decimal/symbols/v2, ar-SO, -> ar-BH
+decimal/symbols/v2, ar-SO/latn, -> ar
+decimal/symbols/v2, ar-SS, -> ar-BH
+decimal/symbols/v2, ar-SS/latn, -> ar
+decimal/symbols/v2, ar-SY, -> ar-BH
+decimal/symbols/v2, ar-SY/latn, -> ar
+decimal/symbols/v2, ar-TD, -> ar-BH
+decimal/symbols/v2, ar-TD/latn, -> ar
+decimal/symbols/v2, ar-TN, -> ar-DZ
+decimal/symbols/v2, ar-YE, -> ar-BH
+decimal/symbols/v2, ar-YE/latn, -> ar
+decimal/symbols/v2, ar/arab, -> ar-BH
+decimal/symbols/v2, as, 46B, 18B, f6bf51484d97ea22
+decimal/symbols/v2, as/latn, 46B, 18B, da7b508812a3f4
+decimal/symbols/v2, ast, 46B, 18B, a1c6d58e8b50443f
+decimal/symbols/v2, az, -> ast
+decimal/symbols/v2, be, 47B, 19B, 3cff846ce4ce37a4
+decimal/symbols/v2, bg, -> be
+decimal/symbols/v2, bgc, 46B, 18B, 5e6b26d3a438d679
+decimal/symbols/v2, bgc/latn, 46B, 18B, 3fb007994296856a
+decimal/symbols/v2, bho, -> bgc
+decimal/symbols/v2, bho/latn, -> bgc/latn
+decimal/symbols/v2, blo, -> af
+decimal/symbols/v2, bn, -> as
+decimal/symbols/v2, bn/latn, -> as/latn
+decimal/symbols/v2, br, -> af
+decimal/symbols/v2, brx, -> as/latn
+decimal/symbols/v2, brx/deva, 46B, 18B, c5f3fa3c4634eeae
+decimal/symbols/v2, bs, -> ast
+decimal/symbols/v2, bs-Cyrl, -> ast
+decimal/symbols/v2, ca, -> ast
+decimal/symbols/v2, cs, -> af
+decimal/symbols/v2, cv, -> af
+decimal/symbols/v2, da, -> ast
+decimal/symbols/v2, de, -> ast
+decimal/symbols/v2, de-AT, -> af
+decimal/symbols/v2, de-CH, 48B, 20B, 60e85d5edf297fce
+decimal/symbols/v2, de-LI, -> de-CH
+decimal/symbols/v2, doi/deva, -> bgc
+decimal/symbols/v2, dsb, -> ast
+decimal/symbols/v2, ee, 46B, 18B, 96f6d7ff706bd606
+decimal/symbols/v2, el, -> ast
+decimal/symbols/v2, en-AT, -> ast
+decimal/symbols/v2, en-BE, -> ast
+decimal/symbols/v2, en-CH, -> de-CH
+decimal/symbols/v2, en-CZ, -> af
+decimal/symbols/v2, en-DE, -> ast
+decimal/symbols/v2, en-DK, -> ast
+decimal/symbols/v2, en-ES, -> ast
+decimal/symbols/v2, en-FI, -> af
+decimal/symbols/v2, en-FR, 48B, 20B, 1bf992c0a6d711d8
+decimal/symbols/v2, en-HU, -> af
+decimal/symbols/v2, en-ID, -> ast
+decimal/symbols/v2, en-IN, -> as/latn
+decimal/symbols/v2, en-IT, -> ast
+decimal/symbols/v2, en-NL, -> ast
+decimal/symbols/v2, en-NO, -> af
+decimal/symbols/v2, en-PL, -> ast
+decimal/symbols/v2, en-PT, -> af
+decimal/symbols/v2, en-RO, -> ast
+decimal/symbols/v2, en-SE, -> af
+decimal/symbols/v2, en-SI, -> ast
+decimal/symbols/v2, en-SK, -> af
+decimal/symbols/v2, en-ZA, -> af
+decimal/symbols/v2, eo, -> af
+decimal/symbols/v2, es, 46B, 18B, 28dd4136886d5f01
+decimal/symbols/v2, es-419, -> bgc/latn
+decimal/symbols/v2, es-AR, -> ast
+decimal/symbols/v2, es-BO, -> ast
+decimal/symbols/v2, es-CL, -> ast
+decimal/symbols/v2, es-CO, -> ast
+decimal/symbols/v2, es-CR, -> af
+decimal/symbols/v2, es-EC, -> ast
+decimal/symbols/v2, es-PY, -> ast
+decimal/symbols/v2, es-UY, -> ast
+decimal/symbols/v2, es-VE, -> ast
+decimal/symbols/v2, et, 49B, 21B, 17eeb2279e0080cb
+decimal/symbols/v2, eu, 48B, 20B, ad715ee6fa0d32be
+decimal/symbols/v2, fa, 59B, 31B, 139fa2364f3d601c
+decimal/symbols/v2, fa/latn, 54B, 26B, e8fbac20e1da766d
+decimal/symbols/v2, ff-Adlm, 48B, 20B, c153d250f8687d46
+decimal/symbols/v2, ff-Adlm/latn, 48B, 20B, 9f80f00a097ffc5d
+decimal/symbols/v2, fi, 49B, 21B, 6bbabd47c5fe3c2c
+decimal/symbols/v2, fo, -> eu
+decimal/symbols/v2, fr, -> en-FR
+decimal/symbols/v2, fr-CA, -> af
+decimal/symbols/v2, fr-LU, -> ast
+decimal/symbols/v2, fr-MA, -> ast
+decimal/symbols/v2, fy, -> ast
+decimal/symbols/v2, gl, -> ast
+decimal/symbols/v2, gu, -> as/latn
+decimal/symbols/v2, gu/gujr, 46B, 18B, a3b95d46b60f8d2
+decimal/symbols/v2, he, -> ar
+decimal/symbols/v2, hi, -> as/latn
+decimal/symbols/v2, hi/deva, -> brx/deva
+decimal/symbols/v2, hr, -> eu
+decimal/symbols/v2, hsb, -> ast
+decimal/symbols/v2, ht, -> af
+decimal/symbols/v2, hu, -> be
+decimal/symbols/v2, hy, -> af
+decimal/symbols/v2, ia, -> es
+decimal/symbols/v2, id, -> ast
+decimal/symbols/v2, ie, -> be
+decimal/symbols/v2, is, -> ast
+decimal/symbols/v2, it, -> es
+decimal/symbols/v2, it-CH, 48B, 20B, 28639acbc41a3089
+decimal/symbols/v2, jv, -> ast
+decimal/symbols/v2, jv/java, 46B, 18B, bf61d3593419f8ee
+decimal/symbols/v2, ka, -> be
+decimal/symbols/v2, kea, -> af
+decimal/symbols/v2, kgp, -> ast
+decimal/symbols/v2, kk, -> af
+decimal/symbols/v2, km/khmr, 46B, 18B, 639d7584f216a328
+decimal/symbols/v2, kn/knda, 46B, 18B, 55186077ed4475ea
+decimal/symbols/v2, kok-Latn, -> as/latn
+decimal/symbols/v2, kok/deva, -> bgc
+decimal/symbols/v2, ks, 63B, 35B, 5354253e2e088025
+decimal/symbols/v2, ks/latn, 47B, 19B, 734f3b733c7aeb1f
+decimal/symbols/v2, ku, -> ast
+decimal/symbols/v2, kxv, -> as/latn
+decimal/symbols/v2, kxv-Deva, -> as/latn
+decimal/symbols/v2, kxv-Deva/deva, -> brx/deva
+decimal/symbols/v2, kxv-Orya, -> as/latn
+decimal/symbols/v2, kxv-Orya/orya, 46B, 18B, 81de90c9b7152ec2
+decimal/symbols/v2, kxv-Telu, -> as/latn
+decimal/symbols/v2, kxv-Telu/telu, 46B, 18B, 62e3bf87d9863250
+decimal/symbols/v2, ky, -> af
+decimal/symbols/v2, lb, -> ast
+decimal/symbols/v2, lij, -> ast
+decimal/symbols/v2, lmo, 48B, 20B, c15a5de689deaa7e
+decimal/symbols/v2, lo, -> ast
+decimal/symbols/v2, lo/laoo, 46B, 18B, c7da81f6bae79e2f
+decimal/symbols/v2, lt, -> fi
+decimal/symbols/v2, lv, -> be
+decimal/symbols/v2, mai/deva, -> bgc
+decimal/symbols/v2, mk, -> ast
+decimal/symbols/v2, ml, -> as/latn
+decimal/symbols/v2, ml/mlym, 46B, 18B, ec0a0a0ea7aa2aa1
+decimal/symbols/v2, mni, 46B, 18B, 6face689d17e1391
+decimal/symbols/v2, mni/latn, -> bgc/latn
+decimal/symbols/v2, mr, -> brx/deva
+decimal/symbols/v2, mr/latn, -> as/latn
+decimal/symbols/v2, ms-BN, -> ast
+decimal/symbols/v2, ms-ID, -> ast
+decimal/symbols/v2, my, 46B, 18B, 7b74e13d1b741a24
+decimal/symbols/v2, my/latn, -> bgc/latn
+decimal/symbols/v2, nds, -> ast
+decimal/symbols/v2, ne, -> brx/deva
+decimal/symbols/v2, ne/latn, -> as/latn
+decimal/symbols/v2, nl, -> ast
+decimal/symbols/v2, no, -> fi
+decimal/symbols/v2, nqo, 47B, 19B, ef62427eefd124d0
+decimal/symbols/v2, nqo/latn, -> ks/latn
+decimal/symbols/v2, nso, 47B, 19B, 9f9f10fc53ebd3a9
+decimal/symbols/v2, oc, -> af
+decimal/symbols/v2, or, -> as/latn
+decimal/symbols/v2, or/orya, -> kxv-Orya/orya
+decimal/symbols/v2, pa, -> as/latn
+decimal/symbols/v2, pa/guru, 46B, 18B, 14d76079b3cbe52
+decimal/symbols/v2, pl, -> be
+decimal/symbols/v2, prg, -> af
+decimal/symbols/v2, ps, -> ks
+decimal/symbols/v2, ps/latn, 54B, 26B, 1582078748090142
+decimal/symbols/v2, pt, -> ast
+decimal/symbols/v2, pt-AO, -> af
+decimal/symbols/v2, pt-PT, -> be
+decimal/symbols/v2, qu-BO, -> ast
+decimal/symbols/v2, raj, -> bgc
+decimal/symbols/v2, raj/latn, -> bgc/latn
+decimal/symbols/v2, rm, 50B, 22B, fb0eaaf69b93514b
+decimal/symbols/v2, ro, -> ast
+decimal/symbols/v2, ru, -> af
+decimal/symbols/v2, ru-UA, -> be
+decimal/symbols/v2, rw, -> ast
+decimal/symbols/v2, sa, -> brx/deva
+decimal/symbols/v2, sa/latn, -> as/latn
+decimal/symbols/v2, sah, -> af
+decimal/symbols/v2, sat, 46B, 18B, 7eeb196209a7f333
+decimal/symbols/v2, sat/latn, -> bgc/latn
+decimal/symbols/v2, sc, -> ast
+decimal/symbols/v2, sd, 51B, 23B, f32b8f4014d07bc3
+decimal/symbols/v2, sd/latn, -> bgc/latn
+decimal/symbols/v2, sk, -> af
+decimal/symbols/v2, sl, 48B, 20B, 1a089dcd9290020d
+decimal/symbols/v2, sq, -> be
+decimal/symbols/v2, sr, -> ast
+decimal/symbols/v2, sr-Latn, -> ast
+decimal/symbols/v2, su, -> ast
+decimal/symbols/v2, sv, -> fi
+decimal/symbols/v2, sw-CD, -> ast
+decimal/symbols/v2, szl, -> af
+decimal/symbols/v2, ta, -> as/latn
+decimal/symbols/v2, ta-MY, -> bgc/latn
+decimal/symbols/v2, ta-MY/tamldec, 49B, 21B, 79a79d2c94a58a70
+decimal/symbols/v2, ta-SG, -> bgc/latn
+decimal/symbols/v2, ta-SG/tamldec, -> ta-MY/tamldec
+decimal/symbols/v2, ta/tamldec, 49B, 21B, a84d766c0745857e
+decimal/symbols/v2, te, -> as/latn
+decimal/symbols/v2, te/telu, 46B, 18B, ef82a6f750157aa3
+decimal/symbols/v2, tg, -> af
+decimal/symbols/v2, th/thai, 46B, 18B, 248ee3f85aefc52d
+decimal/symbols/v2, tk, -> af
+decimal/symbols/v2, tn, -> de-CH
+decimal/symbols/v2, tr, -> ast
+decimal/symbols/v2, tt, -> af
+decimal/symbols/v2, ug/arabext, -> ks
+decimal/symbols/v2, uk, -> af
+decimal/symbols/v2, und, -> bgc/latn
+decimal/symbols/v2, ur, -> ar
+decimal/symbols/v2, ur-IN, -> ks
+decimal/symbols/v2, ur-IN/latn, -> ar
+decimal/symbols/v2, ur/arabext, -> ks
+decimal/symbols/v2, uz, -> af
+decimal/symbols/v2, uz-Cyrl, -> af
+decimal/symbols/v2, vec, -> en-FR
+decimal/symbols/v2, vi, -> ast
+decimal/symbols/v2, vmw, -> ast
+decimal/symbols/v2, wo, -> ast
+decimal/symbols/v2, xh, -> nso
+decimal/symbols/v2, xnr, -> as/latn
+decimal/symbols/v2, xnr/deva, -> brx/deva
+decimal/symbols/v2, yrl, -> ast
+decimal/symbols/v2, yue-Hans/hanidec, 49B, 21B, 153bf65b64d812c4
+decimal/symbols/v2, yue/hanidec, -> yue-Hans/hanidec
+decimal/symbols/v2, zh-Hant/hanidec, -> yue-Hans/hanidec
+decimal/symbols/v2, zh/hanidec, -> yue-Hans/hanidec

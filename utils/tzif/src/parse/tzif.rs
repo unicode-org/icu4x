@@ -827,7 +827,9 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::data::posix::{DstTransitionInfo, TransitionDate, TransitionDay, ZoneVariantInfo};
+    use crate::data::posix::{
+        DstTransitionInfo, TimeZoneVariantInfo, TransitionDate, TransitionDay,
+    };
     use crate::data::time::Hours;
     use crate::{assert_parse_eq, assert_parse_err, assert_parse_ok};
     use combine::EasyParser;
@@ -1484,12 +1486,12 @@ mod test {
             footer(),
             "\nEST+5EDT,M3.2.0/2,M11.1.0/2\n",
             PosixTzString {
-                std_info: ZoneVariantInfo {
+                std_info: TimeZoneVariantInfo {
                     name: "EST".to_owned(),
                     offset: Hours(5).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
-                    variant_info: ZoneVariantInfo {
+                    variant_info: TimeZoneVariantInfo {
                         name: "EDT".to_owned(),
                         offset: Hours(4).as_seconds()
                     },

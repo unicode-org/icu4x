@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -28,9 +29,13 @@ namespace icu4x {
 class DecomposingNormalizer {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> create_nfd(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::DecomposingNormalizer> create_nfd();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> create_nfkd(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> create_nfd_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::DecomposingNormalizer> create_nfkd();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> create_nfkd_with_provider(const icu4x::DataProvider& provider);
 
   inline std::string normalize(std::string_view s) const;
 

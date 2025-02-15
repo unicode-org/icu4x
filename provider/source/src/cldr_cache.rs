@@ -7,20 +7,17 @@
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
-    LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
-    LikelySubtagsForScriptRegionV1Marker,
+    LikelySubtagsExtendedV1, LikelySubtagsForLanguageV1, LikelySubtagsForScriptRegionV1,
 };
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
-use icu_provider_adapters::fixed::FixedProvider;
-use icu_provider_adapters::fork::ForkByMarkerProvider;
-use icu_provider_adapters::make_forking_provider;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
 use std::sync::OnceLock;
+use writeable::Writeable;
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
@@ -33,6 +30,7 @@ pub(crate) struct CldrCache {
     pub(crate) transforms: OnceLock<
         Result<std::sync::Mutex<icu::experimental::transliterate::RuleCollection>, DataError>,
     >,
+    pub(crate) tz_caches: crate::time_zones::Caches,
 }
 
 impl CldrCache {
@@ -44,6 +42,7 @@ impl CldrCache {
             modern_japanese_eras: Default::default(),
             #[cfg(feature = "experimental")]
             transforms: Default::default(),
+            tz_caches: Default::default(),
         }
     }
 
@@ -91,7 +90,7 @@ impl CldrCache {
         levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<DataLocale>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
-        Ok(self
+        let mut locales: Vec<DataLocale> = self
             .serde_cache
             .read_and_parse_json::<crate::cldr_serde::coverage_levels::Resource>(
                 "cldr-core/coverageLevels.json",
@@ -103,7 +102,12 @@ impl CldrCache {
             .map(Into::into)
             // `und` needs to be part of every set
             .chain([Default::default()])
-            .collect())
+            .collect();
+        locales.sort_by(|a, b| {
+            let b = b.write_to_string();
+            a.strict_cmp(b.as_bytes())
+        });
+        Ok(locales)
     }
 
     pub(crate) fn dir_suffix(&self) -> Result<&'static str, DataError> {
@@ -120,28 +124,58 @@ impl CldrCache {
         use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
-                let common_data =
+                use icu_provider::prelude::*;
+                struct Provider {
+                    common: TransformResult,
+                    extended: TransformResult,
+                }
+                impl DataProvider<LikelySubtagsForLanguageV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LikelySubtagsForLanguageV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.common.as_langs()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                impl DataProvider<LikelySubtagsForScriptRegionV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LikelySubtagsForScriptRegionV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.common.as_script_region()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                impl DataProvider<LikelySubtagsExtendedV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.extended.as_extended()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                let common =
                     transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-                let extended_data =
+                let extended =
                     transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
-                let provider = make_forking_provider!(
-                    ForkByMarkerProvider::new,
-                    [
-                        FixedProvider::<LikelySubtagsForLanguageV1Marker>::from_owned(
-                            common_data.as_langs(),
-                        ),
-                        FixedProvider::<LikelySubtagsForScriptRegionV1Marker>::from_owned(
-                            common_data.as_script_region(),
-                        ),
-                        FixedProvider::<LikelySubtagsExtendedV1Marker>::from_owned(
-                            extended_data.as_extended()
-                        ),
-                    ]
-                );
-                LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
-                    DataError::custom("creating LocaleExpander in CldrCache")
-                        .with_display_context(&e)
-                })
+
+                LocaleExpander::try_new_extended_unstable(&Provider { common, extended }).map_err(
+                    |e| {
+                        DataError::custom("creating LocaleExpander in CldrCache")
+                            .with_display_context(&e)
+                    },
+                )
             })
             .as_ref()
             .map_err(|&e| e)

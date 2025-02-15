@@ -7,10 +7,9 @@ mod hardcoded;
 mod replaceable;
 
 use crate::transliterate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
-use crate::transliterate::provider::{
-    RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker,
-};
+use crate::transliterate::provider::{RuleBasedTransliterator, Segment, TransliteratorRulesV1};
 use crate::transliterate::transliterator::hardcoded::Case;
+use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -51,9 +50,9 @@ struct ComposingTransliterator(ComposingNormalizer);
 impl ComposingTransliterator {
     fn try_nfc<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        P: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let inner = ComposingNormalizer::try_new_nfc_unstable(provider)
@@ -63,11 +62,10 @@ impl ComposingTransliterator {
 
     fn try_nfkc<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        P: DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let inner = ComposingNormalizer::try_new_nfkc_unstable(provider)
@@ -79,8 +77,9 @@ impl ComposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
-        rep.replace_modifiable_with_str(&buf);
+        if let Cow::Owned(buf) = self.0.as_borrowed().normalize(rep.as_str_modifiable()) {
+            rep.replace_modifiable_with_str(&buf);
+        } // else the input was already normalized, so no need to modify `rep`
     }
 }
 
@@ -90,8 +89,8 @@ struct DecomposingTransliterator(DecomposingNormalizer);
 impl DecomposingTransliterator {
     fn try_nfd<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+        P: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
         let inner = DecomposingNormalizer::try_new_nfd_unstable(provider)
@@ -101,10 +100,9 @@ impl DecomposingTransliterator {
 
     fn try_nfkd<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+        P: DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
             + ?Sized,
     {
         let inner = DecomposingNormalizer::try_new_nfkd_unstable(provider)
@@ -116,14 +114,15 @@ impl DecomposingTransliterator {
         // would be cool to use `normalize_to` and pass Insertable, but we need to know the
         // input string, which gets replaced by the normalized string.
 
-        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
-        rep.replace_modifiable_with_str(&buf);
+        if let Cow::Owned(buf) = self.0.as_borrowed().normalize(rep.as_str_modifiable()) {
+            rep.replace_modifiable_with_str(&buf);
+        } // else the input was already normalized, so no need to modify `rep`
     }
 }
 
 #[derive(Debug)]
 enum InternalTransliterator {
-    RuleBased(DataPayload<TransliteratorRulesV1Marker>),
+    RuleBased(DataPayload<TransliteratorRulesV1>),
     Composing(ComposingTransliterator),
     Decomposing(DecomposingTransliterator),
     Hex(hardcoded::HexTransliterator),
@@ -193,7 +192,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// #[derive(Debug)]
 /// struct AsciiUpperTransliterator;
 /// impl CustomTransliterator for AsciiUpperTransliterator {
-///     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
+///     fn transliterate(&self, input: &str, range: core::ops::Range<usize>) -> String {
 ///         input.to_ascii_uppercase()
 ///     }
 /// }
@@ -221,7 +220,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// ```
 #[derive(Debug)]
 pub struct Transliterator {
-    transliterator: DataPayload<TransliteratorRulesV1Marker>,
+    transliterator: DataPayload<TransliteratorRulesV1>,
     env: Env,
 }
 
@@ -247,19 +246,8 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(
-            &provider.as_downcasting(),
-            &provider.as_downcasting(),
-            locale,
-        )
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_new)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
         locale: &Locale,
@@ -271,19 +259,19 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<PT, PN>(
         transliterator_provider: &PT,
         normalizer_provider: &PN,
         locale: &Locale,
     ) -> Result<Self, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         Self::internal_try_new_with_override_unstable(
@@ -348,24 +336,8 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_override)]
-    pub fn try_new_with_override_with_any_provider<F>(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
-        lookup: F,
-    ) -> Result<Self, DataError>
-    where
-        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
-    {
-        Self::try_new_with_override_unstable(
-            &provider.as_downcasting(),
-            &provider.as_downcasting(),
-            locale,
-            lookup,
-        )
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_override)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_new_with_override)]
     pub fn try_new_with_override_with_buffer_provider<F>(
         provider: &(impl BufferProvider + ?Sized),
         locale: &Locale,
@@ -382,7 +354,7 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_override)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_override)]
     pub fn try_new_with_override_unstable<PT, PN, F>(
         transliterator_provider: &PT,
         normalizer_provider: &PN,
@@ -390,12 +362,12 @@ impl Transliterator {
         lookup: F,
     ) -> Result<Transliterator, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -414,12 +386,12 @@ impl Transliterator {
         normalizer_provider: &PN,
     ) -> Result<Transliterator, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -448,14 +420,14 @@ impl Transliterator {
         normalizer_provider: &PN,
         allow_internal: bool,
         env: &mut LiteMap<String, InternalTransliterator>,
-    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
+    ) -> Result<DataPayload<TransliteratorRulesV1>, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -500,11 +472,11 @@ impl Transliterator {
         normalizer_provider: &P,
     ) -> Option<Result<InternalTransliterator, DataError>>
     where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        P: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         // TODO(#3909, #3910): add more

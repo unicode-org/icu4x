@@ -11,6 +11,7 @@ const WordBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr
 });
 
 export class WordBreakIteratorUtf8 {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -19,7 +20,7 @@ export class WordBreakIteratorUtf8 {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("WordBreakIteratorUtf8 is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,8 +36,9 @@ export class WordBreakIteratorUtf8 {
         if (this.#selfEdge.length === 0) {
             WordBreakIteratorUtf8_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -69,5 +71,9 @@ export class WordBreakIteratorUtf8 {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

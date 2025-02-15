@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{Date, DateTime, Gregorian, Time};
+use icu_calendar::{Date, Gregorian};
 use icu_datetime::{
-    fields::components,
     fieldsets::{self, enums::*},
     options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
+    provider::fields::components,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::Locale;
 use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
+use icu_time::{DateTime, Time};
 
 fn assert_resolved_components(
     skeleton: CompositeDateTimeFieldSet,
@@ -79,9 +80,9 @@ fn test_length_time_preferences() {
 fn test_date_and_time() {
     let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
         fieldsets::YMDET::medium()
-            .with_year_style(YearStyle::Always)
+            .with_year_style(YearStyle::WithEra)
             .with_alignment(Alignment::Column)
-            .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F4)),
+            .with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F4)),
     ));
 
     let mut input_bag = components::Bag::default();

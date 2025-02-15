@@ -12,7 +12,7 @@ final class LineBreakOptions {
   LineBreakStrictness? strictness;
   LineBreakWordOption? wordOption;
 
-  LineBreakOptions({required this.strictness, required this.wordOption});
+  LineBreakOptions({this.strictness, this.wordOption});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from

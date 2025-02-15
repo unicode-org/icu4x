@@ -25,7 +25,7 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct CodePointSetData {
-    data: DataPayload<ErasedMarker<PropertyCodePointSetV1<'static>>>,
+    data: DataPayload<ErasedMarker<PropertyCodePointSet<'static>>>,
 }
 
 impl CodePointSetData {
@@ -40,7 +40,7 @@ impl CodePointSetData {
         CodePointSetDataBorrowed { set: P::SINGLETON }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P: BinaryProperty>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
     ) -> Result<CodePointSetData, DataError> {
@@ -64,16 +64,16 @@ impl CodePointSetData {
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<DataStruct = PropertyCodePointSetV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointSet<'static>>,
     {
         Self { data: data.cast() }
     }
 
     /// Construct a new owned [`CodePointInversionList`]
     pub fn from_code_point_inversion_list(set: CodePointInversionList<'static>) -> Self {
-        let set = PropertyCodePointSetV1::from_code_point_inversion_list(set);
+        let set = PropertyCodePointSet::from_code_point_inversion_list(set);
         CodePointSetData::from_data(
-            DataPayload::<ErasedMarker<PropertyCodePointSetV1<'static>>>::from_owned(set),
+            DataPayload::<ErasedMarker<PropertyCodePointSet<'static>>>::from_owned(set),
         )
     }
 
@@ -108,7 +108,7 @@ impl CodePointSetData {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct CodePointSetDataBorrowed<'a> {
-    set: &'a PropertyCodePointSetV1<'a>,
+    set: &'a PropertyCodePointSet<'a>,
 }
 
 impl CodePointSetDataBorrowed<'static> {
@@ -204,19 +204,32 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 /// documentation for Unicode regular expressions. In particular, Annex C of this document
 /// defines properties for POSIX compatibility.
 ///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
 /// [`CodePointSetData`]: crate::sets::CodePointSetData
 /// [`TR44`]: https://www.unicode.org/reports/tr44
 /// [`TR18`]: https://www.unicode.org/reports/tr18
-pub trait BinaryProperty: crate::private::Sealed {
+pub trait BinaryProperty: crate::private::Sealed + Sized {
     #[doc(hidden)]
-    type DataMarker: DataMarker<DataStruct = PropertyCodePointSetV1<'static>>;
+    type DataMarker: DataMarker<DataStruct = PropertyCodePointSet<'static>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
-    const SINGLETON: &'static PropertyCodePointSetV1<'static>;
+    const SINGLETON: &'static PropertyCodePointSet<'static>;
     /// The name of this property
     const NAME: &'static [u8];
     /// The abbreviated name of this property, if it exists, otherwise the name
     const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `CodePointSetData::new().contains(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_char(ch: char) -> bool {
+        CodePointSetData::new::<Self>().contains(ch)
+    }
 }
 
 #[cfg(test)]

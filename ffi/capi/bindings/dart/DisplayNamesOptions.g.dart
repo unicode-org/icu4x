@@ -14,7 +14,7 @@ final class DisplayNamesOptions {
   DisplayNamesFallback? fallback;
   LanguageDisplay? languageDisplay;
 
-  DisplayNamesOptions({required this.style, required this.fallback, required this.languageDisplay});
+  DisplayNamesOptions({this.style, this.fallback, this.languageDisplay});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from

@@ -13,13 +13,10 @@ use crate::{
     compactdecimal::CompactDecimalFormatterOptions,
     compactdecimal::CompactDecimalFormatterPreferences,
     dimension::provider::{
-        currency_patterns::CurrencyPatternsDataV1Marker,
-        extended_currency::CurrencyExtendedDataV1Marker,
+        currency_patterns::CurrencyPatternsDataV1, extended_currency::CurrencyExtendedDataV1,
     },
 };
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 
 use super::{long_compact_format::FormattedLongCompactCurrency, CurrencyCode};
 
@@ -30,7 +27,7 @@ define_preferences!(
     [Copy]
     LongCompactCurrencyFormatterPreferences,
     {
-        numbering_system: NumberingSystem
+        numbering_system: super::super::preferences::NumberingSystem
     }
 );
 
@@ -51,10 +48,10 @@ prefs_convert!(
 ///   2. Locale-sensitive grouping separator positions.
 pub struct LongCompactCurrencyFormatter {
     /// Extended data for the currency formatter.
-    extended: DataPayload<CurrencyExtendedDataV1Marker>,
+    extended: DataPayload<CurrencyExtendedDataV1>,
 
     /// Formatting patterns for each currency plural category.
-    patterns: DataPayload<CurrencyPatternsDataV1Marker>,
+    patterns: DataPayload<CurrencyPatternsDataV1>,
 
     /// A [`CompactDecimalFormatter`] to format the currency value in compact form.
     compact_decimal_formatter: CompactDecimalFormatter,
@@ -64,15 +61,14 @@ pub struct LongCompactCurrencyFormatter {
 }
 
 impl LongCompactCurrencyFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (
             prefs: LongCompactCurrencyFormatterPreferences,
             currency_code: &CurrencyCode
         ) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
@@ -100,9 +96,7 @@ impl LongCompactCurrencyFormatter {
                     .with_debug_context("failed to get data marker attribute from a `CurrencyCode`")
             })?;
 
-        let locale = &DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(
-            prefs.locale_prefs,
-        );
+        let locale = &CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 
         let extended = crate::provider::Baked
             .load(DataRequest {
@@ -126,7 +120,7 @@ impl LongCompactCurrencyFormatter {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: LongCompactCurrencyFormatterPreferences,
@@ -134,17 +128,14 @@ impl LongCompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<
-                crate::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker,
-            > + DataProvider<
-                crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker,
-            > + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>
-            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>,
+            + DataProvider<crate::dimension::provider::extended_currency::CurrencyExtendedDataV1>
+            + DataProvider<crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::CardinalV1>
+            + DataProvider<crate::compactdecimal::provider::LongCompactDecimalFormatDataV1>,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<CurrencyPatternsDataV1Marker>(prefs.locale_prefs);
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {

@@ -165,7 +165,7 @@ pub struct NonExceptionData {
 
 impl CaseMapData {
     #[inline]
-    pub(crate) fn case_type(&self) -> Option<CaseType> {
+    pub(crate) fn case_type(self) -> Option<CaseType> {
         match self.kind {
             CaseMapDataKind::Exception(case_type, ..) => case_type,
             CaseMapDataKind::Delta(_, case_type, _) => Some(case_type),
@@ -174,7 +174,7 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn is_upper_or_title(&self) -> bool {
+    pub(crate) fn is_upper_or_title(self) -> bool {
         match self.case_type() {
             None | Some(CaseType::Lower) => false,
             Some(CaseType::Upper) | Some(CaseType::Title) => true,
@@ -182,7 +182,7 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn is_relevant_to(&self, kind: MappingKind) -> bool {
+    pub(crate) fn is_relevant_to(self, kind: MappingKind) -> bool {
         match kind {
             MappingKind::Lower | MappingKind::Fold => self.is_upper_or_title(),
             MappingKind::Upper | MappingKind::Title => self.case_type() == Some(CaseType::Lower),
@@ -190,12 +190,12 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn is_ignorable(&self) -> bool {
+    pub(crate) fn is_ignorable(self) -> bool {
         self.ignoreable
     }
 
     #[inline]
-    pub(crate) fn has_exception(&self) -> bool {
+    pub(crate) fn has_exception(self) -> bool {
         matches!(self.kind, CaseMapDataKind::Exception(..))
     }
 
@@ -203,7 +203,7 @@ impl CaseMapData {
     // only in the non-exception case
     // This is not currently exposed.
     #[inline]
-    pub(crate) fn is_sensitive(&self) -> bool {
+    pub(crate) fn is_sensitive(self) -> bool {
         match self.kind {
             CaseMapDataKind::Exception(..) => false,
             CaseMapDataKind::Delta(ned, ..) => ned.sensitive,
@@ -212,7 +212,7 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn dot_type(&self) -> DotType {
+    pub(crate) fn dot_type(self) -> DotType {
         match self.kind {
             CaseMapDataKind::Exception(..) => DotType::NoDot,
             CaseMapDataKind::Delta(ned, ..) => ned.dot_type,
@@ -225,7 +225,7 @@ impl CaseMapData {
     //
     // Returns 0 for uncased types
     #[inline]
-    pub(crate) fn delta(&self) -> i16 {
+    pub(crate) fn delta(self) -> i16 {
         debug_assert!(!self.has_exception());
         match self.kind {
             CaseMapDataKind::Exception(..) => 0,
@@ -237,7 +237,7 @@ impl CaseMapData {
     // The index of the exception data for this codepoint in the exception
     // table. This should only be called for codepoints with exception data.
     #[inline]
-    pub(crate) fn exception_index(&self) -> u16 {
+    pub(crate) fn exception_index(self) -> u16 {
         debug_assert!(self.has_exception());
         if let CaseMapDataKind::Exception(_, i) = self.kind {
             i

@@ -2,26 +2,56 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::subtags::{Language, Region, Script, Subtag, Variant, Variants};
+#[cfg(feature = "alloc")]
+use crate::subtags::Variants;
+use crate::subtags::{Language, Region, Script, Subtag, Variant};
+use crate::DataLocale;
 
 /// The structure storing locale subtags used in preferences.
-#[allow(clippy::exhaustive_structs)] // this type is stable
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LocalePreferences {
     /// Preference of Language
-    pub language: Language,
+    pub(crate) language: Language,
     /// Preference of Script
-    pub script: Option<Script>,
+    pub(crate) script: Option<Script>,
     /// Preference of Region
-    pub region: Option<Region>,
+    pub(crate) region: Option<Region>,
     /// Preference of Variant
-    pub variant: Option<Variant>,
+    pub(crate) variant: Option<Variant>,
     /// Preference of Regional Subdivision
-    pub subdivision: Option<Subtag>,
+    pub(crate) subdivision: Option<Subtag>,
     /// Preference of Unicode Extension Region
-    pub ue_region: Option<Region>,
+    pub(crate) ue_region: Option<Region>,
 }
 
+impl LocalePreferences {
+    fn to_data_locale_maybe_region_priority(self, region_priority: bool) -> DataLocale {
+        DataLocale {
+            language: self.language,
+            script: self.script,
+            region: match (self.region, self.ue_region) {
+                (Some(_), Some(r)) if region_priority => Some(r),
+                (r, _) => r,
+            },
+            variant: self.variant,
+            subdivision: self.subdivision,
+        }
+    }
+
+    /// Convert to a DataLocale, with region-based fallback priority
+    ///
+    /// Most users should use `icu_provider::marker::make_locale()` instead.
+    pub fn to_data_locale_region_priority(self) -> DataLocale {
+        self.to_data_locale_maybe_region_priority(true)
+    }
+
+    /// Convert to a DataLocale, with language-based fallback priority
+    ///
+    /// Most users should use `icu_provider::marker::make_locale()` instead.
+    pub fn to_data_locale_language_priority(self) -> DataLocale {
+        self.to_data_locale_maybe_region_priority(false)
+    }
+}
 impl Default for LocalePreferences {
     fn default() -> Self {
         Self::default()
@@ -69,6 +99,7 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl From<LocalePreferences> for crate::Locale {
     fn from(prefs: LocalePreferences) -> Self {
         Self {
@@ -113,6 +144,11 @@ impl LocalePreferences {
             subdivision: None,
             ue_region: None,
         }
+    }
+
+    /// Preference of Language
+    pub const fn language(&self) -> Language {
+        self.language
     }
 
     /// Extends the preferences with the values from another set of preferences.

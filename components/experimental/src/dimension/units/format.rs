@@ -4,9 +4,9 @@
 
 //! Experimental.
 
-use crate::dimension::provider::units::UnitsDisplayNameV1;
+use crate::dimension::provider::units::UnitsDisplayName;
 use fixed_decimal::SignedFixedDecimal;
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::{impl_display_with_writeable, Writeable};
 
@@ -14,22 +14,22 @@ pub struct FormattedUnit<'l> {
     pub(crate) value: &'l SignedFixedDecimal,
     // TODO: review using options and essentials.
     // pub(crate) _options: &'l UnitsFormatterOptions,
-    // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
-    pub(crate) display_name: &'l UnitsDisplayNameV1<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    // pub(crate) essential: &'l UnitsEssentials<'l>,
+    pub(crate) display_name: &'l UnitsDisplayName<'l>,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }
 
 impl Writeable for FormattedUnit<'_> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
-        W: core::fmt::Write + ?Sized,
+        W: writeable::PartsWrite + ?Sized,
     {
         self.display_name
             .patterns
             .get(self.value.into(), self.plural_rules)
-            .interpolate((self.fixed_decimal_formatter.format(self.value),))
-            .write_to(sink)
+            .interpolate((self.decimal_formatter.format(self.value),))
+            .write_to_parts(sink)
     }
 }
 

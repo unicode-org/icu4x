@@ -1,2 +1,2 @@
 import { AnyCalendarKind } from "icu4x"
-export function bcp47(self: AnyCalendarKind);
+export function bcp47(anyCalendarKind: AnyCalendarKind);

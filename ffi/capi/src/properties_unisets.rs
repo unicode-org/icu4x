@@ -7,10 +7,11 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_properties::props::BasicEmoji;
 
-    use crate::errors::ffi::DataError;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -41,14 +42,27 @@ pub mod ffi {
             self.0.as_borrowed().contains32(cp)
         }
 
+        /// Create a map for the `Basic_Emoji` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "basic")]
-        pub fn load_basic(provider: &DataProvider) -> Result<Box<EmojiSetData>, DataError> {
-            Ok(Box::new(EmojiSetData(call_constructor_unstable!(
-                icu_properties::EmojiSetData::new::<BasicEmoji> [r => Ok(r.static_to_owned())],
-                icu_properties::EmojiSetData::try_new_unstable::<BasicEmoji>,
-                provider,
-            )?)))
+        #[diplomat::attr(auto, named_constructor = "basic")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_basic() -> Box<EmojiSetData> {
+            Box::new(EmojiSetData(
+                icu_properties::EmojiSetData::new::<BasicEmoji>().static_to_owned(),
+            ))
+        }
+        /// Create a map for the `Basic_Emoji` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "basic_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_basic_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<EmojiSetData>, DataError> {
+            Ok(Box::new(EmojiSetData(
+                icu_properties::EmojiSetData::try_new_unstable::<BasicEmoji>(
+                    &provider.get_unstable()?,
+                )?,
+            )))
         }
     }
 }

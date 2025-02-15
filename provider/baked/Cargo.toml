@@ -42,4 +42,6 @@ export = [
     "dep:proc-macro2",
     "icu_provider/export",
     "zerotrie/databake",
+    "alloc",
 ]
+alloc = ["icu_provider/alloc"]

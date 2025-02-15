@@ -24,22 +24,30 @@ final class SentenceSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
 
-  /// Construct an [`SentenceSegmenter`].
+  /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+  factory SentenceSegmenter() {
+    final result = _icu4x_SentenceSegmenter_create_mv1();
+    return SentenceSegmenter._fromFfi(result, []);
+  }
+
+  /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
   ///
   /// Throws [DataError] on failure.
-  static SentenceSegmenter create(DataProvider provider) {
-    final result = _icu4x_SentenceSegmenter_create_mv1(provider._ffi);
+  factory SentenceSegmenter.withContentLocale(Locale locale) {
+    final result = _icu4x_SentenceSegmenter_create_with_content_locale_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
     return SentenceSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`SentenceSegmenter`].
+  /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
   ///
   /// Throws [DataError] on failure.
-  factory SentenceSegmenter(DataProvider provider, Locale locale) {
-    final result = _icu4x_SentenceSegmenter_create_with_content_locale_mv1(provider._ffi, locale._ffi);
+  factory SentenceSegmenter.withContentLocaleAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -67,14 +75,19 @@ final class SentenceSegmenter implements ffi.Finalizable {
 external void _icu4x_SentenceSegmenter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_SentenceSegmenter_create_mv1();
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_with_content_locale_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_SentenceSegmenter_segment_utf16_mv1')

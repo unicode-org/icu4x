@@ -28,7 +28,7 @@ members = [
     "components/plurals",
     "components/properties",
     "components/segmenter",
-    "components/timezone",
+    "components/time",
 
     # FFI
     "ffi/capi",
@@ -59,7 +59,7 @@ members = [
     "provider/data/plurals",
     "provider/data/properties",
     "provider/data/segmenter",
-    "provider/data/timezone",
+    "provider/data/time",
 
     # Utils
     "utils/bies",
@@ -95,6 +95,7 @@ members = [
     "tools/make/diplomat-gen",
     "tools/make/download-repo-sources",
     "tools/md-tests",
+    "tools/noalloctest",
 ]
 # Note: Workspaces in subdirectories, such as tutorials/crates, are
 # implicitly excluded from the main workspace.
@@ -107,7 +108,7 @@ exclude = [
 
 [workspace.package]
 version = "2.0.0-beta1"
-rust-version = "1.71.1"
+rust-version = "1.81"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -150,7 +151,7 @@ icu_normalizer = { version = "~2.0.0-beta1", path = "components/normalizer", def
 icu_plurals = { version = "~2.0.0-beta1", path = "components/plurals", default-features = false }
 icu_properties = { version = "~2.0.0-beta1", path = "components/properties", default-features = false }
 icu_segmenter = { version = "~2.0.0-beta1", path = "components/segmenter", default-features = false }
-icu_timezone = { version = "~2.0.0-beta1", path = "components/timezone", default-features = false }
+icu_time = { version = "~2.0.0-beta1", path = "components/time", default-features = false }
 
 # FFI
 icu_capi = { version = "~2.0.0-beta1", path = "ffi/capi", default-features = false }
@@ -180,7 +181,7 @@ icu_normalizer_data = { version = "~2.0.0-beta1", path = "provider/data/normaliz
 icu_plurals_data = { version = "~2.0.0-beta1", path = "provider/data/plurals", default-features = false }
 icu_properties_data = { version = "~2.0.0-beta1", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.0.0-beta1", path = "provider/data/segmenter", default-features = false }
-icu_timezone_data = { version = "~2.0.0-beta1", path = "provider/data/timezone", default-features = false }
+icu_time_data = { version = "~2.0.0-beta1", path = "provider/data/time", default-features = false }
 icu_experimental_data = { version = "~0.2.0-dev", path = "provider/data/experimental", default-features = false }
 
 # Utils
@@ -195,14 +196,15 @@ ixdtf = { version = "0.3.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.7.3", path = "utils/litemap", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 tzif = { version = "0.3.0", path = "utils/tzif", default-features = false }
-potential_utf = { version = "0.1.0", path = "utils/potential_utf", default-features = false }
+# potential-utf can stay on 0.1.0 during release.
+potential_utf = { version = "0.1.1-dev", path = "utils/potential_utf", default-features = false }
 writeable = { version = "0.6.0", path = "utils/writeable", default-features = false }
 yoke = { version = "0.7.5", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.7.5", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.3", path = "utils/zerofrom", default-features = false }
 zerofrom-derive = { version = "0.1.3", path = "utils/zerofrom/derive", default-features = false }
 zerotrie = { version = "0.2.0", path = "utils/zerotrie", default-features = false }
-zerovec = { version = "0.11.0", path = "utils/zerovec", default-features = false }
+zerovec = { version = "0.11.1-dev", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.0", path = "utils/zerovec/derive", default-features = false }
 
 # Tools
@@ -213,10 +215,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { version = "0.9.0", default-features = false }
-diplomat-runtime = { version = "0.9.0", default-features = false }
-diplomat_core = { version = "0.9.0", default-features = false }
-diplomat-tool = { version = "0.9.0", default-features = false }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc", default-features = false }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc", default-features = false }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc", default-features = false }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -264,6 +266,8 @@ write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
 zip = { version = "0.6.0", default-features = false }
+tar = { version = "0.4.43", default-features = false }
+flate2 = { version = "1.0.35", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.

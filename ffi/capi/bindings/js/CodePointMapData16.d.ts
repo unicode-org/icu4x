@@ -16,9 +16,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
 */
+
+
 export class CodePointMapData16 {
     
-
     get ffiValue(): pointer;
 
     get(cp: codepoint): number;
@@ -29,5 +30,7 @@ export class CodePointMapData16 {
 
     getSetForValue(value: number): CodePointSetData;
 
-    static loadScript(provider: DataProvider): CodePointMapData16;
+    static createScript(): CodePointMapData16;
+
+    static createScriptWithProvider(provider: DataProvider): CodePointMapData16;
 }

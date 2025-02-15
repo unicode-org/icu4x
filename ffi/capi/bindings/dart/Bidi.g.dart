@@ -26,13 +26,21 @@ final class Bidi implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Bidi_destroy_mv1));
 
-  /// Creates a new [`Bidi`] from locale data.
+  /// Creates a new [`Bidi`] from locale data using compiled data.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
+  factory Bidi() {
+    final result = _icu4x_Bidi_create_mv1();
+    return Bidi._fromFfi(result, []);
+  }
+
+  /// Creates a new [`Bidi`] from locale data, and a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Bidi(DataProvider provider) {
-    final result = _icu4x_Bidi_create_mv1(provider._ffi);
+  factory Bidi.withProvider(DataProvider provider) {
+    final result = _icu4x_Bidi_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -44,7 +52,7 @@ final class Bidi implements ffi.Finalizable {
   /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
-  BidiInfo forText(String text, int? defaultLevel) {
+  BidiInfo forText(String text, [int? defaultLevel]) {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [textArena];
@@ -111,9 +119,14 @@ final class Bidi implements ffi.Finalizable {
 external void _icu4x_Bidi_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Bidi_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_Bidi_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Bidi_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_Bidi_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Bidi_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_Bidi_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, _ResultUint8Void)>(isLeaf: true, symbol: 'icu4x_Bidi_for_text_valid_utf8_mv1')

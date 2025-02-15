@@ -20,8 +20,10 @@
 
 
 
-typedef struct icu4x_CaseMapper_create_mv1_result {union {CaseMapper* ok; DataError err;}; bool is_ok;} icu4x_CaseMapper_create_mv1_result;
-icu4x_CaseMapper_create_mv1_result icu4x_CaseMapper_create_mv1(const DataProvider* provider);
+CaseMapper* icu4x_CaseMapper_create_mv1(void);
+
+typedef struct icu4x_CaseMapper_create_with_provider_mv1_result {union {CaseMapper* ok; DataError err;}; bool is_ok;} icu4x_CaseMapper_create_with_provider_mv1_result;
+icu4x_CaseMapper_create_with_provider_mv1_result icu4x_CaseMapper_create_with_provider_mv1(const DataProvider* provider);
 
 void icu4x_CaseMapper_lowercase_mv1(const CaseMapper* self, DiplomatStringView s, const Locale* locale, DiplomatWrite* write);
 

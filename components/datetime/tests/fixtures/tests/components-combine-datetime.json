@@ -14,9 +14,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "medium",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h12"
             }
@@ -45,9 +45,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h12"
             }

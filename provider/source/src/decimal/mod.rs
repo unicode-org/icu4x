@@ -83,15 +83,14 @@ impl SourceDataProvider {
             .numbers()
             .list_locales()?
             .flat_map(|locale| {
-                let data_locale = locale.clone();
-                let last = data_locale.clone();
+                let last = locale;
                 self.get_supported_numsys_for_langid(&locale, true)
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             DataMarkerAttributes::try_from_str(&nsname).unwrap(),
-                            &data_locale,
+                            &locale,
                         )
                         .into_owned()
                     })

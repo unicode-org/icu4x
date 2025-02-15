@@ -8,7 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
     use diplomat_runtime::DiplomatOption;
 
     #[diplomat::opaque]
@@ -22,10 +25,8 @@ pub mod ffi {
     pub struct CollatorOptionsV1 {
         pub strength: DiplomatOption<CollatorStrength>,
         pub alternate_handling: DiplomatOption<CollatorAlternateHandling>,
-        pub case_first: DiplomatOption<CollatorCaseFirst>,
         pub max_variable: DiplomatOption<CollatorMaxVariable>,
         pub case_level: DiplomatOption<CollatorCaseLevel>,
-        pub numeric: DiplomatOption<CollatorNumeric>,
         pub backward_second_level: DiplomatOption<CollatorBackwardSecondLevel>,
     }
 
@@ -41,7 +42,7 @@ pub mod ffi {
         pub case_first: CollatorCaseFirst,
         pub max_variable: CollatorMaxVariable,
         pub case_level: CollatorCaseLevel,
-        pub numeric: CollatorNumeric,
+        pub numeric: CollatorNumericOrdering,
         pub backward_second_level: CollatorBackwardSecondLevel,
     }
 
@@ -66,11 +67,10 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    #[diplomat::enum_convert(icu_collator::CaseFirst, needs_wildcard)]
     pub enum CollatorCaseFirst {
         Off = 0,
-        LowerFirst = 1,
-        UpperFirst = 2,
+        Lower = 1,
+        Upper = 2,
     }
 
     #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
@@ -91,10 +91,9 @@ pub mod ffi {
         On = 1,
     }
 
-    #[diplomat::rust_link(icu::collator::Numeric, Enum)]
+    #[diplomat::rust_link(icu::collator::NumericOrdering, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    #[diplomat::enum_convert(icu_collator::Numeric, needs_wildcard)]
-    pub enum CollatorNumeric {
+    pub enum CollatorNumericOrdering {
         Off = 0,
         On = 1,
     }
@@ -108,27 +107,44 @@ pub mod ffi {
     }
 
     impl Collator {
-        /// Construct a new Collator instance.
+        /// Construct a new Collator instance using compiled data.
+        #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_v1(
+            locale: &Locale,
+            options: CollatorOptionsV1,
+        ) -> Result<Box<Collator>, DataError> {
+            Ok(Box::new(Collator(
+                icu_collator::Collator::try_new((&locale.0).into(), options.into())?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Construct a new Collator instance using a particular data source.
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
-        pub fn create_v1(
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             options: CollatorOptionsV1,
         ) -> Result<Box<Collator>, DataError> {
-            Ok(Box::new(Collator(call_constructor!(
-                icu_collator::Collator::try_new [r => Ok(r?.static_to_owned())],
-                icu_collator::Collator::try_new_with_any_provider,
-                icu_collator::Collator::try_new_with_buffer_provider,
-                provider,
-                icu_collator::CollatorPreferences::from(&locale.0),
-                icu_collator::CollatorOptions::from(options),
-            )?)))
+            let options = options.into();
+            Ok(Box::new(Collator(
+                icu_collator::Collator::try_new_with_buffer_provider(
+                    provider.get()?,
+                    (&locale.0).into(),
+                    options,
+                )?,
+            )))
         }
-
         /// Compare two strings.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -173,10 +189,8 @@ impl From<ffi::CollatorOptionsV1> for icu_collator::CollatorOptions {
         let mut result = icu_collator::CollatorOptions::default();
         result.strength = options.strength.into_converted_option();
         result.alternate_handling = options.alternate_handling.into_converted_option();
-        result.case_first = options.case_first.into_converted_option();
         result.max_variable = options.max_variable.into_converted_option();
         result.case_level = options.case_level.into_converted_option();
-        result.numeric = options.numeric.into_converted_option();
         result.backward_second_level = options.backward_second_level.into_converted_option();
 
         result
@@ -193,6 +207,64 @@ impl From<icu_collator::ResolvedCollatorOptions> for ffi::CollatorResolvedOption
             case_level: options.case_level.into(),
             numeric: options.numeric.into(),
             backward_second_level: options.backward_second_level.into(),
+        }
+    }
+}
+
+impl From<icu_collator::preferences::CollationCaseFirst> for ffi::CollatorCaseFirst {
+    fn from(other: icu_collator::preferences::CollationCaseFirst) -> Self {
+        match other {
+            icu_collator::preferences::CollationCaseFirst::Upper => ffi::CollatorCaseFirst::Upper,
+            icu_collator::preferences::CollationCaseFirst::Lower => ffi::CollatorCaseFirst::Lower,
+            icu_collator::preferences::CollationCaseFirst::False => ffi::CollatorCaseFirst::Off,
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown variant for icu_collator::preferences::CollationCaseFirst"
+                );
+                ffi::CollatorCaseFirst::Off
+            }
+        }
+    }
+}
+impl From<ffi::CollatorCaseFirst> for icu_collator::preferences::CollationCaseFirst {
+    fn from(this: ffi::CollatorCaseFirst) -> Self {
+        match this {
+            ffi::CollatorCaseFirst::Off => icu_collator::preferences::CollationCaseFirst::False,
+            ffi::CollatorCaseFirst::Lower => icu_collator::preferences::CollationCaseFirst::Lower,
+            ffi::CollatorCaseFirst::Upper => icu_collator::preferences::CollationCaseFirst::Upper,
+        }
+    }
+}
+
+impl From<icu_collator::preferences::CollationNumericOrdering> for ffi::CollatorNumericOrdering {
+    fn from(other: icu_collator::preferences::CollationNumericOrdering) -> Self {
+        match other {
+            icu_collator::preferences::CollationNumericOrdering::True => {
+                ffi::CollatorNumericOrdering::On
+            }
+            icu_collator::preferences::CollationNumericOrdering::False => {
+                ffi::CollatorNumericOrdering::Off
+            }
+            _ => {
+                debug_assert!(
+                    false,
+                    "unknown variant for icu_collator::preferences::CollationNumericOrdering"
+                );
+                ffi::CollatorNumericOrdering::Off
+            }
+        }
+    }
+}
+impl From<ffi::CollatorNumericOrdering> for icu_collator::preferences::CollationNumericOrdering {
+    fn from(this: ffi::CollatorNumericOrdering) -> Self {
+        match this {
+            ffi::CollatorNumericOrdering::Off => {
+                icu_collator::preferences::CollationNumericOrdering::False
+            }
+            ffi::CollatorNumericOrdering::On => {
+                icu_collator::preferences::CollationNumericOrdering::True
+            }
         }
     }
 }

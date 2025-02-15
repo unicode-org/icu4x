@@ -3,30 +3,43 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::store::*;
-use alloc::borrow::Borrow;
+#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
+use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::{Index, IndexMut, Range};
 
-/// A simple "flat" map based on a sorted vector
-///
-/// See the [module level documentation][super] for why one should use this.
-///
-/// The API is roughly similar to that of [`std::collections::BTreeMap`].
-#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-#[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
-pub struct LiteMap<K: ?Sized, V: ?Sized, S = alloc::vec::Vec<(K, V)>> {
-    pub(crate) values: S,
-    pub(crate) _key_type: PhantomData<K>,
-    pub(crate) _value_type: PhantomData<V>,
-}
+macro_rules! litemap_impl(
+    ($cfg:meta, $store:ident $(=$defaultty:ty)?) => {
+        /// A simple "flat" map based on a sorted vector
+        ///
+        /// See the [module level documentation][super] for why one should use this.
+        ///
+        /// The API is roughly similar to that of [`std::collections::BTreeMap`].
+        #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+        #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
+        #[cfg($cfg)]
+        pub struct LiteMap<K: ?Sized, V: ?Sized, $store $(= $defaultty)?> {
+            pub(crate) values: $store,
+            pub(crate) _key_type: PhantomData<K>,
+            pub(crate) _value_type: PhantomData<V>,
+        }
+    };
 
+);
+// You can't `cfg()` a default generic parameter, and we don't want to write this type twice
+// and keep them in sync so we use a small macro
+litemap_impl!(feature = "alloc", S = alloc::vec::Vec<(K, V)>);
+litemap_impl!(not(feature = "alloc"), S);
+
+#[cfg(feature = "alloc")]
 impl<K, V> LiteMap<K, V> {
-    /// Construct a new [`LiteMap`] backed by Vec
+    /// Construct a new [`LiteMap`] backed by Vec    
     pub const fn new_vec() -> Self {
         Self {
             values: alloc::vec::Vec::new(),
@@ -49,6 +62,7 @@ impl<K, V, S> LiteMap<K, V, S> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
     /// Convert a [`LiteMap`] into a sorted `Vec<(K, V)>`.
     #[inline]
@@ -144,6 +158,7 @@ where
     ///
     /// assert_eq!(boxed_map.get("one"), Some(&Box::from("uno")));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn to_boxed_keys_values<KB: ?Sized, VB: ?Sized, SB>(&self) -> LiteMap<Box<KB>, Box<VB>, SB>
     where
         SB: StoreMut<Box<KB>, Box<VB>>,
@@ -182,6 +197,7 @@ where
     ///
     /// assert_eq!(boxed_map.get("one"), Some(&11));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn to_boxed_keys<KB: ?Sized, SB>(&self) -> LiteMap<Box<KB>, V, SB>
     where
         V: Clone,
@@ -219,6 +235,7 @@ where
     ///
     /// assert_eq!(boxed_map.get(&11), Some(&Box::from("uno")));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn to_boxed_values<VB: ?Sized, SB>(&self) -> LiteMap<K, Box<VB>, SB>
     where
         K: Clone,
@@ -878,12 +895,24 @@ where
     }
 
     /// Produce an ordered iterator over keys
+    #[deprecated = "use keys() instead"]
     pub fn iter_keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
         self.values.lm_iter().map(|val| val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
+    #[deprecated = "use values() instead"]
     pub fn iter_values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
+        self.values.lm_iter().map(|val| val.1)
+    }
+
+    /// Produce an ordered iterator over keys
+    pub fn keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
+        self.values.lm_iter().map(|val| val.0)
+    }
+
+    /// Produce an iterator over values, ordered by their keys
+    pub fn values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
         self.values.lm_iter().map(|val| val.1)
     }
 }
@@ -907,6 +936,30 @@ where
 
     fn into_iter(self) -> Self::IntoIter {
         self.values.lm_into_iter()
+    }
+}
+
+impl<'a, K, V, S> IntoIterator for &'a LiteMap<K, V, S>
+where
+    S: StoreIterable<'a, K, V>,
+{
+    type Item = (&'a K, &'a V);
+    type IntoIter = S::KeyValueIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.lm_iter()
+    }
+}
+
+impl<'a, K, V, S> IntoIterator for &'a mut LiteMap<K, V, S>
+where
+    S: StoreIterableMut<'a, K, V>,
+{
+    type Item = (&'a K, &'a mut V);
+    type IntoIter = S::KeyValueIterMut;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.lm_iter_mut()
     }
 }
 

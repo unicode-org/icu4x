@@ -5,7 +5,7 @@
 #[cfg(feature = "datagen")]
 use super::runtime;
 use super::{reference, PatternItem};
-use crate::fields;
+use crate::provider::fields;
 #[cfg(feature = "datagen")]
 use crate::provider::{self, skeleton};
 #[cfg(feature = "datagen")]
@@ -60,8 +60,8 @@ impl CoarseHourCycle {
     #[cfg(feature = "datagen")]
     pub fn apply_on_pattern<'data>(
         &self,
-        date_time: &provider::calendar::patterns::GenericLengthPatternsV1<'data>,
-        skeletons: &provider::calendar::DateSkeletonPatternsV1<'data>,
+        date_time: &provider::calendar::patterns::GenericLengthPatterns<'data>,
+        skeletons: &provider::calendar::DateSkeletonPatterns<'data>,
         pattern_str: &str,
         mut pattern: reference::Pattern,
     ) -> Option<reference::Pattern> {

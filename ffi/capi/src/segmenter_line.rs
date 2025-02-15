@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::locale_core::ffi::Locale;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
     use diplomat_runtime::DiplomatOption;
 
     #[diplomat::opaque]
@@ -65,114 +66,158 @@ pub mod ffi {
     pub struct LineBreakIteratorLatin1<'a>(icu_segmenter::LineBreakIteratorLatin1<'a, 'a>);
 
     impl LineSegmenter {
-        /// Construct a [`LineSegmenter`] with default options. It automatically loads the best
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto")]
-        pub fn create_auto(provider: &DataProvider) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_auto [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_auto_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider,
-                provider
-            )?)))
+        #[diplomat::attr(auto, named_constructor = "auto")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_auto() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_auto(
+                Default::default(),
+            )))
         }
 
-        /// Construct a [`LineSegmenter`] with default options and LSTM payload data for
-        /// Burmese, Khmer, Lao, and Thai.
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
+        /// Burmese, Khmer, Lao, and Thai, using compiled data.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm")]
-        pub fn create_lstm(provider: &DataProvider) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_lstm [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_lstm_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider,
-                provider,
-            )?)))
+        #[diplomat::attr(auto, named_constructor = "lstm")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_lstm() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_lstm(
+                Default::default(),
+            )))
         }
 
-        /// Construct a [`LineSegmenter`] with default options and dictionary payload data for
-        /// Burmese, Khmer, Lao, and Thai..
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
+        /// Burmese, Khmer, Lao, and Thai, using compiled data
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary")]
-        pub fn create_dictionary(provider: &DataProvider) -> Result<Box<LineSegmenter>, DataError> {
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_dictionary [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider,
-                provider,
-            )?)))
+        #[diplomat::attr(auto, named_constructor = "dictionary")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_dictionary() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_dictionary(
+                Default::default(),
+            )))
         }
 
-        /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
+        /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "auto_with_options")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_options_v2")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "auto_with_options")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "auto_with_options_v2")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_options_v2(
+            content_locale: Option<&Locale>,
+            options: LineBreakOptionsV2,
+        ) -> Box<LineSegmenter> {
+            let mut options: icu_segmenter::LineBreakOptions = options.into();
+            options.content_locale = content_locale.map(|c| &c.0.id);
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_auto(
+                options,
+            )))
+        }
+        /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
+        /// available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "auto_with_options_and_provider")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_and_provider")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_options_v2_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_auto_with_options_v2_and_provider(
             provider: &DataProvider,
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_auto_with_options [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_auto_with_options_with_buffer_provider,
-                provider,
-                options,
-            )?)))
+            Ok(Box::new(LineSegmenter(
+                icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider(
+                    provider.get()?,
+                    options,
+                )?,
+            )))
         }
-
         /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
-        /// Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm_with_options, FnInStruct)]
+        /// Burmese, Khmer, Lao, and Thai, using compiled data.
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "lstm_with_options")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_options_v2")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "lstm_with_options")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "lstm_with_options_v2")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_lstm_with_options_v2(
+            content_locale: Option<&Locale>,
+            options: LineBreakOptionsV2,
+        ) -> Box<LineSegmenter> {
+            let mut options: icu_segmenter::LineBreakOptions = options.into();
+            options.content_locale = content_locale.map(|c| &c.0.id);
+
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_lstm(
+                options,
+            )))
+        }
+        /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+        /// Burmese, Khmer, Lao, and Thai, using a particular data source.
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "lstm_with_options_and_provider")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_and_provider")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_options_v2_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_lstm_with_options_v2_and_provider(
             provider: &DataProvider,
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_lstm_with_options [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_lstm_with_options_with_buffer_provider,
-                provider,
-                options,
-            )?)))
+            Ok(Box::new(LineSegmenter(
+                icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider(
+                    provider.get()?,
+                    options,
+                )?,
+            )))
         }
-
         /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
-        /// Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(
-            icu::segmenter::LineSegmenter::new_dictionary_with_options,
-            FnInStruct
-        )]
+        /// Burmese, Khmer, Lao, and Thai, using compiled data.
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "dictionary_with_options")]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_options_v2")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "dictionary_with_options")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "dictionary_with_options_v2")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_dictionary_with_options_v2(
+            content_locale: Option<&Locale>,
+            options: LineBreakOptionsV2,
+        ) -> Box<LineSegmenter> {
+            let mut options: icu_segmenter::LineBreakOptions = options.into();
+            options.content_locale = content_locale.map(|c| &c.0.id);
+
+            Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_dictionary(
+                options,
+            )))
+        }
+        /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+        /// Burmese, Khmer, Lao, and Thai, using a particular data source.
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "dictionary_with_options_and_provider")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_and_provider")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_options_v2_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_dictionary_with_options_v2_and_provider(
             provider: &DataProvider,
-            content_locale: &Locale,
+            content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: icu_segmenter::LineBreakOptions = options.into();
-            options.content_locale = Some(&content_locale.0.id);
+            options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(LineSegmenter(call_constructor!(
-                icu_segmenter::LineSegmenter::new_dictionary_with_options [r => Ok(r)],
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_any_provider,
-                icu_segmenter::LineSegmenter::try_new_dictionary_with_options_with_buffer_provider,
-                provider,
-                options,
-            )?)))
+            Ok(Box::new(LineSegmenter(
+                icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider(
+                    provider.get()?,
+                    options,
+                )?,
+            )))
         }
-
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -265,14 +310,8 @@ pub mod ffi {
 impl From<ffi::LineBreakOptionsV2> for icu_segmenter::LineBreakOptions<'_> {
     fn from(other: ffi::LineBreakOptionsV2) -> Self {
         let mut options = icu_segmenter::LineBreakOptions::default();
-        options.strictness = other
-            .strictness
-            .into_converted_option()
-            .unwrap_or(options.strictness);
-        options.word_option = other
-            .word_option
-            .into_converted_option()
-            .unwrap_or(options.word_option);
+        options.strictness = other.strictness.into_converted_option();
+        options.word_option = other.word_option.into_converted_option();
         options
     }
 }

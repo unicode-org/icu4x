@@ -37,7 +37,7 @@ part 'CollatorBackwardSecondLevel.g.dart';
 part 'CollatorCaseFirst.g.dart';
 part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';
-part 'CollatorNumeric.g.dart';
+part 'CollatorNumericOrdering.g.dart';
 part 'CollatorOptions.g.dart';
 part 'CollatorResolvedOptions.g.dart';
 part 'CollatorStrength.g.dart';
@@ -47,10 +47,15 @@ part 'DataProvider.g.dart';
 part 'Date.g.dart';
 part 'DateFormatter.g.dart';
 part 'DateTime.g.dart';
+part 'DateTimeAlignment.g.dart';
 part 'DateTimeFormatError.g.dart';
 part 'DateTimeFormatter.g.dart';
+part 'DateTimeFormatterGregorian.g.dart';
 part 'DateTimeFormatterLoadError.g.dart';
 part 'DateTimeLength.g.dart';
+part 'DateTimeMismatchedCalendarError.g.dart';
+part 'DecimalFormatter.g.dart';
+part 'DecimalGroupingStrategy.g.dart';
 part 'Decomposed.g.dart';
 part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
@@ -59,8 +64,6 @@ part 'DisplayNamesStyle.g.dart';
 part 'EastAsianWidth.g.dart';
 part 'EmojiSetData.g.dart';
 part 'ExemplarCharacters.g.dart';
-part 'FixedDecimalFormatter.g.dart';
-part 'FixedDecimalGroupingStrategy.g.dart';
 part 'FixedDecimalLimitError.g.dart';
 part 'FixedDecimalParseError.g.dart';
 part 'FixedDecimalRoundingIncrement.g.dart';
@@ -68,16 +71,18 @@ part 'FixedDecimalSign.g.dart';
 part 'FixedDecimalSignDisplay.g.dart';
 part 'FixedDecimalSignedRoundingMode.g.dart';
 part 'GeneralCategory.g.dart';
-part 'GeneralCategoryNameToMaskMapper.g.dart';
+part 'GeneralCategoryGroup.g.dart';
+part 'GeneralCategoryNameToGroupMapper.g.dart';
 part 'GraphemeClusterBreak.g.dart';
 part 'GraphemeClusterBreakIteratorLatin1.g.dart';
 part 'GraphemeClusterBreakIteratorUtf16.g.dart';
 part 'GraphemeClusterBreakIteratorUtf8.g.dart';
 part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
-part 'GregorianDateTimeFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'HangulSyllableType.g.dart';
+part 'IanaParser.g.dart';
+part 'IanaParserExtended.g.dart';
 part 'IndicSyllabicCategory.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
@@ -130,8 +135,7 @@ part 'SentenceSegmenter.g.dart';
 part 'SignedFixedDecimal.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
-part 'TimeZoneIdMapper.g.dart';
-part 'TimeZoneIdMapperWithFastCanonicalization.g.dart';
+part 'TimePrecision.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TitlecaseMapper.g.dart';
@@ -149,7 +153,11 @@ part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
+part 'YearStyle.g.dart';
+part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
+part 'ZonedDateTimeParser.g.dart';
+part 'ZonedIsoDateTime.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.
 /// 
@@ -242,6 +250,34 @@ final class _ResultBoolVoid extends ffi.Struct {
   }
 }
 
+final class _ResultDateTimeFfiInt32Union extends ffi.Union {
+  external _DateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultDateTimeFfiInt32.ok(_DateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
 final class _ResultInt32VoidUnion extends ffi.Union {
   @ffi.Int32()
   external int ok;
@@ -289,6 +325,59 @@ final class _ResultInt8Void extends ffi.Struct {
   }
   factory _ResultInt8Void.err() {
     final struct = ffi.Struct.create<_ResultInt8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultIsoDateTimeFfiInt32Union extends ffi.Union {
+  external _IsoDateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultIsoDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultIsoDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultIsoDateTimeFfiInt32.ok(_IsoDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultIsoDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultIsoDateTimeFfiVoidUnion extends ffi.Union {
+  external _IsoDateTimeFfi ok;
+
+}
+
+final class _ResultIsoDateTimeFfiVoid extends ffi.Struct {
+  external _ResultIsoDateTimeFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultIsoDateTimeFfiVoid.ok(_IsoDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultIsoDateTimeFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiVoid>();
     struct.isOk = false;
     return struct;
   }
@@ -425,6 +514,31 @@ final class _ResultUint8Void extends ffi.Struct {
   }
 }
 
+final class _ResultVoidDateTimeMismatchedCalendarErrorFfiUnion extends ffi.Union {
+
+  external _DateTimeMismatchedCalendarErrorFfi err;
+}
+
+final class _ResultVoidDateTimeMismatchedCalendarErrorFfi extends ffi.Struct {
+  external _ResultVoidDateTimeMismatchedCalendarErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultVoidDateTimeMismatchedCalendarErrorFfi.ok() {
+    final struct = ffi.Struct.create<_ResultVoidDateTimeMismatchedCalendarErrorFfi>();
+    struct.isOk = true;
+    return struct;
+  }
+  factory _ResultVoidDateTimeMismatchedCalendarErrorFfi.err(_DateTimeMismatchedCalendarErrorFfi val) {
+    final struct = ffi.Struct.create<_ResultVoidDateTimeMismatchedCalendarErrorFfi>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
 final class _ResultVoidInt32Union extends ffi.Union {
 
   @ffi.Int32()
@@ -485,6 +599,62 @@ final class _ResultVoidVoid extends ffi.Struct {
   factory _ResultVoidVoid.err() {
     final struct = ffi.Struct.create<_ResultVoidVoid>();
     struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultZonedDateTimeFfiInt32Union extends ffi.Union {
+  external _ZonedDateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultZonedDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultZonedDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultZonedDateTimeFfiInt32.ok(_ZonedDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultZonedDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultZonedDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultZonedDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultZonedIsoDateTimeFfiInt32Union extends ffi.Union {
+  external _ZonedIsoDateTimeFfi ok;
+
+  @ffi.Int32()
+  external int err;
+}
+
+final class _ResultZonedIsoDateTimeFfiInt32 extends ffi.Struct {
+  external _ResultZonedIsoDateTimeFfiInt32Union union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultZonedIsoDateTimeFfiInt32.ok(_ZonedIsoDateTimeFfi val) {
+    final struct = ffi.Struct.create<_ResultZonedIsoDateTimeFfiInt32>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultZonedIsoDateTimeFfiInt32.err(int val) {
+    final struct = ffi.Struct.create<_ResultZonedIsoDateTimeFfiInt32>();
+    struct.isOk = false;
+    struct.union.err = val;
     return struct;
   }
 }

@@ -18,7 +18,7 @@ version.workspace = true
 
 [dependencies]
 icu_locale = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true, features = ["macros", "alloc"] }
 tinystr = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true, features = ["yoke"] }
 
@@ -31,5 +31,4 @@ icu_locale = { path = "../../components/locale" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
-std = []
-export = ["icu_provider/export", "std"]
+export = ["icu_provider/export"]

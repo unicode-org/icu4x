@@ -22,8 +22,8 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
-zerovec = { workspace = true, features = ["yoke"] }
+icu_provider = { workspace = true, features = ["alloc", "macros"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
@@ -43,19 +43,13 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde"]
-datagen = ["std", "serde", "zerovec/databake", "dep:databake"]
+datagen = ["serde", "zerovec/databake", "dep:databake"]
 experimental = []
-bench = ["serde", "datagen"]
 compiled_data = ["dep:icu_plurals_data"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "operands"
@@ -77,7 +71,7 @@ required-features = ["serde"]
 
 [[test]]
 name = "operands"
-required-features = ["serde", "std", "experimental"]
+required-features = ["serde", "experimental"]
 
 [[test]]
 name = "rules"

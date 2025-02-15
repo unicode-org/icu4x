@@ -5,37 +5,22 @@
 //! This module contains types and implementations for the Buddhist calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Buddhist, Date, DateTime};
+//! use icu::calendar::{cal::Buddhist, Date};
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_buddhist = DateTime::new_from_iso(datetime_iso, Buddhist);
-//!
-//! // `Date` checks
 //! assert_eq!(date_buddhist.year().era_year_or_extended(), 2513);
 //! assert_eq!(date_buddhist.month().ordinal, 1);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
-//!
-//! // `DateTime` type
-//! assert_eq!(datetime_buddhist.date.year().era_year_or_extended(), 2513);
-//! assert_eq!(datetime_buddhist.date.month().ordinal, 1);
-//! assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
-//! assert_eq!(datetime_buddhist.time.hour.number(), 13);
-//! assert_eq!(datetime_buddhist.time.minute.number(), 1);
-//! assert_eq!(datetime_buddhist.time.second.number(), 0);
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -50,7 +35,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 /// The months and days are identical to that of the Gregorian calendar, however the years are counted
 /// differently using the Buddhist Era.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
 ///
@@ -179,39 +164,6 @@ impl Date<Buddhist> {
     pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Date<Buddhist>, RangeError> {
         Date::try_new_iso(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
-    }
-}
-
-impl DateTime<Buddhist> {
-    /// Construct a new Buddhist datetime from integers.
-    ///
-    /// Years are specified as BE years.
-    ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_buddhist = DateTime::try_new_buddhist(1970, 1, 2, 13, 1, 0)
-    ///     .expect("Failed to initialize Buddhist DateTime instance.");
-    ///
-    /// assert_eq!(datetime_buddhist.date.year().era_year_or_extended(), 1970);
-    /// assert_eq!(datetime_buddhist.date.month().ordinal, 1);
-    /// assert_eq!(datetime_buddhist.date.day_of_month().0, 2);
-    /// assert_eq!(datetime_buddhist.time.hour.number(), 13);
-    /// assert_eq!(datetime_buddhist.time.minute.number(), 1);
-    /// assert_eq!(datetime_buddhist.time.second.number(), 0);
-    /// ```
-    pub fn try_new_buddhist(
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Buddhist>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_buddhist(year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

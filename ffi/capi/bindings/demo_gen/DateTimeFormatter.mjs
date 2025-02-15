@@ -1,94 +1,40 @@
 import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
-import { DateTime } from "icu4x"
+import { Date } from "icu4x"
 import { DateTimeFormatter } from "icu4x"
-import { IsoDateTime } from "icu4x"
+import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
-export function formatDatetime(name, length, year, month, day, hour, minute, second, nanosecond, name_1) {
-    return (function (...args) { return args[0].formatDatetime(...args.slice(1)) }).apply(
-        null,
-        [
-            DateTimeFormatter.createWithLength.apply(
-                null,
-                [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
-                    Locale.fromString.apply(
-                        null,
-                        [
-                            name
-                        ]
-                    ),
-                    length
-                ]
-            ),
-            DateTime.fromIsoInCalendar.apply(
-                null,
-                [
-                    year,
-                    month,
-                    day,
-                    hour,
-                    minute,
-                    second,
-                    nanosecond,
-                    Calendar.createForLocale.apply(
-                        null,
-                        [
-                            DataProvider.compiled.apply(
-                                null,
-                                [
-                                ]
-                            ),
-                            Locale.fromString.apply(
-                                null,
-                                [
-                                    name_1
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
-    );
+import { Time } from "icu4x"
+export function formatIso(dateTimeFormatterLocaleName, dateTimeFormatterLength, dateTimeFormatterTimePrecision, dateTimeFormatterAlignment, dateTimeFormatterYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond) {
+    
+    let dateTimeFormatterLocale = Locale.fromString(dateTimeFormatterLocaleName);
+    
+    let dateTimeFormatter = DateTimeFormatter.createYmdt(dateTimeFormatterLocale,dateTimeFormatterLength,dateTimeFormatterTimePrecision,dateTimeFormatterAlignment,dateTimeFormatterYearStyle);
+    
+    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    
+    let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
+    
+    let out = dateTimeFormatter.formatIso(date,time);
+    
+
+    return out;
 }
-export function formatIsoDatetime(name, length, year, month, day, hour, minute, second, nanosecond) {
-    return (function (...args) { return args[0].formatIsoDatetime(...args.slice(1)) }).apply(
-        null,
-        [
-            DateTimeFormatter.createWithLength.apply(
-                null,
-                [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    ),
-                    Locale.fromString.apply(
-                        null,
-                        [
-                            name
-                        ]
-                    ),
-                    length
-                ]
-            ),
-            IsoDateTime.create.apply(
-                null,
-                [
-                    year,
-                    month,
-                    day,
-                    hour,
-                    minute,
-                    second,
-                    nanosecond
-                ]
-            )
-        ]
-    );
+export function formatSameCalendar(dateTimeFormatterLocaleName, dateTimeFormatterLength, dateTimeFormatterTimePrecision, dateTimeFormatterAlignment, dateTimeFormatterYearStyle, dateYear, dateMonth, dateDay, dateCalendarLocaleName, timeHour, timeMinute, timeSecond, timeSubsecond) {
+    
+    let dateTimeFormatterLocale = Locale.fromString(dateTimeFormatterLocaleName);
+    
+    let dateTimeFormatter = DateTimeFormatter.createYmdt(dateTimeFormatterLocale,dateTimeFormatterLength,dateTimeFormatterTimePrecision,dateTimeFormatterAlignment,dateTimeFormatterYearStyle);
+    
+    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
+    
+    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    
+    let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
+    
+    let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
+    
+    let out = dateTimeFormatter.formatSameCalendar(date,time);
+    
+
+    return out;
 }

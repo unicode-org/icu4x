@@ -2,11 +2,20 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html)
+/** Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.InvalidOffsetError.html)
 */
-type TimeZoneInvalidOffsetError_Obj = {
+type TimeZoneInvalidOffsetError_obj = {
 };
 
+
+
 export class TimeZoneInvalidOffsetError {
-    constructor(structObj : TimeZoneInvalidOffsetError_Obj);
+    
+    /** Create `TimeZoneInvalidOffsetError` from an object that contains all of `TimeZoneInvalidOffsetError`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj : TimeZoneInvalidOffsetError_obj) : TimeZoneInvalidOffsetError;
+    
+
+    constructor(structObj : TimeZoneInvalidOffsetError_obj);
 }

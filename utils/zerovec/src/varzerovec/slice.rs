@@ -2,12 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::components::VarZeroVecComponents;
+use super::components::{VarZeroSliceIter, VarZeroVecComponents};
 use super::vec::VarZeroVecInner;
 use super::*;
 use crate::ule::*;
-use alloc::boxed::Box;
-use alloc::vec::Vec;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::marker::PhantomData;
@@ -179,7 +177,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     /// assert_eq!(iter_results[2], "baz");
     /// assert_eq!(iter_results[3], "quux");
     /// ```
-    pub fn iter<'b>(&'b self) -> impl Iterator<Item = &'b T> {
+    pub fn iter<'b>(&'b self) -> VarZeroSliceIter<'b, T, F> {
         self.as_components().iter()
     }
 
@@ -231,7 +229,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     }
 
     /// Obtain an owned `Vec<Box<T>>` out of this
-    pub fn to_vec(&self) -> Vec<Box<T>> {
+    #[cfg(feature = "alloc")]
+    pub fn to_vec(&self) -> alloc::vec::Vec<alloc::boxed::Box<T>> {
         self.as_components().to_vec()
     }
 

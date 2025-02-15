@@ -89,7 +89,7 @@ Here is an example of a `provider.rs` boilerplate for a component:
 use std::borrow::Cow;
 
 /// This is a sample data struct.
-#[icu_provider::data_struct(SampleDataStructV1Marker = "foo/example@1")]
+#[icu_provider::data_struct(SampleDataStructV1 = "foo/example@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "datagen", derive(Serialize))]

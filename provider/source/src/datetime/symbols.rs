@@ -9,24 +9,21 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
-pub(crate) fn convert_dates(
-    other: &cldr_serde::ca::Dates,
-    calendar: &str,
-) -> DateSymbolsV1<'static> {
+pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
     let eras = if let Some(ref eras) = other.eras {
         convert_eras(eras, calendar)
     } else {
         Default::default()
     };
-    DateSymbolsV1 {
+    DateSymbols {
         months: other.months.get(&(get_month_code_map(calendar), calendar)),
         weekdays: other.days.get(&()),
         eras,
     }
 }
 
-pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbolsV1<'static> {
-    TimeSymbolsV1 {
+pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbols<'static> {
+    TimeSymbols {
         day_periods: other.day_periods.get(&()),
     }
 }
@@ -147,8 +144,8 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
 macro_rules! symbols_from {
     ([$symbols: path, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
         impl $symbols {
-            fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
-                $name2::SymbolsV1([
+            fn get(&self, _ctx: &$ctx) -> $name2::Symbols<'static> {
+                $name2::Symbols([
                     $(
                         Cow::Owned(self.$element.clone()),
                     )*
@@ -159,8 +156,8 @@ macro_rules! symbols_from {
     };
     ([$symbols: path, $name2: ident $(,)?], $ctx:ty, { $($element: ident),+ $(,)? } $(,)?) => {
         impl $symbols {
-            fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
-                $name2::SymbolsV1 {
+            fn get(&self, _ctx: &$ctx) -> $name2::Symbols<'static> {
+                $name2::Symbols {
                     $(
                         $element: self.$element.clone(),
                     )*
@@ -182,8 +179,8 @@ macro_rules! symbols_from {
         }
 
         impl ca::Contexts<$symbols> {
-            fn get(&self, ctx: &$ctx) -> $name2::ContextsV1<'static> {
-                $name2::ContextsV1 {
+            fn get(&self, ctx: &$ctx) -> $name2::Contexts<'static> {
+                $name2::Contexts {
                     format: self.format.get(ctx),
                     stand_alone: self.stand_alone.as_ref().and_then(|stand_alone| {
                         stand_alone.get_unaliased(&self.format)
@@ -218,8 +215,8 @@ macro_rules! symbols_from {
         }
 
         impl ca::FormatWidths<$symbols> {
-            fn get(&self, ctx: &$ctx) -> $name2::FormatWidthsV1<'static> {
-                $name2::FormatWidthsV1 {
+            fn get(&self, ctx: &$ctx) -> $name2::FormatWidths<'static> {
+                $name2::FormatWidths {
                     abbreviated: self.abbreviated.get(ctx),
                     narrow: self.narrow.get(ctx),
                     short: self.short.as_ref().map(|width| width.get(ctx)),
@@ -229,8 +226,8 @@ macro_rules! symbols_from {
         }
 
         impl ca::StandAloneWidths<$symbols> {
-            fn get(&self, ctx: &$ctx) -> $name2::StandAloneWidthsV1<'static> {
-                $name2::StandAloneWidthsV1 {
+            fn get(&self, ctx: &$ctx) -> $name2::StandAloneWidths<'static> {
+                $name2::StandAloneWidths {
                     abbreviated: self.abbreviated.as_ref().map(|width| width.get(ctx)),
                     narrow: self.narrow.as_ref().map(|width| width.get(ctx)),
                     short: self.short.as_ref().map(|width| width.get(ctx)),
@@ -246,7 +243,7 @@ symbols_from!(
 );
 
 impl cldr_serde::ca::MonthSymbols {
-    fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::SymbolsV1<'static> {
+    fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::Symbols<'static> {
         if ctx.0.len() == 12 && self.0.len() == 12 {
             let mut arr: [Cow<'static, str>; 12] = Default::default();
             for (k, v) in self.0.iter() {
@@ -265,7 +262,7 @@ impl cldr_serde::ca::MonthSymbols {
                     panic!("Solar calendar does not have data for month {i}");
                 }
             }
-            months::SymbolsV1::SolarTwelve(arr)
+            months::Symbols::SolarTwelve(arr)
         } else {
             let mut map = BTreeMap::new();
             for (k, v) in self.0.iter() {
@@ -286,7 +283,7 @@ impl cldr_serde::ca::MonthSymbols {
 
                 map.insert(MonthCode(code), v.as_ref());
             }
-            months::SymbolsV1::Other(map.into_iter().collect())
+            months::Symbols::Other(map.into_iter().collect())
         }
     }
 }
@@ -321,14 +318,14 @@ mod tests {
 
     #[test]
     fn test_adapter_months_numeric() {
-        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<GregorianDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1Marker> = symbols
+        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -347,14 +344,14 @@ mod tests {
 
     #[test]
     fn test_adapter_months_map() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1Marker> = symbols
+        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -373,14 +370,14 @@ mod tests {
 
     #[test]
     fn test_adapter_weekdays_abbreviated() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
+        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -393,20 +390,20 @@ mod tests {
 
         assert_eq!(
             format!("{neo_weekdays_abbreviated:?}"),
-            "LinearNamesV1 { names: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
+            "LinearNames { names: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
         );
     }
 
     #[test]
     fn test_adapter_weekdays_short() {
-        let symbols: DataPayload<HebrewDateSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
+        let neo_weekdays_short: DataPayload<WeekdayNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("6s"),
@@ -419,20 +416,20 @@ mod tests {
 
         assert_eq!(
             format!("{neo_weekdays_short:?}"),
-            "LinearNamesV1 { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
+            "LinearNames { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
         );
     }
 
     #[test]
     fn test_adapter_dayperiods() {
-        let symbols: DataPayload<TimeSymbolsV1Marker> = SourceDataProvider::new_testing()
+        let symbols: DataPayload<TimeSymbolsV1> = SourceDataProvider::new_testing()
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
             })
             .unwrap()
             .payload;
-        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
+        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3s"),
@@ -445,7 +442,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_dayperiods_abbreviated:?}"),
-            "LinearNamesV1 { names: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
+            "LinearNames { names: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
         );
     }
 }

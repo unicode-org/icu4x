@@ -10,7 +10,6 @@
 
 use super::*;
 use crate::ule::*;
-use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::any;
 use core::convert::TryInto;
@@ -28,7 +27,8 @@ use super::components::IntegerULE;
 /// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
 /// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
 pub struct VarZeroVecOwned<T: ?Sized, F = Index16> {
-    marker: PhantomData<(Box<T>, F)>,
+    marker1: PhantomData<T>,
+    marker2: PhantomData<F>,
     // safety invariant: must parse into a valid VarZeroVecComponents
     entire_slice: Vec<u8>,
 }
@@ -36,7 +36,8 @@ pub struct VarZeroVecOwned<T: ?Sized, F = Index16> {
 impl<T: ?Sized, F> Clone for VarZeroVecOwned<T, F> {
     fn clone(&self) -> Self {
         VarZeroVecOwned {
-            marker: self.marker,
+            marker1: PhantomData,
+            marker2: PhantomData,
             entire_slice: self.entire_slice.clone(),
         }
     }
@@ -61,7 +62,8 @@ impl<T: VarULE + ?Sized, F> VarZeroVecOwned<T, F> {
     /// Construct an empty VarZeroVecOwned
     pub fn new() -> Self {
         Self {
-            marker: PhantomData,
+            marker1: PhantomData,
+            marker2: PhantomData,
             entire_slice: Vec::new(),
         }
     }
@@ -71,7 +73,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// Construct a VarZeroVecOwned from a [`VarZeroSlice`] by cloning the internal data
     pub fn from_slice(slice: &VarZeroSlice<T, F>) -> Self {
         Self {
-            marker: PhantomData,
+            marker1: PhantomData,
+            marker2: PhantomData,
             entire_slice: slice.as_bytes().into(),
         }
     }
@@ -85,7 +88,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             Self::from_slice(VarZeroSlice::new_empty())
         } else {
             Self {
-                marker: PhantomData,
+                marker1: PhantomData,
+                marker2: PhantomData,
                 // TODO(#1410): Rethink length errors in VZV.
                 entire_slice: components::get_serializable_bytes_non_empty::<T, A, F>(elements)
                     .ok_or(F::Index::TOO_LARGE_ERROR)?,
@@ -107,7 +111,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// just allocate enough space for 4-byte Ts
     pub(crate) fn with_capacity(capacity: usize) -> Self {
         Self {
-            marker: PhantomData,
+            marker1: PhantomData,
+            marker2: PhantomData,
             entire_slice: Vec::with_capacity(capacity * (F::Index::SIZE + 4)),
         }
     }

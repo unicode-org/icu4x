@@ -10,12 +10,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
 */
+
+
 export class GraphemeClusterSegmenter {
     
-
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): GraphemeClusterSegmenter;
+    static createWithProvider(provider: DataProvider): GraphemeClusterSegmenter;
 
     segment(input: string): GraphemeClusterBreakIteratorUtf16;
+
+    constructor();
 }

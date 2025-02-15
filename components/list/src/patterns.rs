@@ -7,11 +7,13 @@ use crate::provider::*;
 #[cfg(feature = "datagen")]
 use alloc::borrow::Cow;
 #[cfg(feature = "datagen")]
+use alloc::string::ToString;
+#[cfg(feature = "datagen")]
 use icu_provider::DataError;
 use writeable::{LengthHint, Writeable};
 
-impl ListFormatterPatternsV2<'_> {
-    /// Creates a new [`ListFormatterPatternsV2`] from the given patterns. Fails if any pattern is invalid.
+impl ListFormatterPatterns<'_> {
+    /// Creates a new [`ListFormatterPatterns`] from the given patterns. Fails if any pattern is invalid.
     #[cfg(feature = "datagen")]
     pub fn try_new(start: &str, middle: &str, end: &str, pair: &str) -> Result<Self, DataError> {
         let err = DataError::custom("Invalid list pattern");
@@ -91,7 +93,7 @@ impl<'data> ListJoinerPattern<'data> {
             {
                 if (index_0 > 0 && !cfg!(test)) || index_1 - 3 >= 256 {
                     return Err(DataError::custom(
-                        "Found valid pattern that cannot be stored in ListFormatterPatternsV2",
+                        "Found valid pattern that cannot be stored in ListFormatterPatterns",
                     )
                     .with_debug_context(pattern));
                 }
@@ -141,19 +143,17 @@ impl<'data> From<ListJoinerPattern<'data>> for ConditionalListJoinerPattern<'dat
 pub mod test {
     use super::*;
 
-    pub fn test_patterns_general() -> ListFormatterPatternsV2<'static> {
-        ListFormatterPatternsV2::try_new("@{0}:{1}", "{0},{1}", "{0}.{1}!", "${0};{1}+").unwrap()
+    pub fn test_patterns_general() -> ListFormatterPatterns<'static> {
+        ListFormatterPatterns::try_new("@{0}:{1}", "{0},{1}", "{0}.{1}!", "${0};{1}+").unwrap()
     }
 
-    pub fn test_patterns_lengths() -> ListFormatterPatternsV2<'static> {
-        ListFormatterPatternsV2::try_new("{0}1{1}", "{0}12{1}", "{0}12{1}34", "{0}123{1}456")
-            .unwrap()
+    pub fn test_patterns_lengths() -> ListFormatterPatterns<'static> {
+        ListFormatterPatterns::try_new("{0}1{1}", "{0}12{1}", "{0}12{1}34", "{0}123{1}456").unwrap()
     }
 
-    pub fn test_patterns_conditional() -> ListFormatterPatternsV2<'static> {
+    pub fn test_patterns_conditional() -> ListFormatterPatterns<'static> {
         let mut patterns =
-            ListFormatterPatternsV2::try_new("{0}: {1}", "{0}, {1}", "{0}. {1}", "{0}. {1}")
-                .unwrap();
+            ListFormatterPatterns::try_new("{0}: {1}", "{0}, {1}", "{0}. {1}", "{0}. {1}").unwrap();
         patterns.end.special_case = Some(SpecialCasePattern {
             condition: SerdeDFA::new(Cow::Borrowed("^a")).unwrap(),
             pattern: ListJoinerPattern::try_from_str("{0} :o {1}", false, false).unwrap(),

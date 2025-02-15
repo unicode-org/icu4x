@@ -177,7 +177,7 @@ pub struct DateDurationRecord {
     /// Weeks value.
     pub weeks: u32,
     /// Days value.
-    pub days: u32,
+    pub days: u64,
 }
 
 /// A `TimeDurationRecord` represents the result of parsing the time component of a Duration string.
@@ -189,27 +189,27 @@ pub enum TimeDurationRecord {
     // An hours Time duration record.
     Hours {
         /// Hours value.
-        hours: u32,
+        hours: u64,
         /// The parsed fraction value in nanoseconds.
         fraction: u64,
     },
     // A Minutes Time duration record.
     Minutes {
         /// Hours value.
-        hours: u32,
+        hours: u64,
         /// Minutes value.
-        minutes: u32,
+        minutes: u64,
         /// The parsed fraction value in nanoseconds.
         fraction: u64,
     },
     // A Seconds Time duration record.
     Seconds {
         /// Hours value.
-        hours: u32,
+        hours: u64,
         /// Minutes value.
-        minutes: u32,
+        minutes: u64,
         /// Seconds value.
-        seconds: u32,
+        seconds: u64,
         /// The parsed fraction value in nanoseconds.
         fraction: u32,
     },

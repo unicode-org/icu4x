@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -40,7 +41,9 @@ public:
 
   inline std::unique_ptr<icu4x::CodePointSetData> get_set_for_value(uint16_t value) const;
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> load_script(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CodePointMapData16> create_script();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> create_script_with_provider(const icu4x::DataProvider& provider);
 
   inline const icu4x::capi::CodePointMapData16* AsFFI() const;
   inline icu4x::capi::CodePointMapData16* AsFFI();

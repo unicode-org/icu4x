@@ -26,7 +26,7 @@ use super::convertible::Convertible;
 /// ConverterFactory is a factory for creating a converter.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
-    payload: DataPayload<provider::UnitsInfoV1Marker>,
+    payload: DataPayload<provider::UnitsInfoV1>,
 }
 
 impl From<Sign> for num_bigint::Sign {
@@ -39,12 +39,11 @@ impl From<Sign> for num_bigint::Sign {
 }
 
 impl ConverterFactory {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
@@ -58,16 +57,14 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
-            ),
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
+        D: ?Sized + DataProvider<provider::UnitsInfoV1>,
     {
         let payload = provider.load(DataRequest::default())?.payload;
 
@@ -232,7 +229,7 @@ impl ConverterFactory {
         insert_non_basic_units(self, unit2, -1, &mut map)?;
 
         let (power_sums_are_zero, power_diffs_are_zero) =
-            map.iter_values()
+            map.values()
                 .fold((true, true), |(sums, diffs), powers_info| {
                     (
                         sums && powers_info.sums == 0,

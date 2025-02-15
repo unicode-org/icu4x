@@ -34,12 +34,17 @@ use super::ratio::IcuRatio;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(UnitsInfoV1Marker, "units/info@1", singleton))]
+#[icu_provider::data_struct(marker(UnitsInfoV1, "units/info@1", singleton))]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfoV1<'data> {
+    // TODO: remove this field once we are using this map from `measure/provider::UnitsTrie`.
+    /// Maps from unit name (e.g. foot) to it is conversion information.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub units_conversion_trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
+
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]

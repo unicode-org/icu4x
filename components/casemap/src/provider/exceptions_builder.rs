@@ -39,7 +39,7 @@ impl ExceptionHeader {
     }
 
     // Returns true if the given slot exists for this exception
-    pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
+    pub(crate) fn has_slot(self, slot: ExceptionSlot) -> bool {
         self.slot_presence.has_slot(slot)
     }
 }

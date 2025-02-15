@@ -128,14 +128,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// ```
 #[derive(Debug)]
 pub struct GraphemeClusterSegmenter {
-    payload: DataPayload<GraphemeClusterBreakDataV2Marker>,
-}
-
-#[cfg(feature = "compiled_data")]
-impl Default for GraphemeClusterSegmenter {
-    fn default() -> Self {
-        Self::new()
-    }
+    payload: DataPayload<GraphemeClusterBreakDataV2>,
 }
 
 impl GraphemeClusterSegmenter {
@@ -145,27 +138,27 @@ impl GraphemeClusterSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
+    #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2,
             ),
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GraphemeClusterBreakDataV2Marker> + ?Sized,
+        D: DataProvider<GraphemeClusterBreakDataV2> + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })
@@ -184,7 +177,7 @@ impl GraphemeClusterSegmenter {
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub(crate) fn new_and_segment_str<'l, 's>(
         input: &'s str,
-        payload: &'l RuleBreakDataV2<'l>,
+        payload: &'l RuleBreakData<'l>,
     ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
@@ -250,7 +243,7 @@ impl GraphemeClusterSegmenter {
     /// Creates a grapheme cluster break iterator from grapheme cluster rule payload.
     pub(crate) fn new_and_segment_utf16<'l, 's>(
         input: &'s [u16],
-        payload: &'l RuleBreakDataV2<'l>,
+        payload: &'l RuleBreakData<'l>,
     ) -> GraphemeClusterBreakIteratorUtf16<'l, 's> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),

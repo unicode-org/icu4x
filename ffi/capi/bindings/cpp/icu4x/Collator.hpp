@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "CollatorOptionsV1.hpp"
@@ -22,7 +23,10 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_Collator_create_v1_mv1_result {union {icu4x::capi::Collator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Collator_create_v1_mv1_result;
-    icu4x_Collator_create_v1_mv1_result icu4x_Collator_create_v1_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
+    icu4x_Collator_create_v1_mv1_result icu4x_Collator_create_v1_mv1(const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
+    
+    typedef struct icu4x_Collator_create_v1_with_provider_mv1_result {union {icu4x::capi::Collator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Collator_create_v1_with_provider_mv1_result;
+    icu4x_Collator_create_v1_with_provider_mv1_result icu4x_Collator_create_v1_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
     
     int8_t icu4x_Collator_compare_utf8_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatStringView left, diplomat::capi::DiplomatStringView right);
     
@@ -37,8 +41,14 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
-  auto result = icu4x::capi::icu4x_Collator_create_v1_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1(const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
+  auto result = icu4x::capi::icu4x_Collator_create_v1_mv1(locale.AsFFI(),
+    options.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
+  auto result = icu4x::capi::icu4x_Collator_create_v1_with_provider_mv1(provider.AsFFI(),
     locale.AsFFI(),
     options.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));

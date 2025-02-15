@@ -30,7 +30,7 @@ use zerovec::*;
 // TODO(#3776): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
+#[icu_provider::data_struct(TransliteratorRulesV1 = "transliterator/rules@1")]
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]

@@ -8,16 +8,27 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 */
-export class LocaleFallbackConfig {
 
+
+export class LocaleFallbackConfig {
+    
     #priority;
+    
     get priority()  {
         return this.#priority;
-    }
+    } 
     set priority(value) {
         this.#priority = value;
     }
-    constructor(structObj) {
+    
+    /** Create `LocaleFallbackConfig` from an object that contains all of `LocaleFallbackConfig`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj) {
+        return new LocaleFallbackConfig(structObj);
+    }
+    
+    #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("LocaleFallbackConfig's constructor takes an object of LocaleFallbackConfig's fields.");
         }
@@ -28,6 +39,7 @@ export class LocaleFallbackConfig {
             throw new Error("Missing required field priority.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -38,6 +50,18 @@ export class LocaleFallbackConfig {
         appendArrayMap
     ) {
         return [this.#priority.ffiValue]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof LocaleFallbackConfig) {
+            return obj;
+        }
+
+        return LocaleFallbackConfig.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -58,10 +82,14 @@ export class LocaleFallbackConfig {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("LocaleFallbackConfig._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const priorityDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         structObj.priority = new LocaleFallbackPriority(diplomatRuntime.internalConstructor, priorityDeref);
 
-        return new LocaleFallbackConfig(structObj, internalConstructor);
+        return new LocaleFallbackConfig(structObj);
+    }
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

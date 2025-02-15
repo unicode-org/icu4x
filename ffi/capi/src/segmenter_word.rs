@@ -8,9 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::enum_convert(icu_segmenter::WordType, needs_wildcard)]
     #[diplomat::rust_link(icu::segmenter::WordType, Enum)]
@@ -58,110 +59,156 @@ pub mod ffi {
 
     impl WordSegmenter {
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
-        /// or dictionary payload data.
+        /// or dictionary payload data, using compiled data. This does not assume any content locale.
         ///
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto")]
-        pub fn create_auto(provider: &DataProvider) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::new_auto [r => Ok(r)],
-                icu_segmenter::WordSegmenter::try_new_auto_with_any_provider,
-                icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider,
-                provider
-            )?)))
+        #[diplomat::rust_link(icu::segmenter::WordBreakInvariantOptions, Struct, hidden)]
+        #[diplomat::attr(auto, named_constructor = "auto")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_auto() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_auto(
+                Default::default(),
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
-        /// or dictionary payload data.
+        /// or dictionary payload data, using compiled data.
         ///
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_with_options, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auto_with_content_locale")]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakOptions, Struct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_auto(locale.into())?,
+            )))
+        }
+
+        /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+        /// or dictionary payload data, using a particular data source.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_auto_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::try_new_auto_with_options,
-                icu_segmenter::WordSegmenter::try_new_auto_with_options_with_any_provider,
-                icu_segmenter::WordSegmenter::try_new_auto_with_options_with_buffer_provider,
-                provider,
-                locale.into(),
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
-        /// Thai.
+        /// Thai, using compiled data.  This does not assume any content locale.
         ///
-        /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or
-        /// Japanese.
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+        /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm")]
-        pub fn create_lstm(provider: &DataProvider) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::new_lstm [r => Ok(r)],
-                icu_segmenter::WordSegmenter::try_new_lstm_with_any_provider,
-                icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider,
-                provider,
-            )?)))
+        #[diplomat::attr(auto, named_constructor = "lstm")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_lstm() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_lstm(
+                Default::default(),
+            )))
         }
 
-        /// Construct an [`WordSegmenter`] with given a locale, and LSTM payload data for Burmese,
-        /// Khmer, Lao, and Thai.
+        /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+        /// Thai, using compiled data.
         ///
-        /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or
-        /// Japanese.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm_with_options, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "lstm_with_content_locale")]
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_content_locale")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_lstm_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_lstm(locale.into())?,
+            )))
+        }
+
+        /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+        /// Thai, using a particular data source.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_lstm_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::try_new_lstm_with_options,
-                icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_any_provider,
-                icu_segmenter::WordSegmenter::try_new_lstm_with_options_with_buffer_provider,
-                provider,
-                locale.into(),
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
+        }
+
+        /// Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
+        /// Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
+        #[diplomat::attr(auto, named_constructor = "dictionary")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_dictionary() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_dictionary(
+                Default::default(),
+            )))
         }
 
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
-        /// Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary")]
-        pub fn create_dictionary(provider: &DataProvider) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::new_dictionary [r => Ok(r)],
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_any_provider,
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider,
-                provider,
-            )?)))
+        /// Burmese, Khmer, Lao, and Thai, using compiled data.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_dictionary, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_content_locale")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_dictionary_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_dictionary(locale.into())?,
+            )))
         }
 
-        /// Construct an [`WordSegmenter`] with given a locale, and dictionary payload data for Chinese,
-        /// Japanese, Burmese, Khmer, Lao, and Thai.
-        #[diplomat::rust_link(
-            icu::segmenter::WordSegmenter::try_new_dictionary_with_options,
-            FnInStruct
-        )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "dictionary_with_content_locale")]
-        pub fn create_dictionary_with_content_locale(
+        /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+        /// Burmese, Khmer, Lao, and Thai, using a particular data source.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_dictionary, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dictionary_with_content_locale_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_dictionary_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<WordSegmenter>, DataError> {
-            Ok(Box::new(WordSegmenter(call_constructor!(
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_options,
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_any_provider,
-                icu_segmenter::WordSegmenter::try_new_dictionary_with_options_with_buffer_provider,
-                provider,
-                locale.into(),
-            )?)))
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider(
+                    provider.get()?,
+                    locale.into(),
+                )?,
+            )))
         }
-
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

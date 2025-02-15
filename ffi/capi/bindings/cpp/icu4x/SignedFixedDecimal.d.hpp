@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -72,6 +73,8 @@ public:
   inline void trim_start();
 
   inline void trim_end();
+
+  inline void trim_end_if_integer();
 
   inline void pad_start(int16_t position);
 

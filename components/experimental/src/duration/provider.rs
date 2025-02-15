@@ -10,14 +10,14 @@
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
-#[icu_provider::data_struct(DigitalDurationDataV1Marker = "duration/digital@1")]
+#[icu_provider::data_struct(DigitalDurationDataV1 = "duration/digital@1")]
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::duration::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 
 /// A struct containing digital duration data (durationUnit-type-* patterns).
-pub struct DigitalDurationDataV1<'data> {
+pub struct DigitalDurationData<'data> {
     /// The separator between the hour, minute, and second fields.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub separator: Cow<str, 'data>,

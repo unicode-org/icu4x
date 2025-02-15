@@ -8,7 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    #[cfg(feature = "buffer_provider")]
+    use crate::errors::ffi::DataError;
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
@@ -21,21 +24,30 @@ pub mod ffi {
     );
 
     impl UnitsConverterFactory {
-        /// Construct a new [`UnitsConverterFactory`] instance.
+        /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
         #[diplomat::rust_link(
             icu::experimental::units::converter_factory::ConverterFactory::new,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(provider: &DataProvider) -> Result<Box<UnitsConverterFactory>, DataError> {
-            Ok(Box::new(UnitsConverterFactory(call_constructor!(
-                icu_experimental::units::converter_factory::ConverterFactory::new [r => Ok(r)],
-                icu_experimental::units::converter_factory::ConverterFactory::try_new_with_any_provider,
-                icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider,
-                provider,
-            )?)))
+        #[diplomat::attr(auto, constructor)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create() -> Box<UnitsConverterFactory> {
+            Box::new(UnitsConverterFactory(
+                icu_experimental::units::converter_factory::ConverterFactory::new(),
+            ))
         }
-
+        /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
+        #[diplomat::rust_link(
+            icu::experimental::units::converter_factory::ConverterFactory::new,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<UnitsConverterFactory>, DataError> {
+            Ok(Box::new(UnitsConverterFactory(icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider(provider.get()?)?)))
+        }
         /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
         /// Returns nothing if the conversion between the two units is not possible.
         /// For example, conversion between `meter` and `second` is not possible.

@@ -5,14 +5,14 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-use icu::calendar::{Date, Gregorian, Time};
+use icu::calendar::{Date, Gregorian};
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::TimeZoneInfo;
+use icu::time::TimeZoneInfo;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::fieldsets::YMDTO;
+use icu_datetime::fieldsets::{self, YMDT};
 use icu_datetime::FixedCalendarDateTimeFormatter;
-use icu_timezone::CustomZonedDateTime;
+use icu_time::{Time, ZonedDateTime};
 use std::env;
 
 fn main() {
@@ -38,16 +38,16 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, YMDTO>::try_new(
+        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
             locale.into(),
-            YMDTO::medium(),
+            YMDT::medium().zone(fieldsets::zone::LocalizedOffsetShort),
         )
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
         let zone = TimeZoneInfo::utc();
 
-        let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
+        let formatted_dt = dtf.format(&ZonedDateTime { date, time, zone });
 
         println!("Today is: {}", formatted_dt);
     }

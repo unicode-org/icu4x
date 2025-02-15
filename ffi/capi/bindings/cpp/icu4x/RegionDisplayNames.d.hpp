@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -16,6 +17,7 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct RegionDisplayNames; }
 class RegionDisplayNames;
+struct DisplayNamesOptionsV1;
 class DataError;
 class LocaleParseError;
 }
@@ -31,7 +33,9 @@ namespace icu4x {
 class RegionDisplayNames {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1(const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
   inline diplomat::result<std::string, icu4x::LocaleParseError> of(std::string_view region) const;
 

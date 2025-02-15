@@ -8,8 +8,11 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::{DataError, LocaleParseError};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::errors::ffi::DataError;
+    use crate::errors::ffi::LocaleParseError;
     use crate::locale_core::ffi::Locale;
+    #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
@@ -61,11 +64,33 @@ pub mod ffi {
     }
 
     impl LocaleDisplayNamesFormatter {
-        /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
+        /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_v1(
+            locale: &Locale,
+            options: DisplayNamesOptionsV1,
+        ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
+            let prefs = (&locale.0).into();
+            let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
+
+            Ok(Box::new(LocaleDisplayNamesFormatter(
+                icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new(
+                    prefs, options,
+                )?,
+            )))
+        }
+
+        /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
+        #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_v1_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             options: DisplayNamesOptionsV1,
@@ -74,12 +99,7 @@ pub mod ffi {
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
             Ok(Box::new(LocaleDisplayNamesFormatter(
-                call_constructor!(
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_any_provider,
-                    icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider,
-                    provider,
-                    prefs,
+                icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider(provider.get()?, prefs,
                     options,
                 )?,
             )))
@@ -95,22 +115,43 @@ pub mod ffi {
     }
 
     impl RegionDisplayNames {
-        /// Creates a new `RegionDisplayNames` from locale data and an options bag.
+        /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(
-            provider: &DataProvider,
+        #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1")]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_v1(
             locale: &Locale,
+            options: DisplayNamesOptionsV1,
         ) -> Result<Box<RegionDisplayNames>, DataError> {
             let prefs = (&locale.0).into();
-            Ok(Box::new(RegionDisplayNames(call_constructor!(
-                icu_experimental::displaynames::RegionDisplayNames::try_new,
-                icu_experimental::displaynames::RegionDisplayNames::try_new_with_any_provider,
-                icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider,
-                provider,
-                prefs,
-                Default::default()
-            )?)))
+            let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
+            Ok(Box::new(RegionDisplayNames(
+                icu_experimental::displaynames::RegionDisplayNames::try_new(prefs, options)?,
+            )))
+        }
+
+        /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
+        #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_v1_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            options: DisplayNamesOptionsV1,
+        ) -> Result<Box<RegionDisplayNames>, DataError> {
+            let prefs = (&locale.0).into();
+            let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
+            Ok(Box::new(RegionDisplayNames(
+                icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
         }
 
         /// Returns the locale specific display name of a region.

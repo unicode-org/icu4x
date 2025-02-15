@@ -5,11 +5,11 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
-use icu_calendar::{Date, DateTime, Gregorian, Time};
+use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, ZoneVariant};
+use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
@@ -23,15 +23,16 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function(format!("semantic/{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<CustomZonedDateTime<Gregorian, _>> = fx
+                    let datetimes: Vec<ZonedDateTime<Gregorian, _>> = fx
                         .values
                         .iter()
                         .map(move |value| {
                             if has_zones {
                                 mock::parse_zoned_gregorian_from_str(value)
                             } else {
-                                let DateTime { date, time } = mock::parse_gregorian_from_str(value);
-                                CustomZonedDateTime {
+                                let DateTime { date, time } =
+                                    DateTime::try_from_str(value, Gregorian).unwrap();
+                                ZonedDateTime {
                                     date,
                                     time,
                                     // zone is unused but we need to make the types match
@@ -40,20 +41,25 @@ fn datetime_benches(c: &mut Criterion) {
                                             Date::try_new_iso(2024, 1, 1).unwrap(),
                                             Time::midnight(),
                                         ))
-                                        .with_zone_variant(ZoneVariant::Standard),
+                                        .with_zone_variant(TimeZoneVariant::Standard),
                                 }
                             }
                         })
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
-                        let skeleton =
-                            CompositeFieldSet::try_from(setup.options.semantic.unwrap()).unwrap();
+                        let fset = setup
+                            .options
+                            .semantic
+                            .clone()
+                            .unwrap()
+                            .build_composite()
+                            .unwrap();
 
                         let dtf = {
                             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
                                 locale.into(),
-                                skeleton,
+                                fset,
                             )
                             .expect("Failed to create FixedCalendarDateTimeFormatter.")
                         };

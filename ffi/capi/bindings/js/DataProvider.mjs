@@ -7,6 +7,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** An ICU4X data provider, capable of loading ICU4X data keys from some source.
 *
+*Currently the only source supported is loading from "blob" formatted data from a bytes buffer or the file system.
+*
+*If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
+*in their names.
+*
 *See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
 */
 const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -14,6 +19,7 @@ const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class DataProvider {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +27,7 @@ export class DataProvider {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("DataProvider is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,30 +40,11 @@ export class DataProvider {
         if (this.#selfEdge.length === 0) {
             DataProvider_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
-    }
-
-    static compiled() {
-        const result = wasm.icu4x_DataProvider_compiled_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static empty() {
-        const result = wasm.icu4x_DataProvider_empty_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
     }
 
     forkByKey(other) {
@@ -112,5 +99,9 @@ export class DataProvider {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

@@ -15,12 +15,17 @@ use icu_calendar::cal::{
     Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, Indian, IslamicCivil,
     IslamicObservational, IslamicTabular, IslamicUmmAlQura, Japanese, JapaneseExtended, Persian,
 };
-use icu_calendar::{
-    any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, DateTime, Ref, Time,
-};
+use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
-use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset};
+use icu_time::{
+    zone::{models::TimeZoneModel, UtcOffset},
+    DateTime, Time, TimeZoneInfo, ZonedDateTime,
+};
+
+mod private {
+    pub trait Sealed {}
+}
 
 /// A calendar that can be found in CLDR.
 ///
@@ -28,123 +33,140 @@ use icu_timezone::{CustomZonedDateTime, TimeZoneInfo, TimeZoneModel, UtcOffset};
 /// in the CLDR transformer to support any new era maps.
 ///
 /// <div class="stab unstable">
-/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. Do not implement this trait in userland.
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait CldrCalendar: UnstableSealed {
+pub trait CldrCalendar: private::Sealed {
     /// The data marker for loading year symbols for this calendar.
-    type YearNamesV1Marker: DataMarker<DataStruct = YearNamesV1<'static>>;
+    type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
 
     /// The data marker for loading month symbols for this calendar.
-    type MonthNamesV1Marker: DataMarker<DataStruct = MonthNamesV1<'static>>;
+    type MonthNamesV1: DataMarker<DataStruct = MonthNames<'static>>;
 
     /// The data marker for loading skeleton patterns for this calendar.
-    type SkeletaV1Marker: DataMarker<DataStruct = PackedPatternsV1<'static>>;
+    type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
 }
 
+impl private::Sealed for () {}
 impl CldrCalendar for () {
-    type YearNamesV1Marker = NeverMarker<YearNamesV1<'static>>;
-    type MonthNamesV1Marker = NeverMarker<MonthNamesV1<'static>>;
-    type SkeletaV1Marker = NeverMarker<PackedPatternsV1<'static>>;
+    type YearNamesV1 = NeverMarker<YearNames<'static>>;
+    type MonthNamesV1 = NeverMarker<MonthNames<'static>>;
+    type SkeletaV1 = NeverMarker<PackedPatterns<'static>>;
 }
 
+impl private::Sealed for Buddhist {}
 impl CldrCalendar for Buddhist {
-    type YearNamesV1Marker = BuddhistYearNamesV1Marker;
-    type MonthNamesV1Marker = BuddhistMonthNamesV1Marker;
-    type SkeletaV1Marker = BuddhistDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = BuddhistYearNamesV1;
+    type MonthNamesV1 = BuddhistMonthNamesV1;
+    type SkeletaV1 = BuddhistDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Chinese {}
 impl CldrCalendar for Chinese {
-    type YearNamesV1Marker = ChineseYearNamesV1Marker;
-    type MonthNamesV1Marker = ChineseMonthNamesV1Marker;
-    type SkeletaV1Marker = ChineseDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = ChineseYearNamesV1;
+    type MonthNamesV1 = ChineseMonthNamesV1;
+    type SkeletaV1 = ChineseDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Coptic {}
 impl CldrCalendar for Coptic {
-    type YearNamesV1Marker = CopticYearNamesV1Marker;
-    type MonthNamesV1Marker = CopticMonthNamesV1Marker;
-    type SkeletaV1Marker = CopticDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = CopticYearNamesV1;
+    type MonthNamesV1 = CopticMonthNamesV1;
+    type SkeletaV1 = CopticDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Dangi {}
 impl CldrCalendar for Dangi {
-    type YearNamesV1Marker = DangiYearNamesV1Marker;
-    type MonthNamesV1Marker = DangiMonthNamesV1Marker;
-    type SkeletaV1Marker = DangiDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = DangiYearNamesV1;
+    type MonthNamesV1 = DangiMonthNamesV1;
+    type SkeletaV1 = DangiDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Ethiopian {}
 impl CldrCalendar for Ethiopian {
-    type YearNamesV1Marker = EthiopianYearNamesV1Marker;
-    type MonthNamesV1Marker = EthiopianMonthNamesV1Marker;
-    type SkeletaV1Marker = EthiopianDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = EthiopianYearNamesV1;
+    type MonthNamesV1 = EthiopianMonthNamesV1;
+    type SkeletaV1 = EthiopianDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Gregorian {}
 impl CldrCalendar for Gregorian {
-    type YearNamesV1Marker = GregorianYearNamesV1Marker;
-    type MonthNamesV1Marker = GregorianMonthNamesV1Marker;
-    type SkeletaV1Marker = GregorianDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = GregorianYearNamesV1;
+    type MonthNamesV1 = GregorianMonthNamesV1;
+    type SkeletaV1 = GregorianDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Hebrew {}
 impl CldrCalendar for Hebrew {
-    type YearNamesV1Marker = HebrewYearNamesV1Marker;
-    type MonthNamesV1Marker = HebrewMonthNamesV1Marker;
-    type SkeletaV1Marker = HebrewDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = HebrewYearNamesV1;
+    type MonthNamesV1 = HebrewMonthNamesV1;
+    type SkeletaV1 = HebrewDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Indian {}
 impl CldrCalendar for Indian {
-    type YearNamesV1Marker = IndianYearNamesV1Marker;
-    type MonthNamesV1Marker = IndianMonthNamesV1Marker;
-    type SkeletaV1Marker = IndianDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = IndianYearNamesV1;
+    type MonthNamesV1 = IndianMonthNamesV1;
+    type SkeletaV1 = IndianDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for IslamicCivil {}
 impl CldrCalendar for IslamicCivil {
     // this value is not actually a valid identifier for this calendar,
     // however since we are overriding is_identifier_allowed_for_calendar we are using
     // this solely for its effects on skeleton data loading
-    type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = IslamicYearNamesV1;
+    type MonthNamesV1 = IslamicMonthNamesV1;
+    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for IslamicObservational {}
 impl CldrCalendar for IslamicObservational {
-    type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = IslamicYearNamesV1;
+    type MonthNamesV1 = IslamicMonthNamesV1;
+    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for IslamicTabular {}
 impl CldrCalendar for IslamicTabular {
-    type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = IslamicYearNamesV1;
+    type MonthNamesV1 = IslamicMonthNamesV1;
+    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for IslamicUmmAlQura {}
 impl CldrCalendar for IslamicUmmAlQura {
-    type YearNamesV1Marker = IslamicYearNamesV1Marker;
-    type MonthNamesV1Marker = IslamicMonthNamesV1Marker;
-    type SkeletaV1Marker = IslamicDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = IslamicYearNamesV1;
+    type MonthNamesV1 = IslamicMonthNamesV1;
+    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Japanese {}
 impl CldrCalendar for Japanese {
-    type YearNamesV1Marker = JapaneseYearNamesV1Marker;
-    type MonthNamesV1Marker = JapaneseMonthNamesV1Marker;
-    type SkeletaV1Marker = JapaneseDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = JapaneseYearNamesV1;
+    type MonthNamesV1 = JapaneseMonthNamesV1;
+    type SkeletaV1 = JapaneseDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for JapaneseExtended {}
 impl CldrCalendar for JapaneseExtended {
-    type YearNamesV1Marker = JapaneseExtendedYearNamesV1Marker;
-    type MonthNamesV1Marker = JapaneseExtendedMonthNamesV1Marker;
-    type SkeletaV1Marker = JapaneseExtendedDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = JapaneseExtendedYearNamesV1;
+    type MonthNamesV1 = JapaneseExtendedMonthNamesV1;
+    type SkeletaV1 = JapaneseExtendedDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Persian {}
 impl CldrCalendar for Persian {
-    type YearNamesV1Marker = PersianYearNamesV1Marker;
-    type MonthNamesV1Marker = PersianMonthNamesV1Marker;
-    type SkeletaV1Marker = PersianDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = PersianYearNamesV1;
+    type MonthNamesV1 = PersianMonthNamesV1;
+    type SkeletaV1 = PersianDateNeoSkeletonPatternsV1;
 }
 
+impl private::Sealed for Roc {}
 impl CldrCalendar for Roc {
-    type YearNamesV1Marker = RocYearNamesV1Marker;
-    type MonthNamesV1Marker = RocMonthNamesV1Marker;
-    type SkeletaV1Marker = RocDateNeoSkeletonPatternsV1Marker;
+    type YearNamesV1 = RocYearNamesV1;
+    type MonthNamesV1 = RocMonthNamesV1;
+    type SkeletaV1 = RocDateNeoSkeletonPatternsV1;
 }
 
 impl UnstableSealed for () {}
@@ -168,9 +190,14 @@ impl UnstableSealed for Roc {}
 /// A collection of marker types associated with all calendars.
 ///
 /// This is used to group together the calendar-specific marker types that produce a common
-/// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1Marker`].
+/// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1`].
 ///
 /// This trait serves as a building block for a cross-calendar [`BoundDataProvider`].
+///
+/// <div class="stab unstable">
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
+/// </div>
 pub trait CalMarkers<M>: UnstableSealed
 where
     M: DynamicDataMarker,
@@ -359,9 +386,9 @@ macro_rules! impl_load_any_calendar {
 }
 
 impl_load_any_calendar!([
-    (YearNamesV1Marker, YearNamesV1Marker),
-    (MonthNamesV1Marker, MonthNamesV1Marker),
-    (ErasedPackedPatterns, SkeletaV1Marker)
+    (YearNamesV1, YearNamesV1),
+    (MonthNamesV1, MonthNamesV1),
+    (ErasedPackedPatterns, SkeletaV1)
 ], [
     Buddhist,
     Chinese,
@@ -384,6 +411,7 @@ impl_load_any_calendar!([
 ]);
 
 /// A type that can be converted into a specific calendar system.
+// This trait is implementable
 pub trait ConvertCalendar {
     /// The converted type. This can be the same as the receiver type.
     type Converted<'a>: Sized;
@@ -395,7 +423,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A
     type Converted<'a> = Date<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
+        self.to_calendar(Ref(calendar))
     }
 }
 
@@ -411,19 +439,21 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        self.to_any().to_calendar(Ref(calendar))
+        DateTime {
+            date: self.date.to_calendar(Ref(calendar)),
+            time: self.time,
+        }
     }
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
-    for CustomZonedDateTime<A, Z>
+    for ZonedDateTime<A, Z>
 {
-    type Converted<'a> = CustomZonedDateTime<Ref<'a, AnyCalendar>, Z>;
+    type Converted<'a> = ZonedDateTime<Ref<'a, AnyCalendar>, Z>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
-        let date = self.date.to_any().to_calendar(Ref(calendar));
-        CustomZonedDateTime {
-            date,
+        ZonedDateTime {
+            date: self.date.to_calendar(Ref(calendar)),
             time: self.time,
             zone: self.zone,
         }
@@ -439,6 +469,7 @@ impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
 }
 
 /// An input that may be associated with a specific runtime calendar.
+// This trait is implementable
 pub trait InSameCalendar {
     /// Checks whether this type is compatible with the given calendar.
     ///
@@ -490,7 +521,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for CustomZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
     #[inline]
     fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
         Ok(())
@@ -512,15 +543,16 @@ impl<O: TimeZoneModel> InSameCalendar for TimeZoneInfo<O> {
 }
 
 /// An input associated with a fixed, static calendar.
+// This trait is implementable
 pub trait InFixedCalendar<C> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for Date<A> {}
+impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for Date<A> {}
 
 impl<C> InFixedCalendar<C> for Time {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTime<A> {}
+impl<C: CldrCalendar, A: AsCalendar<Calendar = C>> InFixedCalendar<C> for DateTime<A> {}
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for CustomZonedDateTime<A, Z> {}
+impl<C: CldrCalendar, A: AsCalendar<Calendar = C>, Z> InFixedCalendar<C> for ZonedDateTime<A, Z> {}
 
 impl<C> InFixedCalendar<C> for UtcOffset {}
 

@@ -18,13 +18,11 @@ use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseExtended};
 use crate::persian::Persian;
 use crate::roc::Roc;
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
+use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
+use crate::preferences::{CalendarAlgorithm, IslamicCalendarAlgorithm};
 use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::preferences::extensions::unicode::keywords::{
-    CalendarAlgorithm, IslamicCalendarAlgorithm,
-};
 use icu_locale_core::subtags::language;
 use icu_locale_core::Locale;
 use icu_provider::prelude::*;
@@ -32,7 +30,7 @@ use icu_provider::prelude::*;
 use core::fmt;
 
 define_preferences!(
-    /// The prefs for datetime formatting.
+    /// The prefs for date formatting.
     [Copy]
     AnyCalendarPreferences,
     {
@@ -53,7 +51,7 @@ define_preferences!(
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, DateTime, cal::Japanese, Time, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, Date, cal::Japanese, types::{Era, MonthCode}};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -64,26 +62,23 @@ define_preferences!(
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
-/// // manually construct a datetime in this calendar
-/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
-/// // construct from era code, year, month code, day, time, and a calendar
+/// // construct from era code, year, month code, day, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28,
-///                                                manual_time, calendar.clone())
-///                     .expect("Failed to construct DateTime manually");
+/// let manual_date = Date::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
+///                     .expect("Failed to construct Date manually");
 ///
 ///
-/// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::try_new_iso(2020, 9, 1, 12, 34, 28)
-///     .expect("Failed to construct ISO DateTime.");
-/// let iso_converted = iso_datetime.to_calendar(calendar);
+/// // construct another date by converting from ISO
+/// let iso_date = Date::try_new_iso(2020, 9, 1)
+///     .expect("Failed to construct ISO Date.");
+/// let iso_converted = iso_date.to_calendar(calendar);
 ///
-/// // Construct a datetime in the appropriate typed calendar and convert
+/// // Construct a date in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_datetime = DateTime::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
-///                                                         12, 33, 12, japanese_calendar).unwrap();
-/// // This is a DateTime<AnyCalendar>
-/// let any_japanese_datetime = japanese_datetime.to_any();
+/// let japanese_date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
+///                                                         japanese_calendar).unwrap();
+/// // This is a Date<AnyCalendar>
+/// let any_japanese_date = japanese_date.to_any();
 /// ```
 #[derive(Debug, Clone)]
 #[non_exhaustive]
@@ -126,7 +121,7 @@ pub enum AnyCalendar {
 
 // TODO(#3469): Decide on the best way to implement Ord.
 /// The inner date type for [`AnyCalendar`]
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug, Copy)]
 #[non_exhaustive]
 pub enum AnyDateInner {
     /// A date for a [`Buddhist`] calendar
@@ -615,54 +610,8 @@ impl AnyCalendar {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_for_kind)]
-    pub fn try_new_for_kind_with_any_provider<P>(
-        provider: &P,
-        kind: AnyCalendarKind,
-    ) -> Result<Self, DataError>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        Ok(match kind {
-            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => {
-                AnyCalendar::Chinese(Chinese::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => {
-                AnyCalendar::Dangi(Dangi::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
-                EthiopianEraStyle::AmeteMihret,
-            )),
-            AnyCalendarKind::EthiopianAmeteAlem => {
-                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
-            }
-            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
-            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
-            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
-            AnyCalendarKind::IslamicObservational => AnyCalendar::IslamicObservational(
-                IslamicObservational::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(
-                IslamicUmmAlQura::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Japanese => {
-                AnyCalendar::Japanese(Japanese::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
-                JapaneseExtended::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
-            AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
-        })
-    }
-
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
     pub fn try_new_for_kind_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -708,18 +657,18 @@ impl AnyCalendar {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
     pub fn try_new_for_kind_unstable<P>(
         provider: &P,
         kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::JapaneseErasV1Marker>
-            + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
-            + DataProvider<crate::provider::ChineseCacheV1Marker>
-            + DataProvider<crate::provider::DangiCacheV1Marker>
-            + DataProvider<crate::provider::IslamicObservationalCacheV1Marker>
-            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
+        P: DataProvider<crate::provider::JapaneseErasV1>
+            + DataProvider<crate::provider::JapaneseExtendedErasV1>
+            + DataProvider<crate::provider::ChineseCacheV1>
+            + DataProvider<crate::provider::DangiCacheV1>
+            + DataProvider<crate::provider::IslamicObservationalCacheV1>
+            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1>
             + ?Sized,
     {
         Ok(match kind {
@@ -771,29 +720,28 @@ impl AnyCalendar {
         Ok(Self::new_for_kind(kind))
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: AnyCalendarPreferences,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::JapaneseErasV1Marker>
-            + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
-            + DataProvider<crate::provider::ChineseCacheV1Marker>
-            + DataProvider<crate::provider::DangiCacheV1Marker>
-            + DataProvider<crate::provider::IslamicObservationalCacheV1Marker>
-            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1Marker>
+        P: DataProvider<crate::provider::JapaneseErasV1>
+            + DataProvider<crate::provider::JapaneseExtendedErasV1>
+            + DataProvider<crate::provider::ChineseCacheV1>
+            + DataProvider<crate::provider::DangiCacheV1>
+            + DataProvider<crate::provider::IslamicObservationalCacheV1>
+            + DataProvider<crate::provider::IslamicUmmAlQuraCacheV1>
             + ?Sized,
     {
         let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
@@ -836,21 +784,9 @@ impl AnyCalendar {
             Date::new_from_iso(date.to_iso(), Ref(self))
         } else {
             Date {
-                inner: date.inner.clone(),
+                inner: date.inner,
                 calendar: Ref(self),
             }
-        }
-    }
-
-    /// Given an AnyCalendar datetime, convert that date to another AnyCalendar datetime in this calendar,
-    /// if conversion is needed
-    pub fn convert_any_datetime<'a>(
-        &'a self,
-        date: &DateTime<impl AsCalendar<Calendar = AnyCalendar>>,
-    ) -> DateTime<Ref<'a, AnyCalendar>> {
-        DateTime {
-            time: date.time,
-            date: self.convert_any_date(&date.date),
         }
     }
 }
@@ -1129,7 +1065,7 @@ impl AnyCalendarKind {
         if let Some(kind) = Self::get_for_prefs(prefs) {
             kind
         } else {
-            let lang = prefs.locale_prefs.language;
+            let lang = prefs.locale_preferences.language();
             if lang == language!("th") {
                 Self::Buddhist
             } else if lang == language!("sa") {
@@ -1159,11 +1095,6 @@ pub trait IntoAnyCalendar: Calendar + Sized {
     /// The [`AnyCalendarKind`] enum variant associated with this calendar
     fn kind(&self) -> AnyCalendarKind;
 
-    /// Convert this calendar into an [`AnyCalendar`], cloning it
-    ///
-    /// You should not need to call this method directly
-    fn to_any_cloned(&self) -> AnyCalendar;
-
     /// Move an [`AnyCalendar`] into a `Self`, or returning it as an error
     /// if the types do not match.
     ///
@@ -1191,10 +1122,6 @@ impl IntoAnyCalendar for AnyCalendar {
         self.kind()
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        self.clone()
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         Ok(any)
     }
@@ -1204,7 +1131,7 @@ impl IntoAnyCalendar for AnyCalendar {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        d.clone()
+        *d
     }
 }
 
@@ -1216,10 +1143,6 @@ impl IntoAnyCalendar for Buddhist {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::Buddhist
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Buddhist(Buddhist)
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1259,10 +1182,6 @@ impl IntoAnyCalendar for Chinese {
         AnyCalendarKind::Chinese
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Chinese(self.clone())
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::Chinese(cal) = any {
             Ok(cal)
@@ -1300,10 +1219,6 @@ impl IntoAnyCalendar for Coptic {
         AnyCalendarKind::Coptic
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Coptic(Coptic)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::Coptic(cal) = any {
             Ok(cal)
@@ -1339,10 +1254,6 @@ impl IntoAnyCalendar for Dangi {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::Dangi
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Dangi(self.clone())
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1387,10 +1298,6 @@ impl IntoAnyCalendar for Ethiopian {
         }
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Ethiopian(*self)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::Ethiopian(cal) = any {
             Ok(cal)
@@ -1426,10 +1333,6 @@ impl IntoAnyCalendar for Gregorian {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::Gregorian
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Gregorian(Gregorian)
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1469,10 +1372,6 @@ impl IntoAnyCalendar for Hebrew {
         AnyCalendarKind::Hebrew
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Hebrew(Hebrew)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::Hebrew(cal) = any {
             Ok(cal)
@@ -1508,10 +1407,6 @@ impl IntoAnyCalendar for Indian {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::Indian
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Indian(Indian)
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1551,10 +1446,6 @@ impl IntoAnyCalendar for IslamicCivil {
         AnyCalendarKind::IslamicCivil
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicCivil(*self)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::IslamicCivil(cal) = any {
             Ok(cal)
@@ -1590,10 +1481,6 @@ impl IntoAnyCalendar for IslamicObservational {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::IslamicObservational
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicObservational(self.clone())
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1633,10 +1520,6 @@ impl IntoAnyCalendar for IslamicTabular {
         AnyCalendarKind::IslamicTabular
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicTabular(*self)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::IslamicTabular(cal) = any {
             Ok(cal)
@@ -1672,10 +1555,6 @@ impl IntoAnyCalendar for IslamicUmmAlQura {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::IslamicUmmAlQura
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::IslamicUmmAlQura(self.clone())
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1715,10 +1594,6 @@ impl IntoAnyCalendar for Iso {
         AnyCalendarKind::Iso
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Iso(Iso)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::Iso(cal) = any {
             Ok(cal)
@@ -1754,10 +1629,6 @@ impl IntoAnyCalendar for Japanese {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::Japanese
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Japanese(self.clone())
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
@@ -1797,10 +1668,6 @@ impl IntoAnyCalendar for JapaneseExtended {
         AnyCalendarKind::JapaneseExtended
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::JapaneseExtended(self.clone())
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::JapaneseExtended(cal) = any {
             Ok(cal)
@@ -1838,10 +1705,6 @@ impl IntoAnyCalendar for Persian {
         AnyCalendarKind::Persian
     }
     #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Persian(Persian)
-    }
-    #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
         if let AnyCalendar::Persian(cal) = any {
             Ok(cal)
@@ -1877,10 +1740,6 @@ impl IntoAnyCalendar for Roc {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         AnyCalendarKind::Roc
-    }
-    #[inline]
-    fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Roc(Roc)
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {

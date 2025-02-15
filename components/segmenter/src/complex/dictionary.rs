@@ -137,14 +137,14 @@ impl<'s> DictionaryType<'_, 's> for char {
 }
 
 pub(super) struct DictionarySegmenter<'l> {
-    dict: &'l UCharDictionaryBreakDataV1<'l>,
-    grapheme: &'l RuleBreakDataV2<'l>,
+    dict: &'l UCharDictionaryBreakData<'l>,
+    grapheme: &'l RuleBreakData<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub(super) fn new(
-        dict: &'l UCharDictionaryBreakDataV1<'l>,
-        grapheme: &'l RuleBreakDataV2<'l>,
+        dict: &'l UCharDictionaryBreakData<'l>,
+        grapheme: &'l RuleBreakData<'l>,
     ) -> Self {
         // TODO: no way to verify trie data
         Self { dict, grapheme }
@@ -182,7 +182,7 @@ mod tests {
 
     #[test]
     fn burmese_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary();
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let response: DataResponse<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
+        let response: DataResponse<DictionaryForWordOnlyAutoV1> = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("cjdict"),
@@ -203,10 +203,10 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        let word_segmenter = WordSegmenter::new_dictionary();
+        let word_segmenter = WordSegmenter::new_dictionary(Default::default());
         let dict_segmenter = DictionarySegmenter::new(
             response.payload.get(),
-            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2_MARKER,
+            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2,
         );
 
         // Match case
@@ -244,7 +244,7 @@ mod tests {
 
     #[test]
     fn khmer_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary();
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![0, 27, 54, 81]);
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
-        let segmenter = LineSegmenter::new_dictionary();
+        let segmenter = LineSegmenter::new_dictionary(Default::default());
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![0, 12, 21, 33, 42, 54, 63]);

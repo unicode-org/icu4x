@@ -4,7 +4,7 @@ import { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel.mjs"
 import { CollatorCaseFirst } from "./CollatorCaseFirst.mjs"
 import { CollatorCaseLevel } from "./CollatorCaseLevel.mjs"
 import { CollatorMaxVariable } from "./CollatorMaxVariable.mjs"
-import { CollatorNumeric } from "./CollatorNumeric.mjs"
+import { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 import { CollatorStrength } from "./CollatorStrength.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -12,50 +12,53 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html) for more information.
 */
-export class CollatorResolvedOptions {
 
+
+export class CollatorResolvedOptions {
+    
     #strength;
+    
     get strength()  {
         return this.#strength;
     }
     
-
     #alternateHandling;
+    
     get alternateHandling()  {
         return this.#alternateHandling;
     }
     
-
     #caseFirst;
+    
     get caseFirst()  {
         return this.#caseFirst;
     }
     
-
     #maxVariable;
+    
     get maxVariable()  {
         return this.#maxVariable;
     }
     
-
     #caseLevel;
+    
     get caseLevel()  {
         return this.#caseLevel;
     }
     
-
     #numeric;
+    
     get numeric()  {
         return this.#numeric;
     }
     
-
     #backwardSecondLevel;
+    
     get backwardSecondLevel()  {
         return this.#backwardSecondLevel;
     }
     
-    constructor(structObj, internalConstructor) {
+    #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("CollatorResolvedOptions's constructor takes an object of CollatorResolvedOptions's fields.");
         }
@@ -105,6 +108,7 @@ export class CollatorResolvedOptions {
             throw new Error("Missing required field backwardSecondLevel.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -115,6 +119,18 @@ export class CollatorResolvedOptions {
         appendArrayMap
     ) {
         return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue, this.#backwardSecondLevel.ffiValue]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof CollatorResolvedOptions) {
+            return obj;
+        }
+
+        return CollatorResolvedOptions.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -141,7 +157,7 @@ export class CollatorResolvedOptions {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("CollatorResolvedOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const strengthDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
         structObj.strength = new CollatorStrength(diplomatRuntime.internalConstructor, strengthDeref);
         const alternateHandlingDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 4);
@@ -153,10 +169,14 @@ export class CollatorResolvedOptions {
         const caseLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 16);
         structObj.caseLevel = new CollatorCaseLevel(diplomatRuntime.internalConstructor, caseLevelDeref);
         const numericDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 20);
-        structObj.numeric = new CollatorNumeric(diplomatRuntime.internalConstructor, numericDeref);
+        structObj.numeric = new CollatorNumericOrdering(diplomatRuntime.internalConstructor, numericDeref);
         const backwardSecondLevelDeref = diplomatRuntime.enumDiscriminant(wasm, ptr + 24);
         structObj.backwardSecondLevel = new CollatorBackwardSecondLevel(diplomatRuntime.internalConstructor, backwardSecondLevelDeref);
 
         return new CollatorResolvedOptions(structObj, internalConstructor);
+    }
+
+    constructor(structObj, internalConstructor) {
+        return this.#internalConstructor(...arguments)
     }
 }

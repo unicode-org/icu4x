@@ -4,6 +4,7 @@
 
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+use core::cmp::Ordering;
 use core::fmt;
 use core::ops::Deref;
 
@@ -116,6 +117,30 @@ impl<'a> From<&'a str> for &'a PotentialUtf8 {
     }
 }
 
+impl PartialEq<str> for PotentialUtf8 {
+    fn eq(&self, other: &str) -> bool {
+        self.eq(Self::from_str(other))
+    }
+}
+
+impl PartialOrd<str> for PotentialUtf8 {
+    fn partial_cmp(&self, other: &str) -> Option<Ordering> {
+        self.partial_cmp(Self::from_str(other))
+    }
+}
+
+impl PartialEq<PotentialUtf8> for str {
+    fn eq(&self, other: &PotentialUtf8) -> bool {
+        PotentialUtf8::from_str(self).eq(other)
+    }
+}
+
+impl PartialOrd<PotentialUtf8> for str {
+    fn partial_cmp(&self, other: &PotentialUtf8) -> Option<Ordering> {
+        PotentialUtf8::from_str(self).partial_cmp(other)
+    }
+}
+
 #[cfg(feature = "alloc")]
 impl From<Box<str>> for Box<PotentialUtf8> {
     #[inline]
@@ -132,7 +157,7 @@ impl Deref for PotentialUtf8 {
 }
 
 /// This impl requires enabling the optional `zerovec` Cargo feature
-#[cfg(feature = "zerovec")]
+#[cfg(all(feature = "zerovec", feature = "alloc"))]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
     type Container = zerovec::VarZeroVec<'a, PotentialUtf8>;
     type Slice = zerovec::VarZeroSlice<PotentialUtf8>;

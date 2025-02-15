@@ -1,0 +1,41 @@
+{
+  "locations": {},
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " সময়"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " মানক সময়"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " দিবালোক সময়"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

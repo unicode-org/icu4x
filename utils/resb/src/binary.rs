@@ -299,7 +299,7 @@ impl ResDescriptor {
     }
 
     /// Returns `true` if the described resource is empty.
-    pub fn is_empty(&self) -> bool {
+    pub fn is_empty(self) -> bool {
         self.value == 0
     }
 
@@ -308,7 +308,7 @@ impl ResDescriptor {
     /// The type of the resource representation is not verified. Consumers are
     /// expected to call the function appropriate to the resource type they are
     /// querying.
-    fn value_as_16_bit_offset(&self) -> usize {
+    fn value_as_16_bit_offset(self) -> usize {
         // When the value of a resource descriptor is an offset, it is counted
         // in units dependent on the resource type (16-bit values for 16-bit
         // resources, 32-bit values for 32-bit resources). Translate that into
@@ -321,7 +321,7 @@ impl ResDescriptor {
     /// The type of the resource representation is not verified. Consumers are
     /// expected to call the function appropriate to the resource type they are
     /// querying.
-    fn value_as_32_bit_offset(&self) -> usize {
+    fn value_as_32_bit_offset(self) -> usize {
         // When the value of a resource descriptor is an offset, it is counted
         // in units dependent on the resource type (16-bit values for 16-bit
         // resources, 32-bit values for 32-bit resources). Translate that into
@@ -334,7 +334,7 @@ impl ResDescriptor {
     /// The type of the resource representation is not verified. Consumers are
     /// expected to call the function appropriate to the resource type they are
     /// querying.
-    fn value_as_signed_int(&self) -> i32 {
+    fn value_as_signed_int(self) -> i32 {
         ((self.value as i32) << 4) >> 4
     }
 
@@ -343,12 +343,12 @@ impl ResDescriptor {
     /// The type of the resource representation is not verified. Consumers are
     /// expected to call the function appropriate to the resource type they are
     /// querying.
-    fn value_as_unsigned_int(&self) -> u32 {
+    fn value_as_unsigned_int(self) -> u32 {
         self.value
     }
 
     /// Gets the resource type of the described resource.
-    pub fn resource_type(&self) -> ResourceReprType {
+    pub fn resource_type(self) -> ResourceReprType {
         self.resource_type
     }
 }

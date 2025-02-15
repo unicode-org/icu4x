@@ -9,6 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
+    use icu_calendar::Iso;
 
     use crate::calendar::ffi::Calendar;
     use crate::errors::ffi::{CalendarError, CalendarParseError};
@@ -48,9 +49,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_iso_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_iso_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, CalendarParseError> {
-            Ok(Box::new(IsoDate(icu_calendar::Date::try_iso_from_utf8(v)?)))
+            Ok(Box::new(IsoDate(icu_calendar::Date::try_from_utf8(
+                v, Iso,
+            )?)))
         }
 
         /// Convert this date to one in a different calendar
@@ -167,7 +170,7 @@ pub mod ffi {
         /// Creates a new [`Date`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::Date::new_from_iso, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
         pub fn from_iso_in_calendar(
             year: i32,
@@ -185,7 +188,7 @@ pub mod ffi {
         ///
         /// An empty era code will treat the year as an extended year
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
             year: i32,
@@ -214,16 +217,20 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor)]
-        #[cfg(feature = "compiled_data")]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<Date>, CalendarParseError> {
-            Ok(Box::new(Date(
-                icu_calendar::Date::try_from_utf8(v)?.wrap_calendar_in_arc(),
-            )))
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_string(
+            v: &DiplomatStr,
+            calendar: &Calendar,
+        ) -> Result<Box<Date>, CalendarParseError> {
+            Ok(Box::new(Date(icu_calendar::Date::try_from_utf8(
+                v,
+                calendar.0.clone(),
+            )?)))
         }
 
         /// Convert this date to one in a different calendar
         #[diplomat::rust_link(icu::calendar::Date::to_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::convert_any_date, FnInEnum, hidden)]
         pub fn to_calendar(&self, calendar: &Calendar) -> Box<Date> {
             Box::new(Date(self.0.to_calendar(calendar.0.clone())))
         }

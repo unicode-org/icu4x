@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
@@ -18,11 +19,15 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_DecomposingNormalizer_create_nfd_mv1_result {union {icu4x::capi::DecomposingNormalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfd_mv1_result;
-    icu4x_DecomposingNormalizer_create_nfd_mv1_result icu4x_DecomposingNormalizer_create_nfd_mv1(const icu4x::capi::DataProvider* provider);
+    icu4x::capi::DecomposingNormalizer* icu4x_DecomposingNormalizer_create_nfd_mv1(void);
     
-    typedef struct icu4x_DecomposingNormalizer_create_nfkd_mv1_result {union {icu4x::capi::DecomposingNormalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_mv1_result;
-    icu4x_DecomposingNormalizer_create_nfkd_mv1_result icu4x_DecomposingNormalizer_create_nfkd_mv1(const icu4x::capi::DataProvider* provider);
+    typedef struct icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1_result {union {icu4x::capi::DecomposingNormalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1_result;
+    icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1_result icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+    
+    icu4x::capi::DecomposingNormalizer* icu4x_DecomposingNormalizer_create_nfkd_mv1(void);
+    
+    typedef struct icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result {union {icu4x::capi::DecomposingNormalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result;
+    icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     void icu4x_DecomposingNormalizer_normalize_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
     
@@ -41,13 +46,23 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfd(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfd_mv1(provider.AsFFI());
+inline std::unique_ptr<icu4x::DecomposingNormalizer> icu4x::DecomposingNormalizer::create_nfd() {
+  auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfd_mv1();
+  return std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfd_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DecomposingNormalizer>>(std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfkd(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfkd_mv1(provider.AsFFI());
+inline std::unique_ptr<icu4x::DecomposingNormalizer> icu4x::DecomposingNormalizer::create_nfkd() {
+  auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfkd_mv1();
+  return std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfkd_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DecomposingNormalizer>>(std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

@@ -2,10 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParseError, SubtagIterator};
+use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
+use crate::parser::SubtagIterator;
 use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
@@ -48,11 +52,13 @@ impl Value {
     /// Value::try_from_str("buddhist").expect("Parsing failed.");
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::new();
 
@@ -122,6 +128,7 @@ impl Value {
     /// v.push_subtag(subtag!("bar"));
     /// assert_eq!(v, "foo-bar");
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn push_subtag(&mut self, subtag: Subtag) {
         self.0.push(subtag);
     }
@@ -140,6 +147,19 @@ impl Value {
     /// ```
     pub fn subtag_count(&self) -> usize {
         self.0.len()
+    }
+
+    /// Creates an empty [`Value`], which corresponds to a "true" value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::{value, Value};
+    ///
+    /// assert_eq!(value!("true"), Value::new_empty());
+    /// ```
+    pub const fn new_empty() -> Self {
+        Self(ShortBoxSlice::new())
     }
 
     /// Returns `true` if the Value has no subtags.
@@ -227,10 +247,12 @@ impl Value {
     /// Notice: For performance- and memory-constrained environments, it is recommended
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
+    #[cfg(feature = "alloc")]
     pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
         Self(input.into())
     }
 
+    #[allow(dead_code)]
     pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<Subtag>) -> Self {
         Self(input)
     }
@@ -261,12 +283,14 @@ impl IntoIterator for Value {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromIterator<Subtag> for Value {
     fn from_iter<T: IntoIterator<Item = Subtag>>(iter: T) -> Self {
         Self(ShortBoxSlice::from_iter(iter))
     }
 }
 
+#[cfg(feature = "alloc")]
 impl Extend<Subtag> for Value {
     fn extend<T: IntoIterator<Item = Subtag>>(&mut self, iter: T) {
         for i in iter {
@@ -275,6 +299,7 @@ impl Extend<Subtag> for Value {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Value {
     type Err = ParseError;
 

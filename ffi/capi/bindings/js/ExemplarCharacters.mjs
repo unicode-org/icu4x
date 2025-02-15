@@ -6,7 +6,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+/** A set of "exemplar characters" for a given locale.
 *
 *See the [Rust documentation for `locale`](https://docs.rs/icu/latest/icu/locale/index.html) for more information.
 *
@@ -19,6 +19,7 @@ const ExemplarCharacters_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 export class ExemplarCharacters {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -26,7 +27,7 @@ export class ExemplarCharacters {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("ExemplarCharacters is an Opaque type. You cannot call its constructor.");
             return;
@@ -39,8 +40,9 @@ export class ExemplarCharacters {
         if (this.#selfEdge.length === 0) {
             ExemplarCharacters_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -71,10 +73,10 @@ export class ExemplarCharacters {
         finally {}
     }
 
-    static tryNewMain(provider, locale) {
+    static createMain(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ExemplarCharacters_try_new_main_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_main_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -89,10 +91,10 @@ export class ExemplarCharacters {
         }
     }
 
-    static tryNewAuxiliary(provider, locale) {
+    static createMainWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ExemplarCharacters_try_new_auxiliary_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_main_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -107,10 +109,10 @@ export class ExemplarCharacters {
         }
     }
 
-    static tryNewPunctuation(provider, locale) {
+    static createAuxiliary(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ExemplarCharacters_try_new_punctuation_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_auxiliary_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -125,10 +127,10 @@ export class ExemplarCharacters {
         }
     }
 
-    static tryNewNumbers(provider, locale) {
+    static createAuxiliaryWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ExemplarCharacters_try_new_numbers_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_auxiliary_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -143,10 +145,10 @@ export class ExemplarCharacters {
         }
     }
 
-    static tryNewIndex(provider, locale) {
+    static createPunctuation(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ExemplarCharacters_try_new_index_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_ExemplarCharacters_create_punctuation_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -159,5 +161,99 @@ export class ExemplarCharacters {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static createPunctuationWithProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ExemplarCharacters_create_punctuation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createNumbers(locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ExemplarCharacters_create_numbers_mv1(diplomatReceive.buffer, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createNumbersWithProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ExemplarCharacters_create_numbers_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createIndex(locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ExemplarCharacters_create_index_mv1(diplomatReceive.buffer, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createIndexWithProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_ExemplarCharacters_create_index_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

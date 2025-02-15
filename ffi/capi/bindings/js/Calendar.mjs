@@ -14,6 +14,7 @@ const Calendar_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class Calendar {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +22,7 @@ export class Calendar {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("Calendar is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,16 +35,17 @@ export class Calendar {
         if (this.#selfEdge.length === 0) {
             Calendar_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static createForLocale(provider, locale) {
+    static createForLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Calendar_create_for_locale_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_Calendar_create_for_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -58,10 +60,46 @@ export class Calendar {
         }
     }
 
-    static createForKind(provider, kind) {
+    static createForKind(kind) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Calendar_create_for_kind_mv1(diplomatReceive.buffer, provider.ffiValue, kind.ffiValue);
+        const result = wasm.icu4x_Calendar_create_for_kind_mv1(diplomatReceive.buffer, kind.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new Calendar(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createForLocaleWithProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_Calendar_create_for_locale_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new Calendar(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    static createForKindWithProvider(provider, kind) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_Calendar_create_for_kind_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, kind.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -84,5 +122,9 @@ export class Calendar {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

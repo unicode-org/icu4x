@@ -5,7 +5,6 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_casemap::CaseMapper;
 use icu_locale_core::langid;
-#[cfg(feature = "bench")]
 use icu_normalizer::DecomposingNormalizerBorrowed;
 
 const TEST_STRING_EN: &str = "One of the key design principles of ICU4X is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application.  This document explains how that goal can be achieved.";
@@ -13,7 +12,6 @@ const TEST_STRING_EN: &str = "One of the key design principles of ICU4X is to ma
 // First 50 lines of the Iliad, in precomposed Greek
 // (The Iliad is thousands of years old and public domain)
 // Sources can be found in https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0133 or https://www.sacred-texts.com/cla/homer/greek/ili01.htm
-#[cfg(feature = "bench")]
 const ILIAD: &str = include_str!("data/Iliad.txt");
 
 fn overview_bench(c: &mut Criterion) {
@@ -51,7 +49,6 @@ fn overview_bench(c: &mut Criterion) {
     });
 }
 fn greek_uppercasing(_c: &mut Criterion) {
-    #[cfg(feature = "bench")]
     {
         let c = _c;
         let casemapper = CaseMapper::new();

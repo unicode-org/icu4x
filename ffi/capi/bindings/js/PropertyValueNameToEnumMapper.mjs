@@ -18,6 +18,7 @@ const PropertyValueNameToEnumMapper_box_destroy_registry = new FinalizationRegis
 });
 
 export class PropertyValueNameToEnumMapper {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -25,7 +26,7 @@ export class PropertyValueNameToEnumMapper {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("PropertyValueNameToEnumMapper is an Opaque type. You cannot call its constructor.");
             return;
@@ -38,8 +39,9 @@ export class PropertyValueNameToEnumMapper {
         if (this.#selfEdge.length === 0) {
             PropertyValueNameToEnumMapper_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -76,10 +78,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadGeneralCategory(provider) {
+    static createGeneralCategory() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createGeneralCategoryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_general_category_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -94,10 +106,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadHangulSyllableType(provider) {
+    static createHangulSyllableType() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createHangulSyllableTypeWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_hangul_syllable_type_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -112,10 +134,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadEastAsianWidth(provider) {
+    static createEastAsianWidth() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createEastAsianWidthWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_east_asian_width_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -130,10 +162,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadBidiClass(provider) {
+    static createBidiClass() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createBidiClassWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_bidi_class_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -148,10 +190,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadIndicSyllabicCategory(provider) {
+    static createIndicSyllabicCategory() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createIndicSyllabicCategoryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_indic_syllabic_category_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -166,10 +218,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadLineBreak(provider) {
+    static createLineBreak() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createLineBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_line_break_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -184,10 +246,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadGraphemeClusterBreak(provider) {
+    static createGraphemeClusterBreak() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createGraphemeClusterBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_grapheme_cluster_break_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -202,10 +274,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadWordBreak(provider) {
+    static createWordBreak() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createWordBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_word_break_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -220,10 +302,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadSentenceBreak(provider) {
+    static createSentenceBreak() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createSentenceBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_sentence_break_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -238,10 +330,20 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
-    static loadScript(provider) {
+    static createScript() {
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
+    
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createScriptWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_load_script_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -254,5 +356,9 @@ export class PropertyValueNameToEnumMapper {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

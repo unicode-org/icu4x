@@ -3,7 +3,6 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Locale } from "./Locale.mjs"
 import { LocaleDirection } from "./LocaleDirection.mjs"
-import { LocaleExpander } from "./LocaleExpander.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -15,6 +14,7 @@ const LocaleDirectionality_box_destroy_registry = new FinalizationRegistry((ptr)
 });
 
 export class LocaleDirectionality {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,7 +22,7 @@ export class LocaleDirectionality {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleDirectionality is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,16 +35,27 @@ export class LocaleDirectionality {
         if (this.#selfEdge.length === 0) {
             LocaleDirectionality_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    #defaultConstructor() {
+        const result = wasm.icu4x_LocaleDirectionality_create_common_mv1();
+    
+        try {
+            return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createCommonWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -59,10 +70,20 @@ export class LocaleDirectionality {
         }
     }
 
-    static createWithExpander(provider, expander) {
+    static createExtended() {
+        const result = wasm.icu4x_LocaleDirectionality_create_extended_mv1();
+    
+        try {
+            return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createExtendedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -105,5 +126,15 @@ export class LocaleDirectionality {
         }
         
         finally {}
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

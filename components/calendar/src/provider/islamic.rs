@@ -25,21 +25,17 @@ use zerovec::ZeroVec;
 /// operations.
 #[icu_provider::data_struct(
     marker(
-        IslamicObservationalCacheV1Marker,
+        IslamicObservationalCacheV1,
         "calendar/islamicobservationalcache@1",
         singleton
     ),
-    marker(
-        IslamicUmmAlQuraCacheV1Marker,
-        "calendar/islamicummalquracache@1",
-        singleton
-    )
+    marker(IslamicUmmAlQuraCacheV1, "calendar/islamicummalquracache@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::islamic))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct IslamicCacheV1<'data> {
+pub struct IslamicCache<'data> {
     /// The extended year corresponding to the first data entry for this year
     pub first_extended_year: i32,
     /// A list of precomputed data for each year beginning with first_extended_year
@@ -47,7 +43,7 @@ pub struct IslamicCacheV1<'data> {
     pub data: ZeroVec<'data, PackedIslamicYearInfo>,
 }
 
-impl IslamicCacheV1<'_> {
+impl IslamicCache<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
     pub fn compute_for<IB: IslamicBasedMarker>(extended_years: core::ops::Range<i32>) -> Self {
@@ -55,7 +51,7 @@ impl IslamicCacheV1<'_> {
             .clone()
             .map(|year| PackedIslamicYearInfo::compute::<IB>(year))
             .collect();
-        IslamicCacheV1 {
+        IslamicCache {
             first_extended_year: extended_years.start,
             data,
         }

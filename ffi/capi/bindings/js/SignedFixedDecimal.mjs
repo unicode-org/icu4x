@@ -16,6 +16,7 @@ const SignedFixedDecimal_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 export class SignedFixedDecimal {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +24,7 @@ export class SignedFixedDecimal {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("SignedFixedDecimal is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,8 +37,9 @@ export class SignedFixedDecimal {
         if (this.#selfEdge.length === 0) {
             SignedFixedDecimal_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -69,7 +71,7 @@ export class SignedFixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError({}, diplomatRuntime.internalConstructor);
+                const cause = FixedDecimalLimitError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -87,7 +89,7 @@ export class SignedFixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError({}, diplomatRuntime.internalConstructor);
+                const cause = FixedDecimalLimitError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -105,7 +107,7 @@ export class SignedFixedDecimal {
     
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = new FixedDecimalLimitError({}, diplomatRuntime.internalConstructor);
+                const cause = FixedDecimalLimitError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
             return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -245,6 +247,13 @@ export class SignedFixedDecimal {
         finally {}
     }
 
+    trimEndIfInteger() {wasm.icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(this.ffiValue);
+    
+        try {}
+        
+        finally {}
+    }
+
     padStart(position) {wasm.icu4x_SignedFixedDecimal_pad_start_mv1(this.ffiValue, position);
     
         try {}
@@ -336,5 +345,9 @@ export class SignedFixedDecimal {
         finally {
             write.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

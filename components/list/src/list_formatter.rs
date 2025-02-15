@@ -24,12 +24,12 @@ define_preferences!(
 /// [crate-level documentation](crate) for more details.
 #[derive(Debug)]
 pub struct ListFormatter {
-    data: DataPayload<ErasedMarker<ListFormatterPatternsV2<'static>>>,
+    data: DataPayload<ErasedMarker<ListFormatterPatterns<'static>>>,
 }
 
 macro_rules! constructor {
-    ($name: ident, $name_any: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
-        icu_provider::gen_any_buffer_data_constructors!(
+    ($name: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
+        icu_provider::gen_buffer_data_constructors!(
             (prefs: ListFormatterPreferences, options: ListFormatterOptions) ->  error: DataError,
             #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
             ///
@@ -37,25 +37,24 @@ macro_rules! constructor {
             /// an explanation of the different types.
             functions: [
                 $name,
-                $name_any,
                 $name_buffer,
                 $name_unstable,
                 Self
             ]
         );
 
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
+        #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
             provider: &(impl DataProvider<$marker> + ?Sized),
             prefs: ListFormatterPreferences,
             options: ListFormatterOptions,
         ) -> Result<Self, DataError> {
             let length = match options.length.unwrap_or_default() {
-                ListLength::Narrow => ListFormatterPatternsV2::NARROW,
-                ListLength::Short => ListFormatterPatternsV2::SHORT,
-                ListLength::Wide => ListFormatterPatternsV2::WIDE,
+                ListLength::Narrow => ListFormatterPatterns::NARROW,
+                ListLength::Short => ListFormatterPatterns::SHORT,
+                ListLength::Wide => ListFormatterPatterns::WIDE,
             };
-            let locale = DataLocale::from_preferences_locale::<$marker>(prefs.locale_prefs);
+            let locale = <$marker>::make_locale(prefs.locale_preferences);
             let data = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -74,26 +73,23 @@ macro_rules! constructor {
 impl ListFormatter {
     constructor!(
         try_new_and,
-        try_new_and_with_any_provider,
         try_new_and_with_buffer_provider,
         try_new_and_unstable,
-        AndListV2Marker,
+        ListAndV2,
         "and"
     );
     constructor!(
         try_new_or,
-        try_new_or_with_any_provider,
         try_new_or_with_buffer_provider,
         try_new_or_unstable,
-        OrListV2Marker,
+        ListOrV2,
         "or"
     );
     constructor!(
         try_new_unit,
-        try_new_unit_with_any_provider,
         try_new_unit_with_buffer_provider,
         try_new_unit_unstable,
-        UnitListV2Marker,
+        ListUnitV2,
         "unit"
     );
 
@@ -276,7 +272,7 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(patterns: ListFormatterPatternsV2<'static>) -> ListFormatter {
+    fn formatter(patterns: ListFormatterPatterns<'static>) -> ListFormatter {
         ListFormatter {
             data: DataPayload::from_owned(patterns),
         }

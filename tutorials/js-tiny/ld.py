@@ -12,9 +12,9 @@ SYMBOLS = [
     "icu4x_SignedFixedDecimal_from_int32_mv1",
     "icu4x_SignedFixedDecimal_destroy_mv1",
     "icu4x_SignedFixedDecimal_multiply_pow10_mv1",
-    "icu4x_FixedDecimalFormatter_create_with_grouping_strategy_mv1",
-    "icu4x_FixedDecimalFormatter_destroy_mv1",
-    "icu4x_FixedDecimalFormatter_format_mv1",
+    "icu4x_DecimalFormatter_create_with_grouping_strategy_mv1",
+    "icu4x_DecimalFormatter_destroy_mv1",
+    "icu4x_DecimalFormatter_format_mv1",
     "icu4x_Locale_from_string_mv1",
     "icu4x_Locale_destroy_mv1",
 ]
@@ -32,7 +32,7 @@ def main():
         else:
             new_argv += [arg]
             is_export = False
-    result = subprocess.run(["lld-17"] + new_argv, stdout=sys.stdout, stderr=sys.stderr)
+    result = subprocess.run(["lld-18"] + new_argv, stdout=sys.stdout, stderr=sys.stderr)
     return result.returncode
 
 if __name__ == "__main__":

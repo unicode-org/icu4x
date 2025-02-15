@@ -7,7 +7,7 @@
 #include <icu4x/CodePointSetData.hpp>
 #include <icu4x/EmojiSetData.hpp>
 #include <icu4x/ExemplarCharacters.hpp>
-#include <icu4x/GeneralCategoryNameToMaskMapper.hpp>
+#include <icu4x/GeneralCategoryNameToGroupMapper.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/PropertyValueNameToEnumMapper.hpp>
 
@@ -54,11 +54,10 @@ int test_map_8_property(CodePointMapData8* data, char32_t sample, uint32_t expec
 
 int main() {
     Logger::init_simple_logger();
-    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
     int result;
 
     result = test_set_property(
-        CodePointSetData::load_ascii_hex_digit(*dp.get()).ok().value().get(),
+        CodePointSetData::create_ascii_hex_digit().get(),
         u'3',
         u'੩'
     );
@@ -67,7 +66,7 @@ int main() {
     }
 
     result = test_map_16_property(
-        CodePointMapData16::load_script(*dp.get()).ok().value().get(),
+        CodePointMapData16::create_script().get(),
         u'木',
         17 // Script::Han
     );
@@ -76,7 +75,7 @@ int main() {
     }
 
     result = test_map_8_property(
-        CodePointMapData8::load_general_category(*dp.get()).ok().value().get(),
+        CodePointMapData8::create_general_category().get(),
         u'木',
         5 // GeneralCategory::OtherLetter
     );
@@ -85,7 +84,7 @@ int main() {
     }
 
     result = test_map_8_property(
-        CodePointMapData8::load_bidi_class(*dp.get()).ok().value().get(),
+        CodePointMapData8::create_bidi_class().get(),
         u'ع',
         13 // GeneralCategory::ArabicLetter
     );
@@ -93,7 +92,7 @@ int main() {
         return result;
     }
 
-    std::unique_ptr<EmojiSetData> basic_emoji = EmojiSetData::load_basic(*dp.get()).ok().value();
+    std::unique_ptr<EmojiSetData> basic_emoji = EmojiSetData::create_basic();
     std::string letter = u8"hello";
 
     if (!basic_emoji->contains(U'🔥')) {
@@ -121,7 +120,7 @@ int main() {
         std::cout << "Basic_Emoji set contains appropriate characters" << std::endl;
     }
     std::unique_ptr<Locale> locale = Locale::from_string("bn").ok().value();
-    std::unique_ptr<ExemplarCharacters> exemplars = ExemplarCharacters::try_new_main(*dp.get(), *locale.get()).ok().value();
+    std::unique_ptr<ExemplarCharacters> exemplars = ExemplarCharacters::create_main(*locale.get()).ok().value();
     if (!exemplars->contains(U'ব')) {
         std::cout << "Character 'ব' not found in Bangla exemplar chars set" << std::endl;
         result = 1;
@@ -147,7 +146,7 @@ int main() {
     }
 
 
-    std::unique_ptr<PropertyValueNameToEnumMapper> mapper = PropertyValueNameToEnumMapper::load_script(*dp.get()).ok().value();
+    std::unique_ptr<PropertyValueNameToEnumMapper> mapper = PropertyValueNameToEnumMapper::create_script();
     int32_t script = mapper->get_strict("Brah");
     if (script != 65) {
         std::cout << "Expected discriminant 64 for script name `Brah`, found " << script << std::endl;
@@ -174,35 +173,35 @@ int main() {
         std::cout << "Script name mapper returns correct values" << std::endl;
     }
 
-    std::unique_ptr<GeneralCategoryNameToMaskMapper> mask_mapper = GeneralCategoryNameToMaskMapper::load(*dp.get()).ok().value();
-    int32_t mask = mask_mapper->get_strict("Lu");
-    if (mask != 0x02) {
-        std::cout << "Expected discriminant 0x02 for mask name `Lu`, found " << mask << std::endl;
+    std::unique_ptr<GeneralCategoryNameToGroupMapper> group_mapper = GeneralCategoryNameToGroupMapper::create();
+    GeneralCategoryGroup group = group_mapper->get_strict("Lu");
+    if (group.mask != 0x02) {
+        std::cout << "Expected discriminant 0x02 for mask name `Lu`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("L");
-    if (mask != 0x3e) {
-        std::cout << "Expected discriminant 0x3e for mask name `Lu`, found " << mask << std::endl;
+    group = group_mapper->get_strict("L");
+    if (group.mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `Lu`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("Letter");
-    if (mask != 0x3e) {
-        std::cout << "Expected discriminant 0x3e for mask name `Letter`, found " << mask << std::endl;
+    group = group_mapper->get_strict("Letter");
+    if (group.mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `Letter`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_loose("l");
-    if (mask != 0x3e) {
-        std::cout << "Expected discriminant 0x3e for mask name `l`, found " << mask << std::endl;
+    group = group_mapper->get_loose("l");
+    if (group.mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `l`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("letter");
-    if (mask != 0) {
-        std::cout << "Expected no mask for (strict matched) name `letter`, found " << mask << std::endl;
+    group = group_mapper->get_strict("letter");
+    if (group.mask != 0) {
+        std::cout << "Expected no mask for (strict matched) name `letter`, found " << group.mask << std::endl;
         result = 1;
     }
-    mask = mask_mapper->get_strict("EverythingLol");
-    if (mask != 0) {
-        std::cout << "Expected no mask for nonexistent name `EverythingLol`, found " << mask << std::endl;
+    group = group_mapper->get_strict("EverythingLol");
+    if (group.mask != 0) {
+        std::cout << "Expected no mask for nonexistent name `EverythingLol`, found " << group.mask << std::endl;
         result = 1;
     }
 
@@ -214,9 +213,9 @@ int main() {
     }
 
 
-    mask = mask_mapper->get_strict("Lu");
-    std::unique_ptr<CodePointMapData8> gc = CodePointMapData8::load_general_category(*dp.get()).ok().value();
-    auto ranges = gc->iter_ranges_for_mask(mask);
+    group = group_mapper->get_strict("Lu");
+    std::unique_ptr<CodePointMapData8> gc = CodePointMapData8::create_general_category();
+    auto ranges = gc->iter_ranges_for_group(group);
     auto next = ranges->next();
     if (next.done) {
         std::cout << "Got empty iterator!";
@@ -228,8 +227,8 @@ int main() {
     }
 
     // Test iteration to completion for a small set
-    mask = mask_mapper->get_strict("Control");
-    ranges = gc->iter_ranges_for_mask(mask);
+    group = group_mapper->get_strict("Control");
+    ranges = gc->iter_ranges_for_group(group);
     next = ranges->next();
 
     if (next.start != 0 || next.end != 0x1f) {

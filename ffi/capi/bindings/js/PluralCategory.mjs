@@ -2,10 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
 /** See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
 */
+
+
 export class PluralCategory {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -20,14 +23,14 @@ export class PluralCategory {
     static getAllEntries() {
         return PluralCategory.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return PluralCategory.#objectValues[arguments[1]];
         }
@@ -39,11 +42,15 @@ export class PluralCategory {
         let intVal = PluralCategory.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return PluralCategory.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a PluralCategory and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new PluralCategory(value);
     }
 
     get value() {
@@ -90,5 +97,9 @@ export class PluralCategory {
         
             diplomatReceive.free();
         }
+    }
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
     }
 }

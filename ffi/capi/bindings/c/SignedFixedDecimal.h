@@ -67,6 +67,8 @@ void icu4x_SignedFixedDecimal_trim_start_mv1(SignedFixedDecimal* self);
 
 void icu4x_SignedFixedDecimal_trim_end_mv1(SignedFixedDecimal* self);
 
+void icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(SignedFixedDecimal* self);
+
 void icu4x_SignedFixedDecimal_pad_start_mv1(SignedFixedDecimal* self, int16_t position);
 
 void icu4x_SignedFixedDecimal_pad_end_mv1(SignedFixedDecimal* self, int16_t position);

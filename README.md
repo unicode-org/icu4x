@@ -36,23 +36,23 @@ icu = "1.5.0"
 `src/main.rs`:
 
 ```rust
-use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMDT};
+use icu::calendar::Date;
+use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMD};
 use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(
     locale!("es").into(),
-    YMDT::long()
+    YMD::long()
 )
 .expect("locale should be present in compiled data");
 
-let date = DateTime::try_new_iso(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
+let date = Date::try_new_iso(2020, 9, 12).expect("date should be valid");
 let date = date.to_any();
 
-let formatted_date = dtf.format_any_calendar(&date).to_string();
+let formatted_date = dtf.format(&date).to_string();
 assert_eq!(
     formatted_date,
-    "12 de septiembre de 2020, 12:35:00"
+    "12 de septiembre de 2020"
 );
 ```
 

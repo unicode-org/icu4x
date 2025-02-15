@@ -6,9 +6,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
 */
+
+
 export class ScriptExtensionsSet {
     
-
     get ffiValue(): pointer;
 
     contains(script: number): boolean;

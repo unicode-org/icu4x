@@ -34,6 +34,7 @@ mod subdivision;
 mod value;
 
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
 #[doc(inline)]
@@ -47,8 +48,11 @@ pub use subdivision::{subdivision_suffix, SubdivisionId, SubdivisionSuffix};
 #[doc(inline)]
 pub use value::{value, Value};
 
+#[cfg(feature = "alloc")]
 use super::ExtensionType;
+#[cfg(feature = "alloc")]
 use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 
 pub(crate) const UNICODE_EXT_CHAR: char = 'u';
@@ -112,11 +116,13 @@ impl Unicode {
     /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`Unicode`].
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(code_units);
 
@@ -175,6 +181,7 @@ impl Unicode {
         self.as_tuple().cmp(&other.as_tuple())
     }
 
+    #[cfg(feature = "alloc")]
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let attributes = Attributes::try_from_iter(iter)?;
         let keywords = Keywords::try_from_iter(iter)?;
@@ -205,6 +212,7 @@ impl Unicode {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Unicode {
     type Err = ParseError;
 

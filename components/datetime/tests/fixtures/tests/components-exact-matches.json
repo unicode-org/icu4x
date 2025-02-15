@@ -8,7 +8,7 @@
                     "year": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year"],
+                    "dateFields": "Y",
                     "length": "short",
                     "yearStyle": "full"
                 }
@@ -30,7 +30,7 @@
                     "month": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month"],
+                    "dateFields": "YM",
                     "length": "short",
                     "yearStyle": "full"
                 }
@@ -53,7 +53,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "dateFields": "YMD",
                     "length": "short",
                     "yearStyle": "full"
                 }
@@ -77,7 +77,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "dateFields": "YMDE",
                     "length": "short",
                     "yearStyle": "full"
                 }
@@ -99,7 +99,7 @@
                     "month": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month"],
+                    "dateFields": "YM",
                     "length": "medium"
                 }
             }
@@ -121,7 +121,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day"],
+                    "dateFields": "YMD",
                     "length": "medium"
                 }
             }
@@ -144,7 +144,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday"],
+                    "dateFields": "YMDE",
                     "length": "medium"
                 }
             }
@@ -165,7 +165,7 @@
                     "month": "long"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month"],
+                    "dateFields": "YM",
                     "length": "long"
                 }
             }
@@ -185,7 +185,7 @@
                     "month": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["month"],
+                    "dateFields": "M",
                     "length": "medium"
                 }
             }
@@ -206,7 +206,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["month", "day"],
+                    "dateFields": "MD",
                     "length": "short"
                 }
             }
@@ -228,7 +228,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["month", "day", "weekday"],
+                    "dateFields": "MDE",
                     "length": "short"
                 }
             }
@@ -248,7 +248,7 @@
                     "month": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["month"],
+                    "dateFields": "M",
                     "length": "medium"
                 }
             }
@@ -269,7 +269,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["month", "day"],
+                    "dateFields": "MD",
                     "length": "medium"
                 }
             }
@@ -291,7 +291,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["month", "day", "weekday"],
+                    "dateFields": "MDE",
                     "length": "medium"
                 }
             }
@@ -312,7 +312,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["month", "day"],
+                    "dateFields": "MD",
                     "length": "long"
                 }
             }
@@ -332,7 +332,7 @@
                     "day": "numeric-day-of-month"
                 },
                 "semantic": {
-                    "fieldSet": ["day"],
+                    "dateFields": "D",
                     "length": "short"
                 }
             }
@@ -353,7 +353,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["day", "weekday"],
+                    "dateFields": "DE",
                     "length": "medium"
                 }
             }
@@ -373,7 +373,7 @@
                     "weekday": "short"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday"],
+                    "dateFields": "E",
                     "length": "medium"
                 }
             }
@@ -395,9 +395,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "time"],
+                    "dateFields": "E",
                     "length": "medium",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 }
             }
         },
@@ -419,9 +419,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "time"],
+                    "dateFields": "E",
                     "length": "medium",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 }
             }
         },
@@ -442,9 +442,9 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "time"],
+                    "dateFields": "E",
                     "length": "medium",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h23"
             }
@@ -467,9 +467,9 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["weekday", "time"],
+                    "dateFields": "E",
                     "length": "medium",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h23"
             }
@@ -489,9 +489,8 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "hourExact"
+                    "timePrecision": "hour"
                 },
                 "hourCycle": "h12"
             }
@@ -512,9 +511,8 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h12"
             }
@@ -536,9 +534,8 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h12"
             }
@@ -558,9 +555,8 @@
                     "hour": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "hourExact"
+                    "timePrecision": "hour"
                 },
                 "hourCycle": "h23"
             }
@@ -581,9 +577,8 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "minuteExact"
+                    "timePrecision": "minute"
                 },
                 "hourCycle": "h23"
             }
@@ -605,9 +600,8 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
                     "length": "short",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h23"
             }

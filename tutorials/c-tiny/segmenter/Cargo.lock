@@ -4,8 +4,9 @@ version = 3
 
 [[package]]
 name = "diplomat"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef0c3a613b09df83bdd42393cd532830a795053102f87461fca1726999829c60"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -15,13 +16,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.8.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc1708f176e12755d6d6571ad9b0ebbd3b428223b5cdf63a38eecf1479c13e70"
 
 [[package]]
 name = "diplomat_core"
-version = "0.8.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=b49d63ec2a50a456b4b6e9d072d3650dca153ff8#b49d63ec2a50a456b4b6e9d072d3650dca153ff8"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58e5ba87fee6b8b9dcc575cfbc84ae97b8b9f891fa27f670996a4684e20bd178"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -358,7 +361,7 @@ version = "2.0.0-beta1"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.4.0-dev"
+version = "0.4.0"
 
 [[patch.unused]]
 name = "icu_collator"
@@ -473,11 +476,11 @@ name = "icu_segmenter_data"
 version = "2.0.0-beta1"
 
 [[patch.unused]]
-name = "icu_timezone"
+name = "icu_time"
 version = "2.0.0-beta1"
 
 [[patch.unused]]
-name = "icu_timezone_data"
+name = "icu_time_data"
 version = "2.0.0-beta1"
 
 [[patch.unused]]
@@ -486,7 +489,7 @@ version = "0.3.0"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.3.0-dev"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "zerotrie"

@@ -653,6 +653,38 @@ fn duration_exceeds_range() {
 }
 
 #[test]
+fn maximum_duration_units() {
+    use crate::parsers::IsoDurationParser;
+
+    // All the values below represent the value 90,071,992,547,409,910,000,000,000
+    // which is the maximum representable duration in nanoseconds for ECMA402
+
+    let result = IsoDurationParser::from_str("P416999965497D").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("PT25019997929836H").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("PT1501199875790165M").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("PT90071992547409910S").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-P416999965497D").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-PT25019997929836H").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-PT1501199875790165M").parse();
+    assert!(result.is_ok());
+
+    let result = IsoDurationParser::from_str("-PT90071992547409910S").parse();
+    assert!(result.is_ok());
+}
+
+#[test]
 fn temporal_invalid_iso_datetime_strings() {
     // NOTE: The below tests were initially pulled from test262's `argument-string-invalid`
     const INVALID_DATETIME_STRINGS: [&str; 32] = [
@@ -974,4 +1006,78 @@ fn test_zulu_offset() {
             calendar: None,
         })
     );
+}
+
+// Examples referenced from
+#[test]
+fn subsecond_string_tests() {
+    let subsecond_time = "2025-01-15T15:23:30.1";
+    let result = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2025,
+                month: 1,
+                day: 15,
+            }),
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                nanosecond: 100_000_000,
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    let subsecond_time = "2025-01-15T15:23:30.12345678";
+    let result = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2025,
+                month: 1,
+                day: 15,
+            }),
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                nanosecond: 123_456_780,
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    let subsecond_time = "2025-01-15T15:23:30.123456789";
+    let result = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(
+        result,
+        Ok(IxdtfParseRecord {
+            date: Some(DateRecord {
+                year: 2025,
+                month: 1,
+                day: 15,
+            }),
+            time: Some(TimeRecord {
+                hour: 15,
+                minute: 23,
+                second: 30,
+                nanosecond: 123_456_789,
+            }),
+            offset: None,
+            tz: None,
+            calendar: None,
+        })
+    );
+
+    let subsecond_time = "1976-11-18T15:23:30.1234567890";
+    let err = IxdtfParser::from_str(subsecond_time).parse();
+    assert_eq!(err, Err(ParseError::FractionPart));
 }

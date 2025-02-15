@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
-
 use crate::{provider::neo::*, scaffold::*};
 
 /// Struct for combining date/time fields with zone fields.
@@ -13,39 +11,40 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// # Examples
 ///
-/// Two ways to construct the same combo field set (in this case, weekday with location-based zone):
+/// Only one way to construct a combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, E, L};
+/// use icu::datetime::fieldsets::{Combo, E, zone::Location};
 ///
-/// let field_set_1 = E::long().zone_l();
-/// let field_set_2 = Combo::<E, L>::long();
-///
-/// assert_eq!(field_set_1, field_set_2);
+/// let field_set = E::long().zone(Location);
 /// ```
 ///
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<ET, L>>::try_new(
+/// let formatter = DateTimeFormatter::<Combo<ET, Location>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().zone_l(),
+///     ET::short().hm().zone(Location),
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
-///     .unwrap();
+/// let zdt = ZonedDateTime::try_location_only_from_str(
+///     "2024-10-18T15:44[America/Los_Angeles]",
+///     formatter.calendar(),
+///     IanaParser::new(),
+/// )
+/// .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format_any_calendar(&zdt),
+///     formatter.format(&zdt),
 ///     "Fri, 3:44 PM Los Angeles Time"
 /// );
 /// ```
@@ -54,23 +53,22 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::{Combo, ET, L};
+/// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, L>>::try_new(
+/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, Location>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().hm().zone_l(),
+///     ET::short().hm().zone(Location),
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_location_only_iso_from_str("2024-10-18T15:44[America/Los_Angeles]")
-///     .unwrap()
-///     .to_calendar(Gregorian);
+/// let zdt = ZonedDateTime::try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", Gregorian, IanaParser::new())
+///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
@@ -82,40 +80,75 @@ use crate::{provider::neo::*, scaffold::*};
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, Vs, YMD};
+/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, zone::GenericShort, YMD};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::timezone::IxdtfParser;
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, Vs>>::try_new(
+/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, GenericShort>>::try_new(
 ///     locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).zone_v(),
+///     DateFieldSet::YMD(YMD::long()).zone(GenericShort),
 /// )
 /// .unwrap();
 ///
-/// let zdt = IxdtfParser::new()
-///     .try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]")
-///     .unwrap();
+/// let zdt = ZonedDateTime::try_location_only_from_str(
+///     "2024-10-18T15:44[America/Los_Angeles]",
+///     formatter.calendar(),
+///     IanaParser::new(),
+/// )
+/// .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format_any_calendar(&zdt),
+///     formatter.format(&zdt),
 ///     "October 18, 2024 PT"
+/// );
+/// ```
+///
+/// Format with a time of day and long time zone:
+///
+/// ```
+/// use icu::calendar::Gregorian;
+/// use icu::datetime::fieldsets::{T, zone::SpecificLong};
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::locale::locale;
+/// use icu::datetime::input::ZonedDateTime;
+/// use icu::time::zone::{UtcOffsetCalculator, IanaParser};
+/// use writeable::assert_writeable_eq;
+///
+/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("en-US").into(),
+///     T::medium().zone(SpecificLong),
+/// )
+/// .unwrap();
+///
+/// let zdt = ZonedDateTime::try_from_str(
+///     "2024-10-18T15:44-0700[America/Los_Angeles]",
+///     Gregorian,
+///     IanaParser::new(),
+///     &UtcOffsetCalculator::new(),
+/// )
+/// .unwrap();
+///
+/// assert_writeable_eq!(
+///     formatter.format(&zdt),
+///     "3:44:00 PM Pacific Daylight Time"
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Combo<DT, Z> {
     date_time_field_set: DT,
-    _z: PhantomData<Z>,
+    zone_field_set: Z,
 }
 
 impl<DT, Z> Combo<DT, Z> {
     #[inline]
-    pub(crate) const fn new(date_time_field_set: DT) -> Self {
+    pub(crate) const fn new(date_time_field_set: DT, zone_field_set: Z) -> Self {
         Self {
             date_time_field_set,
-            _z: PhantomData,
+            zone_field_set,
         }
     }
 }
@@ -126,6 +159,10 @@ impl<DT, Z> Combo<DT, Z> {
     #[inline]
     pub(crate) fn dt(self) -> DT {
         self.date_time_field_set
+    }
+    #[inline]
+    pub(crate) fn z(self) -> Z {
+        self.zone_field_set
     }
 }
 
@@ -140,6 +177,9 @@ where
     type DayPeriodNames = DT::DayPeriodNames;
     type ZoneEssentials = Z::ZoneEssentials;
     type ZoneLocations = Z::ZoneLocations;
+    type ZoneLocationsRoot = Z::ZoneLocationsRoot;
+    type ZoneExemplars = Z::ZoneExemplars;
+    type ZoneExemplarsRoot = Z::ZoneExemplarsRoot;
     type ZoneGenericLong = Z::ZoneGenericLong;
     type ZoneGenericShort = Z::ZoneGenericShort;
     type ZoneSpecificLong = Z::ZoneSpecificLong;
@@ -155,5 +195,5 @@ where
     type D = DT::D;
     type T = DT::T;
     type Z = Z::Z;
-    type GluePatternV1Marker = datetime_marker_helper!(@glue, yes);
+    type GluePatternV1 = datetime_marker_helper!(@glue, yes);
 }

@@ -14,7 +14,7 @@ use super::api::{
     PersonNamesFormatterOptions, PreferredOrder,
 };
 use super::provider::{
-    PersonNamesFormatV1, PersonNamesFormatV1Marker, PersonNamesFormattingAttributes,
+    PersonNamesFormat, PersonNamesFormatV1, PersonNamesFormattingAttributes,
     PersonNamesFormattingAttributesMask, PersonNamesFormattingData,
 };
 use super::specifications;
@@ -45,10 +45,10 @@ impl PersonNamesFormatter {
     ) -> Result<PersonNamesFormatter, PersonNamesFormatterError>
     where
         P: ?Sized
-            + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
-            + DataProvider<icu_properties::provider::ScriptValueToShortNameV1Marker>
-            + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1Marker>
-            + DataProvider<icu_locale::provider::ParentsV1Marker>,
+            + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1>
+            + DataProvider<icu_properties::provider::ScriptValueToShortNameV1>
+            + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1>
+            + DataProvider<icu_locale::provider::ParentsV1>,
     {
         let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = PropertyNamesShort::try_new_unstable(provider)?;
@@ -67,7 +67,7 @@ impl PersonNamesFormatter {
         person_name: &N,
     ) -> Result<String, PersonNamesFormatterError>
     where
-        P: ?Sized + DataProvider<PersonNamesFormatV1Marker>,
+        P: ?Sized + DataProvider<PersonNamesFormatV1>,
         N: PersonName,
     {
         let available_name_fields = person_name.available_name_fields();
@@ -84,13 +84,13 @@ impl PersonNamesFormatter {
             person_name_locale,
         )?;
 
-        let data: DataResponse<PersonNamesFormatV1Marker> = provider
+        let data: DataResponse<PersonNamesFormatV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&DataLocale::from(effective_locale)),
                 ..Default::default()
             })
             .map_err(PersonNamesFormatterError::Data)?;
-        let formatting_definition: &PersonNamesFormatV1 = data.payload.get();
+        let formatting_definition: &PersonNamesFormat = data.payload.get();
         let option_with_proper_name_order = self.final_person_names_formatter_options(
             effective_locale,
             person_name,
@@ -155,7 +155,7 @@ impl PersonNamesFormatter {
         &self,
         locale: &Locale,
         person_name: &N,
-        formatting_definition: &PersonNamesFormatV1,
+        formatting_definition: &PersonNamesFormat,
     ) -> PersonNamesFormatterOptions
     where
         N: PersonName,

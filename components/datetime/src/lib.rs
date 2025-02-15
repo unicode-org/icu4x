@@ -22,14 +22,14 @@
 //! resource-constrained environments.
 //!
 //! The formatters accept input types from the [`calendar`](icu_calendar) and
-//! [`timezone`](icu_timezone) crates:
+//! [`timezone`](icu_time) crates:
 //!
 //! 1. [`Date`](icu_calendar::Date)
-//! 2. [`DateTime`](icu_calendar::DateTime)
-//! 3. [`Time`](icu_calendar::Time)
-//! 4. [`UtcOffset`](icu_timezone::UtcOffset)
-//! 5. [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
-//! 6. [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+//! 2. [`DateTime`](icu_time::DateTime)
+//! 3. [`Time`](icu_time::Time)
+//! 4. [`UtcOffset`](icu_time::zone::UtcOffset)
+//! 5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
+//! 6. [`ZonedDateTime`](icu_time::ZonedDateTime)
 //!
 //! Not all inputs are valid for all field sets.
 //!
@@ -49,10 +49,11 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::DateTime;
+//! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
+//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
@@ -63,14 +64,14 @@
 //! let dtf = DateTimeFormatter::try_new(locale.into(), field_set).unwrap();
 //!
 //! // Format something:
-//! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
-//! let formatted_date = dtf.format_any_calendar(&datetime);
+//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 9, 35, 0).unwrap() };
+//! let formatted_date = dtf.format(&datetime);
 //!
 //! assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
 //! ```
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -80,6 +81,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -90,15 +92,12 @@ extern crate alloc;
 mod combo;
 mod error;
 mod external_loaders;
-pub mod fields;
 pub mod fieldsets;
 mod format;
 pub mod input;
 mod neo;
-pub mod neo_pattern;
-#[cfg(all(feature = "experimental", feature = "serde"))]
-mod neo_serde;
 pub mod options;
+pub mod parts;
 pub mod pattern;
 pub mod provider;
 pub(crate) mod raw;
@@ -113,3 +112,16 @@ pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
 pub use neo::TimeFormatter;
 pub use options::Length;
+
+/// Locale preferences used by this crate
+pub mod preferences {
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}

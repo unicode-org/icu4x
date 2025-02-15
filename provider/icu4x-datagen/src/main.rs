@@ -29,7 +29,7 @@
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
-use icu_provider::hello_world::HelloWorldV1Marker;
+use icu_provider::hello_world::HelloWorldV1;
 use icu_provider_export::prelude::*;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
@@ -321,7 +321,9 @@ fn main() -> eyre::Result<()> {
                 .collect::<Result<_, _>>()?,
         }
     } else if let Some(bin_path) = &cli.markers_for_bin {
-        icu::markers_for_bin(bin_path)?.into_iter().collect()
+        icu::markers_for_bin(&std::fs::read(bin_path)?)?
+            .into_iter()
+            .collect()
     } else {
         eyre::bail!("--markers or --markers-for-bin are required.")
     };
@@ -346,13 +348,13 @@ fn main() -> eyre::Result<()> {
     };
 
     let (provider, fallbacker): (Box<dyn ExportableProvider>, _) = match () {
-        () if markers == [HelloWorldV1Marker::INFO] => {
+        () if markers == [HelloWorldV1::INFO] => {
             // Just do naive fallback instead of pulling in compiled data or something. We only use this code path to debug
             // providers, so we don't need 100% correct fallback.
             (Box::new(icu_provider::hello_world::HelloWorldProvider), LocaleFallbacker::new_without_data())
         }
-        () if markers.contains(&HelloWorldV1Marker::INFO) => {
-            eyre::bail!("HelloWorldV1Marker is only allowed as the only marker")
+        () if markers.contains(&HelloWorldV1::INFO) => {
+            eyre::bail!("HelloWorldV1 is only allowed as the only marker")
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
@@ -476,7 +478,7 @@ fn main() -> eyre::Result<()> {
         }
 
         #[cfg(not(any(feature = "provider", feature = "blob_input")))]
-        () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
+        () => eyre::bail!("Only the `HelloWorld marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
     let locale_families = match preprocessed_locales {
@@ -604,39 +606,39 @@ fn main() -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
-                    <$marker>::INFO,
+                    <$marker_ty>::INFO,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    <$emarker>::INFO,
+                    <$emarker_ty>::INFO,
                 )+
             ]
         }
 
-        fn marker_lookup() -> &'static HashMap<&'static str, Option<DataMarkerInfo>> {
+        fn marker_lookup() -> &'static HashMap<String, Option<DataMarkerInfo>> {
             use std::sync::OnceLock;
-            static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
+            static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
                 [
-                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
-                    (stringify!(icu_provider::hello_world::HelloWorldV1Marker).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        ($path, Some(<$marker>::INFO)),
-                        (stringify!($marker).split("::").last().unwrap().trim(), Some(<$marker>::INFO)),
+                        (stringify!($marker_ty).replace(' ', ""), Some(<$marker_ty>::INFO)),
+                        (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        ($epath, Some(<$emarker>::INFO)),
+                        (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
                         #[cfg(feature = "experimental")]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), Some(<$emarker>::INFO)),
+                        (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        ($epath, None),
+                        (stringify!($emarker_ty).replace(' ', ""), None),
                         #[cfg(not(feature = "experimental"))]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), None),
+                        (stringify!($emarker).into(), None),
                     )+
 
                 ]
@@ -647,8 +649,8 @@ macro_rules! cb {
 
         #[test]
         fn test_lookup() {
-            assert_eq!(marker_lookup().get("AndListV2Marker"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
-            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
+            assert_eq!(marker_lookup().get("ListAndV2"), Some(&Some(icu::list::provider::ListAndV2::INFO)));
+            assert_eq!(marker_lookup().get("icu::list::provider::ListAndV2"), Some(&Some(icu::list::provider::ListAndV2::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 
@@ -657,18 +659,20 @@ macro_rules! cb {
         icu_provider::export::make_exportable_provider!(
             ReexportableBlobDataProvider,
             [
-                icu_provider::hello_world::HelloWorldV1Marker,
+                icu_provider::hello_world::HelloWorldV1,
                 $(
-                    $marker,
+                    $marker_ty,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    $emarker,
+                    $emarker_ty,
                 )+
             ]
         );
     }
 }
+
+extern crate alloc;
 icu_provider_registry::registry!(cb);
 
 #[cfg(feature = "blob_input")]

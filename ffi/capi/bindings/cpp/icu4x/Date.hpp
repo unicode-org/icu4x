@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
@@ -30,7 +31,7 @@ namespace capi {
     icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(diplomat::capi::DiplomatStringView era_code, int32_t year, diplomat::capi::DiplomatStringView month_code, uint8_t day, const icu4x::capi::Calendar* calendar);
     
     typedef struct icu4x_Date_from_string_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
-    icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(diplomat::capi::DiplomatStringView v);
+    icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar);
     
     icu4x::capi::Date* icu4x_Date_to_calendar_mv1(const icu4x::capi::Date* self, const icu4x::capi::Calendar* calendar);
     
@@ -92,8 +93,9 @@ inline diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> icu4
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError> icu4x::Date::from_string(std::string_view v) {
-  auto result = icu4x::capi::icu4x_Date_from_string_mv1({v.data(), v.size()});
+inline diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError> icu4x::Date::from_string(std::string_view v, const icu4x::Calendar& calendar) {
+  auto result = icu4x::capi::icu4x_Date_from_string_mv1({v.data(), v.size()},
+    calendar.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
 }
 

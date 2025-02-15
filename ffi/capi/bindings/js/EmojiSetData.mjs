@@ -20,6 +20,7 @@ const EmojiSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class EmojiSetData {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -27,7 +28,7 @@ export class EmojiSetData {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("EmojiSetData is an Opaque type. You cannot call its constructor.");
             return;
@@ -40,8 +41,9 @@ export class EmojiSetData {
         if (this.#selfEdge.length === 0) {
             EmojiSetData_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
@@ -72,10 +74,20 @@ export class EmojiSetData {
         finally {}
     }
 
-    static loadBasic(provider) {
+    static createBasic() {
+        const result = wasm.icu4x_EmojiSetData_create_basic_mv1();
+    
+        try {
+            return new EmojiSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    static createBasicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_EmojiSetData_load_basic_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_EmojiSetData_create_basic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -88,5 +100,9 @@ export class EmojiSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

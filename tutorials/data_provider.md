@@ -30,10 +30,10 @@ let mut provider = MultiForkByErrorProvider::new_with_predicate(
 // Pretend we're loading these from the network or somewhere.
 struct SingleLocaleProvider(DataLocale);
 
-impl DataProvider<HelloWorldV1Marker> for SingleLocaleProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+impl DataProvider<HelloWorldV1> for SingleLocaleProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
         if *req.id.locale != self.0 {
-            return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1Marker::INFO, req));
+            return Err(DataErrorKind::IdentifierNotFound.with_req(HelloWorldV1::INFO, req));
         }
         HelloWorldProvider.load(req)
     }
@@ -47,7 +47,7 @@ let mut get_hello_world_formatter = |prefs: HelloWorldFormatterPreferences| {
     }
 
     // We failed to create the formatter. Load more data for the language and try creating the formatter a second time.
-    let loc = DataLocale::from_preferences_locale::<HelloWorldV1Marker>(prefs.locale_prefs);
+    let loc = HelloWorldV1::make_locale(prefs.locale_preferences);
     provider.push(SingleLocaleProvider(loc));
     HelloWorldFormatter::try_new_unstable(&provider, prefs)
         .expect("Language data should now be available")
@@ -78,13 +78,12 @@ use lru::LruCache;
 use std::borrow::{Borrow, Cow};
 use std::convert::TryInto;
 use std::sync::Mutex;
-use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
 /// A data provider that caches response payloads in an LRU cache.
 pub struct LruDataCache<P> {
-    cache: Mutex<LruCache<CacheKeyWrap, AnyResponse>>,
+    cache: Mutex<LruCache<CacheKeyWrap, Box<dyn core::any::Any>>>,
     provider: P,
 }
 
@@ -108,8 +107,7 @@ impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
     M::DataStruct: ZeroFrom<'static, M::DataStruct>,
-    M::DataStruct: icu_provider::any::MaybeSendSync,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -117,20 +115,23 @@ where
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
             let borrowed_cache_key = CacheKey(M::INFO, Cow::Borrowed(req.id.locale));
-            if let Some(any_res) = cache.get(&borrowed_cache_key) {
+            if let Some(res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
-                return any_res.downcast_cloned();
+                return Ok(res.downcast_ref::<DataResponse<M>>().unwrap().clone());
             }
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
         let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.id.locale.clone())));
         // Second lock: cache storage
-        self.cache.lock()
+        Ok(self.cache.lock()
             .unwrap()
-            .get_or_insert(owned_cache_key, || response.wrap_into_any_response())
-            .downcast_cloned()
+            .get_or_insert(owned_cache_key, || Box::new(response))
+            .downcast_ref::<DataResponse<M>>()
+            .unwrap()
+            .clone()
+        )
     }
 }
 
@@ -196,8 +197,8 @@ The following example illustrates how to overwrite the decimal separators for a 
 
 ```rust
 use core::any::Any;
-use icu::decimal::FixedDecimalFormatter;
-use icu::decimal::provider::{DecimalSymbolsV2Marker, DecimalSymbolStrsBuilder};
+use icu::decimal::DecimalFormatter;
+use icu::decimal::provider::{DecimalSymbolsV2, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -216,7 +217,7 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
         if req.id.locale.region == Some(region!("CH")) {
-            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2Marker>() {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2>() {
                 decimal_payload.with_mut(|data| {
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'
@@ -236,7 +237,7 @@ let provider = CustomDecimalSymbolsProvider(
     icu::decimal::provider::Baked
 );
 
-let formatter = FixedDecimalFormatter::try_new_unstable(
+let formatter = DecimalFormatter::try_new_unstable(
     &provider,
     locale!("und").into(),
     Default::default(),
@@ -245,7 +246,7 @@ let formatter = FixedDecimalFormatter::try_new_unstable(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
-let formatter = FixedDecimalFormatter::try_new_unstable(
+let formatter = DecimalFormatter::try_new_unstable(
     &provider,
     locale!("und-CH").into(),
     Default::default(),
@@ -265,7 +266,7 @@ To add custom data markers to your baked data or postcard file, create a forking
 
 ```rust
 use icu::locale::locale;
-use icu::plurals::provider::CardinalV1Marker;
+use icu::plurals::provider::CardinalV1;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
@@ -276,7 +277,7 @@ use icu_provider_source::SourceDataProvider;
 use std::borrow::Cow;
 use std::collections::BTreeSet;
 
-#[icu_provider::data_struct(marker(CustomMarker, "x/custom@1"))]
+#[icu_provider::data_struct(marker(CustomV1, "x/custom@1"))]
 #[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake)]
 #[databake(path = crate)]
 pub struct Custom<'data> {
@@ -284,8 +285,8 @@ pub struct Custom<'data> {
 };
 
 struct CustomProvider;
-impl DataProvider<CustomMarker> for CustomProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CustomMarker>, DataError> {
+impl DataProvider<CustomV1> for CustomProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CustomV1>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(Custom {
@@ -295,7 +296,7 @@ impl DataProvider<CustomMarker> for CustomProvider {
     }
 }
 
-impl IterableDataProvider<CustomMarker> for CustomProvider {
+impl IterableDataProvider<CustomV1> for CustomProvider {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
         Ok([locale!("es"), locale!("ja")]
             .into_iter()
@@ -305,7 +306,8 @@ impl IterableDataProvider<CustomMarker> for CustomProvider {
     }
 }
 
-icu_provider::export::make_exportable_provider!(CustomProvider, [CustomMarker,]);
+extern crate alloc;
+icu_provider::export::make_exportable_provider!(CustomProvider, [CustomV1,]);
 
 let icu4x_source_provider = SourceDataProvider::new_latest_tested();
 let custom_source_provider = CustomProvider;
@@ -317,7 +319,7 @@ ExportDriver::new(
     DeduplicationStrategy::None.into(),
     LocaleFallbacker::try_new_unstable(&icu4x_source_provider).unwrap(),
 )
-.with_markers([CardinalV1Marker::INFO, CustomMarker::INFO])
+.with_markers([CardinalV1::INFO, CustomV1::INFO])
 .export(
     &ForkByMarkerProvider::new(icu4x_source_provider, custom_source_provider),
     BlobExporter::new_with_sink(Box::new(&mut buffer)),
@@ -332,8 +334,8 @@ let req = DataRequest {
     metadata: Default::default(),
 };
 
-assert!(blob_provider.load_data(CardinalV1Marker::INFO, req).is_ok());
-assert!(blob_provider.load_data(CustomMarker::INFO, req).is_ok());
+assert!(blob_provider.load_data(CardinalV1::INFO, req).is_ok());
+assert!(blob_provider.load_data(CustomV1::INFO, req).is_ok());
 ```
 
 ## Accessing the Resolved Locale
@@ -363,10 +365,10 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.inner.load(req)?;
-        // Whichever locale gets loaded for `HelloWorldV1Marker::INFO` will be the one
+        // Whichever locale gets loaded for `HelloWorldV1::INFO` will be the one
         // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
         // one key, this is a useful distinction for most other formatters.
-        if M::INFO == HelloWorldV1Marker::INFO {
+        if M::INFO == HelloWorldV1::INFO {
             let mut w = self.resolved_locale.write().expect("poison");
             *w = res.metadata.locale.take();
         }

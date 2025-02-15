@@ -18,6 +18,7 @@ use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use writeable::Writeable;
+use zerovec::VarZeroCow;
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -183,9 +184,9 @@ impl SourceDataProvider {
             .dates(cldr_cal)
             .list_locales()?
             .flat_map(|locale| {
-                keylengths.iter().map(move |&length| {
-                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
-                })
+                keylengths
+                    .iter()
+                    .map(move |&length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
             })
             .collect())
     }
@@ -198,7 +199,7 @@ fn weekday_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearNamesV1<'static>, DataError> {
+) -> Result<LinearNames<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
     let days = [
@@ -211,7 +212,7 @@ fn weekday_convert(
         &*day_symbols.sat,
     ];
 
-    Ok(LinearNamesV1 {
+    Ok(LinearNames {
         names: (&days).into(),
     })
 }
@@ -223,7 +224,7 @@ fn dayperiods_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearNamesV1<'static>, DataError> {
+) -> Result<LinearNames<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -238,7 +239,7 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearNamesV1 {
+    Ok(LinearNames {
         names: (&periods).into(),
     })
 }
@@ -249,7 +250,7 @@ fn eras_convert(
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
-) -> Result<YearNamesV1<'static>, DataError> {
+) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
@@ -334,12 +335,14 @@ fn eras_convert(
                 panic!("Unknown japanese era number {cldr}");
             }
         }
-        Ok(YearNamesV1::VariableEras(
-            out_eras
-                .iter()
-                .map(|(k, v)| (PotentialUtf8::from_str(k), &**v))
-                .collect(),
-        ))
+        let keys: Vec<&PotentialUtf8> = out_eras
+            .keys()
+            .map(|k| PotentialUtf8::from_str(k))
+            .collect();
+        let values: Vec<&str> = out_eras.values().copied().collect();
+        let kv = (keys, values);
+        let cow = VarZeroCow::from_encodeable(&kv);
+        Ok(YearNames::VariableEras(cow))
     } else {
         let mut out_eras: Vec<&str> = Vec::new();
         for (index, (cldr, _code)) in map.enumerate() {
@@ -356,7 +359,7 @@ fn eras_convert(
             }
         }
 
-        Ok(YearNamesV1::FixedEras((&out_eras).into()))
+        Ok(YearNames::FixedEras((&out_eras).into()))
     }
 }
 fn years_convert(
@@ -366,7 +369,7 @@ fn years_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<YearNamesV1<'static>, DataError> {
+) -> Result<YearNames<'static>, DataError> {
     assert_eq!(
         context,
         Context::Format,
@@ -388,7 +391,7 @@ fn years_convert(
             }
             &**value
         }).collect();
-        Ok(YearNamesV1::Cyclic((&years).into()))
+        Ok(YearNames::Cyclic((&years).into()))
     } else {
         panic!(
             "Calendar {calendar} in locale {locale} has neither eras nor cyclicNameSets for years"
@@ -428,7 +431,7 @@ fn months_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<MonthNamesV1<'static>, DataError> {
+) -> Result<MonthNames<'static>, DataError> {
     if length == Length::Numeric {
         assert_eq!(
             context,
@@ -439,7 +442,7 @@ fn months_convert(
             panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
-        return Ok(MonthNamesV1::LeapNumeric(Cow::Owned(
+        return Ok(MonthNames::LeapNumeric(Cow::Owned(
             pattern.leap.0.to_owned(),
         )));
     }
@@ -484,7 +487,7 @@ fn months_convert(
 
             symbols[index] = (&**v).into();
         }
-        Ok(MonthNamesV1::LeapLinear((&symbols).into()))
+        Ok(MonthNames::LeapLinear((&symbols).into()))
     } else {
         for (k, v) in months.0.iter() {
             let index: usize = k
@@ -533,9 +536,9 @@ fn months_convert(
                     .into_owned();
                 symbols[nonleap + i] = replaced.into();
             }
-            Ok(MonthNamesV1::LeapLinear((&symbols).into()))
+            Ok(MonthNames::LeapLinear((&symbols).into()))
         } else {
-            Ok(MonthNamesV1::Linear((&symbols).into()))
+            Ok(MonthNames::Linear((&symbols).into()))
         }
     }
 }
@@ -543,7 +546,9 @@ fn months_convert(
 /// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
 #[allow(dead_code)] // TODO: Implement numeric overrides in neo patterns
 fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
-    use icu::datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
+    use icu::datetime::provider::fields::{
+        self, FieldLength, FieldNumericOverrides::*, FieldSymbol,
+    };
     let ca::LengthPattern::WithNumberingSystems {
         ref numbering_systems,
         ..
@@ -590,7 +595,7 @@ fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     glue_type: GlueType,
-) -> Result<GluePatternV1<'static>, DataError> {
+) -> Result<GluePattern<'static>, DataError> {
     let mut pattern_anchor = None;
     let pattern = match glue_type {
         GlueType::DateTime => data.datetime_formats.get_pattern(length).get_pattern(),
@@ -616,7 +621,7 @@ fn datetimepattern_convert(
     };
 
     let pattern = pattern.parse().expect("failed to parse pattern");
-    Ok(GluePatternV1 { pattern })
+    Ok(GluePattern { pattern })
 }
 
 macro_rules! impl_symbols_datagen {
@@ -652,16 +657,11 @@ macro_rules! impl_pattern_datagen {
 }
 
 // Weekdays
-impl_symbols_datagen!(
-    WeekdayNamesV1Marker,
-    "gregory",
-    FULL_KEY_LENGTHS,
-    weekday_convert
-);
+impl_symbols_datagen!(WeekdayNamesV1, "gregory", FULL_KEY_LENGTHS, weekday_convert);
 
 // Dayperiods
 impl_symbols_datagen!(
-    DayPeriodNamesV1Marker,
+    DayPeriodNamesV1,
     "gregory",
     NORMAL_KEY_LENGTHS,
     dayperiods_convert
@@ -669,170 +669,155 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearNamesV1Marker,
+    BuddhistYearNamesV1,
     "buddhist",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearNamesV1Marker,
+    ChineseYearNamesV1,
     "chinese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearNamesV1Marker,
+    CopticYearNamesV1,
     "coptic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
+impl_symbols_datagen!(DangiYearNamesV1, "dangi", YEARS_KEY_LENGTHS, years_convert);
 impl_symbols_datagen!(
-    DangiYearNamesV1Marker,
-    "dangi",
-    YEARS_KEY_LENGTHS,
-    years_convert
-);
-impl_symbols_datagen!(
-    EthiopianYearNamesV1Marker,
+    EthiopianYearNamesV1,
     "ethiopic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearNamesV1Marker,
+    GregorianYearNamesV1,
     "gregory",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearNamesV1Marker,
+    HebrewYearNamesV1,
     "hebrew",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearNamesV1Marker,
+    IndianYearNamesV1,
     "indian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearNamesV1Marker,
+    IslamicYearNamesV1,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearNamesV1Marker,
+    JapaneseYearNamesV1,
     "japanese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearNamesV1Marker,
+    JapaneseExtendedYearNamesV1,
     "japanext",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearNamesV1Marker,
+    PersianYearNamesV1,
     "persian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
-impl_symbols_datagen!(
-    RocYearNamesV1Marker,
-    "roc",
-    YEARS_KEY_LENGTHS,
-    years_convert
-);
+impl_symbols_datagen!(RocYearNamesV1, "roc", YEARS_KEY_LENGTHS, years_convert);
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthNamesV1Marker,
+    BuddhistMonthNamesV1,
     "buddhist",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthNamesV1Marker,
+    ChineseMonthNamesV1,
     "chinese",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthNamesV1Marker,
+    CopticMonthNamesV1,
     "coptic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthNamesV1Marker,
+    DangiMonthNamesV1,
     "dangi",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthNamesV1Marker,
+    EthiopianMonthNamesV1,
     "ethiopic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthNamesV1Marker,
+    GregorianMonthNamesV1,
     "gregory",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthNamesV1Marker,
+    HebrewMonthNamesV1,
     "hebrew",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthNamesV1Marker,
+    IndianMonthNamesV1,
     "indian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthNamesV1Marker,
+    IslamicMonthNamesV1,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthNamesV1Marker,
+    JapaneseMonthNamesV1,
     "japanese",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthNamesV1Marker,
+    JapaneseExtendedMonthNamesV1,
     "japanext",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthNamesV1Marker,
+    PersianMonthNamesV1,
     "persian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
-impl_symbols_datagen!(
-    RocMonthNamesV1Marker,
-    "roc",
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
+impl_symbols_datagen!(RocMonthNamesV1, "roc", NORMAL_KEY_LENGTHS, months_convert);
 
 // Datetime patterns
 // TODO: This is modeled with glue patterns that are the same across calendar
 // systems, but CLDR has some instances where the glue patterns differ, such
 // as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
-    GluePatternV1Marker,
+    GluePatternV1,
     "gregory",
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert

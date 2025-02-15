@@ -26,7 +26,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_plurals",
     "icu_properties",
     "icu_segmenter",
-    "icu_timezone",
+    "icu_time",
     // ICU4X utils
     "calendrical_calculations",
     "fixed_decimal",
@@ -88,7 +88,7 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
     "icu_plurals_data",
     "icu_properties_data",
     "icu_segmenter_data",
-    "icu_timezone_data",
+    "icu_time_data",
 ];
 
 /// Dependencies allowed when opting in to experimental code
@@ -144,7 +144,11 @@ pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 /// This shuld rarely change
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
-pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
+pub const EXTRA_FS_DEPS: &[&str] = &[
+    "icu_provider_fs",
+    "icu_provider_registry",
+    "serde-json-core",
+];
 
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
 /// This might change semi frequently but we should try and keep this small.
@@ -153,11 +157,13 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "databake-derive",
     "elsa",
     "erased-serde",
+    "filetime",
     "icu_codepointtrie_builder",
     "icu_provider_adapters",
     "icu_provider_registry",
     "itertools",
     "itoa",
+    "libc",
     "matrixmultiply",
     "ndarray",
     "num-complex",
@@ -169,6 +175,7 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "serde-aux",
     "serde_json",
     "static_assertions",
+    "tar",
     "toml",
     "twox-hash",
 ];

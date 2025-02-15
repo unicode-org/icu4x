@@ -14,10 +14,10 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus",
-                    "yearStyle": "always"
+                    "timePrecision": "second",
+                    "yearStyle": "withEra"
                 },
                 "hourCycle": "h23"
             }
@@ -72,10 +72,10 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus",
-                    "yearStyle": "always"
+                    "timePrecision": "second",
+                    "yearStyle": "withEra"
                 },
                 "hourCycle": "h23"
             }
@@ -102,10 +102,10 @@
                     "second": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus",
-                    "yearStyle": "always"
+                    "timePrecision": "second",
+                    "yearStyle": "withEra"
                 },
                 "hourCycle": "h23"
             }
@@ -128,9 +128,7 @@
                     "fractional_second": 0
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
-                    "length": "short",
-                    "timePrecision": "secondPlus"
+                    "timePrecision": "second"
                 },
                 "hourCycle": "h23"
             }
@@ -152,8 +150,6 @@
                     "fractional_second": 9
                 },
                 "semantic": {
-                    "fieldSet": ["time"],
-                    "length": "short",
                     "timePrecision": "secondF9"
                 },
                 "hourCycle": "h23"

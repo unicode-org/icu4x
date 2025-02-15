@@ -24,7 +24,7 @@
 //!     DeduplicationStrategy::None.into(),
 //!     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 //! )
-//! .with_markers([icu::list::provider::AndListV2Marker::INFO])
+//! .with_markers([icu::list::provider::ListAndV2::INFO])
 //! .export(
 //!     &provider,
 //!     BlobExporter::new_with_sink(Box::new(
@@ -54,7 +54,7 @@
         // clippy::expect_used,
         // clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
+        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -88,6 +88,7 @@ use icu_locale::LocaleFallbacker;
 use icu_provider::export::DataExporter;
 use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
@@ -112,7 +113,7 @@ use std::sync::Arc;
 ///     DeduplicationStrategy::None.into(),
 ///     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 /// )
-/// .with_markers([icu::list::provider::AndListV2Marker::INFO])
+/// .with_markers([icu::list::provider::ListAndV2::INFO])
 /// .export(
 ///     &provider,
 ///     BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -121,7 +122,7 @@ use std::sync::Arc;
 /// ```
 #[derive(Clone)]
 pub struct ExportDriver {
-    markers: Option<HashSet<DataMarkerInfo>>,
+    markers: Option<BTreeSet<DataMarkerInfo>>,
     requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
     #[allow(clippy::type_complexity)] // sigh
     attributes_filters:
@@ -293,7 +294,7 @@ impl ExportDriver {
 }
 
 #[non_exhaustive]
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 /// Contains information about a successful export.
 pub struct ExportMetadata {
     /// The metadata coming from the [`DataExporter`].

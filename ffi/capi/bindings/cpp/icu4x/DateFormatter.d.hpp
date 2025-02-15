@@ -6,22 +6,21 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
+namespace capi { struct Calendar; }
+class Calendar;
 namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct Date; }
 class Date;
 namespace capi { struct DateFormatter; }
 class DateFormatter;
-namespace capi { struct DateTime; }
-class DateTime;
 namespace capi { struct IsoDate; }
 class IsoDate;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
 class DateTimeFormatError;
@@ -40,15 +39,15 @@ namespace icu4x {
 class DateFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_date(const icu4x::Date& value) const;
+  inline static diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_date(const icu4x::IsoDate& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format(const icu4x::Date& value) const;
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_datetime(const icu4x::DateTime& value) const;
+  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso(const icu4x::IsoDate& value) const;
 
-  inline diplomat::result<std::string, icu4x::DateTimeFormatError> format_iso_datetime(const icu4x::IsoDateTime& value) const;
+  inline std::unique_ptr<icu4x::Calendar> calendar() const;
 
   inline const icu4x::capi::DateFormatter* AsFFI() const;
   inline icu4x::capi::DateFormatter* AsFFI();

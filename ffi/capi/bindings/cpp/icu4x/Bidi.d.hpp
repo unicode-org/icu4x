@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -32,7 +33,9 @@ namespace icu4x {
 class Bidi {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::Bidi> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline std::unique_ptr<icu4x::BidiInfo> for_text(std::string_view text, std::optional<uint8_t> default_level) const;
 

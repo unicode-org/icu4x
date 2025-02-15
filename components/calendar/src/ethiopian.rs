@@ -5,37 +5,21 @@
 //! This module contains types and implementations for the Ethiopian calendar.
 //!
 //! ```rust
-//! use icu::calendar::{cal::Ethiopian, Date, DateTime};
+//! use icu::calendar::{cal::Ethiopian, Date};
 //!
-//! // `Date` type
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_ethiopian = Date::new_from_iso(date_iso, Ethiopian::new());
 //!
-//! // `DateTime` type
-//! let datetime_iso = DateTime::try_new_iso(1970, 1, 2, 13, 1, 0)
-//!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_ethiopian =
-//!     DateTime::new_from_iso(datetime_iso, Ethiopian::new());
-//!
-//! // `Date` checks
 //! assert_eq!(date_ethiopian.year().era_year_or_extended(), 1962);
 //! assert_eq!(date_ethiopian.month().ordinal, 4);
 //! assert_eq!(date_ethiopian.day_of_month().0, 24);
-//!
-//! // `DateTime` type
-//! assert_eq!(datetime_ethiopian.date.year().era_year_or_extended(), 1962);
-//! assert_eq!(datetime_ethiopian.date.month().ordinal, 4);
-//! assert_eq!(datetime_ethiopian.date.day_of_month().0, 24);
-//! assert_eq!(datetime_ethiopian.time.hour.number(), 13);
-//! assert_eq!(datetime_ethiopian.time.minute.number(), 1);
-//! assert_eq!(datetime_ethiopian.time.second.number(), 0);
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -60,7 +44,7 @@ pub enum EthiopianEraStyle {
 /// The [Ethiopian calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
 /// and a thirteenth small epagomenal month.
 ///
-/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+/// This type can be used with [`Date`] to represent dates in this calendar.
 ///
 /// It can be constructed in two modes: using the Amete Alem era scheme, or the Amete Mihret era scheme (the default),
 /// see [`EthiopianEraStyle`] for more info.
@@ -257,10 +241,6 @@ impl Ethiopian {
     pub const fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
         Self(matches!(era_style, EthiopianEraStyle::AmeteAlem))
     }
-    /// Set whether or not this uses the Amete Alem era scheme
-    pub fn set_era_style(&mut self, era_style: EthiopianEraStyle) {
-        self.0 = era_style == EthiopianEraStyle::AmeteAlem
-    }
 
     /// Returns whether this has the Amete Alem era
     pub fn era_style(&self) -> EthiopianEraStyle {
@@ -362,51 +342,6 @@ impl Date<Ethiopian> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
-    }
-}
-
-impl DateTime<Ethiopian> {
-    /// Construct a new Ethiopian datetime from integers.
-    ///
-    /// For the Amete Mihret era style, negative years work with
-    /// year 0 as 1 pre-Incarnation, year -1 as 2 pre-Incarnation,
-    /// and so on.
-    ///
-    /// ```rust
-    /// use icu::calendar::cal::EthiopianEraStyle;
-    /// use icu::calendar::DateTime;
-    ///
-    /// let datetime_ethiopian = DateTime::try_new_ethiopian(
-    ///     EthiopianEraStyle::AmeteMihret,
-    ///     2014,
-    ///     8,
-    ///     25,
-    ///     13,
-    ///     1,
-    ///     0,
-    /// )
-    /// .expect("Failed to initialize Ethiopian DateTime instance.");
-    ///
-    /// assert_eq!(datetime_ethiopian.date.year().era_year_or_extended(), 2014);
-    /// assert_eq!(datetime_ethiopian.date.month().ordinal, 8);
-    /// assert_eq!(datetime_ethiopian.date.day_of_month().0, 25);
-    /// assert_eq!(datetime_ethiopian.time.hour.number(), 13);
-    /// assert_eq!(datetime_ethiopian.time.minute.number(), 1);
-    /// assert_eq!(datetime_ethiopian.time.second.number(), 0);
-    /// ```
-    pub fn try_new_ethiopian(
-        era_style: EthiopianEraStyle,
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> Result<DateTime<Ethiopian>, DateError> {
-        Ok(DateTime {
-            date: Date::try_new_ethiopian(era_style, year, month, day)?,
-            time: Time::try_new(hour, minute, second, 0)?,
-        })
     }
 }
 

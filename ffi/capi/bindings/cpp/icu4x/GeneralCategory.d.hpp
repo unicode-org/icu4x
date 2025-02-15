@@ -6,10 +6,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
+struct GeneralCategoryGroup;
 class GeneralCategory;
 }
 
@@ -97,6 +99,8 @@ public:
   explicit operator bool() const = delete;
 
   inline uint8_t to_integer();
+
+  inline icu4x::GeneralCategoryGroup to_group();
 
   inline static std::optional<icu4x::GeneralCategory> from_integer(uint8_t other);
 

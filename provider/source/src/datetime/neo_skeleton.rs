@@ -4,13 +4,14 @@
 
 use std::collections::HashSet;
 
-use crate::{IterableDataProviderCached, SourceDataProvider};
+use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
+use calendar::patterns::GenericLengthPatterns;
 use either::Either;
-use icu::datetime::fields::components;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
-use icu::datetime::provider::calendar::{DateLengthsV1, DateSkeletonPatternsV1, TimeLengthsV1};
-use icu::datetime::provider::pattern::runtime;
+use icu::datetime::provider::calendar::{DateSkeletonPatterns, TimeLengths};
+use icu::datetime::provider::fields::components;
+use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
 use icu::locale::extensions::unicode::{value, Value};
@@ -25,10 +26,14 @@ impl SourceDataProvider {
         &self,
         req: DataRequest,
         calendar: Either<&Value, &str>,
-        to_components_bag: impl Fn(Length, &DataMarkerAttributes, &DateLengthsV1) -> components::Bag,
+        to_components_bag: impl Fn(
+            Length,
+            &DataMarkerAttributes,
+            &cldr_serde::ca::Dates,
+        ) -> components::Bag,
     ) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker<DataStruct = PackedPatternsV1<'static>>,
+        M: DataMarker<DataStruct = PackedPatterns<'static>>,
         Self: crate::IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
@@ -51,13 +56,18 @@ impl SourceDataProvider {
         locale: &DataLocale,
         calendar: Either<&Value, &str>,
         attributes: &DataMarkerAttributes,
-        to_components_bag: impl Fn(Length, &DataMarkerAttributes, &DateLengthsV1) -> components::Bag,
-    ) -> Result<PackedPatternsV1<'static>, DataError> {
+        to_components_bag: impl Fn(
+            Length,
+            &DataMarkerAttributes,
+            &cldr_serde::ca::Dates,
+        ) -> components::Bag,
+    ) -> Result<PackedPatterns<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
-        let date_lengths_v1 = DateLengthsV1::from(&data);
-        let time_lengths_v1 = TimeLengthsV1::from(&data);
-        let skeleton_patterns = DateSkeletonPatternsV1::from(&data);
+        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
+        let time_lengths_v1 = TimeLengths::from(&data);
+        let skeleton_patterns =
+            DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
         fn expand_pp_to_pe(
             pp: PatternPlurals,
@@ -74,12 +84,13 @@ impl SourceDataProvider {
         }
 
         let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
-            .map(|length| to_components_bag(length, attributes, &date_lengths_v1))
+            .map(|length| to_components_bag(length, attributes, &data))
             .map(|components| {
+                // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
                 let pattern = expand_pp_to_pe(components.select_pattern(
                     &skeleton_patterns,
-                    &date_lengths_v1,
-                    &time_lengths_v1,
+                    time_lengths_v1.preferred_hour_cycle,
+                    &length_combinations_v1,
                 ));
                 match components {
                     components::Bag {
@@ -88,7 +99,7 @@ impl SourceDataProvider {
                         ..
                     } => {
                         // TODO(#4478): Use CLDR data when it becomes available
-                        // TODO: Set the length to Length? Or not, because
+                        // TODO: Set the length to NeoSkeletonLength? Or not, because
                         // the era should normally be displayed as short?
                         let mut components_with_full_year = components;
                         components_with_full_year.year = Some(components::Year::Numeric);
@@ -98,13 +109,13 @@ impl SourceDataProvider {
                             pattern,
                             Some(expand_pp_to_pe(components_with_full_year.select_pattern(
                                 &skeleton_patterns,
-                                &date_lengths_v1,
-                                &time_lengths_v1,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
                             ))),
                             Some(expand_pp_to_pe(components_with_era.select_pattern(
                                 &skeleton_patterns,
-                                &date_lengths_v1,
-                                &time_lengths_v1,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
                             ))),
                         )
                     }
@@ -118,13 +129,13 @@ impl SourceDataProvider {
                             pattern,
                             Some(expand_pp_to_pe(components_with_minute.select_pattern(
                                 &skeleton_patterns,
-                                &date_lengths_v1,
-                                &time_lengths_v1,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
                             ))),
                             Some(expand_pp_to_pe(components_with_second.select_pattern(
                                 &skeleton_patterns,
-                                &date_lengths_v1,
-                                &time_lengths_v1,
+                                time_lengths_v1.preferred_hour_cycle,
+                                &length_combinations_v1,
                             ))),
                         )
                     }
@@ -173,9 +184,7 @@ impl SourceDataProvider {
             .flat_map(|locale| {
                 TimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES
                     .iter()
-                    .map(move |attrs| {
-                        DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
-                    })
+                    .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
             })
             .collect())
     }
@@ -197,9 +206,7 @@ impl SourceDataProvider {
                     .iter()
                     .chain(CalendarPeriodFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
                     .chain(DateAndTimeFieldSet::ALL_DATA_MARKER_ATTRIBUTES.iter())
-                    .map(move |attrs| {
-                        DataIdentifierCow::from_borrowed_and_owned(attrs, locale.clone())
-                    })
+                    .map(move |attrs| DataIdentifierCow::from_borrowed_and_owned(attrs, locale))
             })
             .collect())
     }
@@ -277,7 +284,7 @@ fn test_check_for_field() {
 fn gen_time_components(
     _: Length,
     attributes: &DataMarkerAttributes,
-    _: &DateLengthsV1<'_>,
+    _: &cldr_serde::ca::Dates,
 ) -> components::Bag {
     // TODO: Should this use timeSkeletons?
     // "full": "ahmmsszzzz",
@@ -303,7 +310,7 @@ fn gen_time_components(
 fn gen_date_components(
     length: Length,
     attributes: &DataMarkerAttributes,
-    date_lengths_v1: &DateLengthsV1<'_>,
+    data: &cldr_serde::ca::Dates,
 ) -> components::Bag {
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
@@ -316,13 +323,14 @@ fn gen_date_components(
     //
     // Probably depends on CLDR data being higher quality.
     // <https://unicode-org.atlassian.net/browse/CLDR-14993>
-    let date_pattern = match length {
-        Length::Long => &date_lengths_v1.date.long,
-        Length::Medium => &date_lengths_v1.date.medium,
-        Length::Short => &date_lengths_v1.date.short,
+    // TODO(#308): Utilize the numbering system pattern variations.
+    let date_pattern: reference::Pattern = match length {
+        Length::Long => data.date_formats.long.get_pattern().parse().unwrap(),
+        Length::Medium => data.date_formats.medium.get_pattern().parse().unwrap(),
+        Length::Short => data.date_formats.short.get_pattern().parse().unwrap(),
         _ => unreachable!(),
     };
-    let date_bag = components::Bag::from(date_pattern);
+    let date_bag = components::Bag::from(&date_pattern);
     let mut filtered_components = components::Bag::empty();
     if check_for_field(attributes, "y") {
         filtered_components.era = date_bag.era;
@@ -365,16 +373,13 @@ fn gen_date_components(
     filtered_components
 }
 
-impl DataProvider<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TimeNeoSkeletonPatternsV1Marker>, DataError> {
+impl DataProvider<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeNeoSkeletonPatternsV1>, DataError> {
         self.load_neo_skeletons_key(req, Either::Right("generic"), gen_time_components)
     }
 }
 
-impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.neo_time_skeleton_supported_locales()
     }
@@ -400,26 +405,26 @@ macro_rules! impl_neo_skeleton_datagen {
     };
 }
 
-impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1Marker, "buddhist");
-impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1Marker, "chinese");
-impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1Marker, "coptic");
-impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1Marker, "dangi");
-impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1Marker, "ethiopic");
-impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1Marker, "gregory");
-impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1Marker, "hebrew");
-impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1Marker, "indian");
-impl_neo_skeleton_datagen!(IslamicDateNeoSkeletonPatternsV1Marker, "islamic");
-impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1Marker, "japanese");
-impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1Marker, "japanext");
-impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1Marker, "persian");
-impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1Marker, "roc");
+impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1, "buddhist");
+impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1, "chinese");
+impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1, "coptic");
+impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1, "dangi");
+impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1, "ethiopic");
+impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1, "gregory");
+impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, "hebrew");
+impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, "indian");
+impl_neo_skeleton_datagen!(IslamicDateNeoSkeletonPatternsV1, "islamic");
+impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1, "japanese");
+impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1, "japanext");
+impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1, "persian");
+impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1, "roc");
 
 #[test]
 fn test_en_year_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ym0d"),
@@ -463,7 +468,7 @@ fn test_en_hour_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<TimeNeoSkeletonPatternsV1Marker> = provider
+    let payload: DataPayload<TimeNeoSkeletonPatternsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("j"),
@@ -501,7 +506,7 @@ fn test_en_overlap_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1Marker> = provider
+    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ej"),
@@ -536,4 +541,298 @@ fn test_en_overlap_patterns() {
   ]
 }"#
     );
+}
+
+/// This is a test that should eventually be moved to CLDR.
+///
+/// See: https://unicode-org.atlassian.net/browse/CLDR-14993
+#[cfg(feature = "networking")]
+#[cfg(test)]
+mod date_skeleton_consistency_tests {
+    use super::*;
+    use crate::CoverageLevel;
+    use icu::datetime::provider::fields;
+    use pattern::CoarseHourCycle;
+
+    /// When canonicalizing the pattern, normalize only (G=GGG) or be more aggressive
+    /// (such as ignoring whitespace and certain punctuation characters)
+    #[derive(Copy, Clone)]
+    enum PatternCanonicalizationStrategy {
+        NormalizeOnly,
+        FlattenNumerics,
+        Aggressive,
+    }
+
+    #[derive(Copy, Clone)]
+    enum TestStrictness {
+        Comprehensive,
+        LowHangingFruit,
+    }
+
+    #[derive(Copy, Clone)]
+    struct TestCaseFixedArgs<'a> {
+        skeleton_patterns: &'a DateSkeletonPatterns<'a>,
+        preferred_hour_cycle: CoarseHourCycle,
+        length_combinations_v1: &'a GenericLengthPatterns<'a>,
+        cldr_cal: &'a str,
+        locale: &'a DataLocale,
+        skeleton_pattern_set: &'a HashSet<String>,
+        pattern_canonicalization_strategy: PatternCanonicalizationStrategy,
+    }
+
+    struct TestCaseInfo<'a> {
+        pattern: &'a str,
+        skeleton: &'a str,
+        length: &'a str,
+    }
+
+    fn canonicalize_pattern(
+        pattern: &mut reference::Pattern,
+        strategy: PatternCanonicalizationStrategy,
+    ) {
+        use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol};
+        use icu::datetime::provider::pattern::PatternItem;
+        use PatternCanonicalizationStrategy::*;
+
+        let mut items = core::mem::take(pattern).into_items();
+        items.retain_mut(|item| {
+            match (item, strategy) {
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            symbol: FieldSymbol::Era,
+                            length: FieldLength::Three,
+                        },
+                    ),
+                    NormalizeOnly | Aggressive | FlattenNumerics,
+                ) => {
+                    field.length = FieldLength::One;
+                    true
+                }
+                // Ignore differences between 'y' and 'yy'?
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            length: FieldLength::Two,
+                            ..
+                        },
+                    ),
+                    Aggressive | FlattenNumerics,
+                ) => {
+                    field.length = FieldLength::One;
+                    true
+                }
+                // TODO(#5892): For now, ignore differences between 'ccc', 'cccc', and 'EEE'
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            symbol: FieldSymbol::Weekday(fields::Weekday::StandAlone),
+                            length: FieldLength::Four,
+                        },
+                    ),
+                    Aggressive,
+                ) => {
+                    field.symbol = FieldSymbol::Weekday(fields::Weekday::Format);
+                    field.length = FieldLength::Three;
+                    true
+                }
+                // Ignore differences between 'MMM' and 'MMMM'?
+                (
+                    PatternItem::Field(
+                        ref mut field @ Field {
+                            length: FieldLength::Four,
+                            ..
+                        },
+                    ),
+                    Aggressive | FlattenNumerics,
+                ) => {
+                    field.length = FieldLength::Three;
+                    true
+                }
+                // Ignore whitespace and ASCII punctuation?
+                (PatternItem::Literal(' ' | '.' | ',' | '/' | '-'), Aggressive) => false,
+                _ => true,
+            }
+        });
+        *pattern = items.into();
+    }
+
+    /// Returns whether the check was successful.
+    fn check_single_pattern(data: TestCaseFixedArgs, info: TestCaseInfo) -> bool {
+        // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
+        let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
+        let components = components::Bag::from(&parsed_skeleton);
+        let selected_pattern = match components.select_pattern(
+            data.skeleton_patterns,
+            data.preferred_hour_cycle,
+            data.length_combinations_v1,
+        ) {
+            PatternPlurals::SinglePattern(x) => x,
+            PatternPlurals::MultipleVariants(_) => unreachable!(),
+        };
+
+        // Canonicalize the two patterns to make comparison more precise
+        let mut selected_pattern = reference::Pattern::from(&selected_pattern);
+        canonicalize_pattern(
+            &mut selected_pattern,
+            data.pattern_canonicalization_strategy,
+        );
+        let selected_pattern = runtime::Pattern::from(&selected_pattern).to_string();
+        let mut expected_pattern: reference::Pattern = info.pattern.parse().unwrap();
+        let mut pattern_for_lookup = expected_pattern.clone();
+        canonicalize_pattern(
+            &mut expected_pattern,
+            data.pattern_canonicalization_strategy,
+        );
+        let expected_pattern = runtime::Pattern::from(&expected_pattern).to_string();
+        canonicalize_pattern(
+            &mut pattern_for_lookup,
+            PatternCanonicalizationStrategy::FlattenNumerics,
+        );
+        let pattern_for_lookup = runtime::Pattern::from(&pattern_for_lookup).to_string();
+
+        // Check if there is a match
+        if expected_pattern != selected_pattern {
+            let locale = data.locale;
+            let cal = data.cldr_cal;
+            let length = info.length;
+            let in_available_formats = data.skeleton_pattern_set.contains(&pattern_for_lookup);
+            println!(
+                "{}\t{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}",
+                if in_available_formats {
+                    "MATCH"
+                } else {
+                    "MISSING"
+                }
+            );
+            // Don't return an error if there is no match in available formats!
+            !in_available_formats
+        } else {
+            true
+        }
+    }
+
+    fn check_all_patterns_for_calendar_and_locale(
+        provider: &SourceDataProvider,
+        cldr_cal: &str,
+        locale: &DataLocale,
+        strictness: TestStrictness,
+    ) -> usize {
+        let mut num_problems = 0;
+        let data = provider
+            .get_datetime_resources(locale, Either::Right(cldr_cal))
+            .unwrap();
+        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
+        let time_lengths_v1 = TimeLengths::from(&data);
+        let skeleton_patterns =
+            DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
+        let skeleton_pattern_set = data
+            .datetime_formats
+            .available_formats
+            .0
+            .values()
+            .map(|pattern_str| {
+                let mut pattern: reference::Pattern = pattern_str.parse().unwrap();
+                // always use FlattenNumerics mode for availableFormats lookup
+                canonicalize_pattern(
+                    &mut pattern,
+                    PatternCanonicalizationStrategy::FlattenNumerics,
+                );
+                runtime::Pattern::from(&pattern).to_string()
+            })
+            .collect::<HashSet<_>>();
+        let test_case_data = TestCaseFixedArgs {
+            skeleton_patterns: &skeleton_patterns,
+            preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
+            length_combinations_v1: &length_combinations_v1,
+            cldr_cal,
+            locale,
+            skeleton_pattern_set: &skeleton_pattern_set,
+            pattern_canonicalization_strategy: match strictness {
+                TestStrictness::Comprehensive => PatternCanonicalizationStrategy::NormalizeOnly,
+                TestStrictness::LowHangingFruit => PatternCanonicalizationStrategy::Aggressive,
+            },
+        };
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: data.date_formats.short.get_pattern(),
+                skeleton: data.date_skeletons.short.get_pattern(),
+                length: "date-short",
+            },
+        ) as usize;
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: data.date_formats.medium.get_pattern(),
+                skeleton: data.date_skeletons.medium.get_pattern(),
+                length: "date-medum",
+            },
+        ) as usize;
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: data.date_formats.long.get_pattern(),
+                skeleton: data.date_skeletons.long.get_pattern(),
+                length: "date-long",
+            },
+        ) as usize;
+        num_problems += !check_single_pattern(
+            test_case_data,
+            TestCaseInfo {
+                pattern: data.date_formats.full.get_pattern(),
+                skeleton: data.date_skeletons.full.get_pattern(),
+                length: "date-full",
+            },
+        ) as usize;
+        // TODO: Also check time? Date seems more impactful in the short term
+        num_problems
+    }
+
+    #[test]
+    fn gregorian_only() {
+        // NOTE: This test is intended to run over all modern locales
+        let provider = SourceDataProvider::new_latest_tested();
+
+        let mut num_problems = 0;
+        for locale in provider
+            .locales_for_coverage_levels([CoverageLevel::Modern])
+            .unwrap()
+        {
+            num_problems += check_all_patterns_for_calendar_and_locale(
+                &provider,
+                "gregorian",
+                &locale,
+                TestStrictness::LowHangingFruit,
+            );
+        }
+        if num_problems != 0 {
+            panic!("{num_problems} problems");
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn all_calendars() {
+        // NOTE: This test is intended to run over all modern locales
+        let provider = SourceDataProvider::new_latest_tested();
+
+        let mut num_problems = 0;
+        for (_calendar, cldr_cal) in supported_cals().iter() {
+            for locale in provider
+                .locales_for_coverage_levels([CoverageLevel::Modern])
+                .unwrap()
+            {
+                num_problems += check_all_patterns_for_calendar_and_locale(
+                    &provider,
+                    cldr_cal,
+                    &locale,
+                    TestStrictness::Comprehensive,
+                );
+            }
+        }
+        if num_problems != 0 {
+            panic!("{num_problems} problems");
+        }
+    }
 }

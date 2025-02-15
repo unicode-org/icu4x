@@ -47,11 +47,21 @@ final class EmojiSetData implements ffi.Finalizable {
     return result;
   }
 
+  /// Create a map for the `Basic_Emoji` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
+  factory EmojiSetData.basic() {
+    final result = _icu4x_EmojiSetData_create_basic_mv1();
+    return EmojiSetData._fromFfi(result, []);
+  }
+
+  /// Create a map for the `Basic_Emoji` property, using a particular data source.
+  ///
   /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory EmojiSetData.basic(DataProvider provider) {
-    final result = _icu4x_EmojiSetData_load_basic_mv1(provider._ffi);
+  factory EmojiSetData.basicWithProvider(DataProvider provider) {
+    final result = _icu4x_EmojiSetData_create_basic_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -75,6 +85,11 @@ external bool _icu4x_EmojiSetData_contains_str_mv1(ffi.Pointer<ffi.Opaque> self,
 external bool _icu4x_EmojiSetData_contains_mv1(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_EmojiSetData_load_basic_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_EmojiSetData_create_basic_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_EmojiSetData_load_basic_mv1(ffi.Pointer<ffi.Opaque> provider);
+external ffi.Pointer<ffi.Opaque> _icu4x_EmojiSetData_create_basic_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_EmojiSetData_create_basic_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_EmojiSetData_create_basic_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);

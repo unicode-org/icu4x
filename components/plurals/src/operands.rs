@@ -28,7 +28,7 @@ use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 /// From int
 ///
 /// ```
-/// use icu::plurals::rules::RawPluralOperands;
+/// use icu::plurals::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
 ///
 /// assert_eq!(
@@ -47,7 +47,7 @@ use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 /// From &str
 ///
 /// ```
-/// use icu::plurals::rules::RawPluralOperands;
+/// use icu::plurals::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
 ///
 /// assert_eq!(
@@ -67,7 +67,7 @@ use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 ///
 /// ```
 /// use fixed_decimal::SignedFixedDecimal;
-/// use icu::plurals::rules::RawPluralOperands;
+/// use icu::plurals::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
 ///
 /// assert_eq!(
@@ -114,6 +114,9 @@ pub enum OperandsError {
     #[displaydoc("Input to the Operands parsing was invalid")]
     Invalid,
 }
+
+#[cfg(feature = "datagen")]
+impl core::error::Error for OperandsError {}
 
 #[cfg(feature = "datagen")]
 impl From<core::num::ParseIntError> for OperandsError {
@@ -309,7 +312,7 @@ impl From<&CompactDecimal> for PluralOperands {
     /// use fixed_decimal::CompactDecimal;
     /// use fixed_decimal::SignedFixedDecimal;
     /// use icu::locale::locale;
-    /// use icu::plurals::rules::RawPluralOperands;
+    /// use icu::plurals::RawPluralOperands;
     /// use icu::plurals::PluralCategory;
     /// use icu::plurals::PluralOperands;
     /// use icu::plurals::PluralRules;

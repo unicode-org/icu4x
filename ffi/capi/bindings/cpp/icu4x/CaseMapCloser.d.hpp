@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -30,7 +31,9 @@ namespace icu4x {
 class CaseMapCloser {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline void add_case_closure_to(char32_t c, icu4x::CodePointSetBuilder& builder) const;
 

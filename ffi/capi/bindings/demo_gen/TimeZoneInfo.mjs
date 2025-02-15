@@ -1,16 +1,10 @@
 import { TimeZoneInfo } from "icu4x"
-export function timeZoneId(bcp47Id, offsetSeconds, dst) {
-    return (function (...args) { return args[0].timeZoneId }).apply(
-        null,
-        [
-            TimeZoneInfo.fromParts.apply(
-                null,
-                [
-                    bcp47Id,
-                    offsetSeconds,
-                    dst
-                ]
-            )
-        ]
-    );
+export function timeZoneId(timeZoneInfoBcp47Id, timeZoneInfoOffsetSeconds, timeZoneInfoDst) {
+    
+    let timeZoneInfo = new TimeZoneInfo(timeZoneInfoBcp47Id,timeZoneInfoOffsetSeconds,timeZoneInfoDst);
+    
+    let out = timeZoneInfo.timeZoneId;
+    
+
+    return out;
 }

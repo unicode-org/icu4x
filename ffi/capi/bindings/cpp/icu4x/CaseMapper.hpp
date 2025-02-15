@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "CodePointSetBuilder.hpp"
@@ -21,8 +22,10 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_CaseMapper_create_mv1_result {union {icu4x::capi::CaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CaseMapper_create_mv1_result;
-    icu4x_CaseMapper_create_mv1_result icu4x_CaseMapper_create_mv1(const icu4x::capi::DataProvider* provider);
+    icu4x::capi::CaseMapper* icu4x_CaseMapper_create_mv1(void);
+    
+    typedef struct icu4x_CaseMapper_create_with_provider_mv1_result {union {icu4x::capi::CaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CaseMapper_create_with_provider_mv1_result;
+    icu4x_CaseMapper_create_with_provider_mv1_result icu4x_CaseMapper_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     void icu4x_CaseMapper_lowercase_mv1(const icu4x::capi::CaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
     
@@ -53,14 +56,19 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::CaseMapper>, icu4x::DataError> icu4x::CaseMapper::create(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_CaseMapper_create_mv1(provider.AsFFI());
+inline std::unique_ptr<icu4x::CaseMapper> icu4x::CaseMapper::create() {
+  auto result = icu4x::capi::icu4x_CaseMapper_create_mv1();
+  return std::unique_ptr<icu4x::CaseMapper>(icu4x::CaseMapper::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::CaseMapper>, icu4x::DataError> icu4x::CaseMapper::create_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_CaseMapper_create_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CaseMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CaseMapper>>(std::unique_ptr<icu4x::CaseMapper>(icu4x::CaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CaseMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::lowercase(std::string_view s, const icu4x::Locale& locale) const {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
@@ -73,7 +81,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::low
 
 inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::uppercase(std::string_view s, const icu4x::Locale& locale) const {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
@@ -86,7 +94,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::upp
 
 inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::titlecase_segment_with_only_case_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
@@ -100,7 +108,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::tit
 
 inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::fold(std::string_view s) const {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
@@ -112,7 +120,7 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::fol
 
 inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::fold_turkic(std::string_view s) const {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);

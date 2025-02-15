@@ -13,12 +13,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
 */
+
+
 export class IsoDate {
     
-
     get ffiValue(): pointer;
-
-    static create(year: number, month: number, day: number): IsoDate;
 
     static fromString(v: string): IsoDate;
 
@@ -47,4 +46,6 @@ export class IsoDate {
     get daysInMonth(): number;
 
     get daysInYear(): number;
+
+    constructor(year: number, month: number, day: number);
 }

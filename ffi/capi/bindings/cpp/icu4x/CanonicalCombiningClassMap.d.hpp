@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -28,7 +29,9 @@ namespace icu4x {
 class CanonicalCombiningClassMap {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::CanonicalCombiningClassMap> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline uint8_t get(char32_t ch) const;
 

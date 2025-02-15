@@ -21,7 +21,16 @@ use utf8_iter::Utf8CharIndices;
 pub struct WordBreakOptions<'a> {
     /// Content locale for word segmenter
     pub content_locale: Option<&'a LanguageIdentifier>,
+    /// Options independent of the locale
+    pub invariant_options: WordBreakInvariantOptions,
 }
+
+/// Locale-independent options to tailor word breaking behavior
+///
+/// Currently empty but may grow in the future
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
+pub struct WordBreakInvariantOptions {}
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
@@ -115,8 +124,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::new_auto();
+/// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -126,8 +135,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::new_auto();
+/// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -139,8 +148,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu::segmenter::WordSegmenter;
-/// # let segmenter = WordSegmenter::new_auto();
+/// # use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// # let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
 /// let segments: Vec<&str> = segmenter
@@ -161,8 +170,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu::segmenter::{WordType, WordSegmenter};
-/// # let segmenter = WordSegmenter::new_auto();
+/// # use icu::segmenter::{WordType, WordSegmenter, WordBreakInvariantOptions};
+/// # let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter
 ///     .segment_str(text)
@@ -175,9 +184,9 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
-    payload: DataPayload<WordBreakDataV2Marker>,
+    payload: DataPayload<WordBreakDataV2>,
     complex: ComplexPayloads,
-    payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1Marker>>,
+    payload_locale_override: Option<DataPayload<WordBreakDataOverrideV1>>,
 }
 
 impl WordSegmenter {
@@ -196,12 +205,12 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::WordSegmenter;
+    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_auto();
+    /// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -211,10 +220,10 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
-    pub fn new_auto() -> Self {
+    pub fn new_auto(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_auto(),
             payload_locale_override: None,
@@ -222,11 +231,10 @@ impl WordSegmenter {
     }
 
     #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
         functions: [
-            new_auto: skip,
-            try_new_auto_with_any_provider,
+            try_new_auto,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
             Self
@@ -234,47 +242,17 @@ impl WordSegmenter {
     );
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
-            + ?Sized,
-    {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_auto(provider)?,
-            payload_locale_override: None,
-        })
-    }
-
-    #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_auto_with_options,
-            try_new_auto_with_options_with_any_provider,
-            try_new_auto_with_options_with_buffer_provider,
-            try_new_auto_with_options_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
-    pub fn try_new_auto_with_options_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    pub fn try_new_auto_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+        D: DataProvider<WordBreakDataV2>
+            + DataProvider<WordBreakDataOverrideV1>
+            + DataProvider<DictionaryForWordOnlyAutoV1>
+            + DataProvider<LstmForWordLineAutoV1>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -318,12 +296,12 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::WordSegmenter;
+    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_lstm();
+    /// let segmenter = WordSegmenter::new_lstm(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -335,10 +313,10 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_lstm() -> Self {
+    pub fn new_lstm(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_lstm(),
             payload_locale_override: None,
@@ -346,11 +324,10 @@ impl WordSegmenter {
     }
 
     #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
         functions: [
-            new_lstm: skip,
-            try_new_lstm_with_any_provider,
+            try_new_lstm,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
             Self
@@ -358,45 +335,16 @@ impl WordSegmenter {
     );
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
-            + ?Sized,
-    {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_lstm(provider)?,
-            payload_locale_override: None,
-        })
-    }
-
-    #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_lstm_with_options,
-            try_new_lstm_with_options_with_any_provider,
-            try_new_lstm_with_options_with_buffer_provider,
-            try_new_lstm_with_options_unstable,
-            Self
-        ]
-    );
-
-    #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
-    pub fn try_new_lstm_with_options_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    pub fn try_new_lstm_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<LstmForWordLineAutoV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+        D: DataProvider<WordBreakDataV2>
+            + DataProvider<WordBreakDataOverrideV1>
+            + DataProvider<LstmForWordLineAutoV1>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -437,12 +385,12 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::WordSegmenter;
+    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_dictionary();
+    /// let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -451,66 +399,37 @@ impl WordSegmenter {
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary() -> Self {
+    pub fn new_dictionary(_options: WordBreakInvariantOptions) -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2_MARKER,
+                crate::provider::Baked::SINGLETON_WORD_BREAK_DATA_V2,
             ),
             complex: ComplexPayloads::new_dict(),
             payload_locale_override: None,
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
-        () -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
         functions: [
-            new_dictionary: skip,
-            try_new_dictionary_with_any_provider,
+            try_new_dictionary,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, DataError>
-    where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
-            + ?Sized,
-    {
-        Ok(Self {
-            payload: provider.load(Default::default())?.payload,
-            complex: ComplexPayloads::try_new_dict(provider)?,
-            payload_locale_override: None,
-        })
-    }
-
-    icu_provider::gen_any_buffer_data_constructors!(
-        (options: WordBreakOptions) -> error: DataError,
-        functions: [
-            try_new_dictionary_with_options,
-            try_new_dictionary_with_options_with_any_provider,
-            try_new_dictionary_with_options_with_buffer_provider,
-            try_new_dictionary_with_options_unstable,
-            Self
-        ]
-    );
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
-    pub fn try_new_dictionary_with_options_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    pub fn try_new_dictionary_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<WordBreakDataV2Marker>
-            + DataProvider<WordBreakDataOverrideV1Marker>
-            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
-            + DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV2Marker>
+        D: DataProvider<WordBreakDataV2>
+            + DataProvider<WordBreakDataOverrideV1>
+            + DataProvider<DictionaryForWordOnlyAutoV1>
+            + DataProvider<DictionaryForWordLineExtendedV1>
+            + DataProvider<GraphemeClusterBreakDataV2>
             + ?Sized,
     {
         Ok(Self {
@@ -624,6 +543,7 @@ impl WordSegmenter {
 
 #[derive(Debug)]
 pub struct WordBreakTypeUtf8;
+impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
@@ -643,6 +563,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
 
 #[derive(Debug)]
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
+impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
@@ -718,6 +639,8 @@ where
 #[derive(Debug)]
 pub struct WordBreakTypeUtf16;
 
+impl crate::private::Sealed for WordBreakTypeUtf16 {}
+
 impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
@@ -785,7 +708,7 @@ impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
 #[cfg(all(test, feature = "serde"))]
 #[test]
 fn empty_string() {
-    let segmenter = WordSegmenter::new_auto();
+    let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
     assert_eq!(breaks, [0]);
 }

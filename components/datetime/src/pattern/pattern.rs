@@ -37,7 +37,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// ```
 /// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fields::components;
+/// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -58,9 +58,8 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// .unwrap()
 /// // The pattern can depend on the datetime being formatted.
 /// .format(
-///     &Date::try_new_iso(2024, 1, 1)
-///         .unwrap()
-///         .to_calendar(Gregorian),
+///     &Date::try_new_gregorian(2024, 1, 1)
+///         .unwrap(),
 /// )
 /// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
@@ -73,6 +72,34 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// expected_components_bag.day = Some(components::Day::NumericDayOfMonth);
 /// let actual_components_bag = components::Bag::from(&data_pattern);
 /// assert_eq!(actual_components_bag, expected_components_bag);
+/// ```
+///
+/// Check the hour cycle of a resolved pattern:
+///
+/// ```
+/// use icu::datetime::input::Time;
+/// use icu::datetime::provider::fields::components;
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::TimeFormatter;
+/// use icu::locale::locale;
+/// use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
+/// use writeable::assert_writeable_eq;
+///
+/// let pattern = TimeFormatter::try_new(
+///     locale!("es-MX").into(),
+///     T::medium(),
+/// )
+/// .unwrap()
+/// // The pattern can depend on the datetime being formatted.
+/// .format(&Time::try_new(12, 0, 0, 0).unwrap())
+/// .pattern();
+///
+/// assert_writeable_eq!(pattern, "hh:mm:ss a");
+///
+/// // Get the hour cycle from the resolved components:
+/// let components = components::Bag::from(&pattern);
+/// assert_eq!(components.hour_cycle, Some(HourCycle::H12));
 /// ```
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter

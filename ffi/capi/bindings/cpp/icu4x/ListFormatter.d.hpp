@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -31,11 +32,17 @@ namespace icu4x {
 class ListFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_and_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_and_with_length(const icu4x::Locale& locale, icu4x::ListLength length);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_or_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_and_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_unit_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_or_with_length(const icu4x::Locale& locale, icu4x::ListLength length);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_or_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_unit_with_length(const icu4x::Locale& locale, icu4x::ListLength length);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ListFormatter>, icu4x::DataError> create_unit_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::ListLength length);
 
   inline std::string format(diplomat::span<const std::string_view> list) const;
 

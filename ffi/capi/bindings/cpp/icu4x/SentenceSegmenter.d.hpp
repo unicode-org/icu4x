@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -36,9 +37,11 @@ namespace icu4x {
 class SentenceSegmenter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static std::unique_ptr<icu4x::SentenceSegmenter> create();
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> segment(std::string_view input) const;
 

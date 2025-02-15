@@ -5,9 +5,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** Bidi information for a single processed paragraph
 */
+
+
 export class BidiParagraph {
     
-
     get ffiValue(): pointer;
 
     setParagraphInText(n: number): boolean;

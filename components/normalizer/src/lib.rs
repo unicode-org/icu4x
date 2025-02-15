@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -13,6 +13,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -23,47 +24,39 @@
 //! This module is published as its own crate ([`icu_normalizer`](https://docs.rs/icu_normalizer/latest/icu_normalizer/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! # Implementation notes
+//! # Functionality
 //!
-//! The normalizer operates on a lazy iterator over Unicode scalar values (Rust `char`) internally
-//! and iterating over guaranteed-valid UTF-8, potentially-invalid UTF-8, and potentially-invalid
-//! UTF-16 is a step that doesn’t leak into the normalizer internals. Ill-formed byte sequences are
-//! treated as U+FFFD.
+//! The top level of the crate provides normalization of input into the four normalization forms defined in [UAX #15: Unicode
+//! Normalization Forms](https://www.unicode.org/reports/tr15/): NFC, NFD, NFKC, and NFKD.
 //!
-//! The normalizer data layout is not based on the ICU4C design at all. Instead, the normalization
-//! data layout is a clean-slate design optimized for the concept of fusing the NFD decomposition
-//! into the collator. That is, the decomposing normalizer is a by-product of the collator-motivated
-//! data layout.
+//! Three kinds of contiguous inputs are supported: known-well-formed UTF-8 (`&str`), potentially-not-well-formed UTF-8,
+//! and potentially-not-well-formed UTF-16. Additionally, an iterator over `char` can be wrapped in a normalizing iterator.
 //!
-//! Notably, the decomposition data structure is optimized for a starter decomposing to itself,
-//! which is the most common case, and for a starter decomposing to a starter and a non-starter
-//! on the Basic Multilingual Plane. Notably, in this case, the collator makes use of the
-//! knowledge that the second character of such a decomposition is a non-starter. Therefore,
-//! decomposition into two starters is handled by generic fallback path that looks the
-//! decomposition from an array by offset and length instead of baking a BMP starter pair directly
-//! into a trie value.
+//! The `uts46` module provides the combination of mapping and normalization operations for [UTS #46: Unicode IDNA
+//! Compatibility Processing](https://www.unicode.org/reports/tr46/). This functionality is not meant to be used by
+//! applications directly. Instead, it is meant as a building block for a full implementation of UTS #46, such as the
+//! [`idna`](https://docs.rs/idna/latest/idna/) crate.
 //!
-//! The decompositions into non-starters are hard-coded. At present in Unicode, these appear
-//! to be special cases falling into three categories:
+//! The `properties` module provides the non-recursive canonical decomposition operation on a per `char` basis and
+//! the canonical compositon operation given two `char`s. It also provides access to the Canonical Combining Class
+//! property. These operations are primarily meant for [HarfBuzz](https://harfbuzz.github.io/) via the
+//! [`icu_harfbuzz`](https://docs.rs/icu_harfbuzz/latest/icu_harfbuzz/) crate.
 //!
-//! 1. Deprecated combining marks.
-//! 2. Particular Tibetan vowel sings.
-//! 3. NFKD only: half-width kana voicing marks.
+//! Notably, this normalizer does _not_ provide the normalization “quick check” that can result in “maybe” in
+//! addition to “yes” and “no”. The normalization checks provided by this crate always give a definitive
+//! non-“maybe” answer.
 //!
-//! Hopefully Unicode never adds more decompositions into non-starters (other than a character
-//! decomposing to itself), but if it does, a code update is needed instead of a mere data update.
+//! # Examples
 //!
-//! The composing normalizer builds on the decomposing normalizer by performing the canonical
-//! composition post-processing per spec. As an optimization, though, the composing normalizer
-//! attempts to pass through already-normalized text consisting of starters that never combine
-//! backwards and that map to themselves if followed by a character whose decomposition starts
-//! with a starter that never combines backwards.
+//! ```
+//! let nfc = icu_normalizer::ComposingNormalizerBorrowed::new_nfc();
+//! assert_eq!(nfc.normalize("a\u{0308}"), "ä");
+//! assert!(nfc.is_normalized("ä"));
 //!
-//! As a difference with ICU4C, the composing normalizer has only the simplest possible
-//! passthrough (only one inversion list lookup per character in the best case) and the full
-//! decompose-then-canonically-compose behavior, whereas ICU4C has other paths between these
-//! extremes. The ICU4X collator doesn't make use of the FCD concept at all in order to avoid
-//! doing the work of checking whether the FCD condition holds.
+//! let nfd = icu_normalizer::DecomposingNormalizerBorrowed::new_nfd();
+//! assert_eq!(nfd.normalize("ä"), "a\u{0308}");
+//! assert!(!nfd.is_normalized("ä"));
+//! ```
 
 extern crate alloc;
 
@@ -73,10 +66,10 @@ macro_rules! ccc {
     ($name:ident, $num:expr) => {{
         const X: CanonicalCombiningClass = {
             #[cfg(feature = "icu_properties")]
-            if icu_properties::props::CanonicalCombiningClass::$name.0 != $num {
+            if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
-            CanonicalCombiningClass($num)
+            CanonicalCombiningClass::from_icu4c_value($num)
         };
         X
     }};
@@ -86,15 +79,14 @@ pub mod properties;
 pub mod provider;
 pub mod uts46;
 
-use crate::provider::CanonicalCompositionsV1;
-use crate::provider::CanonicalDecompositionDataV1Marker;
-use crate::provider::CompatibilityDecompositionSupplementV1Marker;
-use crate::provider::DecompositionDataV1;
-use crate::provider::Uts46DecompositionSupplementV1Marker;
+use crate::provider::CanonicalCompositions;
+use crate::provider::CanonicalDecompositionDataV2;
+use crate::provider::CompatibilityDecompositionDataV2;
+use crate::provider::DecompositionData;
+use crate::provider::Uts46DecompositionDataV2;
+use alloc::borrow::Cow;
 use alloc::string::String;
-use alloc::vec::Vec;
 use core::char::REPLACEMENT_CHARACTER;
-use core::str::from_utf8_unchecked;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
@@ -102,15 +94,15 @@ use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use provider::CanonicalCompositionsV1Marker;
-use provider::CanonicalDecompositionTablesV1Marker;
-use provider::CompatibilityDecompositionTablesV1Marker;
-use provider::DecompositionSupplementV1;
-use provider::DecompositionTablesV1;
+use provider::CanonicalCompositionsV1;
+use provider::CanonicalDecompositionTablesV1;
+use provider::CompatibilityDecompositionTablesV1;
+use provider::DecompositionTables;
 use smallvec::SmallVec;
+#[cfg(feature = "utf16_iter")]
 use utf16_iter::Utf16CharsEx;
+#[cfg(feature = "utf8_iter")]
 use utf8_iter::Utf8CharsEx;
-use write16::Write16;
 use zerovec::{zeroslice, ZeroSlice};
 
 /// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
@@ -119,23 +111,18 @@ use zerovec::{zeroslice, ZeroSlice};
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
 struct CanonicalCombiningClass(pub(crate) u8);
 
-const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
-const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
-
-#[derive(Debug)]
-enum SupplementPayloadHolder {
-    Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
-    Uts46(DataPayload<Uts46DecompositionSupplementV1Marker>),
-}
-
-impl SupplementPayloadHolder {
-    fn get(&self) -> &DecompositionSupplementV1 {
-        match self {
-            SupplementPayloadHolder::Compatibility(d) => d.get(),
-            SupplementPayloadHolder::Uts46(d) => d.get(),
-        }
+#[cfg(not(feature = "icu_properties"))]
+impl CanonicalCombiningClass {
+    const fn from_icu4c_value(v: u8) -> Self {
+        Self(v)
+    }
+    const fn to_icu4c_value(self) -> u8 {
+        self.0
     }
 }
+
+const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
+const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
 
 /// Treatment of the ignorable marker (0xFFFFFFFF) in data.
 #[derive(Debug, PartialEq, Eq)]
@@ -149,79 +136,65 @@ enum IgnorableBehavior {
     ReplacementCharacter,
 }
 
-/// Number of iterations allowed on the fast path before flushing.
-/// Since a typical UTF-16 iteration advances over a 2-byte BMP
-/// character, this means two memory pages.
-/// Intel Core i7-4770 had the best results between 2 and 4 pages
-/// when testing powers of two. Apple M1 didn't seem to care
-/// about 1, 2, 4, or 8 pages.
-///
-/// Curiously, the `str` case does not appear to benefit from
-/// similar flushing, though the tested monomorphization never
-/// passes an error through from `Write`.
-const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
-
 /// Marker for UTS 46 ignorables.
+///
+/// See trie-value-format.md
 const IGNORABLE_MARKER: u32 = 0xFFFFFFFF;
 
-/// Marker for starters that decompose to themselves but may
-/// combine backwards under canonical composition.
-/// (Main trie only; not used in the supplementary trie.)
-const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
-
-/// Magic marker trie value for characters whose decomposition
-/// starts with a non-starter. The actual decomposition is
-/// hard-coded.
-const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
-
-/// `u16` version of the previous marker value.
-const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
-
-/// Marker that a complex decomposition isn't round-trippable
-/// under re-composition.
+/// Marker that the decomposition does not round trip via NFC.
 ///
-/// TODO: When taking a data format break, swap this and
-/// `BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER` around
-/// to make backward-combiningness use the same bit in all
-/// cases.
-const NON_ROUND_TRIP_MARKER: u16 = 0b1;
+/// See trie-value-format.md
+const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 
-/// Marker that a complex decomposition starts with a starter
-/// that can combine backwards.
-const BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER: u16 = 0b10;
+/// Marker that the first character of the decomposition
+/// can combine backwards.
+///
+/// See trie-value-format.md
+const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
-/// Values above this are treated as a BMP character.
-const HIGHEST_MARKER: u16 = NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER;
+/// Mask for the bits have to be zero for this to be a BMP
+/// singleton decomposition, or value baked into the surrogate
+/// range.
+///
+/// See trie-value-format.md
+const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
+
+/// Mask for the bits have to be zero for this to be a complex
+/// decomposition.
+///
+/// See trie-value-format.md
+const LOW_ZEROS_MASK: u32 = 0xFFE0;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
+///
+/// See trie-value-format.md
 fn trie_value_has_ccc(trie_value: u32) -> bool {
-    (trie_value & 0xFFFFFF00) == 0xD800
+    (trie_value & 0x3FFFFE00) == 0xD800
 }
 
 /// Checks if the trie signifies a special non-starter decomposition.
+///
+/// See trie-value-format.md
 fn trie_value_indicates_special_non_starter_decomposition(trie_value: u32) -> bool {
-    trie_value == SPECIAL_NON_STARTER_DECOMPOSITION_MARKER
+    (trie_value & 0x3FFFFF00) == 0xD900
 }
 
 /// Checks if a trie value signifies a character whose decomposition
 /// starts with a non-starter.
+///
+/// See trie-value-format.md
 fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
     trie_value_has_ccc(trie_value)
-        || trie_value_indicates_special_non_starter_decomposition(trie_value)
 }
 
 /// Extracts a canonical combining class (possibly zero) from a trie value.
 ///
-/// # Panics
-///
-/// The trie value must not be one that signifies a special non-starter
-/// decomposition. (Debug-only)
+/// See trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
-        CanonicalCombiningClass(trie_value as u8)
+        CanonicalCombiningClass::from_icu4c_value(trie_value as u8)
     } else {
-        debug_assert_ne!(trie_value, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER);
         CCC_NOT_REORDERED
     }
 }
@@ -233,8 +206,11 @@ static FDFA_NFKD: [u16; 17] = [
     0x633, 0x644, 0x645,
 ];
 
-/// Marker value for U+FDFA in NFKD
-const FDFA_MARKER: u16 = 3;
+/// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
+/// but they differ by `NON_ROUND_TRIP_MARKER`.)
+///
+/// See trie-value-format.md
+const FDFA_MARKER: u16 = 1;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -297,11 +273,7 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 }
 
 #[inline(always)]
-fn in_inclusive_range32(u: u32, start: u32, end: u32) -> bool {
-    u.wrapping_sub(start) <= (end - start)
-}
-
-#[inline(always)]
+#[cfg(feature = "utf16_iter")]
 fn in_inclusive_range16(u: u16, start: u16, end: u16) -> bool {
     u.wrapping_sub(start) <= (end - start)
 }
@@ -370,6 +342,20 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
     }
 }
 
+/// See trie-value-format.md
+#[inline(always)]
+fn starter_and_decomposes_to_self_impl(trie_val: u32) -> bool {
+    // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+    // and this function needs to ignore that.
+    (trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0
+}
+
+/// See trie-value-format.md
+#[inline(always)]
+fn potential_passthrough_and_cannot_combine_backwards_impl(trie_val: u32) -> bool {
+    (trie_val & (NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER)) == 0
+}
+
 /// Struct for holding together a character and the value
 /// looked up for it from the NFD trie in a more explicit
 /// way than an anonymous pair.
@@ -377,8 +363,8 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
 #[derive(Debug, PartialEq, Eq)]
 struct CharacterAndTrieValue {
     character: char,
+    /// See trie-value-format.md
     trie_val: u32,
-    from_supplement: bool,
 }
 
 impl CharacterAndTrieValue {
@@ -387,84 +373,39 @@ impl CharacterAndTrieValue {
         CharacterAndTrieValue {
             character: c,
             trie_val: trie_value,
-            from_supplement: false,
         }
     }
-    #[inline(always)]
-    pub fn new_from_supplement(c: char, trie_value: u32) -> Self {
-        CharacterAndTrieValue {
-            character: c,
-            trie_val: trie_value,
-            from_supplement: true,
-        }
-    }
+
     #[inline(always)]
     pub fn starter_and_decomposes_to_self(&self) -> bool {
-        if self.trie_val > BACKWARD_COMBINING_STARTER_MARKER {
-            return false;
-        }
-        // Hangul syllables get 0 as their trie value
-        u32::from(self.character).wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+        starter_and_decomposes_to_self_impl(self.trie_val)
     }
+
+    /// See trie-value-format.md
+    #[inline(always)]
+    #[cfg(feature = "utf8_iter")]
+    pub fn starter_and_decomposes_to_self_except_replacement(&self) -> bool {
+        // This intentionally leaves `NON_ROUND_TRIP_MARKER` in the value
+        // to be compared with zero. U+FFFD has that flag set despite really
+        // being being round-tripping in order to make UTF-8 errors
+        // ineligible for passthrough.
+        (self.trie_val & !BACKWARD_COMBINING_MARKER) == 0
+    }
+
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
-        decomposition_starts_with_non_starter(self.trie_val)
-            || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
-            || (((self.trie_val as u16) & !1) == BACKWARD_COMBINING_STARTER_DECOMPOSITION_MARKER && (self.trie_val >> 16) != 0) // Combine with the previous condition when taking a data format break
-            || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
+        (self.trie_val & BACKWARD_COMBINING_MARKER) != 0
     }
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn potential_passthrough(&self) -> bool {
-        self.potential_passthrough_impl(BACKWARD_COMBINING_STARTER_MARKER)
+        (self.trie_val & NON_ROUND_TRIP_MARKER) == 0
     }
+    /// See trie-value-format.md
     #[inline(always)]
     pub fn potential_passthrough_and_cannot_combine_backwards(&self) -> bool {
-        self.potential_passthrough_impl(0)
-    }
-    #[inline(always)]
-    fn potential_passthrough_impl(&self, bound: u32) -> bool {
-        // This methods looks badly branchy, but most characters
-        // take the first return.
-        if self.trie_val <= bound {
-            return true;
-        }
-        if self.from_supplement {
-            return false;
-        }
-        let trail_or_complex = (self.trie_val >> 16) as u16;
-        if trail_or_complex == 0 {
-            return false;
-        }
-        let lead = self.trie_val as u16;
-        if lead == 0 {
-            return true;
-        }
-        if lead <= HIGHEST_MARKER {
-            return false;
-        }
-        if (trail_or_complex & 0x7F) == 0x3C
-            && in_inclusive_range16(trail_or_complex, 0x0900, 0x0BFF)
-        {
-            // Nukta
-            return false;
-        }
-        if in_inclusive_range(self.character, '\u{FB1D}', '\u{FB4E}') {
-            // Hebrew presentation forms
-            return false;
-        }
-        if in_inclusive_range(self.character, '\u{1F71}', '\u{1FFB}') {
-            // Polytonic Greek with oxia
-            return false;
-        }
-        // To avoid more branchiness, 4 characters that decompose to
-        // a BMP starter followed by a BMP non-starter are excluded
-        // from being encoded directly into the trie value and are
-        // handled as complex decompositions instead. These are:
-        // U+0F76 TIBETAN VOWEL SIGN VOCALIC R
-        // U+0F78 TIBETAN VOWEL SIGN VOCALIC L
-        // U+212B ANGSTROM SIGN
-        // U+2ADC FORKING
-        true
+        potential_passthrough_and_cannot_combine_backwards_impl(self.trie_val)
     }
 }
 
@@ -495,7 +436,7 @@ struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
-        CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         CharacterAndClass(u32::from(c) | ((0xFF) << 24))
@@ -515,7 +456,7 @@ impl CharacterAndClass {
     }
     /// This method must exist for Pernosco to apply its special rendering.
     pub fn ccc(&self) -> CanonicalCombiningClass {
-        CanonicalCombiningClass((self.0 >> 24) as u8)
+        CanonicalCombiningClass::from_icu4c_value((self.0 >> 24) as u8)
     }
 
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
@@ -526,7 +467,8 @@ impl CharacterAndClass {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 =
+            ((ccc_from_trie_value(trie.get32_u32(scalar)).to_icu4c_value() as u32) << 24) | scalar;
     }
 }
 
@@ -565,13 +507,12 @@ where
     // However, when `Decomposition` appears inside a `Composition`, this
     // may become a non-starter before `decomposing_next()` is called.
     pending: Option<CharacterAndTrieValue>, // None at end of stream
+    // See trie-value-format.md
     trie: &'data CodePointTrie<'data, u32>,
-    supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<char>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
     supplementary_scalars24: &'data ZeroSlice<char>,
-    half_width_voicing_marks_become_non_starters: bool,
     /// The lowest character for which either of the following does
     /// not hold:
     /// 1. Decomposes to self.
@@ -596,13 +537,12 @@ where
     #[doc(hidden)] // used in collator
     pub fn new(
         delegate: I,
-        decompositions: &'data DecompositionDataV1,
-        tables: &'data DecompositionTablesV1,
+        decompositions: &'data DecompositionData,
+        tables: &'data DecompositionTables,
     ) -> Self {
         Self::new_with_supplements(
             delegate,
             decompositions,
-            None,
             tables,
             None,
             0xC0,
@@ -618,19 +558,12 @@ where
     /// there's a good reason to use this constructor directly.
     fn new_with_supplements(
         delegate: I,
-        decompositions: &'data DecompositionDataV1,
-        supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
-        tables: &'data DecompositionTablesV1,
-        supplementary_tables: Option<&'data DecompositionTablesV1>,
+        decompositions: &'data DecompositionData,
+        tables: &'data DecompositionTables,
+        supplementary_tables: Option<&'data DecompositionTables>,
         decomposition_passthrough_bound: u8,
         ignorable_behavior: IgnorableBehavior,
     ) -> Self {
-        let half_width_voicing_marks_become_non_starters =
-            if let Some(supplementary) = supplementary_decompositions {
-                supplementary.half_width_voicing_marks_become_non_starters()
-            } else {
-                false
-            };
         let mut ret = Decomposition::<I> {
             delegate,
             buffer: SmallVec::new(), // Normalized
@@ -639,7 +572,6 @@ where
             // the real stream starts with a non-starter.
             pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
             trie: &decompositions.trie,
-            supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -652,7 +584,6 @@ where
             } else {
                 EMPTY_CHAR
             },
-            half_width_voicing_marks_become_non_starters,
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
             ignorable_behavior,
         };
@@ -662,11 +593,11 @@ where
 
     fn push_decomposition16(
         &mut self,
-        low: u16,
         offset: usize,
+        len: usize,
+        only_non_starters_in_trail: bool,
         slice16: &ZeroSlice<u16>,
     ) -> (char, usize) {
-        let len = usize::from(low >> 13) + 2;
         let (starter, tail) = slice16
             .get_subslice(offset..offset + len)
             .and_then(|slice| slice.split_first())
@@ -678,7 +609,7 @@ where
                 },
                 |(first, trail)| (char_from_u16(first), trail),
             );
-        if low & 0x1000 != 0 {
+        if only_non_starters_in_trail {
             // All the rest are combining
             self.buffer.extend(
                 tail.iter()
@@ -707,11 +638,11 @@ where
 
     fn push_decomposition32(
         &mut self,
-        low: u16,
         offset: usize,
+        len: usize,
+        only_non_starters_in_trail: bool,
         slice32: &ZeroSlice<char>,
     ) -> (char, usize) {
-        let len = usize::from(low >> 13) + 1;
         let (starter, tail) = slice32
             .get_subslice(offset..offset + len)
             .and_then(|slice| slice.split_first())
@@ -720,7 +651,7 @@ where
                 debug_assert!(false);
                 (REPLACEMENT_CHARACTER, EMPTY_CHAR)
             });
-        if low & 0x1000 != 0 {
+        if only_non_starters_in_trail {
             // All the rest are combining
             self.buffer
                 .extend(tail.iter().map(CharacterAndClass::new_with_placeholder));
@@ -746,37 +677,7 @@ where
 
     #[inline(always)]
     fn attach_trie_value(&self, c: char) -> CharacterAndTrieValue {
-        if let Some(supplementary) = self.supplementary_trie {
-            if let Some(value) = self.attach_supplementary_trie_value(c, supplementary) {
-                return value;
-            }
-        }
-
         CharacterAndTrieValue::new(c, self.trie.get(c))
-    }
-
-    #[inline(never)]
-    fn attach_supplementary_trie_value(
-        &self,
-        c: char,
-        supplementary: &CodePointTrie<u32>,
-    ) -> Option<CharacterAndTrieValue> {
-        let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
-        if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
-            return Some(CharacterAndTrieValue::new(
-                if voicing_mark == 0 {
-                    '\u{3099}'
-                } else {
-                    '\u{309A}'
-                },
-                0xD800 | ccc!(KanaVoicing, 8).0 as u32,
-            ));
-        }
-        let trie_value = supplementary.get32(u32::from(c));
-        if trie_value != 0 {
-            return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
-        }
-        None
     }
 
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
@@ -784,37 +685,31 @@ where
         loop {
             let c = self.delegate.next()?;
 
-            // TODO(#2384): Measure if this check is actually an optimization even in the
-            // non-supplementary case of if this should go inside the supplementary
-            // `if` below.
+            // TODO(#2384): Measure if this check is actually an optimization.
             if u32::from(c) < self.decomposition_passthrough_bound {
                 return Some(CharacterAndTrieValue::new(c, 0));
             }
 
-            if let Some(supplementary) = self.supplementary_trie {
-                if let Some(value) = self.attach_supplementary_trie_value(c, supplementary) {
-                    if value.trie_val == IGNORABLE_MARKER {
-                        match self.ignorable_behavior {
-                            IgnorableBehavior::Unsupported => {
-                                debug_assert!(false);
-                            }
-                            IgnorableBehavior::ReplacementCharacter => {
-                                return Some(CharacterAndTrieValue::new(
-                                    c,
-                                    u32::from(REPLACEMENT_CHARACTER),
-                                ));
-                            }
-                            IgnorableBehavior::Ignored => {
-                                // Else ignore this character by reading the next one from the delegate.
-                                continue;
-                            }
-                        }
+            let trie_val = self.trie.get(c);
+            // TODO: Can we do something better about the cost of this branch in the
+            // non-UTS 46 case?
+            if trie_val == IGNORABLE_MARKER {
+                match self.ignorable_behavior {
+                    IgnorableBehavior::Unsupported => {
+                        debug_assert!(false);
                     }
-                    return Some(value);
+                    IgnorableBehavior::ReplacementCharacter => {
+                        return Some(CharacterAndTrieValue::new(
+                            c,
+                            u32::from(REPLACEMENT_CHARACTER) | NON_ROUND_TRIP_MARKER,
+                        ));
+                    }
+                    IgnorableBehavior::Ignored => {
+                        // Else ignore this character by reading the next one from the delegate.
+                        continue;
+                    }
                 }
             }
-            let trie_val = self.trie.get(c);
-            debug_assert_ne!(trie_val, IGNORABLE_MARKER);
             return Some(CharacterAndTrieValue::new(c, trie_val));
         }
     }
@@ -834,35 +729,76 @@ where
     fn decomposing_next(&mut self, c_and_trie_val: CharacterAndTrieValue) -> char {
         let (starter, combining_start) = {
             let c = c_and_trie_val.character;
-            let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
-            if hangul_offset >= HANGUL_S_COUNT {
-                let decomposition = c_and_trie_val.trie_val;
-                if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
-                    // The character is its own decomposition
-                    (c, 0)
-                } else {
-                    let trail_or_complex = (decomposition >> 16) as u16;
-                    let lead = decomposition as u16;
-                    if lead > HIGHEST_MARKER && trail_or_complex != 0 {
-                        // Decomposition into two BMP characters: starter and non-starter
-                        let starter = char_from_u16(lead);
-                        let combining = char_from_u16(trail_or_complex);
-                        self.buffer
-                            .push(CharacterAndClass::new_with_placeholder(combining));
-                        (starter, 0)
-                    } else if trail_or_complex == 0 {
-                        if lead != FDFA_MARKER {
-                            debug_assert_ne!(
-                                lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
-                                "Should not reach this point with non-starter marker"
-                            );
+            // See trie-value-format.md
+            let decomposition = c_and_trie_val.trie_val;
+            // The REPLACEMENT CHARACTER has `NON_ROUND_TRIP_MARKER` set,
+            // and that flag needs to be ignored here.
+            if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+                // The character is its own decomposition
+                (c, 0)
+            } else {
+                let high_zeros = (decomposition & HIGH_ZEROS_MASK) == 0;
+                let low_zeros = (decomposition & LOW_ZEROS_MASK) == 0;
+                if !high_zeros && !low_zeros {
+                    // Decomposition into two BMP characters: starter and non-starter
+                    let starter = char_from_u32(decomposition & 0x7FFF);
+                    let combining = char_from_u32((decomposition >> 15) & 0x7FFF);
+                    self.buffer
+                        .push(CharacterAndClass::new_with_placeholder(combining));
+                    (starter, 0)
+                } else if high_zeros {
+                    // Do the check by looking at `c` instead of looking at a marker
+                    // in `singleton` below, because if we looked at the trie value,
+                    // we'd still have to check that `c` is in the Hangul syllable
+                    // range in order for the subsequent interpretations as `char`
+                    // to be safe.
+                    // Alternatively, `FDFA_MARKER` and the Hangul marker could
+                    // be unified. That would add a branch for Hangul and remove
+                    // a branch from singleton decompositions. It seems more
+                    // important to favor Hangul syllables than singleton
+                    // decompositions.
+                    // Note that it would be valid to hoist this Hangul check
+                    // one or even two steps earlier in this check hierarchy.
+                    // Right now, it's assumed the kind of decompositions into
+                    // BMP starter and non-starter, which occur in many languages,
+                    // should be checked before Hangul syllables, which are about
+                    // one language specifically. Hopefully, we get some
+                    // instruction-level parallelism out of the disjointness of
+                    // operations on `c` and `decomposition`.
+                    let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
+                    if hangul_offset < HANGUL_S_COUNT {
+                        debug_assert_eq!(decomposition, 1);
+                        // Hangul syllable
+                        // The math here comes from page 144 of Unicode 14.0
+                        let l = hangul_offset / HANGUL_N_COUNT;
+                        let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
+                        let t = hangul_offset % HANGUL_T_COUNT;
+
+                        // The unsafe blocks here are OK, because the values stay
+                        // within the Hangul jamo block and, therefore, the scalar
+                        // value range by construction.
+                        self.buffer.push(CharacterAndClass::new_starter(unsafe {
+                            core::char::from_u32_unchecked(HANGUL_V_BASE + v)
+                        }));
+                        let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
+                        if t != 0 {
+                            self.buffer.push(CharacterAndClass::new_starter(unsafe {
+                                core::char::from_u32_unchecked(HANGUL_T_BASE + t)
+                            }));
+                            (first, 2)
+                        } else {
+                            (first, 1)
+                        }
+                    } else {
+                        let singleton = decomposition as u16;
+                        if singleton != FDFA_MARKER {
                             // Decomposition into one BMP character
-                            let starter = char_from_u16(lead);
+                            let starter = char_from_u16(singleton);
                             (starter, 0)
                         } else {
                             // Special case for the NFKD form of U+FDFA.
                             self.buffer.extend(FDFA_NFKD.map(|u| {
-                                // Safe, because `FDFA_NFKD` is known not to contain
+                                // SAFETY: `FDFA_NFKD` is known not to contain
                                 // surrogates.
                                 CharacterAndClass::new_starter(unsafe {
                                     core::char::from_u32_unchecked(u32::from(u))
@@ -870,75 +806,50 @@ where
                             }));
                             ('\u{0635}', 17)
                         }
-                    } else {
-                        // Complex decomposition
-                        // Format for 16-bit value:
-                        // 15..13: length minus two for 16-bit case and length minus one for
-                        //         the 32-bit case. Length 8 needs to fit in three bits in
-                        //         the 16-bit case, and this way the value is future-proofed
-                        //         up to 9 in the 16-bit case. Zero is unused and length one
-                        //         in the 16-bit case goes directly into the trie.
-                        //     12: 1 if all trailing characters are guaranteed non-starters,
-                        //         0 if no guarantees about non-starterness.
-                        //         Note: The bit choice is this way around to allow for
-                        //         dynamically falling back to not having this but instead
-                        //         having one more bit for length by merely choosing
-                        //         different masks.
-                        //  11..0: Start offset in storage. The offset is to the logical
-                        //         sequence of scalars16, scalars32, supplementary_scalars16,
-                        //         supplementary_scalars32.
-                        let offset = usize::from(trail_or_complex & 0xFFF);
-                        if offset < self.scalars16.len() {
-                            self.push_decomposition16(trail_or_complex, offset, self.scalars16)
-                        } else if offset < self.scalars16.len() + self.scalars24.len() {
-                            self.push_decomposition32(
-                                trail_or_complex,
-                                offset - self.scalars16.len(),
-                                self.scalars24,
-                            )
-                        } else if offset
-                            < self.scalars16.len()
-                                + self.scalars24.len()
-                                + self.supplementary_scalars16.len()
-                        {
-                            self.push_decomposition16(
-                                trail_or_complex,
-                                offset - (self.scalars16.len() + self.scalars24.len()),
-                                self.supplementary_scalars16,
-                            )
-                        } else {
-                            self.push_decomposition32(
-                                trail_or_complex,
-                                offset
-                                    - (self.scalars16.len()
-                                        + self.scalars24.len()
-                                        + self.supplementary_scalars16.len()),
-                                self.supplementary_scalars24,
-                            )
-                        }
                     }
-                }
-            } else {
-                // Hangul syllable
-                // The math here comes from page 144 of Unicode 14.0
-                let l = hangul_offset / HANGUL_N_COUNT;
-                let v = (hangul_offset % HANGUL_N_COUNT) / HANGUL_T_COUNT;
-                let t = hangul_offset % HANGUL_T_COUNT;
-
-                // The unsafe blocks here are OK, because the values stay
-                // within the Hangul jamo block and, therefore, the scalar
-                // value range by construction.
-                self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                    core::char::from_u32_unchecked(HANGUL_V_BASE + v)
-                }));
-                let first = unsafe { core::char::from_u32_unchecked(HANGUL_L_BASE + l) };
-                if t != 0 {
-                    self.buffer.push(CharacterAndClass::new_starter(unsafe {
-                        core::char::from_u32_unchecked(HANGUL_T_BASE + t)
-                    }));
-                    (first, 2)
                 } else {
-                    (first, 1)
+                    debug_assert!(low_zeros);
+                    // Only 12 of 14 bits used as of Unicode 16.
+                    let offset = (((decomposition & !(0b11 << 30)) >> 16) as usize) - 1;
+                    // Only 3 of 4 bits used as of Unicode 16.
+                    let len_bits = decomposition & 0b1111;
+                    let only_non_starters_in_trail = (decomposition & 0b10000) != 0;
+                    if offset < self.scalars16.len() {
+                        self.push_decomposition16(
+                            offset,
+                            (len_bits + 2) as usize,
+                            only_non_starters_in_trail,
+                            self.scalars16,
+                        )
+                    } else if offset < self.scalars16.len() + self.scalars24.len() {
+                        self.push_decomposition32(
+                            offset - self.scalars16.len(),
+                            (len_bits + 1) as usize,
+                            only_non_starters_in_trail,
+                            self.scalars24,
+                        )
+                    } else if offset
+                        < self.scalars16.len()
+                            + self.scalars24.len()
+                            + self.supplementary_scalars16.len()
+                    {
+                        self.push_decomposition16(
+                            offset - (self.scalars16.len() + self.scalars24.len()),
+                            (len_bits + 2) as usize,
+                            only_non_starters_in_trail,
+                            self.supplementary_scalars16,
+                        )
+                    } else {
+                        self.push_decomposition32(
+                            offset
+                                - (self.scalars16.len()
+                                    + self.scalars24.len()
+                                    + self.supplementary_scalars16.len()),
+                            (len_bits + 1) as usize,
+                            only_non_starters_in_trail,
+                            self.supplementary_scalars24,
+                        )
+                    }
                 }
             }
         };
@@ -952,12 +863,15 @@ where
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
         while let Some(ch_and_trie_val) = self.delegate_next() {
-            if trie_value_has_ccc(ch_and_trie_val.trie_val) {
-                self.buffer
-                    .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
-            } else if trie_value_indicates_special_non_starter_decomposition(
+            if !trie_value_has_ccc(ch_and_trie_val.trie_val) {
+                self.pending = Some(ch_and_trie_val);
+                break;
+            } else if !trie_value_indicates_special_non_starter_decomposition(
                 ch_and_trie_val.trie_val,
             ) {
+                self.buffer
+                    .push(CharacterAndClass::new_with_trie_value(ch_and_trie_val));
+            } else {
                 // The Tibetan special cases are starters that decompose into non-starters.
                 let mapped = match ch_and_trie_val.character {
                     '\u{0340}' => {
@@ -996,6 +910,14 @@ where
                             .push(CharacterAndClass::new('\u{0F71}', ccc!(CCC129, 129)));
                         CharacterAndClass::new('\u{0F80}', ccc!(CCC130, 130))
                     }
+                    '\u{FF9E}' => {
+                        // HALFWIDTH KATAKANA VOICED SOUND MARK
+                        CharacterAndClass::new('\u{3099}', ccc!(KanaVoicing, 8))
+                    }
+                    '\u{FF9F}' => {
+                        // HALFWIDTH KATAKANA VOICED SOUND MARK
+                        CharacterAndClass::new('\u{309A}', ccc!(KanaVoicing, 8))
+                    }
                     _ => {
                         // GIGO case
                         debug_assert!(false);
@@ -1003,9 +925,6 @@ where
                     }
                 };
                 self.buffer.push(mapped);
-            } else {
-                self.pending = Some(ch_and_trie_val);
-                break;
             }
         }
         // Slicing succeeds by construction; we've always ensured that `combining_start`
@@ -1529,16 +1448,33 @@ macro_rules! decomposing_normalize_to {
 
 macro_rules! normalizer_methods {
     () => {
-        /// Normalize a string slice into a `String`.
-        pub fn normalize(&self, text: &str) -> String {
+        /// Normalize a string slice into a `Cow<'a, str>`.
+        pub fn normalize<'a>(&self, text: &'a str) -> Cow<'a, str> {
+            let (head, tail) = self.split_normalized(text);
+            if tail.is_empty() {
+                return Cow::Borrowed(head);
+            }
             let mut ret = String::new();
             ret.reserve(text.len());
-            let _ = self.normalize_to(text, &mut ret);
-            ret
+            ret.push_str(head);
+            let _ = self.normalize_to(tail, &mut ret);
+            Cow::Owned(ret)
+        }
+
+        /// Split a string slice into maximum normalized prefix and unnormalized suffix
+        /// such that the concatenation of the prefix and the normalization of the suffix
+        /// is the normalization of the whole input.
+        pub fn split_normalized<'a>(&self, text: &'a str) -> (&'a str, &'a str) {
+            let up_to = self.is_normalized_up_to(text);
+            text.split_at_checked(up_to).unwrap_or_else(|| {
+                // Internal bug, not even GIGO, never supposed to happen
+                debug_assert!(false);
+                ("", text)
+            })
         }
 
         /// Return the index a string slice is normalized up to.
-        pub fn is_normalized_up_to(&self, text: &str) -> usize {
+        fn is_normalized_up_to(&self, text: &str) -> usize {
             let mut sink = IsNormalizedSinkStr::new(text);
             let _ = self.normalize_to(text, &mut sink);
             text.len() - sink.remaining_len()
@@ -1546,25 +1482,47 @@ macro_rules! normalizer_methods {
 
         /// Check whether a string slice is normalized.
         pub fn is_normalized(&self, text: &str) -> bool {
-            let mut sink = IsNormalizedSinkStr::new(text);
-            if self.normalize_to(text, &mut sink).is_err() {
-                return false;
-            }
-            sink.finished()
+            self.is_normalized_up_to(text) == text.len()
         }
 
-        /// Normalize a slice of potentially-invalid UTF-16 into a `Vec`.
+        /// Normalize a slice of potentially-invalid UTF-16 into a `Cow<'a, [u16]>`.
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        pub fn normalize_utf16(&self, text: &[u16]) -> Vec<u16> {
-            let mut ret = Vec::new();
-            let _ = self.normalize_utf16_to(text, &mut ret);
-            ret
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
+        pub fn normalize_utf16<'a>(&self, text: &'a [u16]) -> Cow<'a, [u16]> {
+            let (head, tail) = self.split_normalized_utf16(text);
+            if tail.is_empty() {
+                return Cow::Borrowed(head);
+            }
+            let mut ret = alloc::vec::Vec::with_capacity(text.len());
+            ret.extend_from_slice(head);
+            let _ = self.normalize_utf16_to(tail, &mut ret);
+            Cow::Owned(ret)
+        }
+
+        /// Split a slice of potentially-invalid UTF-16 into maximum normalized (and valid)
+        /// prefix and unnormalized suffix such that the concatenation of the prefix and the
+        /// normalization of the suffix is the normalization of the whole input.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
+        pub fn split_normalized_utf16<'a>(&self, text: &'a [u16]) -> (&'a [u16], &'a [u16]) {
+            let up_to = self.is_normalized_utf16_up_to(text);
+            text.split_at_checked(up_to).unwrap_or_else(|| {
+                // Internal bug, not even GIGO, never supposed to happen
+                debug_assert!(false);
+                (&[], text)
+            })
         }
 
         /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
-        pub fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
+        fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
             let mut sink = IsNormalizedSinkUtf16::new(text);
             let _ = self.normalize_utf16_to(text, &mut sink);
             text.len() - sink.remaining_len()
@@ -1573,27 +1531,55 @@ macro_rules! normalizer_methods {
         /// Checks whether a slice of potentially-invalid UTF-16 is normalized.
         ///
         /// Unpaired surrogates are treated as the REPLACEMENT CHARACTER.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         pub fn is_normalized_utf16(&self, text: &[u16]) -> bool {
-            let mut sink = IsNormalizedSinkUtf16::new(text);
-            if self.normalize_utf16_to(text, &mut sink).is_err() {
-                return false;
-            }
-            sink.finished()
+            self.is_normalized_utf16_up_to(text) == text.len()
         }
 
-        /// Normalize a slice of potentially-invalid UTF-8 into a `String`.
+        /// Normalize a slice of potentially-invalid UTF-8 into a `Cow<'a, str>`.
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
-        pub fn normalize_utf8(&self, text: &[u8]) -> String {
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
+        pub fn normalize_utf8<'a>(&self, text: &'a [u8]) -> Cow<'a, str> {
+            let (head, tail) = self.split_normalized_utf8(text);
+            if tail.is_empty() {
+                return Cow::Borrowed(head);
+            }
             let mut ret = String::new();
             ret.reserve(text.len());
-            let _ = self.normalize_utf8_to(text, &mut ret);
-            ret
+            ret.push_str(head);
+            let _ = self.normalize_utf8_to(tail, &mut ret);
+            Cow::Owned(ret)
+        }
+
+        /// Split a slice of potentially-invalid UTF-8 into maximum normalized (and valid)
+        /// prefix and unnormalized suffix such that the concatenation of the prefix and the
+        /// normalization of the suffix is the normalization of the whole input.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
+        pub fn split_normalized_utf8<'a>(&self, text: &'a [u8]) -> (&'a str, &'a [u8]) {
+            let up_to = self.is_normalized_utf8_up_to(text);
+            let (head, tail) = text.split_at_checked(up_to).unwrap_or_else(|| {
+                // Internal bug, not even GIGO, never supposed to happen
+                debug_assert!(false);
+                (&[], text)
+            });
+            // SAFETY: The normalization check also checks for
+            // UTF-8 well-formedness.
+            (unsafe { core::str::from_utf8_unchecked(head) }, tail)
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
-        pub fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
+        fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
             let mut sink = IsNormalizedSinkUtf8::new(text);
             let _ = self.normalize_utf8_to(text, &mut sink);
             text.len() - sink.remaining_len()
@@ -1603,12 +1589,11 @@ macro_rules! normalizer_methods {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard before checking.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
-            let mut sink = IsNormalizedSinkUtf8::new(text);
-            if self.normalize_utf8_to(text, &mut sink).is_err() {
-                return false;
-            }
-            sink.finished()
+            self.is_normalized_utf8_up_to(text) == text.len()
         }
     };
 }
@@ -1616,10 +1601,9 @@ macro_rules! normalizer_methods {
 /// Borrowed version of a normalizer for performing decomposing normalization.
 #[derive(Debug)]
 pub struct DecomposingNormalizerBorrowed<'a> {
-    decompositions: &'a DecompositionDataV1<'a>,
-    supplementary_decompositions: Option<&'a DecompositionSupplementV1<'a>>,
-    tables: &'a DecompositionTablesV1<'a>,
-    supplementary_tables: Option<&'a DecompositionTablesV1<'a>>,
+    decompositions: &'a DecompositionData<'a>,
+    tables: &'a DecompositionTables<'a>,
+    supplementary_tables: Option<&'a DecompositionTables<'a>>,
     decomposition_passthrough_bound: u8, // never above 0xC0
     composition_passthrough_bound: u16,  // never above 0x0300
 }
@@ -1632,15 +1616,6 @@ impl DecomposingNormalizerBorrowed<'static> {
     pub const fn static_to_owned(self) -> DecomposingNormalizer {
         DecomposingNormalizer {
             decompositions: DataPayload::from_static_ref(self.decompositions),
-            supplementary_decompositions: if let Some(s) = self.supplementary_decompositions {
-                // `map` not available in const context
-                // TODO: Perhaps get rid of the holder enum, since we're just faking it here anyway.
-                Some(SupplementPayloadHolder::Compatibility(
-                    DataPayload::from_static_ref(s),
-                ))
-            } else {
-                None
-            },
             tables: DataPayload::from_static_ref(self.tables),
             supplementary_tables: if let Some(s) = self.supplementary_tables {
                 // `map` not available in const context
@@ -1661,10 +1636,10 @@ impl DecomposingNormalizerBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfd() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1672,10 +1647,8 @@ impl DecomposingNormalizerBorrowed<'static> {
         );
 
         DecomposingNormalizerBorrowed {
-            decompositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            supplementary_decompositions: None,
-            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
+            decompositions: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2,
+            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1,
             supplementary_tables: None,
             decomposition_passthrough_bound: 0xC0,
             composition_passthrough_bound: 0x0300,
@@ -1690,16 +1663,16 @@ impl DecomposingNormalizerBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfkd() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                     .scalars24
                     .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1
                     .scalars16
                     .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1707,42 +1680,35 @@ impl DecomposingNormalizerBorrowed<'static> {
         );
 
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
+            crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_DATA_V2.passthrough_cap
                 <= 0x0300,
             "invalid"
         );
 
         let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
+            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_DATA_V2.passthrough_cap
                 < 0xC0
             {
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_DATA_V2
                     .passthrough_cap
             } else {
                 0xC0
             };
         let composition_capped =
-            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
+            if crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_DATA_V2.passthrough_cap
                 < 0x0300
             {
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_DATA_V2
                     .passthrough_cap
             } else {
                 0x0300
             };
 
         DecomposingNormalizerBorrowed {
-            decompositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            supplementary_decompositions: Some(
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
-            ),
-            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
+            decompositions: crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_DATA_V2,
+            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1,
             supplementary_tables: Some(
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER,
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1,
             ),
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
@@ -1752,16 +1718,16 @@ impl DecomposingNormalizerBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub(crate) const fn new_uts46_decomposed() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+            crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                 .scalars16
                 .const_len()
-                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1
                     .scalars24
                     .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1
                     .scalars16
                     .const_len()
-                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER
+                + crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1
                     .scalars24
                     .const_len()
                 <= 0xFFF,
@@ -1769,42 +1735,31 @@ impl DecomposingNormalizerBorrowed<'static> {
         );
 
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                <= 0x0300,
+            crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_DATA_V2.passthrough_cap <= 0x0300,
             "invalid"
         );
 
         let decomposition_capped =
-            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                < 0xC0
+            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_DATA_V2.passthrough_cap < 0xC0
             {
-                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                    .passthrough_cap
+                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_DATA_V2.passthrough_cap
             } else {
                 0xC0
             };
-        let composition_capped =
-            if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                .passthrough_cap
-                < 0x0300
-            {
-                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER
-                    .passthrough_cap
-            } else {
-                0x0300
-            };
+        let composition_capped = if crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_DATA_V2
+            .passthrough_cap
+            < 0x0300
+        {
+            crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_DATA_V2.passthrough_cap
+        } else {
+            0x0300
+        };
 
         DecomposingNormalizerBorrowed {
-            decompositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER,
-            supplementary_decompositions: Some(
-                crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_SUPPLEMENT_V1_MARKER,
-            ),
-            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER,
+            decompositions: crate::provider::Baked::SINGLETON_UTS46_DECOMPOSITION_DATA_V2,
+            tables: crate::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1,
             supplementary_tables: Some(
-                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1_MARKER,
+                crate::provider::Baked::SINGLETON_COMPATIBILITY_DECOMPOSITION_TABLES_V1,
             ),
             decomposition_passthrough_bound: decomposition_capped as u8,
             composition_passthrough_bound: composition_capped,
@@ -1819,7 +1774,6 @@ impl DecomposingNormalizerBorrowed<'_> {
         Decomposition::new_with_supplements(
             iter,
             self.decompositions,
-            self.supplementary_decompositions,
             self.tables,
             self.supplementary_tables,
             self.decomposition_passthrough_bound,
@@ -1903,6 +1857,9 @@ impl DecomposingNormalizerBorrowed<'_> {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         ,
         normalize_utf8_to,
         core::fmt::Write,
@@ -1925,7 +1882,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                         break 'fastest;
                     }
                     // End of stream
-                    sink.write_str(unsafe { from_utf8_unchecked(pending_slice) })?;
+                    sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
                     return Ok(());
                 }
                 decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
@@ -1934,10 +1891,18 @@ impl DecomposingNormalizerBorrowed<'_> {
                 // is an upcoming byte.
                 let upcoming = decomposition.delegate.next().unwrap();
                 let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
-                if upcoming_with_trie_value.starter_and_decomposes_to_self() {
-                    if upcoming != REPLACEMENT_CHARACTER {
-                        continue 'fast;
-                    }
+                if upcoming_with_trie_value.starter_and_decomposes_to_self_except_replacement() {
+                    // Note: The trie value of the REPLACEMENT CHARACTER is
+                    // intentionally formatted to fail the
+                    // `starter_and_decomposes_to_self` test even though it
+                    // really is a starter that decomposes to self. This
+                    // Allows moving the branch on REPLACEMENT CHARACTER
+                    // below this `continue`.
+                    continue 'fast;
+                }
+
+                // TODO: Annotate as unlikely.
+                if upcoming == REPLACEMENT_CHARACTER {
                     // We might have an error, so fall out of the fast path.
 
                     // Since the U+FFFD might signify an error, we can't
@@ -1946,7 +1911,7 @@ impl DecomposingNormalizerBorrowed<'_> {
                     let back = consumed_so_far.next_back();
                     debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
                     let consumed_so_far_slice = consumed_so_far.as_slice();
-                    sink.write_str(unsafe{from_utf8_unchecked(consumed_so_far_slice)})?;
+                    sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
                     // We could call `gather_and_sort_combining` here and
                     // `continue 'outer`, but this should be better for code
@@ -1955,10 +1920,11 @@ impl DecomposingNormalizerBorrowed<'_> {
                     debug_assert!(decomposition.pending.is_none());
                     break 'fast;
                 }
+
                 let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                     - decomposition.delegate.as_slice().len()
                     - upcoming.len_utf8()];
-                sink.write_str(unsafe{from_utf8_unchecked(consumed_so_far_slice)})?;
+                sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) } )?;
 
                 // Now let's figure out if we got a starter or a non-starter.
                 if decomposition_starts_with_non_starter(
@@ -1989,6 +1955,9 @@ impl DecomposingNormalizerBorrowed<'_> {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         ,
         normalize_utf16_to,
         write16::Write16,
@@ -1999,18 +1968,19 @@ impl DecomposingNormalizerBorrowed<'_> {
         as_slice,
         {
             let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-            // The purpose of the counter is to flush once in a while. If we flush
-            // too much, there is too much flushing overhead. If we flush too rarely,
-            // the flush starts reading from too far behind compared to the hot
-            // recently-read memory.
-            let mut counter = UTF16_FAST_PATH_FLUSH_THRESHOLD;
             'fast: loop {
-                counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     let mut upcoming32 = u32::from(upcoming_code_unit);
-                    if upcoming32 < decomposition_passthrough_bound && counter != 0 {
+                    if upcoming32 < decomposition_passthrough_bound {
                         continue 'fast;
                     }
+                    // We might be doing a trie lookup by surrogate. Surrogates get
+                    // a decomposition to U+FFFD.
+                    let mut trie_value = decomposition.trie.get32(upcoming32);
+                    if starter_and_decomposes_to_self_impl(trie_value) {
+                        continue 'fast;
+                    }
+                    // We might now be looking at a surrogate.
                     // The loop is only broken out of as goto forward
                     #[allow(clippy::never_loop)]
                     'surrogateloop: loop {
@@ -2025,6 +1995,11 @@ impl DecomposingNormalizerBorrowed<'_> {
                                 if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
                                     upcoming32 = (upcoming32 << 10) + u32::from(low)
                                         - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
+                                    // Successfully-paired surrogate. Read from the trie again.
+                                    trie_value = decomposition.trie.get32(upcoming32);
+                                    if starter_and_decomposes_to_self_impl(trie_value) {
+                                        continue 'fast;
+                                    }
                                     break 'surrogateloop;
                                 } else {
                                     code_unit_iter = iter_backup;
@@ -2032,23 +2007,14 @@ impl DecomposingNormalizerBorrowed<'_> {
                             }
                         }
                         // unpaired surrogate
-                        let slice_to_write = &pending_slice
-                            [..pending_slice.len() - code_unit_iter.as_slice().len() - 1];
-                        sink.write_slice(slice_to_write)?;
-                        undecomposed_starter =
-                            CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
-                        debug_assert!(decomposition.pending.is_none());
-                        // We could instead call `gather_and_sort_combining` and `continue 'outer`, but
-                        // assuming this is better for code size.
-                        break 'fast;
+                        upcoming32 = 0xFFFD; // Safe value for `char::from_u32_unchecked` and matches later potential error check.
+                        // trie_value already holds a decomposition to U+FFFD.
+                        break 'surrogateloop;
                     }
-                    // Not unpaired surrogate
+
                     let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
-                    let upcoming_with_trie_value =
-                        decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.starter_and_decomposes_to_self() && counter != 0 {
-                        continue 'fast;
-                    }
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
+
                     let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                         - code_unit_iter.as_slice().len()
                         - upcoming.len_utf16()];
@@ -2090,10 +2056,9 @@ impl DecomposingNormalizerBorrowed<'_> {
 /// A normalizer for performing decomposing normalization.
 #[derive(Debug)]
 pub struct DecomposingNormalizer {
-    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
-    supplementary_decompositions: Option<SupplementPayloadHolder>,
-    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-    supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
+    decompositions: DataPayload<CanonicalDecompositionDataV2>,
+    tables: DataPayload<CanonicalDecompositionTablesV1>,
+    supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1>>,
     decomposition_passthrough_bound: u8, // never above 0xC0
     composition_passthrough_bound: u16,  // never above 0x0300
 }
@@ -2103,10 +2068,6 @@ impl DecomposingNormalizer {
     pub fn as_borrowed(&self) -> DecomposingNormalizerBorrowed {
         DecomposingNormalizerBorrowed {
             decompositions: self.decompositions.get(),
-            supplementary_decompositions: self
-                .supplementary_decompositions
-                .as_ref()
-                .map(|s| s.get()),
             tables: self.tables.get(),
             supplementary_tables: self.supplementary_tables.as_ref().map(|s| s.get()),
             decomposition_passthrough_bound: self.decomposition_passthrough_bound,
@@ -2124,27 +2085,26 @@ impl DecomposingNormalizer {
         DecomposingNormalizerBorrowed::new_nfd()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfd: skip,
-            try_new_nfd_with_any_provider,
             try_new_nfd_with_buffer_provider,
             try_new_nfd_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
     pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+        let decompositions: DataPayload<CanonicalDecompositionDataV2> =
             provider.load(Default::default())?.payload;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+        let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
@@ -2155,24 +2115,31 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
+                .with_marker(CanonicalDecompositionTablesV1::INFO));
         }
+
+        let cap = decompositions.get().passthrough_cap;
+        if cap > 0x0300 {
+            return Err(
+                DataError::custom("invalid").with_marker(CanonicalDecompositionDataV2::INFO)
+            );
+        }
+        let decomposition_capped = cap.min(0xC0);
+        let composition_capped = cap.min(0x0300);
 
         Ok(DecomposingNormalizer {
             decompositions,
-            supplementary_decompositions: None,
             tables,
             supplementary_tables: None,
-            decomposition_passthrough_bound: 0xC0,
-            composition_passthrough_bound: 0x0300,
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped,
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfkd: skip,
-            try_new_nfkd_with_any_provider,
             try_new_nfkd_with_buffer_provider,
             try_new_nfkd_unstable,
             Self,
@@ -2189,23 +2156,19 @@ impl DecomposingNormalizer {
         DecomposingNormalizerBorrowed::new_nfkd()
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
     pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+        D: DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+        let decompositions: DataPayload<CompatibilityDecompositionDataV2> =
             provider.load(Default::default())?.payload;
-        let supplementary_decompositions: DataPayload<
-            CompatibilityDecompositionSupplementV1Marker,
-        > = provider.load(Default::default())?.payload;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+        let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
-        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len()
@@ -2221,22 +2184,20 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
+                .with_marker(CanonicalDecompositionTablesV1::INFO));
         }
 
-        let cap = supplementary_decompositions.get().passthrough_cap;
+        let cap = decompositions.get().passthrough_cap;
         if cap > 0x0300 {
-            return Err(DataError::custom("invalid")
-                .with_marker(CompatibilityDecompositionSupplementV1Marker::INFO));
+            return Err(
+                DataError::custom("invalid").with_marker(CompatibilityDecompositionDataV2::INFO)
+            );
         }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
         Ok(DecomposingNormalizer {
-            decompositions,
-            supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
-                supplementary_decompositions,
-            )),
+            decompositions: decompositions.cast(),
             tables,
             supplementary_tables: Some(supplementary_tables),
             decomposition_passthrough_bound: decomposition_capped as u8,
@@ -2263,20 +2224,17 @@ impl DecomposingNormalizer {
     /// to other reorderable characters.
     pub(crate) fn try_new_uts46_decomposed_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<Uts46DecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
+        D: DataProvider<Uts46DecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+        let decompositions: DataPayload<Uts46DecompositionDataV2> =
             provider.load(Default::default())?.payload;
-        let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
+        let tables: DataPayload<CanonicalDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
-            provider.load(Default::default())?.payload;
-        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
+        let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1> =
             provider.load(Default::default())?.payload;
 
         if tables.get().scalars16.len()
@@ -2292,22 +2250,18 @@ impl DecomposingNormalizer {
             // of 0xFFF and the all-non-starters mask becomes 0 instead of 0x1000. However,
             // since for now the masks are hard-coded, error out.
             return Err(DataError::custom("future extension")
-                .with_marker(CanonicalDecompositionTablesV1Marker::INFO));
+                .with_marker(CanonicalDecompositionTablesV1::INFO));
         }
 
-        let cap = supplementary_decompositions.get().passthrough_cap;
+        let cap = decompositions.get().passthrough_cap;
         if cap > 0x0300 {
-            return Err(DataError::custom("invalid")
-                .with_marker(Uts46DecompositionSupplementV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(Uts46DecompositionDataV2::INFO));
         }
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
         Ok(DecomposingNormalizer {
-            decompositions,
-            supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
-                supplementary_decompositions,
-            )),
+            decompositions: decompositions.cast(),
             tables,
             supplementary_tables: Some(supplementary_tables),
             decomposition_passthrough_bound: decomposition_capped as u8,
@@ -2320,7 +2274,7 @@ impl DecomposingNormalizer {
 #[derive(Debug)]
 pub struct ComposingNormalizerBorrowed<'a> {
     decomposing_normalizer: DecomposingNormalizerBorrowed<'a>,
-    canonical_compositions: &'a CanonicalCompositionsV1<'a>,
+    canonical_compositions: &'a CanonicalCompositions<'a>,
 }
 
 impl ComposingNormalizerBorrowed<'static> {
@@ -2344,8 +2298,7 @@ impl ComposingNormalizerBorrowed<'static> {
     pub const fn new_nfc() -> Self {
         ComposingNormalizerBorrowed {
             decomposing_normalizer: DecomposingNormalizerBorrowed::new_nfd(),
-            canonical_compositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
+            canonical_compositions: crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1,
         }
     }
 
@@ -2358,8 +2311,7 @@ impl ComposingNormalizerBorrowed<'static> {
     pub const fn new_nfkc() -> Self {
         ComposingNormalizerBorrowed {
             decomposing_normalizer: DecomposingNormalizerBorrowed::new_nfkd(),
-            canonical_compositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
+            canonical_compositions: crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1,
         }
     }
 
@@ -2376,8 +2328,7 @@ impl ComposingNormalizerBorrowed<'static> {
     pub(crate) const fn new_uts46() -> Self {
         ComposingNormalizerBorrowed {
             decomposing_normalizer: DecomposingNormalizerBorrowed::new_uts46_decomposed(),
-            canonical_compositions:
-                crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1_MARKER,
+            canonical_compositions: crate::provider::Baked::SINGLETON_CANONICAL_COMPOSITIONS_V1,
         }
     }
 }
@@ -2398,7 +2349,6 @@ impl ComposingNormalizerBorrowed<'_> {
             Decomposition::new_with_supplements(
                 iter,
                 self.decomposing_normalizer.decompositions,
-                self.decomposing_normalizer.supplementary_decompositions,
                 self.decomposing_normalizer.tables,
                 self.decomposing_normalizer.supplementary_tables,
                 self.decomposing_normalizer.decomposition_passthrough_bound,
@@ -2429,13 +2379,7 @@ impl ComposingNormalizerBorrowed<'_> {
                 // non-ASCII lead bytes is worthwhile is ever introduced.
                 composition_passthrough_bound.min(0x80) as u8
             };
-            // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes in the tightest loop are as
-            // simple as possible (and potentially as peel-hoistable as possible).
-            // Furthermore, this reduces `unwrap()` later.
-            let mut undecomposed_starter_valid = true;
-            // Annotation belongs really on inner statements, but Rust doesn't
-            // allow it there.
+            // Attributes have to be on blocks, so hoisting all the way here.
             #[allow(clippy::unwrap_used)]
             'fast: loop {
                 let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
@@ -2443,7 +2387,6 @@ impl ComposingNormalizerBorrowed<'_> {
                     if let Some(&upcoming_byte) = code_unit_iter.next() {
                         if upcoming_byte < composition_passthrough_byte_bound {
                             // Fast-track succeeded!
-                            undecomposed_starter_valid = false;
                             continue 'fastest;
                         }
                         composition.decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
@@ -2462,26 +2405,19 @@ impl ComposingNormalizerBorrowed<'_> {
                     // starter albeit past `composition_passthrough_bound`
 
                     // Fast-track succeeded!
-                    undecomposed_starter = upcoming_with_trie_value;
-                    undecomposed_starter_valid = true;
                     continue 'fast;
                 }
                 // We need to fall off the fast path.
                 composition.decomposition.pending = Some(upcoming_with_trie_value);
-                let consumed_so_far_slice = if undecomposed_starter_valid {
-                    &pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8() - undecomposed_starter.character.len_utf8()]
-                } else {
-                    // slicing and unwrap OK, because we've just evidently read enough previously.
-                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars();
-                    // `unwrap` OK, because we've previously manage to read the previous character
-                    undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
-                    undecomposed_starter_valid = true;
-                    consumed_so_far.as_str()
-                };
+
+                // slicing and unwrap OK, because we've just evidently read enough previously.
+                let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars();
+                // `unwrap` OK, because we've previously manage to read the previous character
+                undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
+                let consumed_so_far_slice = consumed_so_far.as_str();
                 sink.write_str(consumed_so_far_slice)?;
                 break 'fast;
             }
-            debug_assert!(undecomposed_starter_valid);
         },
         text,
         sink,
@@ -2497,6 +2433,9 @@ impl ComposingNormalizerBorrowed<'_> {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
+        ///
+        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
+        #[cfg(feature = "utf8_iter")]
         ,
         normalize_utf8_to,
         core::fmt::Write,
@@ -2505,18 +2444,26 @@ impl ComposingNormalizerBorrowed<'_> {
         false,
         as_slice,
         {
-            // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes in the tightest loop are as
-            // simple as possible (and potentially as peel-hoistable as possible).
-            // Furthermore, this reduces `unwrap()` later.
-            let mut undecomposed_starter_valid = true;
             'fast: loop {
                 if let Some(upcoming) = composition.decomposition.delegate.next() {
                     if u32::from(upcoming) < composition_passthrough_bound {
                         // Fast-track succeeded!
-                        undecomposed_starter_valid = false;
                         continue 'fast;
                     }
+                    // TODO: Be statically aware of fast/small trie.
+                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                        // Note: The trie value of the REPLACEMENT CHARACTER is
+                        // intentionally formatted to fail the
+                        // `potential_passthrough_and_cannot_combine_backwards`
+                        // test even though it really is a starter that decomposes
+                        // to self and cannot combine backwards. This
+                        // Allows moving the branch on REPLACEMENT CHARACTER
+                        // below this `continue`.
+                        continue 'fast;
+                    }
+                    // We need to fall off the fast path.
+
                     // TODO(#2006): Annotate as unlikely
                     if upcoming == REPLACEMENT_CHARACTER {
                         // Can't tell if this is an error or a literal U+FFFD in
@@ -2528,45 +2475,33 @@ impl ComposingNormalizerBorrowed<'_> {
                         let back = consumed_so_far.next_back();
                         debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
                         let consumed_so_far_slice = consumed_so_far.as_slice();
-                        sink.write_str(unsafe{ from_utf8_unchecked(consumed_so_far_slice)})?;
+                        sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice) })?;
                         undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
-                        undecomposed_starter_valid = true;
                         composition.decomposition.pending = None;
                         break 'fast;
                     }
-                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
-                        // Can't combine backwards, hence a plain (non-backwards-combining)
-                        // starter albeit past `composition_passthrough_bound`
 
-                        // Fast-track succeeded!
-                        undecomposed_starter = upcoming_with_trie_value;
-                        undecomposed_starter_valid = true;
-                        continue 'fast;
-                    }
-                    // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
-                    // Annotation belongs really on inner statement, but Rust doesn't
-                    // allow it there.
+                    // slicing and unwrap OK, because we've just evidently read enough previously.
+                    // `unwrap` OK, because we've previously manage to read the previous character
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars();
                     #[allow(clippy::unwrap_used)]
-                    let consumed_so_far_slice = if undecomposed_starter_valid {
-                        &pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8() - undecomposed_starter.character.len_utf8()]
-                    } else {
-                        // slicing and unwrap OK, because we've just evidently read enough previously.
-                        let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars();
-                        // `unwrap` OK, because we've previously manage to read the previous character
+                    {
+                        // TODO: If the previous character was below the passthrough bound,
+                        // we really need to read from the trie. Otherwise, we could maintain
+                        // the most-recent trie value. Need to measure what's more expensive:
+                        // Remembering the trie value on each iteration or re-reading the
+                        // last one after the fast-track run.
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
-                        undecomposed_starter_valid = true;
-                        consumed_so_far.as_slice()
-                    };
-                    sink.write_str(unsafe { from_utf8_unchecked(consumed_so_far_slice)})?;
+                    }
+                    let consumed_so_far_slice = consumed_so_far.as_slice();
+                    sink.write_str(unsafe { core::str::from_utf8_unchecked(consumed_so_far_slice)})?;
                     break 'fast;
                 }
                 // End of stream
-                sink.write_str(unsafe {from_utf8_unchecked(pending_slice) })?;
+                sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
                 return Ok(());
             }
-            debug_assert!(undecomposed_starter_valid);
         },
         text,
         sink,
@@ -2582,6 +2517,9 @@ impl ComposingNormalizerBorrowed<'_> {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
+        ///
+        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
+        #[cfg(feature = "utf16_iter")]
         ,
         normalize_utf16_to,
         write16::Write16,
@@ -2594,35 +2532,35 @@ impl ComposingNormalizerBorrowed<'_> {
         {
             let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
             let mut upcoming32;
-            // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes to it are  are as
-            // simple as possible.
-            // Furthermore, this removes the need for `unwrap()` later.
-            let mut undecomposed_starter_valid;
-            // The purpose of the counter is to flush once in a while. If we flush
-            // too much, there is too much flushing overhead. If we flush too rarely,
-            // the flush starts reading from too far behind compared to the hot
-            // recently-read memory.
-            let mut counter = UTF16_FAST_PATH_FLUSH_THRESHOLD;
-            // The purpose of this trickiness is to avoid writing to
-            // `undecomposed_starter_valid` from the tightest loop. Writing to it
-            // from there destroys performance.
-            let mut counter_reference = counter - 1;
+            // Declaring this up here is useful for getting compile errors about invalid changes
+            // to the code structure below.
+            let mut trie_value;
             'fast: loop {
-                counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
-                    if upcoming32 < composition_passthrough_bound && counter != 0 {
+                    if upcoming32 < composition_passthrough_bound {
                         // No need for surrogate or U+FFFD check, because
                         // `composition_passthrough_bound` cannot be higher than
                         // U+0300.
                         // Fast-track succeeded!
+                        // At this point, `trie_value` is out of sync with `upcoming32`.
+                        // However, we either 1) reach the end of `code_unit_iter`, at
+                        // which point nothing reads `trie_value` anymore or we
+                        // execute the line immediately below this loop.
                         continue 'fast;
                     }
-                    // if `counter` equals `counter_reference`, the `continue 'fast`
-                    // line above has not executed and `undecomposed_starter` is still
-                    // valid.
-                    undecomposed_starter_valid = counter == counter_reference;
+                    // We might be doing a trie lookup by surrogate. Surrogates get
+                    // a decomposition to U+FFFD.
+                    trie_value = composition.decomposition.trie.get32(upcoming32);
+                    if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
+                        // Can't combine backwards, hence a plain (non-backwards-combining)
+                        // starter albeit past `composition_passthrough_bound`
+
+                        // Fast-track succeeded!
+                        continue 'fast;
+                    }
+
+                    // We might now be looking at a surrogate.
                     // The loop is only broken out of as goto forward
                     #[allow(clippy::never_loop)]
                     'surrogateloop: loop {
@@ -2637,6 +2575,12 @@ impl ComposingNormalizerBorrowed<'_> {
                                 if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
                                     upcoming32 = (upcoming32 << 10) + u32::from(low)
                                         - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
+                                    // Successfully-paired surrogate. Read from the trie again.
+                                    trie_value = composition.decomposition.trie.get32(upcoming32);
+                                    if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
+                                        // Fast-track succeeded!
+                                        continue 'fast;
+                                    }
                                     break 'surrogateloop;
                                 } else {
                                     code_unit_iter = iter_backup;
@@ -2644,44 +2588,29 @@ impl ComposingNormalizerBorrowed<'_> {
                             }
                         }
                         // unpaired surrogate
-                        let slice_to_write = &pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - 1];
-                        sink.write_slice(slice_to_write)?;
-                        undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
-                        undecomposed_starter_valid = true;
-                        composition.decomposition.pending = None;
-                        break 'fast;
+                        upcoming32 = 0xFFFD; // Safe value for `char::from_u32_unchecked` and matches later potential error check.
+                        // trie_value already holds a decomposition to U+FFFD.
+                        debug_assert_eq!(trie_value, NON_ROUND_TRIP_MARKER | BACKWARD_COMBINING_MARKER | 0xFFFD);
+                        break 'surrogateloop;
                     }
-                    // Not unpaired surrogate
-                    let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
-                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() && counter != 0 {
-                        // Can't combine backwards, hence a plain (non-backwards-combining)
-                        // starter albeit past `composition_passthrough_bound`
 
-                        // Fast-track succeeded!
-                        undecomposed_starter = upcoming_with_trie_value;
-                        // Cause `undecomposed_starter_valid` to be set to true.
-                        // This regresses English performance on Haswell by 11%
-                        // compared to commenting out this assignment to
-                        // `counter_reference`.
-                        counter_reference = counter - 1;
-                        continue 'fast;
-                    }
+                    // SAFETY: upcoming32 can no longer be a surrogate.
+                    let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
                     // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
-                    // Annotation belongs really on inner statement, but Rust doesn't
-                    // allow it there.
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()].chars();
+                    // `unwrap` OK, because we've previously managed to read the previous character
                     #[allow(clippy::unwrap_used)]
-                    let consumed_so_far_slice = if undecomposed_starter_valid {
-                        &pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16() - undecomposed_starter.character.len_utf16()]
-                    } else {
-                        // slicing and unwrap OK, because we've just evidently read enough previously.
-                        let mut consumed_so_far = pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()].chars();
-                        // `unwrap` OK, because we've previously manage to read the previous character
+                    {
+                        // TODO: If the previous character was below the passthrough bound,
+                        // we really need to read from the trie. Otherwise, we could maintain
+                        // the most-recent trie value. Need to measure what's more expensive:
+                        // Remembering the trie value on each iteration or re-reading the
+                        // last one after the fast-track run.
                         undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
-                        undecomposed_starter_valid = true;
-                        consumed_so_far.as_slice()
-                    };
+                    }
+                    let consumed_so_far_slice = consumed_so_far.as_slice();
                     sink.write_slice(consumed_so_far_slice)?;
                     break 'fast;
                 }
@@ -2689,7 +2618,6 @@ impl ComposingNormalizerBorrowed<'_> {
                 sink.write_slice(pending_slice)?;
                 return Ok(());
             }
-            debug_assert!(undecomposed_starter_valid);
             // Sync the main iterator
             composition.decomposition.delegate = code_unit_iter.as_slice().chars();
         },
@@ -2707,7 +2635,7 @@ impl ComposingNormalizerBorrowed<'_> {
 #[derive(Debug)]
 pub struct ComposingNormalizer {
     decomposing_normalizer: DecomposingNormalizer,
-    canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
+    canonical_compositions: DataPayload<CanonicalCompositionsV1>,
 }
 
 impl ComposingNormalizer {
@@ -2729,28 +2657,27 @@ impl ComposingNormalizer {
         ComposingNormalizerBorrowed::new_nfc()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfc: skip,
-            try_new_nfc_with_any_provider,
             try_new_nfc_with_buffer_provider,
             try_new_nfc_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
     pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1> =
             provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
@@ -2769,30 +2696,28 @@ impl ComposingNormalizer {
         ComposingNormalizerBorrowed::new_nfkc()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfkc: skip,
-            try_new_nfkc_with_any_provider,
             try_new_nfkc_with_buffer_provider,
             try_new_nfkc_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
     pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        D: DataProvider<CompatibilityDecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1> =
             provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
@@ -2801,21 +2726,20 @@ impl ComposingNormalizer {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
     pub(crate) fn try_new_uts46_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<Uts46DecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + DataProvider<CanonicalCompositionsV1Marker>
+        D: DataProvider<Uts46DecompositionDataV2>
+            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<CompatibilityDecompositionTablesV1>
+            // UTS 46 tables merged into CompatibilityDecompositionTablesV1
+            + DataProvider<CanonicalCompositionsV1>
             + ?Sized,
     {
         let decomposing_normalizer =
             DecomposingNormalizer::try_new_uts46_decomposed_unstable(provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1> =
             provider.load(Default::default())?.payload;
 
         Ok(ComposingNormalizer {
@@ -2825,23 +2749,23 @@ impl ComposingNormalizer {
     }
 }
 
+#[cfg(feature = "utf16_iter")]
 struct IsNormalizedSinkUtf16<'a> {
     expect: &'a [u16],
 }
 
+#[cfg(feature = "utf16_iter")]
 impl<'a> IsNormalizedSinkUtf16<'a> {
     pub fn new(slice: &'a [u16]) -> Self {
         IsNormalizedSinkUtf16 { expect: slice }
-    }
-    pub fn finished(&self) -> bool {
-        self.expect.is_empty()
     }
     pub fn remaining_len(&self) -> usize {
         self.expect.len()
     }
 }
 
-impl Write16 for IsNormalizedSinkUtf16<'_> {
+#[cfg(feature = "utf16_iter")]
+impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
         // so we can compare addresses. Indexing is OK, because
@@ -2867,22 +2791,22 @@ impl Write16 for IsNormalizedSinkUtf16<'_> {
     }
 }
 
+#[cfg(feature = "utf8_iter")]
 struct IsNormalizedSinkUtf8<'a> {
     expect: &'a [u8],
 }
 
+#[cfg(feature = "utf8_iter")]
 impl<'a> IsNormalizedSinkUtf8<'a> {
     pub fn new(slice: &'a [u8]) -> Self {
         IsNormalizedSinkUtf8 { expect: slice }
-    }
-    pub fn finished(&self) -> bool {
-        self.expect.is_empty()
     }
     pub fn remaining_len(&self) -> usize {
         self.expect.len()
     }
 }
 
+#[cfg(feature = "utf8_iter")]
 impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
@@ -2916,9 +2840,6 @@ struct IsNormalizedSinkStr<'a> {
 impl<'a> IsNormalizedSinkStr<'a> {
     pub fn new(slice: &'a str) -> Self {
         IsNormalizedSinkStr { expect: slice }
-    }
-    pub fn finished(&self) -> bool {
-        self.expect.is_empty()
     }
     pub fn remaining_len(&self) -> usize {
         self.expect.len()

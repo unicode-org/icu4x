@@ -34,8 +34,8 @@ use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
 use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
+use crate::preferences::CollationCaseFirst;
 
-use super::CaseFirst;
 use super::MaxVariable;
 
 #[cfg(feature = "compiled_data")]
@@ -59,25 +59,25 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_collation_root_v1_marker!(Baked);
-    impl_collation_tailoring_v1_marker!(Baked);
-    impl_collation_diacritics_v1_marker!(Baked);
-    impl_collation_jamo_v1_marker!(Baked);
-    impl_collation_metadata_v1_marker!(Baked);
-    impl_collation_special_primaries_v1_marker!(Baked);
-    impl_collation_reordering_v1_marker!(Baked);
+    impl_collation_root_v1!(Baked);
+    impl_collation_tailoring_v1!(Baked);
+    impl_collation_diacritics_v1!(Baked);
+    impl_collation_jamo_v1!(Baked);
+    impl_collation_metadata_v1!(Baked);
+    impl_collation_special_primaries_v1!(Baked);
+    impl_collation_reordering_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CollationRootV1Marker::INFO,
-    CollationTailoringV1Marker::INFO,
-    CollationDiacriticsV1Marker::INFO,
-    CollationJamoV1Marker::INFO,
-    CollationMetadataV1Marker::INFO,
-    CollationReorderingV1Marker::INFO,
-    CollationSpecialPrimariesV1Marker::INFO,
+    CollationRootV1::INFO,
+    CollationTailoringV1::INFO,
+    CollationDiacriticsV1::INFO,
+    CollationJamoV1::INFO,
+    CollationMetadataV1::INFO,
+    CollationReorderingV1::INFO,
+    CollationSpecialPrimariesV1::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =
@@ -117,9 +117,9 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(CollationRootV1Marker, "collator/root@1", singleton),
+    marker(CollationRootV1, "collator/root@1", singleton),
     marker(
-        CollationTailoringV1Marker,
+        CollationTailoringV1,
         "collator/tailoring@1",
         fallback_by = "script",
         attributes_domain = "collator",
@@ -129,7 +129,7 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CollationDataV1<'data> {
+pub struct CollationData<'data> {
     /// Mapping from `char` to `CollationElement32` (represented
     /// as its `u32` bits).
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -147,7 +147,7 @@ pub struct CollationDataV1<'data> {
     pub contexts: ZeroVec<'data, u16>,
 }
 
-impl<'data> CollationDataV1<'data> {
+impl<'data> CollationData<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
         CollationElement32::new(self.trie.get32(c as u32))
     }
@@ -236,7 +236,7 @@ impl<'data> CollationDataV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationDiacriticsV1Marker,
+    CollationDiacriticsV1,
     "collator/dia@1",
     fallback_by = "script",
     attributes_domain = "collator",
@@ -245,7 +245,7 @@ impl<'data> CollationDataV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CollationDiacriticsV1<'data> {
+pub struct CollationDiacritics<'data> {
     /// Secondary weights for characters starting from U+0300 up
     /// to but not including U+034F. May be shorter than that;
     /// zero-length when a tailoring opts out of using this
@@ -261,12 +261,12 @@ pub struct CollationDiacriticsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CollationJamoV1Marker, "collator/jamo@1", singleton))]
+#[icu_provider::data_struct(marker(CollationJamoV1, "collator/jamo@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CollationJamoV1<'data> {
+pub struct CollationJamo<'data> {
     /// `CollationElement32`s (as `u32`s) for the Hangul Jamo Unicode Block.
     /// The length must be equal to the size of the block (256).
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -281,7 +281,7 @@ pub struct CollationJamoV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationReorderingV1Marker,
+    CollationReorderingV1,
     "collator/reord@1",
     fallback_by = "script",
     attributes_domain = "collator",
@@ -290,7 +290,7 @@ pub struct CollationJamoV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CollationReorderingV1<'data> {
+pub struct CollationReordering<'data> {
     /// Limit of last reordered range. 0 if no reordering or no split bytes.
     ///
     /// Comment from ICU4C's `collationsettings.h`
@@ -329,7 +329,7 @@ pub struct CollationReorderingV1<'data> {
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
 
-impl CollationReorderingV1<'_> {
+impl CollationReordering<'_> {
     pub(crate) fn reorder(&self, primary: u32) -> u32 {
         if let Some(b) = self.reorder_table.get((primary >> 24) as usize) {
             if b != 0 || primary <= NO_CE_PRIMARY {
@@ -371,7 +371,7 @@ impl CollationReorderingV1<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(
-    CollationMetadataV1Marker,
+    CollationMetadataV1,
     "collator/meta@1",
     fallback_by = "script",
     attributes_domain = "collator",
@@ -380,7 +380,7 @@ impl CollationReorderingV1<'_> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CollationMetadataV1 {
+pub struct CollationMetadata {
     /// See the mask constants in the `impl` block for the
     /// bit layout. The other bits are ignored: They could
     /// be from the future if their semantics such that
@@ -393,7 +393,7 @@ pub struct CollationMetadataV1 {
     pub bits: u32,
 }
 
-impl CollationMetadataV1 {
+impl CollationMetadata {
     const MAX_VARIABLE_MASK: u32 = 0b11;
     const TAILORED_MASK: u32 = 1 << 3;
     const TAILORED_DIACRITICS_MASK: u32 = 1 << 4;
@@ -405,56 +405,57 @@ impl CollationMetadataV1 {
     const UPPER_FIRST_MASK: u32 = 1 << 10;
 
     #[inline(always)]
-    pub(crate) fn max_variable(&self) -> MaxVariable {
-        // Safe, because the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
-        // and we take the two low bits.
-        unsafe { core::mem::transmute((self.bits & CollationMetadataV1::MAX_VARIABLE_MASK) as u8) }
+    pub(crate) fn max_variable(self) -> MaxVariable {
+        // Safety: the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
+        // and it is repr(u8). MAX_VARIABLE_MASK here ensures our values have most 2 bits, which produces
+        // the same range.
+        unsafe { core::mem::transmute((self.bits & CollationMetadata::MAX_VARIABLE_MASK) as u8) }
     }
 
     #[inline(always)]
-    pub(crate) fn tailored(&self) -> bool {
-        self.bits & CollationMetadataV1::TAILORED_MASK != 0
+    pub(crate) fn tailored(self) -> bool {
+        self.bits & CollationMetadata::TAILORED_MASK != 0
     }
 
     /// Vietnamese and Ewe
     #[inline(always)]
-    pub(crate) fn tailored_diacritics(&self) -> bool {
-        self.bits & CollationMetadataV1::TAILORED_DIACRITICS_MASK != 0
+    pub(crate) fn tailored_diacritics(self) -> bool {
+        self.bits & CollationMetadata::TAILORED_DIACRITICS_MASK != 0
     }
 
     /// Lithuanian
     #[inline(always)]
-    pub(crate) fn lithuanian_dot_above(&self) -> bool {
-        self.bits & CollationMetadataV1::LITHUANIAN_DOT_ABOVE_MASK != 0
+    pub(crate) fn lithuanian_dot_above(self) -> bool {
+        self.bits & CollationMetadata::LITHUANIAN_DOT_ABOVE_MASK != 0
     }
 
     /// Canadian French
     #[inline(always)]
-    pub(crate) fn backward_second_level(&self) -> bool {
-        self.bits & CollationMetadataV1::BACWARD_SECOND_LEVEL_MASK != 0
+    pub(crate) fn backward_second_level(self) -> bool {
+        self.bits & CollationMetadata::BACWARD_SECOND_LEVEL_MASK != 0
     }
 
     #[inline(always)]
-    pub(crate) fn reordering(&self) -> bool {
-        self.bits & CollationMetadataV1::REORDERING_MASK != 0
+    pub(crate) fn reordering(self) -> bool {
+        self.bits & CollationMetadata::REORDERING_MASK != 0
     }
 
     /// Thai
     #[inline(always)]
-    pub(crate) fn alternate_shifted(&self) -> bool {
-        self.bits & CollationMetadataV1::ALTERNATE_SHIFTED_MASK != 0
+    pub(crate) fn alternate_shifted(self) -> bool {
+        self.bits & CollationMetadata::ALTERNATE_SHIFTED_MASK != 0
     }
 
     #[inline(always)]
-    pub(crate) fn case_first(&self) -> CaseFirst {
-        if self.bits & CollationMetadataV1::CASE_FIRST_MASK != 0 {
-            if self.bits & CollationMetadataV1::UPPER_FIRST_MASK != 0 {
-                CaseFirst::UpperFirst
+    pub(crate) fn case_first(self) -> CollationCaseFirst {
+        if self.bits & CollationMetadata::CASE_FIRST_MASK != 0 {
+            if self.bits & CollationMetadata::UPPER_FIRST_MASK != 0 {
+                CollationCaseFirst::Upper
             } else {
-                CaseFirst::LowerFirst
+                CollationCaseFirst::Lower
             }
         } else {
-            CaseFirst::Off
+            CollationCaseFirst::False
         }
     }
 }
@@ -466,16 +467,12 @@ impl CollationMetadataV1 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationSpecialPrimariesV1Marker,
-    "collator/prim@1",
-    singleton
-))]
+#[icu_provider::data_struct(marker(CollationSpecialPrimariesV1, "collator/prim@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CollationSpecialPrimariesV1<'data> {
+pub struct CollationSpecialPrimaries<'data> {
     /// The primaries corresponding to `MaxVariable`
     /// character classes packed so that each fits in
     /// 16 bits. Length must match the number of enum
@@ -486,7 +483,7 @@ pub struct CollationSpecialPrimariesV1<'data> {
     pub numeric_primary: u8,
 }
 
-impl CollationSpecialPrimariesV1<'_> {
+impl CollationSpecialPrimaries<'_> {
     #[allow(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.

@@ -13,14 +13,14 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-/// Currency Compact V1 data struct.
-#[icu_provider::data_struct(marker(ShortCurrencyCompactV1Marker, "currency/compact@1"))]
+/// Currency Compact  data struct.
+#[icu_provider::data_struct(marker(ShortCurrencyCompactV1, "currency/compact@1"))]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_compact))]
 #[yoke(prove_covariance_manually)]
-pub struct ShortCurrencyCompactV1<'data> {
+pub struct ShortCurrencyCompact<'data> {
     // TODO: this map should include a `DoublePattern` as a value.
     /// Contains the compact patterns for a compact currency format based on the plural rules.
     /// NOTE:

@@ -13,9 +13,10 @@
 //!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT};
+use icu::calendar::{Date, Gregorian};
+use icu::datetime::{fieldsets::YMDT, FixedCalendarDateTimeFormatter};
 use icu::locale::locale;
+use icu::time::{DateTime, Time};
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {
@@ -32,10 +33,10 @@ fn main() {
     )
     .expect("locale 'my' should be present in compiled data");
 
-    let datetime = DateTime::try_new_gregorian(2022, 12, 23, 12, 54, 29)
-        .expect("constant should be valid datetime");
+    let date = Date::try_new_gregorian(2022, 12, 23).expect("constant should be valid datetime");
+    let time = Time::try_new(12, 54, 29, 0).unwrap();
 
-    let result = formatter.format(&datetime).to_string();
+    let result = formatter.format(&DateTime { date, time }).to_string();
 
     assert_eq!(result, "၂၀၂၂ ဒီ ၂၃ ၁၂:၅၄:၂၉");
     println!("{result}");

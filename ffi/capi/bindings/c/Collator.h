@@ -21,7 +21,10 @@
 
 
 typedef struct icu4x_Collator_create_v1_mv1_result {union {Collator* ok; DataError err;}; bool is_ok;} icu4x_Collator_create_v1_mv1_result;
-icu4x_Collator_create_v1_mv1_result icu4x_Collator_create_v1_mv1(const DataProvider* provider, const Locale* locale, CollatorOptionsV1 options);
+icu4x_Collator_create_v1_mv1_result icu4x_Collator_create_v1_mv1(const Locale* locale, CollatorOptionsV1 options);
+
+typedef struct icu4x_Collator_create_v1_with_provider_mv1_result {union {Collator* ok; DataError err;}; bool is_ok;} icu4x_Collator_create_v1_with_provider_mv1_result;
+icu4x_Collator_create_v1_with_provider_mv1_result icu4x_Collator_create_v1_with_provider_mv1(const DataProvider* provider, const Locale* locale, CollatorOptionsV1 options);
 
 int8_t icu4x_Collator_compare_utf8_mv1(const Collator* self, DiplomatStringView left, DiplomatStringView right);
 

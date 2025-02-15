@@ -56,7 +56,7 @@ impl Writeable for FormattedRelativeTime<'_> {
             &self.formatter.rt.get().future
         }
         .get((&self.value).into(), &self.formatter.plural_rules)
-        .interpolate((self.formatter.fixed_decimal_format.format(&self.value),))
+        .interpolate((self.formatter.decimal_formatter.format(&self.value),))
         .write_to(sink)
     }
 }

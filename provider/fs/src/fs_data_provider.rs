@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::datapath::get_data_marker_id;
 use crate::manifest::Manifest;
 use icu_provider::prelude::*;
 use icu_provider::DynamicDryDataProvider;
@@ -68,24 +69,34 @@ impl FsDataProvider {
         if marker.is_singleton && !req.id.locale.is_default() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
-        let mut path = self.root.join(marker.path.as_str());
+        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
+            return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
+        };
+        let mut path = self.root.join(component).join(marker_name);
         if !path.exists() {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
-        if !req.id.marker_attributes.is_empty() {
-            if req.metadata.attributes_prefix_match {
-                path.push(
-                    std::fs::read_dir(&path)?
-                        .filter_map(|e| e.ok()?.file_name().into_string().ok())
-                        .filter(|c| c.starts_with(req.id.marker_attributes.as_str()))
-                        .min()
-                        .ok_or(DataErrorKind::IdentifierNotFound.with_req(marker, req))?,
-                );
-            } else {
-                path.push(req.id.marker_attributes.as_str());
-            }
+        let checksum = if marker.is_singleton {
+            std::fs::read_to_string(format!("{}_checksum", path.display()))
+        } else {
+            std::fs::read_to_string(path.join(".checksum"))
         }
+        .ok()
+        .and_then(|s| s.parse().ok());
         if !marker.is_singleton {
+            if !req.id.marker_attributes.is_empty() {
+                if req.metadata.attributes_prefix_match {
+                    path.push(
+                        std::fs::read_dir(&path)?
+                            .filter_map(|e| e.ok()?.file_name().into_string().ok())
+                            .filter(|c| c.starts_with(req.id.marker_attributes.as_str()))
+                            .min()
+                            .ok_or(DataErrorKind::IdentifierNotFound.with_req(marker, req))?,
+                    );
+                } else {
+                    path.push(req.id.marker_attributes.as_str());
+                }
+            }
             let mut string_path = path.into_os_string();
             write!(&mut string_path, "/{}", req.id.locale).expect("infallible");
             path = PathBuf::from(string_path);
@@ -96,6 +107,7 @@ impl FsDataProvider {
         }
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(self.manifest.buffer_format);
+        metadata.checksum = checksum;
         Ok((metadata, path))
     }
 }

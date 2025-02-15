@@ -14,7 +14,7 @@ use icu_provider::prelude::*;
 /// [`ForkByErrorPredicate`] trait.
 ///
 /// [`ForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
 #[derive(Debug, PartialEq, Eq)]
 pub struct ForkByErrorProvider<P0, P1, F>(P0, P1, F);
 
@@ -76,23 +76,6 @@ where
             _ => (),
         };
         self.1.dry_load(req)
-    }
-}
-
-impl<P0, P1, F> AnyProvider for ForkByErrorProvider<P0, P1, F>
-where
-    P0: AnyProvider,
-    P1: AnyProvider,
-    F: ForkByErrorPredicate,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let result = self.0.load_any(marker, req);
-        match result {
-            Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.test(marker, Some(req), err) => return Err(err),
-            _ => (),
-        };
-        self.1.load_any(marker, req)
     }
 }
 
@@ -168,7 +151,7 @@ where
     P1: ExportableProvider,
     F: ForkByErrorPredicate + Sync,
 {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         let mut markers = self.0.supported_markers();
         markers.extend(self.1.supported_markers());
         markers
@@ -181,7 +164,7 @@ where
 /// [`ForkByErrorPredicate`] trait.
 ///
 /// [`MultiForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
-/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+/// supports forking between [`BufferProvider`], and [`DynamicDataProvider`].
 #[derive(Debug)]
 pub struct MultiForkByErrorProvider<P, F> {
     providers: Vec<P>,
@@ -254,25 +237,6 @@ where
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(M::INFO, Some(req), err) => return Err(err),
-                Err(err) => last_error = err,
-            };
-        }
-        Err(last_error)
-    }
-}
-
-impl<P, F> AnyProvider for MultiForkByErrorProvider<P, F>
-where
-    P: AnyProvider,
-    F: ForkByErrorPredicate,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut last_error = F::UNIT_ERROR.with_marker(marker);
-        for provider in self.providers.iter() {
-            let result = provider.load_any(marker, req);
-            match result {
-                Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.test(marker, Some(req), err) => return Err(err),
                 Err(err) => last_error = err,
             };
         }
@@ -357,7 +321,7 @@ where
     P: ExportableProvider,
     F: ForkByErrorPredicate + Sync,
 {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         self.providers
             .iter()
             .flat_map(|p| p.supported_markers())

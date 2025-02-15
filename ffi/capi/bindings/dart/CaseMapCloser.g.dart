@@ -22,13 +22,26 @@ final class CaseMapCloser implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapCloser_destroy_mv1));
 
-  /// Construct a new CaseMapper instance
+  /// Construct a new CaseMapCloser instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory CaseMapCloser(DataProvider provider) {
-    final result = _icu4x_CaseMapCloser_create_mv1(provider._ffi);
+  factory CaseMapCloser() {
+    final result = _icu4x_CaseMapCloser_create_mv1();
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CaseMapCloser._fromFfi(result.union.ok, []);
+  }
+
+  /// Construct a new CaseMapCloser instance using a particular data source.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CaseMapCloser.withProvider(DataProvider provider) {
+    final result = _icu4x_CaseMapCloser_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -38,7 +51,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
   /// Also adds special case closure mappings.
   ///
-  /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to) for more information.
+  /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _icu4x_CaseMapCloser_add_case_closure_to_mv1(_ffi, c, builder._ffi);
   }
@@ -48,7 +61,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   ///
   /// Returns true if the string was found
   ///
-  /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
+  /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
     final temp = _FinalizedArena();
     final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, s._utf8AllocIn(temp.arena), builder._ffi);
@@ -62,9 +75,14 @@ final class CaseMapCloser implements ffi.Finalizable {
 external void _icu4x_CaseMapCloser_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_CaseMapCloser_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_CaseMapCloser_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CaseMapCloser_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapCloser_add_case_closure_to_mv1')

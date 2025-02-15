@@ -2,8 +2,10 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
+
+
 export class BidiDirection {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -15,14 +17,14 @@ export class BidiDirection {
     static getAllEntries() {
         return BidiDirection.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return BidiDirection.#objectValues[arguments[1]];
         }
@@ -34,11 +36,15 @@ export class BidiDirection {
         let intVal = BidiDirection.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return BidiDirection.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a BidiDirection and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new BidiDirection(value);
     }
 
     get value() {
@@ -57,4 +63,8 @@ export class BidiDirection {
     static Ltr = BidiDirection.#objectValues[0];
     static Rtl = BidiDirection.#objectValues[1];
     static Mixed = BidiDirection.#objectValues[2];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

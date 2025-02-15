@@ -16,11 +16,11 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 
 ```rust
 use fixed_decimal::SignedFixedDecimal;
-use icu::decimal::FixedDecimalFormatter;
+use icu::decimal::DecimalFormatter;
 use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new(
+let df = DecimalFormatter::try_new(
     locale!("bn").into(),
     Default::default(),
 )
@@ -28,19 +28,19 @@ let fdf = FixedDecimalFormatter::try_new(
 
 let fixed_decimal = SignedFixedDecimal::from(1000007);
 
-assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
+assert_writeable_eq!(df.format(&fixed_decimal), "১০,০০,০০৭");
 ```
 
 ### Format a number with digits after the decimal separator
 
 ```rust
 use fixed_decimal::SignedFixedDecimal;
-use icu::decimal::FixedDecimalFormatter;
+use icu::decimal::DecimalFormatter;
 use icu::locale::Locale;
 use writeable::assert_writeable_eq;
 
-let fdf =
-    FixedDecimalFormatter::try_new(Default::default(), Default::default())
+let df =
+    DecimalFormatter::try_new(Default::default(), Default::default())
         .expect("locale should be present");
 
 let fixed_decimal = {
@@ -49,21 +49,20 @@ let fixed_decimal = {
     decimal
 };
 
-assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
+assert_writeable_eq!(df.format(&fixed_decimal), "2,000.50");
 ```
 
-#### Format a number using an alternative numbering system
+### Format a number using an alternative numbering system
 
-Numbering systems specified in the `-u-nu` subtag will be followed as long as the locale has
-symbols for that numbering system.
+Numbering systems specified in the `-u-nu` subtag will be followed.
 
 ```rust
 use fixed_decimal::SignedFixedDecimal;
-use icu::decimal::FixedDecimalFormatter;
+use icu::decimal::DecimalFormatter;
 use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new(
+let fdf = DecimalFormatter::try_new(
     locale!("th-u-nu-thai").into(),
     Default::default(),
 )
@@ -74,7 +73,7 @@ let fixed_decimal = SignedFixedDecimal::from(1000007);
 assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```
 
-[`FixedDecimalFormatter`]: FixedDecimalFormatter
+[`DecimalFormatter`]: DecimalFormatter
 
 <!-- cargo-rdme end -->
 

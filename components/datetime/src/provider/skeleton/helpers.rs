@@ -8,19 +8,19 @@ use core::cmp::Ordering;
 
 use super::plural::PatternPlurals;
 use crate::{
-    fields::{self, components, Field, FieldLength, FieldSymbol},
     options::FractionalSecondDigits,
     provider::{
         calendar::{
-            patterns::{FullLongMediumShort, GenericLengthPatternsV1},
-            DateSkeletonPatternsV1,
+            patterns::{FullLongMediumShort, GenericLengthPatterns},
+            DateSkeletonPatterns,
         },
+        fields::{self, components, Field, FieldLength, FieldSymbol},
         pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
     },
 };
 
 #[cfg(feature = "datagen")]
-use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
+use crate::provider::pattern::CoarseHourCycle;
 
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
@@ -99,7 +99,7 @@ pub enum BestSkeleton<T> {
 /// only needs to find a single "v" field, and then the time zone name can expand from there.
 fn naively_apply_time_zone_name(
     pattern: &mut runtime::Pattern,
-    time_zone_name: &Option<components::TimeZoneName>,
+    time_zone_name: Option<components::TimeZoneName>,
 ) {
     // If there is a preference overriding the hour cycle, apply it now.
     if let Some(time_zone_name) = time_zone_name {
@@ -109,7 +109,7 @@ fn naively_apply_time_zone_name(
                 length: _,
             }) = item
             {
-                Some(PatternItem::Field((*time_zone_name).into()))
+                Some(PatternItem::Field((time_zone_name).into()))
             } else {
                 None
             }
@@ -133,8 +133,8 @@ fn naively_apply_time_zone_name(
 ///         configuration option makes it so that the final pattern won't have additional work
 ///         done to mutate it to match the fields. It will prefer the actual matched pattern.
 pub fn create_best_pattern_for_fields<'data>(
-    skeletons: &DateSkeletonPatternsV1<'data>,
-    length_patterns: &GenericLengthPatternsV1<'data>,
+    skeletons: &DateSkeletonPatterns<'data>,
+    length_patterns: &GenericLengthPatterns<'data>,
     fields: &[Field],
     components: &components::Bag,
     prefer_matched_pattern: bool,
@@ -146,7 +146,7 @@ pub fn create_best_pattern_for_fields<'data>(
     if let BestSkeleton::AllFieldsMatch(mut pattern_plurals) = first_pattern_match {
         pattern_plurals.for_each_mut(|pattern| {
             naively_apply_preferences(pattern, components.hour_cycle);
-            naively_apply_time_zone_name(pattern, &components.time_zone_name);
+            naively_apply_time_zone_name(pattern, components.time_zone_name);
             apply_fractional_seconds(pattern, components.fractional_second);
         });
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
@@ -163,7 +163,7 @@ pub fn create_best_pattern_for_fields<'data>(
                 if date.is_empty() {
                     pattern_plurals.for_each_mut(|pattern| {
                         naively_apply_preferences(pattern, components.hour_cycle);
-                        naively_apply_time_zone_name(pattern, &components.time_zone_name);
+                        naively_apply_time_zone_name(pattern, components.time_zone_name);
                         apply_fractional_seconds(pattern, components.fractional_second);
                     });
                 }
@@ -192,7 +192,7 @@ pub fn create_best_pattern_for_fields<'data>(
         let mut pattern =
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
         naively_apply_preferences(&mut pattern, components.hour_cycle);
-        naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
+        naively_apply_time_zone_name(&mut pattern, components.time_zone_name);
         apply_fractional_seconds(&mut pattern, components.fractional_second);
         pattern
     });
@@ -317,7 +317,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
         if let PatternItem::Field(pattern_field) = item {
             if let Some(requested_field) = fields
                 .iter()
-                .find(|field| field.symbol.skeleton_cmp(&pattern_field.symbol).is_eq())
+                .find(|field| field.symbol.skeleton_cmp(pattern_field.symbol).is_eq())
             {
                 if requested_field.length != pattern_field.length
                     && requested_field.get_length_type() == pattern_field.get_length_type()
@@ -350,7 +350,6 @@ fn apply_fractional_seconds(
     pattern: &mut runtime::Pattern,
     fractional_seconds: Option<FractionalSecondDigits>,
 ) {
-    use FractionalSecondDigits::*;
     if let Some(fractional_seconds) = fractional_seconds {
         let mut items = pattern.items.to_vec();
         for item in items.iter_mut() {
@@ -368,11 +367,7 @@ fn apply_fractional_seconds(
         *pattern = runtime::Pattern::from(items);
         pattern
             .metadata
-            .set_time_granularity(if fractional_seconds == F0 {
-                TimeGranularity::Seconds
-            } else {
-                TimeGranularity::Nanoseconds
-            });
+            .set_time_granularity(TimeGranularity::Nanoseconds);
     }
 }
 
@@ -397,7 +392,7 @@ fn apply_fractional_seconds(
 ///
 /// Panics if `prefer_matched_pattern` is set to true in a non-datagen mode.
 pub fn get_best_available_format_pattern<'data>(
-    skeletons: &DateSkeletonPatternsV1<'data>,
+    skeletons: &DateSkeletonPatterns<'data>,
     fields: &[Field],
     prefer_matched_pattern: bool,
 ) -> BestSkeleton<PatternPlurals<'data>> {
@@ -431,7 +426,7 @@ pub fn get_best_available_format_pattern<'data>(
                         skeleton_field.symbol != FieldSymbol::Month(fields::Month::StandAlone)
                     );
 
-                    match skeleton_field.symbol.skeleton_cmp(&requested_field.symbol) {
+                    match skeleton_field.symbol.skeleton_cmp(requested_field.symbol) {
                         Ordering::Less => {
                             // Keep searching for a matching skeleton field.
                             skeleton_fields.next();
@@ -533,26 +528,19 @@ impl components::Bag {
     #[cfg(feature = "datagen")]
     pub fn select_pattern<'data>(
         self,
-        skeletons: &DateSkeletonPatternsV1<'data>,
-        date_patterns: &DateLengthsV1<'data>,
-        time_patterns: &TimeLengthsV1<'data>,
+        skeletons: &DateSkeletonPatterns<'data>,
+        preferred_hour_cycle: CoarseHourCycle,
+        length_patterns: &GenericLengthPatterns<'data>,
     ) -> PatternPlurals<'data> {
         use crate::provider::pattern::runtime::Pattern;
-        use crate::provider::pattern::CoarseHourCycle;
         use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
-        let default_hour_cycle = match time_patterns.preferred_hour_cycle {
+        let default_hour_cycle = match preferred_hour_cycle {
             CoarseHourCycle::H11H12 => HourCycle::H12,
             CoarseHourCycle::H23H24 => HourCycle::H23,
         };
         let fields = self.to_vec_fields(default_hour_cycle);
-        match create_best_pattern_for_fields(
-            skeletons,
-            &date_patterns.length_combinations,
-            &fields,
-            &self,
-            false,
-        ) {
+        match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
             BestSkeleton::AllFieldsMatch(p) => p,
             _ => {
                 // Build a last-resort pattern that contains all of the requested fields.

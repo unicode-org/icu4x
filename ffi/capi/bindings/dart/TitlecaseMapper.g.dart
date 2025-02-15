@@ -22,13 +22,26 @@ final class TitlecaseMapper implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TitlecaseMapper_destroy_mv1));
 
-  /// Construct a new `TitlecaseMapper` instance
+  /// Construct a new `TitlecaseMapper` instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory TitlecaseMapper(DataProvider provider) {
-    final result = _icu4x_TitlecaseMapper_create_mv1(provider._ffi);
+  factory TitlecaseMapper() {
+    final result = _icu4x_TitlecaseMapper_create_mv1();
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return TitlecaseMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Construct a new `TitlecaseMapper` instance using a particular data source.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory TitlecaseMapper.withProvider(DataProvider provider) {
+    final result = _icu4x_TitlecaseMapper_create_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -39,7 +52,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///
-  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment) for more information.
+  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
   String titlecaseSegment(String s, Locale locale, TitlecaseOptions options) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -54,9 +67,14 @@ final class TitlecaseMapper implements ffi.Finalizable {
 external void _icu4x_TitlecaseMapper_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @meta.RecordUse()
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_create_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_TitlecaseMapper_create_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_TitlecaseMapper_create_mv1();
+
+@meta.RecordUse()
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_create_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_TitlecaseMapper_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @meta.RecordUse()
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_titlecase_segment_v1_mv1')

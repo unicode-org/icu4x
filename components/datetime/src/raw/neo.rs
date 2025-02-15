@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::input::ExtractedInput;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
+use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
@@ -25,18 +25,6 @@ pub(crate) struct RawOptions {
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
-}
-
-impl RawOptions {
-    #[cfg(all(feature = "serde", feature = "experimental"))]
-    pub(crate) fn merge(self, other: RawOptions) -> Self {
-        Self {
-            length: self.length,
-            alignment: self.alignment.or(other.alignment),
-            year_style: self.year_style.or(other.year_style),
-            time_precision: self.time_precision.or(other.time_precision),
-        }
-    }
 }
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -136,23 +124,23 @@ pub(crate) enum DateTimeZonePatternSelectionData {
     DateTimeGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
     DateZoneGlue {
         date: DatePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
     TimeZoneGlue {
         time: TimePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
     DateTimeZoneGlue {
         date: DatePatternSelectionData,
         time: TimePatternSelectionData,
         zone: ZonePatternSelectionData,
-        glue: DataPayload<GluePatternV1Marker>,
+        glue: DataPayload<GluePatternV1>,
     },
 }
 
@@ -167,23 +155,23 @@ pub(crate) enum DateTimeZonePatternDataBorrowed<'a> {
     DateTimeGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     DateZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     TimeZoneGlue {
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
     DateTimeZoneGlue {
         date: DatePatternDataBorrowed<'a>,
         time: TimePatternDataBorrowed<'a>,
         zone: ZonePatternDataBorrowed<'a>,
-        glue: &'a GluePatternV1<'a>,
+        glue: &'a GluePattern<'a>,
     },
 }
 
@@ -194,7 +182,9 @@ impl DatePatternSelectionData {
         attributes: &DataMarkerAttributes,
         options: RawOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let payload = provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
@@ -222,7 +212,7 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { options, payload } => {
-                let year_style = options.year_style.unwrap_or(YearStyle::Auto);
+                let year_style = options.year_style.unwrap_or_default();
                 let variant = match (
                     year_style,
                     input
@@ -230,7 +220,7 @@ impl DatePatternSelectionData {
                         .map(|y| y.year_ambiguity())
                         .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
                 ) {
-                    (YearStyle::Always, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
+                    (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
                         PackedSkeletonVariant::Variant1
                     }
                     (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
@@ -254,27 +244,19 @@ impl ExtractedInput {
         &self,
         time_precision: TimePrecision,
     ) -> (PackedSkeletonVariant, Option<FractionalSecondDigits>) {
-        enum HourMinute {
-            Hour,
-            Minute,
-        }
-        let smallest_required_field = match time_precision {
-            TimePrecision::HourExact => return (PackedSkeletonVariant::Standard, None),
-            TimePrecision::MinuteExact => return (PackedSkeletonVariant::Variant0, None),
-            TimePrecision::SecondExact(f) => return (PackedSkeletonVariant::Variant1, Some(f)),
-            TimePrecision::HourPlus => HourMinute::Hour,
-            TimePrecision::MinutePlus => HourMinute::Minute,
-            TimePrecision::SecondPlus => return (PackedSkeletonVariant::Variant1, None),
-        };
-        let minute = self.minute.unwrap_or_default();
-        let second = self.second.unwrap_or_default();
-        let nanosecond = self.nanosecond.unwrap_or_default();
-        if !nanosecond.is_zero() || !second.is_zero() {
-            (PackedSkeletonVariant::Variant1, None)
-        } else if !minute.is_zero() || matches!(smallest_required_field, HourMinute::Minute) {
-            (PackedSkeletonVariant::Variant0, None)
-        } else {
-            (PackedSkeletonVariant::Standard, None)
+        match time_precision {
+            TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
+            TimePrecision::Minute => (PackedSkeletonVariant::Variant0, None),
+            TimePrecision::Second => (PackedSkeletonVariant::Variant1, None),
+            TimePrecision::FractionalSecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
+            TimePrecision::MinuteOptional => {
+                let minute = self.minute.unwrap_or_default();
+                if minute.is_zero() {
+                    (PackedSkeletonVariant::Standard, None)
+                } else {
+                    (PackedSkeletonVariant::Variant0, None)
+                }
+            }
         }
     }
 }
@@ -297,7 +279,9 @@ impl OverlapPatternSelectionData {
         attributes: &DataMarkerAttributes,
         options: RawOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let prefs = RawPreferences::from_prefs(prefs);
         let payload = provider
             .load_bound(DataRequest {
@@ -343,7 +327,7 @@ impl OverlapPatternSelectionData {
                 // year and a time because that would involve 3*3 = 9 variants
                 // instead of 3 variants.
                 debug_assert!(options.year_style.is_none());
-                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
+                let time_precision = options.time_precision.unwrap_or_default();
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
@@ -364,7 +348,9 @@ impl TimePatternSelectionData {
         components: TimeFieldSet,
         options: RawOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let prefs = RawPreferences::from_prefs(prefs);
         // First try to load with the explicit hour cycle. If there is no explicit hour cycle,
         // or if loading the explicit hour cycle fails, then load with the default hour cycle.
@@ -426,7 +412,7 @@ impl TimePatternSelectionData {
                 prefs,
                 payload,
             } => {
-                let time_precision = options.time_precision.unwrap_or(TimePrecision::SecondPlus);
+                let time_precision = options.time_precision.unwrap_or_default();
                 let (variant, fractional_second_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
@@ -495,7 +481,7 @@ impl DateTimeZonePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        glue_provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         skeleton: CompositeFieldSet,
     ) -> Result<Self, DataError> {
@@ -566,54 +552,45 @@ impl DateTimeZonePatternSelectionData {
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTime)?;
                 Ok(Self::DateTimeGlue { date, time, glue })
             }
-            CompositeFieldSet::DateZone(field_set, time_zone_style) => {
-                let options = field_set.to_raw_options();
+            CompositeFieldSet::DateZone(combo) => {
+                let options = combo.dt().to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     prefs,
-                    field_set.id_str(),
+                    combo.dt().id_str(),
                     options,
                 )?;
-                // Always use the short length for time zones when mixed with another field (Date)
-                let zone_field_set =
-                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
-                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
+                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
                 Ok(Self::DateZoneGlue { date, zone, glue })
             }
-            CompositeFieldSet::TimeZone(field_set, time_zone_style) => {
-                let options = field_set.to_raw_options();
+            CompositeFieldSet::TimeZone(combo) => {
+                let options = combo.dt().to_raw_options();
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     prefs,
-                    field_set,
+                    combo.dt(),
                     options,
                 )?;
-                // Always use the short length for time zones when mixed with another field (Time)
-                let zone_field_set =
-                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
-                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
+                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
                 Ok(Self::TimeZoneGlue { time, zone, glue })
             }
-            CompositeFieldSet::DateTimeZone(field_set, time_zone_style) => {
-                let options = field_set.to_raw_options();
+            CompositeFieldSet::DateTimeZone(combo) => {
+                let options = combo.dt().to_raw_options();
                 let date = DatePatternSelectionData::try_new_with_skeleton(
                     date_provider,
                     prefs,
-                    field_set.to_date_field_set().id_str(),
+                    combo.dt().to_date_field_set().id_str(),
                     options,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     prefs,
-                    field_set.to_time_field_set(),
+                    combo.dt().to_time_field_set(),
                     options,
                 )?;
-                // Always use the short length for time zones when mixed with another field (Date + Time)
-                let zone_field_set =
-                    ZoneFieldSet::from_time_zone_style_and_length(time_zone_style, Length::Short);
-                let zone = ZonePatternSelectionData::new_with_skeleton(zone_field_set);
+                let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
                 Ok(Self::DateTimeZoneGlue {
                     date,
@@ -626,12 +603,14 @@ impl DateTimeZonePatternSelectionData {
     }
 
     fn load_glue(
-        provider: &(impl BoundDataProvider<GluePatternV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         options: RawOptions,
         glue_type: GlueType,
-    ) -> Result<DataPayload<GluePatternV1Marker>, DataError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
+    ) -> Result<DataPayload<GluePatternV1>, DataError> {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
@@ -879,7 +858,8 @@ impl<'a> ItemsAndOptions<'a> {
             #[allow(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
             match &mut pattern_item {
                 PatternItem::Field(ref mut field) => {
-                    if matches!(self.alignment, Some(Alignment::Column))
+                    let alignment = self.alignment.unwrap_or_default();
+                    if matches!(alignment, Alignment::Column)
                         && field.length == FieldLength::One
                         && matches!(
                             field.symbol,

@@ -430,7 +430,7 @@
       "ime": "NO",
       "density": 1,
       "originCountry": "CY",
-      "likelyLanguage": "grc"
+      "likelyLanguage": "ecy"
     },
     "Cyrl": {
       "rank": 4,
@@ -1326,7 +1326,7 @@
       "ime": "YES",
       "density": 1,
       "originCountry": "GR",
-      "likelyLanguage": "grc"
+      "likelyLanguage": "gmy"
     },
     "Lisu": {
       "rank": 33,

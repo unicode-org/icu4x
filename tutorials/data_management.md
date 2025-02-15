@@ -68,13 +68,12 @@ trait DataProvider<M: DataMarker> {
 
 As you can see, the `DataProvider` trait is fairly simple. It's generic in a `DataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
 
-## `BufferProvider` and `AnyProvider`
+## `BufferProvider`
 
-Static markers that determine the type of data is great for data that is compiled into the binary, as it allows the compiler to eliminate unused data, but for runtime data loading it is too restrictive. For this reason `ICU4X` defines two more traits: `BufferProvider` abstracts over data providers that provide opaque byte buffers which can be deserialized, and `AnyProvider` which uses dynamic typing with `Any`.
+Static markers that determine the type of data is great for data that is compiled into the binary, as it allows the compiler to eliminate unused data, but for runtime data loading it is too restrictive. For this reason `ICU4X` defines one more trait: `BufferProvider` abstracts over data providers that provide opaque byte buffers which can be deserialized.
 
 Because of these three data provider types, every `ICU4X` API has four constructors:
 * `try_new`: This uses the built-in data provider
-* `try_new_with_any_provider`: This loads data from a provided `&impl AnyProvider`, downcasting it
 * `try_new_with_buffer_provider`: This loads data from a provided `&impl BufferProvider`, deserializing it
 * `try_new_unstable`: This loads data from a provided `&impl DataProvider<X + Y + ...>`. It is *semver unstable*, because the bounds on the provider might change in case more data is required in the future.
 
@@ -97,8 +96,8 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 ```rust,compile_fail
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
-use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, options::YMDHMS, Length};
+use icu::calendar::Date;
+use icu::datetime::{DateTimeFormatter, Length};
 
 const LOCALE: Locale = locale!("ja");
 
@@ -112,11 +111,11 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), Length::Medium.into())
         .expect("ja data should be available");
 
-    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
-        .expect("datetime should be valid");
+    let date = Date::try_new_iso(2020, 10, 14)
+        .expect("date should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format_any_calendar(&date).to_string();
+    let formatted_date = dtf.format(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }
@@ -153,8 +152,8 @@ We can then use the provider in our code:
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
-use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMDT};
+use icu::calendar::Date;
+use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMD};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -174,15 +173,15 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &buffer_provider,
         LOCALE.into(),
-        YMDT::medium()
+        YMD::medium()
     )
     .expect("blob should contain required markers and `ja` data");
 
-    let date = DateTime::try_new_iso(2020, 10, 14, 13, 21, 28)
-        .expect("datetime should be valid");
+    let date = Date::try_new_iso(2020, 10, 14)
+        .expect("date should be valid");
     let date = date.to_any();
 
-    let formatted_date = dtf.format_any_calendar(&date).to_string();
+    let formatted_date = dtf.format(&date).to_string();
 
     println!("📅: {}", formatted_date);
 }
@@ -206,8 +205,8 @@ We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only suppo
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
-use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMDT, Length};
+use icu::calendar::{Date, Gregorian};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMD, Length};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -227,12 +226,12 @@ fn main() {
     let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
         LOCALE.into(),
-        YMDT::medium(),
+        YMD::medium(),
     )
     .expect("blob should contain required data");
 
-    let date = DateTime::try_new_gregorian(2020, 10, 14, 13, 21, 28)
-        .expect("datetime should be valid");
+    let date = Date::try_new_gregorian(2020, 10, 14)
+        .expect("date should be valid");
 
     let formatted_date = dtf.format(&date).to_string();
 

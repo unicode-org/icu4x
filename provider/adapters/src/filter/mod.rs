@@ -122,17 +122,6 @@ where
     }
 }
 
-impl<D, F> AnyProvider for FilterDataProvider<D, F>
-where
-    F: Fn(DataIdentifierBorrowed) -> bool,
-    D: AnyProvider,
-{
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.check(marker, req)?;
-        self.inner.load_any(marker, req)
-    }
-}
-
 impl<M, D, F> IterableDynamicDataProvider<M> for FilterDataProvider<D, F>
 where
     M: DynamicDataMarker,
@@ -174,7 +163,7 @@ where
     P0: ExportableProvider,
     F: Fn(DataIdentifierBorrowed) -> bool + Sync,
 {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         // The predicate only takes DataIdentifier, not DataMarker, so we are not impacted
         self.inner.supported_markers()
     }

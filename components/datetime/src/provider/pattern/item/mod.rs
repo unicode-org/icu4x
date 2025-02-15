@@ -5,7 +5,7 @@
 mod generic;
 mod ule;
 
-use crate::fields::{Field, FieldLength, FieldSymbol};
+use crate::provider::fields::{Field, FieldLength, FieldSymbol};
 pub use generic::GenericPatternItem;
 
 /// An element of a [`Pattern`](super::runtime::Pattern).

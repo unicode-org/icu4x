@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -34,9 +35,13 @@ namespace icu4x {
 class PluralRules {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::PluralRules>, icu4x::DataError> create_cardinal(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::PluralRules>, icu4x::DataError> create_cardinal(const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::PluralRules>, icu4x::DataError> create_ordinal(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::PluralRules>, icu4x::DataError> create_cardinal_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::PluralRules>, icu4x::DataError> create_ordinal(const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::PluralRules>, icu4x::DataError> create_ordinal_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   inline icu4x::PluralCategory category_for(const icu4x::PluralOperands& op) const;
 

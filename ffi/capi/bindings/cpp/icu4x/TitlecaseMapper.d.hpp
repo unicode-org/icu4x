@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -31,7 +32,9 @@ namespace icu4x {
 class TitlecaseMapper {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  inline static diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const;
 

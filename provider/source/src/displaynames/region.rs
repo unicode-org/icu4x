@@ -11,12 +11,9 @@ use icu::locale::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<RegionDisplayNamesV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
-        self.check_req::<RegionDisplayNamesV1Marker>(req)?;
+impl DataProvider<RegionDisplayNamesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<RegionDisplayNamesV1>, DataError> {
+        self.check_req::<RegionDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::region::Resource = self
             .cldr()?
@@ -25,14 +22,14 @@ impl DataProvider<RegionDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(RegionDisplayNamesV1::try_from(data).map_err(
-                |e| DataError::custom("data for RegionDisplayNames").with_display_context(&e),
-            )?),
+            payload: DataPayload::from_owned(RegionDisplayNames::try_from(data).map_err(|e| {
+                DataError::custom("data for RegionDisplayNames").with_display_context(&e)
+            })?),
         })
     }
 }
 
-impl IterableDataProviderCached<RegionDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<RegionDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -56,7 +53,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
 const SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames<'static> {
     type Error = icu::locale::ParseError;
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
@@ -93,7 +90,7 @@ mod tests {
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
+        let data: DataPayload<RegionDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -114,7 +111,7 @@ mod tests {
     fn test_basic_short_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
+        let data: DataPayload<RegionDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()

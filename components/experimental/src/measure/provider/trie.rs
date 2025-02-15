@@ -30,12 +30,13 @@ pub use crate::provider::Baked;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(UnitsTrieV1Marker, "units/trie@1", singleton))]
+#[icu_provider::data_struct(marker(UnitsTrieV1, "units/trie@1", singleton))]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::trie))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsTrieV1<'data> {
+    // TODO: remove this field from units/provider::UnitsInfo once the `MeasureUnit` is fully used in the measurement units.
     /// Maps from unit name (e.g. foot or meter) to its unit id. this id can be used to retrieve the conversion information from the `UnitsInfoV1`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,

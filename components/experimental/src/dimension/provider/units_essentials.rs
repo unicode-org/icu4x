@@ -38,13 +38,13 @@ use super::pattern_key::PatternKey;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(UnitsEssentialsV1Marker = "units/essentials@1")]
+#[icu_provider::data_struct(UnitsEssentialsV1 = "units/essentials@1")]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units_essentials))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsEssentialsV1<'data> {
+pub struct UnitsEssentials<'data> {
     // TODO: use `SinglePlaceholderPattern` instead of `str` for the patterns' string representations.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub prefixes: ZeroMap<'data, PatternKey, str>,

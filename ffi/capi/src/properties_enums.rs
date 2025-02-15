@@ -6,6 +6,8 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    use icu_properties::props;
+
     #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
     #[diplomat::enum_convert(icu_properties::props::BidiClass, needs_wildcard)]
     pub enum BidiClass {
@@ -1697,9 +1699,21 @@ pub mod ffi {
     }
 
     impl GeneralCategory {
+        /// Convert to an integer using the ICU4C integer mappings for `General_Category`
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+
+        /// Produces a GeneralCategoryGroup mask that can represent a group of general categories
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
+        pub fn to_group(self) -> GeneralCategoryGroup {
+            GeneralCategoryGroup {
+                mask: props::GeneralCategoryGroup::from(props::GeneralCategory::from(self)).into(),
+            }
+        }
+
+        /// Convert from an integer using the ICU4C integer mappings for `General_Category`
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryOutOfBoundsError, Struct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unassigned,
@@ -1736,8 +1750,121 @@ pub mod ffi {
             })
         }
     }
+
+    /// A mask that is capable of representing groups of `General_Category` values.
+    #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
+    #[derive(Default)]
+    pub struct GeneralCategoryGroup {
+        pub mask: u32,
+    }
+
+    impl GeneralCategoryGroup {
+        #[inline]
+        pub(crate) fn into_props_group(self) -> props::GeneralCategoryGroup {
+            self.mask.into()
+        }
+
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup::contains, FnInStruct)]
+        pub fn contains(self, val: GeneralCategory) -> bool {
+            self.into_props_group().contains(val.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup::complement, FnInStruct)]
+        pub fn complement(self) -> Self {
+            self.into_props_group().complement().into()
+        }
+
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup::all, FnInStruct)]
+        pub fn all() -> Self {
+            props::GeneralCategoryGroup::all().into()
+        }
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup::empty, FnInStruct)]
+        pub fn empty() -> Self {
+            props::GeneralCategoryGroup::empty().into()
+        }
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup::union, FnInStruct)]
+        #[diplomat::attr(any(c, cpp), rename = "union_")]
+        pub fn union(self, other: Self) -> Self {
+            self.into_props_group()
+                .union(other.into_props_group())
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::intersection,
+            FnInStruct
+        )]
+        pub fn intersection(self, other: Self) -> Self {
+            self.into_props_group()
+                .intersection(other.into_props_group())
+                .into()
+        }
+
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::CasedLetter,
+            AssociatedConstantInStruct
+        )]
+        pub fn cased_letter() -> Self {
+            props::GeneralCategoryGroup::CasedLetter.into()
+        }
+
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Letter,
+            AssociatedConstantInStruct
+        )]
+        pub fn letter() -> Self {
+            props::GeneralCategoryGroup::Letter.into()
+        }
+
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Mark,
+            AssociatedConstantInStruct
+        )]
+        pub fn mark() -> Self {
+            props::GeneralCategoryGroup::Mark.into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Number,
+            AssociatedConstantInStruct
+        )]
+        pub fn number() -> Self {
+            props::GeneralCategoryGroup::Number.into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Other,
+            AssociatedConstantInStruct
+        )]
+        pub fn separator() -> Self {
+            props::GeneralCategoryGroup::Other.into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Letter,
+            AssociatedConstantInStruct
+        )]
+        pub fn other() -> Self {
+            props::GeneralCategoryGroup::Letter.into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Punctuation,
+            AssociatedConstantInStruct
+        )]
+        pub fn punctuation() -> Self {
+            props::GeneralCategoryGroup::Punctuation.into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryGroup::Symbol,
+            AssociatedConstantInStruct
+        )]
+        pub fn symbol() -> Self {
+            props::GeneralCategoryGroup::Symbol.into()
+        }
+    }
 }
 
+impl From<icu_properties::props::GeneralCategoryGroup> for ffi::GeneralCategoryGroup {
+    #[inline]
+    fn from(other: icu_properties::props::GeneralCategoryGroup) -> Self {
+        Self { mask: other.into() }
+    }
+}
 #[cfg(test)]
 mod test {
     use super::ffi::*;
@@ -1746,71 +1873,71 @@ mod test {
     #[test]
     fn test_all_cases_covered() {
         for prop in props::BidiClass::ALL_VALUES {
-            let ffi_prop = BidiClass::from_integer(prop.0)
+            let ffi_prop = BidiClass::from_integer(prop.to_icu4c_value())
                 .expect("Found BidiClass value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
         }
 
         for prop in props::Script::ALL_VALUES {
-            let ffi_prop =
-                Script::from_integer(prop.0).expect("Found Script value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            let ffi_prop = Script::from_integer(prop.to_icu4c_value())
+                .expect("Found Script value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::Script::from(ffi_prop));
         }
 
         for prop in props::HangulSyllableType::ALL_VALUES {
-            let ffi_prop = HangulSyllableType::from_integer(prop.0)
+            let ffi_prop = HangulSyllableType::from_integer(prop.to_icu4c_value())
                 .expect("Found HangulSyllableType value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::HangulSyllableType::from(ffi_prop));
         }
         for prop in props::EastAsianWidth::ALL_VALUES {
-            let ffi_prop = EastAsianWidth::from_integer(prop.0)
+            let ffi_prop = EastAsianWidth::from_integer(prop.to_icu4c_value())
                 .expect("Found EastAsianWidth value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::EastAsianWidth::from(ffi_prop));
         }
         for prop in props::LineBreak::ALL_VALUES {
-            let ffi_prop = LineBreak::from_integer(prop.0)
+            let ffi_prop = LineBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found LineBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::LineBreak::from(ffi_prop));
         }
         for prop in props::GraphemeClusterBreak::ALL_VALUES {
-            let ffi_prop = GraphemeClusterBreak::from_integer(prop.0)
+            let ffi_prop = GraphemeClusterBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found GraphemeClusterBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::GraphemeClusterBreak::from(ffi_prop));
         }
         for prop in props::WordBreak::ALL_VALUES {
-            let ffi_prop = WordBreak::from_integer(prop.0)
+            let ffi_prop = WordBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found WordBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::WordBreak::from(ffi_prop));
         }
         for prop in props::SentenceBreak::ALL_VALUES {
-            let ffi_prop = SentenceBreak::from_integer(prop.0)
+            let ffi_prop = SentenceBreak::from_integer(prop.to_icu4c_value())
                 .expect("Found SentenceBreak value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::SentenceBreak::from(ffi_prop));
         }
         for prop in props::CanonicalCombiningClass::ALL_VALUES {
-            let ffi_prop = CanonicalCombiningClass::from_integer(prop.0)
+            let ffi_prop = CanonicalCombiningClass::from_integer(prop.to_icu4c_value())
                 .expect("Found CanonicalCombiningClass value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::CanonicalCombiningClass::from(ffi_prop));
         }
         for prop in props::IndicSyllabicCategory::ALL_VALUES {
-            let ffi_prop = IndicSyllabicCategory::from_integer(prop.0)
+            let ffi_prop = IndicSyllabicCategory::from_integer(prop.to_icu4c_value())
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
-            let ffi_prop = JoiningType::from_integer(prop.0)
+            let ffi_prop = JoiningType::from_integer(prop.to_icu4c_value())
                 .expect("Found JoiningType value not supported in ffi");
-            assert_eq!(prop.0, ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
             assert_eq!(*prop, props::JoiningType::from(ffi_prop));
         }
         for prop in props::GeneralCategory::ALL_VALUES {

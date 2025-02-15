@@ -14,7 +14,7 @@ Verify that Rust is installed. If it's not, you can install it in a few seconds 
 
 ```console
 cargo --version
-# cargo 1.71.1 (7f1d04c00 2023-07-29)
+# cargo 1.81.0 (2dbb1af80 2024-08-20)
 ```
 
 Create a new Rust binary crate with icu4x as a dependency:
@@ -171,7 +171,7 @@ let date_formatter = DateTimeFormatter::try_new(
 println!(
     "Date: {}",
     date_formatter
-        .format_any_calendar(&iso_date.to_any()).to_string()
+        .format(&iso_date.to_any()).to_string()
 );
 ```
 
@@ -224,7 +224,7 @@ Now we would also like to format the current time.
 
 ### Rust Part 4
 
-Use the API documentation for [`icu::calendar::DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) and [`icu::datetime::DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) to expand your app to format both date and time.
+Use the API documentation for [`icu::time::DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) and [`icu::datetime::DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) to expand your app to format both date and time.
 
 Hint: You can use `Default::default()` for the `DateTimeFormatterOptions` argument.
 

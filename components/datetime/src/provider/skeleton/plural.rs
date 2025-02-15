@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::fields::{components, Field, FieldSymbol, Week};
+use crate::provider::fields::{components, Field, FieldSymbol, Week};
 use crate::provider::pattern::{runtime::Pattern, PatternError, PatternItem};
 use either::Either;
 use icu_plurals::PluralCategory;

@@ -17,8 +17,8 @@
 
 pub mod chinese_based;
 pub mod islamic;
-pub use chinese_based::{ChineseCacheV1Marker, DangiCacheV1Marker};
-pub use islamic::{IslamicObservationalCacheV1Marker, IslamicUmmAlQuraCacheV1Marker};
+pub use chinese_based::{ChineseCacheV1, DangiCacheV1};
+pub use islamic::{IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1};
 
 use crate::types::IsoWeekday;
 use icu_provider::prelude::*;
@@ -45,25 +45,25 @@ const _: () = {
         pub use icu_calendar_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_chinese_cache_v1_marker!(Baked);
-    impl_dangi_cache_v1_marker!(Baked);
-    impl_islamic_observational_cache_v1_marker!(Baked);
-    impl_islamic_umm_al_qura_cache_v1_marker!(Baked);
-    impl_japanese_eras_v1_marker!(Baked);
-    impl_japanese_extended_eras_v1_marker!(Baked);
-    impl_week_data_v2_marker!(Baked);
+    impl_chinese_cache_v1!(Baked);
+    impl_dangi_cache_v1!(Baked);
+    impl_islamic_observational_cache_v1!(Baked);
+    impl_islamic_umm_al_qura_cache_v1!(Baked);
+    impl_japanese_eras_v1!(Baked);
+    impl_japanese_extended_eras_v1!(Baked);
+    impl_week_data_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    ChineseCacheV1Marker::INFO,
-    DangiCacheV1Marker::INFO,
-    IslamicObservationalCacheV1Marker::INFO,
-    IslamicUmmAlQuraCacheV1Marker::INFO,
-    JapaneseErasV1Marker::INFO,
-    JapaneseExtendedErasV1Marker::INFO,
-    WeekDataV2Marker::INFO,
+    ChineseCacheV1::INFO,
+    DangiCacheV1::INFO,
+    IslamicObservationalCacheV1::INFO,
+    IslamicUmmAlQuraCacheV1::INFO,
+    JapaneseErasV1::INFO,
+    JapaneseExtendedErasV1::INFO,
+    WeekDataV2::INFO,
 ];
 
 /// The date at which an era started
@@ -100,14 +100,14 @@ pub struct EraStartDate {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(JapaneseErasV1Marker, "calendar/japanese@1", singleton),
-    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
+    marker(JapaneseErasV1, "calendar/japanese@1", singleton),
+    marker(JapaneseExtendedErasV1, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct JapaneseErasV1<'data> {
+pub struct JapaneseEras<'data> {
     /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
@@ -121,17 +121,13 @@ pub struct JapaneseErasV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    WeekDataV2Marker,
-    "datetime/week_data@2",
-    fallback_by = "region"
-))]
+#[icu_provider::data_struct(marker(WeekDataV2, "datetime/week_data@2", fallback_by = "region"))]
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
-pub struct WeekDataV2 {
+pub struct WeekData {
     /// The first day of a week.
     pub first_weekday: IsoWeekday,
     /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
@@ -185,7 +181,7 @@ impl WeekdaySet {
 
 impl IsoWeekday {
     /// Defines the bit order used for encoding and reading weekend days.
-    const fn bit_value(&self) -> u8 {
+    const fn bit_value(self) -> u8 {
         match self {
             IsoWeekday::Monday => 1 << 6,
             IsoWeekday::Tuesday => 1 << 5,
@@ -224,9 +220,13 @@ impl serde::Serialize for WeekdaySet {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self)
-                .collect::<alloc::vec::Vec<_>>()
-                .serialize(serializer)
+            use serde::ser::SerializeSeq;
+
+            let mut seq = serializer.serialize_seq(None)?;
+            for day in crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self) {
+                seq.serialize_element(&day)?;
+            }
+            seq.end()
         } else {
             self.0.serialize(serializer)
         }
@@ -240,7 +240,26 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
         D: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            alloc::vec::Vec::<IsoWeekday>::deserialize(deserializer).map(|s| Self::new(&s))
+            use core::marker::PhantomData;
+
+            struct Visitor<'de>(PhantomData<&'de ()>);
+            impl<'de> serde::de::Visitor<'de> for Visitor<'de> {
+                type Value = WeekdaySet;
+                fn expecting(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                    core::write!(f, "a sequence of IsoWeekdays")
+                }
+                fn visit_seq<A: serde::de::SeqAccess<'de>>(
+                    self,
+                    mut seq: A,
+                ) -> Result<Self::Value, A::Error> {
+                    let mut set = WeekdaySet::new(&[]);
+                    while let Some(day) = seq.next_element::<IsoWeekday>()? {
+                        set.0 |= day.bit_value();
+                    }
+                    Ok(set)
+                }
+            }
+            deserializer.deserialize_seq(Visitor(PhantomData))
         } else {
             u8::deserialize(deserializer).map(Self)
         }

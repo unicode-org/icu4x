@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -31,9 +32,13 @@ namespace icu4x {
 class Calendar {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_locale(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_locale(const icu4x::Locale& locale);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind);
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind(icu4x::AnyCalendarKind kind);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_locale_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind);
 
   inline icu4x::AnyCalendarKind kind() const;
 

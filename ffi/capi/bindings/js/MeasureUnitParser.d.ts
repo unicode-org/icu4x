@@ -8,9 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 *
 *See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
 */
+
+
 export class MeasureUnitParser {
     
-
     get ffiValue(): pointer;
 
     parse(unitId: string): MeasureUnit | null;

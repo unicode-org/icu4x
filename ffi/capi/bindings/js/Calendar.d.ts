@@ -8,14 +8,19 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
 */
+
+
 export class Calendar {
     
-
     get ffiValue(): pointer;
 
-    static createForLocale(provider: DataProvider, locale: Locale): Calendar;
+    static createForLocale(locale: Locale): Calendar;
 
-    static createForKind(provider: DataProvider, kind: AnyCalendarKind): Calendar;
+    static createForKind(kind: AnyCalendarKind): Calendar;
+
+    static createForLocaleWithProvider(provider: DataProvider, locale: Locale): Calendar;
+
+    static createForKindWithProvider(provider: DataProvider, kind: AnyCalendarKind): Calendar;
 
     get kind(): AnyCalendarKind;
 }

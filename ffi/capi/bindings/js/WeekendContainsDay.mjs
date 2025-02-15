@@ -7,64 +7,81 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *
 *See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
 */
-export class WeekendContainsDay {
 
+
+export class WeekendContainsDay {
+    
     #monday;
+    
     get monday()  {
         return this.#monday;
-    }
+    } 
     set monday(value) {
         this.#monday = value;
     }
-
+    
     #tuesday;
+    
     get tuesday()  {
         return this.#tuesday;
-    }
+    } 
     set tuesday(value) {
         this.#tuesday = value;
     }
-
+    
     #wednesday;
+    
     get wednesday()  {
         return this.#wednesday;
-    }
+    } 
     set wednesday(value) {
         this.#wednesday = value;
     }
-
+    
     #thursday;
+    
     get thursday()  {
         return this.#thursday;
-    }
+    } 
     set thursday(value) {
         this.#thursday = value;
     }
-
+    
     #friday;
+    
     get friday()  {
         return this.#friday;
-    }
+    } 
     set friday(value) {
         this.#friday = value;
     }
-
+    
     #saturday;
+    
     get saturday()  {
         return this.#saturday;
-    }
+    } 
     set saturday(value) {
         this.#saturday = value;
     }
-
+    
     #sunday;
+    
     get sunday()  {
         return this.#sunday;
-    }
+    } 
     set sunday(value) {
         this.#sunday = value;
     }
-    constructor(structObj) {
+    
+    /** Create `WeekendContainsDay` from an object that contains all of `WeekendContainsDay`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj) {
+        return new WeekendContainsDay(structObj);
+    }
+    
+    #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("WeekendContainsDay's constructor takes an object of WeekendContainsDay's fields.");
         }
@@ -111,6 +128,7 @@ export class WeekendContainsDay {
             throw new Error("Missing required field sunday.");
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -121,6 +139,18 @@ export class WeekendContainsDay {
         appendArrayMap
     ) {
         return [this.#monday, this.#tuesday, this.#wednesday, this.#thursday, this.#friday, this.#saturday, this.#sunday]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof WeekendContainsDay) {
+            return obj;
+        }
+
+        return WeekendContainsDay.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -147,7 +177,7 @@ export class WeekendContainsDay {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("WeekendContainsDay._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const mondayDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
         structObj.monday = mondayDeref;
         const tuesdayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
@@ -163,6 +193,10 @@ export class WeekendContainsDay {
         const sundayDeref = (new Uint8Array(wasm.memory.buffer, ptr + 6, 1))[0] === 1;
         structObj.sunday = sundayDeref;
 
-        return new WeekendContainsDay(structObj, internalConstructor);
+        return new WeekendContainsDay(structObj);
+    }
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

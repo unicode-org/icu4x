@@ -42,7 +42,6 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     {
         u32_benches(c);
         char_benches(c);
@@ -50,7 +49,6 @@ fn overview_bench(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
 fn u32_benches(c: &mut Criterion) {
     c.bench_function("zerovec_serde/serialize/u32/slice", |b| {
         b.iter(|| bincode::serialize(&Vec::from(black_box(TEST_SLICE))));
@@ -83,7 +81,6 @@ fn u32_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
 fn char_benches(c: &mut Criterion) {
     const ORIGINAL_CHARS: &[char] = &[
         'ⶢ', '⺇', 'Ⱜ', '◁', '◩', '⌂', '⼅', '⏻', '⢜', '◊', 'ⲫ', '⏷', '◢', '⟉', '℞',
@@ -110,7 +107,6 @@ fn char_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
 fn stress_benches(c: &mut Criterion) {
     let number_vec = random_numbers(100);
     let bincode_vec = bincode::serialize(&number_vec).unwrap();

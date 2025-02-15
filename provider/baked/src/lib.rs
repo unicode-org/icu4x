@@ -23,6 +23,8 @@ pub trait DataStore<M: DataMarker> {
         attributes_prefix_match: bool,
     ) -> Option<&'static M::DataStruct>;
 
+    #[cfg(feature = "alloc")]
     type IterReturn: Iterator<Item = DataIdentifierCow<'static>>;
+    #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn;
 }
