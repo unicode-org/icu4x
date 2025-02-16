@@ -323,11 +323,6 @@ impl<A: AsCalendar> Date<A> {
     pub fn calendar_wrapper(&self) -> &A {
         &self.calendar
     }
-
-    #[doc(hidden)]
-    pub fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
-        Iso::fixed_from_iso(self.to_iso().inner)
-    }
 }
 
 impl Date<Iso> {
@@ -344,7 +339,7 @@ impl Date<Iso> {
     /// ```
     #[doc(hidden)] // unstable
     pub fn days_since(&self, other: Date<Iso>) -> i32 {
-        (Iso::fixed_from_iso(*self.inner()) - Iso::fixed_from_iso(other.inner)) as i32
+        (Iso::to_fixed(*self) - Iso::to_fixed(other)) as i32
     }
 }
 

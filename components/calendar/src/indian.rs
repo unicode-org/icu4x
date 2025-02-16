@@ -467,11 +467,10 @@ mod tests {
     fn test_roundtrip_near_rd_zero() {
         for i in -1000..=1000 {
             let initial = RataDie::new(i);
-            let result = Iso::fixed_from_iso(
-                Iso::iso_from_fixed(initial)
+            let result = Iso::to_fixed(
+                Iso::from_fixed(initial)
                     .to_calendar(Indian)
-                    .to_calendar(Iso)
-                    .inner,
+                    .to_calendar(Iso),
             );
             assert_eq!(
                 initial, result,
@@ -485,11 +484,10 @@ mod tests {
         // Epoch start: RD 28570
         for i in 27570..=29570 {
             let initial = RataDie::new(i);
-            let result = Iso::fixed_from_iso(
-                Iso::iso_from_fixed(initial)
+            let result = Iso::to_fixed(
+                Iso::from_fixed(initial)
                     .to_calendar(Indian)
-                    .to_calendar(Iso)
-                    .inner,
+                    .to_calendar(Iso),
             );
             assert_eq!(
                 initial, result,
@@ -505,8 +503,8 @@ mod tests {
                 let rd_i = RataDie::new(i);
                 let rd_j = RataDie::new(j);
 
-                let indian_i = Iso::iso_from_fixed(rd_i).to_calendar(Indian);
-                let indian_j = Iso::iso_from_fixed(rd_j).to_calendar(Indian);
+                let indian_i = Iso::from_fixed(rd_i).to_calendar(Indian);
+                let indian_j = Iso::from_fixed(rd_j).to_calendar(Indian);
 
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }
@@ -518,8 +516,8 @@ mod tests {
         // Epoch start: RD 28570
         for i in 28470..=28670 {
             for j in 28470..=28670 {
-                let indian_i = Iso::iso_from_fixed(RataDie::new(i)).to_calendar(Indian);
-                let indian_j = Iso::iso_from_fixed(RataDie::new(j)).to_calendar(Indian);
+                let indian_i = Iso::from_fixed(RataDie::new(i)).to_calendar(Indian);
+                let indian_j = Iso::from_fixed(RataDie::new(j)).to_calendar(Indian);
 
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }
