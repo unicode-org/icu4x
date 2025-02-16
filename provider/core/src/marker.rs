@@ -118,7 +118,7 @@ pub trait MaybeAsVarULE {
 
     /// If `self` can be wholy represented as [`Self::VarULE`],
     /// returns it as a reference.
-    /// 
+    ///
     /// Otherwise, returns `None`.
     fn maybe_as_varule(&self) -> Option<&Self::VarULE>;
 }

@@ -8,8 +8,8 @@
 
 use crate as icu_provider;
 
-use crate::prelude::*;
 use crate::marker::MaybeAsVarULE;
+use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
 use alloc::string::String;
