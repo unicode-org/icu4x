@@ -101,7 +101,7 @@ pub(crate) struct ItemsAndOptions<'a> {
     pub(crate) items: &'a ZeroSlice<PatternItem>,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) hour_cycle: Option<fields::Hour>,
-    pub(crate) fractional_second_digits: Option<SubsecondDigits>,
+    pub(crate) subsecond_digits: Option<SubsecondDigits>,
 }
 
 impl ItemsAndOptions<'_> {
@@ -328,13 +328,13 @@ impl OverlapPatternSelectionData {
                 // instead of 3 variants.
                 debug_assert!(options.year_style.is_none());
                 let time_precision = options.time_precision.unwrap_or_default();
-                let (variant, fractional_second_digits) =
+                let (variant, subsecond_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(options.length, variant),
                     options.alignment,
                     prefs.hour_cycle,
-                    fractional_second_digits,
+                    subsecond_digits,
                 )
             }
         }
@@ -413,13 +413,13 @@ impl TimePatternSelectionData {
                 payload,
             } => {
                 let time_precision = options.time_precision.unwrap_or_default();
-                let (variant, fractional_second_digits) =
+                let (variant, subsecond_digits) =
                     input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(options.length, variant),
                     options.alignment,
                     prefs.hour_cycle,
-                    fractional_second_digits,
+                    subsecond_digits,
                 )
             }
         }
@@ -428,12 +428,12 @@ impl TimePatternSelectionData {
 
 impl<'a> TimePatternDataBorrowed<'a> {
     pub(crate) fn items_and_options(self) -> ItemsAndOptions<'a> {
-        let Self::Resolved(pattern, alignment, hour_cycle, fractional_second_digits) = self;
+        let Self::Resolved(pattern, alignment, hour_cycle, subsecond_digits) = self;
         ItemsAndOptions {
             items: pattern.items,
             alignment,
             hour_cycle,
-            fractional_second_digits,
+            subsecond_digits,
         }
     }
 }
@@ -876,14 +876,14 @@ impl<'a> ItemsAndOptions<'a> {
                             field.symbol = FieldSymbol::Hour(hour_cycle);
                         }
                     }
-                    if let Some(fractional_second_digits) = self.fractional_second_digits {
+                    if let Some(subsecond_digits) = self.subsecond_digits {
                         if matches!(
                             field.symbol,
                             FieldSymbol::Second(fields::Second::Second)
                                 | FieldSymbol::DecimalSecond(_)
                         ) {
-                            field.symbol = FieldSymbol::from_fractional_second_digits(
-                                fractional_second_digits,
+                            field.symbol = FieldSymbol::from_subsecond_digits(
+                                subsecond_digits,
                             );
                         }
                     }

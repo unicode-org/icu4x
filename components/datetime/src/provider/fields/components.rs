@@ -71,7 +71,7 @@ pub struct Bag {
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
     /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
-    pub fractional_second: Option<SubsecondDigits>,
+    pub subsecond: Option<SubsecondDigits>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -100,7 +100,7 @@ impl Bag {
             hour: other.hour.or(self.hour),
             minute: other.minute.or(self.minute),
             second: other.second.or(self.second),
-            fractional_second: other.fractional_second.or(self.fractional_second),
+            subsecond: other.subsecond.or(self.subsecond),
             time_zone_name: other.time_zone_name.or(self.time_zone_name),
             hour_cycle: other.hour_cycle.or(self.hour_cycle),
         }
@@ -295,10 +295,10 @@ impl Bag {
         }
 
         if let Some(second) = self.second {
-            let symbol = match self.fractional_second {
+            let symbol = match self.subsecond {
                 None => FieldSymbol::Second(fields::Second::Second),
-                Some(fractional_second) => {
-                    FieldSymbol::from_fractional_second_digits(fractional_second)
+                Some(subsecond) => {
+                    FieldSymbol::from_subsecond_digits(subsecond)
                 }
             };
             // s    8, 12    Numeric: minimum digits
@@ -740,7 +740,7 @@ impl Bag {
                         FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
-                    bag.fractional_second = Some(match decimal_second {
+                    bag.subsecond = Some(match decimal_second {
                         fields::DecimalSecond::SecondF1 => F1,
                         fields::DecimalSecond::SecondF2 => F2,
                         fields::DecimalSecond::SecondF3 => F3,
@@ -798,7 +798,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
-            fractional_second: Some(SubsecondDigits::F3),
+            subsecond: Some(SubsecondDigits::F3),
 
             ..Default::default()
         };
