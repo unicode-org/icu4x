@@ -108,7 +108,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -123,7 +123,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -131,7 +131,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -164,7 +164,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_casemap_data",
@@ -179,14 +179,14 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_provider_baked",
 ]
 
 [[package]]
 name = "icu_collator"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_collator_data",
@@ -203,7 +203,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -211,7 +211,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "potential_utf",
@@ -222,7 +222,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "either",
@@ -245,7 +245,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -253,7 +253,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -266,7 +266,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -313,7 +313,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_list_data",
@@ -324,7 +324,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -332,7 +332,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -346,7 +346,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_core"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -357,14 +357,14 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_provider_baked",
 ]
 
 [[package]]
 name = "icu_normalizer"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -380,7 +380,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_provider_baked",
 ]
@@ -398,7 +398,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -417,7 +417,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -432,14 +432,14 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_provider_baked",
 ]
 
 [[package]]
 name = "icu_provider"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
@@ -455,7 +455,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider",
@@ -465,7 +465,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_baked"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_provider",
  "writeable",
@@ -474,7 +474,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -483,7 +483,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -498,7 +498,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -506,7 +506,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -520,7 +520,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 dependencies = [
  "icu_provider_baked",
 ]
@@ -978,11 +978,11 @@ version = "0.1.7"
 
 [[patch.unused]]
 name = "icu"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu4x-datagen"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
@@ -998,7 +998,7 @@ version = "0.4.0"
 
 [[patch.unused]]
 name = "icu_freertos"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
@@ -1006,23 +1006,23 @@ version = "0.2.0"
 
 [[patch.unused]]
 name = "icu_provider_blob"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu_provider_export"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu_provider_fs"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu_provider_registry"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0-beta1"
+version = "2.0.0-dev"
 
 [[patch.unused]]
 name = "tzif"
