@@ -303,8 +303,9 @@ impl Fraction {
                     }
                 })
         } else {
-            10u64.checked_pow((self.digits - 1) as u32)
-                .and_then(|base|{
+            10u64
+                .checked_pow((self.digits - 1) as u32)
+                .and_then(|base| {
                     if self.value < base {
                         None
                     } else {
@@ -313,7 +314,7 @@ impl Fraction {
                 })?
                 .checked_div(10u64.pow(u32::from(self.digits - 9)))
                 .and_then(|v| u32::try_from(v).ok())
-       }
+        }
     }
 }
 
