@@ -330,7 +330,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// ```
 /// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
-/// use icu::datetime::options::FractionalSecondDigits;
+/// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -340,7 +340,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::Hour,
 ///     TimePrecision::Minute,
 ///     TimePrecision::Second,
-///     TimePrecision::FractionalSecond(FractionalSecondDigits::F2),
+///     TimePrecision::Subsecond(SubsecondDigits::F2),
 ///     TimePrecision::MinuteOptional,
 /// ]
 /// .map(|time_precision| {
@@ -362,7 +362,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     ["7 AM", "7 AM", "7 AM"],                            // Hour
 ///     ["7:00 AM", "7:00 AM", "7:12 AM"],                   // Minute
 ///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"],          // Second
-///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // FractionalSecond(F2)
+///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // Subsecond(F2)
 ///     ["7 AM", "7 AM", "7:12 AM"],                         // MinuteOptional
 /// ];
 ///
@@ -421,12 +421,12 @@ pub enum TimePrecision {
     /// Display the hour, minute, and second with the given number of
     /// fractional second digits.
     ///
-    /// Examples with [`FractionalSecondDigits::F1`]:
+    /// Examples with [`SubsecondDigits::F1`]:
     ///
     /// 1. `11:00:00.0 am`
     /// 2. `16:20:00.0`
     /// 3. `07:15:01.8`
-    FractionalSecond(FractionalSecondDigits),
+    Subsecond(SubsecondDigits),
     /// Display the hour; display the minute if nonzero. Hide the second.
     ///
     /// Examples:
@@ -470,31 +470,31 @@ impl From<TimePrecision> for TimePrecisionSerde {
             TimePrecision::Hour => TimePrecisionSerde::Hour,
             TimePrecision::Minute => TimePrecisionSerde::Minute,
             TimePrecision::Second => TimePrecisionSerde::Second,
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F1) => {
+            TimePrecision::Subsecond(SubsecondDigits::F1) => {
                 TimePrecisionSerde::SecondF1
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F2) => {
+            TimePrecision::Subsecond(SubsecondDigits::F2) => {
                 TimePrecisionSerde::SecondF2
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F3) => {
+            TimePrecision::Subsecond(SubsecondDigits::F3) => {
                 TimePrecisionSerde::SecondF3
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F4) => {
+            TimePrecision::Subsecond(SubsecondDigits::F4) => {
                 TimePrecisionSerde::SecondF4
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F5) => {
+            TimePrecision::Subsecond(SubsecondDigits::F5) => {
                 TimePrecisionSerde::SecondF5
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F6) => {
+            TimePrecision::Subsecond(SubsecondDigits::F6) => {
                 TimePrecisionSerde::SecondF6
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F7) => {
+            TimePrecision::Subsecond(SubsecondDigits::F7) => {
                 TimePrecisionSerde::SecondF7
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F8) => {
+            TimePrecision::Subsecond(SubsecondDigits::F8) => {
                 TimePrecisionSerde::SecondF8
             }
-            TimePrecision::FractionalSecond(FractionalSecondDigits::F9) => {
+            TimePrecision::Subsecond(SubsecondDigits::F9) => {
                 TimePrecisionSerde::SecondF9
             }
             TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
@@ -510,31 +510,31 @@ impl From<TimePrecisionSerde> for TimePrecision {
             TimePrecisionSerde::Minute => TimePrecision::Minute,
             TimePrecisionSerde::Second => TimePrecision::Second,
             TimePrecisionSerde::SecondF1 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F1)
+                TimePrecision::Subsecond(SubsecondDigits::F1)
             }
             TimePrecisionSerde::SecondF2 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F2)
+                TimePrecision::Subsecond(SubsecondDigits::F2)
             }
             TimePrecisionSerde::SecondF3 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F3)
+                TimePrecision::Subsecond(SubsecondDigits::F3)
             }
             TimePrecisionSerde::SecondF4 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F4)
+                TimePrecision::Subsecond(SubsecondDigits::F4)
             }
             TimePrecisionSerde::SecondF5 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F5)
+                TimePrecision::Subsecond(SubsecondDigits::F5)
             }
             TimePrecisionSerde::SecondF6 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F6)
+                TimePrecision::Subsecond(SubsecondDigits::F6)
             }
             TimePrecisionSerde::SecondF7 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F7)
+                TimePrecision::Subsecond(SubsecondDigits::F7)
             }
             TimePrecisionSerde::SecondF8 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F8)
+                TimePrecision::Subsecond(SubsecondDigits::F8)
             }
             TimePrecisionSerde::SecondF9 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
+                TimePrecision::Subsecond(SubsecondDigits::F9)
             }
             TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
         }
@@ -544,7 +544,7 @@ impl From<TimePrecisionSerde> for TimePrecision {
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
-/// [`FractionalSecondDigits::F3`].
+/// [`SubsecondDigits::F3`].
 ///
 /// Lower-precision digits will be truncated.
 ///
@@ -556,7 +556,7 @@ impl From<TimePrecisionSerde> for TimePrecision {
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
-/// use icu::datetime::options::FractionalSecondDigits;
+/// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -564,8 +564,8 @@ impl From<TimePrecisionSerde> for TimePrecision {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///     locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::FractionalSecond(
-///         FractionalSecondDigits::F2,
+///     T::short().with_time_precision(TimePrecision::Subsecond(
+///         SubsecondDigits::F2,
 ///     )),
 /// )
 /// .unwrap();
@@ -577,7 +577,7 @@ impl From<TimePrecisionSerde> for TimePrecision {
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
-pub enum FractionalSecondDigits {
+pub enum SubsecondDigits {
     /// One fractional digit (tenths of a second).
     F1 = 1,
     /// Two fractional digits (hundredths of a second).
@@ -598,19 +598,19 @@ pub enum FractionalSecondDigits {
     F9 = 9,
 }
 
-/// An error from constructing [`FractionalSecondDigits`].
+/// An error from constructing [`SubsecondDigits`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
 #[non_exhaustive]
-pub enum FractionalSecondError {
+pub enum SubsecondError {
     /// The provided value is out of range (0-9).
     OutOfRange,
 }
 
-impl core::error::Error for FractionalSecondError {}
+impl core::error::Error for SubsecondError {}
 
-impl From<FractionalSecondDigits> for u8 {
-    fn from(value: FractionalSecondDigits) -> u8 {
-        use FractionalSecondDigits::*;
+impl From<SubsecondDigits> for u8 {
+    fn from(value: SubsecondDigits) -> u8 {
+        use SubsecondDigits::*;
         match value {
             F1 => 1,
             F2 => 2,
@@ -625,10 +625,10 @@ impl From<FractionalSecondDigits> for u8 {
     }
 }
 
-impl TryFrom<u8> for FractionalSecondDigits {
-    type Error = FractionalSecondError;
+impl TryFrom<u8> for SubsecondDigits {
+    type Error = SubsecondError;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        use FractionalSecondDigits::*;
+        use SubsecondDigits::*;
         match value {
             1 => Ok(F1),
             2 => Ok(F2),
@@ -639,7 +639,7 @@ impl TryFrom<u8> for FractionalSecondDigits {
             7 => Ok(F7),
             8 => Ok(F8),
             9 => Ok(F9),
-            _ => Err(FractionalSecondError::OutOfRange),
+            _ => Err(SubsecondError::OutOfRange),
         }
     }
 }

@@ -30,7 +30,7 @@
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 use crate::{
-    options::FractionalSecondDigits,
+    options::SubsecondDigits,
     provider::fields::{self, Field, FieldLength, FieldSymbol},
     provider::pattern::{reference, runtime::Pattern, PatternItem},
 };
@@ -71,7 +71,7 @@ pub struct Bag {
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
     /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
-    pub fractional_second: Option<FractionalSecondDigits>,
+    pub fractional_second: Option<SubsecondDigits>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -735,7 +735,7 @@ impl Bag {
                     fields::Second::MillisInDay => unimplemented!("fields::Second::MillisInDay"),
                 },
                 FieldSymbol::DecimalSecond(decimal_second) => {
-                    use FractionalSecondDigits::*;
+                    use SubsecondDigits::*;
                     bag.second = Some(match field.length {
                         FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
@@ -798,7 +798,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
-            fractional_second: Some(FractionalSecondDigits::F3),
+            fractional_second: Some(SubsecondDigits::F3),
 
             ..Default::default()
         };

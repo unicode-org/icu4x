@@ -82,7 +82,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
         runtime::PatternBorrowed<'a>,
         Option<Alignment>,
         Option<fields::Hour>,
-        Option<FractionalSecondDigits>,
+        Option<SubsecondDigits>,
     ),
 }
 
@@ -101,7 +101,7 @@ pub(crate) struct ItemsAndOptions<'a> {
     pub(crate) items: &'a ZeroSlice<PatternItem>,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) hour_cycle: Option<fields::Hour>,
-    pub(crate) fractional_second_digits: Option<FractionalSecondDigits>,
+    pub(crate) fractional_second_digits: Option<SubsecondDigits>,
 }
 
 impl ItemsAndOptions<'_> {
@@ -243,12 +243,12 @@ impl ExtractedInput {
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
-    ) -> (PackedSkeletonVariant, Option<FractionalSecondDigits>) {
+    ) -> (PackedSkeletonVariant, Option<SubsecondDigits>) {
         match time_precision {
             TimePrecision::Hour => (PackedSkeletonVariant::Standard, None),
             TimePrecision::Minute => (PackedSkeletonVariant::Variant0, None),
             TimePrecision::Second => (PackedSkeletonVariant::Variant1, None),
-            TimePrecision::FractionalSecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
+            TimePrecision::Subsecond(f) => (PackedSkeletonVariant::Variant1, Some(f)),
             TimePrecision::MinuteOptional => {
                 let minute = self.minute.unwrap_or_default();
                 if minute.is_zero() {

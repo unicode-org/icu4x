@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::FractionalSecondDigits;
+use crate::options::SubsecondDigits;
 #[cfg(feature = "datagen")]
 use crate::provider::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
@@ -174,9 +174,9 @@ impl FieldSymbol {
     }
 
     pub(crate) fn from_fractional_second_digits(
-        fractional_second_digits: FractionalSecondDigits,
+        fractional_second_digits: SubsecondDigits,
     ) -> Self {
-        use FractionalSecondDigits::*;
+        use SubsecondDigits::*;
         match fractional_second_digits {
             F1 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF1),
             F2 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF2),
@@ -604,7 +604,7 @@ impl Hour {
     }
 }
 
-// NOTE: 'S' FractionalSecond is represented via DecimalSecond,
+// NOTE: 'S' Subsecond is represented via DecimalSecond,
 // so it is not included in the Second enum.
 
 field_type!(

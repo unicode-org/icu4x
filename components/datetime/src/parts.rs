@@ -11,7 +11,7 @@
 //! use icu::calendar::Date;
 //! use icu::datetime::parts as datetime_parts;
 //! use icu::datetime::fieldsets;
-//! use icu::datetime::options::FractionalSecondDigits;
+//! use icu::datetime::options::SubsecondDigits;
 //! use icu::datetime::options::TimePrecision;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
@@ -22,7 +22,7 @@
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F2)).zone(fieldsets::zone::SpecificShort),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::Subsecond(SubsecondDigits::F2)).zone(fieldsets::zone::SpecificShort),
 //! )
 //! .unwrap();
 //!

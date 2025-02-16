@@ -8,7 +8,7 @@ use core::cmp::Ordering;
 
 use super::plural::PatternPlurals;
 use crate::{
-    options::FractionalSecondDigits,
+    options::SubsecondDigits,
     provider::{
         calendar::{
             patterns::{FullLongMediumShort, GenericLengthPatterns},
@@ -348,7 +348,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
 /// (see <https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons>)
 fn apply_fractional_seconds(
     pattern: &mut runtime::Pattern,
-    fractional_seconds: Option<FractionalSecondDigits>,
+    fractional_seconds: Option<SubsecondDigits>,
 ) {
     if let Some(fractional_seconds) = fractional_seconds {
         let mut items = pattern.items.to_vec();

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options::FractionalSecondDigits;
+use icu_datetime::options::SubsecondDigits;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -1023,31 +1023,31 @@ impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
             ffi::TimePrecision::MinuteOptional => TimePrecision::MinuteOptional,
             ffi::TimePrecision::Second => TimePrecision::Second,
             ffi::TimePrecision::SecondF1 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F1)
+                TimePrecision::Subsecond(SubsecondDigits::F1)
             }
             ffi::TimePrecision::SecondF2 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F2)
+                TimePrecision::Subsecond(SubsecondDigits::F2)
             }
             ffi::TimePrecision::SecondF3 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F3)
+                TimePrecision::Subsecond(SubsecondDigits::F3)
             }
             ffi::TimePrecision::SecondF4 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F4)
+                TimePrecision::Subsecond(SubsecondDigits::F4)
             }
             ffi::TimePrecision::SecondF5 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F5)
+                TimePrecision::Subsecond(SubsecondDigits::F5)
             }
             ffi::TimePrecision::SecondF6 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F6)
+                TimePrecision::Subsecond(SubsecondDigits::F6)
             }
             ffi::TimePrecision::SecondF7 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F7)
+                TimePrecision::Subsecond(SubsecondDigits::F7)
             }
             ffi::TimePrecision::SecondF8 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F8)
+                TimePrecision::Subsecond(SubsecondDigits::F8)
             }
             ffi::TimePrecision::SecondF9 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
+                TimePrecision::Subsecond(SubsecondDigits::F9)
             }
         }
     }
