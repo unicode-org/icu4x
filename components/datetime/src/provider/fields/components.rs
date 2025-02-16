@@ -739,15 +739,15 @@ impl Bag {
                         _ => Numeric::Numeric,
                     });
                     bag.subsecond = Some(match decimal_second {
-                        fields::DecimalSecond::SecondF1 => F1,
-                        fields::DecimalSecond::SecondF2 => F2,
-                        fields::DecimalSecond::SecondF3 => F3,
-                        fields::DecimalSecond::SecondF4 => F4,
-                        fields::DecimalSecond::SecondF5 => F5,
-                        fields::DecimalSecond::SecondF6 => F6,
-                        fields::DecimalSecond::SecondF7 => F7,
-                        fields::DecimalSecond::SecondF8 => F8,
-                        fields::DecimalSecond::SecondF9 => F9,
+                        fields::DecimalSecond::SecondS1 => S1,
+                        fields::DecimalSecond::SecondS2 => S2,
+                        fields::DecimalSecond::SecondS3 => S3,
+                        fields::DecimalSecond::SecondS4 => S4,
+                        fields::DecimalSecond::SecondS5 => S5,
+                        fields::DecimalSecond::SecondS6 => S6,
+                        fields::DecimalSecond::SecondS7 => S7,
+                        fields::DecimalSecond::SecondS8 => S8,
+                        fields::DecimalSecond::SecondS9 => S9,
                     });
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
@@ -796,7 +796,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
-            subsecond: Some(SubsecondDigits::F3),
+            subsecond: Some(SubsecondDigits::S3),
 
             ..Default::default()
         };
@@ -809,7 +809,7 @@ mod test {
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (
-                    Symbol::DecimalSecond(fields::DecimalSecond::SecondF3),
+                    Symbol::DecimalSecond(fields::DecimalSecond::SecondS3),
                     Length::One
                 )
                     .into(),

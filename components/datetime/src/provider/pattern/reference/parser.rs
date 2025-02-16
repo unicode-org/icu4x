@@ -436,7 +436,7 @@ mod tests {
                     ':'.into(),
                     (FieldSymbol::Minute, FieldLength::Two).into(),
                     ':'.into(),
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::Two).into(),
+                    (fields::DecimalSecond::SecondS2.into(), FieldLength::Two).into(),
                 ],
             ),
         ];
@@ -641,11 +641,11 @@ mod tests {
             ),
             (
                 "s.SS",
-                vec![(fields::DecimalSecond::SecondF2.into(), FieldLength::One).into()],
+                vec![(fields::DecimalSecond::SecondS2.into(), FieldLength::One).into()],
             ),
             (
                 "sSS",
-                vec![(fields::DecimalSecond::SecondF2.into(), FieldLength::One).into()],
+                vec![(fields::DecimalSecond::SecondS2.into(), FieldLength::One).into()],
             ),
             (
                 "s.. z",
@@ -664,7 +664,7 @@ mod tests {
             (
                 "s.SSz",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::SecondS2.into(), FieldLength::One).into(),
                     (
                         fields::TimeZone::SpecificNonLocation.into(),
                         FieldLength::One,
@@ -675,7 +675,7 @@ mod tests {
             (
                 "sSSz",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::SecondS2.into(), FieldLength::One).into(),
                     (
                         fields::TimeZone::SpecificNonLocation.into(),
                         FieldLength::One,
@@ -686,14 +686,14 @@ mod tests {
             (
                 "s.SSss",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::SecondS2.into(), FieldLength::One).into(),
                     (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),
             (
                 "sSSss",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::SecondS2.into(), FieldLength::One).into(),
                     (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),

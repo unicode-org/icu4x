@@ -82,13 +82,13 @@
 //! // Render for column alignment
 //!
 //! let static_field_set = fieldsets::T::short()
-//!     .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::F3))
+//!     .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S3))
 //!     .with_alignment(Alignment::Column)
 //!     .zone(fieldsets::zone::SpecificLong);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
-//! builder.time_precision = Some(TimePrecision::Subsecond(SubsecondDigits::F3));
+//! builder.time_precision = Some(TimePrecision::Subsecond(SubsecondDigits::S3));
 //! builder.alignment = Some(Alignment::Column);
 //! builder.zone_style = Some(ZoneStyle::SpecificLong);
 //! let dynamic_field_set = builder.build_composite().unwrap();

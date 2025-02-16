@@ -19,15 +19,15 @@ export class TimePrecision {
     static Minute : TimePrecision;
     static MinuteOptional : TimePrecision;
     static Second : TimePrecision;
-    static SecondF1 : TimePrecision;
-    static SecondF2 : TimePrecision;
-    static SecondF3 : TimePrecision;
-    static SecondF4 : TimePrecision;
-    static SecondF5 : TimePrecision;
-    static SecondF6 : TimePrecision;
-    static SecondF7 : TimePrecision;
-    static SecondF8 : TimePrecision;
-    static SecondF9 : TimePrecision;
+    static SecondS1 : TimePrecision;
+    static SecondS2 : TimePrecision;
+    static SecondS3 : TimePrecision;
+    static SecondS4 : TimePrecision;
+    static SecondS5 : TimePrecision;
+    static SecondS6 : TimePrecision;
+    static SecondS7 : TimePrecision;
+    static SecondS8 : TimePrecision;
+    static SecondS9 : TimePrecision;
 
     constructor(value: TimePrecision | string );
 }

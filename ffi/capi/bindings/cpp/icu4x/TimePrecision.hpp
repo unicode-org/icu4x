@@ -32,15 +32,15 @@ inline icu4x::TimePrecision icu4x::TimePrecision::FromFFI(icu4x::capi::TimePreci
     case icu4x::capi::TimePrecision_Minute:
     case icu4x::capi::TimePrecision_MinuteOptional:
     case icu4x::capi::TimePrecision_Second:
-    case icu4x::capi::TimePrecision_SecondF1:
-    case icu4x::capi::TimePrecision_SecondF2:
-    case icu4x::capi::TimePrecision_SecondF3:
-    case icu4x::capi::TimePrecision_SecondF4:
-    case icu4x::capi::TimePrecision_SecondF5:
-    case icu4x::capi::TimePrecision_SecondF6:
-    case icu4x::capi::TimePrecision_SecondF7:
-    case icu4x::capi::TimePrecision_SecondF8:
-    case icu4x::capi::TimePrecision_SecondF9:
+    case icu4x::capi::TimePrecision_SecondS1:
+    case icu4x::capi::TimePrecision_SecondS2:
+    case icu4x::capi::TimePrecision_SecondS3:
+    case icu4x::capi::TimePrecision_SecondS4:
+    case icu4x::capi::TimePrecision_SecondS5:
+    case icu4x::capi::TimePrecision_SecondS6:
+    case icu4x::capi::TimePrecision_SecondS7:
+    case icu4x::capi::TimePrecision_SecondS8:
+    case icu4x::capi::TimePrecision_SecondS9:
       return static_cast<icu4x::TimePrecision::Value>(c_enum);
     default:
       abort();

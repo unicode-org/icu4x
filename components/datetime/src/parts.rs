@@ -22,7 +22,7 @@
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::Subsecond(SubsecondDigits::F2)).zone(fieldsets::zone::SpecificShort),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S2)).zone(fieldsets::zone::SpecificShort),
 //! )
 //! .unwrap();
 //!

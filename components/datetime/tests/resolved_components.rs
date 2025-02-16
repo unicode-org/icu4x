@@ -82,7 +82,7 @@ fn test_date_and_time() {
         fieldsets::YMDET::medium()
             .with_year_style(YearStyle::WithEra)
             .with_alignment(Alignment::Column)
-            .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::F4)),
+            .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S4)),
     ));
 
     let mut input_bag = components::Bag::default();
@@ -94,7 +94,7 @@ fn test_date_and_time() {
     input_bag.hour = Some(components::Numeric::TwoDigit);
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
-    input_bag.subsecond = Some(SubsecondDigits::F4);
+    input_bag.subsecond = Some(SubsecondDigits::S4);
     input_bag.hour_cycle = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);
