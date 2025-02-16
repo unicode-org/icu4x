@@ -19,8 +19,8 @@ pub mod ffi {
     #[cfg(feature = "calendar")]
     use crate::week::ffi::WeekCalculator;
 
-    #[diplomat::enum_convert(icu_calendar::types::IsoWeekday)]
-    pub enum IsoWeekday {
+    #[diplomat::enum_convert(icu_calendar::types::Weekday)]
+    pub enum Weekday {
         Monday = 1,
         Tuesday,
         Wednesday,
@@ -84,7 +84,7 @@ pub mod ffi {
         /// Returns the day in the week for this day
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_week(&self) -> IsoWeekday {
+        pub fn day_of_week(&self) -> Weekday {
             self.0.day_of_week().into()
         }
 
@@ -98,7 +98,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
+        pub fn week_of_month(&self, first_weekday: Weekday) -> u8 {
             self.0.week_of_month(first_weekday.into()).0
         }
 
@@ -258,7 +258,7 @@ pub mod ffi {
         /// Returns the day in the week for this day
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
-        pub fn day_of_week(&self) -> IsoWeekday {
+        pub fn day_of_week(&self) -> Weekday {
             self.0.day_of_week().into()
         }
 
@@ -272,7 +272,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn week_of_month(&self, first_weekday: IsoWeekday) -> u8 {
+        pub fn week_of_month(&self, first_weekday: Weekday) -> u8 {
             self.0.week_of_month(first_weekday.into()).0
         }
 

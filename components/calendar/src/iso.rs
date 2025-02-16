@@ -117,7 +117,7 @@ impl Calendar for Iso {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         // For the purposes of the calculation here, Monday is 0, Sunday is 6
         // ISO has Monday=1, Sunday=7, which we transform in the last step
 
@@ -162,7 +162,7 @@ impl Calendar for Iso {
         let day_offset = (january_1_2000 + year_offset + month_offset + date.0.day as u32) % 7;
 
         // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
-        types::IsoWeekday::from((day_offset + 1) as usize)
+        types::Weekday::from((day_offset + 1) as usize)
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
@@ -353,7 +353,7 @@ impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::IsoWeekday;
+    use crate::types::Weekday;
 
     #[test]
     fn iso_overflow() {
@@ -517,17 +517,17 @@ mod test {
         // June 23, 2021 is a Wednesday
         assert_eq!(
             Date::try_new_iso(2021, 6, 23).unwrap().day_of_week(),
-            IsoWeekday::Wednesday,
+            Weekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
             Date::try_new_iso(1983, 2, 2).unwrap().day_of_week(),
-            IsoWeekday::Wednesday,
+            Weekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
             Date::try_new_iso(2020, 1, 21).unwrap().day_of_week(),
-            IsoWeekday::Tuesday,
+            Weekday::Tuesday,
         );
     }
 

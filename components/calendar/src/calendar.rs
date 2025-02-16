@@ -48,7 +48,7 @@ pub trait Calendar {
     /// from that year/month
     fn days_in_month(&self, date: &Self::DateInner) -> u8;
     /// Calculate the day of the week and return it
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         self.date_to_iso(date).day_of_week()
     }
     // fn week_of_year(&self, date: &Self::DateInner) -> u8;

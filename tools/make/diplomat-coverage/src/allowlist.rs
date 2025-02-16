@@ -370,7 +370,7 @@ lazy_static::lazy_static! {
         "icu::calendar::types::DayOfMonth",
         "icu::calendar::types::DayOfWeekInMonth",
         "icu::calendar::types::Era",
-        "icu::calendar::types::IsoWeekday",
+        "icu::calendar::types::Weekday",
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",

@@ -51,7 +51,7 @@ final class WeekCalculator implements ffi.Finalizable {
   }
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
-  factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(IsoWeekday firstWeekday, int minWeekDays) {
+  factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(Weekday firstWeekday, int minWeekDays) {
     final result = _icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday._ffi, minWeekDays);
     return WeekCalculator._fromFfi(result, []);
   }
@@ -59,9 +59,9 @@ final class WeekCalculator implements ffi.Finalizable {
   /// Returns the weekday that starts the week for this object's locale
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
-  IsoWeekday get firstWeekday {
+  Weekday get firstWeekday {
     final result = _icu4x_WeekCalculator_first_weekday_mv1(_ffi);
-    return IsoWeekday.values.firstWhere((v) => v._ffi == result);
+    return Weekday.values.firstWhere((v) => v._ffi == result);
   }
 
   /// The minimum number of days overlapping a year required for a week to be

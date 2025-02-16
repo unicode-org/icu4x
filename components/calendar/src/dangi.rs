@@ -257,7 +257,7 @@ impl Calendar for Dangi {
         }
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> crate::types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> crate::types::Weekday {
         self.date_to_iso(date).day_of_week()
     }
 

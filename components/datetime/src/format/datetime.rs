@@ -12,7 +12,7 @@ use crate::{parts, pattern::*};
 
 use core::fmt::{self, Write};
 use fixed_decimal::SignedFixedDecimal;
-use icu_calendar::types::{DayOfWeekInMonth, IsoWeekday};
+use icu_calendar::types::{DayOfWeekInMonth, Weekday};
 use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
 
@@ -294,13 +294,13 @@ where
                     w.with_part(PART, |w| {
                         w.with_part(Part::ERROR, |w| {
                             w.write_str(match iso_weekday {
-                                IsoWeekday::Monday => "mon",
-                                IsoWeekday::Tuesday => "tue",
-                                IsoWeekday::Wednesday => "wed",
-                                IsoWeekday::Thursday => "thu",
-                                IsoWeekday::Friday => "fri",
-                                IsoWeekday::Saturday => "sat",
-                                IsoWeekday::Sunday => "sun",
+                                Weekday::Monday => "mon",
+                                Weekday::Tuesday => "tue",
+                                Weekday::Wednesday => "wed",
+                                Weekday::Thursday => "thu",
+                                Weekday::Friday => "fri",
+                                Weekday::Saturday => "sat",
+                                Weekday::Sunday => "sun",
                             })
                         })
                     })?;

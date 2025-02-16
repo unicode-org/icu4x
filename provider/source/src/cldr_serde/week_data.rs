@@ -26,22 +26,22 @@ pub(crate) enum Weekday {
     Sun,
 }
 
-impl From<&Weekday> for icu::calendar::types::IsoWeekday {
+impl From<&Weekday> for icu::calendar::types::Weekday {
     fn from(day: &Weekday) -> Self {
-        use icu::calendar::types::IsoWeekday;
+        use icu::calendar::types::Weekday as CalWeekday;
         match day {
-            Weekday::Mon => IsoWeekday::Monday,
-            Weekday::Tue => IsoWeekday::Tuesday,
-            Weekday::Wed => IsoWeekday::Wednesday,
-            Weekday::Thu => IsoWeekday::Thursday,
-            Weekday::Fri => IsoWeekday::Friday,
-            Weekday::Sat => IsoWeekday::Saturday,
-            Weekday::Sun => IsoWeekday::Sunday,
+            Weekday::Mon => CalWeekday::Monday,
+            Weekday::Tue => CalWeekday::Tuesday,
+            Weekday::Wed => CalWeekday::Wednesday,
+            Weekday::Thu => CalWeekday::Thursday,
+            Weekday::Fri => CalWeekday::Friday,
+            Weekday::Sat => CalWeekday::Saturday,
+            Weekday::Sun => CalWeekday::Sunday,
         }
     }
 }
 
-impl From<Weekday> for icu::calendar::types::IsoWeekday {
+impl From<Weekday> for icu::calendar::types::Weekday {
     fn from(day: Weekday) -> Self {
         (&day).into()
     }
