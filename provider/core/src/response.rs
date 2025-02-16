@@ -13,6 +13,7 @@ use core::marker::PhantomData;
 #[cfg(feature = "alloc")]
 use core::ops::Deref;
 use yoke::cartable_ptr::CartableOptionPointer;
+use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
 #[cfg(feature = "alloc")]
@@ -262,7 +263,7 @@ where
 impl<M> Clone for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         Self(match &self.0 {
@@ -275,7 +276,7 @@ where
 impl<M, O> Clone for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     O: Clone,
 {
     fn clone(&self) -> Self {
@@ -294,21 +295,22 @@ where
 impl<M> PartialEq for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
-        self.get() == other.get()
+        YokeTraitHack(self.get()).into_ref() == YokeTraitHack(other.get()).into_ref()
     }
 }
+
 impl<M, O> PartialEq for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
     O: Eq,
 {
     fn eq(&self, other: &Self) -> bool {
         match (self.get(), other.get()) {
-            (Ok(x), Ok(y)) => x == y,
+            (Ok(x), Ok(y)) => YokeTraitHack(x).into_ref() == YokeTraitHack(y).into_ref(),
             (Err(x), Err(y)) => x == y,
             _ => false,
         }
@@ -318,14 +320,14 @@ where
 impl<M> Eq for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Eq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
 {
 }
 
 impl<M, O> Eq for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Eq,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
     O: Eq,
 {
 }
@@ -1092,7 +1094,7 @@ where
 impl<M> Clone for DataResponse<M>
 where
     M: DynamicDataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         Self {

@@ -6,6 +6,7 @@
 
 use core::fmt;
 use icu_provider::prelude::*;
+use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
 /// A data provider that returns clones of a fixed type-erased payload.
@@ -67,7 +68,7 @@ impl<M: DataMarker> FixedProvider<M> {
 impl<M> DataProvider<M> for FixedProvider<M>
 where
     M: DataMarker,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
 {
     fn load(&self, _: DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {

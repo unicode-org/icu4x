@@ -78,6 +78,7 @@ use lru::LruCache;
 use std::borrow::{Borrow, Cow};
 use std::convert::TryInto;
 use std::sync::Mutex;
+use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
@@ -107,7 +108,7 @@ impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
     M::DataStruct: ZeroFrom<'static, M::DataStruct>,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
