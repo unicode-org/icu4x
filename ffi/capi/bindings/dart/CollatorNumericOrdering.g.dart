@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `NumericOrdering`](https://docs.rs/icu/latest/icu/collator/enum.NumericOrdering.html) for more information.
+/// See the [Rust documentation for `NumericOrdering`](https://docs.rs/icu/latest/icu/collator/options/enum.NumericOrdering.html) for more information.
 enum CollatorNumericOrdering {
   off,
 

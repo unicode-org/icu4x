@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/enum.CaseLevel.html) for more information.
+/// See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/options/enum.CaseLevel.html) for more information.
 enum CollatorCaseLevel {
   off,
 

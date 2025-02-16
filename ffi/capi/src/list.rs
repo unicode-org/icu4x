@@ -33,8 +33,16 @@ pub mod ffi {
         /// Construct a new ListFormatter instance for And patterns from compiled data.
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
         #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
-        #[diplomat::rust_link(icu::list::options::ListFormatterOptions::with_length, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::list::options::ListFormatterOptions::default, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::list::options::ListFormatterOptions::with_length,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::list::options::ListFormatterOptions::default,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
