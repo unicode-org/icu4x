@@ -62,7 +62,7 @@ pub(crate) fn bake(
                 const VALUES: &'static [<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
             },
             quote! {
-                icu_provider_baked::zerotrie::DataForStructs
+                icu_provider_baked::zerotrie::Data
             },
         )
     } else {
@@ -101,28 +101,9 @@ pub(crate) fn bake(
             }
 
         },
-        core::mem::size_of::<DataForStructs<icu_provider::hello_world::HelloWorldV1>>()
+        core::mem::size_of::<Data<icu_provider::hello_world::HelloWorldV1>>()
             + trie.as_borrowed_slice().borrows_size(),
     )
-}
-
-pub struct DataForStructs<M: DataMarker> {
-    // Unsafe invariant: actual values contained MUST be valid indices into `values`
-    trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    values: &'static [M::DataStruct],
-}
-
-impl<M: DataMarker> DataForStructs<M> {
-    /// Construct from a trie and values
-    ///
-    /// # Safety
-    /// The actual values contained in the trie must be valid indices into `values`
-    pub const unsafe fn from_trie_and_values_unchecked(
-        trie: ZeroTrieSimpleAscii<&'static [u8]>,
-        values: &'static [M::DataStruct],
-    ) -> Self {
-        Self { trie, values }
-    }
 }
 
 fn get_index(
@@ -149,7 +130,45 @@ fn get_index(
     }
 }
 
-impl<M: DataMarker> super::DataStore<M> for DataForStructs<M> {
+fn iter(
+    trie: &'static ZeroTrieSimpleAscii<&'static [u8]>,
+) -> core::iter::FilterMap<
+    zerotrie::ZeroTrieStringIterator<'static>,
+    fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
+> {
+    use alloc::borrow::ToOwned;
+    trie.iter().filter_map(move |(s, _)| {
+        if let Some((locale, attrs)) = s.split_once(ID_SEPARATOR as char) {
+            Some(DataIdentifierCow::from_owned(
+                DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
+                locale.parse().ok()?,
+            ))
+        } else {
+            s.parse().ok().map(DataIdentifierCow::from_locale)
+        }
+    })
+}
+
+pub struct Data<M: DataMarker> {
+    // Unsafe invariant: actual values contained MUST be valid indices into `values`
+    trie: ZeroTrieSimpleAscii<&'static [u8]>,
+    values: &'static [M::DataStruct],
+}
+
+impl<M: DataMarker> Data<M> {
+    /// Construct from a trie and values
+    ///
+    /// # Safety
+    /// The actual values contained in the trie must be valid indices into `values`
+    pub const unsafe fn from_trie_and_values_unchecked(
+        trie: ZeroTrieSimpleAscii<&'static [u8]>,
+        values: &'static [M::DataStruct],
+    ) -> Self {
+        Self { trie, values }
+    }
+}
+
+impl<M: DataMarker> super::DataStore<M> for Data<M> {
     fn get(
         &self,
         id: DataIdentifierBorrowed,
@@ -168,18 +187,7 @@ impl<M: DataMarker> super::DataStore<M> for DataForStructs<M> {
     >;
     #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn {
-        #![allow(unused_imports)]
-        use alloc::borrow::ToOwned;
-        self.trie.iter().filter_map(move |(s, _)| {
-            if let Some((locale, attrs)) = s.split_once(ID_SEPARATOR as char) {
-                Some(DataIdentifierCow::from_owned(
-                    DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
-                    locale.parse().ok()?,
-                ))
-            } else {
-                s.parse().ok().map(DataIdentifierCow::from_locale)
-            }
-        })
+        iter(&self.trie)
     }
 }
 
@@ -231,17 +239,6 @@ where
     >;
     #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn {
-        #![allow(unused_imports)]
-        use alloc::borrow::ToOwned;
-        self.trie.iter().filter_map(move |(s, _)| {
-            if let Some((locale, attrs)) = s.split_once(ID_SEPARATOR as char) {
-                Some(DataIdentifierCow::from_owned(
-                    DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
-                    locale.parse().ok()?,
-                ))
-            } else {
-                s.parse().ok().map(DataIdentifierCow::from_locale)
-            }
-        })
+        iter(&self.trie)
     }
 }
