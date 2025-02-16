@@ -328,8 +328,7 @@ impl OverlapPatternSelectionData {
                 // instead of 3 variants.
                 debug_assert!(options.year_style.is_none());
                 let time_precision = options.time_precision.unwrap_or_default();
-                let (variant, subsecond_digits) =
-                    input.resolve_time_precision(time_precision);
+                let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(options.length, variant),
                     options.alignment,
@@ -413,8 +412,7 @@ impl TimePatternSelectionData {
                 payload,
             } => {
                 let time_precision = options.time_precision.unwrap_or_default();
-                let (variant, subsecond_digits) =
-                    input.resolve_time_precision(time_precision);
+                let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
                 TimePatternDataBorrowed::Resolved(
                     payload.get().get(options.length, variant),
                     options.alignment,
@@ -882,9 +880,7 @@ impl<'a> ItemsAndOptions<'a> {
                             FieldSymbol::Second(fields::Second::Second)
                                 | FieldSymbol::DecimalSecond(_)
                         ) {
-                            field.symbol = FieldSymbol::from_subsecond_digits(
-                                subsecond_digits,
-                            );
+                            field.symbol = FieldSymbol::from_subsecond_digits(subsecond_digits);
                         }
                     }
                 }

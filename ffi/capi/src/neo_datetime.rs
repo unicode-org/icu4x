@@ -1022,33 +1022,15 @@ impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
             ffi::TimePrecision::Minute => TimePrecision::Minute,
             ffi::TimePrecision::MinuteOptional => TimePrecision::MinuteOptional,
             ffi::TimePrecision::Second => TimePrecision::Second,
-            ffi::TimePrecision::SecondF1 => {
-                TimePrecision::Subsecond(SubsecondDigits::F1)
-            }
-            ffi::TimePrecision::SecondF2 => {
-                TimePrecision::Subsecond(SubsecondDigits::F2)
-            }
-            ffi::TimePrecision::SecondF3 => {
-                TimePrecision::Subsecond(SubsecondDigits::F3)
-            }
-            ffi::TimePrecision::SecondF4 => {
-                TimePrecision::Subsecond(SubsecondDigits::F4)
-            }
-            ffi::TimePrecision::SecondF5 => {
-                TimePrecision::Subsecond(SubsecondDigits::F5)
-            }
-            ffi::TimePrecision::SecondF6 => {
-                TimePrecision::Subsecond(SubsecondDigits::F6)
-            }
-            ffi::TimePrecision::SecondF7 => {
-                TimePrecision::Subsecond(SubsecondDigits::F7)
-            }
-            ffi::TimePrecision::SecondF8 => {
-                TimePrecision::Subsecond(SubsecondDigits::F8)
-            }
-            ffi::TimePrecision::SecondF9 => {
-                TimePrecision::Subsecond(SubsecondDigits::F9)
-            }
+            ffi::TimePrecision::SecondF1 => TimePrecision::Subsecond(SubsecondDigits::F1),
+            ffi::TimePrecision::SecondF2 => TimePrecision::Subsecond(SubsecondDigits::F2),
+            ffi::TimePrecision::SecondF3 => TimePrecision::Subsecond(SubsecondDigits::F3),
+            ffi::TimePrecision::SecondF4 => TimePrecision::Subsecond(SubsecondDigits::F4),
+            ffi::TimePrecision::SecondF5 => TimePrecision::Subsecond(SubsecondDigits::F5),
+            ffi::TimePrecision::SecondF6 => TimePrecision::Subsecond(SubsecondDigits::F6),
+            ffi::TimePrecision::SecondF7 => TimePrecision::Subsecond(SubsecondDigits::F7),
+            ffi::TimePrecision::SecondF8 => TimePrecision::Subsecond(SubsecondDigits::F8),
+            ffi::TimePrecision::SecondF9 => TimePrecision::Subsecond(SubsecondDigits::F9),
         }
     }
 }

@@ -297,9 +297,7 @@ impl Bag {
         if let Some(second) = self.second {
             let symbol = match self.subsecond {
                 None => FieldSymbol::Second(fields::Second::Second),
-                Some(subsecond) => {
-                    FieldSymbol::from_subsecond_digits(subsecond)
-                }
+                Some(subsecond) => FieldSymbol::from_subsecond_digits(subsecond),
             };
             // s    8, 12    Numeric: minimum digits
             // ss  08, 12    Numeric: 2 digits, zero pad if needed

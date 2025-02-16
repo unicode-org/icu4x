@@ -346,10 +346,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
 /// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
 /// of ‘S’ characters from the requested skeleton.
 /// (see <https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons>)
-fn apply_subseconds(
-    pattern: &mut runtime::Pattern,
-    subseconds: Option<SubsecondDigits>,
-) {
+fn apply_subseconds(pattern: &mut runtime::Pattern, subseconds: Option<SubsecondDigits>) {
     if let Some(subseconds) = subseconds {
         let mut items = pattern.items.to_vec();
         for item in items.iter_mut() {

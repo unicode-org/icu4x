@@ -173,9 +173,7 @@ impl FieldSymbol {
         self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
     }
 
-    pub(crate) fn from_subsecond_digits(
-        subsecond_digits: SubsecondDigits,
-    ) -> Self {
+    pub(crate) fn from_subsecond_digits(subsecond_digits: SubsecondDigits) -> Self {
         use SubsecondDigits::*;
         match subsecond_digits {
             F1 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF1),
