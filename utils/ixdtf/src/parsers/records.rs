@@ -236,24 +236,127 @@ pub struct Fraction {
 impl Fraction {
     /// Returns Some(`u32`) representing the `Fraction` as it's computed
     /// nanosecond value or `None` if the digits exceeds 9 digits.
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::records::Fraction;
+    ///
+    /// let valid_fraction = Fraction {
+    ///    digits: 8,
+    ///    value: 12345678
+    /// };
+    ///
+    /// let invalid_fraction = Fraction {
+    ///    digits: 10,
+    ///    value: 1234567898
+    /// };
+    ///
+    /// assert_eq!(valid_fraction.to_nanoseconds(), Some(123456780));
+    /// assert_eq!(invalid_fraction.to_nanoseconds(), None);
+    /// ```
     pub fn to_nanoseconds(&self) -> Option<u32> {
         if self.digits <= 9 {
-            10u32
+            10u64
                 .checked_pow(9 - u32::from(self.digits))
-                .map(|x| x * self.value as u32)
+                .and_then(|x| x.checked_mul(self.value))
+                .and_then(|v| u32::try_from(v).ok())
+                .and_then(|result| {
+                    if result < 100_000_000 {
+                        None
+                    } else {
+                        Some(result)
+                    }
+                })
         } else {
             None
         }
     }
 
-    /// Returns a `u64` representing the `Fraction` as it's computed
+    /// Returns a `u32` representing the `Fraction` as it's computed
     /// nanosecond value, truncating any value beyond 9 digits to
-    /// nanoseconds
-    pub fn to_truncated_nanoseconds(&self) -> u64 {
+    /// nanoseconds.
+    ///
+    /// This method will return `None` if the value exceeds a represented
+    /// range or the underlying `Fraction` is malformed.
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::records::Fraction;
+    ///
+    /// let fraction = Fraction {
+    ///    digits: 13,
+    ///    value: 1234567898765
+    /// };
+    ///
+    /// assert_eq!(fraction.to_truncated_nanoseconds(), Some(123456789));
+    /// assert_eq!(fraction.to_nanoseconds(), None);
+    /// ```
+    pub fn to_truncated_nanoseconds(&self) -> Option<u32> {
         if self.digits <= 9 {
-            self.value
+            10u64
+                .checked_pow(9 - u32::from(self.digits))
+                .and_then(|x| x.checked_mul(self.value))
+                .and_then(|v| u32::try_from(v).ok())
+                .and_then(|result| {
+                    if result < 100_000_000 {
+                        None
+                    } else {
+                        Some(result)
+                    }
+                })
         } else {
-            self.value / 10u64.pow(u32::from(self.digits - 9))
-        }
+            10u64.checked_pow((self.digits - 1) as u32)
+                .and_then(|base|{
+                    if self.value < base {
+                        None
+                    } else {
+                        Some(self.value)
+                    }
+                })?
+                .checked_div(10u64.pow(u32::from(self.digits - 9)))
+                .and_then(|v| u32::try_from(v).ok())
+       }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Fraction;
+
+    #[test]
+    fn malformed_fraction() {
+        // Test 3 digit (< 9 case) with excessively large digit
+        let fraction = Fraction {
+            digits: 4,
+            value: 123456789123,
+        };
+
+        assert_eq!(fraction.to_nanoseconds(), None);
+        assert_eq!(fraction.to_truncated_nanoseconds(), None);
+
+        // Test 3 digit (< 9 case) with under value
+        let fraction = Fraction {
+            digits: 4,
+            value: 123,
+        };
+
+        assert_eq!(fraction.to_nanoseconds(), None);
+        assert_eq!(fraction.to_truncated_nanoseconds(), None);
+
+        // Test 13 digits (> 9 case) but 5 digit value
+        let fraction = Fraction {
+            digits: 13,
+            value: 12345,
+        };
+
+        assert_eq!(fraction.to_nanoseconds(), None);
+        assert_eq!(fraction.to_truncated_nanoseconds(), None);
+
+        // Test 13 digits (> 9 case) but 12 digit value
+        let fraction = Fraction {
+            digits: 13,
+            value: 123456789876,
+        };
+
+        assert_eq!(fraction.to_nanoseconds(), None);
+        assert_eq!(fraction.to_truncated_nanoseconds(), None);
     }
 }
