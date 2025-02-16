@@ -134,6 +134,7 @@ fn get_index(
 }
 
 #[cfg(feature = "alloc")]
+#[allow(clippy::type_complexity)]
 fn iter(
     trie: &'static ZeroTrieSimpleAscii<&'static [u8]>,
 ) -> core::iter::FilterMap<
