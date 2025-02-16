@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::iter::FromIterator;
 use core::{
     convert::TryFrom,
-    iter::FromIterator,
     ops::{Range, RangeBounds, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
 use super::RangeError;
 use crate::codepointinvlist::utils::deconstruct_range;
-use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use crate::codepointinvlist::CodePointInversionList;
+use crate::codepointinvlist::CodePointInversionListBuilder;
 use potential_utf::PotentialCodePoint;
 use zerovec::ZeroVec;
 

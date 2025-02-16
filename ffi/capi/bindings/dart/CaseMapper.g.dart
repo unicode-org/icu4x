@@ -45,7 +45,7 @@ final class CaseMapper implements ffi.Finalizable {
 
   /// Returns the full lowercase mapping of the given string
   ///
-  /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
+  /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
   String lowercase(String s, Locale locale) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -55,7 +55,7 @@ final class CaseMapper implements ffi.Finalizable {
 
   /// Returns the full uppercase mapping of the given string
   ///
-  /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
+  /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
   String uppercase(String s, Locale locale) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -69,7 +69,7 @@ final class CaseMapper implements ffi.Finalizable {
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///
-  /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
+  /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data) for more information.
   String titlecaseSegmentWithOnlyCaseData(String s, Locale locale, TitlecaseOptions options) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -79,7 +79,7 @@ final class CaseMapper implements ffi.Finalizable {
 
   /// Case-folds the characters in the given string
   ///
-  /// See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
+  /// See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
   String fold(String s) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -90,7 +90,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// Case-folds the characters in the given string
   /// using Turkic (T) mappings for dotted/dotless I.
   ///
-  /// See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
+  /// See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.fold_turkic) for more information.
   String foldTurkic(String s) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -110,7 +110,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// Identical to the similarly named method on `CaseMapCloser`, use that if you
   /// plan on using string case closure mappings too.
   ///
-  /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to) for more information.
+  /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.add_case_closure_to) for more information.
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _icu4x_CaseMapper_add_case_closure_to_mv1(_ffi, c, builder._ffi);
   }
@@ -119,9 +119,9 @@ final class CaseMapper implements ffi.Finalizable {
   ///
   /// This function only implements simple and common mappings.
   /// Full mappings, which can map one char to a string, are not included.
-  /// For full mappings, use `CaseMapper::lowercase`.
+  /// For full mappings, use `CaseMapperBorrowed::lowercase`.
   ///
-  /// See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_lowercase) for more information.
+  /// See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
   Rune simpleLowercase(Rune ch) {
     final result = _icu4x_CaseMapper_simple_lowercase_mv1(_ffi, ch);
     return result;
@@ -131,9 +131,9 @@ final class CaseMapper implements ffi.Finalizable {
   ///
   /// This function only implements simple and common mappings.
   /// Full mappings, which can map one char to a string, are not included.
-  /// For full mappings, use `CaseMapper::uppercase`.
+  /// For full mappings, use `CaseMapperBorrowed::uppercase`.
   ///
-  /// See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_uppercase) for more information.
+  /// See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
   Rune simpleUppercase(Rune ch) {
     final result = _icu4x_CaseMapper_simple_uppercase_mv1(_ffi, ch);
     return result;
@@ -143,9 +143,9 @@ final class CaseMapper implements ffi.Finalizable {
   ///
   /// This function only implements simple and common mappings.
   /// Full mappings, which can map one char to a string, are not included.
-  /// For full mappings, use `CaseMapper::titlecase_segment`.
+  /// For full mappings, use `CaseMapperBorrowed::titlecase_segment`.
   ///
-  /// See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_titlecase) for more information.
+  /// See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
   Rune simpleTitlecase(Rune ch) {
     final result = _icu4x_CaseMapper_simple_titlecase_mv1(_ffi, ch);
     return result;
@@ -154,9 +154,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple casefolding of the given character.
   ///
   /// This function only implements simple folding.
-  /// For full folding, use `CaseMapper::fold`.
+  /// For full folding, use `CaseMapperBorrowed::fold`.
   ///
-  /// See the [Rust documentation for `simple_fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold) for more information.
+  /// See the [Rust documentation for `simple_fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
   Rune simpleFold(Rune ch) {
     final result = _icu4x_CaseMapper_simple_fold_mv1(_ffi, ch);
     return result;
@@ -165,9 +165,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple casefolding of the given character in the Turkic locale
   ///
   /// This function only implements simple folding.
-  /// For full folding, use `CaseMapper::fold_turkic`.
+  /// For full folding, use `CaseMapperBorrowed::fold_turkic`.
   ///
-  /// See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic) for more information.
+  /// See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
   Rune simpleFoldTurkic(Rune ch) {
     final result = _icu4x_CaseMapper_simple_fold_turkic_mv1(_ffi, ch);
     return result;

@@ -89,6 +89,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 // Make sure inherent docs go first
@@ -189,3 +190,15 @@ pub use error::{DateError, RangeError};
 pub use gregorian::Gregorian;
 #[doc(no_inline)]
 pub use iso::Iso;
+
+/// Locale preferences used by this crate
+pub mod preferences {
+    #[doc(inline)]
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+    #[doc(inline)]
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::IslamicCalendarAlgorithm;
+}

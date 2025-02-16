@@ -66,10 +66,10 @@ macro_rules! ccc {
     ($name:ident, $num:expr) => {{
         const X: CanonicalCombiningClass = {
             #[cfg(feature = "icu_properties")]
-            if icu_properties::props::CanonicalCombiningClass::$name.0 != $num {
+            if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
-            CanonicalCombiningClass($num)
+            CanonicalCombiningClass::from_icu4c_value($num)
         };
         X
     }};
@@ -110,6 +110,16 @@ use zerovec::{zeroslice, ZeroSlice};
 #[cfg(not(feature = "icu_properties"))]
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
 struct CanonicalCombiningClass(pub(crate) u8);
+
+#[cfg(not(feature = "icu_properties"))]
+impl CanonicalCombiningClass {
+    const fn from_icu4c_value(v: u8) -> Self {
+        Self(v)
+    }
+    const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+}
 
 const CCC_NOT_REORDERED: CanonicalCombiningClass = ccc!(NotReordered, 0);
 const CCC_ABOVE: CanonicalCombiningClass = ccc!(Above, 230);
@@ -183,7 +193,7 @@ fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
 /// See trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
-        CanonicalCombiningClass(trie_value as u8)
+        CanonicalCombiningClass::from_icu4c_value(trie_value as u8)
     } else {
         CCC_NOT_REORDERED
     }
@@ -426,7 +436,7 @@ struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
-        CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         CharacterAndClass(u32::from(c) | ((0xFF) << 24))
@@ -446,7 +456,7 @@ impl CharacterAndClass {
     }
     /// This method must exist for Pernosco to apply its special rendering.
     pub fn ccc(&self) -> CanonicalCombiningClass {
-        CanonicalCombiningClass((self.0 >> 24) as u8)
+        CanonicalCombiningClass::from_icu4c_value((self.0 >> 24) as u8)
     }
 
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
@@ -457,7 +467,8 @@ impl CharacterAndClass {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 =
+            ((ccc_from_trie_value(trie.get32_u32(scalar)).to_icu4c_value() as u32) << 24) | scalar;
     }
 }
 
@@ -2074,18 +2085,17 @@ impl DecomposingNormalizer {
         DecomposingNormalizerBorrowed::new_nfd()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfd: skip,
-            try_new_nfd_with_any_provider,
             try_new_nfd_with_buffer_provider,
             try_new_nfd_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfd)]
     pub fn try_new_nfd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2>
@@ -2126,11 +2136,10 @@ impl DecomposingNormalizer {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfkd: skip,
-            try_new_nfkd_with_any_provider,
             try_new_nfkd_with_buffer_provider,
             try_new_nfkd_unstable,
             Self,
@@ -2147,7 +2156,7 @@ impl DecomposingNormalizer {
         DecomposingNormalizerBorrowed::new_nfkd()
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfkd)]
     pub fn try_new_nfkd_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CompatibilityDecompositionDataV2>
@@ -2648,18 +2657,17 @@ impl ComposingNormalizer {
         ComposingNormalizerBorrowed::new_nfc()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfc: skip,
-            try_new_nfc_with_any_provider,
             try_new_nfc_with_buffer_provider,
             try_new_nfc_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfc)]
     pub fn try_new_nfc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2>
@@ -2688,18 +2696,17 @@ impl ComposingNormalizer {
         ComposingNormalizerBorrowed::new_nfkc()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new_nfkc: skip,
-            try_new_nfkc_with_any_provider,
             try_new_nfkc_with_buffer_provider,
             try_new_nfkc_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_nfkc)]
     pub fn try_new_nfkc_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CompatibilityDecompositionDataV2>
@@ -2719,7 +2726,7 @@ impl ComposingNormalizer {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_uts46)]
     pub(crate) fn try_new_uts46_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<Uts46DecompositionDataV2>

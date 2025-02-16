@@ -89,7 +89,7 @@ fn decomposition_starts_with_non_starter(trie_value: u32) -> bool {
 /// See components/normalizer/trie-value-format.md
 fn ccc_from_trie_value(trie_value: u32) -> CanonicalCombiningClass {
     if trie_value_has_ccc(trie_value) {
-        CanonicalCombiningClass(trie_value as u8)
+        CanonicalCombiningClass::from_icu4c_value(trie_value as u8)
     } else {
         CanonicalCombiningClass::NotReordered
     }
@@ -663,7 +663,7 @@ impl CharacterAndClassAndTrieValue {
     pub fn new_with_non_zero_ccc(c: char, ccc: CanonicalCombiningClass) -> Self {
         CharacterAndClassAndTrieValue {
             c_and_c: CharacterAndClass::new(c, ccc),
-            trie_val: 0xD800 | u32::from(ccc.0),
+            trie_val: 0xD800 | u32::from(ccc.to_icu4c_value()),
         }
     }
     pub fn new_with_non_special_decomposition_trie_val(c: char, trie_val: u32) -> Self {
@@ -683,7 +683,7 @@ impl CharacterAndClassAndTrieValue {
             }
         } else {
             CharacterAndClassAndTrieValue {
-                c_and_c: CharacterAndClass::new(c, CanonicalCombiningClass(0xFF)),
+                c_and_c: CharacterAndClass::new(c, CanonicalCombiningClass::from_icu4c_value(0xFF)),
                 trie_val,
             }
         }
@@ -698,7 +698,7 @@ impl CharacterAndClassAndTrieValue {
 
     fn ccc(&self) -> CanonicalCombiningClass {
         let ret = self.c_and_c.ccc();
-        debug_assert_ne!(ret, CanonicalCombiningClass(0xFF));
+        debug_assert_ne!(ret, CanonicalCombiningClass::from_icu4c_value(0xFF));
         ret
     }
 }
@@ -733,7 +733,7 @@ impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
         // Safety invariant upheld here: the first half is a valid char
         // and the second half does not affect the low 24 bits
-        CharacterAndClass(u32::from(c) | (u32::from(ccc.0) << 24))
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         // Safety invariant upheld here: the first half is a valid char
@@ -750,7 +750,7 @@ impl CharacterAndClass {
     pub fn ccc(&self) -> CanonicalCombiningClass {
         // Safety invariant upheld here: The argument is outside of the low 24 bits,
         // and \0 is a valid character
-        CanonicalCombiningClass((self.0 >> 24) as u8)
+        CanonicalCombiningClass::from_icu4c_value((self.0 >> 24) as u8)
     }
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
@@ -762,7 +762,8 @@ impl CharacterAndClass {
         let scalar = self.0 & 0xFF_FFFF;
         // Safety invariant upheld here: The first half doesn't affect the lower 24 bits,
         // and the second half was taken from the old `self` which had these invariants upheld already.
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 =
+            ((ccc_from_trie_value(trie.get32_u32(scalar)).to_icu4c_value() as u32) << 24) | scalar;
     }
 }
 

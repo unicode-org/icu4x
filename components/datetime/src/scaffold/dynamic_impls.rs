@@ -10,9 +10,9 @@ use icu_calendar::{
     Date, Iso,
 };
 use icu_provider::marker::NeverMarker;
-use icu_timezone::{
-    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
-    Time, TimeZoneBcp47Id, UtcOffset, ZoneVariant,
+use icu_time::{
+    zone::{TimeZoneVariant, UtcOffset},
+    Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
 impl UnstableSealed for DateFieldSet {}
@@ -136,7 +136,7 @@ impl TimeMarkers for TimeFieldSet {
     type HourInput = datetime_marker_helper!(@input/hour, yes);
     type MinuteInput = datetime_marker_helper!(@input/minute, yes);
     type SecondInput = datetime_marker_helper!(@input/second, yes);
-    type NanoSecondInput = datetime_marker_helper!(@input/nanosecond, yes);
+    type NanosecondInput = datetime_marker_helper!(@input/Nanosecond, yes);
 }
 
 impl DateTimeMarkers for TimeFieldSet {

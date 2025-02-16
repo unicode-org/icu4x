@@ -34,7 +34,7 @@ use crate::elements::FFFD_CE32;
 use crate::elements::FFFD_CE32_VALUE;
 use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
-use crate::CaseFirst;
+use crate::preferences::CollationCaseFirst;
 
 use super::MaxVariable;
 
@@ -447,15 +447,15 @@ impl CollationMetadata {
     }
 
     #[inline(always)]
-    pub(crate) fn case_first(self) -> CaseFirst {
+    pub(crate) fn case_first(self) -> CollationCaseFirst {
         if self.bits & CollationMetadata::CASE_FIRST_MASK != 0 {
             if self.bits & CollationMetadata::UPPER_FIRST_MASK != 0 {
-                CaseFirst::Upper
+                CollationCaseFirst::Upper
             } else {
-                CaseFirst::Lower
+                CollationCaseFirst::Lower
             }
         } else {
-            CaseFirst::False
+            CollationCaseFirst::False
         }
     }
 }

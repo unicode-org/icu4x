@@ -18,7 +18,7 @@ use icu_calendar::{
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
 use icu_datetime::{
-    pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
+    pattern::DateTimePattern, pattern::FixedCalendarDateTimeNames, DateTimeFormatter,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::{
@@ -28,7 +28,10 @@ use icu_locale_core::{
     Locale,
 };
 use icu_provider::prelude::*;
-use icu_timezone::{DateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset, ZonedDateTime};
+use icu_time::{
+    zone::{IanaParser, UtcOffset},
+    DateTime, TimeZoneInfo, ZonedDateTime,
+};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,
@@ -57,18 +60,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::new();
-        let japanext = JapaneseExtended::new();
         let skeleton = match fx.input.options.semantic {
-            Some(semantic) => {
-                let semantic = CompositeFieldSet::try_from(semantic).unwrap();
-                match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
-                    Some(v) => v,
-                    None => {
-                        panic!("Cannot handle field sets with time zones in this fn: {semantic:?}");
-                    }
-                }
-            }
+            Some(semantic) => semantic.build_composite_datetime().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -100,8 +93,9 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let input_islamic_umm_al_qura =
             DateTime::try_from_str(&fx.input.value, IslamicUmmAlQura::new_always_calculating())
                 .unwrap();
-        let input_japanese = DateTime::try_from_str(&fx.input.value, japanese).unwrap();
-        let input_japanext = DateTime::try_from_str(&fx.input.value, japanext).unwrap();
+        let input_japanese = DateTime::try_from_str(&fx.input.value, Japanese::new()).unwrap();
+        let input_japanext =
+            DateTime::try_from_str(&fx.input.value, JapaneseExtended::new()).unwrap();
         let input_persian = DateTime::try_from_str(&fx.input.value, Persian).unwrap();
         let input_roc = DateTime::try_from_str(&fx.input.value, Roc).unwrap();
 
@@ -341,8 +335,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let skeleton = match fx.input.options.semantic {
-            Some(semantic) => CompositeFieldSet::try_from(semantic).unwrap(),
+        let fset = match fx.input.options.semantic {
+            Some(semantic) => semantic.build_composite().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -363,14 +357,14 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
                 apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
             }
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton)
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), fset)
                     .unwrap()
             };
             assert_writeable_eq!(
                 dtf.format(&zoned_datetime),
                 output_value.expectation(),
                 "{}",
-                description
+                description,
             );
         }
     }
@@ -391,11 +385,13 @@ fn test_dayperiod_patterns() {
                     for pattern_input in patterns {
                         let parsed_pattern =
                             DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
-                        let mut pattern_formatter =
-                            TypedDateTimeNames::<Gregorian, CompositeDateTimeFieldSet>::try_new(
-                                (&locale).into(),
-                            )
-                            .unwrap();
+                        let mut pattern_formatter = FixedCalendarDateTimeNames::<
+                            Gregorian,
+                            CompositeDateTimeFieldSet,
+                        >::try_new(
+                            (&locale).into()
+                        )
+                        .unwrap();
                         let formatted_datetime = pattern_formatter
                             .include_for_pattern(&parsed_pattern)
                             .unwrap()
@@ -453,10 +449,11 @@ fn test_time_zone_format_configs() {
 
 #[test]
 fn test_time_zone_format_offset_seconds() {
-    use icu_datetime::fieldsets::O;
+    use icu_datetime::fieldsets::zone::LocalizedOffsetLong;
 
     let tzf =
-        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::new()).unwrap();
+        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), LocalizedOffsetLong)
+            .unwrap();
     assert_writeable_eq!(
         tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
         "GMT+00:00:12",
@@ -465,13 +462,14 @@ fn test_time_zone_format_offset_seconds() {
 
 #[test]
 fn test_time_zone_format_offset_fallback() {
-    use icu_datetime::fieldsets::O;
+    use icu_datetime::fieldsets::zone::LocalizedOffsetLong;
 
     let tzf =
-        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::new()).unwrap();
+        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), LocalizedOffsetLong)
+            .unwrap();
     assert_writeable_eq!(
         tzf.format(
-            &TimeZoneIdMapper::new()
+            &IanaParser::new()
                 .iana_to_bcp47("America/Los_Angeles")
                 .with_offset(None)
         ),
@@ -496,7 +494,7 @@ fn test_time_zone_patterns() {
             }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
-                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
+                FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
             let formatted_datetime = pattern_formatter
                 .include_for_pattern(&parsed_pattern)
                 .unwrap()

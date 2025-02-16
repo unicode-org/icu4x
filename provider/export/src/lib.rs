@@ -24,7 +24,7 @@
 //!     DeduplicationStrategy::None.into(),
 //!     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 //! )
-//! .with_markers([icu::list::provider::AndListV2::INFO])
+//! .with_markers([icu::list::provider::ListAndV2::INFO])
 //! .export(
 //!     &provider,
 //!     BlobExporter::new_with_sink(Box::new(
@@ -113,7 +113,7 @@ use std::sync::Arc;
 ///     DeduplicationStrategy::None.into(),
 ///     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 /// )
-/// .with_markers([icu::list::provider::AndListV2::INFO])
+/// .with_markers([icu::list::provider::ListAndV2::INFO])
 /// .export(
 ///     &provider,
 ///     BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -294,7 +294,7 @@ impl ExportDriver {
 }
 
 #[non_exhaustive]
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 /// Contains information about a successful export.
 pub struct ExportMetadata {
     /// The metadata coming from the [`DataExporter`].

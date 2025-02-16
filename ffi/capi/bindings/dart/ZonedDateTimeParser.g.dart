@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html) for more information.
+/// See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTimeParser.html) for more information.
 final class ZonedDateTimeParser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -24,7 +24,7 @@ final class ZonedDateTimeParser implements ffi.Finalizable {
 
   /// Construct a new [`ZonedDateTimeParser`] instance using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTimeParser.html#method.new) for more information.
   factory ZonedDateTimeParser() {
     final result = _icu4x_ZonedDateTimeParser_create_mv1();
     return ZonedDateTimeParser._fromFfi(result, []);
@@ -32,7 +32,7 @@ final class ZonedDateTimeParser implements ffi.Finalizable {
 
   /// Construct a new [`ZonedDateTimeParser`] instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTimeParser.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory ZonedDateTimeParser.withProvider(DataProvider provider) {
@@ -45,7 +45,7 @@ final class ZonedDateTimeParser implements ffi.Finalizable {
 
   /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
   ///
   /// Throws [CalendarParseError] on failure.
   ZonedIsoDateTime tryIsoFromStr(String v) {
@@ -59,7 +59,7 @@ final class ZonedDateTimeParser implements ffi.Finalizable {
 
   /// Creates a new [`ZonedDateTime`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
   ///
   /// Throws [CalendarParseError] on failure.
   ZonedDateTime tryFromStr(String v, Calendar calendar) {

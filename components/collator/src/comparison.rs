@@ -27,7 +27,8 @@ use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
 use crate::{
-    AlternateHandling, CaseFirst, CollationType, CollatorOptions, MaxVariable, NumericOrdering,
+    preferences::CollationCaseFirst, preferences::CollationNumericOrdering,
+    preferences::CollationType, AlternateHandling, CollatorOptions, MaxVariable,
     ResolvedCollatorOptions, Strength,
 };
 use core::cmp::Ordering;
@@ -83,15 +84,15 @@ icu_locale_core::preferences::define_preferences!(
     /// ## Case First
     ///
     /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
-    /// This is the BCP47 key `kf`. Three possibilities: [`CaseFirst::False`] (default,
-    /// except for Danish and Maltese), [`CaseFirst::Lower`], and [`CaseFirst::Upper`]
+    /// This is the BCP47 key `kf`. Three possibilities: [`CollationCaseFirst::False`] (default,
+    /// except for Danish and Maltese), [`CollationCaseFirst::Lower`], and [`CollationCaseFirst::Upper`]
     /// (default for Danish and Maltese).
     ///
     /// ## Numeric
     ///
-    /// This is the BCP47 key `kn`. When set to [`NumericOrdering::True`], any sequence of decimal
+    /// This is the BCP47 key `kn`. When set to [`CollationNumericOrdering::True`], any sequence of decimal
     /// digits (General_Category = Nd) is sorted at the primary level according to the
-    /// numeric value. The default is [`NumericOrdering::False`].
+    /// numeric value. The default is [`CollationNumericOrdering::False`].
     [Copy]
     CollatorPreferences,
     {
@@ -99,11 +100,11 @@ icu_locale_core::preferences::define_preferences!(
         collation_type: CollationType,
         /// Treatment of case. (Large and small kana differences are treated as case differences.)
         /// This corresponds to the `-u-kf` BCP-47 tag.
-        case_first: CaseFirst,
+        case_first: CollationCaseFirst,
         /// When set to `True`, any sequence of decimal digits is sorted at a primary level according
         /// to the numeric value.
         /// This corresponds to the `-u-kn` BPC-47 tag.
-        numeric_ordering: NumericOrdering
+        numeric_ordering: CollationNumericOrdering
     }
 );
 
@@ -129,10 +130,11 @@ impl LocaleSpecificDataHolder {
             .unwrap_or_default();
 
         let data_locale = CollationTailoringV1::make_locale(prefs.locale_preferences);
-        let id = DataIdentifierCow::from_borrowed_and_owned(marker_attributes, data_locale);
-
         let req = DataRequest {
-            id: id.as_borrowed(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                marker_attributes,
+                &data_locale,
+            ),
             metadata: {
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
@@ -140,11 +142,11 @@ impl LocaleSpecificDataHolder {
             },
         };
 
-        let fallback_id =
-            DataIdentifierCow::from_borrowed_and_owned(Default::default(), data_locale);
-
         let fallback_req = DataRequest {
-            id: fallback_id.as_borrowed(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                Default::default(),
+                &data_locale,
+            ),
             ..Default::default()
         };
 
@@ -275,18 +277,17 @@ impl Collator {
         CollatorBorrowed::try_new(prefs, options)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: CollatorPreferences, options: CollatorOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: CollatorPreferences,

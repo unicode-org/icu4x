@@ -58,8 +58,7 @@ fn test_grouper() {
     use crate::DecimalFormatter;
     use fixed_decimal::SignedFixedDecimal;
     use icu_provider::prelude::*;
-    use icu_provider_adapters::fixed::FixedProvider;
-    use icu_provider_adapters::fork::ForkByMarkerProvider;
+    use std::cell::RefCell;
     use writeable::assert_writeable_eq;
 
     let western_sizes = GroupingSizes {
@@ -159,26 +158,51 @@ fn test_grouper() {
                 dec.multiply_pow10((i as i16) + 3);
                 dec
             };
-            let provider_symbols =
-                FixedProvider::<DecimalSymbolsV2>::from_owned(crate::provider::DecimalSymbols {
-                    grouping_sizes: cas.sizes,
-                    ..DecimalSymbols::new_en_for_testing()
-                });
-            let provider_digits =
-                FixedProvider::<DecimalDigitsV1>::from_owned(crate::provider::DecimalDigits {
-                    digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-                });
-            let provider = ForkByMarkerProvider::new(provider_symbols, provider_digits);
+            let symbols = crate::provider::DecimalSymbols {
+                grouping_sizes: cas.sizes,
+                ..DecimalSymbols::new_en_for_testing()
+            };
+            let digits = crate::provider::DecimalDigits {
+                digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+            };
+            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
+            impl DataProvider<DecimalSymbolsV2> for Provider {
+                fn load(
+                    &self,
+                    _req: icu_provider::DataRequest,
+                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV2>, icu_provider::DataError>
+                {
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(
+                            self.0
+                                .borrow_mut()
+                                .take()
+                                // We only have one payload
+                                .ok_or(DataErrorKind::Custom.into_error())?,
+                        ),
+                    })
+                }
+            }
+            impl DataProvider<DecimalDigitsV1> for Provider {
+                fn load(
+                    &self,
+                    _req: icu_provider::DataRequest,
+                ) -> Result<icu_provider::DataResponse<DecimalDigitsV1>, icu_provider::DataError>
+                {
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(self.1),
+                    })
+                }
+            }
+            let provider = Provider(RefCell::new(Some(symbols)), digits);
             let options = options::DecimalFormatterOptions {
-                grouping_strategy: cas.strategy,
+                grouping_strategy: Some(cas.strategy),
                 ..Default::default()
             };
-            let fdf = DecimalFormatter::try_new_unstable(
-                &provider.as_downcasting(),
-                Default::default(),
-                options,
-            )
-            .unwrap();
+            let fdf =
+                DecimalFormatter::try_new_unstable(&provider, Default::default(), options).unwrap();
             let actual = fdf.format(&dec);
             assert_writeable_eq!(actual, cas.expected[i], "{:?}", cas);
         }

@@ -67,9 +67,7 @@ lazy_static::lazy_static! {
         // provider stuff not relevant to FFI
         "DynamicDataMarker",
         "DataMarker",
-        "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
-        "AsDynamicDataProviderAnyMarkerWrap",
         "IterableDynamicDataProvider",
         "IterableDataProvider",
         "ForkByErrorPredicate",
@@ -79,7 +77,6 @@ lazy_static::lazy_static! {
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
-        "AnyProvider",
 
         // We might expose these if someone asks for it
         "DryDataProvider",
@@ -102,8 +99,6 @@ lazy_static::lazy_static! {
     // Ignore if this is a substring of any path
     // keep this small
     pub static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
-        // compiled data constructors cover these
-        "_with_any_provider",
         // TODO-2.0 remove this
         "_with_buffer_provider",
         "_unstable",
@@ -165,19 +160,10 @@ lazy_static::lazy_static! {
         "icu::calendar::types::YearAmbiguity",
         "icu::calendar::types::YearInfo::year_ambiguity",
 
-        // Strongly calendar-typed datetime methods
-        "icu::datetime::DateTimeFormatter::format_same_calendar",
-        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
-        "icu::datetime::MismatchedCalendarError",
-
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
         "icu::datetime::parts",
         "icu::decimal::parts",
-
-        // Not planned for 2.0: Intermediate Writeable types.
-        "icu::datetime::FormattedDateTime::to_string",
-        "icu::datetime::FormattedDateTime::pattern",
 
         // Not planned for 2.0: Until someone needs them
         "icu::locale::extensions",
@@ -194,6 +180,12 @@ lazy_static::lazy_static! {
         "icu::locale::preferences::LocalePreferences",
         "icu::plurals::PluralRulesPreferences",
         "icu::locale::preferences::PreferenceKey",
+        // And the preference enums
+        "icu::calendar::preferences",
+        "icu::collator::preferences",
+        "icu::datetime::preferences",
+        "icu::decimal::preferences",
+
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locale::LanguageIdentifier",
@@ -252,8 +244,14 @@ lazy_static::lazy_static! {
         "fixed_decimal::UnsignedRoundingMode",
 
         // Not planned for 2.0
-        // Lower-level pattern API
-        "icu::datetime::pattern::TypedDateTimeNames",
+        // DateTimePattern and related low-level APIs
+        "icu::datetime::pattern",
+        "icu::datetime::FormattedDateTime::pattern",
+
+        // Not planned for 2.0
+        // DateTimeFormatter conversion functions that involve moving opaques
+        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
+        "icu::datetime::FixedCalendarDateTimeFormatter::into_formatter",
 
         // Not planned for 2.0
         // Serde-specific
@@ -272,7 +270,7 @@ lazy_static::lazy_static! {
         "fixed_decimal::FixedInteger",
         "fixed_decimal::ScientificDecimal",
 
-        "icu::plurals::rules",
+        "icu::plurals::RawPluralOperands",
 
         "icu::plurals::PluralRulesWithRanges",
         "icu::plurals::PluralRulesWithRanges::categories",
@@ -293,7 +291,7 @@ lazy_static::lazy_static! {
 
         // Scaffolding modules
         "icu::datetime::scaffold",
-        "icu::timezone::scaffold",
+        "icu::time::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -309,32 +307,39 @@ lazy_static::lazy_static! {
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
-        "icu::timezone::provider",
+        "icu::time::provider",
         "icu::transliterate::provider",
 
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
-        "icu::timezone::types::ZoneVariantULE",
+        "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::timezone::types::Time",
-        "icu::timezone::types::DateTime",
-        "icu::timezone::types::UtcOffset",
-        "icu::timezone::types::ZoneVariant",
-        "icu::timezone::types::ZonedDateTime",
+        "icu::casemap::titlecase::TitlecaseMapperBorrowed",
+        "icu::datetime::input::Date",
+        "icu::datetime::input::DateTime",
+        "icu::datetime::input::Time",
+        "icu::datetime::input::TimeZone",
+        "icu::datetime::input::TimeZoneInfo",
+        "icu::datetime::input::UtcOffset",
+        "icu::datetime::input::ZonedDateTime",
+        "icu::time::zone::IanaParser",
+        "icu::time::zone::WindowsParser",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
 
-        // Rust-specific calendar wrapper stuff
+        // Rust-specific calendar and field set wrapper stuff
         "icu::calendar::AsCalendar",
         "icu::calendar::Ref",
         "icu::datetime::CldrCalendar",
+        "icu::datetime::DateTimeFormatter::cast_into_fset",
+        "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
@@ -369,10 +374,10 @@ lazy_static::lazy_static! {
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
         "icu::calendar::types::WeekOfYear",
-        "icu::timezone::types::IsoHour",
-        "icu::timezone::types::IsoMinute",
-        "icu::timezone::types::IsoSecond",
-        "icu::timezone::types::NanoSecond",
+        "icu::time::Hour",
+        "icu::time::Minute",
+        "icu::time::Second",
+        "icu::time::Nanosecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.
@@ -391,7 +396,7 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
 
         // Specialized constructor for separately constructed instances
-        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
+        "icu::time::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

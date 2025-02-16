@@ -7,9 +7,7 @@
 use fixed_decimal::SignedFixedDecimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 
 use icu_provider::prelude::*;
 
@@ -27,7 +25,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: NumberingSystem
+        numbering_system: super::super::preferences::NumberingSystem
     }
 );
 
@@ -51,12 +49,11 @@ pub struct PercentFormatter<R> {
 }
 
 impl PercentFormatter<DecimalFormatter> {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PercentFormatterPreferences, options: PercentFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
@@ -78,7 +75,7 @@ impl PercentFormatter<DecimalFormatter> {
         PercentFormatter::try_new_with_decimal_formatter(prefs, decimal_formatter, options)
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: PercentFormatterPreferences,
@@ -160,7 +157,7 @@ where
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_with_decimal_formatter_unstable(
         provider: &(impl DataProvider<PercentEssentialsV1> + ?Sized),
         prefs: PercentFormatterPreferences,

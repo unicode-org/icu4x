@@ -24,7 +24,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// Things you can do with one of these:
 ///
-/// 1. Use it to directly format a datetime via [`TypedDateTimeNames`]
+/// 1. Use it to directly format a datetime via [`FixedCalendarDateTimeNames`]
 /// 2. Convert it to a string pattern via [`Writeable`]
 /// 3. Get the resolved components
 #[doc = date_time_pattern_size!()]
@@ -77,7 +77,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// Check the hour cycle of a resolved pattern:
 ///
 /// ```
-/// use icu::timezone::Time;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::pattern::DateTimePattern;
@@ -104,7 +104,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
 /// [`FormattedDateTime::pattern`]: crate::FormattedDateTime::pattern
-/// [`TypedDateTimeNames`]: crate::pattern::TypedDateTimeNames
+/// [`FixedCalendarDateTimeNames`]: crate::pattern::FixedCalendarDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {
     pattern: runtime::Pattern<'static>,

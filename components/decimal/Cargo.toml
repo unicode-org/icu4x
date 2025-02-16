@@ -22,7 +22,8 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true, features = ["alloc", "macros"] }
+icu_locale_core = { path = "../../components/locale_core" }
 writeable = { workspace = true }
 zerovec = { workspace = true }
 databake = { workspace = true, features = ["derive"], optional = true}
@@ -34,7 +35,6 @@ tinystr = { workspace = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locale_core = { path = "../../components/locale_core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 rand = { workspace = true }
 rand_pcg = { workspace = true }

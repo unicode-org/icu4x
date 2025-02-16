@@ -93,6 +93,7 @@ impl_tinystr_subtag!(
 
 #[allow(clippy::len_without_is_empty)]
 impl Subtag {
+    #[allow(dead_code)]
     pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
     }
@@ -120,6 +121,7 @@ impl Subtag {
         self.0
     }
 
+    #[allow(dead_code)]
     pub(crate) fn to_ascii_lowercase(self) -> Self {
         Self(self.0.to_ascii_lowercase())
     }

@@ -157,7 +157,7 @@ impl Deref for PotentialUtf8 {
 }
 
 /// This impl requires enabling the optional `zerovec` Cargo feature
-#[cfg(feature = "zerovec")]
+#[cfg(all(feature = "zerovec", feature = "alloc"))]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
     type Container = zerovec::VarZeroVec<'a, PotentialUtf8>;
     type Slice = zerovec::VarZeroSlice<PotentialUtf8>;

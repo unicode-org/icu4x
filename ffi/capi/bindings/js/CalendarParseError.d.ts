@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/timezone/enum.ParseError.html)
+/** Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
 */
 
 

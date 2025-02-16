@@ -78,13 +78,12 @@ use lru::LruCache;
 use std::borrow::{Borrow, Cow};
 use std::convert::TryInto;
 use std::sync::Mutex;
-use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
 /// A data provider that caches response payloads in an LRU cache.
 pub struct LruDataCache<P> {
-    cache: Mutex<LruCache<CacheKeyWrap, AnyResponse>>,
+    cache: Mutex<LruCache<CacheKeyWrap, Box<dyn core::any::Any>>>,
     provider: P,
 }
 
@@ -108,8 +107,7 @@ impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
     M::DataStruct: ZeroFrom<'static, M::DataStruct>,
-    M::DataStruct: icu_provider::any::MaybeSendSync,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -117,20 +115,23 @@ where
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
             let borrowed_cache_key = CacheKey(M::INFO, Cow::Borrowed(req.id.locale));
-            if let Some(any_res) = cache.get(&borrowed_cache_key) {
+            if let Some(res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
-                return any_res.downcast_cloned();
+                return Ok(res.downcast_ref::<DataResponse<M>>().unwrap().clone());
             }
         }
         // Release the lock to invoke the inner provider
         let response = self.provider.load(req)?;
         let owned_cache_key = CacheKeyWrap(CacheKey(M::INFO, Cow::Owned(req.id.locale.clone())));
         // Second lock: cache storage
-        self.cache.lock()
+        Ok(self.cache.lock()
             .unwrap()
-            .get_or_insert(owned_cache_key, || response.wrap_into_any_response())
-            .downcast_cloned()
+            .get_or_insert(owned_cache_key, || Box::new(response))
+            .downcast_ref::<DataResponse<M>>()
+            .unwrap()
+            .clone()
+        )
     }
 }
 

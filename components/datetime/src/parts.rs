@@ -16,16 +16,17 @@
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::decimal::parts as decimal_parts;
 //! use icu::locale::locale;
-//! use icu::timezone::{ZonedDateTimeParser, Time};
+//! use icu::datetime::input::{ZonedDateTime, Time};
+//! use icu::time::zone::{IanaParser, UtcOffsetCalculator};
 //! use writeable::assert_writeable_parts_eq;
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F2)).with_zone_specific(),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::FractionalSecond(FractionalSecondDigits::F2)).zone(fieldsets::zone::SpecificShort),
 //! )
 //! .unwrap();
 //!
-//! let dtz = ZonedDateTimeParser::new().parse("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar()).unwrap();
+//! let dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new(), &UtcOffsetCalculator::new()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(

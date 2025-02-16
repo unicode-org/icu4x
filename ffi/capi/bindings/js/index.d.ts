@@ -8,6 +8,8 @@ export { CollatorOptions } from "./CollatorOptions"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
+export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
+
 export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
@@ -64,11 +66,7 @@ export { IsoDate } from "./IsoDate"
 
 export { DateFormatter } from "./DateFormatter"
 
-export { DateTimeFormatter } from "./DateTimeFormatter"
-
 export { GregorianDateFormatter } from "./GregorianDateFormatter"
-
-export { GregorianDateTimeFormatter } from "./GregorianDateTimeFormatter"
 
 export { TimeFormatter } from "./TimeFormatter"
 
@@ -99,6 +97,10 @@ export { Locale } from "./Locale"
 export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
+
+export { DateTimeFormatter } from "./DateTimeFormatter"
+
+export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
@@ -172,9 +174,9 @@ export { Time } from "./Time"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
-export { TimeZoneIdMapper } from "./TimeZoneIdMapper"
+export { IanaParser } from "./IanaParser"
 
-export { TimeZoneIdMapperWithFastCanonicalization } from "./TimeZoneIdMapperWithFastCanonicalization"
+export { IanaParserExtended } from "./IanaParserExtended"
 
 export { MeasureUnit } from "./MeasureUnit"
 
@@ -255,6 +257,12 @@ export { ListLength } from "./ListLength"
 export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
+
+export { DateTimeAlignment } from "./DateTimeAlignment"
+
+export { TimePrecision } from "./TimePrecision"
+
+export { YearStyle } from "./YearStyle"
 
 export { PluralCategory } from "./PluralCategory"
 

@@ -79,7 +79,14 @@ extern crate alloc;
 mod operands;
 mod options;
 pub mod provider;
-pub mod rules;
+
+// Need to expose it for datagen, but we don't
+// have a reason to make it fully public, so hiding docs for now.
+#[cfg(feature = "experimental")]
+mod raw_operands;
+
+#[cfg(feature = "experimental")]
+pub use raw_operands::RawPluralOperands;
 
 use core::cmp::{Ord, PartialOrd};
 use icu_locale_core::preferences::define_preferences;
@@ -87,10 +94,10 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 pub use options::*;
+use provider::rules::runtime::test_rule;
 use provider::CardinalV1;
 use provider::OrdinalV1;
 use provider::PluralRulesData;
-use rules::runtime::test_rule;
 
 #[cfg(feature = "experimental")]
 use provider::PluralRangesV1;
@@ -267,7 +274,7 @@ impl AsRef<PluralRules> for PluralRules {
 }
 
 impl PluralRules {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PluralRulesPreferences, options: PluralRulesOptions) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale and type using compiled data.
         ///
@@ -286,7 +293,7 @@ impl PluralRules {
         /// [`data provider`]: icu_provider
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<CardinalV1> + DataProvider<OrdinalV1> + ?Sized),
         prefs: PluralRulesPreferences,
@@ -298,7 +305,7 @@ impl PluralRules {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale for cardinal numbers using compiled data.
         ///
@@ -325,14 +332,13 @@ impl PluralRules {
         /// [`Other`]: PluralCategory::Other
         functions: [
             try_new_cardinal,
-            try_new_cardinal_with_any_provider,
             try_new_cardinal_with_buffer_provider,
             try_new_cardinal_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1> + ?Sized),
         prefs: PluralRulesPreferences,
@@ -349,7 +355,7 @@ impl PluralRules {
         ))
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRules` for a given locale for ordinal numbers using compiled data.
         ///
@@ -382,14 +388,13 @@ impl PluralRules {
         /// [`Other`]: PluralCategory::Other
         functions: [
             try_new_ordinal,
-            try_new_ordinal_with_any_provider,
             try_new_ordinal_with_buffer_provider,
             try_new_ordinal_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1> + ?Sized),
         prefs: PluralRulesPreferences,
@@ -560,7 +565,7 @@ pub struct PluralRulesWithRanges<R> {
 
 #[cfg(feature = "experimental")]
 impl PluralRulesWithRanges<PluralRules> {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
 
         (prefs: PluralRulesPreferences, options: PluralRulesOptions) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
@@ -578,7 +583,7 @@ impl PluralRulesWithRanges<PluralRules> {
         /// ```
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<PluralRangesV1>
               + DataProvider<CardinalV1>
@@ -593,7 +598,7 @@ impl PluralRulesWithRanges<PluralRules> {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for cardinal numbers using
         /// compiled data.
@@ -613,14 +618,13 @@ impl PluralRulesWithRanges<PluralRules> {
         /// ```
         functions: [
             try_new_cardinal,
-            try_new_cardinal_with_any_provider,
             try_new_cardinal_with_buffer_provider,
             try_new_cardinal_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
         provider: &(impl DataProvider<CardinalV1> + DataProvider<PluralRangesV1> + ?Sized),
         prefs: PluralRulesPreferences,
@@ -630,7 +634,7 @@ impl PluralRulesWithRanges<PluralRules> {
         PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PluralRulesPreferences) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale for ordinal numbers using
         /// compiled data.
@@ -652,14 +656,13 @@ impl PluralRulesWithRanges<PluralRules> {
         /// ```
         functions: [
             try_new_ordinal,
-            try_new_ordinal_with_any_provider,
             try_new_ordinal_with_buffer_provider,
             try_new_ordinal_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
         provider: &(impl DataProvider<OrdinalV1> + DataProvider<PluralRangesV1> + ?Sized),
         prefs: PluralRulesPreferences,
@@ -675,7 +678,7 @@ impl<R> PluralRulesWithRanges<R>
 where
     R: AsRef<PluralRules>,
 {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: PluralRulesPreferences, rules: R) -> error: DataError,
         /// Constructs a new `PluralRulesWithRanges` for a given locale from an existing
         /// `PluralRules` (either owned or as a reference) and compiled data.
@@ -700,14 +703,13 @@ where
         /// ```
         functions: [
             try_new_with_rules,
-            try_new_with_rules_with_any_provider,
             try_new_with_rules_with_buffer_provider,
             try_new_with_rules_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_rules)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_rules)]
     pub fn try_new_with_rules_unstable(
         provider: &(impl DataProvider<PluralRangesV1> + ?Sized),
         prefs: PluralRulesPreferences,

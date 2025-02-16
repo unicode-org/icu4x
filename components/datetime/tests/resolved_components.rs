@@ -11,7 +11,7 @@ use icu_datetime::{
 };
 use icu_locale_core::Locale;
 use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
-use icu_timezone::{DateTime, Time};
+use icu_time::{DateTime, Time};
 
 fn assert_resolved_components(
     skeleton: CompositeDateTimeFieldSet,

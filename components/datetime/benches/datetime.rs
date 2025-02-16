@@ -5,11 +5,11 @@
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::{fieldsets::enums::CompositeFieldSet, FixedCalendarDateTimeFormatter};
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
 use icu_calendar::{Date, Gregorian};
 use icu_locale_core::Locale;
-use icu_timezone::{DateTime, Time, TimeZoneInfo, ZoneVariant, ZonedDateTime};
+use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
@@ -41,20 +41,25 @@ fn datetime_benches(c: &mut Criterion) {
                                             Date::try_new_iso(2024, 1, 1).unwrap(),
                                             Time::midnight(),
                                         ))
-                                        .with_zone_variant(ZoneVariant::Standard),
+                                        .with_zone_variant(TimeZoneVariant::Standard),
                                 }
                             }
                         })
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
-                        let skeleton =
-                            CompositeFieldSet::try_from(setup.options.semantic.unwrap()).unwrap();
+                        let fset = setup
+                            .options
+                            .semantic
+                            .clone()
+                            .unwrap()
+                            .build_composite()
+                            .unwrap();
 
                         let dtf = {
                             FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
                                 locale.into(),
-                                skeleton,
+                                fset,
                             )
                             .expect("Failed to create FixedCalendarDateTimeFormatter.")
                         };

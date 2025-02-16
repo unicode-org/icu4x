@@ -15,9 +15,7 @@ use alloc::borrow::Cow;
 use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
@@ -31,7 +29,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: NumberingSystem
+        numbering_system: super::preferences::NumberingSystem
     }
 );
 
@@ -128,18 +126,17 @@ impl CompactDecimalFormatter {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: CompactDecimalFormatterPreferences, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
             try_new_short: skip,
-            try_new_short_with_any_provider,
             try_new_short_with_buffer_provider,
             try_new_short_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
     pub fn try_new_short_unstable<D>(
         provider: &D,
         prefs: CompactDecimalFormatterPreferences,
@@ -215,18 +212,17 @@ impl CompactDecimalFormatter {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: CompactDecimalFormatterPreferences, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
             try_new_long: skip,
-            try_new_long_with_any_provider,
             try_new_long_with_buffer_provider,
             try_new_long_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
     pub fn try_new_long_unstable<D>(
         provider: &D,
         prefs: CompactDecimalFormatterPreferences,

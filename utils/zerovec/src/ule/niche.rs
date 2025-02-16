@@ -4,7 +4,10 @@
 
 use core::{marker::Copy, mem::size_of};
 
-use crate::{map::ZeroMapKV, ZeroSlice, ZeroVec};
+#[cfg(feature = "alloc")]
+use crate::map::ZeroMapKV;
+#[cfg(feature = "alloc")]
+use crate::{ZeroSlice, ZeroVec};
 
 use super::{AsULE, ULE};
 
@@ -182,6 +185,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a, T: AsULE + 'static, const N: usize> ZeroMapKV<'a> for NichedOption<T, N>
 where
     T::ULE: NicheBytes<N>,

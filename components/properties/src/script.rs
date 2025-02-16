@@ -8,8 +8,10 @@
 use crate::props::Script;
 use crate::provider::*;
 
+#[cfg(feature = "alloc")]
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
+#[cfg(feature = "alloc")]
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
@@ -313,18 +315,17 @@ impl ScriptWithExtensions {
         ScriptWithExtensionsBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> result: Result<ScriptWithExtensions, DataError>,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1> + ?Sized),
     ) -> Result<Self, DataError> {
@@ -642,6 +643,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert!(syriac.contains('\u{1DFA}')); // COMBINING DOT BELOW LEFT
     /// assert!(!syriac.contains('\u{1DFB}')); // COMBINING DELETION MARK
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_script_extensions_set(self, script: Script) -> CodePointInversionList<'a> {
         CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }

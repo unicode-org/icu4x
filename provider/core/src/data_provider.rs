@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::{boxed::Box, collections::BTreeSet};
 use core::marker::PhantomData;
 use yoke::Yokeable;
 
@@ -31,7 +30,8 @@ where
     }
 }
 
-impl<M, P> DataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DataProvider<M> for alloc::boxed::Box<P>
 where
     M: DataMarker,
     P: DataProvider<M> + ?Sized,
@@ -42,6 +42,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DataProvider<M> for alloc::rc::Rc<P>
 where
     M: DataMarker,
@@ -54,6 +55,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DataProvider<M> for alloc::sync::Arc<P>
 where
     M: DataMarker,
@@ -89,7 +91,8 @@ where
     }
 }
 
-impl<M, P> DryDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DryDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DataMarker,
     P: DryDataProvider<M> + ?Sized,
@@ -100,6 +103,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DryDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DataMarker,
@@ -112,6 +116,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DryDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DataMarker,
@@ -127,17 +132,15 @@ where
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+#[cfg(feature = "alloc")]
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a set of [`DataIdentifierCow`].
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+    fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError>;
 }
 
 /// A data provider that loads data for a specific data type.
 ///
 /// Unlike [`DataProvider`], there may be multiple markers corresponding to the same data type.
-/// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
-///
-/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DynamicDataProvider<M>
 where
     M: DynamicDataMarker,
@@ -168,7 +171,8 @@ where
     }
 }
 
-impl<M, P> DynamicDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: DynamicDataProvider<M> + ?Sized,
@@ -183,6 +187,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DynamicDataMarker,
@@ -199,6 +204,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DynamicDataMarker,
@@ -246,7 +252,8 @@ where
     }
 }
 
-impl<M, P> DynamicDryDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> DynamicDryDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: DynamicDryDataProvider<M> + ?Sized,
@@ -261,6 +268,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDryDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DynamicDataMarker,
@@ -277,6 +285,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> DynamicDryDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DynamicDataMarker,
@@ -296,15 +305,17 @@ where
 ///
 /// The provider is not allowed to return `Ok` for requests that were not returned by `iter_ids`,
 /// and must not fail with a [`DataErrorKind::IdentifierNotFound`] for requests that were returned.
+#[cfg(feature = "alloc")]
 pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider<M> {
     /// Given a [`DataMarkerInfo`], returns a set of [`DataIdentifierCow`].
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError>;
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError>;
 }
 
-impl<M, P> IterableDynamicDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> IterableDynamicDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
@@ -312,7 +323,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
         (**self).iter_ids_for_marker(marker)
     }
 }
@@ -325,8 +336,6 @@ where
 /// with a single marker. However, this trait can also be implemented on providers that fork between
 /// multiple markers that all return the same data type. For example, it can abstract over many
 /// calendar systems in the datetime formatter.
-///
-/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait BoundDataProvider<M>
 where
     M: DynamicDataMarker,
@@ -355,7 +364,8 @@ where
     }
 }
 
-impl<M, P> BoundDataProvider<M> for Box<P>
+#[cfg(feature = "alloc")]
+impl<M, P> BoundDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DynamicDataMarker,
     P: BoundDataProvider<M> + ?Sized,
@@ -370,6 +380,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<M, P> BoundDataProvider<M> for alloc::rc::Rc<P>
 where
     M: DynamicDataMarker,
@@ -386,6 +397,7 @@ where
 }
 
 #[cfg(target_has_atomic = "ptr")]
+#[cfg(feature = "alloc")]
 impl<M, P> BoundDataProvider<M> for alloc::sync::Arc<P>
 where
     M: DynamicDataMarker,
@@ -489,8 +501,6 @@ mod test {
         }
     }
 
-    crate::dynutil::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1,], AnyMarker);
-
     /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
     #[derive(Debug)]
     struct DataProvider2 {
@@ -520,12 +530,6 @@ mod test {
             })
         }
     }
-
-    crate::dynutil::impl_dynamic_data_provider!(
-        DataProvider2,
-        [HelloWorldV1, HelloAltMarkerV1,],
-        AnyMarker
-    );
 
     const DATA: &str = r#"{
         "hello_v1": {
@@ -569,19 +573,6 @@ mod test {
     }
 
     #[test]
-    fn test_warehouse_owned_dyn_erased() {
-        use crate::any::*;
-        let warehouse = get_warehouse(DATA);
-        let hello_data = get_payload_v1(&warehouse.as_any_provider().as_downcasting()).unwrap();
-        assert!(matches!(
-            hello_data.get(),
-            HelloWorld {
-                message: Cow::Borrowed(_),
-            }
-        ));
-    }
-
-    #[test]
     fn test_warehouse_owned_dyn_generic() {
         let warehouse = get_warehouse(DATA);
         let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1>).unwrap();
@@ -590,19 +581,6 @@ mod test {
             HelloWorld {
                 message: Cow::Borrowed(_),
             }
-        ));
-    }
-
-    #[test]
-    fn test_warehouse_owned_dyn_erased_alt() {
-        let warehouse = get_warehouse(DATA);
-        let response = get_payload_alt(&warehouse.as_any_provider().as_downcasting());
-        assert!(matches!(
-            response,
-            Err(DataError {
-                kind: DataErrorKind::MarkerNotFound,
-                ..
-            })
         ));
     }
 
@@ -617,27 +595,6 @@ mod test {
                 message: Cow::Borrowed(_),
             }
         ));
-    }
-
-    #[test]
-    fn test_provider2_dyn_erased() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        let hello_data = get_payload_v1(&provider.as_any_provider().as_downcasting()).unwrap();
-        assert!(matches!(
-            hello_data.get(),
-            HelloWorld {
-                message: Cow::Borrowed(_),
-            }
-        ));
-    }
-
-    #[test]
-    fn test_provider2_dyn_erased_alt() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        let hello_data = get_payload_alt(&provider.as_any_provider().as_downcasting()).unwrap();
-        assert!(matches!(hello_data.get(), HelloAlt { .. }));
     }
 
     #[test]
@@ -661,27 +618,6 @@ mod test {
         assert!(matches!(hello_data.get(), HelloAlt { .. }));
     }
 
-    #[test]
-    fn test_mismatched_types() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        // Request is for v2, but type argument is for v1
-        let response: Result<DataResponse<HelloWorldV1>, DataError> = AnyProvider::load_any(
-            &provider.as_any_provider(),
-            HelloAltMarkerV1::INFO,
-            Default::default(),
-        )
-        .unwrap()
-        .downcast();
-        assert!(matches!(
-            response,
-            Err(DataError {
-                kind: DataErrorKind::Downcast(_),
-                ..
-            })
-        ));
-    }
-
     fn check_v1_v2<P>(d: &P)
     where
         P: DataProvider<HelloWorldV1> + DataProvider<HelloAltMarkerV1> + ?Sized,
@@ -698,12 +634,5 @@ mod test {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
         check_v1_v2(&provider);
-    }
-
-    #[test]
-    fn test_v1_v2_dyn_erased() {
-        let warehouse = get_warehouse(DATA);
-        let provider = DataProvider2::from(warehouse);
-        check_v1_v2(&provider.as_any_provider().as_downcasting());
     }
 }

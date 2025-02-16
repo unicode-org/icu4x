@@ -6,16 +6,19 @@ use crate::buf::BufferMarker;
 use crate::DataError;
 use crate::DataLocale;
 use crate::DynamicDataMarker;
+#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 use core::fmt::Debug;
 use core::marker::PhantomData;
+#[cfg(feature = "alloc")]
 use core::ops::Deref;
 use yoke::cartable_ptr::CartableOptionPointer;
-use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
+#[cfg(feature = "alloc")]
 #[cfg(not(feature = "sync"))]
 use alloc::rc::Rc as SelectedRc;
+#[cfg(feature = "alloc")]
 #[cfg(feature = "sync")]
 use alloc::sync::Arc as SelectedRc;
 
@@ -173,11 +176,18 @@ pub(crate) enum DataPayloadOrInnerInner<M: DynamicDataMarker, O> {
 /// it to a [`DataPayload`] with [`DataPayload::from_yoked_buffer`].
 #[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
-pub struct Cart(CartInner);
+pub struct Cart(#[allow(dead_code)] CartInner);
 
 /// The actual cart type (private typedef).
+#[cfg(feature = "alloc")]
 pub(crate) type CartInner = SelectedRc<Box<[u8]>>;
+#[cfg(not(feature = "alloc"))]
+pub(crate) type CartInner = &'static ();
 
+// Safety: Rc, Arc, and () are CloneableCart, and our impl delegates.
+unsafe impl yoke::CloneableCart for Cart {}
+
+#[cfg(feature = "alloc")]
 impl Deref for Cart {
     type Target = Box<[u8]>;
     fn deref(&self) -> &Self::Target {
@@ -185,11 +195,11 @@ impl Deref for Cart {
     }
 }
 // Safety: both Rc and Arc are StableDeref, and our impl delegates.
+#[cfg(feature = "alloc")]
 unsafe impl stable_deref_trait::StableDeref for Cart {}
-// Safety: both Rc and Arc are CloneableCart, and our impl delegates.
-unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
+    #[cfg(feature = "alloc")]
     /// Creates a `Yoke<Y, Option<Cart>>` from owned bytes by applying `f`.
     pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
@@ -252,7 +262,7 @@ where
 impl<M> Clone for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
         Self(match &self.0 {
@@ -265,7 +275,7 @@ where
 impl<M, O> Clone for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
     O: Clone,
 {
     fn clone(&self) -> Self {
@@ -284,22 +294,21 @@ where
 impl<M> PartialEq for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
-        YokeTraitHack(self.get()).into_ref() == YokeTraitHack(other.get()).into_ref()
+        self.get() == other.get()
     }
 }
-
 impl<M, O> PartialEq for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: PartialEq,
     O: Eq,
 {
     fn eq(&self, other: &Self) -> bool {
         match (self.get(), other.get()) {
-            (Ok(x), Ok(y)) => YokeTraitHack(x).into_ref() == YokeTraitHack(y).into_ref(),
+            (Ok(x), Ok(y)) => x == y,
             (Err(x), Err(y)) => x == y,
             _ => false,
         }
@@ -309,14 +318,14 @@ where
 impl<M> Eq for DataPayload<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Eq,
 {
 }
 
 impl<M, O> Eq for DataPayloadOr<M, O>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Eq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Eq,
     O: Eq,
 {
 }
@@ -904,6 +913,7 @@ where
 
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
+    #[cfg(feature = "alloc")]
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
         let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b)
             .wrap_cart_in_option()
@@ -1082,7 +1092,7 @@ where
 impl<M> Clone for DataResponse<M>
 where
     M: DynamicDataMarker,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: Clone,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
         Self {

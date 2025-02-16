@@ -27,15 +27,14 @@ pub mod tuple;
 pub mod tuplevar;
 pub mod vartuple;
 pub use chars::CharULE;
-pub use encode::{encode_varule_to_box, EncodeAsVarULE};
+#[cfg(feature = "alloc")]
+pub use encode::encode_varule_to_box;
+pub use encode::EncodeAsVarULE;
 pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
 
-use alloc::alloc::Layout;
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
 use core::{any, fmt, mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
@@ -358,7 +357,11 @@ pub unsafe trait VarULE: 'static {
 
     /// Allocate on the heap as a `Box<T>`
     #[inline]
-    fn to_boxed(&self) -> Box<Self> {
+    #[cfg(feature = "alloc")]
+    fn to_boxed(&self) -> alloc::boxed::Box<Self> {
+        use alloc::borrow::ToOwned;
+        use alloc::boxed::Box;
+        use core::alloc::Layout;
         let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
         let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {

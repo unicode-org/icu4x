@@ -98,6 +98,8 @@ pub mod list;
 pub mod locale;
 #[cfg(feature = "locale")]
 pub mod locale_directionality;
+#[cfg(feature = "datetime")]
+pub mod neo_datetime;
 #[cfg(feature = "normalizer")]
 pub mod normalizer;
 #[cfg(feature = "normalizer")]

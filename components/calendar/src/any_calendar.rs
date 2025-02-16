@@ -20,11 +20,9 @@ use crate::persian::Persian;
 use crate::roc::Roc;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
+use crate::preferences::{CalendarAlgorithm, IslamicCalendarAlgorithm};
 use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::preferences::extensions::unicode::keywords::{
-    CalendarAlgorithm, IslamicCalendarAlgorithm,
-};
 use icu_locale_core::subtags::language;
 use icu_locale_core::Locale;
 use icu_provider::prelude::*;
@@ -612,54 +610,8 @@ impl AnyCalendar {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new_for_kind)]
-    pub fn try_new_for_kind_with_any_provider<P>(
-        provider: &P,
-        kind: AnyCalendarKind,
-    ) -> Result<Self, DataError>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        Ok(match kind {
-            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => {
-                AnyCalendar::Chinese(Chinese::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => {
-                AnyCalendar::Dangi(Dangi::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
-                EthiopianEraStyle::AmeteMihret,
-            )),
-            AnyCalendarKind::EthiopianAmeteAlem => {
-                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
-            }
-            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
-            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
-            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
-            AnyCalendarKind::IslamicObservational => AnyCalendar::IslamicObservational(
-                IslamicObservational::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(
-                IslamicUmmAlQura::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Japanese => {
-                AnyCalendar::Japanese(Japanese::try_new_with_any_provider(provider)?)
-            }
-            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
-                JapaneseExtended::try_new_with_any_provider(provider)?,
-            ),
-            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
-            AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
-        })
-    }
-
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
     pub fn try_new_for_kind_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -705,7 +657,7 @@ impl AnyCalendar {
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
     pub fn try_new_for_kind_unstable<P>(
         provider: &P,
         kind: AnyCalendarKind,
@@ -768,18 +720,17 @@ impl AnyCalendar {
         Ok(Self::new_for_kind(kind))
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: AnyCalendarPreferences) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: AnyCalendarPreferences,

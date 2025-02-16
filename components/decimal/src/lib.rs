@@ -106,9 +106,7 @@ pub use format::FormattedDecimal;
 use alloc::string::String;
 use fixed_decimal::SignedFixedDecimal;
 use icu_locale_core::locale;
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem,
-};
+use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
 use writeable::Writeable;
@@ -126,9 +124,16 @@ define_preferences!(
         ///
         /// To get the resolved numbering system, you can inspect the data provider.
         /// See the [`provider`] module for an example.
-        numbering_system: NumberingSystem
+        numbering_system: preferences::NumberingSystem
     }
 );
+
+/// Locale preferences used by this crate
+pub mod preferences {
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
 
 /// A formatter for [`SignedFixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -156,12 +161,12 @@ impl AsRef<DecimalFormatter> for DecimalFormatter {
 }
 
 impl DecimalFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: DecimalFormatterPreferences, options: options::DecimalFormatterOptions) -> error: DataError,
         /// Creates a new [`DecimalFormatter`] from compiled data and an options bag.
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
         D: DataProvider<provider::DecimalSymbolsV2> + DataProvider<provider::DecimalDigitsV1> + ?Sized,
     >(

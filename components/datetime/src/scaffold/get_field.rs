@@ -6,10 +6,9 @@ use icu_calendar::{
     types::{DayOfMonth, DayOfYearInfo, IsoWeekday, MonthInfo, YearInfo},
     AsCalendar, Calendar, Date, Iso,
 };
-use icu_timezone::{
-    types::{IsoHour, IsoMinute, IsoSecond, NanoSecond},
-    DateTime, Time, TimeZoneBcp47Id, TimeZoneInfo, TimeZoneModel, UtcOffset, ZoneVariant,
-    ZonedDateTime,
+use icu_time::{
+    zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset},
+    DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 
 use super::UnstableSealed;
@@ -76,31 +75,31 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<
 
 impl UnstableSealed for Time {}
 
-impl GetField<IsoHour> for Time {
+impl GetField<Hour> for Time {
     #[inline]
-    fn get_field(&self) -> IsoHour {
+    fn get_field(&self) -> Hour {
         self.hour
     }
 }
 
-impl GetField<IsoMinute> for Time {
+impl GetField<Minute> for Time {
     #[inline]
-    fn get_field(&self) -> IsoMinute {
+    fn get_field(&self) -> Minute {
         self.minute
     }
 }
 
-impl GetField<IsoSecond> for Time {
+impl GetField<Second> for Time {
     #[inline]
-    fn get_field(&self) -> IsoSecond {
+    fn get_field(&self) -> Second {
         self.second
     }
 }
 
-impl GetField<NanoSecond> for Time {
+impl GetField<Nanosecond> for Time {
     #[inline]
-    fn get_field(&self) -> NanoSecond {
-        self.nanosecond
+    fn get_field(&self) -> Nanosecond {
+        self.subsecond
     }
 }
 
@@ -141,31 +140,31 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for DateT
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoHour> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Hour> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> IsoHour {
+    fn get_field(&self) -> Hour {
         self.time.hour
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoMinute> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Minute> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> IsoMinute {
+    fn get_field(&self) -> Minute {
         self.time.minute
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<IsoSecond> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Second> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> IsoSecond {
+    fn get_field(&self) -> Second {
         self.time.second
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<NanoSecond> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Nanosecond> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> NanoSecond {
-        self.time.nanosecond
+    fn get_field(&self) -> Nanosecond {
+        self.time.subsecond
     }
 }
 
@@ -206,31 +205,31 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYearInfo> for Zo
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoHour> for ZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Hour> for ZonedDateTime<A, Z> {
     #[inline]
-    fn get_field(&self) -> IsoHour {
+    fn get_field(&self) -> Hour {
         self.time.hour
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoMinute> for ZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Minute> for ZonedDateTime<A, Z> {
     #[inline]
-    fn get_field(&self) -> IsoMinute {
+    fn get_field(&self) -> Minute {
         self.time.minute
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<IsoSecond> for ZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Second> for ZonedDateTime<A, Z> {
     #[inline]
-    fn get_field(&self) -> IsoSecond {
+    fn get_field(&self) -> Second {
         self.time.second
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<NanoSecond> for ZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Nanosecond> for ZonedDateTime<A, Z> {
     #[inline]
-    fn get_field(&self) -> NanoSecond {
-        self.time.nanosecond
+    fn get_field(&self) -> Nanosecond {
+        self.time.subsecond
     }
 }
 
@@ -245,22 +244,22 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<TimeZoneBcp47Id> for ZonedDateTime<A, Z>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<TimeZone> for ZonedDateTime<A, Z>
 where
-    Z: GetField<TimeZoneBcp47Id>,
+    Z: GetField<TimeZone>,
 {
     #[inline]
-    fn get_field(&self) -> TimeZoneBcp47Id {
+    fn get_field(&self) -> TimeZone {
         self.zone.get_field()
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<ZoneVariant> for ZonedDateTime<A, Z>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<TimeZoneVariant> for ZonedDateTime<A, Z>
 where
-    Z: GetField<ZoneVariant>,
+    Z: GetField<TimeZoneVariant>,
 {
     #[inline]
-    fn get_field(&self) -> ZoneVariant {
+    fn get_field(&self) -> TimeZoneVariant {
         self.zone.get_field()
     }
 }
@@ -287,12 +286,12 @@ impl GetField<Option<UtcOffset>> for UtcOffset {
 
 impl<O: TimeZoneModel> UnstableSealed for TimeZoneInfo<O> {}
 
-impl<O> GetField<TimeZoneBcp47Id> for TimeZoneInfo<O>
+impl<O> GetField<TimeZone> for TimeZoneInfo<O>
 where
     O: TimeZoneModel,
 {
     #[inline]
-    fn get_field(&self) -> TimeZoneBcp47Id {
+    fn get_field(&self) -> TimeZone {
         self.time_zone_id()
     }
 }
@@ -307,12 +306,12 @@ where
     }
 }
 
-impl<O> GetField<ZoneVariant> for TimeZoneInfo<O>
+impl<O> GetField<TimeZoneVariant> for TimeZoneInfo<O>
 where
-    O: TimeZoneModel<ZoneVariant = ZoneVariant>,
+    O: TimeZoneModel<TimeZoneVariant = TimeZoneVariant>,
 {
     #[inline]
-    fn get_field(&self) -> ZoneVariant {
+    fn get_field(&self) -> TimeZoneVariant {
         self.zone_variant()
     }
 }

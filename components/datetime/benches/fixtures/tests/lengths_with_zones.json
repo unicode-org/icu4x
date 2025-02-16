@@ -9,7 +9,7 @@
                         "time": "full"
                     },
                     "semantic": {
-                        "fieldSet": ["time", "zoneSpecific"],
+                        "zoneStyle": "SpecificShort",
                         "length": "long",
                         "timePrecision": "second"
                     }
@@ -23,7 +23,7 @@
                         "time": "long"
                     },
                     "semantic": {
-                        "fieldSet": ["time", "zoneSpecific"],
+                        "zoneStyle": "SpecificShort",
                         "length": "medium",
                         "timePrecision": "second"
                     }
@@ -37,7 +37,8 @@
                         "time": "full"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                        "dateFields": "YMDE",
+                        "zoneStyle": "SpecificShort",
                         "length": "long",
                         "timePrecision": "second"
                     }
@@ -51,7 +52,8 @@
                         "time": "long"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "time", "zoneSpecific"],
+                        "dateFields": "YMD",
+                        "zoneStyle": "SpecificShort",
                         "length": "medium",
                         "timePrecision": "second"
                     }

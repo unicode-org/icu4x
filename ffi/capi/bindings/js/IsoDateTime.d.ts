@@ -7,7 +7,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /** An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 *
-*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/timezone/struct.DateTime.html) for more information.
+*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
 */
 
 

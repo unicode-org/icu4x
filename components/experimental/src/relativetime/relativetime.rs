@@ -126,7 +126,7 @@ pub struct RelativeTimeFormatter {
 }
 
 macro_rules! constructor {
-    ($unstable: ident, $baked: ident, $any: ident, $buffer: ident, $marker: ty) => {
+    ($unstable: ident, $baked: ident, $buffer: ident, $marker: ty) => {
 
         /// Create a new [`RelativeTimeFormatter`] from compiled data.
         ///
@@ -159,11 +159,10 @@ macro_rules! constructor {
             })
         }
 
-        icu_provider::gen_any_buffer_data_constructors!(
+        icu_provider::gen_buffer_data_constructors!(
             (prefs: RelativeTimeFormatterPreferences, options: RelativeTimeFormatterOptions) -> error: DataError,
             functions: [
                 $baked: skip,
-                $any,
                 $buffer,
                 $unstable,
                 Self,
@@ -171,7 +170,7 @@ macro_rules! constructor {
         );
 
 
-        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
+        #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
         pub fn $unstable<D>(
             provider: &D,
             prefs: RelativeTimeFormatterPreferences,
@@ -211,168 +210,144 @@ impl RelativeTimeFormatter {
     constructor!(
         try_new_long_second_unstable,
         try_new_long_second,
-        try_new_long_second_with_any_provider,
         try_new_long_second_with_buffer_provider,
         LongSecondRelativeV1
     );
     constructor!(
         try_new_long_minute_unstable,
         try_new_long_minute,
-        try_new_long_minute_with_any_provider,
         try_new_long_minute_with_buffer_provider,
         LongMinuteRelativeV1
     );
     constructor!(
         try_new_long_hour_unstable,
         try_new_long_hour,
-        try_new_long_hour_with_any_provider,
         try_new_long_hour_with_buffer_provider,
         LongHourRelativeV1
     );
     constructor!(
         try_new_long_day_unstable,
         try_new_long_day,
-        try_new_long_day_with_any_provider,
         try_new_long_day_with_buffer_provider,
         LongDayRelativeV1
     );
     constructor!(
         try_new_long_week_unstable,
         try_new_long_week,
-        try_new_long_week_with_any_provider,
         try_new_long_week_with_buffer_provider,
         LongWeekRelativeV1
     );
     constructor!(
         try_new_long_month_unstable,
         try_new_long_month,
-        try_new_long_month_with_any_provider,
         try_new_long_month_with_buffer_provider,
         LongMonthRelativeV1
     );
     constructor!(
         try_new_long_quarter_unstable,
         try_new_long_quarter,
-        try_new_long_quarter_with_any_provider,
         try_new_long_quarter_with_buffer_provider,
         LongQuarterRelativeV1
     );
     constructor!(
         try_new_long_year_unstable,
         try_new_long_year,
-        try_new_long_year_with_any_provider,
         try_new_long_year_with_buffer_provider,
         LongYearRelativeV1
     );
     constructor!(
         try_new_short_second_unstable,
         try_new_short_second,
-        try_new_short_second_with_any_provider,
         try_new_short_second_with_buffer_provider,
         ShortSecondRelativeV1
     );
     constructor!(
         try_new_short_minute_unstable,
         try_new_short_minute,
-        try_new_short_minute_with_any_provider,
         try_new_short_minute_with_buffer_provider,
         ShortMinuteRelativeV1
     );
     constructor!(
         try_new_short_hour_unstable,
         try_new_short_hour,
-        try_new_short_hour_with_any_provider,
         try_new_short_hour_with_buffer_provider,
         ShortHourRelativeV1
     );
     constructor!(
         try_new_short_day_unstable,
         try_new_short_day,
-        try_new_short_day_with_any_provider,
         try_new_short_day_with_buffer_provider,
         ShortDayRelativeV1
     );
     constructor!(
         try_new_short_week_unstable,
         try_new_short_week,
-        try_new_short_week_with_any_provider,
         try_new_short_week_with_buffer_provider,
         ShortWeekRelativeV1
     );
     constructor!(
         try_new_short_month_unstable,
         try_new_short_month,
-        try_new_short_month_with_any_provider,
         try_new_short_month_with_buffer_provider,
         ShortMonthRelativeV1
     );
     constructor!(
         try_new_short_quarter_unstable,
         try_new_short_quarter,
-        try_new_short_quarter_with_any_provider,
         try_new_short_quarter_with_buffer_provider,
         ShortQuarterRelativeV1
     );
     constructor!(
         try_new_short_year_unstable,
         try_new_short_year,
-        try_new_short_year_with_any_provider,
         try_new_short_year_with_buffer_provider,
         ShortYearRelativeV1
     );
     constructor!(
         try_new_narrow_second_unstable,
         try_new_narrow_second,
-        try_new_narrow_second_with_any_provider,
         try_new_narrow_second_with_buffer_provider,
         NarrowSecondRelativeV1
     );
     constructor!(
         try_new_narrow_minute_unstable,
         try_new_narrow_minute,
-        try_new_narrow_minute_with_any_provider,
         try_new_narrow_minute_with_buffer_provider,
         NarrowMinuteRelativeV1
     );
     constructor!(
         try_new_narrow_hour_unstable,
         try_new_narrow_hour,
-        try_new_narrow_hour_with_any_provider,
         try_new_narrow_hour_with_buffer_provider,
         NarrowHourRelativeV1
     );
     constructor!(
         try_new_narrow_day_unstable,
         try_new_narrow_day,
-        try_new_narrow_day_with_any_provider,
         try_new_narrow_day_with_buffer_provider,
         NarrowDayRelativeV1
     );
     constructor!(
         try_new_narrow_week_unstable,
         try_new_narrow_week,
-        try_new_narrow_week_with_any_provider,
         try_new_narrow_week_with_buffer_provider,
         NarrowWeekRelativeV1
     );
     constructor!(
         try_new_narrow_month_unstable,
         try_new_narrow_month,
-        try_new_narrow_month_with_any_provider,
         try_new_narrow_month_with_buffer_provider,
         NarrowMonthRelativeV1
     );
     constructor!(
         try_new_narrow_quarter_unstable,
         try_new_narrow_quarter,
-        try_new_narrow_quarter_with_any_provider,
         try_new_narrow_quarter_with_buffer_provider,
         NarrowQuarterRelativeV1
     );
     constructor!(
         try_new_narrow_year_unstable,
         try_new_narrow_year,
-        try_new_narrow_year_with_any_provider,
         try_new_narrow_year_with_buffer_provider,
         NarrowYearRelativeV1
     );

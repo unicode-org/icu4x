@@ -33,7 +33,7 @@
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
-//! use icu::timezone::{DateTime, Time};
+//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
@@ -139,35 +139,35 @@ pub enum TimeFieldSet {
 /// Time zone names contribute a lot of data size. For resource-constrained
 /// environments, the following formats require the least amount of data:
 ///
-/// - [`fieldsets::Zs`]
-/// - [`fieldsets::O`]
+/// - [`fieldsets::zone::SpecificShort`]
+/// - [`fieldsets::zone::LocalizedOffsetLong`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ZoneFieldSet {
     /// The long specific non-location format, as in
     /// “Pacific Daylight Time”.
-    Z(fieldsets::Z),
+    SpecificLong(fieldsets::zone::SpecificLong),
     /// The short specific non-location format, as in
     /// “PDT”.
-    Zs(fieldsets::Zs),
+    SpecificShort(fieldsets::zone::SpecificShort),
     /// The long offset format, as in
     /// “GMT−8:00”.
-    O(fieldsets::O),
+    LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong),
     /// The short offset format, as in
     /// “GMT−8”.
-    Os(fieldsets::Os),
+    LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
     /// The long generic non-location format, as in
     /// “Pacific Time”.
-    V(fieldsets::V),
+    GenericLong(fieldsets::zone::GenericLong),
     /// The short generic non-location format, as in
     /// “PT”.
-    Vs(fieldsets::Vs),
+    GenericShort(fieldsets::zone::GenericShort),
     /// The location format, as in
     /// “Los Angeles Time”.
-    L(fieldsets::L),
+    Location(fieldsets::zone::Location),
     /// The exemplar city format, as in
     /// “Los Angeles.
-    X(fieldsets::X),
+    ExemplarCity(fieldsets::zone::ExemplarCity),
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -408,14 +408,6 @@ macro_rules! impl_attrs {
                     alignment,
                 })
             }
-            #[cfg(all(feature = "serde", feature = "experimental"))]
-            pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawOptions) -> Self {
-                match date_field_set {
-                    $(
-                        DateFieldSet::$d_variant(_) => Self::$variant(fieldsets::$variant::from_raw_options(options)),
-                    )+
-                }
-            }
         }
     };
 }
@@ -472,14 +464,14 @@ impl_attrs! {
     @zone,
     ZoneFieldSet,
     [
-        Z,
-        Zs,
-        O,
-        Os,
-        V,
-        Vs,
-        L,
-        X,
+        SpecificLong,
+        SpecificShort,
+        LocalizedOffsetLong,
+        LocalizedOffsetShort,
+        GenericLong,
+        GenericShort,
+        Location,
+        ExemplarCity,
     ]
 }
 

@@ -22,10 +22,10 @@ use writeable::TryWriteable;
 /// It assumes that the pattern is already localized for the customer's locale. Most clients
 /// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///
-/// Create one of these via factory methods on [`TypedDateTimeNames`].
+/// Create one of these via factory methods on [`FixedCalendarDateTimeNames`].
 ///
 /// [`DateTimePattern`]: super::DateTimePattern
-/// [`TypedDateTimeNames`]: super::TypedDateTimeNames
+/// [`FixedCalendarDateTimeNames`]: super::FixedCalendarDateTimeNames
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
 #[derive(Debug, Copy, Clone)]
 pub struct DateTimePatternFormatter<'a, C: CldrCalendar, FSet> {
@@ -72,13 +72,13 @@ where
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::YearNameLength;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format wide month and era names:
-    /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
-    ///     TypedDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
+    /// let mut names: FixedCalendarDateTimeNames<Gregorian, DateFieldSet> =
+    ///     FixedCalendarDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
     /// names
     ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap()
@@ -107,17 +107,17 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::timezone::Time;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::DayPeriodNameLength;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated day periods:
-    /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
-    ///     TypedDateTimeNames::try_new(locale!("en-US").into()).unwrap();
+    /// let mut names: FixedCalendarDateTimeNames<Gregorian, TimeFieldSet> =
+    ///     FixedCalendarDateTimeNames::try_new(locale!("en-US").into()).unwrap();
     /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -155,19 +155,18 @@ where
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::ZonedDateTimeParser;
+    /// use icu::datetime::input::ZonedDateTime;
+    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut london_winter = ZonedDateTimeParser::new()
-    ///     .parse("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian)
+    /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap();
-    /// let mut london_summer = ZonedDateTimeParser::new()
-    ///     .parse("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian)
+    /// let mut london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
     ///     .unwrap();
     ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
     ///     locale!("en-GB").into(),
     /// )
     /// .unwrap();
@@ -237,13 +236,14 @@ mod tests {
     use super::super::*;
     use icu_calendar::{Date, Gregorian};
     use icu_locale_core::locale;
-    use icu_timezone::{DateTime, Time};
+    use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
 
     #[test]
     fn test_basic_pattern_formatting() {
         let locale = locale!("en").into();
-        let mut names: TypedDateTimeNames<Gregorian> = TypedDateTimeNames::try_new(locale).unwrap();
+        let mut names: FixedCalendarDateTimeNames<Gregorian> =
+            FixedCalendarDateTimeNames::try_new(locale).unwrap();
         names
             .load_month_names(&crate::provider::Baked, MonthNameLength::Wide)
             .unwrap()
@@ -311,8 +311,8 @@ mod tests {
                 length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
                 .load_year_names(&crate::provider::Baked, length)
                 .unwrap();
@@ -377,8 +377,8 @@ mod tests {
                 length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
                 .load_month_names(&crate::provider::Baked, length)
                 .unwrap();
@@ -482,8 +482,8 @@ mod tests {
                 length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
                 .load_weekday_names(&crate::provider::Baked, length)
                 .unwrap();
@@ -567,8 +567,8 @@ mod tests {
                 length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
                 .load_day_period_names(&crate::provider::Baked, length)
                 .unwrap();

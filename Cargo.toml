@@ -28,7 +28,7 @@ members = [
     "components/plurals",
     "components/properties",
     "components/segmenter",
-    "components/timezone",
+    "components/time",
 
     # FFI
     "ffi/capi",
@@ -59,7 +59,7 @@ members = [
     "provider/data/plurals",
     "provider/data/properties",
     "provider/data/segmenter",
-    "provider/data/timezone",
+    "provider/data/time",
 
     # Utils
     "utils/bies",
@@ -151,7 +151,7 @@ icu_normalizer = { version = "~2.0.0-beta1", path = "components/normalizer", def
 icu_plurals = { version = "~2.0.0-beta1", path = "components/plurals", default-features = false }
 icu_properties = { version = "~2.0.0-beta1", path = "components/properties", default-features = false }
 icu_segmenter = { version = "~2.0.0-beta1", path = "components/segmenter", default-features = false }
-icu_timezone = { version = "~2.0.0-beta1", path = "components/timezone", default-features = false }
+icu_time = { version = "~2.0.0-beta1", path = "components/time", default-features = false }
 
 # FFI
 icu_capi = { version = "~2.0.0-beta1", path = "ffi/capi", default-features = false }
@@ -181,7 +181,7 @@ icu_normalizer_data = { version = "~2.0.0-beta1", path = "provider/data/normaliz
 icu_plurals_data = { version = "~2.0.0-beta1", path = "provider/data/plurals", default-features = false }
 icu_properties_data = { version = "~2.0.0-beta1", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.0.0-beta1", path = "provider/data/segmenter", default-features = false }
-icu_timezone_data = { version = "~2.0.0-beta1", path = "provider/data/timezone", default-features = false }
+icu_time_data = { version = "~2.0.0-beta1", path = "provider/data/time", default-features = false }
 icu_experimental_data = { version = "~0.2.0-dev", path = "provider/data/experimental", default-features = false }
 
 # Utils

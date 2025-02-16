@@ -2,14 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "alloc")]
+use crate::code_point_set::CodePointSetData;
 use crate::props::GeneralCategory;
+use crate::props::GeneralCategoryGroup;
 use crate::provider::*;
-use crate::{code_point_set::CodePointSetData, props::GeneralCategoryGroup};
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
-use zerovec::ule::UleError;
 
 /// A wrapper around code point map data.
 ///
@@ -39,7 +40,7 @@ impl<T: TrieValue> CodePointMapData<T> {
         CodePointMapDataBorrowed::new()
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<T::DataMarker> + ?Sized),
     ) -> Result<Self, DataError>
@@ -85,7 +86,8 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter as u8);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol as u8);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, UleError>
+    #[cfg(feature = "alloc")]
+    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, zerovec::ule::UleError>
     where
         P: TrieValue,
     {
@@ -186,6 +188,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert!(other_letter_set.contains('木')); // U+6728
     /// assert!(!other_letter_set.contains('🎃')); // U+1F383 JACK-O-LANTERN
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_set_for_value(self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
         CodePointSetData::from_code_point_inversion_list(set)
@@ -263,6 +266,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
 impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     /// TODO
+    #[cfg(feature = "alloc")]
     pub fn get_set_for_value_group(self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
         let matching_gc_ranges = self
             .iter_ranges()
@@ -358,4 +362,12 @@ pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     const NAME: &'static [u8];
     /// The abbreviated name of this property, if it exists, otherwise the name
     const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `CodePointMapData::new().get(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_char(ch: char) -> Self {
+        CodePointMapData::new().get(ch)
+    }
 }

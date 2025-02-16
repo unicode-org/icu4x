@@ -27,18 +27,6 @@ pub(crate) struct RawOptions {
     pub(crate) time_precision: Option<TimePrecision>,
 }
 
-impl RawOptions {
-    #[cfg(all(feature = "serde", feature = "experimental"))]
-    pub(crate) fn merge(self, other: RawOptions) -> Self {
-        Self {
-            length: self.length,
-            alignment: self.alignment.or(other.alignment),
-            year_style: self.year_style.or(other.year_style),
-            time_precision: self.time_precision.or(other.time_precision),
-        }
-    }
-}
-
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct RawPreferences {
     pub(crate) hour_cycle: Option<fields::Hour>,
@@ -224,7 +212,7 @@ impl DatePatternSelectionData {
     pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
         match self {
             DatePatternSelectionData::SkeletonDate { options, payload } => {
-                let year_style = options.year_style.unwrap_or(YearStyle::Auto);
+                let year_style = options.year_style.unwrap_or_default();
                 let variant = match (
                     year_style,
                     input
@@ -870,7 +858,8 @@ impl<'a> ItemsAndOptions<'a> {
             #[allow(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
             match &mut pattern_item {
                 PatternItem::Field(ref mut field) => {
-                    if matches!(self.alignment, Some(Alignment::Column))
+                    let alignment = self.alignment.unwrap_or_default();
+                    if matches!(alignment, Alignment::Column)
                         && field.length == FieldLength::One
                         && matches!(
                             field.symbol,

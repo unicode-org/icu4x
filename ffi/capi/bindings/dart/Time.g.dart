@@ -4,7 +4,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 ///
-/// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html) for more information.
+/// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
 final class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,11 +26,11 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] given field values
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_new) for more information.
   ///
   /// Throws [CalendarError] on failure.
-  factory Time(int hour, int minute, int second, int nanosecond) {
-    final result = _icu4x_Time_create_mv1(hour, minute, second, nanosecond);
+  factory Time(int hour, int minute, int second, int subsecond) {
+    final result = _icu4x_Time_create_mv1(hour, minute, second, subsecond);
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -39,7 +39,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
   ///
   /// Throws [CalendarParseError] on failure.
   factory Time.fromString(String v) {
@@ -53,7 +53,7 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] representing midnight (00:00.000).
   ///
-  /// See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#method.midnight) for more information.
+  /// See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Time.midnight() {
@@ -66,7 +66,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the hour in this time
   ///
-  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.hour) for more information.
+  /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.hour) for more information.
   int get hour {
     final result = _icu4x_Time_hour_mv1(_ffi);
     return result;
@@ -74,7 +74,7 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the minute in this time
   ///
-  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.minute) for more information.
+  /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.minute) for more information.
   int get minute {
     final result = _icu4x_Time_minute_mv1(_ffi);
     return result;
@@ -82,17 +82,17 @@ final class Time implements ffi.Finalizable {
 
   /// Returns the second in this time
   ///
-  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.second) for more information.
+  /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.second) for more information.
   int get second {
     final result = _icu4x_Time_second_mv1(_ffi);
     return result;
   }
 
-  /// Returns the nanosecond in this time
+  /// Returns the subsecond in this time as nanoseconds
   ///
-  /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/timezone/struct.Time.html#structfield.nanosecond) for more information.
-  int get nanosecond {
-    final result = _icu4x_Time_nanosecond_mv1(_ffi);
+  /// See the [Rust documentation for `subsecond`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.subsecond) for more information.
+  int get subsecond {
+    final result = _icu4x_Time_subsecond_mv1(_ffi);
     return result;
   }
 }
@@ -105,7 +105,7 @@ external void _icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_Time_create_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int nanosecond);
+external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int subsecond);
 
 @meta.RecordUse()
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Time_from_string_mv1')
@@ -133,6 +133,6 @@ external int _icu4x_Time_minute_mv1(ffi.Pointer<ffi.Opaque> self);
 external int _icu4x_Time_second_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @meta.RecordUse()
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_nanosecond_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_subsecond_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_Time_nanosecond_mv1(ffi.Pointer<ffi.Opaque> self);
+external int _icu4x_Time_subsecond_mv1(ffi.Pointer<ffi.Opaque> self);

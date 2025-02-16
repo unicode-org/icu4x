@@ -9,7 +9,7 @@
                         "time": null
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday"],
+                        "dateFields": "YMDE",
                         "length": "long"
                     }
                 }
@@ -22,7 +22,7 @@
                         "time": null
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day"],
+                        "dateFields": "YMD",
                         "length": "long"
                     }
                 }
@@ -35,7 +35,7 @@
                         "time": null
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day"],
+                        "dateFields": "YMD",
                         "length": "medium"
                     }
                 }
@@ -48,7 +48,7 @@
                         "time": null
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day"],
+                        "dateFields": "YMD",
                         "length": "short"
                     }
                 }
@@ -61,7 +61,6 @@
                         "time": "medium"
                     },
                     "semantic": {
-                        "fieldSet": ["time"],
                         "length": "short",
                         "timePrecision": "second"
                     }
@@ -75,7 +74,6 @@
                         "time": "short"
                     },
                     "semantic": {
-                        "fieldSet": ["time"],
                         "length": "short",
                         "timePrecision": "minute"
                     }
@@ -89,7 +87,7 @@
                         "time": "medium"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "weekday", "time"],
+                        "dateFields": "YMDE",
                         "length": "long",
                         "timePrecision": "second"
                     }
@@ -103,7 +101,7 @@
                         "time": "short"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "time"],
+                        "dateFields": "YMD",
                         "length": "long",
                         "timePrecision": "minute"
                     }
@@ -117,7 +115,7 @@
                         "time": "medium"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "time"],
+                        "dateFields": "YMD",
                         "length": "medium",
                         "timePrecision": "second"
                     }
@@ -131,7 +129,7 @@
                         "time": "short"
                     },
                     "semantic": {
-                        "fieldSet": ["year", "month", "day", "time"],
+                        "dateFields": "YMD",
                         "length": "short",
                         "timePrecision": "minute"
                     }

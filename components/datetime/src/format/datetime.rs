@@ -361,23 +361,23 @@ where
             input!(_, hour = input.hour);
             input!(_, minute = input.minute);
             input!(_, second = input.second);
-            input!(_, nanosecond = input.nanosecond);
+            input!(_, subsecond = input.subsecond);
 
             let milliseconds = (((hour.number() as u32 * 60) + minute.number() as u32) * 60
                 + second.number() as u32)
                 * 1000
-                + nanosecond.number() / 1_000_000;
+                + subsecond.number() / 1_000_000;
             try_write_number_without_part(w, fdf, milliseconds.into(), l)?
         }
         (FieldSymbol::DecimalSecond(decimal_second), l) => {
             const PART: Part = parts::SECOND;
             input!(PART, second = input.second);
-            input!(PART, nanosecond = input.nanosecond);
+            input!(PART, subsecond = input.subsecond);
 
             // Formatting with fractional seconds
             let mut s = SignedFixedDecimal::from(second.number());
             let _infallible = s.concatenate_end(
-                SignedFixedDecimal::from(nanosecond.number())
+                SignedFixedDecimal::from(subsecond.number())
                     .absolute
                     .multiplied_pow10(-9),
             );
@@ -398,7 +398,7 @@ where
                 pattern_metadata.time_granularity().is_top_of_hour(
                     input.minute.unwrap_or_default().number(),
                     input.second.unwrap_or_default().number(),
-                    input.nanosecond.unwrap_or_default().number(),
+                    input.subsecond.unwrap_or_default().number(),
                 ),
             ) {
                 Err(e) => {
@@ -612,7 +612,7 @@ mod tests {
         ];
 
         let mut decimal_formatter_options = DecimalFormatterOptions::default();
-        decimal_formatter_options.grouping_strategy = GroupingStrategy::Never;
+        decimal_formatter_options.grouping_strategy = Some(GroupingStrategy::Never);
         let decimal_formatter = DecimalFormatter::try_new(
             icu_locale_core::locale!("en").into(),
             decimal_formatter_options,

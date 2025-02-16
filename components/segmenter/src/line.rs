@@ -134,7 +134,7 @@ const ZWJ: u8 = 54;
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#line-break-property>.
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub enum LineBreakStrictness {
     /// Breaks text using the least restrictive set of line-breaking rules.
     /// Typically used for short lines, such as in newspapers.
@@ -152,6 +152,7 @@ pub enum LineBreakStrictness {
     /// resolving class [CJ](https://www.unicode.org/reports/tr14/#CJ) to
     /// [NS](https://www.unicode.org/reports/tr14/#NS);
     /// see rule [LB1](https://www.unicode.org/reports/tr14/#LB1).
+    #[default]
     Strict,
 
     /// Breaks text assuming there is a soft wrap opportunity around every
@@ -168,10 +169,11 @@ pub enum LineBreakStrictness {
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#word-break-property>
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub enum LineBreakWordOption {
     /// Words break according to their customary rules. See the details in
     /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-normal>.
+    #[default]
     Normal,
 
     /// Breaking is allowed within "words".
@@ -185,13 +187,17 @@ pub enum LineBreakWordOption {
 
 /// Options to tailor line-breaking behavior.
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub struct LineBreakOptions<'a> {
     /// Strictness of line-breaking rules. See [`LineBreakStrictness`].
-    pub strictness: LineBreakStrictness,
+    ///
+    /// Default is [`LineBreakStrictness::Strict`]
+    pub strictness: Option<LineBreakStrictness>,
 
     /// Line break opportunities between letters. See [`LineBreakWordOption`].
-    pub word_option: LineBreakWordOption,
+    ///
+    /// Default is [`LineBreakStrictness::Normal`]
+    pub word_option: Option<LineBreakWordOption>,
 
     /// Content locale for line segmenter
     ///
@@ -200,16 +206,6 @@ pub struct LineBreakOptions<'a> {
     /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
     /// This option has no effect in Latin-1 mode.
     pub content_locale: Option<&'a LanguageIdentifier>,
-}
-
-impl Default for LineBreakOptions<'_> {
-    fn default() -> Self {
-        Self {
-            strictness: LineBreakStrictness::Strict,
-            word_option: LineBreakWordOption::Normal,
-            content_locale: None,
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -227,8 +223,8 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
             false
         };
         Self {
-            strictness: options.strictness,
-            word_option: options.word_option,
+            strictness: options.strictness.unwrap_or_default(),
+            word_option: options.word_option.unwrap_or_default(),
             ja_zh,
         }
     }
@@ -325,8 +321,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// };
 ///
 /// let mut options = LineBreakOptions::default();
-/// options.strictness = LineBreakStrictness::Strict;
-/// options.word_option = LineBreakWordOption::BreakAll;
+/// options.strictness = Some(LineBreakStrictness::Strict);
+/// options.word_option = Some(LineBreakWordOption::BreakAll);
 /// options.content_locale = None;
 /// let segmenter = LineSegmenter::new_auto(options);
 ///
@@ -399,11 +395,10 @@ impl LineSegmenter {
     }
 
     #[cfg(feature = "auto")]
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             new_auto: skip,
-            try_new_auto_with_any_provider,
             try_new_auto_with_buffer_provider,
             try_new_auto_unstable,
             Self,
@@ -411,7 +406,7 @@ impl LineSegmenter {
     );
 
     #[cfg(feature = "auto")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_auto)]
     pub fn try_new_auto_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -449,11 +444,10 @@ impl LineSegmenter {
     }
 
     #[cfg(feature = "lstm")]
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             try_new_lstm: skip,
-            try_new_lstm_with_any_provider,
             try_new_lstm_with_buffer_provider,
             try_new_lstm_unstable,
             Self,
@@ -461,7 +455,7 @@ impl LineSegmenter {
     );
 
     #[cfg(feature = "lstm")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_lstm)]
     pub fn try_new_lstm_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -507,18 +501,17 @@ impl LineSegmenter {
         }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
             new_dictionary: skip,
-            try_new_dictionary_with_any_provider,
             try_new_dictionary_with_buffer_provider,
             try_new_dictionary_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_dictionary)]
     pub fn try_new_dictionary_unstable<D>(
         provider: &D,
         options: LineBreakOptions,

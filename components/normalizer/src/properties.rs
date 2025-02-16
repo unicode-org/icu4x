@@ -145,17 +145,16 @@ impl CanonicalComposition {
         CanonicalCompositionBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalCompositionsV1> + ?Sized,
@@ -474,17 +473,16 @@ impl CanonicalDecomposition {
         CanonicalDecompositionBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2>
@@ -590,7 +588,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
         if trie_value_has_ccc(trie_value) {
             trie_value as u8
         } else {
-            ccc!(NotReordered, 0).0
+            ccc!(NotReordered, 0).to_icu4c_value()
         }
     }
 
@@ -600,7 +598,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     #[inline(always)]
     #[cfg(feature = "icu_properties")]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        CanonicalCombiningClass(self.get_u8(c))
+        CanonicalCombiningClass::from_icu4c_value(self.get_u8(c))
     }
 
     /// Look up the canonical combining class for a scalar value
@@ -610,7 +608,7 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     /// ✨ *Enabled with the `icu_properties` Cargo feature.*
     #[cfg(feature = "icu_properties")]
     pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        CanonicalCombiningClass(self.get32_u8(c))
+        CanonicalCombiningClass::from_icu4c_value(self.get32_u8(c))
     }
 }
 
@@ -647,16 +645,15 @@ impl CanonicalCombiningClassMap {
         CanonicalCombiningClassMapBorrowed::new()
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
+                        try_new_with_buffer_provider,
             try_new_unstable,
             Self,
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<CanonicalDecompositionDataV2> + ?Sized,

@@ -41,14 +41,33 @@ const _: () = {
         pub use icu_list_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_and_list_v2!(Baked);
-    impl_or_list_v2!(Baked);
-    impl_unit_list_v2!(Baked);
+    impl_list_and_v2!(Baked);
+    impl_list_or_v2!(Baked);
+    impl_list_unit_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[AndListV2::INFO, OrListV2::INFO, UnitListV2::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[ListAndV2::INFO, ListOrV2::INFO, ListUnitV2::INFO];
+
+data_marker!(
+    /// Marker for and lists
+    ListAndV2,
+    "list/and/v2",
+    ListFormatterPatterns<'static>,
+);
+data_marker!(
+    /// Marker for or lists
+    ListOrV2,
+    "list/or/v2",
+    ListFormatterPatterns<'static>,
+);
+data_marker!(
+    /// Marker for unit lists
+    ListUnitV2,
+    "list/unit/v2",
+    ListFormatterPatterns<'static>,
+);
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///
@@ -57,12 +76,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[AndListV2::INFO, OrListV2::INFO, UnitLi
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    AndListV2 = "list/and@2",
-    OrListV2 = "list/or@2",
-    UnitListV2 = "list/unit@2"
-)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

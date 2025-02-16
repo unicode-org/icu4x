@@ -103,10 +103,12 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
         .map(|i| unsafe { self.values.get_unchecked(i) })
     }
 
+    #[cfg(feature = "alloc")]
     type IterReturn = core::iter::FilterMap<
         zerotrie::ZeroTrieStringIterator<'static>,
         fn((alloc::string::String, usize)) -> Option<DataIdentifierCow<'static>>,
     >;
+    #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn {
         #![allow(unused_imports)]
         use alloc::borrow::ToOwned;

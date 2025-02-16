@@ -14,7 +14,7 @@
 //! converted to [`ICU4X Locale`](https://crates.io/crates/icu_locale)
 //!
 //! It also retrieves preferences for [`Calendar`](https://crates.io/crates/icu_calendar)
-//! & [`TimeZone`](https://crates.io/crates/icu_timezone)
+//! & [`TimeZone`](https://crates.io/crates/icu_time)
 
 mod error;
 pub use error::RetrievalError;

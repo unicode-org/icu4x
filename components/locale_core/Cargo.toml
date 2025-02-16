@@ -45,9 +45,10 @@ serde_json = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-databake = ["dep:databake"]
-serde = ["dep:serde", "tinystr/serde"]
+databake = ["dep:databake", "alloc"]
+serde = ["dep:serde", "tinystr/serde", "alloc"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
+alloc = []
 
 [lib]
 bench = false # This option is required for Benchmark CI

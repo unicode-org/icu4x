@@ -5,16 +5,19 @@
 use crate::codepointtrie::error::Error;
 use crate::codepointtrie::impl_const::*;
 
+#[cfg(feature = "alloc")]
 use crate::codepointinvlist::CodePointInversionList;
 use core::char::CharTryFromError;
 use core::convert::Infallible;
 use core::convert::TryFrom;
 use core::fmt::Display;
+#[cfg(feature = "alloc")]
 use core::iter::FromIterator;
 use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+#[cfg(feature = "alloc")]
 use zerovec::ule::UleError;
 use zerovec::ZeroVec;
 
@@ -482,6 +485,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// assert_eq!(planes_trie_i8.get32(0x30000), 3);
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, UleError>
     where
         P: TrieValue,
@@ -522,6 +526,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// assert_eq!(planes_trie_u16.get32(0x30000), 3);
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn try_alloc_map_value<P, E>(
         &self,
         mut f: impl FnMut(T) -> Result<P, E>,
@@ -1018,6 +1023,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert!(sip.contains32(end));
     /// assert!(!sip.contains32(end + 1));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         let value_ranges = self.iter_ranges_for_value(value);
         CodePointInversionList::from_iter(value_ranges)

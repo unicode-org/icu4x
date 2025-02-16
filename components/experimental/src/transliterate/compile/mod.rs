@@ -162,7 +162,7 @@ impl RuleCollection {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::as_provider)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::as_provider)]
     pub fn as_provider_unstable<'a, PP, NP>(
         &'a self,
         properties_provider: &'a PP,

@@ -4,10 +4,7 @@
 
 //! Options types for date/time formatting.
 
-use icu_timezone::scaffold::IntoOption;
-
-#[cfg(all(feature = "serde", feature = "experimental"))]
-use crate::neo_serde::TimePrecisionSerde;
+use icu_time::scaffold::IntoOption;
 
 /// The length of a formatted date/time string.
 ///
@@ -58,7 +55,7 @@ use crate::neo_serde::TimePrecisionSerde;
 ///     "January 1, 2000"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -73,6 +70,9 @@ pub enum Length {
     /// A long date; typically spelled-out, as in “January 1, 2000”.
     Long = 4,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
+    ///
+    /// This is the default.
+    #[default]
     Medium = 3,
     /// A short date; typically numeric, as in “1/1/2000”.
     Short = 1,
@@ -128,7 +128,7 @@ impl IntoOption<Length> for Length {
 ///     "01/01/25"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -142,6 +142,7 @@ pub enum Alignment {
     /// Align fields as the locale specifies them to be aligned.
     ///
     /// This is the default option.
+    #[default]
     Auto,
     /// Align fields as appropriate for a column layout. For example:
     ///
@@ -257,7 +258,7 @@ impl IntoOption<Alignment> for Alignment {
 ///     "1/1/2025 AD"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -279,6 +280,7 @@ pub enum YearStyle {
     /// - `77 AD`
     /// - `1900`
     /// - `'24`
+    #[default]
     Auto,
     /// Always display the century, and display the era when needed to
     /// disambiguate the year, based on locale preferences.
@@ -326,7 +328,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::Time;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;
@@ -442,6 +444,103 @@ impl IntoOption<TimePrecision> for TimePrecision {
     }
 }
 
+#[cfg(all(feature = "serde", feature = "experimental"))]
+#[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+enum TimePrecisionSerde {
+    Hour,
+    Minute,
+    Second,
+    SecondF1,
+    SecondF2,
+    SecondF3,
+    SecondF4,
+    SecondF5,
+    SecondF6,
+    SecondF7,
+    SecondF8,
+    SecondF9,
+    MinuteOptional,
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+impl From<TimePrecision> for TimePrecisionSerde {
+    fn from(value: TimePrecision) -> Self {
+        match value {
+            TimePrecision::Hour => TimePrecisionSerde::Hour,
+            TimePrecision::Minute => TimePrecisionSerde::Minute,
+            TimePrecision::Second => TimePrecisionSerde::Second,
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F1) => {
+                TimePrecisionSerde::SecondF1
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F2) => {
+                TimePrecisionSerde::SecondF2
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F3) => {
+                TimePrecisionSerde::SecondF3
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F4) => {
+                TimePrecisionSerde::SecondF4
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F5) => {
+                TimePrecisionSerde::SecondF5
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F6) => {
+                TimePrecisionSerde::SecondF6
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F7) => {
+                TimePrecisionSerde::SecondF7
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F8) => {
+                TimePrecisionSerde::SecondF8
+            }
+            TimePrecision::FractionalSecond(FractionalSecondDigits::F9) => {
+                TimePrecisionSerde::SecondF9
+            }
+            TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
+        }
+    }
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+impl From<TimePrecisionSerde> for TimePrecision {
+    fn from(value: TimePrecisionSerde) -> Self {
+        match value {
+            TimePrecisionSerde::Hour => TimePrecision::Hour,
+            TimePrecisionSerde::Minute => TimePrecision::Minute,
+            TimePrecisionSerde::Second => TimePrecision::Second,
+            TimePrecisionSerde::SecondF1 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F1)
+            }
+            TimePrecisionSerde::SecondF2 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F2)
+            }
+            TimePrecisionSerde::SecondF3 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F3)
+            }
+            TimePrecisionSerde::SecondF4 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F4)
+            }
+            TimePrecisionSerde::SecondF5 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F5)
+            }
+            TimePrecisionSerde::SecondF6 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F6)
+            }
+            TimePrecisionSerde::SecondF7 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F7)
+            }
+            TimePrecisionSerde::SecondF8 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F8)
+            }
+            TimePrecisionSerde::SecondF9 => {
+                TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
+            }
+            TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
+        }
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
@@ -455,7 +554,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::timezone::Time;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::FractionalSecondDigits;
 /// use icu::datetime::options::TimePrecision;

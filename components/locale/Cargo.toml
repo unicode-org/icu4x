@@ -25,12 +25,12 @@ all-features = true
 [dependencies]
 databake = { workspace = true, optional = true, features = ["derive"] }
 displaydoc = { workspace = true }
-icu_locale_core = { workspace = true, features = ["zerovec"] }
+icu_locale_core = { workspace = true, features = ["alloc", "zerovec"] }
 icu_provider = { workspace = true, features = ["macros"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
-potential_utf = { workspace = true, features = ["zerovec"] }
-zerovec = { workspace = true,  features = ["yoke"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
+zerovec = { workspace = true,  features = ["alloc", "yoke"] }
 
 icu_collections = { workspace = true }
 

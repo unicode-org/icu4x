@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::ops::Range;
 
@@ -88,10 +87,11 @@ where
 
     /// Construct a `Box<ZeroSlice<T>>` from a boxed slice of ULEs
     #[inline]
-    pub fn from_boxed_slice(slice: Box<[T::ULE]>) -> Box<Self> {
+    #[cfg(feature = "alloc")]
+    pub fn from_boxed_slice(slice: alloc::boxed::Box<[T::ULE]>) -> alloc::boxed::Box<Self> {
         // This is safe because ZeroSlice is transparent over [T::ULE]
         // so Box<ZeroSlice<T>> can be safely cast from Box<[T::ULE]>
-        unsafe { Box::from_raw(Box::into_raw(slice) as *mut Self) }
+        unsafe { alloc::boxed::Box::from_raw(alloc::boxed::Box::into_raw(slice) as *mut Self) }
     }
 
     /// Returns this slice as its underlying `&[u8]` byte buffer representation.
@@ -567,7 +567,8 @@ impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
     }
 }
 
-impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
+#[cfg(feature = "alloc")]
+impl<T: AsULE> AsRef<ZeroSlice<T>> for alloc::vec::Vec<T::ULE> {
     fn as_ref(&self) -> &ZeroSlice<T> {
         ZeroSlice::<T>::from_ule_slice(self)
     }

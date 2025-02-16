@@ -8,7 +8,6 @@ use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use alloc::sync::Arc;
 use databake::{Bake, BakeSize, CrateEnv, TokenStream};
-use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
 trait ExportableDataPayload {
@@ -24,8 +23,7 @@ trait ExportableDataPayload {
 
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize + PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -92,8 +90,7 @@ impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DynamicDataMarker,
     M::DataStruct: Sync + Send,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize + PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {

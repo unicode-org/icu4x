@@ -6,14 +6,15 @@ use icu::{
     calendar::Date,
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
-    timezone::{
-        Time, TimeZoneIdMapper, UtcOffset, ZoneVariant, ZonedDateTime, ZonedDateTimeParser,
+    time::{
+        zone::{IanaParser, UtcOffset, UtcOffsetCalculator},
+        Time, ZonedDateTime,
     },
 };
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
     let ts: jiff::Timestamp = "2024-09-10T23:37:20.123456789Z".parse()?;
-    let zoned: jiff::Zoned = ts.intz("Asia/Tokyo")?;
+    let zoned: jiff::Zoned = ts.in_tz("Asia/Tokyo")?;
 
     // Convert to ICU types
     let date = Date::try_new_iso(
@@ -33,25 +34,27 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
 
     let zone =
         // ICU uses BCP47 time zone IDs
-        TimeZoneIdMapper::new().iana_to_bcp47(zoned.time_zone().iana_name().unwrap_or("Etc/Unknown"))
+        IanaParser::new().iana_to_bcp47(zoned.time_zone().iana_name().unwrap_or("Etc/Unknown"))
         // In ICU's model, a time zone has a fixed offset, as that's required for formatting
         .with_offset(UtcOffset::try_from_seconds(zoned.offset().seconds()).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to
         // Central Time), so the ICU timezone needs a reference date and time.
         .at_time((date, time))
         // And finally, the zone variant is also required for formatting
-        .with_zone_variant(match zoned.time_zone().to_offset(zoned.timestamp()).1 {
-            jiff::tz::Dst::Yes => ZoneVariant::Daylight,
-            jiff::tz::Dst::No => ZoneVariant::Standard,
-        });
+        // TODO(jiff#258): Jiff does not currently guarantee rearguard semantics
+        .with_rearguard_isdst(zoned.time_zone().to_offset_info(zoned.timestamp()).dst().is_dst());
 
     let zoned_date_time = ZonedDateTime { date, time, zone };
 
     // Alternatively, the ICU ZonedDateTime can be parsed from a serialized IXDTF string.
     assert_eq!(
-        ZonedDateTimeParser::new()
-            .parse(&zoned.to_string(), icu::calendar::Iso)
-            .unwrap(),
+        ZonedDateTime::try_from_str(
+            &zoned.to_string(),
+            icu::calendar::Iso,
+            IanaParser::new(),
+            &UtcOffsetCalculator::new()
+        )
+        .unwrap(),
         zoned_date_time
     );
 
@@ -59,8 +62,10 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
     let prefs = locale!("en-GB-u-ca-japanese").into();
 
     // A medium-length year-month-day-time-specific-zone formatter
-    let formatter =
-        DateTimeFormatter::try_new(prefs, fieldsets::YMDT::medium().with_zone_specific_long())?;
+    let formatter = DateTimeFormatter::try_new(
+        prefs,
+        fieldsets::YMDT::medium().zone(fieldsets::zone::SpecificLong),
+    )?;
 
     println!("{}", formatter.format(&zoned_date_time)); // 11 Sept 6 Reiwa, 08:37:20 Japan Standard Time
 

@@ -44,23 +44,3 @@ macro_rules! impl_data_provider {
         impl_islamic_umm_al_qura_cache_v1!($provider);
     };
 }
-#[allow(unused_macros)]
-macro_rules! impl_any_provider {
-    ($ provider : ty) => {
-        #[clippy::msrv = "1.81"]
-        impl icu_provider::any::AnyProvider for $provider {
-            fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                match marker.id.hashed() {
-                    h if h == <icu::calendar::provider::ChineseCacheV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::ChineseCacheV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::JapaneseErasV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseErasV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::IslamicObservationalCacheV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::IslamicObservationalCacheV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::JapaneseExtendedErasV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseExtendedErasV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::DangiCacheV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::DangiCacheV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::WeekDataV2 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV2>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    h if h == <icu::calendar::provider::IslamicUmmAlQuraCacheV1 as icu_provider::DataMarker>::INFO.id.hashed() => icu_provider::DataProvider::<icu::calendar::provider::IslamicUmmAlQuraCacheV1>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
-                }
-            }
-        }
-    };
-}

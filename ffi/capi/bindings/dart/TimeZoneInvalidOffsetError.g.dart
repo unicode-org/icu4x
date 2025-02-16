@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.InvalidOffsetError.html)
+/// Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.InvalidOffsetError.html)
 final class TimeZoneInvalidOffsetError {
 
   TimeZoneInvalidOffsetError();

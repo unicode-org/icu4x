@@ -9,7 +9,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/timezone/struct.ZonedDateTimeParser.html) for more information.
+/** See the [Rust documentation for `ZonedDateTimeParser`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTimeParser.html) for more information.
 */
 const ZonedDateTimeParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ZonedDateTimeParser_destroy_mv1(ptr);

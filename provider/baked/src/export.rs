@@ -260,7 +260,8 @@ impl BakedExporter {
 
         if !self.use_separate_crates {
             // Don't search the whole file, there should be a macro in the first 1000 bytes
-            if formatted[..1000].contains("macro_rules!") || formatted[..1000].contains("include!")
+            if formatted[..core::cmp::min(formatted.len(), 1000)].contains("macro_rules!")
+                || formatted[..core::cmp::min(formatted.len(), 1000)].contains("include!")
             {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
@@ -284,27 +285,6 @@ impl BakedExporter {
         );
         write!(file, "// @generated\n{formatted}")
             .map_err(|e| DataError::from(e).with_path_context(&path))
-    }
-
-    fn print_deps(&mut self) {
-        let mut deps = core::mem::take(&mut self.dependencies)
-            .into_iter()
-            .collect::<BTreeSet<_>>();
-        if !self.use_separate_crates {
-            deps.retain(|&krate| {
-                !krate.starts_with("icu_")
-                    || krate == "icu_provider"
-                    || krate == "icu_locale_core"
-                    || krate == "icu_pattern"
-            });
-            deps.insert("icu");
-        }
-        deps.insert("icu_provider");
-
-        log::info!("The generated module requires the following crates:");
-        for crate_name in deps {
-            log::info!("{}", crate_name);
-        }
     }
 
     fn write_impl_macros(
@@ -717,8 +697,6 @@ impl DataExporter for BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
-        let marker_bakes = data.keys().copied().map(bake_marker);
-
         let file_paths = data.values().map(|(i, _)| format!("{i}.rs.data"));
 
         let macro_idents = data
@@ -769,46 +747,43 @@ impl DataExporter for BakedExporter {
                         )*
                     };
                 }
-
-                // Not public because `impl_data_provider` isn't.
-                #[allow(unused_macros)]
-                macro_rules! impl_any_provider {
-                    ($provider:ty) => {
-                        #maybe_msrv
-                        impl icu_provider::any::AnyProvider for $provider {
-                            fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                match marker.id.hashed() {
-                                    #(
-                                        h if h == <#marker_bakes as icu_provider::DataMarker>::INFO.id.hashed() =>
-                                            icu_provider::DataProvider::<#marker_bakes>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                                    )*
-                                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
-                                }
-                            }
-                        }
-                    }
-                }
             },
         )?;
 
-        // TODO: Return the statistics instead of writing them out.
-        let mut file = crlify::BufWriterWithLineEndingFix::new(std::fs::File::create(
-            self.mod_directory.join("fingerprints.csv"),
-        )?);
-        for (marker, (_, stats)) in data {
-            if !marker.is_singleton {
-                writeln!(
-                    &mut file,
-                    "{marker:?}, <lookup>, {}B, {} identifiers",
-                    stats.lookup_struct_size, stats.identifiers_count
-                )?;
-            }
+        let statistics = data
+            .into_iter()
+            .map(|(marker, (_, stats))| (marker, stats))
+            .collect();
+
+        let mut required_crates = core::mem::take(&mut self.dependencies)
+            .into_iter()
+            .collect::<BTreeSet<_>>();
+        if !self.use_separate_crates {
+            required_crates.retain(|&krate| {
+                !krate.starts_with("icu_")
+                    || krate == "icu_provider"
+                    || krate == "icu_locale_core"
+                    || krate == "icu_pattern"
+            });
+            required_crates.insert("icu");
         }
+        required_crates.insert("icu_provider");
 
-        self.print_deps();
-
-        Ok(Default::default())
+        Ok(ExporterCloseMetadata(Some(Box::new(
+            BakedExporterCloseMetadata {
+                statistics,
+                required_crates,
+            },
+        ))))
     }
+}
+
+/// TODO
+pub struct BakedExporterCloseMetadata {
+    /// TODO
+    pub statistics: BTreeMap<DataMarkerInfo, Statistics>,
+    /// TODO
+    pub required_crates: BTreeSet<&'static str>,
 }
 
 macro_rules! cb {

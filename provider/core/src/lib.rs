@@ -35,18 +35,7 @@
 //! The [`DynamicDataProvider`] is still type-level parametrized by the type that it loads, and there are two
 //! implementations that should be called out
 //!
-//! - [`DynamicDataProvider<AnyMarker>`], and [`AnyProvider`] (a slightly optimized alternative) return data as `dyn Any` trait objects.
 //! - [`DynamicDataProvider<BufferMarker>`], a.k.a. [`BufferProvider`](buf::BufferProvider) returns data as `[u8]` buffers.
-//!
-//! ### AnyProvider
-//!
-//! These providers are able to return structured data cast into `dyn Any` trait objects. Users
-//! can call [`as_downcasting()`] to get an object implementing [`DataProvider`] by downcasting
-//! the trait objects.
-//!
-//! Examples of AnyProviders:
-//!
-//! - [`FixedProvider`] wraps a specific data struct and returns it.
 //!
 //! ### BufferProvider
 //!
@@ -80,12 +69,10 @@
 //!
 //! [`FixedProvider`]: https://docs.rs/icu_provider_adapters/latest/fixed/any_payload/struct.FixedProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
-//! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dynamic_data_provider!`]: dynutil::impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/index.html
 //! [`SourceDataProvider`]: https://docs.rs/icu_provider_source/latest/icu_provider_source/struct.SourceDataProvider.html
-//! [`as_downcasting()`]: any::AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: buf::AsDeserializingBufferProvider::as_deserializing
 //! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
@@ -107,26 +94,29 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
-pub mod any;
 pub mod buf;
 pub mod constructors;
 pub mod dynutil;
 #[cfg(feature = "export")]
 pub mod export;
+#[cfg(feature = "alloc")]
 pub mod hello_world;
 
 // TODO: put this in a separate crate
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "serde", feature = "alloc"))]
 #[doc(hidden)]
 pub mod serde_borrow_de_utils;
 
 mod data_provider;
 pub use data_provider::{
     BoundDataProvider, DataProvider, DataProviderWithMarker, DryDataProvider, DynamicDataProvider,
-    DynamicDryDataProvider, IterableDataProvider, IterableDynamicDataProvider,
+    DynamicDryDataProvider,
 };
+#[cfg(feature = "alloc")]
+pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
 
 mod error;
 pub use error::{DataError, DataErrorKind, ResultDataError};
@@ -158,11 +148,6 @@ pub mod marker {
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
     #[doc(no_inline)]
-    pub use crate::any::{
-        AnyMarker, AnyPayload, AnyProvider, AnyResponse, AsDowncastingAnyProvider,
-        AsDynamicDataProviderAnyMarkerWrap,
-    };
-    #[doc(no_inline)]
     #[cfg(feature = "serde")]
     pub use crate::buf::AsDeserializingBufferProvider;
     #[doc(no_inline)]
@@ -173,9 +158,10 @@ pub mod prelude {
         data_marker, marker::DataMarkerExt, BoundDataProvider, DataError, DataErrorKind,
         DataLocale, DataMarker, DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider,
         DataRequest, DataRequestMetadata, DataResponse, DataResponseMetadata, DryDataProvider,
-        DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, IterableDataProvider,
-        IterableDynamicDataProvider, ResultDataError,
+        DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, ResultDataError,
     };
+    #[cfg(feature = "alloc")]
+    pub use crate::{IterableDataProvider, IterableDynamicDataProvider};
 
     #[doc(no_inline)]
     pub use icu_locale_core;

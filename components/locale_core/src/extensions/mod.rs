@@ -64,9 +64,11 @@ use private::{Private, PRIVATE_EXT_CHAR};
 use transform::{Transform, TRANSFORM_EXT_CHAR};
 use unicode::{Unicode, UNICODE_EXT_CHAR};
 
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
 use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::subtags;
 
@@ -85,6 +87,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
+    #[allow(dead_code)]
     pub(crate) const fn try_from_byte_slice(key: &[u8]) -> Result<Self, ParseError> {
         if let [b] = key {
             Self::try_from_byte(*b)
@@ -126,7 +129,13 @@ pub struct Extensions {
     /// A sequence of any other extensions that are present in the locale identifier but are not formally
     /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
     /// and [`Private`] are.
+    #[cfg(feature = "alloc")]
     pub other: Vec<Other>,
+    /// A sequence of any other extensions that are present in the locale identifier but are not formally
+    /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
+    /// and [`Private`] are.
+    #[cfg(not(feature = "alloc"))]
+    pub other: &'static [Other],
 }
 
 impl Extensions {
@@ -145,7 +154,10 @@ impl Extensions {
             unicode: Unicode::new(),
             transform: Transform::new(),
             private: Private::new(),
+            #[cfg(feature = "alloc")]
             other: Vec::new(),
+            #[cfg(not(feature = "alloc"))]
+            other: &[],
         }
     }
 
@@ -157,7 +169,10 @@ impl Extensions {
             unicode,
             transform: Transform::new(),
             private: Private::new(),
+            #[cfg(feature = "alloc")]
             other: Vec::new(),
+            #[cfg(not(feature = "alloc"))]
+            other: &[],
         }
     }
 
@@ -250,10 +265,12 @@ impl Extensions {
         if !predicate(ExtensionType::Private) {
             self.private.clear();
         }
+        #[cfg(feature = "alloc")]
         self.other
             .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
     }
 
+    #[cfg(feature = "alloc")]
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut unicode = None;
         let mut transform = None;
@@ -343,6 +360,7 @@ impl Extensions {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl_writeable_for_each_subtag_str_no_test!(Extensions);
 
 #[test]

@@ -71,8 +71,7 @@ pub trait DynamicDataMarker: 'static {
 /// Most markers should be associated with a specific marker and should therefore implement this
 /// trait.
 ///
-/// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
-/// because they are not specific to a single marker.
+/// [`BufferMarker`] is an example of a marker that does _not_ implement this trait.
 ///
 /// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
@@ -81,7 +80,6 @@ pub trait DynamicDataMarker: 'static {
 /// [`data_struct!`]: crate::data_struct
 /// [`DataProvider`]: crate::DataProvider
 /// [`BufferMarker`]: crate::buf::BufferMarker
-/// [`AnyMarker`]: crate::any::AnyMarker
 pub trait DataMarker: DynamicDataMarker {
     /// The single [`DataMarkerInfo`] associated with this marker.
     const INFO: DataMarkerInfo;
@@ -306,6 +304,7 @@ const fn fxhash_32(bytes: &[u8]) -> u32 {
     hash
 }
 
+#[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for DataMarkerIdHash {
     type Container = zerovec::ZeroVec<'a, DataMarkerIdHash>;
     type Slice = zerovec::ZeroSlice<DataMarkerIdHash>;
@@ -567,7 +566,7 @@ pub use __data_marker_id as data_marker_id;
 #[macro_export]
 #[doc(hidden)] // macro
 macro_rules! __data_marker {
-    ($(#[$doc:meta])* $name:ident, $struct:ty $(, $info_field:ident = $info_val:expr)* $(,)?) => {
+    ($(#[$doc:meta])* $name:ident, $($debug:literal,)? $struct:ty $(, $info_field:ident = $info_val:expr)* $(,)?) => {
         $(#[$doc])*
         pub struct $name;
         impl $crate::DynamicDataMarker for $name {
@@ -575,6 +574,24 @@ macro_rules! __data_marker {
         }
         impl $crate::DataMarker for $name {
             const INFO: $crate::DataMarkerInfo = {
+                $(
+                    /// ```rust
+                    #[doc = concat!("let ident = \"", stringify!($name), "\";")]
+                    #[doc = concat!("let debug = \"", $debug, "\";")]
+                    /// assert_eq!(
+                    ///     debug.split('/').map(|s| {
+                    ///         let mut b = s.to_ascii_lowercase().into_bytes();
+                    ///         b[0] = b[0].to_ascii_uppercase();
+                    ///         String::from_utf8(b).unwrap()
+                    ///     })
+                    ///     .collect::<Vec<_>>()
+                    ///     .join(""),
+                    ///     ident
+                    /// );
+                    /// ```
+                    #[allow(dead_code)]
+                    struct DebugTest;
+                )?
                 #[allow(unused_mut)]
                 let mut info = $crate::DataMarkerInfo::from_id($crate::marker::data_marker_id!($name));
                 $(

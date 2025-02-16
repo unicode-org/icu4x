@@ -47,9 +47,7 @@ pub mod ffi {
             let prefs = DecimalFormatterPreferences::from(&locale.0);
 
             let mut options = DecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy
-                .map(Into::into)
-                .unwrap_or(options.grouping_strategy);
+            options.grouping_strategy = grouping_strategy.map(Into::into);
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new(prefs, options)?,
             )))
@@ -68,9 +66,7 @@ pub mod ffi {
             let prefs = DecimalFormatterPreferences::from(&locale.0);
 
             let mut options = DecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy
-                .map(Into::into)
-                .unwrap_or(options.grouping_strategy);
+            options.grouping_strategy = grouping_strategy.map(Into::into);
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_with_buffer_provider(
                     provider.get()?,
@@ -97,8 +93,8 @@ pub mod ffi {
             grouping_strategy: Option<DecimalGroupingStrategy>,
         ) -> Result<Box<DecimalFormatter>, DataError> {
             use alloc::borrow::Cow;
-            use icu_provider::any::AsDowncastingAnyProvider;
-            use icu_provider_adapters::{fixed::FixedProvider, fork::ForkByMarkerProvider};
+            use core::cell::RefCell;
+            use icu_provider::prelude::*;
             use zerovec::VarZeroCow;
 
             fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> Cow<'_, str> {
@@ -142,19 +138,49 @@ pub mod ffi {
             };
 
             let mut options = DecimalFormatterOptions::default();
-            options.grouping_strategy = grouping_strategy
-                .map(Into::into)
-                .unwrap_or(options.grouping_strategy);
-            let provider_symbols = FixedProvider::<DecimalSymbolsV2>::from_owned(DecimalSymbols {
-                strings: VarZeroCow::from_encodeable(&strings),
-                grouping_sizes,
-            });
-            let provider_digits =
-                FixedProvider::<DecimalDigitsV1>::from_owned(DecimalDigits { digits });
-            let provider = ForkByMarkerProvider::new(provider_symbols, provider_digits);
+            options.grouping_strategy = grouping_strategy.map(Into::into);
+
+            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
+            impl DataProvider<DecimalSymbolsV2> for Provider {
+                fn load(
+                    &self,
+                    _req: icu_provider::DataRequest,
+                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV2>, icu_provider::DataError>
+                {
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(
+                            self.0
+                                .borrow_mut()
+                                .take()
+                                // We only have one payload
+                                .ok_or(DataErrorKind::Custom.into_error())?,
+                        ),
+                    })
+                }
+            }
+            impl DataProvider<DecimalDigitsV1> for Provider {
+                fn load(
+                    &self,
+                    _req: icu_provider::DataRequest,
+                ) -> Result<icu_provider::DataResponse<DecimalDigitsV1>, icu_provider::DataError>
+                {
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: DataPayload::from_owned(self.1),
+                    })
+                }
+            }
+            let provider = Provider(
+                RefCell::new(Some(DecimalSymbols {
+                    strings: VarZeroCow::from_encodeable(&strings),
+                    grouping_sizes,
+                })),
+                DecimalDigits { digits },
+            );
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_unstable(
-                    &provider.as_downcasting(),
+                    &provider,
                     Default::default(),
                     options,
                 )?,

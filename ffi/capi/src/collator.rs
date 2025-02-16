@@ -211,46 +211,60 @@ impl From<icu_collator::ResolvedCollatorOptions> for ffi::CollatorResolvedOption
     }
 }
 
-impl From<icu_collator::CaseFirst> for ffi::CollatorCaseFirst {
-    fn from(other: icu_collator::CaseFirst) -> Self {
+impl From<icu_collator::preferences::CollationCaseFirst> for ffi::CollatorCaseFirst {
+    fn from(other: icu_collator::preferences::CollationCaseFirst) -> Self {
         match other {
-            icu_collator::CaseFirst::Upper => ffi::CollatorCaseFirst::Upper,
-            icu_collator::CaseFirst::Lower => ffi::CollatorCaseFirst::Lower,
-            icu_collator::CaseFirst::False => ffi::CollatorCaseFirst::Off,
+            icu_collator::preferences::CollationCaseFirst::Upper => ffi::CollatorCaseFirst::Upper,
+            icu_collator::preferences::CollationCaseFirst::Lower => ffi::CollatorCaseFirst::Lower,
+            icu_collator::preferences::CollationCaseFirst::False => ffi::CollatorCaseFirst::Off,
             _ => {
-                debug_assert!(false, "unknown variant for icu_collator::CaseFirst");
+                debug_assert!(
+                    false,
+                    "unknown variant for icu_collator::preferences::CollationCaseFirst"
+                );
                 ffi::CollatorCaseFirst::Off
             }
         }
     }
 }
-impl From<ffi::CollatorCaseFirst> for icu_collator::CaseFirst {
+impl From<ffi::CollatorCaseFirst> for icu_collator::preferences::CollationCaseFirst {
     fn from(this: ffi::CollatorCaseFirst) -> Self {
         match this {
-            ffi::CollatorCaseFirst::Off => icu_collator::CaseFirst::False,
-            ffi::CollatorCaseFirst::Lower => icu_collator::CaseFirst::Lower,
-            ffi::CollatorCaseFirst::Upper => icu_collator::CaseFirst::Upper,
+            ffi::CollatorCaseFirst::Off => icu_collator::preferences::CollationCaseFirst::False,
+            ffi::CollatorCaseFirst::Lower => icu_collator::preferences::CollationCaseFirst::Lower,
+            ffi::CollatorCaseFirst::Upper => icu_collator::preferences::CollationCaseFirst::Upper,
         }
     }
 }
 
-impl From<icu_collator::NumericOrdering> for ffi::CollatorNumericOrdering {
-    fn from(other: icu_collator::NumericOrdering) -> Self {
+impl From<icu_collator::preferences::CollationNumericOrdering> for ffi::CollatorNumericOrdering {
+    fn from(other: icu_collator::preferences::CollationNumericOrdering) -> Self {
         match other {
-            icu_collator::NumericOrdering::True => ffi::CollatorNumericOrdering::On,
-            icu_collator::NumericOrdering::False => ffi::CollatorNumericOrdering::Off,
+            icu_collator::preferences::CollationNumericOrdering::True => {
+                ffi::CollatorNumericOrdering::On
+            }
+            icu_collator::preferences::CollationNumericOrdering::False => {
+                ffi::CollatorNumericOrdering::Off
+            }
             _ => {
-                debug_assert!(false, "unknown variant for icu_collator::NumericOrdering");
+                debug_assert!(
+                    false,
+                    "unknown variant for icu_collator::preferences::CollationNumericOrdering"
+                );
                 ffi::CollatorNumericOrdering::Off
             }
         }
     }
 }
-impl From<ffi::CollatorNumericOrdering> for icu_collator::NumericOrdering {
+impl From<ffi::CollatorNumericOrdering> for icu_collator::preferences::CollationNumericOrdering {
     fn from(this: ffi::CollatorNumericOrdering) -> Self {
         match this {
-            ffi::CollatorNumericOrdering::Off => icu_collator::NumericOrdering::False,
-            ffi::CollatorNumericOrdering::On => icu_collator::NumericOrdering::True,
+            ffi::CollatorNumericOrdering::Off => {
+                icu_collator::preferences::CollationNumericOrdering::False
+            }
+            ffi::CollatorNumericOrdering::On => {
+                icu_collator::preferences::CollationNumericOrdering::True
+            }
         }
     }
 }

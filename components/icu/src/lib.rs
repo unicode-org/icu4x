@@ -178,7 +178,7 @@ pub use icu_collections as collections;
 pub use icu_segmenter as segmenter;
 
 #[doc(inline)]
-pub use icu_timezone as timezone;
+pub use icu_time as time;
 
 #[doc(inline)]
 #[cfg(feature = "experimental")]

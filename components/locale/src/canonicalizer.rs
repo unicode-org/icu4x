@@ -206,17 +206,16 @@ impl LocaleCanonicalizer<LocaleExpander> {
         Self::new_with_expander(LocaleExpander::new_common())
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new_common: skip,
-            try_new_common_with_any_provider,
             try_new_common_with_buffer_provider,
             try_new_common_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2>
@@ -239,17 +238,16 @@ impl LocaleCanonicalizer<LocaleExpander> {
         Self::new_with_expander(LocaleExpander::new_extended())
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new_extended: skip,
-            try_new_extended_with_any_provider,
             try_new_extended_with_buffer_provider,
             try_new_extended_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<AliasesV2>
@@ -277,7 +275,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: Expander,
@@ -290,10 +288,9 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
         Ok(Self { aliases, expander })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((options: Expander) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!((options: Expander) -> error: DataError,
         functions: [
             new_with_expander: skip,
-            try_new_with_expander_with_any_provider,
             try_new_with_expander_with_buffer_provider,
             try_new_with_expander_unstable,
             Self,
