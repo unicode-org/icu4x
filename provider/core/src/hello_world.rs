@@ -49,6 +49,14 @@ impl MaybeAsVarULE for HelloWorld<'_> {
     }
 }
 
+impl<'a> From<&'a str> for HelloWorld<'a> {
+    fn from(value: &'a str) -> Self {
+        Self {
+            message: Cow::Borrowed(value),
+        }
+    }
+}
+
 data_marker!(
     /// Marker type for [`HelloWorld`].
     #[derive(Debug)]
