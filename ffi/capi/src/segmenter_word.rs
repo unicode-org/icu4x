@@ -13,8 +13,8 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
 
-    #[diplomat::enum_convert(icu_segmenter::WordType, needs_wildcard)]
-    #[diplomat::rust_link(icu::segmenter::WordType, Enum)]
+    #[diplomat::enum_convert(icu_segmenter::options::WordType, needs_wildcard)]
+    #[diplomat::rust_link(icu::segmenter::options::WordType, Enum)]
     pub enum SegmenterWordType {
         None = 0,
         Number = 1,
@@ -50,10 +50,10 @@ pub mod ffi {
     pub struct WordBreakIteratorLatin1<'a>(icu_segmenter::WordBreakIteratorLatin1<'a, 'a>);
 
     impl SegmenterWordType {
-        #[diplomat::rust_link(icu::segmenter::WordType::is_word_like, FnInEnum)]
+        #[diplomat::rust_link(icu::segmenter::options::WordType::is_word_like, FnInEnum)]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(self) -> bool {
-            icu_segmenter::WordType::from(self).is_word_like()
+            icu_segmenter::options::WordType::from(self).is_word_like()
         }
     }
 
@@ -64,7 +64,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::WordBreakInvariantOptions, Struct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::options::WordBreakInvariantOptions, Struct, hidden)]
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto() -> Box<WordSegmenter> {
@@ -79,7 +79,7 @@ pub mod ffi {
         /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::WordBreakOptions, Struct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::options::WordBreakOptions, Struct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_content_locale(
@@ -345,9 +345,11 @@ pub mod ffi {
     }
 }
 
-impl<'a> From<&'a crate::locale_core::ffi::Locale> for icu_segmenter::WordBreakOptions<'a> {
+impl<'a> From<&'a crate::locale_core::ffi::Locale>
+    for icu_segmenter::options::WordBreakOptions<'a>
+{
     fn from(other: &'a crate::locale_core::ffi::Locale) -> Self {
-        let mut options = icu_segmenter::WordBreakOptions::default();
+        let mut options = icu_segmenter::options::WordBreakOptions::default();
         options.content_locale = Some(&other.0.id);
         options
     }

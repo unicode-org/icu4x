@@ -4,8 +4,8 @@
 
 use crate::complex::ComplexPayloads;
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::options::WordType;
 use crate::provider::*;
-use crate::WordType;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
 

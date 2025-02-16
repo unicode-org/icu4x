@@ -4,7 +4,7 @@ import type { LineBreakWordOption } from "./LineBreakWordOption"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
+/** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
 */
 type LineBreakOptions_obj = {
     strictness?: LineBreakStrictness | null;

@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
+/// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
 enum SegmenterWordType {
   none,
 
@@ -10,7 +10,7 @@ enum SegmenterWordType {
 
   letter;
 
-  /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html#method.is_word_like) for more information.
+  /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
   bool get isWordLike {
     final result = _icu4x_SegmenterWordType_is_word_like_mv1(index);
     return result;

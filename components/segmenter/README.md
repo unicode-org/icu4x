@@ -67,7 +67,7 @@ See [`GraphemeClusterSegmenter`] for more examples.
 Find all word boundaries:
 
 ```rust
-use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 
 let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 
@@ -87,7 +87,7 @@ See [`WordSegmenter`] for more examples.
 Segment the string into sentences:
 
 ```rust
-use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
 
 let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 
