@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_casemap::titlecase::TitlecaseOptions;
+use icu_casemap::options::TitlecaseOptions;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -19,22 +19,22 @@ pub mod ffi {
 
     use writeable::Writeable;
 
-    #[diplomat::enum_convert(icu_casemap::titlecase::LeadingAdjustment, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
+    #[diplomat::enum_convert(icu_casemap::options::LeadingAdjustment, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::options::LeadingAdjustment, Enum)]
     pub enum LeadingAdjustment {
         Auto,
         None,
         ToCased,
     }
 
-    #[diplomat::enum_convert(icu_casemap::titlecase::TrailingCase, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::TrailingCase, Enum)]
+    #[diplomat::enum_convert(icu_casemap::options::TrailingCase, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::options::TrailingCase, Enum)]
     pub enum TrailingCase {
         Lower,
         Unchanged,
     }
 
-    #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
+    #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
     pub struct TitlecaseOptionsV1 {
         pub leading_adjustment: DiplomatOption<LeadingAdjustment>,
@@ -42,7 +42,7 @@ pub mod ffi {
     }
 
     impl TitlecaseOptionsV1 {
-        #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions::default, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
         pub fn default() -> TitlecaseOptionsV1 {

@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html) for more information.
+/// See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
 enum LeadingAdjustment {
   auto,
 
