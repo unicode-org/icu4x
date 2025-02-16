@@ -13,4 +13,4 @@ rust-version = "1.81"
 path = "unused"
 
 [dependencies]
-icu_capi = "2.0.0-beta1"
+icu_capi = "2.0.0-dev"
