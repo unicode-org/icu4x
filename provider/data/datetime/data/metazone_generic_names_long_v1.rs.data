@@ -1953,7 +1953,7 @@ macro_rules! __impl_metazone_generic_names_long_v1 {
                         fallback_iterator.step();
                     }
                 };
-                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+                Ok(icu_provider::DataResponse { payload, metadata })
             }
         }
     };
