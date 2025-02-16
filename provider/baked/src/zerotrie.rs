@@ -10,7 +10,10 @@ const ID_SEPARATOR: u8 = 0x1E;
 pub use icu_provider::DynamicDataMarker;
 use icu_provider::{marker::MaybeAsVarULE, prelude::*};
 pub use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{VarZeroSlice, VarZeroVec};
+use zerovec::VarZeroSlice;
+
+#[cfg(feature = "export")]
+use zerovec::VarZeroVec;
 
 #[cfg(feature = "export")]
 pub(crate) enum BakedValue<'a> {
@@ -130,6 +133,7 @@ fn get_index(
     }
 }
 
+#[cfg(feature = "alloc")]
 fn iter(
     trie: &'static ZeroTrieSimpleAscii<&'static [u8]>,
 ) -> core::iter::FilterMap<
