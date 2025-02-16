@@ -123,7 +123,7 @@ impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
         &self,
         id: DataIdentifierBorrowed,
         attributes_prefix_match: bool,
-    ) -> Option<&'static M::DataStruct> {
+    ) -> Option<DataPayload<M>> {
         self.0
             .binary_search_by(|&(k, _)| K::cmp(k, id))
             .or_else(|e| {
@@ -136,6 +136,7 @@ impl<K: BinarySearchKey, M: DataMarker> super::DataStore<M> for Data<K, M> {
             // Safety: binary_search returns in-bounds indices when returning Ok.
             // The err case in `or_else` above only returns in-bounds Ok values
             .map(|i| unsafe { self.0.get_unchecked(i) }.1)
+            .map(DataPayload::from_static_ref)
             .ok()
     }
 
