@@ -658,7 +658,7 @@ impl DataExporter for BakedExporter {
                             #search
 
                             Ok(icu_provider::DataResponse {
-                                payload: icu_provider::DataPayload::from_static_ref(payload),
+                                payload,
                                 metadata
                             })
                         }

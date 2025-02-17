@@ -81,7 +81,7 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
         &self,
         id: DataIdentifierBorrowed,
         attributes_prefix_match: bool,
-    ) -> Option<&'static <M>::DataStruct> {
+    ) -> Option<DataPayload<M>> {
         use writeable::Writeable;
         let mut cursor = self.trie.cursor();
         let _is_ascii = id.locale.write_to(&mut cursor);
@@ -101,6 +101,7 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
         }
         // Safety: Allowed since `i` came from the trie and the field safety invariant
         .map(|i| unsafe { self.values.get_unchecked(i) })
+        .map(DataPayload::from_static_ref)
     }
 
     #[cfg(feature = "alloc")]

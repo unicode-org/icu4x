@@ -27,7 +27,7 @@ macro_rules! __impl_decimal_digits_v1 {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::decimal::provider::DecimalDigitsV1>, icu_provider::DataError> {
                 let metadata = icu_provider::DataResponseMetadata::default();
                 let Some(payload) = icu_provider_baked::DataStore::get(&Self::DATA_DECIMAL_DIGITS_V1, req.id, req.metadata.attributes_prefix_match) else { return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::decimal::provider::DecimalDigitsV1 as icu_provider::DataMarker>::INFO, req)) };
-                Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(payload), metadata })
+                Ok(icu_provider::DataResponse { payload, metadata })
             }
         }
     };
