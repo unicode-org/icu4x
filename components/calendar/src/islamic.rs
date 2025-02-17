@@ -474,7 +474,7 @@ impl Calendar for IslamicObservational {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
@@ -852,7 +852,7 @@ impl Calendar for IslamicCivil {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
@@ -1046,7 +1046,7 @@ impl Calendar for IslamicTabular {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 

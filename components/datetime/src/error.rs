@@ -102,7 +102,7 @@ pub enum DateTimeWriteError {
     /// [`FixedCalendarDateTimeNames::with_pattern_unchecked`], and the pattern requires names
     /// that were not loaded.
     ///
-    /// The output will contain fallback values using field identifiers (such as `tue` for `IsoWeekday::Tuesday`,
+    /// The output will contain fallback values using field identifiers (such as `tue` for `Weekday::Tuesday`,
     /// `M02` for month 2, etc.).
     #[displaydoc("Names for {0:?} not loaded")]
     NamesNotLoaded(ErrorField),

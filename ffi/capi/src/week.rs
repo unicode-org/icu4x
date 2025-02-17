@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::date::ffi::IsoWeekday;
+    use crate::date::ffi::Weekday;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -74,7 +74,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor)]
         pub fn from_first_day_of_week_and_min_week_days(
-            first_weekday: IsoWeekday,
+            first_weekday: Weekday,
             min_week_days: u8,
         ) -> Box<WeekCalculator> {
             let mut calculator = icu_calendar::week::WeekCalculator::default();
@@ -86,7 +86,7 @@ pub mod ffi {
         /// Returns the weekday that starts the week for this object's locale
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::first_weekday, StructField)]
         #[diplomat::attr(auto, getter)]
-        pub fn first_weekday(&self) -> IsoWeekday {
+        pub fn first_weekday(&self) -> Weekday {
             self.0.first_weekday.into()
         }
         /// The minimum number of days overlapping a year required for a week to be
@@ -103,13 +103,13 @@ pub mod ffi {
             let mut contains = WeekendContainsDay::default();
             for day in self.0.weekend() {
                 match day {
-                    icu_calendar::types::IsoWeekday::Monday => contains.monday = true,
-                    icu_calendar::types::IsoWeekday::Tuesday => contains.tuesday = true,
-                    icu_calendar::types::IsoWeekday::Wednesday => contains.wednesday = true,
-                    icu_calendar::types::IsoWeekday::Thursday => contains.thursday = true,
-                    icu_calendar::types::IsoWeekday::Friday => contains.friday = true,
-                    icu_calendar::types::IsoWeekday::Saturday => contains.saturday = true,
-                    icu_calendar::types::IsoWeekday::Sunday => contains.sunday = true,
+                    icu_calendar::types::Weekday::Monday => contains.monday = true,
+                    icu_calendar::types::Weekday::Tuesday => contains.tuesday = true,
+                    icu_calendar::types::Weekday::Wednesday => contains.wednesday = true,
+                    icu_calendar::types::Weekday::Thursday => contains.thursday = true,
+                    icu_calendar::types::Weekday::Friday => contains.friday = true,
+                    icu_calendar::types::Weekday::Saturday => contains.saturday = true,
+                    icu_calendar::types::Weekday::Sunday => contains.sunday = true,
                 }
             }
             contains

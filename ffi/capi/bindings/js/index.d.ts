@@ -216,7 +216,7 @@ export { CollatorNumericOrdering } from "./CollatorNumericOrdering"
 
 export { CollatorStrength } from "./CollatorStrength"
 
-export { IsoWeekday } from "./IsoWeekday"
+export { Weekday } from "./Weekday"
 
 export { DateTimeLength } from "./DateTimeLength"
 

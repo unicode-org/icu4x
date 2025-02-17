@@ -1,5 +1,5 @@
-#ifndef icu4x_IsoWeekday_D_HPP
-#define icu4x_IsoWeekday_D_HPP
+#ifndef icu4x_Weekday_D_HPP
+#define icu4x_Weekday_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -13,22 +13,22 @@
 
 namespace icu4x {
 namespace capi {
-    enum IsoWeekday {
-      IsoWeekday_Monday = 1,
-      IsoWeekday_Tuesday = 2,
-      IsoWeekday_Wednesday = 3,
-      IsoWeekday_Thursday = 4,
-      IsoWeekday_Friday = 5,
-      IsoWeekday_Saturday = 6,
-      IsoWeekday_Sunday = 7,
+    enum Weekday {
+      Weekday_Monday = 1,
+      Weekday_Tuesday = 2,
+      Weekday_Wednesday = 3,
+      Weekday_Thursday = 4,
+      Weekday_Friday = 5,
+      Weekday_Saturday = 6,
+      Weekday_Sunday = 7,
     };
     
-    typedef struct IsoWeekday_option {union { IsoWeekday ok; }; bool is_ok; } IsoWeekday_option;
+    typedef struct Weekday_option {union { Weekday ok; }; bool is_ok; } Weekday_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
-class IsoWeekday {
+class Weekday {
 public:
   enum Value {
     Monday = 1,
@@ -40,18 +40,18 @@ public:
     Sunday = 7,
   };
 
-  IsoWeekday() = default;
+  Weekday() = default;
   // Implicit conversions between enum and ::Value
-  constexpr IsoWeekday(Value v) : value(v) {}
+  constexpr Weekday(Value v) : value(v) {}
   constexpr operator Value() const { return value; }
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline icu4x::capi::IsoWeekday AsFFI() const;
-  inline static icu4x::IsoWeekday FromFFI(icu4x::capi::IsoWeekday c_enum);
+  inline icu4x::capi::Weekday AsFFI() const;
+  inline static icu4x::Weekday FromFFI(icu4x::capi::Weekday c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_IsoWeekday_D_HPP
+#endif // icu4x_Weekday_D_HPP

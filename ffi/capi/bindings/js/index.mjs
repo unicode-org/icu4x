@@ -214,7 +214,7 @@ export { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 
 export { CollatorStrength } from "./CollatorStrength.mjs"
 
-export { IsoWeekday } from "./IsoWeekday.mjs"
+export { Weekday } from "./Weekday.mjs"
 
 export { DateTimeLength } from "./DateTimeLength.mjs"
 

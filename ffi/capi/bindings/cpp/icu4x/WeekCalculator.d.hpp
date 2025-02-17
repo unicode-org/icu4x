@@ -19,7 +19,7 @@ namespace capi { struct WeekCalculator; }
 class WeekCalculator;
 struct WeekendContainsDay;
 class DataError;
-class IsoWeekday;
+class Weekday;
 }
 
 
@@ -37,9 +37,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  inline static std::unique_ptr<icu4x::WeekCalculator> from_first_day_of_week_and_min_week_days(icu4x::IsoWeekday first_weekday, uint8_t min_week_days);
+  inline static std::unique_ptr<icu4x::WeekCalculator> from_first_day_of_week_and_min_week_days(icu4x::Weekday first_weekday, uint8_t min_week_days);
 
-  inline icu4x::IsoWeekday first_weekday() const;
+  inline icu4x::Weekday first_weekday() const;
 
   inline uint8_t min_week_days() const;
 

@@ -2943,7 +2943,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-        day: input::IsoWeekday,
+        day: input::Weekday,
     ) -> Result<&str, GetNameForWeekdayError> {
         let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;

@@ -11,9 +11,9 @@
 #include "CalendarError.d.h"
 #include "CalendarParseError.d.h"
 #include "IsoDate.d.h"
-#include "IsoWeekday.d.h"
 #include "WeekCalculator.d.h"
 #include "WeekOf.d.h"
+#include "Weekday.d.h"
 
 #include "Date.d.h"
 
@@ -39,9 +39,9 @@ uint16_t icu4x_Date_day_of_year_mv1(const Date* self);
 
 uint8_t icu4x_Date_day_of_month_mv1(const Date* self);
 
-IsoWeekday icu4x_Date_day_of_week_mv1(const Date* self);
+Weekday icu4x_Date_day_of_week_mv1(const Date* self);
 
-uint8_t icu4x_Date_week_of_month_mv1(const Date* self, IsoWeekday first_weekday);
+uint8_t icu4x_Date_week_of_month_mv1(const Date* self, Weekday first_weekday);
 
 WeekOf icu4x_Date_week_of_year_mv1(const Date* self, const WeekCalculator* calculator);
 

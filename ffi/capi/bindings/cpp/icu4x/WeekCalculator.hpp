@@ -13,8 +13,8 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
-#include "IsoWeekday.hpp"
 #include "Locale.hpp"
+#include "Weekday.hpp"
 #include "WeekendContainsDay.hpp"
 
 
@@ -28,9 +28,9 @@ namespace capi {
     typedef struct icu4x_WeekCalculator_create_with_provider_mv1_result {union {icu4x::capi::WeekCalculator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WeekCalculator_create_with_provider_mv1_result;
     icu4x_WeekCalculator_create_with_provider_mv1_result icu4x_WeekCalculator_create_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
-    icu4x::capi::WeekCalculator* icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(icu4x::capi::IsoWeekday first_weekday, uint8_t min_week_days);
+    icu4x::capi::WeekCalculator* icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(icu4x::capi::Weekday first_weekday, uint8_t min_week_days);
     
-    icu4x::capi::IsoWeekday icu4x_WeekCalculator_first_weekday_mv1(const icu4x::capi::WeekCalculator* self);
+    icu4x::capi::Weekday icu4x_WeekCalculator_first_weekday_mv1(const icu4x::capi::WeekCalculator* self);
     
     uint8_t icu4x_WeekCalculator_min_week_days_mv1(const icu4x::capi::WeekCalculator* self);
     
@@ -54,15 +54,15 @@ inline diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WeekCalculator>>(std::unique_ptr<icu4x::WeekCalculator>(icu4x::WeekCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WeekCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::WeekCalculator> icu4x::WeekCalculator::from_first_day_of_week_and_min_week_days(icu4x::IsoWeekday first_weekday, uint8_t min_week_days) {
+inline std::unique_ptr<icu4x::WeekCalculator> icu4x::WeekCalculator::from_first_day_of_week_and_min_week_days(icu4x::Weekday first_weekday, uint8_t min_week_days) {
   auto result = icu4x::capi::icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(first_weekday.AsFFI(),
     min_week_days);
   return std::unique_ptr<icu4x::WeekCalculator>(icu4x::WeekCalculator::FromFFI(result));
 }
 
-inline icu4x::IsoWeekday icu4x::WeekCalculator::first_weekday() const {
+inline icu4x::Weekday icu4x::WeekCalculator::first_weekday() const {
   auto result = icu4x::capi::icu4x_WeekCalculator_first_weekday_mv1(this->AsFFI());
-  return icu4x::IsoWeekday::FromFFI(result);
+  return icu4x::Weekday::FromFFI(result);
 }
 
 inline uint8_t icu4x::WeekCalculator::min_week_days() const {

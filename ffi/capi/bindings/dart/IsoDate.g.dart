@@ -84,9 +84,9 @@ final class IsoDate implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  IsoWeekday get dayOfWeek {
+  Weekday get dayOfWeek {
     final result = _icu4x_IsoDate_day_of_week_mv1(_ffi);
-    return IsoWeekday.values.firstWhere((v) => v._ffi == result);
+    return Weekday.values.firstWhere((v) => v._ffi == result);
   }
 
   /// Returns the week number in this month, 1-indexed, based on what
@@ -95,7 +95,7 @@ final class IsoDate implements ffi.Finalizable {
   /// `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-  int weekOfMonth(IsoWeekday firstWeekday) {
+  int weekOfMonth(Weekday firstWeekday) {
     final result = _icu4x_IsoDate_week_of_month_mv1(_ffi, firstWeekday._ffi);
     return result;
   }

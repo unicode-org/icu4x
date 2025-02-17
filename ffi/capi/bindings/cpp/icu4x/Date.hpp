@@ -15,9 +15,9 @@
 #include "CalendarError.hpp"
 #include "CalendarParseError.hpp"
 #include "IsoDate.hpp"
-#include "IsoWeekday.hpp"
 #include "WeekCalculator.hpp"
 #include "WeekOf.hpp"
+#include "Weekday.hpp"
 
 
 namespace icu4x {
@@ -41,9 +41,9 @@ namespace capi {
     
     uint8_t icu4x_Date_day_of_month_mv1(const icu4x::capi::Date* self);
     
-    icu4x::capi::IsoWeekday icu4x_Date_day_of_week_mv1(const icu4x::capi::Date* self);
+    icu4x::capi::Weekday icu4x_Date_day_of_week_mv1(const icu4x::capi::Date* self);
     
-    uint8_t icu4x_Date_week_of_month_mv1(const icu4x::capi::Date* self, icu4x::capi::IsoWeekday first_weekday);
+    uint8_t icu4x_Date_week_of_month_mv1(const icu4x::capi::Date* self, icu4x::capi::Weekday first_weekday);
     
     icu4x::capi::WeekOf icu4x_Date_week_of_year_mv1(const icu4x::capi::Date* self, const icu4x::capi::WeekCalculator* calculator);
     
@@ -120,12 +120,12 @@ inline uint8_t icu4x::Date::day_of_month() const {
   return result;
 }
 
-inline icu4x::IsoWeekday icu4x::Date::day_of_week() const {
+inline icu4x::Weekday icu4x::Date::day_of_week() const {
   auto result = icu4x::capi::icu4x_Date_day_of_week_mv1(this->AsFFI());
-  return icu4x::IsoWeekday::FromFFI(result);
+  return icu4x::Weekday::FromFFI(result);
 }
 
-inline uint8_t icu4x::Date::week_of_month(icu4x::IsoWeekday first_weekday) const {
+inline uint8_t icu4x::Date::week_of_month(icu4x::Weekday first_weekday) const {
   auto result = icu4x::capi::icu4x_Date_week_of_month_mv1(this->AsFFI(),
     first_weekday.AsFFI());
   return result;

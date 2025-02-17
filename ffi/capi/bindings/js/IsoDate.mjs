@@ -3,9 +3,9 @@ import { Calendar } from "./Calendar.mjs"
 import { CalendarError } from "./CalendarError.mjs"
 import { CalendarParseError } from "./CalendarParseError.mjs"
 import { Date } from "./Date.mjs"
-import { IsoWeekday } from "./IsoWeekday.mjs"
 import { WeekCalculator } from "./WeekCalculator.mjs"
 import { WeekOf } from "./WeekOf.mjs"
+import { Weekday } from "./Weekday.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -133,7 +133,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_day_of_week_mv1(this.ffiValue);
     
         try {
-            return new IsoWeekday(diplomatRuntime.internalConstructor, result);
+            return new Weekday(diplomatRuntime.internalConstructor, result);
         }
         
         finally {}

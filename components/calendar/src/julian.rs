@@ -144,7 +144,7 @@ impl Calendar for Julian {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(Julian.date_to_iso(date).inner())
     }
 

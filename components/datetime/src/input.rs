@@ -15,14 +15,14 @@ pub use icu_calendar::Date;
 pub use icu_time::{zone::UtcOffset, DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
-pub(crate) use icu_calendar::types::{DayOfMonth, IsoWeekday, MonthInfo, YearInfo};
+pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct ExtractedInput {
     pub(crate) year: Option<YearInfo>,
     pub(crate) month: Option<MonthInfo>,
     pub(crate) day_of_month: Option<DayOfMonth>,
-    pub(crate) iso_weekday: Option<IsoWeekday>,
+    pub(crate) iso_weekday: Option<Weekday>,
     pub(crate) day_of_year: Option<DayOfYearInfo>,
     pub(crate) hour: Option<Hour>,
     pub(crate) minute: Option<Minute>,
