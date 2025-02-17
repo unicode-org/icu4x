@@ -546,19 +546,19 @@ pub enum SubsecondDigits {
     S1 = 1,
     /// Two fractional digits (hundredths of a second).
     S2 = 2,
-    /// Three fractional digits (thousandths of a second).
+    /// Three fractional digits (milliseconds).
     S3 = 3,
     /// Four fractional digits.
     S4 = 4,
     /// Five fractional digits.
     S5 = 5,
-    /// Six fractional digits.
+    /// Six fractional digits (microseconds).
     S6 = 6,
     /// Seven fractional digits.
     S7 = 7,
     /// Eight fractional digits.
     S8 = 8,
-    /// Nine fractional digits.
+    /// Nine fractional digits (nanoseconds)
     S9 = 9,
 }
 
