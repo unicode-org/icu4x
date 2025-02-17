@@ -28,7 +28,7 @@ impl DataProvider<WeekDataV2> for SourceDataProvider {
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
 
-        let first_weekday: icu::calendar::types::IsoWeekday = week_data
+        let first_weekday: icu::calendar::types::Weekday = week_data
             .first_day
             .get(&territory)
             .or_else(|| week_data.first_day.get(&DEFAULT_TERRITORY))
@@ -104,7 +104,7 @@ impl IterableDataProviderCached<WeekDataV2> for SourceDataProvider {
 #[test]
 fn test_basic_cldr_week_data_v2() {
     use icu::calendar::provider::WeekdaySet;
-    use icu::calendar::types::IsoWeekday::*;
+    use icu::calendar::types::Weekday::*;
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();

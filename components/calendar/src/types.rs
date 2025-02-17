@@ -410,10 +410,10 @@ fn test_day_of_week_in_month() {
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::types::IsoWeekday;
+/// use icu::calendar::types::Weekday;
 ///
-/// assert_eq!(1, IsoWeekday::Monday as usize);
-/// assert_eq!(7, IsoWeekday::Sunday as usize);
+/// assert_eq!(1, Weekday::Monday as usize);
+/// assert_eq!(7, Weekday::Sunday as usize);
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(missing_docs)] // The weekday variants should be self-obvious.
@@ -422,7 +422,7 @@ fn test_day_of_week_in_month() {
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::types))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // This is stable
-pub enum IsoWeekday {
+pub enum Weekday {
     Monday = 1,
     Tuesday,
     Wednesday,
@@ -432,22 +432,22 @@ pub enum IsoWeekday {
     Sunday,
 }
 
-impl From<usize> for IsoWeekday {
-    /// Convert from an ISO-8601 weekday number to an [`IsoWeekday`] enum. 0 is automatically converted
+impl From<usize> for Weekday {
+    /// Convert from an ISO-8601 weekday number to an [`Weekday`] enum. 0 is automatically converted
     /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::types::Weekday;
     ///
-    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
-    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));
-    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(7));
-    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
+    /// assert_eq!(Weekday::Sunday, Weekday::from(0));
+    /// assert_eq!(Weekday::Monday, Weekday::from(1));
+    /// assert_eq!(Weekday::Sunday, Weekday::from(7));
+    /// assert_eq!(Weekday::Monday, Weekday::from(8));
     /// ```
     fn from(input: usize) -> Self {
-        use IsoWeekday::*;
+        use Weekday::*;
         match input % 7 {
             0 => Sunday,
             1 => Monday,
@@ -461,10 +461,10 @@ impl From<usize> for IsoWeekday {
     }
 }
 
-impl IsoWeekday {
+impl Weekday {
     /// Returns the day after the current day.
-    pub(crate) fn next_day(self) -> IsoWeekday {
-        use IsoWeekday::*;
+    pub(crate) fn next_day(self) -> Weekday {
+        use Weekday::*;
         match self {
             Monday => Tuesday,
             Tuesday => Wednesday,

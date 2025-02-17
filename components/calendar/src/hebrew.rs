@@ -190,7 +190,7 @@ impl Calendar for Hebrew {
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
         let (year_info, h_year) = YearInfo::year_containing_rd(fixed_iso);
         // Obtaining a 1-indexed day-in-year value
         let day = fixed_iso - year_info.new_year() + 1;
@@ -210,7 +210,7 @@ impl Calendar for Hebrew {
         let days_preceding = year_info.keviyah.days_preceding(date.0.month);
 
         // Need to subtract 1 since the new year is itself in this year
-        Iso::iso_from_fixed(ny + i64::from(days_preceding) + i64::from(date.0.day) - 1)
+        Iso::from_fixed(ny + i64::from(days_preceding) + i64::from(date.0.day) - 1)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

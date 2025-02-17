@@ -20,7 +20,7 @@ pub mod islamic;
 pub use chinese_based::{ChineseCacheV1, DangiCacheV1};
 pub use islamic::{IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1};
 
-use crate::types::IsoWeekday;
+use crate::types::Weekday;
 use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
@@ -129,7 +129,7 @@ pub struct JapaneseEras<'data> {
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekData {
     /// The first day of a week.
-    pub first_weekday: IsoWeekday,
+    pub first_weekday: Weekday,
     /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
     pub min_week_days: u8,
     /// Bitset representing weekdays that are part of the 'weekend', for calendar purposes.
@@ -160,14 +160,14 @@ pub struct WeekdaySet(u8);
 
 impl WeekdaySet {
     /// Returns whether the set contains the day.
-    pub const fn contains(&self, day: IsoWeekday) -> bool {
+    pub const fn contains(&self, day: Weekday) -> bool {
         self.0 & day.bit_value() != 0
     }
 }
 
 impl WeekdaySet {
     /// Creates a new [WeekdaySet] using the provided days.
-    pub const fn new(days: &[IsoWeekday]) -> Self {
+    pub const fn new(days: &[Weekday]) -> Self {
         let mut i = 0;
         let mut w = 0;
         #[allow(clippy::indexing_slicing)]
@@ -179,17 +179,17 @@ impl WeekdaySet {
     }
 }
 
-impl IsoWeekday {
+impl Weekday {
     /// Defines the bit order used for encoding and reading weekend days.
     const fn bit_value(self) -> u8 {
         match self {
-            IsoWeekday::Monday => 1 << 6,
-            IsoWeekday::Tuesday => 1 << 5,
-            IsoWeekday::Wednesday => 1 << 4,
-            IsoWeekday::Thursday => 1 << 3,
-            IsoWeekday::Friday => 1 << 2,
-            IsoWeekday::Saturday => 1 << 1,
-            IsoWeekday::Sunday => 1 << 0,
+            Weekday::Monday => 1 << 6,
+            Weekday::Tuesday => 1 << 5,
+            Weekday::Wednesday => 1 << 4,
+            Weekday::Thursday => 1 << 3,
+            Weekday::Friday => 1 << 2,
+            Weekday::Saturday => 1 << 1,
+            Weekday::Sunday => 1 << 0,
         }
     }
 }
@@ -199,7 +199,7 @@ impl databake::Bake for WeekdaySet {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_calendar");
         let days =
-            crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self).map(|d| d.bake(ctx));
+            crate::week_of::WeekdaySetIterator::new(Weekday::Monday, *self).map(|d| d.bake(ctx));
         databake::quote! {
             icu_calendar::provider::WeekdaySet::new(&[#(#days),*])
         }
@@ -223,7 +223,7 @@ impl serde::Serialize for WeekdaySet {
             use serde::ser::SerializeSeq;
 
             let mut seq = serializer.serialize_seq(None)?;
-            for day in crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self) {
+            for day in crate::week_of::WeekdaySetIterator::new(Weekday::Monday, *self) {
                 seq.serialize_element(&day)?;
             }
             seq.end()
@@ -246,14 +246,14 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
             impl<'de> serde::de::Visitor<'de> for Visitor<'de> {
                 type Value = WeekdaySet;
                 fn expecting(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-                    core::write!(f, "a sequence of IsoWeekdays")
+                    core::write!(f, "a sequence of Weekdays")
                 }
                 fn visit_seq<A: serde::de::SeqAccess<'de>>(
                     self,
                     mut seq: A,
                 ) -> Result<Self::Value, A::Error> {
                     let mut set = WeekdaySet::new(&[]);
-                    while let Some(day) = seq.next_element::<IsoWeekday>()? {
+                    while let Some(day) = seq.next_element::<Weekday>()? {
                         set.0 |= day.bit_value();
                     }
                     Ok(set)
@@ -272,9 +272,9 @@ fn test_weekdayset_bake() {
         WeekdaySet,
         const,
         crate::provider::WeekdaySet::new(&[
-            crate::types::IsoWeekday::Monday,
-            crate::types::IsoWeekday::Wednesday,
-            crate::types::IsoWeekday::Friday
+            crate::types::Weekday::Monday,
+            crate::types::Weekday::Wednesday,
+            crate::types::Weekday::Friday
         ]),
         icu_calendar
     );
@@ -282,7 +282,7 @@ fn test_weekdayset_bake() {
 
 #[test]
 fn test_weekdayset_new() {
-    use IsoWeekday::*;
+    use Weekday::*;
 
     let sat_sun_bitmap = Saturday.bit_value() | Sunday.bit_value();
     let sat_sun_weekend = WeekdaySet::new(&[Saturday, Sunday]);

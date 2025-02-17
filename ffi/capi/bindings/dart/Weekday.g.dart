@@ -2,7 +2,7 @@
 
 part of 'lib.g.dart';
 
-enum IsoWeekday {
+enum Weekday {
   monday,
 
   tuesday,

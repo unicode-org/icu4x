@@ -123,13 +123,13 @@ impl Calendar for Julian {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(JulianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
         Self::julian_from_fixed(fixed_iso)
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let fixed_julian = Julian::fixed_from_julian(date.0);
-        Iso::iso_from_fixed(fixed_julian)
+        Iso::from_fixed(fixed_julian)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -144,7 +144,7 @@ impl Calendar for Julian {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(Julian.date_to_iso(date).inner())
     }
 
@@ -470,7 +470,7 @@ mod test {
         ];
 
         for case in cases {
-            let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(RataDie::new(case.fixed_date));
+            let iso_from_fixed: Date<Iso> = Iso::from_fixed(RataDie::new(case.fixed_date));
             let julian_from_fixed: Date<Julian> = Date::new_from_iso(iso_from_fixed, Julian);
             assert_eq!(julian_from_fixed.year().era_year().unwrap(), case.expected_year,
                 "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nJulian: {julian_from_fixed:?}");

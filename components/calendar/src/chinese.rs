@@ -195,7 +195,7 @@ impl Calendar for Chinese {
 
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed = Iso::fixed_from_iso(iso.inner);
+        let fixed = Iso::to_fixed(iso);
         ChineseDateInner(Inner::chinese_based_date_from_fixed(
             self,
             fixed,
@@ -206,7 +206,7 @@ impl Calendar for Chinese {
     // Obtain an ISO date from a Chinese date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let fixed = Inner::fixed_from_chinese_based_date_inner(date.0);
-        Iso::iso_from_fixed(fixed)
+        Iso::from_fixed(fixed)
     }
 
     //Count the number of months in a given year, specified by providing a date
@@ -353,7 +353,7 @@ impl Chinese {
         } else {
             Inner::fixed_mid_year_from_year(year)
         };
-        let iso_year = Iso::iso_from_fixed(rata_die_in_year).year();
+        let iso_year = Iso::from_fixed(rata_die_in_year).year();
         let related_iso = iso_year.era_year_or_extended();
         types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
@@ -476,7 +476,7 @@ mod test {
         let chinese_cached = Chinese::new();
         for case in cases {
             let rata_die = RataDie::new(case.fixed);
-            let iso = Iso::iso_from_fixed(rata_die);
+            let iso = Iso::from_fixed(rata_die);
 
             do_twice(
                 &chinese_calculating,
@@ -557,7 +557,7 @@ mod test {
         let chinese_cached = Chinese::new();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let iso = Iso::iso_from_fixed(rata_die);
+            let iso = Iso::from_fixed(rata_die);
 
             do_twice(
                 &chinese_calculating,

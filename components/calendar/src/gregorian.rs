@@ -336,7 +336,7 @@ mod test {
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(case.fixed_date);
+        let iso_from_fixed: Date<Iso> = Iso::from_fixed(case.fixed_date);
         let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
         assert_eq!(greg_date_from_fixed.year().era_year_or_extended(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
@@ -603,8 +603,8 @@ mod test {
         // than the other, without exception.
         for i in -100..100 {
             for j in -100..100 {
-                let iso_i: Date<Iso> = Iso::iso_from_fixed(RataDie::new(i));
-                let iso_j: Date<Iso> = Iso::iso_from_fixed(RataDie::new(j));
+                let iso_i: Date<Iso> = Iso::from_fixed(RataDie::new(i));
+                let iso_j: Date<Iso> = Iso::from_fixed(RataDie::new(j));
 
                 let greg_i: Date<Gregorian> = Date::new_from_iso(iso_i, Gregorian);
                 let greg_j: Date<Gregorian> = Date::new_from_iso(iso_j, Gregorian);

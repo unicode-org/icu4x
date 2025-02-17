@@ -170,7 +170,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Monday is 1, Sunday is 7, according to ISO
     #[inline]
-    pub fn day_of_week(&self) -> types::IsoWeekday {
+    pub fn day_of_week(&self) -> types::Weekday {
         self.calendar.as_calendar().day_of_week(self.inner())
     }
 
@@ -244,18 +244,18 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::types::Weekday;
     /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
-    /// let first_weekday = IsoWeekday::Sunday;
+    /// let first_weekday = Weekday::Sunday;
     ///
     /// assert_eq!(date.week_of_month(first_weekday), WeekOfMonth(2));
     /// ```
-    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
+    pub fn week_of_month(&self, first_weekday: types::Weekday) -> types::WeekOfMonth {
         let config = WeekCalculator {
             first_weekday,
             min_week_days: 0, // ignored
@@ -323,11 +323,6 @@ impl<A: AsCalendar> Date<A> {
     pub fn calendar_wrapper(&self) -> &A {
         &self.calendar
     }
-
-    #[doc(hidden)]
-    pub fn to_fixed(&self) -> calendrical_calculations::rata_die::RataDie {
-        Iso::fixed_from_iso(self.to_iso().inner)
-    }
 }
 
 impl Date<Iso> {
@@ -344,7 +339,7 @@ impl Date<Iso> {
     /// ```
     #[doc(hidden)] // unstable
     pub fn days_since(&self, other: Date<Iso>) -> i32 {
-        (Iso::fixed_from_iso(*self.inner()) - Iso::fixed_from_iso(other.inner)) as i32
+        (Iso::to_fixed(*self) - Iso::to_fixed(other)) as i32
     }
 }
 

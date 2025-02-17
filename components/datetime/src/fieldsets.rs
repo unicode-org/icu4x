@@ -64,7 +64,7 @@ use crate::{
 };
 use enums::*;
 use icu_calendar::{
-    types::{DayOfMonth, IsoWeekday, MonthInfo, YearInfo},
+    types::{DayOfMonth, MonthInfo, Weekday, YearInfo},
     Date, Iso,
 };
 use icu_provider::marker::NeverMarker;

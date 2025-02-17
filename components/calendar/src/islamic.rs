@@ -445,7 +445,7 @@ impl Calendar for IslamicObservational {
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
 
         let (year_info, y, m, d) = self
             .precomputed_data()
@@ -459,7 +459,7 @@ impl Calendar for IslamicObservational {
             date.0.month,
             date.0.day,
         );
-        Iso::iso_from_fixed(fixed)
+        Iso::from_fixed(fixed)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -474,7 +474,7 @@ impl Calendar for IslamicObservational {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
@@ -638,7 +638,7 @@ impl Calendar for IslamicUmmAlQura {
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
 
         let (year_info, y, m, d) = self
             .precomputed_data()
@@ -651,7 +651,7 @@ impl Calendar for IslamicUmmAlQura {
             date.0
                 .year_info
                 .rd_for::<SaudiIslamicMarker>(date.0.year, date.0.month, date.0.day);
-        Iso::iso_from_fixed(fixed)
+        Iso::from_fixed(fixed)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -831,13 +831,13 @@ impl Calendar for IslamicCivil {
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
         Self::islamic_from_fixed(fixed_iso).inner
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let fixed_islamic = Self::fixed_from_islamic(*date);
-        Iso::iso_from_fixed(fixed_islamic)
+        Iso::from_fixed(fixed_islamic)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -852,7 +852,7 @@ impl Calendar for IslamicCivil {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
@@ -1025,13 +1025,13 @@ impl Calendar for IslamicTabular {
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
         Self::islamic_from_fixed(fixed_iso).inner
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let fixed_islamic = Self::fixed_from_islamic(*date);
-        Iso::iso_from_fixed(fixed_islamic)
+        Iso::from_fixed(fixed_islamic)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -1046,7 +1046,7 @@ impl Calendar for IslamicTabular {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
@@ -1853,7 +1853,7 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let iso = Iso::iso_from_fixed(RataDie::new(*f_date));
+            let iso = Iso::from_fixed(RataDie::new(*f_date));
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }
@@ -1868,7 +1868,11 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(
+                Iso::to_fixed(date.to_iso()),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
         }
     }
 
@@ -1881,7 +1885,11 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(
+                Iso::to_fixed(date.to_iso()),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
         }
     }
 
@@ -1894,7 +1902,7 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let iso = Iso::iso_from_fixed(RataDie::new(*f_date));
+            let iso = Iso::from_fixed(RataDie::new(*f_date));
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }
@@ -1909,7 +1917,11 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(
+                Iso::to_fixed(date.to_iso()),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
         }
     }
 
@@ -1922,7 +1934,7 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let iso = Iso::iso_from_fixed(RataDie::new(*f_date));
+            let iso = Iso::from_fixed(RataDie::new(*f_date));
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }
@@ -1939,7 +1951,7 @@ mod test {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            let iso = Iso::iso_from_fixed(RataDie::new(*f_date));
+            let iso = Iso::from_fixed(RataDie::new(*f_date));
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }
@@ -1956,7 +1968,11 @@ mod test {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(
+                Iso::to_fixed(date.to_iso()),
+                RataDie::new(*f_date),
+                "{case:?}"
+            );
         }
     }
 
@@ -1975,13 +1991,14 @@ mod test {
                 ) as i64
             })
             .sum();
-        let expected_number_of_days =
-            Date::try_new_observational_islamic_with_calendar(END_YEAR, 1, 1, calendar)
-                .unwrap()
-                .to_fixed()
-                - Date::try_new_observational_islamic_with_calendar(START_YEAR, 1, 1, calendar)
-                    .unwrap()
-                    .to_fixed(); // The number of days between Islamic years -1245 and 1518
+        let expected_number_of_days = (Iso::to_fixed(
+            (Date::try_new_observational_islamic_with_calendar(END_YEAR, 1, 1, calendar).unwrap())
+                .to_iso(),
+        )) - Iso::to_fixed(
+            (Date::try_new_observational_islamic_with_calendar(START_YEAR, 1, 1, calendar)
+                .unwrap())
+            .to_iso(),
+        ); // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
         assert!(
@@ -2005,13 +2022,11 @@ mod test {
                 ) as i64
             })
             .sum();
-        let expected_number_of_days =
-            Date::try_new_ummalqura_with_calendar(END_YEAR, 1, 1, calendar)
-                .unwrap()
-                .to_fixed()
-                - Date::try_new_ummalqura_with_calendar(START_YEAR, 1, 1, calendar)
-                    .unwrap()
-                    .to_fixed(); // The number of days between Umm al-Qura Islamic years -1245 and 1518
+        let expected_number_of_days = (Iso::to_fixed(
+            (Date::try_new_ummalqura_with_calendar(END_YEAR, 1, 1, calendar).unwrap()).to_iso(),
+        )) - Iso::to_fixed(
+            (Date::try_new_ummalqura_with_calendar(START_YEAR, 1, 1, calendar).unwrap()).to_iso(),
+        ); // The number of days between Umm al-Qura Islamic years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }

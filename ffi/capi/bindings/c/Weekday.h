@@ -1,5 +1,5 @@
-#ifndef IsoWeekday_H
-#define IsoWeekday_H
+#ifndef Weekday_H
+#define Weekday_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "IsoWeekday.d.h"
+#include "Weekday.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // IsoWeekday_H
+#endif // Weekday_H

@@ -185,7 +185,7 @@ impl Calendar for Dangi {
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
-        let fixed = Iso::fixed_from_iso(iso.inner);
+        let fixed = Iso::to_fixed(iso);
         DangiDateInner(Inner::chinese_based_date_from_fixed(
             self,
             fixed,
@@ -195,7 +195,7 @@ impl Calendar for Dangi {
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
         let fixed = Inner::fixed_from_chinese_based_date_inner(date.0);
-        Iso::iso_from_fixed(fixed)
+        Iso::from_fixed(fixed)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -257,7 +257,7 @@ impl Calendar for Dangi {
         }
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> crate::types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> crate::types::Weekday {
         self.date_to_iso(date).day_of_week()
     }
 
@@ -330,7 +330,7 @@ impl Dangi {
         } else {
             Inner::fixed_mid_year_from_year(year)
         };
-        let iso_year = Iso::iso_from_fixed(rata_die_in_year).year();
+        let iso_year = Iso::from_fixed(rata_die_in_year).year();
         let related_iso = iso_year.era_year_or_extended();
         types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
@@ -396,7 +396,7 @@ mod test {
         let dangi_cached = Dangi::new();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let iso = Iso::iso_from_fixed(rata_die);
+            let iso = Iso::from_fixed(rata_die);
             do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
                 let korean = iso.to_calendar(dangi);
                 let result = korean.to_calendar(Iso);

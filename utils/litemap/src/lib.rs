@@ -66,4 +66,4 @@ pub mod store;
 #[cfg(any(test, feature = "testing"))]
 pub mod testing;
 
-pub use map::LiteMap;
+pub use map::{Entry, LiteMap, OccupiedEntry, VacantEntry};

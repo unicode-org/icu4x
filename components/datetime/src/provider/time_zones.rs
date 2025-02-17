@@ -242,8 +242,8 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriod<'data> {
-    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local [`EPOCH`](icu_time::provider::EPOCH). It represents when the metazone started to be used.
+    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
+    /// [`MinutesSinceEpoch`](icu_time::provider::MinutesSinceEpoch). It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub list: ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
 }

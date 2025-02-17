@@ -154,13 +154,13 @@ impl Calendar for Ethiopian {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> EthiopianDateInner {
-        let fixed_iso = Iso::fixed_from_iso(*iso.inner());
+        let fixed_iso = Iso::to_fixed(iso);
         Self::ethiopian_from_fixed(fixed_iso)
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let fixed_ethiopian = Ethiopian::fixed_from_ethiopian(date.0);
-        Iso::iso_from_fixed(fixed_ethiopian)
+        Iso::from_fixed(fixed_ethiopian)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -175,7 +175,7 @@ impl Calendar for Ethiopian {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::IsoWeekday {
+    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
         Iso.day_of_week(self.date_to_iso(date).inner())
     }
 

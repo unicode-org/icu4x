@@ -91,48 +91,36 @@ impl SourceDataProvider {
 
         let mut exemplar_cities = bcp47_tzids
             .iter()
-            .filter_map(|(bcp47, bcp47_tzid_data)| {
-                bcp47_tzid_data
-                    .alias
-                    .as_ref()
-                    .map(|aliases| (bcp47, aliases))
-            })
-            // Montreal is meant to be deprecated, but pre-43 the deprecation
-            // fallback was not set, which is why it might show up here.
-            .filter(|(bcp47, _)| bcp47.0 != "camtr")
-            .filter_map(|(bcp47, aliases)| {
-                aliases
-                    .split(' ')
-                    .filter_map(|alias| {
-                        let mut alias_parts = alias.split('/');
-                        let continent = alias_parts.next().expect("split non-empty");
-                        let location_or_subregion = alias_parts.next()?;
-                        let location_in_subregion = alias_parts.next();
-                        time_zone_names
-                            .zone
-                            .0
-                            .get(continent)
-                            .and_then(|x| x.0.get(location_or_subregion))
-                            .and_then(|x| match x {
-                                LocationOrSubRegion::Location(place) => Some(place),
-                                LocationOrSubRegion::SubRegion(region) => {
-                                    region.get(location_in_subregion?)
-                                }
-                            })
-                            .and_then(|p| p.exemplar_city.clone())
+            .filter_map(|(&bcp47, bcp47_tzid_data)| {
+                let canonical_alias = bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap(); // non-empty
+
+                // Etc zones don't have locations, with the exception of Unknown, which we still want to skip in root
+                if canonical_alias.starts_with("Etc/")
+                    && (canonical_alias != "Etc/Unknown" || locale.is_default())
+                {
+                    return None;
+                }
+
+                let mut alias_parts = canonical_alias.split('/');
+                let exemplar = time_zone_names
+                    .zone
+                    .0
+                    .get(alias_parts.next().expect("split non-empty"))
+                    .and_then(|x| x.0.get(alias_parts.next()?))
+                    .and_then(|x| match x {
+                        LocationOrSubRegion::Location(place) => place.exemplar_city.clone(),
+                        LocationOrSubRegion::SubRegion(region) => {
+                            region.get(alias_parts.next()?)?.exemplar_city.clone()
+                        }
                     })
-                    .next()
-                    .or_else(|| {
-                        let canonical_alias = aliases.split(' ').next().expect("split non-empty");
-                        let mut alias_parts = canonical_alias.split('/');
-                        (alias_parts.next() != Some("Etc")).then(|| {
-                            alias_parts
-                                .next_back()
-                                .expect("split non-empty")
-                                .replace('_', " ")
-                        })
-                    })
-                    .map(|name| (*bcp47, name))
+                    .unwrap_or_else(|| {
+                        canonical_alias
+                            .split('/')
+                            .next_back()
+                            .expect("split non-empty")
+                            .replace('_', " ")
+                    });
+                Some((bcp47, exemplar))
             })
             .collect::<BTreeMap<_, _>>();
 
@@ -266,17 +254,11 @@ impl SourceDataProvider {
                                         )
                                     }
 
-                                    let to_fixed = |(date, time): (Date<Iso>, Time)| {
-                                        (date.to_fixed() - EPOCH) as i32 * 24 * 60
-                                            + (time.hour.number() as i32 * 60
-                                                + time.minute.number() as i32)
-                                    };
-
                                     [
                                         // join the metazone
                                         Some((
                                             bcp47,
-                                            to_fixed(parse_mzone_date(
+                                            MinutesSinceEpoch::from(parse_mzone_date(
                                                 period
                                                     .uses_meta_zone
                                                     .from
@@ -297,7 +279,7 @@ impl SourceDataProvider {
                                             .to
                                             .as_deref()
                                             .map(parse_mzone_date)
-                                            .map(to_fixed)
+                                            .map(MinutesSinceEpoch::from)
                                             .map(|m| (bcp47, m, NichedOption(None))),
                                     ]
                                 })
@@ -322,12 +304,11 @@ impl SourceDataProvider {
                         .iter()
                         .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
                         .flat_map(|(bcp47, zoneset)| {
-                            let mut data =
-                                Vec::<(MinutesSinceEpoch, (UtcOffset, UtcOffset))>::new();
+                            let mut data = Vec::<(i32, (UtcOffset, UtcOffset))>::new();
 
                             fn store_offsets(
-                                data: &mut Vec<(MinutesSinceEpoch, (UtcOffset, UtcOffset))>,
-                                end_time: MinutesSinceEpoch,
+                                data: &mut Vec<(i32, (UtcOffset, UtcOffset))>,
+                                end_time: i32,
                                 utc_offset: i64,
                                 dst_offset_relative: i64,
                             ) {
@@ -348,8 +329,8 @@ impl SourceDataProvider {
                                     // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
                                     // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
                                     // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
-                                    .map(|t| (t.to_timestamp() / 60) as MinutesSinceEpoch)
-                                    .unwrap_or(MinutesSinceEpoch::MAX);
+                                    .map(|t| (t.to_timestamp() / 60) as i32)
+                                    .unwrap_or(i32::MAX);
 
                                 if local_end_time <= 0 {
                                     continue;
@@ -398,7 +379,7 @@ impl SourceDataProvider {
                                                                 zone_info.offset,
                                                                 rule.time_to_add,
                                                             ) / 60)
-                                                                as MinutesSinceEpoch
+                                                                as i32
                                                         }
                                                     },
                                                     rule.time_to_add,
@@ -467,7 +448,7 @@ impl SourceDataProvider {
                                 move |(end_time, (utc_offset, dst_offset_relative))| {
                                     (
                                         bcp47,
-                                        end_time,
+                                        MinutesSinceEpoch(end_time),
                                         (
                                             utc_offset.to_eighths_of_hour(),
                                             dst_offset_relative.to_eighths_of_hour(),
