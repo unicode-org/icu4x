@@ -12,21 +12,21 @@ enum TimePrecision {
 
   second,
 
-  secondS1,
+  subsecond1,
 
-  secondS2,
+  subsecond2,
 
-  secondS3,
+  subsecond3,
 
-  secondS4,
+  subsecond4,
 
-  secondS5,
+  subsecond5,
 
-  secondS6,
+  subsecond6,
 
-  secondS7,
+  subsecond7,
 
-  secondS8,
+  subsecond8,
 
-  secondS9;
+  subsecond9;
 }

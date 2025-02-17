@@ -150,7 +150,7 @@
                     "subsecond": 9
                 },
                 "semantic": {
-                    "timePrecision": "secondS9"
+                    "timePrecision": "subsecond9"
                 },
                 "hourCycle": "h23"
             }

@@ -176,15 +176,15 @@ impl FieldSymbol {
     pub(crate) fn from_subsecond_digits(subsecond_digits: SubsecondDigits) -> Self {
         use SubsecondDigits::*;
         match subsecond_digits {
-            S1 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS1),
-            S2 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS2),
-            S3 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS3),
-            S4 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS4),
-            S5 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS5),
-            S6 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS6),
-            S7 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS7),
-            S8 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS8),
-            S9 => FieldSymbol::DecimalSecond(DecimalSecond::SecondS9),
+            S1 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond1),
+            S2 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond2),
+            S3 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond3),
+            S4 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond4),
+            S5 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond5),
+            S6 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond6),
+            S7 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond7),
+            S8 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond8),
+            S9 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond9),
         }
     }
 
@@ -301,15 +301,15 @@ impl FieldSymbol {
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
             Self::Second(Second::MillisInDay) => 24,
-            Self::DecimalSecond(DecimalSecond::SecondS1) => 31,
-            Self::DecimalSecond(DecimalSecond::SecondS2) => 32,
-            Self::DecimalSecond(DecimalSecond::SecondS3) => 33,
-            Self::DecimalSecond(DecimalSecond::SecondS4) => 34,
-            Self::DecimalSecond(DecimalSecond::SecondS5) => 35,
-            Self::DecimalSecond(DecimalSecond::SecondS6) => 36,
-            Self::DecimalSecond(DecimalSecond::SecondS7) => 37,
-            Self::DecimalSecond(DecimalSecond::SecondS8) => 38,
-            Self::DecimalSecond(DecimalSecond::SecondS9) => 39,
+            Self::DecimalSecond(DecimalSecond::Subsecond1) => 31,
+            Self::DecimalSecond(DecimalSecond::Subsecond2) => 32,
+            Self::DecimalSecond(DecimalSecond::Subsecond3) => 33,
+            Self::DecimalSecond(DecimalSecond::Subsecond4) => 34,
+            Self::DecimalSecond(DecimalSecond::Subsecond5) => 35,
+            Self::DecimalSecond(DecimalSecond::Subsecond6) => 36,
+            Self::DecimalSecond(DecimalSecond::Subsecond7) => 37,
+            Self::DecimalSecond(DecimalSecond::Subsecond8) => 38,
+            Self::DecimalSecond(DecimalSecond::Subsecond9) => 39,
             Self::TimeZone(TimeZone::SpecificNonLocation) => 100,
             Self::TimeZone(TimeZone::LocalizedOffset) => 102,
             Self::TimeZone(TimeZone::GenericNonLocation) => 103,
@@ -784,23 +784,23 @@ impl LengthType for TimeZone {
 #[allow(clippy::exhaustive_enums)] // used in data struct
 pub enum DecimalSecond {
     /// A second with 1 fractional digit: "1.0"
-    SecondS1 = 1,
+    Subsecond1 = 1,
     /// A second with 2 fractional digits: "1.00"
-    SecondS2 = 2,
+    Subsecond2 = 2,
     /// A second with 3 fractional digits: "1.000"
-    SecondS3 = 3,
+    Subsecond3 = 3,
     /// A second with 4 fractional digits: "1.0000"
-    SecondS4 = 4,
+    Subsecond4 = 4,
     /// A second with 5 fractional digits: "1.00000"
-    SecondS5 = 5,
+    Subsecond5 = 5,
     /// A second with 6 fractional digits: "1.000000"
-    SecondS6 = 6,
+    Subsecond6 = 6,
     /// A second with 7 fractional digits: "1.0000000"
-    SecondS7 = 7,
+    Subsecond7 = 7,
     /// A second with 8 fractional digits: "1.00000000"
-    SecondS8 = 8,
+    Subsecond8 = 8,
     /// A second with 9 fractional digits: "1.000000000"
-    SecondS9 = 9,
+    Subsecond9 = 9,
 }
 
 impl DecimalSecond {

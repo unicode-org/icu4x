@@ -739,15 +739,15 @@ impl Bag {
                         _ => Numeric::Numeric,
                     });
                     bag.subsecond = Some(match decimal_second {
-                        fields::DecimalSecond::SecondS1 => S1,
-                        fields::DecimalSecond::SecondS2 => S2,
-                        fields::DecimalSecond::SecondS3 => S3,
-                        fields::DecimalSecond::SecondS4 => S4,
-                        fields::DecimalSecond::SecondS5 => S5,
-                        fields::DecimalSecond::SecondS6 => S6,
-                        fields::DecimalSecond::SecondS7 => S7,
-                        fields::DecimalSecond::SecondS8 => S8,
-                        fields::DecimalSecond::SecondS9 => S9,
+                        fields::DecimalSecond::Subsecond1 => S1,
+                        fields::DecimalSecond::Subsecond2 => S2,
+                        fields::DecimalSecond::Subsecond3 => S3,
+                        fields::DecimalSecond::Subsecond4 => S4,
+                        fields::DecimalSecond::Subsecond5 => S5,
+                        fields::DecimalSecond::Subsecond6 => S6,
+                        fields::DecimalSecond::Subsecond7 => S7,
+                        fields::DecimalSecond::Subsecond8 => S8,
+                        fields::DecimalSecond::Subsecond9 => S9,
                     });
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
@@ -809,7 +809,7 @@ mod test {
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (
-                    Symbol::DecimalSecond(fields::DecimalSecond::SecondS3),
+                    Symbol::DecimalSecond(fields::DecimalSecond::Subsecond3),
                     Length::One
                 )
                     .into(),
