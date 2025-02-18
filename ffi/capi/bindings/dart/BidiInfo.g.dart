@@ -24,7 +24,8 @@ final class BidiInfo implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiInfo_destroy));
+  static final _finalizer =
+      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiInfo_destroy));
 
   /// The number of paragraphs contained here
   int get paragraphCount {
@@ -37,7 +38,9 @@ final class BidiInfo implements ffi.Finalizable {
     // This lifetime edge depends on lifetimes: 'text
     core.List<Object> textEdges = [this];
     final result = _ICU4XBidiInfo_paragraph_at(_ffi, n);
-    return result.address == 0 ? null : BidiParagraph._fromFfi(result, [], textEdges);
+    return result.address == 0
+        ? null
+        : BidiParagraph._fromFfi(result, [], textEdges);
   }
 
   /// The number of bytes in this full text
@@ -57,27 +60,34 @@ final class BidiInfo implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XBidiInfo_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XBidiInfo_destroy')
+@RecordSymbol('ICU4XBidiInfo_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
+    isLeaf: true, symbol: 'ICU4XBidiInfo_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XBidiInfo_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XBidiInfo_paragraph_count')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiInfo_paragraph_count')
+@RecordSymbol('ICU4XBidiInfo_paragraph_count')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiInfo_paragraph_count')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiInfo_paragraph_count(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XBidiInfo_paragraph_at')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiInfo_paragraph_at')
+@RecordSymbol('ICU4XBidiInfo_paragraph_at')
+@ffi.Native<
+        ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
+    isLeaf: true, symbol: 'ICU4XBidiInfo_paragraph_at')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XBidiInfo_paragraph_at(ffi.Pointer<ffi.Opaque> self, int n);
+external ffi.Pointer<ffi.Opaque> _ICU4XBidiInfo_paragraph_at(
+    ffi.Pointer<ffi.Opaque> self, int n);
 
-@meta.ResourceIdentifier('ICU4XBidiInfo_size')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiInfo_size')
+@RecordSymbol('ICU4XBidiInfo_size')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiInfo_size')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiInfo_size(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XBidiInfo_level_at')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiInfo_level_at')
+@RecordSymbol('ICU4XBidiInfo_level_at')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
+    isLeaf: true, symbol: 'ICU4XBidiInfo_level_at')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiInfo_level_at(ffi.Pointer<ffi.Opaque> self, int pos);

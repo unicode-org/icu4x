@@ -31,13 +31,13 @@ final class PluralCategories {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  PluralCategories._fromFfi(_PluralCategoriesFfi ffi) :
-    zero = ffi.zero,
-    one = ffi.one,
-    two = ffi.two,
-    few = ffi.few,
-    many = ffi.many,
-    other = ffi.other;
+  PluralCategories._fromFfi(_PluralCategoriesFfi ffi)
+      : zero = ffi.zero,
+        one = ffi.one,
+        two = ffi.two,
+        few = ffi.few,
+        many = ffi.many,
+        other = ffi.other;
 
   // ignore: unused_element
   _PluralCategoriesFfi _toFfi(ffi.Allocator temp) {

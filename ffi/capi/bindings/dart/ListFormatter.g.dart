@@ -20,15 +20,18 @@ final class ListFormatter implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XListFormatter_destroy));
+  static final _finalizer =
+      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XListFormatter_destroy));
 
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ListFormatter.andWithLength(DataProvider provider, Locale locale, ListLength length) {
-    final result = _ICU4XListFormatter_create_and_with_length(provider._ffi, locale._ffi, length.index);
+  factory ListFormatter.andWithLength(
+      DataProvider provider, Locale locale, ListLength length) {
+    final result = _ICU4XListFormatter_create_and_with_length(
+        provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -40,8 +43,10 @@ final class ListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ListFormatter.orWithLength(DataProvider provider, Locale locale, ListLength length) {
-    final result = _ICU4XListFormatter_create_or_with_length(provider._ffi, locale._ffi, length.index);
+  factory ListFormatter.orWithLength(
+      DataProvider provider, Locale locale, ListLength length) {
+    final result = _ICU4XListFormatter_create_or_with_length(
+        provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -53,8 +58,10 @@ final class ListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
   ///
   /// Throws [Error] on failure.
-  factory ListFormatter.unitWithLength(DataProvider provider, Locale locale, ListLength length) {
-    final result = _ICU4XListFormatter_create_unit_with_length(provider._ffi, locale._ffi, length.index);
+  factory ListFormatter.unitWithLength(
+      DataProvider provider, Locale locale, ListLength length) {
+    final result = _ICU4XListFormatter_create_unit_with_length(
+        provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -68,7 +75,8 @@ final class ListFormatter implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final listView = list.utf16View;
     final writeable = _Writeable();
-    final result = _ICU4XListFormatter_format_utf16(_ffi, listView.allocIn(temp), listView.length, writeable._ffi);
+    final result = _ICU4XListFormatter_format_utf16(
+        _ffi, listView.allocIn(temp), listView.length, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -77,27 +85,53 @@ final class ListFormatter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XListFormatter_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XListFormatter_destroy')
+@RecordSymbol('ICU4XListFormatter_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
+    isLeaf: true, symbol: 'ICU4XListFormatter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XListFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XListFormatter_create_and_with_length')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XListFormatter_create_and_with_length')
+@RecordSymbol('ICU4XListFormatter_create_and_with_length')
+@ffi.Native<
+        _ResultOpaqueInt32 Function(
+            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
+    isLeaf: true, symbol: 'ICU4XListFormatter_create_and_with_length')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XListFormatter_create_and_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+external _ResultOpaqueInt32 _ICU4XListFormatter_create_and_with_length(
+    ffi.Pointer<ffi.Opaque> provider,
+    ffi.Pointer<ffi.Opaque> locale,
+    int length);
 
-@meta.ResourceIdentifier('ICU4XListFormatter_create_or_with_length')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XListFormatter_create_or_with_length')
+@RecordSymbol('ICU4XListFormatter_create_or_with_length')
+@ffi.Native<
+        _ResultOpaqueInt32 Function(
+            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
+    isLeaf: true, symbol: 'ICU4XListFormatter_create_or_with_length')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XListFormatter_create_or_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+external _ResultOpaqueInt32 _ICU4XListFormatter_create_or_with_length(
+    ffi.Pointer<ffi.Opaque> provider,
+    ffi.Pointer<ffi.Opaque> locale,
+    int length);
 
-@meta.ResourceIdentifier('ICU4XListFormatter_create_unit_with_length')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XListFormatter_create_unit_with_length')
+@RecordSymbol('ICU4XListFormatter_create_unit_with_length')
+@ffi.Native<
+        _ResultOpaqueInt32 Function(
+            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
+    isLeaf: true, symbol: 'ICU4XListFormatter_create_unit_with_length')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XListFormatter_create_unit_with_length(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+external _ResultOpaqueInt32 _ICU4XListFormatter_create_unit_with_length(
+    ffi.Pointer<ffi.Opaque> provider,
+    ffi.Pointer<ffi.Opaque> locale,
+    int length);
 
-@meta.ResourceIdentifier('ICU4XListFormatter_format_utf16')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<_SliceUtf16>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XListFormatter_format_utf16')
+@RecordSymbol('ICU4XListFormatter_format_utf16')
+@ffi.Native<
+        _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
+            ffi.Pointer<_SliceUtf16>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XListFormatter_format_utf16')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XListFormatter_format_utf16(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<_SliceUtf16> listData, int listLength, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XListFormatter_format_utf16(
+    ffi.Pointer<ffi.Opaque> self,
+    ffi.Pointer<_SliceUtf16> listData,
+    int listLength,
+    ffi.Pointer<ffi.Opaque> writeable);

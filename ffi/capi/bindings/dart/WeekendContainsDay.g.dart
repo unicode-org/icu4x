@@ -31,7 +31,14 @@ final class WeekendContainsDay {
   bool saturday;
   bool sunday;
 
-  WeekendContainsDay({required this.monday, required this.tuesday, required this.wednesday, required this.thursday, required this.friday, required this.saturday, required this.sunday});
+  WeekendContainsDay(
+      {required this.monday,
+      required this.tuesday,
+      required this.wednesday,
+      required this.thursday,
+      required this.friday,
+      required this.saturday,
+      required this.sunday});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -39,14 +46,14 @@ final class WeekendContainsDay {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  WeekendContainsDay._fromFfi(_WeekendContainsDayFfi ffi) :
-    monday = ffi.monday,
-    tuesday = ffi.tuesday,
-    wednesday = ffi.wednesday,
-    thursday = ffi.thursday,
-    friday = ffi.friday,
-    saturday = ffi.saturday,
-    sunday = ffi.sunday;
+  WeekendContainsDay._fromFfi(_WeekendContainsDayFfi ffi)
+      : monday = ffi.monday,
+        tuesday = ffi.tuesday,
+        wednesday = ffi.wednesday,
+        thursday = ffi.thursday,
+        friday = ffi.friday,
+        saturday = ffi.saturday,
+        sunday = ffi.sunday;
 
   // ignore: unused_element
   _WeekendContainsDayFfi _toFfi(ffi.Allocator temp) {

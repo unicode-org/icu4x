@@ -22,7 +22,8 @@ final class BidiParagraph implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiParagraph_destroy));
+  static final _finalizer =
+      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiParagraph_destroy));
 
   /// Given a paragraph index `n` within the surrounding text, this sets this
   /// object to the paragraph at that index. Returns `Error::OutOfBoundsError` when out of bounds.
@@ -36,7 +37,6 @@ final class BidiParagraph implements ffi.Finalizable {
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    
   }
 
   /// The primary direction of this paragraph
@@ -75,7 +75,8 @@ final class BidiParagraph implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String reorderLine(int rangeStart, int rangeEnd) {
     final writeable = _Writeable();
-    final result = _ICU4XBidiParagraph_reorder_line(_ffi, rangeStart, rangeEnd, writeable._ffi);
+    final result = _ICU4XBidiParagraph_reorder_line(
+        _ffi, rangeStart, rangeEnd, writeable._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -95,42 +96,58 @@ final class BidiParagraph implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_destroy')
+@RecordSymbol('ICU4XBidiParagraph_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XBidiParagraph_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_set_paragraph_in_text')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_set_paragraph_in_text')
+@RecordSymbol('ICU4XBidiParagraph_set_paragraph_in_text')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_set_paragraph_in_text')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XBidiParagraph_set_paragraph_in_text(ffi.Pointer<ffi.Opaque> self, int n);
+external _ResultVoidInt32 _ICU4XBidiParagraph_set_paragraph_in_text(
+    ffi.Pointer<ffi.Opaque> self, int n);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_direction')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_direction')
+@RecordSymbol('ICU4XBidiParagraph_direction')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_direction')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_direction(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_size')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_size')
+@RecordSymbol('ICU4XBidiParagraph_size')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_size')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_size(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_range_start')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_range_start')
+@RecordSymbol('ICU4XBidiParagraph_range_start')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_range_start')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_range_start(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_range_end')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_range_end')
+@RecordSymbol('ICU4XBidiParagraph_range_end')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_range_end')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_range_end(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_reorder_line')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_reorder_line')
+@RecordSymbol('ICU4XBidiParagraph_reorder_line')
+@ffi.Native<
+        _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size,
+            ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_reorder_line')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XBidiParagraph_reorder_line(ffi.Pointer<ffi.Opaque> self, int rangeStart, int rangeEnd, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XBidiParagraph_reorder_line(
+    ffi.Pointer<ffi.Opaque> self,
+    int rangeStart,
+    int rangeEnd,
+    ffi.Pointer<ffi.Opaque> writeable);
 
-@meta.ResourceIdentifier('ICU4XBidiParagraph_level_at')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XBidiParagraph_level_at')
+@RecordSymbol('ICU4XBidiParagraph_level_at')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
+    isLeaf: true, symbol: 'ICU4XBidiParagraph_level_at')
 // ignore: non_constant_identifier_names
-external int _ICU4XBidiParagraph_level_at(ffi.Pointer<ffi.Opaque> self, int pos);
+external int _ICU4XBidiParagraph_level_at(
+    ffi.Pointer<ffi.Opaque> self, int pos);

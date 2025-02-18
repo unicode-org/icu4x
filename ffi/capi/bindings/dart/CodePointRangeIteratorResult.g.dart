@@ -29,10 +29,10 @@ final class CodePointRangeIteratorResult {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  CodePointRangeIteratorResult._fromFfi(_CodePointRangeIteratorResultFfi ffi) :
-    start = ffi.start,
-    end = ffi.end,
-    done = ffi.done;
+  CodePointRangeIteratorResult._fromFfi(_CodePointRangeIteratorResultFfi ffi)
+      : start = ffi.start,
+        end = ffi.end,
+        done = ffi.done;
 
   // ignore: unused_element
   _CodePointRangeIteratorResultFfi _toFfi(ffi.Allocator temp) {

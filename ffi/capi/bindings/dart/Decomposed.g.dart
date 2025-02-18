@@ -24,9 +24,9 @@ final class Decomposed {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  Decomposed._fromFfi(_DecomposedFfi ffi) :
-    first = ffi.first,
-    second = ffi.second;
+  Decomposed._fromFfi(_DecomposedFfi ffi)
+      : first = ffi.first,
+        second = ffi.second;
 
   // ignore: unused_element
   _DecomposedFfi _toFfi(ffi.Allocator temp) {
@@ -38,9 +38,7 @@ final class Decomposed {
 
   @override
   bool operator ==(Object other) =>
-      other is Decomposed &&
-      other.first == first &&
-      other.second == second;
+      other is Decomposed && other.first == first && other.second == second;
 
   @override
   int get hashCode => Object.hashAll([

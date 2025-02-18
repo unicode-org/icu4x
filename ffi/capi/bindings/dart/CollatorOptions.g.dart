@@ -29,7 +29,14 @@ final class CollatorOptions {
   CollatorNumeric numeric;
   CollatorBackwardSecondLevel backwardSecondLevel;
 
-  CollatorOptions({required this.strength, required this.alternateHandling, required this.caseFirst, required this.maxVariable, required this.caseLevel, required this.numeric, required this.backwardSecondLevel});
+  CollatorOptions(
+      {required this.strength,
+      required this.alternateHandling,
+      required this.caseFirst,
+      required this.maxVariable,
+      required this.caseLevel,
+      required this.numeric,
+      required this.backwardSecondLevel});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -37,14 +44,16 @@ final class CollatorOptions {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  CollatorOptions._fromFfi(_CollatorOptionsFfi ffi) :
-    strength = CollatorStrength.values[ffi.strength],
-    alternateHandling = CollatorAlternateHandling.values[ffi.alternateHandling],
-    caseFirst = CollatorCaseFirst.values[ffi.caseFirst],
-    maxVariable = CollatorMaxVariable.values[ffi.maxVariable],
-    caseLevel = CollatorCaseLevel.values[ffi.caseLevel],
-    numeric = CollatorNumeric.values[ffi.numeric],
-    backwardSecondLevel = CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel];
+  CollatorOptions._fromFfi(_CollatorOptionsFfi ffi)
+      : strength = CollatorStrength.values[ffi.strength],
+        alternateHandling =
+            CollatorAlternateHandling.values[ffi.alternateHandling],
+        caseFirst = CollatorCaseFirst.values[ffi.caseFirst],
+        maxVariable = CollatorMaxVariable.values[ffi.maxVariable],
+        caseLevel = CollatorCaseLevel.values[ffi.caseLevel],
+        numeric = CollatorNumeric.values[ffi.numeric],
+        backwardSecondLevel =
+            CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel];
 
   // ignore: unused_element
   _CollatorOptionsFfi _toFfi(ffi.Allocator temp) {

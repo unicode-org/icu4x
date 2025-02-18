@@ -17,7 +17,10 @@ final class DisplayNamesOptions {
   DisplayNamesFallback fallback;
   LanguageDisplay languageDisplay;
 
-  DisplayNamesOptions({required this.style, required this.fallback, required this.languageDisplay});
+  DisplayNamesOptions(
+      {required this.style,
+      required this.fallback,
+      required this.languageDisplay});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -25,10 +28,10 @@ final class DisplayNamesOptions {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  DisplayNamesOptions._fromFfi(_DisplayNamesOptionsFfi ffi) :
-    style = DisplayNamesStyle.values[ffi.style],
-    fallback = DisplayNamesFallback.values[ffi.fallback],
-    languageDisplay = LanguageDisplay.values[ffi.languageDisplay];
+  DisplayNamesOptions._fromFfi(_DisplayNamesOptionsFfi ffi)
+      : style = DisplayNamesStyle.values[ffi.style],
+        fallback = DisplayNamesFallback.values[ffi.fallback],
+        languageDisplay = LanguageDisplay.values[ffi.languageDisplay];
 
   // ignore: unused_element
   _DisplayNamesOptionsFfi _toFfi(ffi.Allocator temp) {

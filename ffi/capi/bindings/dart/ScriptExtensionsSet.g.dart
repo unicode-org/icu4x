@@ -24,7 +24,9 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptExtensionsSet_destroy));
+  @RecordSymbol('ICU4XScriptExtensionsSet_destroy')
+  static final _finalizer = ffi.NativeFinalizer(
+      ffi.Native.addressOf(_ICU4XScriptExtensionsSet_destroy));
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
@@ -54,22 +56,28 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_destroy')
+@RecordSymbol('ICU4XScriptExtensionsSet_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
+    isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XScriptExtensionsSet_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_contains')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_contains')
+@RecordSymbol('ICU4XScriptExtensionsSet_contains')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>(
+    isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_contains')
 // ignore: non_constant_identifier_names
-external bool _ICU4XScriptExtensionsSet_contains(ffi.Pointer<ffi.Opaque> self, int script);
+external bool _ICU4XScriptExtensionsSet_contains(
+    ffi.Pointer<ffi.Opaque> self, int script);
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_count')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_count')
+@RecordSymbol('ICU4XScriptExtensionsSet_count')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_count')
 // ignore: non_constant_identifier_names
 external int _ICU4XScriptExtensionsSet_count(ffi.Pointer<ffi.Opaque> self);
 
-@meta.ResourceIdentifier('ICU4XScriptExtensionsSet_script_at')
-@ffi.Native<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_script_at')
+@RecordSymbol('ICU4XScriptExtensionsSet_script_at')
+@ffi.Native<_ResultUint16Void Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
+    isLeaf: true, symbol: 'ICU4XScriptExtensionsSet_script_at')
 // ignore: non_constant_identifier_names
-external _ResultUint16Void _ICU4XScriptExtensionsSet_script_at(ffi.Pointer<ffi.Opaque> self, int index);
+external _ResultUint16Void _ICU4XScriptExtensionsSet_script_at(
+    ffi.Pointer<ffi.Opaque> self, int index);

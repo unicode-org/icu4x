@@ -22,15 +22,19 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XFixedDecimalFormatter_destroy));
+  @RecordSymbol('ICU4XFixedDecimalFormatter_destroy')
+  static final _finalizer = ffi.NativeFinalizer(
+      ffi.Native.addressOf(_ICU4XFixedDecimalFormatter_destroy));
 
   /// Creates a new [`FixedDecimalFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider, Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
-    final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider._ffi, locale._ffi, groupingStrategy.index);
+  factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider,
+      Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
+    final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
+        provider._ffi, locale._ffi, groupingStrategy.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -44,7 +48,8 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String format(FixedDecimal value) {
     final writeable = _Writeable();
-    final result = _ICU4XFixedDecimalFormatter_format(_ffi, value._ffi, writeable._ffi);
+    final result =
+        _ICU4XFixedDecimalFormatter_format(_ffi, value._ffi, writeable._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -52,17 +57,32 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XFixedDecimalFormatter_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_destroy')
+@RecordSymbol('ICU4XFixedDecimalFormatter_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
+    isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimalFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
+@RecordSymbol('ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
+@ffi.Native<
+        _ResultOpaqueInt32 Function(
+            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
+    isLeaf: true,
+    symbol: 'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int groupingStrategy);
+external _ResultOpaqueInt32
+    _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
+        ffi.Pointer<ffi.Opaque> provider,
+        ffi.Pointer<ffi.Opaque> locale,
+        int groupingStrategy);
 
-@meta.ResourceIdentifier('ICU4XFixedDecimalFormatter_format')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_format')
+@RecordSymbol('ICU4XFixedDecimalFormatter_format')
+@ffi.Native<
+        _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
+            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_format')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XFixedDecimalFormatter_format(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XFixedDecimalFormatter_format(
+    ffi.Pointer<ffi.Opaque> self,
+    ffi.Pointer<ffi.Opaque> value,
+    ffi.Pointer<ffi.Opaque> writeable);

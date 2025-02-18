@@ -82,7 +82,8 @@ enum AnyCalendarKind {
   static AnyCalendarKind? getForBcp47(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _ICU4XAnyCalendarKind_get_for_bcp47(sView.allocIn(temp), sView.length);
+    final result =
+        _ICU4XAnyCalendarKind_get_for_bcp47(sView.allocIn(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
       return null;
@@ -105,17 +106,23 @@ enum AnyCalendarKind {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XAnyCalendarKind_get_for_locale')
-@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_locale')
+@RecordSymbol('ICU4XAnyCalendarKind_get_for_locale')
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_locale')
 // ignore: non_constant_identifier_names
-external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_locale(ffi.Pointer<ffi.Opaque> locale);
+external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_locale(
+    ffi.Pointer<ffi.Opaque> locale);
 
-@meta.ResourceIdentifier('ICU4XAnyCalendarKind_get_for_bcp47')
-@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_bcp47')
+@RecordSymbol('ICU4XAnyCalendarKind_get_for_bcp47')
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(
+    isLeaf: true, symbol: 'ICU4XAnyCalendarKind_get_for_bcp47')
 // ignore: non_constant_identifier_names
-external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_bcp47(ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultInt32Void _ICU4XAnyCalendarKind_get_for_bcp47(
+    ffi.Pointer<ffi.Uint8> sData, int sLength);
 
-@meta.ResourceIdentifier('ICU4XAnyCalendarKind_bcp47')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
+@RecordSymbol('ICU4XAnyCalendarKind_bcp47')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(
+    isLeaf: true, symbol: 'ICU4XAnyCalendarKind_bcp47')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XAnyCalendarKind_bcp47(int self, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XAnyCalendarKind_bcp47(
+    int self, ffi.Pointer<ffi.Opaque> writeable);
