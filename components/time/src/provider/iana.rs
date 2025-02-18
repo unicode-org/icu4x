@@ -26,26 +26,38 @@ use zerovec::{VarZeroVec, ZeroVec};
 /// this byte.
 pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 
+icu_provider::data_marker!(
+    /// See [`IanaToBcp47Map`]
+    ///
+    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaExtendedV1`].
+    TimeZoneIanaBasicV1,
+    IanaToBcp47Map<'static>,
+    is_singleton = true,
+    has_checksum = true,
+);
+
+icu_provider::data_marker!(
+    /// See [`Bcp47ToIanaMap`]
+    ///
+    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaBasicV1`].
+    TimeZoneIanaExtendedV1,
+    Bcp47ToIanaMap<'static>,
+    is_singleton = true,
+    has_checksum = true,
+);
+
 /// A mapping from normal-case IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// Multiple IANA time zone IDs can map to the same BCP-47 time zone ID.
-///
-/// This markers uses a checksum to ensure consistency with [`Bcp47ToIanaMap`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(marker(
-    IanaToBcp47MapV3,
-    "time_zone/iana_to_bcp47@3",
-    singleton,
-    has_checksum
-))]
+#[derive(Debug, Clone, PartialEq, zerofrom::ZeroFrom, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::names))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct IanaToBcp47Map<'data> {
     /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
@@ -71,22 +83,14 @@ pub struct IanaToBcp47Map<'data> {
 ///
 /// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
 ///
-/// This markers uses a checksum to ensure consistency with [`IanaToBcp47Map`].
-///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(marker(
-    Bcp47ToIanaMapV1,
-    "time_zone/bcp47_to_iana@1",
-    singleton,
-    has_checksum
-))]
+#[derive(Debug, Clone, PartialEq, zerofrom::ZeroFrom, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::names))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMap<'data> {

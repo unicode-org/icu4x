@@ -88,8 +88,6 @@ export { Decimal } from "./Decimal"
 
 export { IanaParser } from "./IanaParser"
 
-export { IanaParserExtended } from "./IanaParserExtended"
-
 export { ListFormatter } from "./ListFormatter"
 
 export { LocaleCanonicalizer } from "./LocaleCanonicalizer"

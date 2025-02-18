@@ -330,6 +330,8 @@ lazy_static::lazy_static! {
         "icu::datetime::input::ZonedDateTime",
         "icu::time::zone::IanaParser",
         "icu::time::zone::WindowsParser",
+        "icu::time::zone::TimeZoneInfo",
+        "icu::time::zone::TimeZone",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::time::provider::names::*;
+use icu::time::provider::iana::*;
 use icu::time::TimeZone;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -13,8 +13,8 @@ use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{ZeroSlice, ZeroVec};
 
-impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3>, DataError> {
+impl DataProvider<TimeZoneIanaBasicV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaBasicV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
 
         // Sort and deduplicate the BCP-47 IDs:
@@ -41,7 +41,7 @@ impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
                         format!(
                             "{}{iana}",
                             char::from_u32(
-                                icu::time::provider::names::NON_REGION_CITY_PREFIX as u32
+                                icu::time::provider::iana::NON_REGION_CITY_PREFIX as u32
                             )
                             .unwrap()
                         )
@@ -68,14 +68,14 @@ impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<IanaToBcp47MapV3> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimeZoneIanaBasicV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<Bcp47ToIanaMapV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1>, DataError> {
+impl DataProvider<TimeZoneIanaExtendedV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaExtendedV1>, DataError> {
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
@@ -95,7 +95,7 @@ impl DataProvider<Bcp47ToIanaMapV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimeZoneIanaExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -203,18 +203,16 @@ fn test_normalize_canonicalize_iana_coverage() {
     let provider = crate::SourceDataProvider::new_testing();
 
     let iana2bcp = provider.iana_to_bcp47_map().unwrap();
-
-    let mapper = icu::time::zone::IanaParser::try_new_unstable(&provider).unwrap();
-    let mapper = mapper.as_borrowed();
-
-    for iana_id in iana2bcp.keys() {
-        let normalized = mapper.normalize_iana(iana_id).unwrap().0;
-        assert_eq!(&normalized, iana_id);
-    }
-
     let bcp2iana = provider.bcp47_to_canonical_iana_map().unwrap();
-    for (iana_id, bcp47_id) in iana2bcp.iter() {
-        let canonicalized = mapper.canonicalize_iana(iana_id).unwrap().0;
-        assert_eq!(&canonicalized, bcp2iana.get(bcp47_id).unwrap());
+
+    let parser = icu::time::zone::iana::IanaParserExtended::try_new_unstable(&provider).unwrap();
+    let parser = parser.as_borrowed();
+
+    for (iana_id, bcp47) in iana2bcp {
+        let unnormalized = iana_id.to_ascii_uppercase();
+        let (tz, canonicalized, normalized) = parser.parse(&unnormalized);
+        assert_eq!(tz, *bcp47);
+        assert_eq!(&canonicalized, bcp2iana.get(bcp47).unwrap());
+        assert_eq!(&normalized, iana_id);
     }
 }

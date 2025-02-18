@@ -81,7 +81,7 @@ pub mod ffi {
     }
 
     #[derive(Debug, PartialEq, Eq)]
-    #[diplomat::rust_link(icu::time::InvalidOffsetError, Struct, compact)]
+    #[diplomat::rust_link(icu::time::zone::InvalidOffsetError, Struct, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone"))]
     pub struct TimeZoneInvalidOffsetError;
 
@@ -300,8 +300,8 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 }
 
 #[cfg(any(feature = "timezone", feature = "datetime"))]
-impl From<icu_time::InvalidOffsetError> for TimeZoneInvalidOffsetError {
-    fn from(_: icu_time::InvalidOffsetError) -> Self {
+impl From<icu_time::zone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
+    fn from(_: icu_time::zone::InvalidOffsetError) -> Self {
         Self
     }
 }

@@ -1377,7 +1377,7 @@ pub mod zone {
         ///
         /// // "uschi" - has symbol data for short generic non-location
         /// let time_zone = IanaParser::new()
-        ///     .iana_to_bcp47("America/Chicago")
+        ///     .parse("America/Chicago")
         ///     .with_offset("-05".parse().ok())
         ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
         /// assert_writeable_eq!(
@@ -1387,7 +1387,7 @@ pub mod zone {
         ///
         /// // "ushnl" - has time zone override symbol data for short generic non-location
         /// let time_zone = IanaParser::new()
-        ///     .iana_to_bcp47("Pacific/Honolulu")
+        ///     .parse("Pacific/Honolulu")
         ///     .with_offset("-10".parse().ok())
         ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
         /// assert_writeable_eq!(
@@ -1397,7 +1397,7 @@ pub mod zone {
         ///
         /// // Mis-spelling of "America/Chicago" results in a fallback to offset format
         /// let time_zone = IanaParser::new()
-        ///     .iana_to_bcp47("America/Chigagou")
+        ///     .parse("America/Chigagou")
         ///     .with_offset("-05".parse().ok())
         ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
         /// assert_writeable_eq!(

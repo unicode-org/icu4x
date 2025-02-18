@@ -25,7 +25,7 @@ use zerovec::maps::ZeroMapKV;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
-pub mod names;
+pub mod iana;
 pub mod windows;
 
 #[cfg(feature = "compiled_data")]
@@ -47,28 +47,41 @@ const _: () = {
         pub use crate as time;
     }
     make_provider!(Baked);
-    impl_bcp47_to_iana_map_v1!(Baked);
-    impl_iana_to_bcp47_map_v3!(Baked);
-    impl_windows_zones_to_bcp47_map_v1!(Baked);
-    impl_zone_offset_period_v1!(Baked);
+    impl_time_zone_iana_basic_v1!(Baked);
+    impl_time_zone_iana_extended_v1!(Baked);
+    impl_time_zone_windows_v1!(Baked);
+    impl_time_zone_offsets_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    names::Bcp47ToIanaMapV1::INFO,
-    names::IanaToBcp47MapV3::INFO,
-    windows::WindowsZonesToBcp47MapV1::INFO,
-    ZoneOffsetPeriodV1::INFO,
+    iana::TimeZoneIanaExtendedV1::INFO,
+    iana::TimeZoneIanaBasicV1::INFO,
+    windows::TimeZoneWindowsV1::INFO,
+    TimeZoneOffsetsV1::INFO,
 ];
 
-/// TimeZone ID in BCP47 format
+/// A CLDR time zone identity.
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
+/// This can be created directly from BCP-47 strings, or it can be parsed from IANA IDs.
+///
+/// CLDR uses difference equivalence classes than IANA. For example, `Europe/Oslo` is
+/// an alias to `Europe/Berlin` in IANA (because they agree since 1970), but these are
+/// different identities in CLDR, as we want to be able to say "Norway Time" and
+/// "Germany Time". On the other hand `Europe/Belfast` and `Europe/London` are the same
+/// CLDR identity ("UK Time").
+///
+/// ```
+/// use icu::time::zone::{IanaParser, TimeZone};
+/// use tinystr::tinystr;
+///
+/// let parser = IanaParser::new();
+/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
+/// assert_eq!(parser.parse("Europe/Berlin"), TimeZone(tinystr!(8, "deber")));
+/// assert_eq!(parser.parse("Europe/Belfast"), TimeZone(tinystr!(8, "gblon")));
+/// assert_eq!(parser.parse("Europe/London"), TimeZone(tinystr!(8, "gblon")));
+/// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -113,6 +126,35 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
     type Slice = ZeroSlice<TimeZone>;
     type GetType = TimeZone;
     type OwnedType = TimeZone;
+}
+
+/// A time zone variant, such as Standard Time, or Daylight/Summer Time.
+///
+/// This should not generally be constructed by client code. Instead, use
+/// * [`TimeZoneInfo::with_rearguard_isdst`](crate::TimeZoneInfo::with_rearguard_isdst)
+/// * [`TimeZoneInfo::infer_zone_variant`](crate::TimeZoneInfo::infer_zone_variant)
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[zerovec::make_ule(TimeZoneVariantULE)]
+#[repr(u8)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum TimeZoneVariant {
+    /// The variant corresponding to `"standard"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Standard Time".
+    ///
+    /// This is the variant with the lower UTC offset.
+    Standard = 0,
+    /// The variant corresponding to `"daylight"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Daylight Time".
+    ///
+    /// This is the variant with the higher UTC offset.
+    Daylight = 1,
 }
 
 /// Storage type for storing UTC offsets as eights of an hour.
@@ -209,25 +251,14 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
     }
 }
 
-/// An ICU4X mapping to the time zone offsets at a given period.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(ZoneOffsetPeriodV1, "time_zone/offset_period@1", singleton))]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct ZoneOffsetPeriod<'data>(
+icu_provider::data_marker!(
     /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
     /// [`MinutesSinceEpoch`]. It represents when the offsets started to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    TimeZoneOffsetsV1,
+    "time/zone/offsets/v1",
+    ZeroMap2d<'static, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    is_singleton = true
 );

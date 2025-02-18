@@ -86,8 +86,6 @@ export { Decimal } from "./Decimal.mjs"
 
 export { IanaParser } from "./IanaParser.mjs"
 
-export { IanaParserExtended } from "./IanaParserExtended.mjs"
-
 export { ListFormatter } from "./ListFormatter.mjs"
 
 export { LocaleCanonicalizer } from "./LocaleCanonicalizer.mjs"
