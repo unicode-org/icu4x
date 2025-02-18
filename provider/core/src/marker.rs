@@ -112,16 +112,25 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
 ///
 /// For most data structs, a default implementation available via
 /// [`does_not_deref_to_varule`] can be used.
-pub trait MaybeExportAsVarULE {
+pub trait MaybeExportAsVarULE<'a> {
     /// The [`VarULE`] type for this data struct, or [`NeverVarULE`]
     /// if it cannot be represented as [`VarULE`].
-    type VarULE: VarULE + ?Sized;
+    type VarULE: ?Sized;
+
+    /// The [`EncodeAsVarULE`] type for this data struct, or [`NeverVarULE`]
+    /// if it cannot be represented as [`VarULE`].
+    ///
+    /// This is expected to be `&'a Self::VarULE` for compatible types.
+    type EncodeAsVarULE: 'a;
 
     /// If `self` can be wholy represented as [`Self::VarULE`],
     /// returns it as a reference.
     ///
     /// Otherwise, returns `None`.
-    fn maybe_as_varule(&self) -> Option<&Self::VarULE>;
+    fn maybe_as_varule(&'a self) -> Option<Self::EncodeAsVarULE>;
+
+    /// Converts from `Self::EncodeAsVarULE` to `Self`.
+    fn from_varule(varule: Self::EncodeAsVarULE) -> Self;
 }
 
 /// Implements [`MaybeExportAsVarULE`] on a type that is NOT representable
@@ -129,18 +138,26 @@ pub trait MaybeExportAsVarULE {
 #[macro_export]
 macro_rules! does_not_deref_to_varule {
     (<$generic:ident: $bound:tt> $ty:path) => {
-        impl<$generic: $bound> $crate::marker::MaybeExportAsVarULE for $ty {
+        impl<$generic: $bound> $crate::marker::MaybeExportAsVarULE<'_> for $ty {
             type VarULE = $crate::marker::NeverVarULE;
-            fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
+            type EncodeAsVarULE = $crate::marker::NeverVarULE;
+            fn maybe_as_varule(&self) -> Option<Self::VarULE> {
                 None
+            }
+            fn from_varule(input: Self::VarULE) -> Self {
+                match input {}
             }
         }
     };
     ($ty:path) => {
-        impl $crate::marker::MaybeExportAsVarULE for $ty {
+        impl $crate::marker::MaybeExportAsVarULE<'_> for $ty {
             type VarULE = $crate::marker::NeverVarULE;
-            fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
+            type EncodeAsVarULE = $crate::marker::NeverVarULE;
+            fn maybe_as_varule(&self) -> Option<Self::VarULE> {
                 None
+            }
+            fn from_varule(input: Self::VarULE) -> Self {
+                match input {}
             }
         }
     };

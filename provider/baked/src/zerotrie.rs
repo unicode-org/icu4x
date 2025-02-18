@@ -10,14 +10,14 @@ const ID_SEPARATOR: u8 = 0x1E;
 pub use icu_provider::DynamicDataMarker;
 use icu_provider::{marker::MaybeExportAsVarULE, prelude::*};
 pub use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::VarZeroSlice;
+use zerovec::{ule::VarULE, VarZeroSlice};
 
 #[cfg(feature = "export")]
 use zerovec::VarZeroVec;
 
 #[cfg(feature = "export")]
-pub(crate) enum BakedValue<'a> {
-    VarULE(&'a [u8]),
+pub(crate) enum BakedValue {
+    VarULE(Box<[u8]>),
     Struct(databake::TokenStream),
 }
 
@@ -72,7 +72,7 @@ pub(crate) fn bake(
         let byteses = bakes_to_ids
             .iter()
             .map(|(bake, _)| match bake {
-                BakedValue::VarULE(bytes) => *bytes,
+                BakedValue::VarULE(bytes) => &**bytes,
                 BakedValue::Struct(_) => {
                     unreachable!(
                         "All instances should equivalently return Some or None in MaybeExportAsVarULE"
@@ -198,16 +198,16 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
 
 pub struct DataForVarULEs<M: DataMarker>
 where
-    M::DataStruct: MaybeExportAsVarULE,
+    M::DataStruct: MaybeExportAsVarULE<'static>,
 {
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE>::VarULE>,
+    values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE>,
 }
 
 impl<M: DataMarker> DataForVarULEs<M>
 where
-    M::DataStruct: MaybeExportAsVarULE,
+    M::DataStruct: MaybeExportAsVarULE<'static>,
 {
     /// Construct from a trie and values
     ///
@@ -215,7 +215,7 @@ where
     /// The actual values contained in the trie must be valid indices into `values`
     pub const unsafe fn from_trie_and_values_unchecked(
         trie: ZeroTrieSimpleAscii<&'static [u8]>,
-        values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE>::VarULE>,
+        values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE>,
     ) -> Self {
         Self { trie, values }
     }
@@ -223,8 +223,10 @@ where
 
 impl<M: DataMarker> super::DataStore<M> for DataForVarULEs<M>
 where
-    M::DataStruct:
-        MaybeExportAsVarULE + From<&'static <M::DataStruct as MaybeExportAsVarULE>::VarULE>,
+    M::DataStruct: MaybeExportAsVarULE<'static>,
+    <M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE: VarULE,
+    <M::DataStruct as MaybeExportAsVarULE<'static>>::EncodeAsVarULE:
+        From<&'static <M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE>,
 {
     fn get(
         &self,
@@ -234,7 +236,7 @@ where
         get_index(self.trie, id, attributes_prefix_match)
             // Safety: Allowed since `i` came from the trie and the field safety invariant
             .map(|i| unsafe { self.values.get_unchecked(i) })
-            .map(From::from)
+            .map(|v| M::DataStruct::from_varule(v.into()))
             .map(DataPayload::from_owned)
     }
 

@@ -42,17 +42,15 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-impl MaybeExportAsVarULE for HelloWorld<'_> {
+impl<'a> MaybeExportAsVarULE<'a> for HelloWorld<'a> {
     type VarULE = str;
-    fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
+    type EncodeAsVarULE = &'a str;
+    fn maybe_as_varule(&'a self) -> Option<Self::EncodeAsVarULE> {
         Some(&self.message)
     }
-}
-
-impl<'a> From<&'a str> for HelloWorld<'a> {
-    fn from(value: &'a str) -> Self {
+    fn from_varule(varule: Self::EncodeAsVarULE) -> Self {
         Self {
-            message: Cow::Borrowed(value),
+            message: Cow::Borrowed(varule),
         }
     }
 }
