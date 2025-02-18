@@ -663,7 +663,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Allow inversion lists to be built from ranges that include `char::MAX` (#3203)
   - `icu_datetime`: No other changes
   - `icu_decimal`
-    - Add `From<GroupingStrategy>` for `FixedDecimalFormatterOptions` (#3045)
+    - Add `From<GroupingStrategy>` for `DecimalFormatterOptions` (#3045)
   - `icu_list`
     - `ListJoinerPattern::from_parts_unchecked()` is now `from_parts()` and panics when necessary (#3052)
   - `icu_locid`
