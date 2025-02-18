@@ -4,7 +4,7 @@
 
 import 'package:native_assets_cli/native_assets_cli.dart';
 
-import 'tool/build_libs.dart' show buildLib;
+import '../tool/build_libs.dart' show buildLib;
 
 void main(List<String> args) async {
   final config = await BuildConfig.fromArgs(args);
