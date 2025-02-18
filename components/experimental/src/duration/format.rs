@@ -8,7 +8,7 @@ use super::validated_options::Unit;
 use core::fmt;
 use core::fmt::Write;
 use either::Either;
-use fixed_decimal::{SignDisplay, SignedFixedDecimal, UnsignedFixedDecimal};
+use fixed_decimal::{SignDisplay, SignedFixedDecimal, UnsignedDecimal};
 use icu_decimal::FormattedDecimal;
 use smallvec::SmallVec;
 use writeable::{adapters::WithPart, PartsWrite, Writeable};
@@ -238,7 +238,7 @@ impl FormattedDuration<'_> {
         ] {
             if style == FieldStyle::Fractional {
                 let val = val + prev_val / 1000;
-                prev_formatted.absolute = UnsignedFixedDecimal::from(val % 1000)
+                prev_formatted.absolute = UnsignedDecimal::from(val % 1000)
                     .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
 
@@ -246,7 +246,7 @@ impl FormattedDuration<'_> {
             } else {
                 return SignedFixedDecimal::new(
                     prev_formatted.sign,
-                    UnsignedFixedDecimal::from(val)
+                    UnsignedDecimal::from(val)
                         .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                         .unwrap(),
                 );

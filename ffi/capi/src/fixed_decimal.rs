@@ -191,42 +191,36 @@ pub mod ffi {
             )))
         }
 
-        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::digit_at, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::digit_at, FnInStruct)]
         pub fn digit_at(&self, magnitude: i16) -> u8 {
             self.0.absolute.digit_at(magnitude)
         }
 
-        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::magnitude_range, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::magnitude_range, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn magnitude_start(&self) -> i16 {
             *self.0.absolute.magnitude_range().start()
         }
 
-        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::magnitude_range, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::magnitude_range, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn magnitude_end(&self) -> i16 {
             *self.0.absolute.magnitude_range().end()
         }
 
-        #[diplomat::rust_link(
-            fixed_decimal::UnsignedFixedDecimal::nonzero_magnitude_start,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::nonzero_magnitude_start, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn nonzero_magnitude_start(&self) -> i16 {
             self.0.absolute.nonzero_magnitude_start()
         }
 
-        #[diplomat::rust_link(
-            fixed_decimal::UnsignedFixedDecimal::nonzero_magnitude_end,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::nonzero_magnitude_end, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn nonzero_magnitude_end(&self) -> i16 {
             self.0.absolute.nonzero_magnitude_end()
         }
 
-        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::is_zero, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::is_zero, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_zero(&self) -> bool {
             self.0.absolute.is_zero()
@@ -279,9 +273,9 @@ pub mod ffi {
             self.0.absolute.trim_end()
         }
 
-        #[diplomat::rust_link(fixed_decimal::UnsignedFixedDecimal::trim_end_if_integer, FnInStruct)]
+        #[diplomat::rust_link(fixed_decimal::UnsignedDecimal::trim_end_if_integer, FnInStruct)]
         #[diplomat::rust_link(
-            fixed_decimal::UnsignedFixedDecimal::trimmed_end_if_integer,
+            fixed_decimal::UnsignedDecimal::trimmed_end_if_integer,
             FnInStruct,
             hidden
         )]

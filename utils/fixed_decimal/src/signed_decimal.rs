@@ -7,7 +7,7 @@ use core::ops::{Deref, DerefMut};
 use core::str::FromStr;
 
 use crate::uint_iterator::IntIterator;
-use crate::{variations::Signed, UnsignedFixedDecimal};
+use crate::{variations::Signed, UnsignedDecimal};
 #[cfg(feature = "ryu")]
 use crate::{FloatPrecision, LimitError};
 use crate::{
@@ -15,7 +15,7 @@ use crate::{
     SignedRoundingMode, UnsignedRoundingMode,
 };
 
-/// A Type containing a [`UnsignedFixedDecimal`] and a [`Sign`] to represent a signed decimal number.
+/// A Type containing a [`UnsignedDecimal`] and a [`Sign`] to represent a signed decimal number.
 ///
 /// Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, as well as an optional sign; used for formatting and plural selection.
@@ -29,7 +29,7 @@ use crate::{
 /// - Floating point values (using the `ryu` feature)
 ///
 /// To create a [`SignedFixedDecimal`] with fractional digits, you have several options:
-/// - Create it from an integer and then call [`UnsignedFixedDecimal::multiply_pow10`] (you can also call `multiply_pow10` directly on the [`SignedFixedDecimal`]).
+/// - Create it from an integer and then call [`UnsignedDecimal::multiply_pow10`] (you can also call `multiply_pow10` directly on the [`SignedFixedDecimal`]).
 /// - Create it from a string.
 /// - When the `ryu` feature is enabled, create it from a floating point value using [`SignedFixedDecimal::try_from_f64`].
 ///
@@ -44,10 +44,10 @@ use crate::{
 /// dec.multiply_pow10(-2);
 /// assert_eq!("2.50", dec.to_string());
 /// ```
-pub type SignedFixedDecimal = Signed<UnsignedFixedDecimal>;
+pub type SignedFixedDecimal = Signed<UnsignedDecimal>;
 
 impl SignedFixedDecimal {
-    pub fn new(sign: Sign, absolute: UnsignedFixedDecimal) -> Self {
+    pub fn new(sign: Sign, absolute: UnsignedDecimal) -> Self {
         SignedFixedDecimal { sign, absolute }
     }
 
@@ -79,7 +79,7 @@ impl SignedFixedDecimal {
             return Err(ParseError::Syntax);
         }
 
-        let unsigned_decimal = UnsignedFixedDecimal::try_from_no_sign_utf8(no_sign_str)?;
+        let unsigned_decimal = UnsignedDecimal::try_from_no_sign_utf8(no_sign_str)?;
         Ok(Self {
             sign,
             absolute: unsigned_decimal,
@@ -166,7 +166,7 @@ macro_rules! impl_from_signed_integer_type {
                 } else {
                     Sign::None
                 };
-                let value = UnsignedFixedDecimal::from_ascending(int_iterator)
+                let value = UnsignedDecimal::from_ascending(int_iterator)
                     .expect("All built-in integer types should fit");
                 SignedFixedDecimal {
                     sign,
@@ -191,7 +191,7 @@ macro_rules! impl_from_unsigned_integer_type {
                 let int_iterator: IntIterator<$utype> = value.into();
                 Self {
                     sign: Sign::None,
-                    absolute: UnsignedFixedDecimal::from_ascending(int_iterator)
+                    absolute: UnsignedDecimal::from_ascending(int_iterator)
                         .expect("All built-in integer types should fit"),
                 }
             }
@@ -257,18 +257,18 @@ impl SignedFixedDecimal {
         match float.is_sign_negative() {
             true => Ok(SignedFixedDecimal {
                 sign: Sign::Negative,
-                absolute: UnsignedFixedDecimal::try_from_f64(-float, precision)?,
+                absolute: UnsignedDecimal::try_from_f64(-float, precision)?,
             }),
             false => Ok(SignedFixedDecimal {
                 sign: Sign::None,
-                absolute: UnsignedFixedDecimal::try_from_f64(float, precision)?,
+                absolute: UnsignedDecimal::try_from_f64(float, precision)?,
             }),
         }
     }
 }
 
 impl Deref for SignedFixedDecimal {
-    type Target = UnsignedFixedDecimal;
+    type Target = UnsignedDecimal;
     fn deref(&self) -> &Self::Target {
         &self.absolute
     }
@@ -501,7 +501,7 @@ impl SignedFixedDecimal {
 
     /// Rounds this number towards zero at a particular digit position.
     ///
-    /// Also see [`UnsignedFixedDecimal::pad_end()`].
+    /// Also see [`UnsignedDecimal::pad_end()`].
     ///
     /// # Examples
     ///
@@ -532,7 +532,7 @@ impl SignedFixedDecimal {
 
     /// Returns this number rounded towards zero at a particular digit position.
     ///
-    /// Also see [`UnsignedFixedDecimal::padded_end()`].
+    /// Also see [`UnsignedDecimal::padded_end()`].
     ///
     /// # Examples
     ///
