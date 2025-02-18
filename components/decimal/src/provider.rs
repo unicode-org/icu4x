@@ -50,7 +50,7 @@
 //!     numbering_system: RefCell::new(None),
 //! };
 //!
-//! let df = DecimalFormatter::try_new_unstable(
+//! let formatter = DecimalFormatter::try_new_unstable(
 //!     &provider,
 //!     locale!("th").into(),
 //!     Default::default(),
@@ -59,7 +59,7 @@
 //!
 //! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
 //!
-//! let df = DecimalFormatter::try_new_unstable(
+//! let formatter = DecimalFormatter::try_new_unstable(
 //!     &provider,
 //!     locale!("th-u-nu-thai").into(),
 //!     Default::default(),
@@ -68,7 +68,7 @@
 //!
 //! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
 //!
-//! let df = DecimalFormatter::try_new_unstable(
+//! let formatter = DecimalFormatter::try_new_unstable(
 //!     &provider,
 //!     locale!("th-u-nu-adlm").into(),
 //!     Default::default(),
