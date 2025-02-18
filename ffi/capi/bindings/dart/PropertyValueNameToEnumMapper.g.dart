@@ -24,6 +24,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPropertyValueNameToEnumMapper_destroy));
 
   /// Get the property value matching the given name, using strict matching

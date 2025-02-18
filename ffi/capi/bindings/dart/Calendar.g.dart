@@ -20,6 +20,7 @@ final class Calendar implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCalendar_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCalendar_destroy));
 
   /// Creates a new [`Calendar`] from the specified date and time.

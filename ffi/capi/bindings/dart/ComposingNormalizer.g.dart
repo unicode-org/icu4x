@@ -20,6 +20,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XComposingNormalizer_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XComposingNormalizer_destroy));
 
   /// Construct a new ICU4XComposingNormalizer instance for NFC

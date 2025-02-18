@@ -22,6 +22,7 @@ final class WeekCalculator implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XWeekCalculator_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWeekCalculator_destroy));
 
   /// Creates a new [`WeekCalculator`] from locale data.

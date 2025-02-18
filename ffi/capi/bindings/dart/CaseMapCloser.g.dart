@@ -20,6 +20,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCaseMapCloser_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
 
   /// Construct a new ICU4XCaseMapper instance

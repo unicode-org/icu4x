@@ -24,6 +24,7 @@ final class LineBreakIteratorLatin1 implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLineBreakIteratorLatin1_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLineBreakIteratorLatin1_destroy));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is

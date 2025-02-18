@@ -23,6 +23,7 @@ final class DateFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XDateFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDateFormatter_destroy));
 
   /// Creates a new [`DateFormatter`] from locale data.

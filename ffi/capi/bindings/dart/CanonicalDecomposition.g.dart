@@ -24,6 +24,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCanonicalDecomposition_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalDecomposition_destroy));
 
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC

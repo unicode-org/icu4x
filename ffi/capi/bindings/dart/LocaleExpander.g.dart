@@ -22,6 +22,7 @@ final class LocaleExpander implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleExpander_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleExpander_destroy));
 
   /// Create a new [`LocaleExpander`].

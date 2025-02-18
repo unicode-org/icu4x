@@ -22,6 +22,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocale_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocale_destroy));
 
   /// Construct an [`Locale`] from an locale identifier.

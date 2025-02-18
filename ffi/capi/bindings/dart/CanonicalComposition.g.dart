@@ -24,6 +24,7 @@ final class CanonicalComposition implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCanonicalComposition_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCanonicalComposition_destroy));
 
   /// Construct a new ICU4XCanonicalComposition instance for NFC

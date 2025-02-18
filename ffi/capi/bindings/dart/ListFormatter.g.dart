@@ -20,6 +20,7 @@ final class ListFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XListFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XListFormatter_destroy));
 
   /// Construct a new ICU4XListFormatter instance for And patterns

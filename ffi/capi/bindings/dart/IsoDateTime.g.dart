@@ -22,6 +22,7 @@ final class IsoDateTime implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XIsoDateTime_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XIsoDateTime_destroy));
 
   /// Creates a new [`IsoDateTime`] from the specified date and time.

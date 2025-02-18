@@ -28,6 +28,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCodePointMapData8_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointMapData8_destroy));
 
   /// Gets the value for a code point.

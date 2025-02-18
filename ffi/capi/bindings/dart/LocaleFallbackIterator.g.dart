@@ -24,6 +24,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleFallbackIterator_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackIterator_destroy));
 
   Locale? _current;

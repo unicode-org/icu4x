@@ -22,6 +22,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XFixedDecimalFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XFixedDecimalFormatter_destroy));
 
   /// Creates a new [`FixedDecimalFormatter`] from locale data.

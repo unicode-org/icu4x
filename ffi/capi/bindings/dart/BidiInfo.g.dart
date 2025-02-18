@@ -24,6 +24,7 @@ final class BidiInfo implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XBidiInfo_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidiInfo_destroy));
 
   /// The number of paragraphs contained here

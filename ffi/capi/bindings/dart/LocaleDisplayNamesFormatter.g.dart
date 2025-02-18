@@ -20,6 +20,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleDisplayNamesFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleDisplayNamesFormatter_destroy));
 
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.

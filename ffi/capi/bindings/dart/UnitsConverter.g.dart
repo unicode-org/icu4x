@@ -24,6 +24,7 @@ final class UnitsConverter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XUnitsConverter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnitsConverter_destroy));
 
   /// Converts the input value in float from the input unit to the output unit (that have been used to create this converter).

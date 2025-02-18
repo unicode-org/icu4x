@@ -24,6 +24,7 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XGeneralCategoryNameToMaskMapper_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGeneralCategoryNameToMaskMapper_destroy));
 
   /// Get the mask value matching the given name, using strict matching

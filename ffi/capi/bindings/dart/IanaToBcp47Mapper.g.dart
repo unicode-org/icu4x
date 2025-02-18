@@ -26,6 +26,7 @@ final class IanaToBcp47Mapper implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XIanaToBcp47Mapper_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XIanaToBcp47Mapper_destroy));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html#method.new) for more information.

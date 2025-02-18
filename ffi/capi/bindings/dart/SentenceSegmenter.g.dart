@@ -22,6 +22,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XSentenceSegmenter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XSentenceSegmenter_destroy));
 
   /// Construct an [`SentenceSegmenter`].

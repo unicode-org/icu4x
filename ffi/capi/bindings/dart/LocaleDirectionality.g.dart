@@ -20,6 +20,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleDirectionality_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleDirectionality_destroy));
 
   /// Construct a new ICU4XLocaleDirectionality instance

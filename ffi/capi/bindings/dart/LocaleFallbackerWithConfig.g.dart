@@ -26,6 +26,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleFallbackerWithConfig_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackerWithConfig_destroy));
 
   /// Creates an iterator from a locale with each step of fallback.

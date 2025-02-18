@@ -24,6 +24,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XScriptExtensionsSet_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XScriptExtensionsSet_destroy));
 
   /// Check if the Script_Extensions property of the given code point covers the given script

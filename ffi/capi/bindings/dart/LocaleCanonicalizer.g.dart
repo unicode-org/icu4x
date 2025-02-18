@@ -22,6 +22,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleCanonicalizer_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleCanonicalizer_destroy));
 
   /// Create a new [`LocaleCanonicalizer`].

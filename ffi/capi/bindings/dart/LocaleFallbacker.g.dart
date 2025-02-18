@@ -22,6 +22,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleFallbacker_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbacker_destroy));
 
   /// Creates a new `LocaleFallbacker` from a data provider.

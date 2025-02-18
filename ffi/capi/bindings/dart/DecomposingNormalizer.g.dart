@@ -20,6 +20,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XDecomposingNormalizer_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDecomposingNormalizer_destroy));
 
   /// Construct a new ICU4XDecomposingNormalizer instance for NFC

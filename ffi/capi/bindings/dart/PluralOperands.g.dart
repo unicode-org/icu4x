@@ -20,6 +20,7 @@ final class PluralOperands implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XPluralOperands_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralOperands_destroy));
 
   /// Construct for a given string representing a number

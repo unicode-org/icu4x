@@ -22,6 +22,7 @@ final class Bidi implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XBidi_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XBidi_destroy));
 
   /// Creates a new [`Bidi`] from locale data.

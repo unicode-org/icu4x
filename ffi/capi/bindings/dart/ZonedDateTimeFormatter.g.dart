@@ -22,6 +22,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XZonedDateTimeFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XZonedDateTimeFormatter_destroy));
 
   /// Creates a new [`ZonedDateTimeFormatter`] from locale data.

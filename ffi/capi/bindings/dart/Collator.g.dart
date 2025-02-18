@@ -20,6 +20,7 @@ final class Collator implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCollator_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCollator_destroy));
 
   /// Construct a new Collator instance.

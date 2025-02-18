@@ -20,6 +20,7 @@ final class Logger implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLogger_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLogger_destroy));
 
   /// Initialize the logger using `simple_logger`

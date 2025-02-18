@@ -20,6 +20,7 @@ final class CustomTimeZone implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XCustomTimeZone_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCustomTimeZone_destroy));
 
   /// Creates a time zone from an offset string.

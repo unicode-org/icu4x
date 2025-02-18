@@ -26,6 +26,7 @@ final class UnicodeSetData implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XUnicodeSetData_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnicodeSetData_destroy));
 
   /// Checks whether the string is in the set.

@@ -22,6 +22,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XTimeZoneFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XTimeZoneFormatter_destroy));
 
   /// Creates a new [`TimeZoneFormatter`] from locale data.

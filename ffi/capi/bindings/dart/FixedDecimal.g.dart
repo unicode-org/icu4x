@@ -20,6 +20,7 @@ final class FixedDecimal implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XFixedDecimal_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XFixedDecimal_destroy));
 
   /// Construct an [`FixedDecimal`] from an integer.

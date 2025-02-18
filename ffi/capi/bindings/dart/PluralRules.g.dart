@@ -20,6 +20,7 @@ final class PluralRules implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XPluralRules_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralRules_destroy));
 
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers

@@ -20,6 +20,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XRegionDisplayNames_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XRegionDisplayNames_destroy));
 
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.

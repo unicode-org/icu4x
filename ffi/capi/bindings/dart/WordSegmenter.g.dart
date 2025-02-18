@@ -22,6 +22,7 @@ final class WordSegmenter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XWordSegmenter_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWordSegmenter_destroy));
 
   /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
