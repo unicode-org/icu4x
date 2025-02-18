@@ -133,8 +133,7 @@ pub trait MaybeExportAsVarULE<'a> {
     fn from_varule(varule: Self::EncodeAsVarULE) -> Self;
 }
 
-/// Implements [`MaybeExportAsVarULE`] on a type that is NOT representable
-/// as a [`VarULE`].
+/// Implements required traits on data structs, such as [`MaybeExportAsVarULE`].
 #[macro_export]
 macro_rules! __data_struct {
     (<$generic:ident: $bound:tt> $ty:path) => {
@@ -162,7 +161,7 @@ macro_rules! __data_struct {
         }
     };
 }
-
+#[doc(inline)]
 pub use __data_struct as data_struct;
 
 /// An empty enum used for implementations of [`MaybeExportAsVarULE`]
