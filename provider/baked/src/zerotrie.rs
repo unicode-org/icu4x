@@ -8,7 +8,7 @@
 const ID_SEPARATOR: u8 = 0x1E;
 
 pub use icu_provider::DynamicDataMarker;
-use icu_provider::{marker::MaybeAsVarULE, prelude::*};
+use icu_provider::{marker::MaybeExportAsVarULE, prelude::*};
 pub use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroSlice;
 
@@ -56,7 +56,7 @@ pub(crate) fn bake(
             BakedValue::Struct(tokens) => tokens,
             BakedValue::VarULE(_) => {
                 unreachable!(
-                    "All instances should equivalently return Some or None in MaybeAsVarULE"
+                    "All instances should equivalently return Some or None in MaybeExportAsVarULE"
                 )
             }
         });
@@ -75,7 +75,7 @@ pub(crate) fn bake(
                 BakedValue::VarULE(bytes) => *bytes,
                 BakedValue::Struct(_) => {
                     unreachable!(
-                        "All instances should equivalently return Some or None in MaybeAsVarULE"
+                        "All instances should equivalently return Some or None in MaybeExportAsVarULE"
                     )
                 }
             })
@@ -84,7 +84,7 @@ pub(crate) fn bake(
         let vzv_bytes = vzv.as_bytes().bake(ctx);
         (
             quote! {
-                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeAsVarULE>::VarULE> = unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#vzv_bytes) };
+                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeExportAsVarULE>::VarULE> = unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#vzv_bytes) };
             },
             quote! {
                 icu_provider_baked::zerotrie::DataForVarULEs
@@ -198,16 +198,16 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
 
 pub struct DataForVarULEs<M: DataMarker>
 where
-    M::DataStruct: MaybeAsVarULE,
+    M::DataStruct: MaybeExportAsVarULE,
 {
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::VarULE>,
+    values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE>::VarULE>,
 }
 
 impl<M: DataMarker> DataForVarULEs<M>
 where
-    M::DataStruct: MaybeAsVarULE,
+    M::DataStruct: MaybeExportAsVarULE,
 {
     /// Construct from a trie and values
     ///
@@ -215,7 +215,7 @@ where
     /// The actual values contained in the trie must be valid indices into `values`
     pub const unsafe fn from_trie_and_values_unchecked(
         trie: ZeroTrieSimpleAscii<&'static [u8]>,
-        values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::VarULE>,
+        values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE>::VarULE>,
     ) -> Self {
         Self { trie, values }
     }
@@ -223,7 +223,8 @@ where
 
 impl<M: DataMarker> super::DataStore<M> for DataForVarULEs<M>
 where
-    M::DataStruct: MaybeAsVarULE + From<&'static <M::DataStruct as MaybeAsVarULE>::VarULE>,
+    M::DataStruct:
+        MaybeExportAsVarULE + From<&'static <M::DataStruct as MaybeExportAsVarULE>::VarULE>,
 {
     fn get(
         &self,

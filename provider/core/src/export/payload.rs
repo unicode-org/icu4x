@@ -5,7 +5,7 @@
 use core::any::Any;
 
 use crate::prelude::*;
-use crate::{dynutil::UpcastDataPayload, marker::MaybeAsVarULE};
+use crate::{dynutil::UpcastDataPayload, marker::MaybeExportAsVarULE};
 use alloc::sync::Arc;
 use databake::{Bake, BakeSize, CrateEnv, TokenStream};
 use yoke::*;
@@ -26,7 +26,7 @@ trait ExportableDataPayload {
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
     for<'a> <M::DataStruct as Yokeable<'a>>::Output:
-        Bake + BakeSize + serde::Serialize + MaybeAsVarULE + PartialEq,
+        Bake + BakeSize + serde::Serialize + MaybeExportAsVarULE + PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -98,7 +98,7 @@ where
     M: DynamicDataMarker,
     M::DataStruct: Sync + Send,
     for<'a> <M::DataStruct as Yokeable<'a>>::Output:
-        Bake + BakeSize + serde::Serialize + MaybeAsVarULE + PartialEq,
+        Bake + BakeSize + serde::Serialize + MaybeExportAsVarULE + PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
@@ -179,7 +179,7 @@ impl DataPayload<ExportMarker> {
     }
 
     /// If this type can be dereferenced as a [`VarULE`], returns bytes
-    /// valid as a [`MaybeAsVarULE::VarULE`].
+    /// valid as a [`MaybeExportAsVarULE::VarULE`].
     pub fn maybe_as_varule_bytes(&self) -> Option<&[u8]> {
         self.get().payload.maybe_as_varule_bytes()
     }

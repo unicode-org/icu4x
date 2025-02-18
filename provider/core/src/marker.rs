@@ -112,7 +112,7 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
 ///
 /// For most data structs, a default implementation available via
 /// [`does_not_deref_to_varule`] can be used.
-pub trait MaybeAsVarULE {
+pub trait MaybeExportAsVarULE {
     /// The [`VarULE`] type for this data struct.
     type VarULE: VarULE + ?Sized;
 
@@ -123,12 +123,12 @@ pub trait MaybeAsVarULE {
     fn maybe_as_varule(&self) -> Option<&Self::VarULE>;
 }
 
-/// Implements [`MaybeAsVarULE`] on a type that is NOT representable
+/// Implements [`MaybeExportAsVarULE`] on a type that is NOT representable
 /// as a [`VarULE`].
 #[macro_export]
 macro_rules! does_not_deref_to_varule {
     (<$generic:ident: $bound:tt> $ty:path) => {
-        impl<$generic: $bound> $crate::marker::MaybeAsVarULE for $ty {
+        impl<$generic: $bound> $crate::marker::MaybeExportAsVarULE for $ty {
             type VarULE = [()];
             fn maybe_as_varule(&self) -> Option<&[()]> {
                 None
@@ -136,7 +136,7 @@ macro_rules! does_not_deref_to_varule {
         }
     };
     ($ty:path) => {
-        impl $crate::marker::MaybeAsVarULE for $ty {
+        impl $crate::marker::MaybeExportAsVarULE for $ty {
             type VarULE = [()];
             fn maybe_as_varule(&self) -> Option<&[()]> {
                 None

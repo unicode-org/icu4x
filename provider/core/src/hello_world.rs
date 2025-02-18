@@ -8,7 +8,7 @@
 
 use crate as icu_provider;
 
-use crate::marker::MaybeAsVarULE;
+use crate::marker::MaybeExportAsVarULE;
 use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
@@ -42,7 +42,7 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-impl MaybeAsVarULE for HelloWorld<'_> {
+impl MaybeExportAsVarULE for HelloWorld<'_> {
     type VarULE = str;
     fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
         Some(&self.message)
