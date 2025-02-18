@@ -84,6 +84,10 @@ export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 
 export { Decimal } from "./Decimal.mjs"
 
+export { IanaParser } from "./IanaParser.mjs"
+
+export { IanaParserExtended } from "./IanaParserExtended.mjs"
+
 export { ListFormatter } from "./ListFormatter.mjs"
 
 export { LocaleCanonicalizer } from "./LocaleCanonicalizer.mjs"
@@ -172,10 +176,6 @@ export { Time } from "./Time.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
-export { IanaParser } from "./IanaParser.mjs"
-
-export { IanaParserExtended } from "./IanaParserExtended.mjs"
-
 export { MeasureUnit } from "./MeasureUnit.mjs"
 
 export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
@@ -184,9 +184,9 @@ export { UnitsConverter } from "./UnitsConverter.mjs"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
-export { WeekCalculator } from "./WeekCalculator.mjs"
+export { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
 
-export { ZonedDateTimeParser } from "./ZonedDateTimeParser.mjs"
+export { WeekCalculator } from "./WeekCalculator.mjs"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 

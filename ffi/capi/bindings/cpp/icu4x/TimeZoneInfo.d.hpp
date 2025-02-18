@@ -19,6 +19,8 @@ namespace capi { struct Time; }
 class Time;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
+namespace capi { struct UtcOffsetCalculator; }
+class UtcOffsetCalculator;
 struct IsoDateTime;
 struct TimeZoneInvalidOffsetError;
 }
@@ -64,9 +66,11 @@ public:
 
   inline void set_time_zone_id(std::string_view id);
 
-  inline void set_iana_time_zone_id(const icu4x::IanaParser& mapper, std::string_view id);
+  inline void set_iana_time_zone_id(const icu4x::IanaParser& parser, std::string_view id);
 
   inline std::string time_zone_id() const;
+
+  inline std::optional<std::monostate> infer_zone_variant(const icu4x::UtcOffsetCalculator& offset_calculator);
 
   inline void clear_zone_variant();
 
