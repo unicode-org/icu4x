@@ -566,7 +566,7 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     }
 }
 
-/// The iterator returned by [`IanaParserExtendedBorrowed::iter_canonical()`]
+/// The iterator returned by [`IanaParserExtendedBorrowed::iter()`]
 #[derive(Debug)]
 pub struct TimeZoneAndCanonicalIter<'a>(
     core::iter::Zip<ZeroSliceIter<'a, TimeZone>, VarZeroSliceIter<'a, str>>,
@@ -580,7 +580,7 @@ impl<'a> Iterator for TimeZoneAndCanonicalIter<'a> {
     }
 }
 
-/// The iterator returned by [`IanaParserExtendedBorrowed::iter_normalized()`]
+/// The iterator returned by [`IanaParserExtendedBorrowed::iter_all()`]
 #[derive(Debug)]
 pub struct TimeZoneAndCanonicalAndNormalizedIter<'a>(usize, IanaParserExtendedBorrowed<'a>);
 
