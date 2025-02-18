@@ -63,12 +63,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 ];
 
 /// TimeZone ID in BCP47 format
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
