@@ -364,36 +364,3 @@ impl AsULE for bool {
 
 // EqULE is true because bool is its own ULE.
 unsafe impl EqULE for bool {}
-
-// Safety (based on the safety checklist on the ULE trait):
-//  1. () does not include any uninitialized or padding bytes (it has no bytes)
-//  2. () is aligned to any number of bytes (it is zero-sized)
-//  3. The impl of validate_bytes() returns an error if any byte is not valid (any byte).
-//  4. The impl of validate_bytes() returns an error if there are leftover bytes (always).
-//  5. The other ULE methods use the default impl.
-//  6. () byte equality is semantic equality
-unsafe impl ULE for () {
-    #[inline]
-    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        if bytes.is_empty() {
-            Ok(())
-        } else {
-            Err(UleError::length::<Self>(bytes.len()))
-        }
-    }
-}
-
-impl AsULE for () {
-    type ULE = Self;
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-// EqULE is true because () is its own ULE.
-unsafe impl EqULE for () {}
