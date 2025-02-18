@@ -2,42 +2,133 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Types for resolving and manipulating time zones.
+//!
+//! # Fields
+//!
+//! In ICU4X, a [formattable time zone] consists of up to four different fields:
+//!
+//! 1. The time zone ID
+//! 2. The offset from UTC
+//! 3. A timestamp, as time zone names can change over time
+//! 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
+//!
+//! ## Time Zone
+//!
+//! The time zone ID corresponds to a time zone from the time zone database. The time zone ID
+//! usually corresponds to the largest city in the time zone.
+//!
+//! There are two mostly-interchangeable standards for time zone IDs:
+//!
+//! 1. IANA time zone IDs, like `"America/Chicago"`
+//! 2. BCP-47 time zone IDs, like `"uschi"`
+//!
+//! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
+//! IANA time zone, use [`IanaParser`].
+//!
+//! ## UTC Offset
+//!
+//! The UTC offset precisely states the time difference between the time zone in question and
+//! Coordinated Universal Time (UTC).
+//!
+//! In localized strings, it is often rendered as "UTC-6", meaning 6 hours less than UTC (some locales
+//! use the term "GMT" instead of "UTC").
+//!
+//! ## Timestamp
+//!
+//! Some time zones change names over time, such as when changing "metazone". For example, Portugal changed from
+//! "Western European Time" to "Central European Time" and back in the 1990s, without changing time zone id
+//! (`Europe/Lisbon`/`ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
+//!
+//! It is not required to set the timestamp on [`TimeZoneInfo`]. If it is not set, some string
+//! formats may be unsupported.
+//!
+//! ## Zone Variant
+//!
+//! Many zones use different names and offsets in the summer than in the winter. In ICU4X,
+//! this is called the _zone variant_.
+//!
+//! CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
+//! variants to specific observed offsets varies from time zone to time zone, and they may not
+//! consistently represent winter versus summer time.
+//!
+//! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
+//! formats may be unsupported.
+//!
+//! # Examples
+//!
+//! ```
+//! use icu::calendar::Date;
+//! use icu::time::Time;
+//! use icu::time::TimeZone;
+//! use icu::time::zone::IanaParser;
+//! use icu::time::zone::TimeZoneVariant;
+//! use tinystr::tinystr;
+//!
+//! // Parse the IANA ID
+//! let id = IanaParser::new().iana_to_bcp47("America/Chicago");
+//!
+//! // Alternatively, use the BCP47 ID directly
+//! let id = TimeZone(tinystr!(8, "uschi"));
+//!
+//! // Create a TimeZoneInfo<Base> by associating the ID with an offset
+//! let time_zone = id.with_offset("-0600".parse().ok());
+//!
+//! // Extend to a TimeZoneInfo<AtTime> by adding a local time
+//! let time_zone_at_time = time_zone
+//!     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
+//!
+//! // Extend to a TimeZoneInfo<Full> by adding a zone variant
+//! let time_zone_with_variant =
+//!     time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
+//! ```
+
+pub mod iana;
+mod offset;
+pub mod windows;
+
+#[doc(inline)]
+pub use crate::provider::{TimeZone, TimeZoneVariant};
+pub use offset::InvalidOffsetError;
+pub use offset::UtcOffset;
+pub use offset::UtcOffsetCalculator;
+pub use offset::UtcOffsets;
+
+#[doc(no_inline)]
+pub use iana::IanaParser;
+#[doc(no_inline)]
+pub use windows::WindowsParser;
+
+use crate::{scaffold::IntoOption, Time};
 use core::fmt;
-
-use crate::{
-    scaffold::IntoOption,
-    zone::{TimeZoneVariant, UtcOffset, UtcOffsetCalculator},
-    Time, TimeZone,
-};
 use icu_calendar::{Date, Iso};
-
-mod private {
-    pub trait Sealed {}
-}
-
-/// Trait encoding a particular data model for time zones.
-///
-/// <div class="stab unstable">
-/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-/// trait, please consider using a type from the implementors listed below.
-/// </div>
-pub trait TimeZoneModel: private::Sealed {
-    /// The zone variant, if required for this time zone model.
-    type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
-    /// The local time, if required for this time zone model.
-    type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
-}
 
 /// Time zone data model choices.
 pub mod models {
     use super::*;
+    mod private {
+        pub trait Sealed {}
+    }
+
+    /// Trait encoding a particular data model for time zones.
+    ///
+    /// <div class="stab unstable">
+    /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+    /// trait, please consider using a type from the implementors listed below.
+    /// </div>
+    pub trait TimeZoneModel: private::Sealed {
+        /// The zone variant, if required for this time zone model.
+        type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
+        /// The local time, if required for this time zone model.
+        type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
+    }
 
     /// A time zone containing a time zone ID and optional offset.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
     pub enum Base {}
 
-    impl super::private::Sealed for Base {}
+    impl private::Sealed for Base {}
     impl TimeZoneModel for Base {
         type TimeZoneVariant = ();
         type LocalTime = ();
@@ -48,7 +139,7 @@ pub mod models {
     #[non_exhaustive]
     pub enum AtTime {}
 
-    impl super::private::Sealed for AtTime {}
+    impl private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
         type TimeZoneVariant = ();
         type LocalTime = (Date<Iso>, Time);
@@ -59,7 +150,7 @@ pub mod models {
     #[non_exhaustive]
     pub enum Full {}
 
-    impl super::private::Sealed for Full {}
+    impl private::Sealed for Full {}
     impl TimeZoneModel for Full {
         type TimeZoneVariant = TimeZoneVariant;
         type LocalTime = (Date<Iso>, Time);
@@ -69,22 +160,22 @@ pub mod models {
 /// A utility type that can hold time zone information.
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
-pub struct TimeZoneInfo<Model: TimeZoneModel> {
+pub struct TimeZoneInfo<Model: models::TimeZoneModel> {
     time_zone_id: TimeZone,
     offset: Option<UtcOffset>,
     local_time: Model::LocalTime,
     zone_variant: Model::TimeZoneVariant,
 }
 
-impl<Model: TimeZoneModel> Clone for TimeZoneInfo<Model> {
+impl<Model: models::TimeZoneModel> Clone for TimeZoneInfo<Model> {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-impl<Model: TimeZoneModel> Copy for TimeZoneInfo<Model> {}
+impl<Model: models::TimeZoneModel> Copy for TimeZoneInfo<Model> {}
 
-impl<Model: TimeZoneModel> TimeZoneInfo<Model> {
+impl<Model: models::TimeZoneModel> TimeZoneInfo<Model> {
     /// The BCP47 time-zone identifier.
     pub fn time_zone_id(self) -> TimeZone {
         self.time_zone_id
@@ -100,7 +191,7 @@ impl<Model: TimeZoneModel> TimeZoneInfo<Model> {
 
 impl<Model> TimeZoneInfo<Model>
 where
-    Model: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    Model: models::TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
 {
     /// The time at which to interpret the time zone.
     pub fn local_time(self) -> (Date<Iso>, Time) {
@@ -110,7 +201,7 @@ where
 
 impl<Model> TimeZoneInfo<Model>
 where
-    Model: TimeZoneModel<TimeZoneVariant = TimeZoneVariant>,
+    Model: models::TimeZoneModel<TimeZoneVariant = TimeZoneVariant>,
 {
     /// The time variant e.g. daylight or standard, if known.
     ///

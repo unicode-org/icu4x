@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    zone::{iana::IanaParserBorrowed, models, UtcOffset, UtcOffsetCalculator},
-    DateTime, InvalidOffsetError, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
+    zone::{iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset, UtcOffsetCalculator},
+    DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};

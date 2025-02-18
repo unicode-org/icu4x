@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! TODO
+
 use core::fmt::Write;
 
 use icu_provider::{
@@ -35,11 +37,11 @@ use crate::{
 /// querying a BCP-47 identifier. If no region is provided or the specificity is not required,
 /// then the territory will default to the M.49 World Code, `001`.
 #[derive(Debug)]
-pub struct WindowsTimeZoneMapper {
+pub struct WindowsParser {
     data: DataPayload<WindowsZonesToBcp47MapV1>,
 }
 
-impl WindowsTimeZoneMapper {
+impl WindowsParser {
     /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
     #[allow(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
@@ -106,10 +108,10 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     ///
     /// ```rust
     /// use icu::locale::subtags::region;
-    /// use icu::time::{TimeZone, zone::WindowsTimeZoneMapper};
+    /// use icu::time::{TimeZone, zone::WindowsParser};
     /// use tinystr::tinystr;
     ///
-    /// let win_tz_mapper = WindowsTimeZoneMapper::new();
+    /// let win_tz_mapper = WindowsParser::new();
     ///
     /// let bcp47_id =
     ///     win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", None);
@@ -147,7 +149,7 @@ mod tests {
 
     #[test]
     fn basic_windows_tz_lookup() {
-        let win_map = WindowsTimeZoneMapper::new();
+        let win_map = WindowsParser::new();
 
         let result = win_map.windows_tz_to_bcp47_id("Central Standard Time", None);
         assert_eq!(result, Some(TimeZone(tinystr!(8, "uschi"))));

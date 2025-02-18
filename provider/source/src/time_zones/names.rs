@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::time::provider::names::*;
+use icu::time::provider::iana::*;
 use icu::time::TimeZone;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -41,7 +41,7 @@ impl DataProvider<IanaToBcp47MapV3> for SourceDataProvider {
                         format!(
                             "{}{iana}",
                             char::from_u32(
-                                icu::time::provider::names::NON_REGION_CITY_PREFIX as u32
+                                icu::time::provider::iana::NON_REGION_CITY_PREFIX as u32
                             )
                             .unwrap()
                         )

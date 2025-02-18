@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! TODO
+
 use alloc::borrow::Cow;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -12,7 +14,7 @@ use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
 use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
-    provider::names::{
+    provider::iana::{
         Bcp47ToIanaMap, Bcp47ToIanaMapV1, IanaToBcp47Map, IanaToBcp47MapV3, NON_REGION_CITY_PREFIX,
     },
     TimeZone,

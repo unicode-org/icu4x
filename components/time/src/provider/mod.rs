@@ -25,7 +25,7 @@ use zerovec::maps::ZeroMapKV;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
-pub mod names;
+pub mod iana;
 pub mod windows;
 
 #[cfg(feature = "compiled_data")]
@@ -56,8 +56,8 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    names::Bcp47ToIanaMapV1::INFO,
-    names::IanaToBcp47MapV3::INFO,
+    iana::Bcp47ToIanaMapV1::INFO,
+    iana::IanaToBcp47MapV3::INFO,
     windows::WindowsZonesToBcp47MapV1::INFO,
     ZoneOffsetPeriodV1::INFO,
 ];
@@ -113,6 +113,35 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
     type Slice = ZeroSlice<TimeZone>;
     type GetType = TimeZone;
     type OwnedType = TimeZone;
+}
+
+/// A time zone variant, such as Standard Time, or Daylight/Summer Time.
+///
+/// This should not generally be constructed by client code. Instead, use
+/// * [`TimeZoneInfo::with_rearguard_isdst`]
+/// * [`TimeZoneInfo::infer_zone_variant`]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[zerovec::make_ule(TimeZoneVariantULE)]
+#[repr(u8)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum TimeZoneVariant {
+    /// The variant corresponding to `"standard"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Standard Time".
+    ///
+    /// This is the variant with the lower UTC offset.
+    Standard = 0,
+    /// The variant corresponding to `"daylight"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Daylight Time".
+    ///
+    /// This is the variant with the higher UTC offset.
+    Daylight = 1,
 }
 
 /// Storage type for storing UTC offsets as eights of an hour.

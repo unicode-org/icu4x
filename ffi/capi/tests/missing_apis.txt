@@ -215,8 +215,6 @@ icu::time::ZonedDateTime::try_offset_only_from_utf8#FnInStruct
 icu::time::zone::TimeZoneVariant#Enum
 icu::time::zone::UtcOffsetCalculator::compute_offsets_from_time_zone#FnInStruct
 icu::time::zone::UtcOffsets#Struct
-icu::time::zone::WindowsTimeZoneMapper#Struct
-icu::time::zone::WindowsTimeZoneMapper::new#FnInStruct
 icu::time::zone::iana::IanaParserBorrowed::iter_bcp47#FnInStruct
 icu::time::zone::iana::IanaParserExtended::try_new_with_mapper#FnInStruct
 icu::time::zone::iana::IanaParserExtendedBorrowed::iter_canonical_iana#FnInStruct
@@ -224,11 +222,14 @@ icu::time::zone::iana::TimeZoneBcp47Iter#Struct
 icu::time::zone::iana::TimeZoneBcp47Iter::next#FnInStruct
 icu::time::zone::iana::TimeZoneCanonicalIanaIter#Struct
 icu::time::zone::iana::TimeZoneCanonicalIanaIter::next#FnInStruct
+icu::time::zone::iana::TimeZoneIanaIdBorrowed#Struct
+icu::time::zone::iana::TimeZoneIanaIdBorrowed::to_string#FnInStruct
+icu::time::zone::iana::TimeZoneIanaIdBorrowed::write_to#FnInStruct
 icu::time::zone::models::AtTime#Enum
 icu::time::zone::models::Base#Enum
 icu::time::zone::models::Full#Enum
-icu::time::zone::windows::WindowsTimeZoneMapper#Struct
-icu::time::zone::windows::WindowsTimeZoneMapper::new#FnInStruct
+icu::time::zone::windows::WindowsParser#Struct
+icu::time::zone::windows::WindowsParser::new#FnInStruct
 icu::time::zone::windows::WindowsTimeZoneMapperBorrowed#Struct
 icu::time::zone::windows::WindowsTimeZoneMapperBorrowed::new#FnInStruct
 icu::time::zone::windows::WindowsTimeZoneMapperBorrowed::windows_tz_to_bcp47_id#FnInStruct

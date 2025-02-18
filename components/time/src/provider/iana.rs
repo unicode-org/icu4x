@@ -45,7 +45,7 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
     has_checksum
 ))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::names))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct IanaToBcp47Map<'data> {
     /// A map from normal-case IANA time zone identifiers to indexes of BCP-47 time zone
@@ -86,7 +86,7 @@ pub struct IanaToBcp47Map<'data> {
     has_checksum
 ))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::names))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMap<'data> {
