@@ -201,9 +201,9 @@ fn test_grouper() {
                 grouping_strategy: Some(cas.strategy),
                 ..Default::default()
             };
-            let df =
+            let formatter =
                 DecimalFormatter::try_new_unstable(&provider, Default::default(), options).unwrap();
-            let actual = df.format(&dec);
+            let actual = formatter.format(&dec);
             assert_writeable_eq!(actual, cas.expected[i], "{:?}", cas);
         }
     }

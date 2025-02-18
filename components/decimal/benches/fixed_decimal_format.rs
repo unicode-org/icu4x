@@ -32,10 +32,10 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             // This benchmark demonstrates the performance of the format function on 1000 numbers
             // ranging from -1e9 to 1e9.
-            let df = DecimalFormatter::try_new(prefs, options).unwrap();
+            let formatter = DecimalFormatter::try_new(prefs, options).unwrap();
             for &num in &nums {
-                let fd = Decimal::from(black_box(num));
-                df.format_to_string(&fd);
+                let decimal = Decimal::from(black_box(num));
+                formatter.format_to_string(&decimal);
             }
         });
     });
