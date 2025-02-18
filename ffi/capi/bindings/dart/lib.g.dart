@@ -7,7 +7,7 @@ import 'dart:ffi' as ffi;
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart' show RecordUse;
+import 'package:meta/meta.dart' show RecordUse, mustBeConst;
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
 
 part 'AnyCalendarKind.g.dart';

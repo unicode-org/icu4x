@@ -55,7 +55,9 @@ category = "ICU4X Development"
 cwd = "ffi/dart"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error dart --enable-experiment=native-assets pub get
+exec --fail-on-error dart pub get
+exec --fail-on-error dart analyze
+exec --fail-on-error dart format --output=none --set-exit-if-changed .
 exec --fail-on-error dart --enable-experiment=native-assets test
 '''
 

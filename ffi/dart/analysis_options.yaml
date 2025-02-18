@@ -3,3 +3,8 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     - prefer_single_quotes
+
+analyzer:
+  errors:
+    non_constant_identifier_names: ignore
+    unused_element: ignore
