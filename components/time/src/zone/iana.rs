@@ -9,7 +9,7 @@ use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
     provider::iana::{
-        Bcp47ToIanaMap, IanaToBcp47Map, TimeZoneIanaBasicV1, TimeZoneIanaExtendedV1,
+        IanaNames, IanaToBcp47Map, TimeZoneIanaBasicV1, TimeZoneIanaExtendedV1,
         NON_REGION_CITY_PREFIX,
     },
     TimeZone,
@@ -388,7 +388,7 @@ where
 #[derive(Debug, Copy, Clone)]
 pub struct IanaParserExtendedBorrowed<'a> {
     inner: IanaParserBorrowed<'a>,
-    data: &'a Bcp47ToIanaMap<'a>,
+    data: &'a IanaNames<'a>,
 }
 
 #[cfg(feature = "compiled_data")]

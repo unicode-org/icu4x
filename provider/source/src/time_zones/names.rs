@@ -99,7 +99,7 @@ impl DataProvider<TimeZoneIanaExtendedV1> for SourceDataProvider {
             .chain(non_canonical_iana_ids)
             .collect::<Vec<_>>();
 
-        let data_struct = Bcp47ToIanaMap {
+        let data_struct = IanaNames {
             // Note: we can't build VarZeroVec from an iterator yet.
             normalized_iana_ids: normalized_iana_ids.as_slice().into(),
         };

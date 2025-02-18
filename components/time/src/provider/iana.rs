@@ -41,7 +41,7 @@ icu_provider::data_marker!(
     ///
     /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaBasicV1`].
     TimeZoneIanaExtendedV1,
-    Bcp47ToIanaMap<'static>,
+    IanaNames<'static>,
     is_singleton = true,
     has_checksum = true,
 );
@@ -93,7 +93,7 @@ pub struct IanaToBcp47Map<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct Bcp47ToIanaMap<'data> {
+pub struct IanaNames<'data> {
     /// The list of all normalized IANA identifiers.
     /// 
     /// The first `bcp47_ids.len()` identifiers are canonical for the
