@@ -216,7 +216,10 @@ pub mod ffi {
 
         /// Infers the zone variant.
         #[diplomat::rust_link(icu::time::TimeZoneInfo::infer_zone_variant, FnInStruct)]
-        pub fn infer_zone_variant(&mut self, offset_calculator: &UtcOffsetCalculator) -> Option<()> {
+        pub fn infer_zone_variant(
+            &mut self,
+            offset_calculator: &UtcOffsetCalculator,
+        ) -> Option<()> {
             *self = self
                 .time_zone_id
                 .with_offset(self.offset)
