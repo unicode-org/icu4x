@@ -9,9 +9,9 @@
 
 #include "DataError.d.h"
 #include "DataProvider.d.h"
+#include "Decimal.d.h"
 #include "DecimalGroupingStrategy.d.h"
 #include "Locale.d.h"
-#include "Decimal.d.h"
 
 #include "DecimalFormatter.d.h"
 

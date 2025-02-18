@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "FixedDecimalParseError.hpp"
 #include "Decimal.hpp"
+#include "FixedDecimalParseError.hpp"
 
 
 namespace icu4x {

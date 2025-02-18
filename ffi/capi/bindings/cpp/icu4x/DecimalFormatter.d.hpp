@@ -13,12 +13,12 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct Decimal; }
+class Decimal;
 namespace capi { struct DecimalFormatter; }
 class DecimalFormatter;
 namespace capi { struct Locale; }
 class Locale;
-namespace capi { struct Decimal; }
-class Decimal;
 class DataError;
 class DecimalGroupingStrategy;
 }

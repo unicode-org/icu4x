@@ -13,9 +13,9 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "Decimal.hpp"
 #include "DecimalGroupingStrategy.hpp"
 #include "Locale.hpp"
-#include "Decimal.hpp"
 
 
 namespace icu4x {

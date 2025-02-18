@@ -11,10 +11,10 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct PluralOperands; }
-class PluralOperands;
 namespace capi { struct Decimal; }
 class Decimal;
+namespace capi { struct PluralOperands; }
+class PluralOperands;
 class FixedDecimalParseError;
 }
 

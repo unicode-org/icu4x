@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "FixedDecimalParseError.d.h"
 #include "Decimal.d.h"
+#include "FixedDecimalParseError.d.h"
 
 #include "PluralOperands.d.h"
 
