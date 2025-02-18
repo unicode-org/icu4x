@@ -4,7 +4,7 @@
 
 //! `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 //!
-//! This crate provides [`SignedFixedDecimal`] and [`UnsignedFixedDecimal`], essential APIs for representing numbers in a human-readable format.
+//! This crate provides [`SignedFixedDecimal`] and [`UnsignedDecimal`], essential APIs for representing numbers in a human-readable format.
 //! These types are particularly useful for formatting and plural rule selection, and are optimized for operations on individual digits.
 //!
 //! # Examples
@@ -73,7 +73,7 @@ pub use rounding::FloatPrecision;
 pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
-pub use decimal::UnsignedFixedDecimal;
+pub use decimal::UnsignedDecimal;
 use displaydoc::Display;
 pub use integer::FixedInteger;
 pub use rounding::RoundingIncrement;
@@ -88,7 +88,7 @@ pub use variations::Signed;
 pub(crate) use rounding::IncrementLike;
 pub(crate) use rounding::NoIncrement;
 
-/// The magnitude or number of digits exceeds the limit of the [`UnsignedFixedDecimal`] or [`SignedFixedDecimal`].
+/// The magnitude or number of digits exceeds the limit of the [`UnsignedDecimal`] or [`SignedFixedDecimal`].
 ///
 /// The highest
 /// magnitude of the most significant digit is [`i16::MAX`], and the lowest magnitude of the
@@ -133,6 +133,6 @@ pub enum ParseError {
 impl core::error::Error for ParseError {}
 
 // TODO(#5065): implement these while `WithCompactExponent` and `WithScientificExponent` are implemented.
-// pub type FixedDecimalOrInfinity = WithInfinity<UnsignedFixedDecimal>;
+// pub type FixedDecimalOrInfinity = WithInfinity<UnsignedDecimal>;
 // pub type SignedFixedDecimalOrInfinity = Signed<FixedDecimalOrInfinity>;
 // pub type SignedFixedDecimalOrInfinityOrNan = WithNaN<SignedFixedDecimalOrInfinity>;

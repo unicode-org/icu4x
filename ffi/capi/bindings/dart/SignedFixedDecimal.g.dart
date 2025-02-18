@@ -90,37 +90,37 @@ final class SignedFixedDecimal implements ffi.Finalizable {
     return SignedFixedDecimal._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.digit_at) for more information.
+  /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.digit_at) for more information.
   int digitAt(int magnitude) {
     final result = _icu4x_SignedFixedDecimal_digit_at_mv1(_ffi, magnitude);
     return result;
   }
 
-  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.magnitude_range) for more information.
+  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.magnitude_range) for more information.
   int get magnitudeStart {
     final result = _icu4x_SignedFixedDecimal_magnitude_start_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.magnitude_range) for more information.
+  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.magnitude_range) for more information.
   int get magnitudeEnd {
     final result = _icu4x_SignedFixedDecimal_magnitude_end_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.nonzero_magnitude_start) for more information.
+  /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.nonzero_magnitude_start) for more information.
   int get nonzeroMagnitudeStart {
     final result = _icu4x_SignedFixedDecimal_nonzero_magnitude_start_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.nonzero_magnitude_end) for more information.
+  /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.nonzero_magnitude_end) for more information.
   int get nonzeroMagnitudeEnd {
     final result = _icu4x_SignedFixedDecimal_nonzero_magnitude_end_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.is_zero) for more information.
+  /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.is_zero) for more information.
   bool get isZero {
     final result = _icu4x_SignedFixedDecimal_is_zero_mv1(_ffi);
     return result;
@@ -161,7 +161,7 @@ final class SignedFixedDecimal implements ffi.Finalizable {
     _icu4x_SignedFixedDecimal_trim_end_mv1(_ffi);
   }
 
-  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedFixedDecimal.html#method.trim_end_if_integer) for more information.
+  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.trim_end_if_integer) for more information.
   void trimEndIfInteger() {
     _icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(_ffi);
   }

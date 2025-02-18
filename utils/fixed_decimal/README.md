@@ -4,7 +4,7 @@
 
 `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 
-This crate provides [`SignedFixedDecimal`] and [`UnsignedFixedDecimal`], essential APIs for representing numbers in a human-readable format.
+This crate provides [`SignedFixedDecimal`] and [`UnsignedDecimal`], essential APIs for representing numbers in a human-readable format.
 These types are particularly useful for formatting and plural rule selection, and are optimized for operations on individual digits.
 
 ## Examples
