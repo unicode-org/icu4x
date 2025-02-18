@@ -367,7 +367,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
 
     // TODO: Allow this to be configured
     result.extend(quote!(
-        icu_provider::marker::does_not_deref_to_varule!(#name_with_implied_lt);
+        icu_provider::marker::data_struct!(#name_with_implied_lt);
     ));
 
     result.extend(quote!(

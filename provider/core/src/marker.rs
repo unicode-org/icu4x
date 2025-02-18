@@ -111,7 +111,7 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
 /// This trait should be implemented on all data structs.
 ///
 /// For most data structs, a default implementation available via
-/// [`does_not_deref_to_varule`] can be used.
+/// [`data_struct`] can be used.
 pub trait MaybeExportAsVarULE<'a> {
     /// The [`VarULE`] type for this data struct, or [`NeverVarULE`]
     /// if it cannot be represented as [`VarULE`].
@@ -136,7 +136,7 @@ pub trait MaybeExportAsVarULE<'a> {
 /// Implements [`MaybeExportAsVarULE`] on a type that is NOT representable
 /// as a [`VarULE`].
 #[macro_export]
-macro_rules! does_not_deref_to_varule {
+macro_rules! __data_struct {
     (<$generic:ident: $bound:tt> $ty:path) => {
         impl<$generic: $bound> $crate::marker::MaybeExportAsVarULE<'_> for $ty {
             type VarULE = $crate::marker::NeverVarULE;
@@ -163,7 +163,7 @@ macro_rules! does_not_deref_to_varule {
     };
 }
 
-pub use does_not_deref_to_varule;
+pub use __data_struct as data_struct;
 
 /// An empty enum used for implementations of [`MaybeExportAsVarULE`]
 /// that do not use the VarULE storage optimization.

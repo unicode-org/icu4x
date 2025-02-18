@@ -69,7 +69,7 @@ data_marker!(
     ListFormatterPatterns<'static>,
 );
 
-icu_provider::marker::does_not_deref_to_varule!(ListFormatterPatterns<'_>);
+icu_provider::marker::data_struct!(ListFormatterPatterns<'_>);
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///

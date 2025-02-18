@@ -21,7 +21,7 @@ fn test_basic() {
             pub struct Foo;
         ),
         quote!(
-            icu_provider::marker::does_not_deref_to_varule!(Foo);
+            icu_provider::marker::data_struct!(Foo);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo;
         ),
@@ -42,7 +42,7 @@ fn test_dyn_data_marker() {
             impl icu_provider::DynamicDataMarker for FooV1 {
                 type DataStruct = Foo;
             }
-            icu_provider::marker::does_not_deref_to_varule!(Foo);
+            icu_provider::marker::data_struct!(Foo);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo;
         ),
@@ -72,7 +72,7 @@ fn test_data_marker() {
                     info
                 };
             }
-            icu_provider::marker::does_not_deref_to_varule!(Foo);
+            icu_provider::marker::data_struct!(Foo);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo;
         ),
@@ -121,7 +121,7 @@ fn test_multi_named_keyed_data_marker() {
                     info
                 };
             }
-            icu_provider::marker::does_not_deref_to_varule!(Foo<'_>);
+            icu_provider::marker::data_struct!(Foo<'_>);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo<'data>;
         ),
@@ -165,7 +165,7 @@ fn test_attributes() {
                     info
                 };
             }
-            icu_provider::marker::does_not_deref_to_varule!(Foo<'_>);
+            icu_provider::marker::data_struct!(Foo<'_>);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo<'data>;
         ),
