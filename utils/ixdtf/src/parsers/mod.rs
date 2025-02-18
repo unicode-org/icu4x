@@ -245,11 +245,11 @@ impl<'a> IxdtfParser<'a> {
 /// let date_duration = result.date.unwrap();
 ///
 /// let (hours, minutes, seconds, fraction) = match result.time {
-///     // Hours variant is defined as { hours: u32, fraction: Fraction }
+///     // Hours variant is defined as { hours: u32, fraction: Option<Fraction> }
 ///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
-///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: Fraction }
+///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: Option<Fraction> }
 ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
-///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: Fraction }
+///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: Option<Fraction> }
 ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction),
 ///     None => (0,0,0, None),
 /// };
@@ -319,11 +319,11 @@ impl<'a> IsoDurationParser<'a> {
     /// let result = IsoDurationParser::from_str(time_duration).parse().unwrap();
     ///
     /// let (hours, minutes, seconds, fraction) = match result.time {
-    ///     // Hours variant is defined as { hours: u32, fraction: u64 }
+    ///     // Hours variant is defined as { hours: u32, fraction: Option<Fraction> }
     ///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
-    ///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+    ///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: Option<Fraction> }
     ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
-    ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
+    ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: Option<Fraction> }
     ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction),
     ///     None => (0,0,0, None),
     /// };
