@@ -160,6 +160,18 @@ macro_rules! __data_struct {
             }
         }
     };
+    ($ty:path, varule: $varule:path, as_varule: $as_varule:path, from_varule: $from_varule:path) => {
+        impl<'a> $crate::marker::MaybeExportAsVarULE<'a> for $ty {
+            type VarULE = $varule;
+            type EncodeAsVarULE = &'a $varule;
+            fn maybe_as_varule(&'a self) -> Option<Self::EncodeAsVarULE> {
+                Some($as_varule(self))
+            }
+            fn from_varule(input: Self::EncodeAsVarULE) -> Self {
+                $from_varule(input)
+            }
+        }
+    };
 }
 #[doc(inline)]
 pub use __data_struct as data_struct;

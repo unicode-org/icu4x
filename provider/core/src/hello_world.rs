@@ -8,7 +8,6 @@
 
 use crate as icu_provider;
 
-use crate::marker::MaybeExportAsVarULE;
 use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::collections::BTreeSet;
@@ -42,18 +41,23 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-impl<'a> MaybeExportAsVarULE<'a> for HelloWorld<'a> {
-    type VarULE = str;
-    type EncodeAsVarULE = &'a str;
-    fn maybe_as_varule(&'a self) -> Option<Self::EncodeAsVarULE> {
-        Some(&self.message)
+impl<'a> HelloWorld<'a> {
+    fn as_varule(&'a self) -> &'a str {
+        &self.message
     }
-    fn from_varule(varule: Self::EncodeAsVarULE) -> Self {
+    fn from_varule(message: &'a str) -> Self {
         Self {
-            message: Cow::Borrowed(varule),
+            message: Cow::Borrowed(message)
         }
     }
 }
+
+crate::marker::data_struct!(
+    HelloWorld<'a>,
+    varule: str,
+    as_varule: HelloWorld::as_varule,
+    from_varule: HelloWorld::from_varule
+);
 
 data_marker!(
     /// Marker type for [`HelloWorld`].
