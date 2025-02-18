@@ -18,7 +18,7 @@ pub mod ffi {
 
     use crate::{
         date::ffi::IsoDate, datetime::ffi::IsoDateTime, errors::ffi::TimeZoneInvalidOffsetError,
-        time::ffi::Time,
+        time::ffi::Time, utc_offset::ffi::UtcOffsetCalculator,
     };
 
     #[diplomat::opaque]
@@ -198,10 +198,10 @@ pub mod ffi {
         /// the corresponding BCP-47 string.
         pub fn set_iana_time_zone_id(
             &mut self,
-            mapper: &crate::timezone_mapper::ffi::IanaParser,
+            parser: &crate::iana_parser::ffi::IanaParser,
             id: &DiplomatStr,
         ) {
-            self.time_zone_id = mapper.0.as_borrowed().iana_bytes_to_bcp47(id);
+            self.time_zone_id = parser.0.as_borrowed().iana_bytes_to_bcp47(id);
         }
 
         /// Writes the value of the `time_zone_id` field as a string.
@@ -214,29 +214,39 @@ pub mod ffi {
             let _infallible = write.write_str(self.time_zone_id.0.as_str());
         }
 
+        /// Infers the zone variant.
+        #[diplomat::rust_link(icu::time::TimeZoneInfo::infer_zone_variant, FnInStruct)]
+        pub fn infer_zone_variant(&mut self, offset_calculator: &UtcOffsetCalculator) -> Option<()> {
+            *self = self
+                .time_zone_id
+                .with_offset(self.offset)
+                .at_time(self.local_time?)
+                .infer_zone_variant(&offset_calculator.0)
+                .into();
+            Some(())
+        }
+
         /// Clears the `zone_variant` field.
         #[diplomat::rust_link(icu::time::TimeZoneVariant, Enum, compact)]
         pub fn clear_zone_variant(&mut self) {
             self.zone_variant.take();
         }
 
-        /// Sets the `zone_variant` field to standard time, which may or may
-        /// not correspond to a display name with Standard in its name.
+        /// Sets the `zone_variant` field to "standard" time.
         #[diplomat::rust_link(icu::time::TimeZoneVariant::Standard, EnumVariant)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_zone_variant, FnInStruct)]
         pub fn set_standard_time(&mut self) {
             self.zone_variant = Some(TimeZoneVariant::Standard)
         }
 
-        /// Sets the `zone_variant` field to "daylight" time, which may or may
-        /// not correspond to a display name with "Daylight" in its name.
+        /// Sets the `zone_variant` field to "daylight" time.
         #[diplomat::rust_link(icu::time::TimeZoneVariant::Daylight, EnumVariant)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_zone_variant, FnInStruct)]
         pub fn set_daylight_time(&mut self) {
             self.zone_variant = Some(TimeZoneVariant::Daylight)
         }
 
-        /// Returns whether the `zone_variant` field is standard time.
+        /// Returns whether the `zone_variant` field is "standard" time.
         ///
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::time::TimeZoneVariant::Standard, EnumVariant)]
@@ -246,7 +256,7 @@ pub mod ffi {
             Some(self.zone_variant? == TimeZoneVariant::Standard)
         }
 
-        /// Returns whether the `zone_variant` field is daylight time.
+        /// Returns whether the `zone_variant` field is "daylight" time.
         ///
         /// Returns null if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::time::TimeZoneVariant::Daylight, EnumVariant)]

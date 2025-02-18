@@ -56,12 +56,16 @@ void main() {
   });
 
   test('DateTime formatting', () {
-    final zonedDateTimeIso = ZonedDateTimeParser()
-        .tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
+    final zonedDateTimeIso = ZonedIsoDateTime.tryFromStr(
+        '2025-01-15T14:32:12.34+01[Europe/Zurich]',
+        IanaParser(),
+        UtcOffsetCalculator());
 
-    final zonedDateTimeBuddhist = ZonedDateTimeParser().tryFromStr(
+    final zonedDateTimeBuddhist = ZonedDateTime.tryFromStr(
         '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
-        Calendar.forKind(AnyCalendarKind.buddhist));
+        Calendar.forKind(AnyCalendarKind.buddhist),
+        IanaParser(),
+        UtcOffsetCalculator());
 
     var locale = Locale.fromString('de-u-ca-islamic');
 

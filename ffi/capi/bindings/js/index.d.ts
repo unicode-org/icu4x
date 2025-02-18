@@ -86,6 +86,10 @@ export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 
 export { Decimal } from "./Decimal"
 
+export { IanaParser } from "./IanaParser"
+
+export { IanaParserExtended } from "./IanaParserExtended"
+
 export { ListFormatter } from "./ListFormatter"
 
 export { LocaleCanonicalizer } from "./LocaleCanonicalizer"
@@ -174,10 +178,6 @@ export { Time } from "./Time"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
-export { IanaParser } from "./IanaParser"
-
-export { IanaParserExtended } from "./IanaParserExtended"
-
 export { MeasureUnit } from "./MeasureUnit"
 
 export { MeasureUnitParser } from "./MeasureUnitParser"
@@ -186,9 +186,9 @@ export { UnitsConverter } from "./UnitsConverter"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
-export { WeekCalculator } from "./WeekCalculator"
+export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
 
-export { ZonedDateTimeParser } from "./ZonedDateTimeParser"
+export { WeekCalculator } from "./WeekCalculator"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 

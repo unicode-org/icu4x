@@ -36,6 +36,20 @@ final class ZonedDateTime {
     return struct;
   }
 
+  /// Creates a new [`ZonedDateTime`] from an IXDTF string.
+  ///
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+  ///
+  /// Throws [CalendarParseError] on failure.
+  static ZonedDateTime tryFromStr(String v, Calendar calendar, IanaParser ianaParser, UtcOffsetCalculator offsetCalculator) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedDateTime_try_from_str_mv1(v._utf8AllocIn(temp.arena), calendar._ffi, ianaParser._ffi, offsetCalculator._ffi);
+    if (!result.isOk) {
+      throw CalendarParseError.values[result.union.err];
+    }
+    return ZonedDateTime._fromFfi(result.union.ok);
+  }
+
   @override
   bool operator ==(Object other) =>
       other is ZonedDateTime &&
@@ -50,3 +64,8 @@ final class ZonedDateTime {
         zone,
       ]);
 }
+
+@meta.RecordUse()
+@ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultZonedDateTimeFfiInt32 _icu4x_ZonedDateTime_try_from_str_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar, ffi.Pointer<ffi.Opaque> ianaParser, ffi.Pointer<ffi.Opaque> offsetCalculator);

@@ -4,6 +4,7 @@ import type { IsoDate } from "./IsoDate"
 import type { IsoDateTime } from "./IsoDateTime"
 import type { Time } from "./Time"
 import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
+import type { UtcOffsetCalculator } from "./UtcOffsetCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -43,9 +44,11 @@ export class TimeZoneInfo {
 
     setTimeZoneId(id: string): void;
 
-    setIanaTimeZoneId(mapper: IanaParser, id: string): void;
+    setIanaTimeZoneId(parser: IanaParser, id: string): void;
 
     get timeZoneId(): string;
+
+    inferZoneVariant(offsetCalculator: UtcOffsetCalculator): boolean;
 
     clearZoneVariant(): void;
 

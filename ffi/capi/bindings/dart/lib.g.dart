@@ -143,6 +143,7 @@ part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnitsConverter.g.dart';
 part 'UnitsConverterFactory.g.dart';
+part 'UtcOffsetCalculator.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
@@ -156,7 +157,6 @@ part 'WordSegmenter.g.dart';
 part 'YearStyle.g.dart';
 part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
-part 'ZonedDateTimeParser.g.dart';
 part 'ZonedIsoDateTime.g.dart';
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.

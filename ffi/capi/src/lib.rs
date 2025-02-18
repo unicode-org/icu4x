@@ -92,6 +92,8 @@ pub mod exemplar_chars;
 pub mod fallbacker;
 #[cfg(feature = "decimal")]
 pub mod fixed_decimal;
+#[cfg(any(feature = "datetime", feature = "timezone"))]
+pub mod iana_parser;
 #[cfg(feature = "list")]
 pub mod list;
 #[cfg(feature = "locale")]
@@ -132,10 +134,10 @@ pub mod segmenter_word;
 pub mod time;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
-#[cfg(any(feature = "datetime", feature = "timezone"))]
-pub mod timezone_mapper;
 #[cfg(feature = "experimental")]
 pub mod units_converter;
+#[cfg(any(feature = "datetime", feature = "timezone"))]
+pub mod utc_offset;
 #[cfg(feature = "calendar")]
 pub mod week;
 #[cfg(feature = "datetime")]
