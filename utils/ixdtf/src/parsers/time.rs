@@ -4,6 +4,8 @@
 
 //! Parsing of Time Values
 
+use core::num::NonZeroU8;
+
 use crate::{
     assert_syntax,
     parsers::{
@@ -78,7 +80,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
             hour,
             minute: 0,
             second: 0,
-            fraction: Fraction::default(),
+            fraction: None,
         });
     }
 
@@ -92,7 +94,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
             hour,
             minute,
             second: 0,
-            fraction: Fraction::default(),
+            fraction: None,
         });
     }
 
@@ -102,7 +104,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 
     let second = parse_minute_second(cursor, true)?;
 
-    let fraction = parse_fraction(cursor)?.unwrap_or_default();
+    let fraction = parse_fraction(cursor)?;
 
     Ok(TimeRecord {
         hour,
@@ -161,9 +163,7 @@ pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<Fractio
         digits = digits.saturating_add(1);
     }
 
-    if digits == 0 {
-        return Err(ParseError::FractionPart);
-    }
+    let digits = NonZeroU8::new(digits).ok_or(ParseError::FractionPart)?;
 
     Ok(Some(Fraction { digits, value }))
 }

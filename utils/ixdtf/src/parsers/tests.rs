@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extern crate alloc;
+use core::num::NonZeroU8;
+
 use alloc::vec::Vec;
 
 use crate::{
@@ -46,10 +48,10 @@ fn temporal_date_time_max() {
             hour: 12,
             minute: 28,
             second: 32,
-            fraction: Fraction {
-                digits: 9,
+            fraction: Some(Fraction {
+                digits: NonZeroU8::new(9).unwrap(),
                 value: 329402834
-            }
+            })
         })
     );
 }
@@ -576,10 +578,10 @@ fn temporal_duration_parsing() {
                 hours: 1,
                 minutes: 1,
                 seconds: 1,
-                fraction: Fraction {
-                    digits: 9,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(9).unwrap(),
                     value: 123456789,
-                }
+                })
             })
         },
         "Failing to parse a valid Duration string: \"{}\" should pass.",
@@ -599,10 +601,10 @@ fn temporal_duration_parsing() {
             }),
             time: Some(TimeDurationRecord::Hours {
                 hours: 0,
-                fraction: Fraction {
-                    digits: 1,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(1).unwrap(),
                     value: 18_000
-                },
+                }),
             })
         }
     );
@@ -659,10 +661,10 @@ fn duration_fraction_extended() {
             time: Some(TimeDurationRecord::Minutes {
                 hours: 1,
                 minutes: 1,
-                fraction: Fraction {
-                    digits: 12,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(12).unwrap(),
                     value: 7_407_407_347_380,
-                }
+                })
             })
         })
     );
@@ -811,10 +813,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 0,
                 second: 0,
-                fraction: Fraction {
-                    digits: 0,
-                    value: 0
-                },
+                fraction: None,
             }),
             offset: None,
             tz: None,
@@ -836,10 +835,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 0,
-                fraction: Fraction {
-                    digits: 0,
-                    value: 0
-                },
+                fraction: None,
             }),
             offset: None,
             tz: None,
@@ -861,10 +857,7 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                fraction: Fraction {
-                    digits: 0,
-                    value: 0
-                },
+                fraction: None,
             }),
             offset: None,
             tz: None,
@@ -886,10 +879,10 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                fraction: Fraction {
-                    digits: 3,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(3).unwrap(),
                     value: 0
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -911,10 +904,10 @@ fn test_correct_datetime() {
                 hour: 4,
                 minute: 34,
                 second: 22,
-                fraction: Fraction {
-                    digits: 3,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(3).unwrap(),
                     value: 0
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1019,10 +1012,7 @@ fn test_zulu_offset() {
                 hour: 14,
                 minute: 0,
                 second: 0,
-                fraction: Fraction {
-                    digits: 0,
-                    value: 0
-                },
+                fraction: None,
             }),
             offset: Some(crate::parsers::records::UtcOffsetRecordOrZ::Z),
             tz: Some(TimeZoneAnnotation {
@@ -1047,10 +1037,7 @@ fn test_zulu_offset() {
                 hour: 14,
                 minute: 0,
                 second: 0,
-                fraction: Fraction {
-                    digits: 0,
-                    value: 0
-                },
+                fraction: None,
             }),
             offset: Some(UtcOffsetRecordOrZ::Z),
             tz: None,
@@ -1080,10 +1067,10 @@ fn subsecond_string_tests() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 1,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(1).unwrap(),
                     value: 1,
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1105,10 +1092,10 @@ fn subsecond_string_tests() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 8,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(8).unwrap(),
                     value: 12_345_678
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1130,10 +1117,10 @@ fn subsecond_string_tests() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 9,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(9).unwrap(),
                     value: 123_456_789,
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1155,10 +1142,10 @@ fn subseconds_parsing_extended_nanoseconds() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 7,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(7).unwrap(),
                     value: 1_234_567
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1177,10 +1164,10 @@ fn subseconds_parsing_extended_nanoseconds() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 9,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(9).unwrap(),
                     value: 123_456_789,
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1202,10 +1189,10 @@ fn subseconds_parsing_extended_picoseconds() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 10,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(10).unwrap(),
                     value: 1_234_567_890,
-                }
+                })
             }),
             offset: None,
             tz: None,
@@ -1224,10 +1211,10 @@ fn subseconds_parsing_extended_picoseconds() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 12,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(12).unwrap(),
                     value: 123_456_789_876,
-                }
+                })
             }),
             offset: None,
             tz: None,
@@ -1249,10 +1236,10 @@ fn subseconds_parsing_extended_femtoseconds() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 13,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(13).unwrap(),
                     value: 1_234_567_898_765,
-                }
+                })
             }),
             offset: None,
             tz: None,
@@ -1271,10 +1258,10 @@ fn subseconds_parsing_extended_femtoseconds() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 15,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(15).unwrap(),
                     value: 123_456_789_876_543
-                }
+                })
             }),
             offset: None,
             tz: None,
@@ -1296,10 +1283,10 @@ fn subseconds_parsing_extended_truncated() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 16,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(16).unwrap(),
                     value: 1_234_567_898_765_432
-                },
+                }),
             }),
             offset: None,
             tz: None,
@@ -1318,10 +1305,10 @@ fn subseconds_parsing_extended_truncated() {
                 hour: 15,
                 minute: 23,
                 second: 30,
-                fraction: Fraction {
-                    digits: 37,
+                fraction: Some(Fraction {
+                    digits: NonZeroU8::new(37).unwrap(),
                     value: 123_456_789_876_543_210,
-                },
+                }),
             }),
             offset: None,
             tz: None,

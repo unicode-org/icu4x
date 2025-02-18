@@ -197,8 +197,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
             fraction: time
                 .3
                 .map(|f| adjust_fraction_for_unit(f, 3600))
-                .transpose()?
-                .unwrap_or_default(),
+                .transpose()?,
         })),
         // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
         TimeUnit::Minute => Ok(Some(TimeDurationRecord::Minutes {
@@ -207,14 +206,13 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
             fraction: time
                 .3
                 .map(|f| adjust_fraction_for_unit(f, 60))
-                .transpose()?
-                .unwrap_or_default(),
+                .transpose()?,
         })),
         TimeUnit::Second => Ok(Some(TimeDurationRecord::Seconds {
             hours: time.0,
             minutes: time.1,
             seconds: time.2,
-            fraction: time.3.unwrap_or_default(),
+            fraction: time.3,
         })),
         TimeUnit::None => Err(ParseError::abrupt_end("TimeDurationDesignator")),
     }

@@ -10,9 +10,7 @@ use super::{
         is_annotation_key_value_separator, is_annotation_open, is_critical_flag, is_sign,
         is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator, is_utc_designator,
     },
-    records::{
-        Fraction, Sign, TimeZoneAnnotation, TimeZoneRecord, UtcOffsetRecord, UtcOffsetRecordOrZ,
-    },
+    records::{Sign, TimeZoneAnnotation, TimeZoneRecord, UtcOffsetRecord, UtcOffsetRecordOrZ},
     time::{parse_fraction, parse_hour, parse_minute_second},
     Cursor,
 };
@@ -157,7 +155,7 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UtcOffset
         // If `UtcOffsetWithSubMinuteComponents`, continue parsing.
         utc_to_minute.second = parse_minute_second(cursor, true)?;
 
-        let fraction = parse_fraction(cursor)?.unwrap_or_default();
+        let fraction = parse_fraction(cursor)?;
 
         utc_to_minute.fraction = fraction;
     }
@@ -187,7 +185,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
                 hour,
                 minute: 0,
                 second: 0,
-                fraction: Fraction::default(),
+                fraction: None,
             },
             false,
         ));
@@ -203,7 +201,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
             hour,
             minute,
             second: 0,
-            fraction: Fraction::default(),
+            fraction: None,
         },
         true,
     ))

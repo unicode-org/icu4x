@@ -714,9 +714,16 @@ impl Time {
     }
 
     fn try_from_time_record(time_record: &TimeRecord) -> Result<Self, ParseError> {
-        let Some(nanosecond) = time_record.fraction.to_nanoseconds() else {
-            return Err(ParseError::ExcessivePrecision);
-        };
+        let nanosecond = time_record
+            .fraction
+            .map(|fraction| {
+                fraction
+                    .to_nanoseconds()
+                    .ok_or(ParseError::ExcessivePrecision)
+            })
+            .transpose()?
+            .unwrap_or_default();
+
         Ok(Self::try_new(
             time_record.hour,
             time_record.minute,

@@ -20,7 +20,7 @@
 //!
 //! ```
 //! use ixdtf::parsers::{
-//!     records::{Sign, TimeZoneRecord, Fraction},
+//!     records::{Sign, TimeZoneRecord},
 //!     IxdtfParser,
 //! };
 //!
@@ -42,7 +42,7 @@
 //! assert_eq!(offset.hour, 5);
 //! assert_eq!(offset.minute, 0);
 //! assert_eq!(offset.second, 0);
-//! assert_eq!(offset.fraction, Fraction { digits: 0, value: 0});
+//! assert_eq!(offset.fraction, None);
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
@@ -74,7 +74,7 @@
 //!
 //! ```rust
 //! use ixdtf::parsers::{
-//!     records::{Sign, TimeZoneRecord, Fraction},
+//!     records::{Sign, TimeZoneRecord},
 //!     IxdtfParser,
 //! };
 //!
@@ -96,7 +96,7 @@
 //! assert_eq!(offset.hour, 0);
 //! assert_eq!(offset.minute, 0);
 //! assert_eq!(offset.second, 0);
-//! assert_eq!(offset.fraction, Fraction { digits: 0, value: 0});
+//! assert_eq!(offset.fraction, None);
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
@@ -135,7 +135,7 @@
 //!
 //! ```rust
 //! use ixdtf::parsers::{
-//!     records::{Sign, TimeZoneRecord, Fraction},
+//!     records::{Sign, TimeZoneRecord},
 //!     IxdtfParser,
 //! };
 //!
@@ -152,7 +152,7 @@
 //! assert_eq!(offset.hour, 0);
 //! assert_eq!(offset.minute, 0);
 //! assert_eq!(offset.second, 0);
-//! assert_eq!(offset.fraction, Fraction { digits: 0, value: 0});
+//! assert_eq!(offset.fraction, None);
 //! assert!(tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
