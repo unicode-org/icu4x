@@ -26,9 +26,9 @@
 //! )
 //! .expect("locale should be present");
 //!
-//! let fixed_decimal = Decimal::from(1000007);
+//! let decimal = Decimal::from(1000007);
 //!
-//! assert_writeable_eq!(df.format(&fixed_decimal), "১০,০০,০০৭");
+//! assert_writeable_eq!(df.format(&decimal), "১০,০০,০০৭");
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator
@@ -62,15 +62,15 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = DecimalFormatter::try_new(
+//! let df = DecimalFormatter::try_new(
 //!     locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
 //!
-//! let fixed_decimal = Decimal::from(1000007);
+//! let decimal = Decimal::from(1000007);
 //!
-//! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
+//! assert_writeable_eq!(df.format(&decimal), "๑,๐๐๐,๐๐๗");
 //! ```
 //!
 //! [`DecimalFormatter`]: DecimalFormatter
