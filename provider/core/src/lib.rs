@@ -142,6 +142,7 @@ pub mod marker {
     pub use super::marker_full::{
         data_marker_id, does_not_deref_to_varule, impl_data_provider_never_marker, DataMarkerExt,
         DataMarkerId, DataMarkerIdHash, ErasedMarker, MaybeExportAsVarULE, NeverMarker,
+        NeverVarULE,
     };
 }
 

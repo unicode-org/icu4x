@@ -113,7 +113,8 @@ impl<M: DataMarker + Sized> DataMarkerExt for M {
 /// For most data structs, a default implementation available via
 /// [`does_not_deref_to_varule`] can be used.
 pub trait MaybeExportAsVarULE {
-    /// The [`VarULE`] type for this data struct.
+    /// The [`VarULE`] type for this data struct, or [`NeverVarULE`]
+    /// if it cannot be represented as [`VarULE`].
     type VarULE: VarULE + ?Sized;
 
     /// If `self` can be wholy represented as [`Self::VarULE`],
@@ -129,16 +130,16 @@ pub trait MaybeExportAsVarULE {
 macro_rules! does_not_deref_to_varule {
     (<$generic:ident: $bound:tt> $ty:path) => {
         impl<$generic: $bound> $crate::marker::MaybeExportAsVarULE for $ty {
-            type VarULE = [()];
-            fn maybe_as_varule(&self) -> Option<&[()]> {
+            type VarULE = $crate::marker::NeverVarULE;
+            fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
                 None
             }
         }
     };
     ($ty:path) => {
         impl $crate::marker::MaybeExportAsVarULE for $ty {
-            type VarULE = [()];
-            fn maybe_as_varule(&self) -> Option<&[()]> {
+            type VarULE = $crate::marker::NeverVarULE;
+            fn maybe_as_varule(&self) -> Option<&Self::VarULE> {
                 None
             }
         }
@@ -146,6 +147,31 @@ macro_rules! does_not_deref_to_varule {
 }
 
 pub use does_not_deref_to_varule;
+
+/// An empty enum used for implementations of [`MaybeExportAsVarULE`]
+/// that do not use the VarULE storage optimization.
+#[derive(Debug)]
+#[allow(clippy::exhaustive_enums)] // empty enum
+pub enum NeverVarULE {}
+
+/// Safety checklist for VarULE:
+///
+/// 1. No uninitialized or padding bytes (empty type)
+/// 2. Type is an empty enum
+/// 3. `VarULE::validate_bytes()` always returns errors
+/// 4. `VarULE::validate_bytes()` always returns errors
+/// 5. `VarULE::from_bytes_unchecked()` returns the same pointer
+/// 6. All other methods are left with their default impl
+/// 7. Byte equality is semantic equality
+unsafe impl VarULE for NeverVarULE {
+    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError> {
+        Err(UleError::parse::<Self>())
+    }
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // Note: this returns a thin pointer instead of a fat pointer
+        &*(bytes.as_ptr() as *const Self)
+    }
+}
 
 /// A [`DynamicDataMarker`] that never returns data.
 ///
