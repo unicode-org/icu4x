@@ -64,7 +64,7 @@ You should now have a `target/release/libicu_capi.a`, ready to compile into your
 Here's an annotated, shorter version of the fixed decimal example:
 
  ```cpp
-#include "FixedDecimalFormatter.hpp"
+#include "DecimalFormatter.hpp"
 #include "DataStruct.hpp"
 #include "Logger.hpp"
 
@@ -82,14 +82,14 @@ int main() {
     DataProvider dp = DataProvider::create_compiled();
 
     // Create a formatter object with the appropriate settings
-    FixedDecimalFormatter fdf = FixedDecimalFormatter::create_with_grouping_strategy(
-        dp, locale, FixedDecimalGroupingStrategy::Auto).ok().value();
+    DecimalFormatter df = DecimalFormatter::create_with_grouping_strategy(
+            dp, locale, DecimalGroupingStrategy::Auto).ok().value();
 
     // Create a decimal representing the number 1,000,007
-    FixedDecimal decimal = FixedDecimal::create_from_u64(1000007);
+    Decimal decimal = Decimal::create_from_u64(1000007);
 
     // Format it to a string
-    std::string out = fdf.format(decimal).ok().value();
+    std::string out = df.format(decimal).ok().value();
 
     // Report formatted value
     std::cout << "Formatted value is " << out << std::endl;
