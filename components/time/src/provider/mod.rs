@@ -62,7 +62,26 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     TimeZoneOffsetsV1::INFO,
 ];
 
-/// TimeZone ID in BCP47 format
+/// A CLDR time zone identity.
+///
+/// This can be created directly from BCP-47 strings, or it can be parsed from IANA IDs.
+///
+/// CLDR uses difference equivalence classes than IANA. For example, `Europe/Oslo` is
+/// an alias to `Europe/Berlin` in IANA (because they agree since 1970), but these are
+/// different identities in CLDR, as we want to be able to say "Norway Time" and
+/// "Germany Time". On the other hand `Europe/Belfast` and `Europe/London` are the same
+/// CLDR identity ("UK Time").
+///
+/// ```
+/// use icu::time::zone::{IanaParser, TimeZone};
+/// use tinystr::tinystr;
+///
+/// let parser = IanaParser::new();
+/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
+/// assert_eq!(parser.parse("Europe/Berlin"), TimeZone(tinystr!(8, "deber")));
+/// assert_eq!(parser.parse("Europe/Belfast"), TimeZone(tinystr!(8, "gblon")));
+/// assert_eq!(parser.parse("Europe/London"), TimeZone(tinystr!(8, "gblon")));
+/// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
