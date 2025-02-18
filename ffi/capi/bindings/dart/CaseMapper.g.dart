@@ -20,8 +20,7 @@ final class CaseMapper implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapper_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapper_destroy));
 
   /// Construct a new ICU4XCaseMapper instance
   ///
@@ -45,8 +44,7 @@ final class CaseMapper implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_lowercase(
-        _ffi, sView.allocIn(temp), sView.length, locale._ffi, writeable._ffi);
+    final result = _ICU4XCaseMapper_lowercase(_ffi, sView.allocIn(temp), sView.length, locale._ffi, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -63,8 +61,7 @@ final class CaseMapper implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_uppercase(
-        _ffi, sView.allocIn(temp), sView.length, locale._ffi, writeable._ffi);
+    final result = _ICU4XCaseMapper_uppercase(_ffi, sView.allocIn(temp), sView.length, locale._ffi, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -81,18 +78,11 @@ final class CaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
   ///
   /// Throws [Error] on failure.
-  String titlecaseSegmentWithOnlyCaseData(
-      String s, Locale locale, TitlecaseOptions options) {
+  String titlecaseSegmentWithOnlyCaseData(String s, Locale locale, TitlecaseOptions options) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(
-        _ffi,
-        sView.allocIn(temp),
-        sView.length,
-        locale._ffi,
-        options._toFfi(temp),
-        writeable._ffi);
+    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_ffi, sView.allocIn(temp), sView.length, locale._ffi, options._toFfi(temp), writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -109,8 +99,7 @@ final class CaseMapper implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_fold(
-        _ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final result = _ICU4XCaseMapper_fold(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -128,8 +117,7 @@ final class CaseMapper implements ffi.Finalizable {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_fold_turkic(
-        _ffi, sView.allocIn(temp), sView.length, writeable._ffi);
+    final result = _ICU4XCaseMapper_fold_turkic(_ffi, sView.allocIn(temp), sView.length, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -214,139 +202,66 @@ final class CaseMapper implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XCaseMapper_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCaseMapper_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_create')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_create')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCaseMapper_create(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCaseMapper_create(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_lowercase')
-@ffi.Native<
-        _ResultVoidInt32 Function(
-            ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Size,
-            ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_lowercase')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_lowercase')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XCaseMapper_lowercase(
-    ffi.Pointer<ffi.Opaque> self,
-    ffi.Pointer<ffi.Uint8> sData,
-    int sLength,
-    ffi.Pointer<ffi.Opaque> locale,
-    ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XCaseMapper_lowercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_uppercase')
-@ffi.Native<
-        _ResultVoidInt32 Function(
-            ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Size,
-            ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_uppercase')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_uppercase')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XCaseMapper_uppercase(
-    ffi.Pointer<ffi.Opaque> self,
-    ffi.Pointer<ffi.Uint8> sData,
-    int sLength,
-    ffi.Pointer<ffi.Opaque> locale,
-    ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XCaseMapper_uppercase(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
-@ffi.Native<
-        _ResultVoidInt32 Function(
-            ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Size,
-            ffi.Pointer<ffi.Opaque>,
-            _TitlecaseOptionsFfi,
-            ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true,
-    symbol: 'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32
-    _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(
-        ffi.Pointer<ffi.Opaque> self,
-        ffi.Pointer<ffi.Uint8> sData,
-        int sLength,
-        ffi.Pointer<ffi.Opaque> locale,
-        _TitlecaseOptionsFfi options,
-        ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_fold')
-@ffi.Native<
-    _ResultVoidInt32 Function(
-        ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Uint8>,
-        ffi.Size,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_fold')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_fold')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XCaseMapper_fold(
-    ffi.Pointer<ffi.Opaque> self,
-    ffi.Pointer<ffi.Uint8> sData,
-    int sLength,
-    ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XCaseMapper_fold(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_fold_turkic')
-@ffi.Native<
-        _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_fold_turkic')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_fold_turkic')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XCaseMapper_fold_turkic(
-    ffi.Pointer<ffi.Opaque> self,
-    ffi.Pointer<ffi.Uint8> sData,
-    int sLength,
-    ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XCaseMapper_fold_turkic(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_add_case_closure_to')
-@ffi.Native<
-        ffi.Void Function(
-            ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_add_case_closure_to')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapper_add_case_closure_to')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapper_add_case_closure_to(
-    ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
+external void _ICU4XCaseMapper_add_case_closure_to(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_simple_lowercase')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_simple_lowercase')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCaseMapper_simple_lowercase')
 // ignore: non_constant_identifier_names
-external Rune _ICU4XCaseMapper_simple_lowercase(
-    ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _ICU4XCaseMapper_simple_lowercase(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_simple_uppercase')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_simple_uppercase')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCaseMapper_simple_uppercase')
 // ignore: non_constant_identifier_names
-external Rune _ICU4XCaseMapper_simple_uppercase(
-    ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _ICU4XCaseMapper_simple_uppercase(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_simple_titlecase')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_simple_titlecase')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCaseMapper_simple_titlecase')
 // ignore: non_constant_identifier_names
-external Rune _ICU4XCaseMapper_simple_titlecase(
-    ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _ICU4XCaseMapper_simple_titlecase(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_simple_fold')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_simple_fold')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCaseMapper_simple_fold')
 // ignore: non_constant_identifier_names
-external Rune _ICU4XCaseMapper_simple_fold(
-    ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _ICU4XCaseMapper_simple_fold(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('ICU4XCaseMapper_simple_fold_turkic')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapper_simple_fold_turkic')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCaseMapper_simple_fold_turkic')
 // ignore: non_constant_identifier_names
-external Rune _ICU4XCaseMapper_simple_fold_turkic(
-    ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _ICU4XCaseMapper_simple_fold_turkic(ffi.Pointer<ffi.Opaque> self, Rune ch);

@@ -20,8 +20,7 @@ final class PluralOperands implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralOperands_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPluralOperands_destroy));
 
   /// Construct for a given string representing a number
   ///
@@ -31,8 +30,7 @@ final class PluralOperands implements ffi.Finalizable {
   factory PluralOperands.fromString(String s) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _ICU4XPluralOperands_create_from_string(
-        sView.allocIn(temp), sView.length);
+    final result = _ICU4XPluralOperands_create_from_string(sView.allocIn(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -50,21 +48,16 @@ final class PluralOperands implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XPluralOperands_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XPluralOperands_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XPluralOperands_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XPluralOperands_create_from_string')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(
-    isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_string')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_string')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XPluralOperands_create_from_string(
-    ffi.Pointer<ffi.Uint8> sData, int sLength);
+external _ResultOpaqueInt32 _ICU4XPluralOperands_create_from_string(ffi.Pointer<ffi.Uint8> sData, int sLength);
 
 @_DiplomatFfiUse('ICU4XPluralOperands_create_from_fixed_decimal')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_fixed_decimal')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPluralOperands_create_from_fixed_decimal')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XPluralOperands_create_from_fixed_decimal(
-    ffi.Pointer<ffi.Opaque> x);
+external ffi.Pointer<ffi.Opaque> _ICU4XPluralOperands_create_from_fixed_decimal(ffi.Pointer<ffi.Opaque> x);

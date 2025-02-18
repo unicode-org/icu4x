@@ -18,33 +18,25 @@ final class LocaleFallbackConfig {
   String extensionKey;
   LocaleFallbackSupplement fallbackSupplement;
 
-  LocaleFallbackConfig(
-      {required this.priority,
-      required this.extensionKey,
-      required this.fallbackSupplement});
+  LocaleFallbackConfig({required this.priority, required this.extensionKey, required this.fallbackSupplement});
 
   // ignore: unused_element
-  LocaleFallbackConfig._fromFfi(
-      _LocaleFallbackConfigFfi ffi, core.List<Object> aEdges)
-      : priority = LocaleFallbackPriority.values[ffi.priority],
-        extensionKey = ffi.extensionKey._toDart(aEdges),
-        fallbackSupplement =
-            LocaleFallbackSupplement.values[ffi.fallbackSupplement];
+  LocaleFallbackConfig._fromFfi(_LocaleFallbackConfigFfi ffi, core.List<Object> aEdges) :
+    priority = LocaleFallbackPriority.values[ffi.priority],
+    extensionKey = ffi.extensionKey._toDart(aEdges),
+    fallbackSupplement = LocaleFallbackSupplement.values[ffi.fallbackSupplement];
 
   // If this struct contains any slices, their lifetime-edge-relevant objects (typically _FinalizedArenas) will only
   // be constructed here, and can be appended to any relevant lifetime arrays here. <lifetime>AppendArray accepts a list
   // of arrays for each lifetime to do so. It accepts multiple lists per lifetime in case the caller needs to tie a lifetime to multiple
   // output arrays. Null is equivalent to an empty list: this lifetime is not being borrowed from.
   // ignore: unused_element
-  _LocaleFallbackConfigFfi _toFfi(ffi.Allocator temp,
-      {core.List<core.List<Object>> aAppendArray = const []}) {
+  _LocaleFallbackConfigFfi _toFfi(ffi.Allocator temp, {core.List<core.List<Object>> aAppendArray = const []}) {
     final struct = ffi.Struct.create<_LocaleFallbackConfigFfi>();
     struct.priority = priority.index;
     final extensionKeyView = extensionKey.utf8View;
     struct.extensionKey._length = extensionKeyView.length;
-    struct.extensionKey._data = extensionKeyView.allocIn(aAppendArray.isNotEmpty
-        ? _FinalizedArena.withLifetime(aAppendArray).arena
-        : temp);
+    struct.extensionKey._data = extensionKeyView.allocIn(aAppendArray.isNotEmpty ? _FinalizedArena.withLifetime(aAppendArray).arena : temp);
     struct.fallbackSupplement = fallbackSupplement.index;
     return struct;
   }
@@ -63,7 +55,7 @@ final class LocaleFallbackConfig {
         fallbackSupplement,
       ]);
 
-  // Return all fields corresponding to lifetime `'a`
+  // Return all fields corresponding to lifetime `'a` 
   // without handling lifetime dependencies (this is the job of the caller)
   // This is all fields that may be borrowed from if borrowing `'a`,
   // assuming that there are no `'other: a`. bounds. In case of such bounds,

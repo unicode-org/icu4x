@@ -20,9 +20,9 @@ final class WeekOf {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  WeekOf._fromFfi(_WeekOfFfi ffi)
-      : week = ffi.week,
-        unit = WeekRelativeUnit.values[ffi.unit];
+  WeekOf._fromFfi(_WeekOfFfi ffi) :
+    week = ffi.week,
+    unit = WeekRelativeUnit.values[ffi.unit];
 
   // ignore: unused_element
   _WeekOfFfi _toFfi(ffi.Allocator temp) {
@@ -34,7 +34,9 @@ final class WeekOf {
 
   @override
   bool operator ==(Object other) =>
-      other is WeekOf && other.week == week && other.unit == unit;
+      other is WeekOf &&
+      other.week == week &&
+      other.unit == unit;
 
   @override
   int get hashCode => Object.hashAll([

@@ -28,9 +28,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
     }
   }
 
-  @_DiplomatFfiUse('ICU4XCodePointMapData8_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.Native.addressOf(_ICU4XCodePointMapData8_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCodePointMapData8_destroy));
 
   /// Gets the value for a code point.
   ///
@@ -66,8 +64,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
-    final result =
-        _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(_ffi, value);
+    final result = _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(_ffi, value);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
@@ -133,8 +130,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CodePointMapData8.hangulSyllableType(DataProvider provider) {
-    final result =
-        _ICU4XCodePointMapData8_load_hangul_syllable_type(provider._ffi);
+    final result = _ICU4XCodePointMapData8_load_hangul_syllable_type(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -145,8 +141,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CodePointMapData8.indicSyllabicCategory(DataProvider provider) {
-    final result =
-        _ICU4XCodePointMapData8_load_indic_syllabic_category(provider._ffi);
+    final result = _ICU4XCodePointMapData8_load_indic_syllabic_category(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -168,8 +163,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   static CodePointMapData8 tryGraphemeClusterBreak(DataProvider provider) {
-    final result =
-        _ICU4XCodePointMapData8_try_grapheme_cluster_break(provider._ffi);
+    final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(provider._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -211,124 +205,86 @@ final class CodePointMapData8 implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCodePointMapData8_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_get')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_get')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_get')
 // ignore: non_constant_identifier_names
 external int _ICU4XCodePointMapData8_get(ffi.Pointer<ffi.Opaque> self, Rune cp);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_general_category_to_mask')
-@ffi.Native<ffi.Uint32 Function(ffi.Uint8)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_general_category_to_mask')
+@ffi.Native<ffi.Uint32 Function(ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_general_category_to_mask')
 // ignore: non_constant_identifier_names
 external int _ICU4XCodePointMapData8_general_category_to_mask(int gc);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_iter_ranges_for_value')
-@ffi.Native<
-        ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_value')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_value')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_value(
-    ffi.Pointer<ffi.Opaque> self, int value);
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_value(ffi.Pointer<ffi.Opaque> self, int value);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
-@ffi.Native<
-        ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(
-    isLeaf: true,
-    symbol: 'ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque>
-    _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(
-        ffi.Pointer<ffi.Opaque> self, int value);
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(ffi.Pointer<ffi.Opaque> self, int value);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_iter_ranges_for_mask')
-@ffi.Native<
-        ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_mask')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_iter_ranges_for_mask')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_mask(
-    ffi.Pointer<ffi.Opaque> self, int mask);
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_iter_ranges_for_mask(ffi.Pointer<ffi.Opaque> self, int mask);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_get_set_for_value')
-@ffi.Native<
-        ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_get_set_for_value')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint8)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_get_set_for_value')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_get_set_for_value(
-    ffi.Pointer<ffi.Opaque> self, int value);
+external ffi.Pointer<ffi.Opaque> _ICU4XCodePointMapData8_get_set_for_value(ffi.Pointer<ffi.Opaque> self, int value);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_general_category')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_general_category')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_general_category')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_general_category(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_general_category(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_bidi_class')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_bidi_class')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_bidi_class')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_bidi_class(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_bidi_class(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_east_asian_width')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_east_asian_width')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_east_asian_width')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_east_asian_width(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_east_asian_width(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_hangul_syllable_type')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_hangul_syllable_type')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_hangul_syllable_type')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_hangul_syllable_type(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_hangul_syllable_type(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_indic_syllabic_category')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_indic_syllabic_category')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_indic_syllabic_category')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32
-    _ICU4XCodePointMapData8_load_indic_syllabic_category(
-        ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_indic_syllabic_category(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_line_break')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_line_break')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_line_break')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_line_break(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_line_break(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_try_grapheme_cluster_break')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_try_grapheme_cluster_break')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_try_grapheme_cluster_break')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_try_grapheme_cluster_break(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_try_grapheme_cluster_break(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_word_break')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_word_break')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_word_break')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_word_break(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_word_break(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_sentence_break')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_sentence_break')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_sentence_break')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_sentence_break(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_sentence_break(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCodePointMapData8_load_joining_type')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_joining_type')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCodePointMapData8_load_joining_type')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_joining_type(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCodePointMapData8_load_joining_type(ffi.Pointer<ffi.Opaque> provider);

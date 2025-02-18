@@ -22,10 +22,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     }
   }
 
-  @_DiplomatFfiUse('ICU4XLocale_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-    ffi.Native.addressOf(_ICU4XLocale_destroy),
-  );
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocale_destroy));
 
   /// Construct an [`Locale`] from an locale identifier.
   ///
@@ -39,10 +36,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   factory Locale.fromString(String name) {
     final temp = ffi2.Arena();
     final nameView = name.utf8View;
-    final result = _ICU4XLocale_create_from_string(
-      nameView.allocIn(temp),
-      nameView.length,
-    );
+    final result = _ICU4XLocale_create_from_string(nameView.allocIn(temp), nameView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -90,12 +84,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XLocale_get_unicode_extension(
-      _ffi,
-      bytesView.allocIn(temp),
-      bytesView.length,
-      writeable._ffi,
-    );
+    final result = _ICU4XLocale_get_unicode_extension(_ffi, bytesView.allocIn(temp), bytesView.length, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -125,15 +114,12 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   set language(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
-    final result = _ICU4XLocale_set_language(
-      _ffi,
-      bytesView.allocIn(temp),
-      bytesView.length,
-    );
+    final result = _ICU4XLocale_set_language(_ffi, bytesView.allocIn(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
+    
   }
 
   /// Write a string representation of [`Locale`] region to `write`
@@ -158,15 +144,12 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   set region(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
-    final result = _ICU4XLocale_set_region(
-      _ffi,
-      bytesView.allocIn(temp),
-      bytesView.length,
-    );
+    final result = _ICU4XLocale_set_region(_ffi, bytesView.allocIn(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
+    
   }
 
   /// Write a string representation of [`Locale`] script to `write`
@@ -191,15 +174,12 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   set script(String bytes) {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
-    final result = _ICU4XLocale_set_script(
-      _ffi,
-      bytesView.allocIn(temp),
-      bytesView.length,
-    );
+    final result = _ICU4XLocale_set_script(_ffi, bytesView.allocIn(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
+    
   }
 
   /// Best effort locale canonicalizer that doesn't need any data
@@ -213,11 +193,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     final temp = ffi2.Arena();
     final bytesView = bytes.utf8View;
     final writeable = _Writeable();
-    final result = _ICU4XLocale_canonicalize(
-      bytesView.allocIn(temp),
-      bytesView.length,
-      writeable._ffi,
-    );
+    final result = _ICU4XLocale_canonicalize(bytesView.allocIn(temp), bytesView.length, writeable._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -244,11 +220,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   bool normalizingEq(String other) {
     final temp = ffi2.Arena();
     final otherView = other.utf8View;
-    final result = _ICU4XLocale_normalizing_eq(
-      _ffi,
-      otherView.allocIn(temp),
-      otherView.length,
-    );
+    final result = _ICU4XLocale_normalizing_eq(_ffi, otherView.allocIn(temp), otherView.length);
     temp.releaseAll();
     return result;
   }
@@ -257,17 +229,12 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   int compareToString(String other) {
     final temp = ffi2.Arena();
     final otherView = other.utf8View;
-    final result = _ICU4XLocale_strict_cmp_(
-      _ffi,
-      otherView.allocIn(temp),
-      otherView.length,
-    );
+    final result = _ICU4XLocale_strict_cmp_(_ffi, otherView.allocIn(temp), otherView.length);
     temp.releaseAll();
     return result;
   }
 
   /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.total_cmp) for more information.
-  @override
   int compareTo(Locale other) {
     final result = _ICU4XLocale_total_cmp_(_ffi, other._ffi);
     return result;
@@ -276,197 +243,90 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   @override
   bool operator ==(Object other) => other is Locale && compareTo(other) == 0;
   @override
-  int get hashCode =>
-      42; // Cannot get hash from Rust, so a constant is the only correct impl
+  int get hashCode => 42; // Cannot get hash from Rust, so a constant is the only correct impl
 }
 
 @_DiplomatFfiUse('ICU4XLocale_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-  isLeaf: true,
-  symbol: 'ICU4XLocale_destroy',
-)
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocale_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocale_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XLocale_create_from_string')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(
-  isLeaf: true,
-  symbol: 'ICU4XLocale_create_from_string',
-)
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_create_from_string')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocale_create_from_string(
-  ffi.Pointer<ffi.Uint8> nameData,
-  int nameLength,
-);
+external _ResultOpaqueInt32 _ICU4XLocale_create_from_string(ffi.Pointer<ffi.Uint8> nameData, int nameLength);
 
 @_DiplomatFfiUse('ICU4XLocale_create_und')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(
-  isLeaf: true,
-  symbol: 'ICU4XLocale_create_und',
-)
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'ICU4XLocale_create_und')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XLocale_create_und();
 
 @_DiplomatFfiUse('ICU4XLocale_clone')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-  isLeaf: true,
-  symbol: 'ICU4XLocale_clone',
-)
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_clone')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XLocale_clone(
-  ffi.Pointer<ffi.Opaque> self,
-);
+external ffi.Pointer<ffi.Opaque> _ICU4XLocale_clone(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XLocale_basename')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_basename')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_basename')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_basename(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_basename(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_get_unicode_extension')
-@ffi.Native<
-    _ResultVoidInt32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi.Uint8>,
-      ffi.Size,
-      ffi.Pointer<ffi.Opaque>,
-    )>(isLeaf: true, symbol: 'ICU4XLocale_get_unicode_extension')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_get_unicode_extension')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_get_unicode_extension(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Uint8> bytesData,
-  int bytesLength,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_get_unicode_extension(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_language')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_language')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_language')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_language(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_language(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_set_language')
-@ffi.Native<
-    _ResultVoidInt32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi.Uint8>,
-      ffi.Size,
-    )>(isLeaf: true, symbol: 'ICU4XLocale_set_language')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_set_language')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_set_language(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Uint8> bytesData,
-  int bytesLength,
-);
+external _ResultVoidInt32 _ICU4XLocale_set_language(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength);
 
 @_DiplomatFfiUse('ICU4XLocale_region')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_region')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_region')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_region(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_region(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_set_region')
-@ffi.Native<
-    _ResultVoidInt32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi.Uint8>,
-      ffi.Size,
-    )>(isLeaf: true, symbol: 'ICU4XLocale_set_region')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_set_region')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_set_region(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Uint8> bytesData,
-  int bytesLength,
-);
+external _ResultVoidInt32 _ICU4XLocale_set_region(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength);
 
 @_DiplomatFfiUse('ICU4XLocale_script')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_script')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_script')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_script(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_script(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_set_script')
-@ffi.Native<
-    _ResultVoidInt32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi.Uint8>,
-      ffi.Size,
-    )>(isLeaf: true, symbol: 'ICU4XLocale_set_script')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_set_script')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_set_script(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Uint8> bytesData,
-  int bytesLength,
-);
+external _ResultVoidInt32 _ICU4XLocale_set_script(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> bytesData, int bytesLength);
 
 @_DiplomatFfiUse('ICU4XLocale_canonicalize')
-@ffi.Native<
-    _ResultVoidInt32 Function(
-      ffi.Pointer<ffi.Uint8>,
-      ffi.Size,
-      ffi.Pointer<ffi.Opaque>,
-    )>(isLeaf: true, symbol: 'ICU4XLocale_canonicalize')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_canonicalize')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_canonicalize(
-  ffi.Pointer<ffi.Uint8> bytesData,
-  int bytesLength,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_canonicalize(ffi.Pointer<ffi.Uint8> bytesData, int bytesLength, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_to_string')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_to_string')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_to_string')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XLocale_to_string(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Opaque> writeable,
-);
+external _ResultVoidInt32 _ICU4XLocale_to_string(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XLocale_normalizing_eq')
-@ffi.Native<
-    ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>,
-        ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_normalizing_eq')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_normalizing_eq')
 // ignore: non_constant_identifier_names
-external bool _ICU4XLocale_normalizing_eq(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Uint8> otherData,
-  int otherLength,
-);
+external bool _ICU4XLocale_normalizing_eq(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
 
 @_DiplomatFfiUse('ICU4XLocale_strict_cmp_')
-@ffi.Native<
-    ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>,
-        ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_strict_cmp_')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XLocale_strict_cmp_')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocale_strict_cmp_(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Uint8> otherData,
-  int otherLength,
-);
+external int _ICU4XLocale_strict_cmp_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> otherData, int otherLength);
 
 @_DiplomatFfiUse('ICU4XLocale_total_cmp_')
-@ffi.Native<
-        ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocale_total_cmp_')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocale_total_cmp_')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocale_total_cmp_(
-  ffi.Pointer<ffi.Opaque> self,
-  ffi.Pointer<ffi.Opaque> other,
-);
+external int _ICU4XLocale_total_cmp_(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);

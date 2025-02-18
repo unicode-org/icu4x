@@ -20,9 +20,9 @@ final class TitlecaseOptions {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  TitlecaseOptions._fromFfi(_TitlecaseOptionsFfi ffi)
-      : leadingAdjustment = LeadingAdjustment.values[ffi.leadingAdjustment],
-        trailingCase = TrailingCase.values[ffi.trailingCase];
+  TitlecaseOptions._fromFfi(_TitlecaseOptionsFfi ffi) :
+    leadingAdjustment = LeadingAdjustment.values[ffi.leadingAdjustment],
+    trailingCase = TrailingCase.values[ffi.trailingCase];
 
   // ignore: unused_element
   _TitlecaseOptionsFfi _toFfi(ffi.Allocator temp) {
@@ -33,8 +33,7 @@ final class TitlecaseOptions {
   }
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
-  factory TitlecaseOptions(
-      {LeadingAdjustment? leadingAdjustment, TrailingCase? trailingCase}) {
+  factory TitlecaseOptions({LeadingAdjustment? leadingAdjustment, TrailingCase? trailingCase}) {
     final result = _ICU4XTitlecaseOptionsV1_default_options();
     final dart = TitlecaseOptions._fromFfi(result);
     if (leadingAdjustment != null) {
@@ -60,7 +59,6 @@ final class TitlecaseOptions {
 }
 
 @_DiplomatFfiUse('ICU4XTitlecaseOptionsV1_default_options')
-@ffi.Native<_TitlecaseOptionsFfi Function()>(
-    isLeaf: true, symbol: 'ICU4XTitlecaseOptionsV1_default_options')
+@ffi.Native<_TitlecaseOptionsFfi Function()>(isLeaf: true, symbol: 'ICU4XTitlecaseOptionsV1_default_options')
 // ignore: non_constant_identifier_names
 external _TitlecaseOptionsFfi _ICU4XTitlecaseOptionsV1_default_options();

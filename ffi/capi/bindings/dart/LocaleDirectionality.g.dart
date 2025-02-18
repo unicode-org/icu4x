@@ -20,9 +20,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     }
   }
 
-  @_DiplomatFfiUse('ICU4XLocaleDirectionality_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.Native.addressOf(_ICU4XLocaleDirectionality_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleDirectionality_destroy));
 
   /// Construct a new ICU4XLocaleDirectionality instance
   ///
@@ -42,10 +40,8 @@ final class LocaleDirectionality implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LocaleDirectionality.withExpander(
-      DataProvider provider, LocaleExpander expander) {
-    final result = _ICU4XLocaleDirectionality_create_with_expander(
-        provider._ffi, expander._ffi);
+  factory LocaleDirectionality.withExpander(DataProvider provider, LocaleExpander expander) {
+    final result = _ICU4XLocaleDirectionality_create_with_expander(provider._ffi, expander._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -60,61 +56,43 @@ final class LocaleDirectionality implements ffi.Finalizable {
 
   /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
   bool isLeftToRight(Locale locale) {
-    final result =
-        _ICU4XLocaleDirectionality_is_left_to_right(_ffi, locale._ffi);
+    final result = _ICU4XLocaleDirectionality_is_left_to_right(_ffi, locale._ffi);
     return result;
   }
 
   /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
   bool isRightToLeft(Locale locale) {
-    final result =
-        _ICU4XLocaleDirectionality_is_right_to_left(_ffi, locale._ffi);
+    final result = _ICU4XLocaleDirectionality_is_right_to_left(_ffi, locale._ffi);
     return result;
   }
 }
 
 @_DiplomatFfiUse('ICU4XLocaleDirectionality_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleDirectionality_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleDirectionality_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XLocaleDirectionality_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleDirectionality_create')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_create')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleDirectionality_create(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XLocaleDirectionality_create(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XLocaleDirectionality_create_with_expander')
-@ffi.Native<
-        _ResultOpaqueInt32 Function(
-            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleDirectionality_create_with_expander')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_create_with_expander')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XLocaleDirectionality_create_with_expander(
-    ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> expander);
+external _ResultOpaqueInt32 _ICU4XLocaleDirectionality_create_with_expander(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> expander);
 
 @_DiplomatFfiUse('ICU4XLocaleDirectionality_get')
-@ffi.Native<
-        ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleDirectionality_get')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_get')
 // ignore: non_constant_identifier_names
-external int _ICU4XLocaleDirectionality_get(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external int _ICU4XLocaleDirectionality_get(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
 @_DiplomatFfiUse('ICU4XLocaleDirectionality_is_left_to_right')
-@ffi.Native<
-        ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleDirectionality_is_left_to_right')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_is_left_to_right')
 // ignore: non_constant_identifier_names
-external bool _ICU4XLocaleDirectionality_is_left_to_right(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external bool _ICU4XLocaleDirectionality_is_left_to_right(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
 @_DiplomatFfiUse('ICU4XLocaleDirectionality_is_right_to_left')
-@ffi.Native<
-        ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleDirectionality_is_right_to_left')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleDirectionality_is_right_to_left')
 // ignore: non_constant_identifier_names
-external bool _ICU4XLocaleDirectionality_is_right_to_left(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+external bool _ICU4XLocaleDirectionality_is_right_to_left(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);

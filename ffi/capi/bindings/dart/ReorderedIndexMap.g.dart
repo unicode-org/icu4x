@@ -24,9 +24,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     }
   }
 
-  @_DiplomatFfiUse('ICU4XReorderedIndexMap_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.Native.addressOf(_ICU4XReorderedIndexMap_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XReorderedIndexMap_destroy));
 
   /// Get this as a slice/array of indices
   core.List<int> get asSlice {
@@ -58,33 +56,26 @@ final class ReorderedIndexMap implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XReorderedIndexMap_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XReorderedIndexMap_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XReorderedIndexMap_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XReorderedIndexMap_as_slice')
-@ffi.Native<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XReorderedIndexMap_as_slice')
+@ffi.Native<_SliceUsize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_as_slice')
 // ignore: non_constant_identifier_names
-external _SliceUsize _ICU4XReorderedIndexMap_as_slice(
-    ffi.Pointer<ffi.Opaque> self);
+external _SliceUsize _ICU4XReorderedIndexMap_as_slice(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XReorderedIndexMap_len')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XReorderedIndexMap_len')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_len')
 // ignore: non_constant_identifier_names
 external int _ICU4XReorderedIndexMap_len(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XReorderedIndexMap_is_empty')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XReorderedIndexMap_is_empty')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_is_empty')
 // ignore: non_constant_identifier_names
 external bool _ICU4XReorderedIndexMap_is_empty(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XReorderedIndexMap_get')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
-    isLeaf: true, symbol: 'ICU4XReorderedIndexMap_get')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XReorderedIndexMap_get')
 // ignore: non_constant_identifier_names
-external int _ICU4XReorderedIndexMap_get(
-    ffi.Pointer<ffi.Opaque> self, int index);
+external int _ICU4XReorderedIndexMap_get(ffi.Pointer<ffi.Opaque> self, int index);

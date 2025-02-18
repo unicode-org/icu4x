@@ -20,8 +20,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XCaseMapCloser_destroy));
 
   /// Construct a new ICU4XCaseMapper instance
   ///
@@ -53,43 +52,28 @@ final class CaseMapCloser implements ffi.Finalizable {
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
     final temp = ffi2.Arena();
     final sView = s.utf8View;
-    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(
-        _ffi, sView.allocIn(temp), sView.length, builder._ffi);
+    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(_ffi, sView.allocIn(temp), sView.length, builder._ffi);
     temp.releaseAll();
     return result;
   }
 }
 
 @_DiplomatFfiUse('ICU4XCaseMapCloser_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapCloser_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCaseMapCloser_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XCaseMapCloser_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapCloser_create')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_create')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XCaseMapCloser_create(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XCaseMapCloser_create(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XCaseMapCloser_add_case_closure_to')
-@ffi.Native<
-        ffi.Void Function(
-            ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_case_closure_to')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_case_closure_to')
 // ignore: non_constant_identifier_names
-external void _ICU4XCaseMapCloser_add_case_closure_to(
-    ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
+external void _ICU4XCaseMapCloser_add_case_closure_to(ffi.Pointer<ffi.Opaque> self, Rune c, ffi.Pointer<ffi.Opaque> builder);
 
 @_DiplomatFfiUse('ICU4XCaseMapCloser_add_string_case_closure_to')
-@ffi.Native<
-        ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>,
-            ffi.Size, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_string_case_closure_to')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XCaseMapCloser_add_string_case_closure_to')
 // ignore: non_constant_identifier_names
-external bool _ICU4XCaseMapCloser_add_string_case_closure_to(
-    ffi.Pointer<ffi.Opaque> self,
-    ffi.Pointer<ffi.Uint8> sData,
-    int sLength,
-    ffi.Pointer<ffi.Opaque> builder);
+external bool _ICU4XCaseMapCloser_add_string_case_closure_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength, ffi.Pointer<ffi.Opaque> builder);

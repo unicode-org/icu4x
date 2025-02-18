@@ -24,9 +24,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     }
   }
 
-  @_DiplomatFfiUse('ICU4XUnitsConverterFactory_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.Native.addressOf(_ICU4XUnitsConverterFactory_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XUnitsConverterFactory_destroy));
 
   /// Construct a new [`UnitsConverterFactory`] instance.
   ///
@@ -47,8 +45,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
   UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
-    final result =
-        _ICU4XUnitsConverterFactory_converter(_ffi, from._ffi, to._ffi);
+    final result = _ICU4XUnitsConverterFactory_converter(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
 
@@ -64,32 +61,21 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XUnitsConverterFactory_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XUnitsConverterFactory_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XUnitsConverterFactory_create')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_create')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_create')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(
-    ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('ICU4XUnitsConverterFactory_converter')
-@ffi.Native<
-        ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_converter')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_converter')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(
-    ffi.Pointer<ffi.Opaque> self,
-    ffi.Pointer<ffi.Opaque> from,
-    ffi.Pointer<ffi.Opaque> to);
+external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
 
 @_DiplomatFfiUse('ICU4XUnitsConverterFactory_parser')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_parser(
-    ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_parser(ffi.Pointer<ffi.Opaque> self);

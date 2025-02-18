@@ -22,8 +22,7 @@ final class Date implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDate_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XDate_destroy));
 
   /// Creates a new [`Date`] representing the ISO date and time
   /// given but in a given calendar
@@ -31,10 +30,8 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Date.fromIsoInCalendar(
-      int year, int month, int day, Calendar calendar) {
-    final result =
-        _ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar._ffi);
+  factory Date.fromIsoInCalendar(int year, int month, int day, Calendar calendar) {
+    final result = _ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar._ffi);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -46,19 +43,11 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Date.fromCodesInCalendar(
-      String eraCode, int year, String monthCode, int day, Calendar calendar) {
+  factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final temp = ffi2.Arena();
     final eraCodeView = eraCode.utf8View;
     final monthCodeView = monthCode.utf8View;
-    final result = _ICU4XDate_create_from_codes_in_calendar(
-        eraCodeView.allocIn(temp),
-        eraCodeView.length,
-        year,
-        monthCodeView.allocIn(temp),
-        monthCodeView.length,
-        day,
-        calendar._ffi);
+    final result = _ICU4XDate_create_from_codes_in_calendar(eraCodeView.allocIn(temp), eraCodeView.length, year, monthCodeView.allocIn(temp), monthCodeView.length, day, calendar._ffi);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._ffi == result.union.err);
@@ -215,139 +204,91 @@ final class Date implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XDate_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XDate_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XDate_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XDate_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XDate_create_from_iso_in_calendar')
-@ffi.Native<
-        _ResultOpaqueInt32 Function(
-            ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_create_from_iso_in_calendar')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_create_from_iso_in_calendar')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XDate_create_from_iso_in_calendar(
-    int year, int month, int day, ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _ICU4XDate_create_from_iso_in_calendar(int year, int month, int day, ffi.Pointer<ffi.Opaque> calendar);
 
 @_DiplomatFfiUse('ICU4XDate_create_from_codes_in_calendar')
-@ffi.Native<
-        _ResultOpaqueInt32 Function(
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Size,
-            ffi.Int32,
-            ffi.Pointer<ffi.Uint8>,
-            ffi.Size,
-            ffi.Uint8,
-            ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_create_from_codes_in_calendar')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_create_from_codes_in_calendar')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _ICU4XDate_create_from_codes_in_calendar(
-    ffi.Pointer<ffi.Uint8> eraCodeData,
-    int eraCodeLength,
-    int year,
-    ffi.Pointer<ffi.Uint8> monthCodeData,
-    int monthCodeLength,
-    int day,
-    ffi.Pointer<ffi.Opaque> calendar);
+external _ResultOpaqueInt32 _ICU4XDate_create_from_codes_in_calendar(ffi.Pointer<ffi.Uint8> eraCodeData, int eraCodeLength, int year, ffi.Pointer<ffi.Uint8> monthCodeData, int monthCodeLength, int day, ffi.Pointer<ffi.Opaque> calendar);
 
 @_DiplomatFfiUse('ICU4XDate_to_calendar')
-@ffi.Native<
-    ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_to_calendar')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_to_calendar')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_calendar(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
+external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_calendar(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calendar);
 
 @_DiplomatFfiUse('ICU4XDate_to_iso')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_to_iso')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_to_iso')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_iso(
-    ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _ICU4XDate_to_iso(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_day_of_year')
-@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_day_of_year')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_day_of_year(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_day_of_month')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_day_of_month')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_day_of_month(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_day_of_week')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_day_of_week')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_day_of_week')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_day_of_week(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_week_of_month')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
-    isLeaf: true, symbol: 'ICU4XDate_week_of_month')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'ICU4XDate_week_of_month')
 // ignore: non_constant_identifier_names
-external int _ICU4XDate_week_of_month(
-    ffi.Pointer<ffi.Opaque> self, int firstWeekday);
+external int _ICU4XDate_week_of_month(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
 
 @_DiplomatFfiUse('ICU4XDate_week_of_year')
-@ffi.Native<
-        _ResultWeekOfFfiInt32 Function(
-            ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_week_of_year')
+@ffi.Native<_ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_week_of_year')
 // ignore: non_constant_identifier_names
-external _ResultWeekOfFfiInt32 _ICU4XDate_week_of_year(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
+external _ResultWeekOfFfiInt32 _ICU4XDate_week_of_year(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
 
 @_DiplomatFfiUse('ICU4XDate_ordinal_month')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_ordinal_month')
+@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_ordinal_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_ordinal_month(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_month_code')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_month_code')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_month_code')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDate_month_code(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XDate_month_code(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XDate_year_in_era')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_year_in_era')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_year_in_era')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_year_in_era(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_era')
-@ffi.Native<
-    _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-        ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_era')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_era')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _ICU4XDate_era(
-    ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
+external _ResultVoidInt32 _ICU4XDate_era(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> writeable);
 
 @_DiplomatFfiUse('ICU4XDate_months_in_year')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_months_in_year')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_months_in_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_months_in_year(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_days_in_month')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_days_in_month')
+@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_days_in_month')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_days_in_month(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_days_in_year')
-@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_days_in_year')
+@ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_days_in_year')
 // ignore: non_constant_identifier_names
 external int _ICU4XDate_days_in_year(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XDate_calendar')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XDate_calendar')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XDate_calendar')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XDate_calendar(
-    ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _ICU4XDate_calendar(ffi.Pointer<ffi.Opaque> self);

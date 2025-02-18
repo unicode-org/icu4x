@@ -22,9 +22,7 @@ final class WordBreakIteratorUtf16 implements ffi.Finalizable {
     }
   }
 
-  @_DiplomatFfiUse('ICU4XWordBreakIteratorUtf16_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.Native.addressOf(_ICU4XWordBreakIteratorUtf16_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XWordBreakIteratorUtf16_destroy));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
@@ -53,27 +51,21 @@ final class WordBreakIteratorUtf16 implements ffi.Finalizable {
 }
 
 @_DiplomatFfiUse('ICU4XWordBreakIteratorUtf16_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XWordBreakIteratorUtf16_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XWordBreakIteratorUtf16_next')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_next')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_next')
 // ignore: non_constant_identifier_names
 external int _ICU4XWordBreakIteratorUtf16_next(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XWordBreakIteratorUtf16_word_type')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_word_type')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_word_type')
 // ignore: non_constant_identifier_names
-external int _ICU4XWordBreakIteratorUtf16_word_type(
-    ffi.Pointer<ffi.Opaque> self);
+external int _ICU4XWordBreakIteratorUtf16_word_type(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('ICU4XWordBreakIteratorUtf16_is_word_like')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_is_word_like')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XWordBreakIteratorUtf16_is_word_like')
 // ignore: non_constant_identifier_names
-external bool _ICU4XWordBreakIteratorUtf16_is_word_like(
-    ffi.Pointer<ffi.Opaque> self);
+external bool _ICU4XWordBreakIteratorUtf16_is_word_like(ffi.Pointer<ffi.Opaque> self);

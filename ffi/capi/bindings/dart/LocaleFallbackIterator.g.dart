@@ -5,8 +5,7 @@ part of 'lib.g.dart';
 /// An iterator over the locale under fallback.
 ///
 /// See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html) for more information.
-final class LocaleFallbackIterator
-    implements ffi.Finalizable, core.Iterator<Locale> {
+final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Locale> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -25,16 +24,12 @@ final class LocaleFallbackIterator
     }
   }
 
-  @_DiplomatFfiUse('ICU4XLocaleFallbackIterator_destroy')
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.Native.addressOf(_ICU4XLocaleFallbackIterator_destroy));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleFallbackIterator_destroy));
 
   Locale? _current;
 
-  @override
   Locale get current => _current!;
 
-  @override
   bool moveNext() {
     _current = _iteratorNext();
     return _current != null;
@@ -49,14 +44,11 @@ final class LocaleFallbackIterator
 }
 
 @_DiplomatFfiUse('ICU4XLocaleFallbackIterator_destroy')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_destroy')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleFallbackIterator_destroy(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('ICU4XLocaleFallbackIterator_next')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-    isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_next')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleFallbackIterator_next')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackIterator_next(
-    ffi.Pointer<ffi.Opaque> self);
+external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbackIterator_next(ffi.Pointer<ffi.Opaque> self);
