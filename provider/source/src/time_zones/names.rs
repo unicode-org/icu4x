@@ -13,8 +13,8 @@ use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 use zerovec::{ZeroSlice, ZeroVec};
 
-impl DataProvider<TimeZoneIanaBasicV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaBasicV1>, DataError> {
+impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaMapV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
 
         // Sort and deduplicate the BCP-47 IDs:
@@ -68,14 +68,14 @@ impl DataProvider<TimeZoneIanaBasicV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneIanaBasicV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimeZoneIanaMapV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<TimeZoneIanaExtendedV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaExtendedV1>, DataError> {
+impl DataProvider<TimeZoneIanaNamesV1> for SourceDataProvider {
+    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaNamesV1>, DataError> {
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
@@ -110,7 +110,7 @@ impl DataProvider<TimeZoneIanaExtendedV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneIanaExtendedV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimeZoneIanaNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

@@ -1,8 +1,8 @@
 // @generated
-include!("time_zone_iana_basic_v1.rs.data");
+include!("time_zone_iana_names_v1.rs.data");
+include!("time_zone_iana_map_v1.rs.data");
 include!("time_zone_offsets_v1.rs.data");
 include!("time_zone_windows_v1.rs.data");
-include!("time_zone_iana_extended_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -32,9 +32,9 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_time_zone_iana_basic_v1!($provider);
+        impl_time_zone_iana_names_v1!($provider);
+        impl_time_zone_iana_map_v1!($provider);
         impl_time_zone_offsets_v1!($provider);
         impl_time_zone_windows_v1!($provider);
-        impl_time_zone_iana_extended_v1!($provider);
     };
 }

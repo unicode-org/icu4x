@@ -9,8 +9,7 @@ use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
     provider::iana::{
-        IanaNames, IanaToBcp47Map, TimeZoneIanaBasicV1, TimeZoneIanaExtendedV1,
-        NON_REGION_CITY_PREFIX,
+        IanaNames, IanaToBcp47Map, TimeZoneIanaMapV1, TimeZoneIanaNamesV1, NON_REGION_CITY_PREFIX,
     },
     TimeZone,
 };
@@ -90,7 +89,7 @@ use crate::{
 /// ```
 #[derive(Debug, Clone)]
 pub struct IanaParser {
-    data: DataPayload<TimeZoneIanaBasicV1>,
+    data: DataPayload<TimeZoneIanaMapV1>,
     checksum: u64,
 }
 
@@ -120,14 +119,14 @@ impl IanaParser {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<TimeZoneIanaBasicV1> + ?Sized,
+        P: DataProvider<TimeZoneIanaMapV1> + ?Sized,
     {
         let response = provider.load(Default::default())?;
         Ok(Self {
             data: response.payload,
             checksum: response.metadata.checksum.ok_or_else(|| {
                 DataError::custom("Missing checksum")
-                    .with_req(TimeZoneIanaBasicV1::INFO, Default::default())
+                    .with_req(TimeZoneIanaMapV1::INFO, Default::default())
             })?,
         })
     }
@@ -176,8 +175,8 @@ impl IanaParserBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_BASIC_V1,
-            checksum: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_BASIC_V1_CHECKSUM,
+            data: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_MAP_V1,
+            checksum: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_MAP_V1_CHECKSUM,
         }
     }
 
@@ -283,7 +282,7 @@ impl Iterator for TimeZoneIter<'_> {
 #[derive(Debug, Clone)]
 pub struct IanaParserExtended<I> {
     inner: I,
-    data: DataPayload<TimeZoneIanaExtendedV1>,
+    data: DataPayload<TimeZoneIanaNamesV1>,
 }
 
 impl IanaParserExtended<IanaParser> {
@@ -312,7 +311,7 @@ impl IanaParserExtended<IanaParser> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<TimeZoneIanaBasicV1> + DataProvider<TimeZoneIanaExtendedV1> + ?Sized,
+        P: DataProvider<TimeZoneIanaMapV1> + DataProvider<TimeZoneIanaNamesV1> + ?Sized,
     {
         let parser = IanaParser::try_new_unstable(provider)?;
         Self::try_new_with_parser_unstable(provider, parser)
@@ -334,15 +333,15 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_parser(parser: I) -> Result<Self, DataError> {
         if parser.as_ref().checksum
-            != crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_EXTENDED_V1_CHECKSUM
+            != crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1_CHECKSUM
         {
-            return Err(DataErrorKind::InconsistentData(TimeZoneIanaBasicV1::INFO)
-                .with_marker(TimeZoneIanaExtendedV1::INFO));
+            return Err(DataErrorKind::InconsistentData(TimeZoneIanaMapV1::INFO)
+                .with_marker(TimeZoneIanaNamesV1::INFO));
         }
         Ok(Self {
             inner: parser,
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_EXTENDED_V1,
+                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1,
             ),
         })
     }
@@ -359,12 +358,12 @@ where
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_with_parser_unstable<P>(provider: &P, parser: I) -> Result<Self, DataError>
     where
-        P: DataProvider<TimeZoneIanaBasicV1> + DataProvider<TimeZoneIanaExtendedV1> + ?Sized,
+        P: DataProvider<TimeZoneIanaMapV1> + DataProvider<TimeZoneIanaNamesV1> + ?Sized,
     {
         let response = provider.load(Default::default())?;
         if Some(parser.as_ref().checksum) != response.metadata.checksum {
-            return Err(DataErrorKind::InconsistentData(TimeZoneIanaBasicV1::INFO)
-                .with_marker(TimeZoneIanaExtendedV1::INFO));
+            return Err(DataErrorKind::InconsistentData(TimeZoneIanaMapV1::INFO)
+                .with_marker(TimeZoneIanaNamesV1::INFO));
         }
         Ok(Self {
             inner: parser,
@@ -409,12 +408,12 @@ impl IanaParserExtendedBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_BASIC_V1_CHECKSUM
-                == crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_EXTENDED_V1_CHECKSUM,
+            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_MAP_V1_CHECKSUM
+                == crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1_CHECKSUM,
         );
         Self {
             inner: IanaParserBorrowed::new(),
-            data: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_EXTENDED_V1,
+            data: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1,
         }
     }
 
@@ -554,7 +553,7 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// assert_eq!(ids.len(), 445);
     ///
     /// assert_eq!(
-    ///     parser.iter().zip(parser.iter_canonical()).nth(367).unwrap(), 
+    ///     parser.iter().zip(parser.iter_canonical()).nth(367).unwrap(),
     ///     (TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv")
     /// );
     /// ```

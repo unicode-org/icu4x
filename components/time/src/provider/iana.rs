@@ -29,8 +29,9 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 icu_provider::data_marker!(
     /// See [`IanaToBcp47Map`]
     ///
-    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaExtendedV1`].
-    TimeZoneIanaBasicV1,
+    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaNamesV1`].
+    TimeZoneIanaMapV1,
+    "time/zone/iana/map/v1",
     IanaToBcp47Map<'static>,
     is_singleton = true,
     has_checksum = true,
@@ -39,8 +40,9 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// See [`Bcp47ToIanaMap`]
     ///
-    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaBasicV1`].
-    TimeZoneIanaExtendedV1,
+    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaMapV1`].
+    TimeZoneIanaNamesV1,
+    "time/zone/iana/names/v1",
     IanaNames<'static>,
     is_singleton = true,
     has_checksum = true,
@@ -95,10 +97,10 @@ pub struct IanaToBcp47Map<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct IanaNames<'data> {
     /// The list of all normalized IANA identifiers.
-    /// 
+    ///
     /// The first `bcp47_ids.len()` identifiers are canonical for the
     /// the BCP-47 IDs in [`IanaToBcp47Map::bcp47_ids`] at the same index.
-    /// 
+    ///
     /// The remaining non-canonical identifiers are sorted in ascending lowercase order.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub normalized_iana_ids: VarZeroVec<'data, str>,

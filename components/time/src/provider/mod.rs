@@ -47,8 +47,8 @@ const _: () = {
         pub use crate as time;
     }
     make_provider!(Baked);
-    impl_time_zone_iana_basic_v1!(Baked);
-    impl_time_zone_iana_extended_v1!(Baked);
+    impl_time_zone_iana_map_v1!(Baked);
+    impl_time_zone_iana_names_v1!(Baked);
     impl_time_zone_windows_v1!(Baked);
     impl_time_zone_offsets_v1!(Baked);
 };
@@ -56,8 +56,8 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    iana::TimeZoneIanaExtendedV1::INFO,
-    iana::TimeZoneIanaBasicV1::INFO,
+    iana::TimeZoneIanaNamesV1::INFO,
+    iana::TimeZoneIanaMapV1::INFO,
     windows::TimeZoneWindowsV1::INFO,
     TimeZoneOffsetsV1::INFO,
 ];
