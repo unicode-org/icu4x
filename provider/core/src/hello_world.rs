@@ -47,7 +47,7 @@ impl<'a> HelloWorld<'a> {
     }
     fn from_varule(message: &'a str) -> Self {
         Self {
-            message: Cow::Borrowed(message)
+            message: Cow::Borrowed(message),
         }
     }
 }
