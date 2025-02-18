@@ -236,6 +236,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   }
 
   /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.total_cmp) for more information.
+  @override
   int compareTo(Locale other) {
     final result = _ICU4XLocale_total_cmp_(_ffi, other._ffi);
     return result;

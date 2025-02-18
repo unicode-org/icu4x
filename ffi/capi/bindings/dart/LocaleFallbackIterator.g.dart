@@ -29,8 +29,10 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
 
   Locale? _current;
 
+  @override
   Locale get current => _current!;
 
+  @override
   bool moveNext() {
     _current = _iteratorNext();
     return _current != null;
