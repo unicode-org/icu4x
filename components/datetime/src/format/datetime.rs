@@ -11,7 +11,7 @@ use crate::provider::pattern::PatternItem;
 use crate::{parts, pattern::*};
 
 use core::fmt::{self, Write};
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_calendar::types::{DayOfWeekInMonth, Weekday};
 use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
@@ -21,7 +21,7 @@ fn try_write_number<W>(
     part: Part,
     w: &mut W,
     decimal_formatter: Option<&DecimalFormatter>,
-    mut num: SignedFixedDecimal,
+    mut num: Decimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -45,7 +45,7 @@ where
 fn try_write_number_without_part<W>(
     w: &mut W,
     decimal_formatter: Option<&DecimalFormatter>,
-    mut num: SignedFixedDecimal,
+    mut num: Decimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -159,7 +159,7 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, year = input.year);
-            let mut year = SignedFixedDecimal::from(year.era_year_or_extended());
+            let mut year = Decimal::from(year.era_year_or_extended());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
                 year.set_max_position(2);
@@ -209,7 +209,7 @@ where
 
             // Always in latin digits according to spec
             w.with_part(PART, |w| {
-                let mut num = SignedFixedDecimal::from(related_iso);
+                let mut num = Decimal::from(related_iso);
                 num.pad_start(l.to_len() as i16);
                 num.write_to(w)
             })?;
@@ -235,7 +235,7 @@ where
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     debug_assert!(l == FieldLength::One);
                     if let Some(fdf) = fdf {
-                        let mut num = SignedFixedDecimal::from(month.ordinal);
+                        let mut num = Decimal::from(month.ordinal);
                         num.pad_start(l.to_len() as i16);
                         w.with_part(PART, |w| {
                             substitution_pattern
@@ -248,7 +248,7 @@ where
                             w.with_part(Part::ERROR, |w| {
                                 substitution_pattern
                                     .interpolate([{
-                                        let mut num = SignedFixedDecimal::from(month.ordinal);
+                                        let mut num = Decimal::from(month.ordinal);
                                         num.pad_start(l.to_len() as i16);
                                         num
                                     }])
@@ -375,9 +375,9 @@ where
             input!(PART, subsecond = input.subsecond);
 
             // Formatting with fractional seconds
-            let mut s = SignedFixedDecimal::from(second.number());
+            let mut s = Decimal::from(second.number());
             let _infallible = s.concatenate_end(
-                SignedFixedDecimal::from(subsecond.number())
+                Decimal::from(subsecond.number())
                     .absolute
                     .multiplied_pow10(-9),
             );
@@ -625,7 +625,7 @@ mod tests {
                 try_write_number_without_part(
                     &mut writeable::adapters::CoreWriteAsPartsWrite(&mut s),
                     Some(&decimal_formatter),
-                    SignedFixedDecimal::from(*value),
+                    Decimal::from(*value),
                     *length,
                 )
                 .unwrap()

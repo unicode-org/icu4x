@@ -82,7 +82,7 @@ export { LocaleFallbacker } from "./LocaleFallbacker.mjs"
 
 export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 
-export { SignedFixedDecimal } from "./SignedFixedDecimal.mjs"
+export { Decimal } from "./Decimal.mjs"
 
 export { ListFormatter } from "./ListFormatter.mjs"
 

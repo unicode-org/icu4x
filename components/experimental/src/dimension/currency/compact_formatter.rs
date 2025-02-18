@@ -10,7 +10,7 @@ use crate::{
         currency::CurrencyEssentialsV1, currency_compact::ShortCurrencyCompactV1,
     },
 };
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
@@ -163,7 +163,7 @@ impl CompactCurrencyFormatter {
         })
     }
 
-    /// Formats in the compact format a [`SignedFixedDecimal`] value for the given currency code.
+    /// Formats in the compact format a [`Decimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
@@ -184,7 +184,7 @@ impl CompactCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l SignedFixedDecimal,
+        value: &'l Decimal,
         currency_code: CurrencyCode,
     ) -> FormattedCompactCurrency<'l> {
         FormattedCompactCurrency {

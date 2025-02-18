@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 
 use icu_decimal::DecimalFormatter;
 use writeable::Writeable;
@@ -14,7 +14,7 @@ use crate::dimension::provider::currency;
 use crate::dimension::provider::currency::CurrencyEssentials;
 
 pub struct FormattedCurrency<'l> {
-    pub(crate) value: &'l SignedFixedDecimal,
+    pub(crate) value: &'l Decimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentials<'l>,

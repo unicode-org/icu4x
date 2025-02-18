@@ -56,7 +56,7 @@ fn test_grouper() {
     use crate::options;
     use crate::provider::*;
     use crate::DecimalFormatter;
-    use fixed_decimal::SignedFixedDecimal;
+    use fixed_decimal::Decimal;
     use icu_provider::prelude::*;
     use std::cell::RefCell;
     use writeable::assert_writeable_eq;
@@ -154,7 +154,7 @@ fn test_grouper() {
     for cas in &cases {
         for i in 0..4 {
             let dec = {
-                let mut dec = SignedFixedDecimal::from(1);
+                let mut dec = Decimal::from(1);
                 dec.multiply_pow10((i as i16) + 3);
                 dec
             };

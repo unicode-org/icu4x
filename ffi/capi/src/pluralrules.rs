@@ -126,7 +126,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
             Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
-                &fixed_decimal::SignedFixedDecimal::try_from_utf8(s)?,
+                &fixed_decimal::Decimal::try_from_utf8(s)?,
             ))))
         }
 
@@ -135,7 +135,7 @@ pub mod ffi {
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "decimal")]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::SignedFixedDecimal) -> Box<Self> {
+        pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::Decimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
         }
     }

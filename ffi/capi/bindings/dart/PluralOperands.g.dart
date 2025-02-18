@@ -39,7 +39,7 @@ final class PluralOperands implements ffi.Finalizable {
   /// Construct from a FixedDecimal
   ///
   /// Retains at most 18 digits each from the integer and fraction parts.
-  factory PluralOperands.fromFixedDecimal(SignedFixedDecimal x) {
+  factory PluralOperands.fromFixedDecimal(Decimal x) {
     final result = _icu4x_PluralOperands_from_fixed_decimal_mv1(x._ffi);
     return PluralOperands._fromFfi(result, []);
   }

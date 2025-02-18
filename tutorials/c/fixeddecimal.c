@@ -4,7 +4,7 @@
 
 #include "DataProvider.h"
 #include "Locale.h"
-#include "SignedFixedDecimal.h"
+#include "Decimal.h"
 #include "DecimalFormatter.h"
 #include "Logger.h"
 #include <string.h>
@@ -23,7 +23,7 @@ int main() {
     }
     Locale* locale = locale_result.ok;
 
-    SignedFixedDecimal* decimal = icu4x_SignedFixedDecimal_from_uint64_mv1(1000007);
+    Decimal* decimal = icu4x_Decimal_from_uint64_mv1(1000007);
 
     DecimalGroupingStrategy_option o = {.ok = DecimalGroupingStrategy_Auto, .is_ok = true};
 
@@ -51,9 +51,9 @@ int main() {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_multiply_pow10_mv1(decimal, 2);
+    icu4x_Decimal_multiply_pow10_mv1(decimal, 2);
 
-    icu4x_SignedFixedDecimal_set_sign_mv1(decimal, FixedDecimalSign_Negative);
+    icu4x_Decimal_set_sign_mv1(decimal, FixedDecimalSign_Negative);
 
     write = diplomat_simple_write(output, 40);
 
@@ -70,14 +70,14 @@ int main() {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_destroy_mv1(decimal);
+    icu4x_Decimal_destroy_mv1(decimal);
 
     struct DiplomatStringView fixed_decimal_str = {
         "1000007.070",
         11
     };
 
-    icu4x_SignedFixedDecimal_from_string_mv1_result fd_result = icu4x_SignedFixedDecimal_from_string_mv1(fixed_decimal_str);
+    icu4x_Decimal_from_string_mv1_result fd_result = icu4x_Decimal_from_string_mv1(fixed_decimal_str);
     if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;
@@ -99,7 +99,7 @@ int main() {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_destroy_mv1(decimal);
+    icu4x_Decimal_destroy_mv1(decimal);
     icu4x_DecimalFormatter_destroy_mv1(fdf);
     icu4x_Locale_destroy_mv1(locale);
 

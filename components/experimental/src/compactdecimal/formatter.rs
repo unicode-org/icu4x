@@ -13,7 +13,7 @@ use crate::compactdecimal::{
 };
 use alloc::borrow::Cow;
 use core::convert::TryFrom;
-use fixed_decimal::{CompactDecimal, SignedFixedDecimal};
+use fixed_decimal::{CompactDecimal, Decimal};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
@@ -304,7 +304,7 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format_i64(-1_172_700), "-1.2M");
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
-        let unrounded = SignedFixedDecimal::from(value);
+        let unrounded = Decimal::from(value);
         self.format_fixed_decimal(&unrounded)
     }
 
@@ -369,22 +369,22 @@ impl CompactDecimalFormatter {
         use fixed_decimal::FloatPrecision::RoundTrip;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
-        let partly_rounded = SignedFixedDecimal::try_from_f64(value, RoundTrip)?;
+        let partly_rounded = Decimal::try_from_f64(value, RoundTrip)?;
         Ok(self.format_fixed_decimal(&partly_rounded))
     }
 
-    /// Formats a [`SignedFixedDecimal`] by automatically scaling and rounding it.
+    /// Formats a [`Decimal`] by automatically scaling and rounding it.
     ///
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.
     ///
-    /// Because the SignedFixedDecimal is mutated before formatting, this function
+    /// Because the Decimal is mutated before formatting, this function
     /// takes ownership of it.
     ///
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::SignedFixedDecimal;
+    /// use fixed_decimal::Decimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -396,38 +396,38 @@ impl CompactDecimalFormatter {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(0)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(0)),
     ///     "0"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(2)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(2)),
     ///     "2"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(843)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(843)),
     ///     "843"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(2207)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(2207)),
     ///     "2.2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(15127)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(15127)),
     ///     "15K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(3010349)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(3010349)),
     ///     "3M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(&SignedFixedDecimal::from(-13132)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(-13132)),
     ///     "-13K"
     /// );
     ///
-    /// // The sign display on the SignedFixedDecimal is respected:
+    /// // The sign display on the Decimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(
-    ///         &SignedFixedDecimal::from(2500)
+    ///         &Decimal::from(2500)
     ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
@@ -471,7 +471,7 @@ impl CompactDecimalFormatter {
     ///     "-1.2M"
     /// );
     /// ```
-    pub fn format_fixed_decimal(&self, value: &SignedFixedDecimal) -> FormattedCompactDecimal<'_> {
+    pub fn format_fixed_decimal(&self, value: &Decimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
         let mut significand = value.clone();

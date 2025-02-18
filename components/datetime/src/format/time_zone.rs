@@ -8,7 +8,7 @@ use crate::pattern::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
 use crate::{input::ExtractedInput, provider::fields::FieldLength};
 use core::fmt;
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_calendar::{Date, Iso};
 use icu_decimal::DecimalFormatter;
 use icu_time::provider::MinutesSinceEpoch;
@@ -241,7 +241,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     sink: &mut S,
                 ) -> fmt::Result {
                     let fd = {
-                        let mut fd = SignedFixedDecimal::from(self.offset.hours_part())
+                        let mut fd = Decimal::from(self.offset.hours_part())
                             .with_sign_display(fixed_decimal::SignDisplay::Always);
                         fd.pad_start(if self.length == FieldLength::Four {
                             2
@@ -256,7 +256,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                         || self.offset.minutes_part() != 0
                         || self.offset.seconds_part() != 0
                     {
-                        let mut signed_fdf = SignedFixedDecimal::from(self.offset.minutes_part());
+                        let mut signed_fdf = Decimal::from(self.offset.minutes_part());
                         signed_fdf.absolute.pad_start(2);
                         sink.write_str(self.separator)?;
                         self.fdf.format(&signed_fdf).write_to(sink)?;
@@ -265,7 +265,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                     if self.offset.seconds_part() != 0 {
                         sink.write_str(self.separator)?;
 
-                        let mut signed_fdf = SignedFixedDecimal::from(self.offset.seconds_part());
+                        let mut signed_fdf = Decimal::from(self.offset.seconds_part());
                         signed_fdf.absolute.pad_start(2);
                         self.fdf.format(&signed_fdf).write_to(sink)?;
                     }
@@ -628,7 +628,7 @@ impl Iso8601Format {
 
         // Always in latin digits according to spec
         {
-            let mut fd = SignedFixedDecimal::from(offset.hours_part())
+            let mut fd = Decimal::from(offset.hours_part())
                 .with_sign_display(fixed_decimal::SignDisplay::Always);
             fd.pad_start(2);
             fd
@@ -642,7 +642,7 @@ impl Iso8601Format {
                 sink.write_char(':')?;
             }
             {
-                let mut fd = SignedFixedDecimal::from(offset.minutes_part());
+                let mut fd = Decimal::from(offset.minutes_part());
                 fd.pad_start(2);
                 fd
             }
@@ -654,7 +654,7 @@ impl Iso8601Format {
                 sink.write_char(':')?;
             }
             {
-                let mut fd = SignedFixedDecimal::from(offset.seconds_part());
+                let mut fd = Decimal::from(offset.seconds_part());
                 fd.pad_start(2);
                 fd
             }

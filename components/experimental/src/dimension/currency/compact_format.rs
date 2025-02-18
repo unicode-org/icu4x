@@ -13,11 +13,11 @@ use crate::{
         currency_compact::ShortCurrencyCompact,
     },
 };
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use writeable::Writeable;
 
 pub struct FormattedCompactCurrency<'l> {
-    pub(crate) value: &'l SignedFixedDecimal,
+    pub(crate) value: &'l Decimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CompactCurrencyFormatterOptions,
     pub(crate) essential: &'l CurrencyEssentials<'l>,

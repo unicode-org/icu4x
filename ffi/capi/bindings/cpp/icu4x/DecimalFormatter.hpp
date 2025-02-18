@@ -13,9 +13,9 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "Decimal.hpp"
 #include "DecimalGroupingStrategy.hpp"
 #include "Locale.hpp"
-#include "SignedFixedDecimal.hpp"
 
 
 namespace icu4x {
@@ -31,7 +31,7 @@ namespace capi {
     typedef struct icu4x_DecimalFormatter_create_with_manual_data_mv1_result {union {icu4x::capi::DecimalFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecimalFormatter_create_with_manual_data_mv1_result;
     icu4x_DecimalFormatter_create_with_manual_data_mv1_result icu4x_DecimalFormatter_create_with_manual_data_mv1(diplomat::capi::DiplomatStringView plus_sign_prefix, diplomat::capi::DiplomatStringView plus_sign_suffix, diplomat::capi::DiplomatStringView minus_sign_prefix, diplomat::capi::DiplomatStringView minus_sign_suffix, diplomat::capi::DiplomatStringView decimal_separator, diplomat::capi::DiplomatStringView grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::capi::DiplomatCharView digits, icu4x::capi::DecimalGroupingStrategy_option grouping_strategy);
     
-    void icu4x_DecimalFormatter_format_mv1(const icu4x::capi::DecimalFormatter* self, const icu4x::capi::SignedFixedDecimal* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_DecimalFormatter_format_mv1(const icu4x::capi::DecimalFormatter* self, const icu4x::capi::Decimal* value, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_DecimalFormatter_destroy_mv1(DecimalFormatter* self);
@@ -68,7 +68,7 @@ inline diplomat::result<std::unique_ptr<icu4x::DecimalFormatter>, icu4x::DataErr
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DecimalFormatter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DecimalFormatter>>(std::unique_ptr<icu4x::DecimalFormatter>(icu4x::DecimalFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DecimalFormatter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::string icu4x::DecimalFormatter::format(const icu4x::SignedFixedDecimal& value) const {
+inline std::string icu4x::DecimalFormatter::format(const icu4x::Decimal& value) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_DecimalFormatter_format_mv1(this->AsFFI(),
