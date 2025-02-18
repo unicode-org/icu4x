@@ -99,7 +99,7 @@ pub struct Bcp47ToIanaMap<'data> {
     /// The first `bcp47_ids.len()` identifiers are canonical for the
     /// the BCP-47 IDs in [`IanaToBcp47Map::bcp47_ids`] at the same index.
     /// 
-    /// The remaining non-canonical identifiers are sorted in ascending order.
+    /// The remaining non-canonical identifiers are sorted in ascending lowercase order.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub normalized_iana_ids: VarZeroVec<'data, str>,
 }

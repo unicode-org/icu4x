@@ -83,12 +83,21 @@ impl DataProvider<TimeZoneIanaExtendedV1> for SourceDataProvider {
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         let canonical_iana_ids = bcp2iana.values().collect::<Vec<_>>();
-        let non_canonical_iana_ids = self
+        let mut non_canonical_iana_ids = self
             .iana_to_bcp47_map()?
             .keys()
             .filter(|k| !canonical_iana_ids.contains(k))
             .collect::<Vec<_>>();
-        let normalized_iana_ids = canonical_iana_ids.into_iter().chain(non_canonical_iana_ids).collect::<Vec<_>>();
+        non_canonical_iana_ids.sort_by(|a, b| {
+            a.as_bytes()
+                .iter()
+                .map(u8::to_ascii_lowercase)
+                .cmp(b.as_bytes().iter().map(u8::to_ascii_lowercase))
+        });
+        let normalized_iana_ids = canonical_iana_ids
+            .into_iter()
+            .chain(non_canonical_iana_ids)
+            .collect::<Vec<_>>();
 
         let data_struct = Bcp47ToIanaMap {
             // Note: we can't build VarZeroVec from an iterator yet.
