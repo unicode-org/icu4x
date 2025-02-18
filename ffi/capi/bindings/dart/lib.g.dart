@@ -165,6 +165,7 @@ final _rustFree = core.Finalizer(
     (({ffi.Pointer<ffi.Void> pointer, int bytes, int align}) record) =>
         _diplomat_free(record.pointer, record.bytes, record.align));
 
+// ignore: unused_element
 final class _RustAlloc implements ffi.Allocator {
   @override
   ffi.Pointer<T> allocate<T extends ffi.NativeType>(int byteCount,
@@ -713,6 +714,7 @@ final class _SliceUtf16 extends ffi.Struct {
   @override
   int get hashCode => _length.hashCode;
 
+  // ignore: unused_element
   String _toDart(core.List<Object> lifetimeEdges) {
     final r = core.String.fromCharCodes(_data.asTypedList(_length));
     if (lifetimeEdges.isEmpty) {

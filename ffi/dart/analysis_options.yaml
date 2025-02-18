@@ -7,4 +7,3 @@ linter:
 analyzer:
   errors:
     non_constant_identifier_names: ignore
-    unused_element: ignore
