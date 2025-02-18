@@ -94,12 +94,12 @@ pub struct IanaToBcp47Map<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMap<'data> {
-    /// The IANA time zone identifier corresponding to the BCP-47 ID in
-    /// [`IanaToBcp47Map::bcp47_ids`].
-    ///
-    /// Since there can be more than one IANA identifier for a particular
-    /// BCP-47 identifier, this list contains only the current canonical
-    /// IANA identifier.
+    /// The list of all normalized IANA identifiers.
+    /// 
+    /// The first `bcp47_ids.len()` identifiers are canonical for the
+    /// the BCP-47 IDs in [`IanaToBcp47Map::bcp47_ids`] at the same index.
+    /// 
+    /// The remaining non-canonical identifiers are sorted in ascending order.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub canonical_iana_ids: VarZeroVec<'data, str>,
+    pub normalized_iana_ids: VarZeroVec<'data, str>,
 }

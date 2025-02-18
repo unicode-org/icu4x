@@ -4,10 +4,7 @@
 
 //! TODO
 
-use alloc::borrow::Cow;
-use alloc::string::String;
 use icu_provider::prelude::*;
-use zerotrie::cursor::ZeroAsciiIgnoreCaseTrieCursor;
 use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
 
 use crate::{
@@ -246,24 +243,15 @@ impl IanaParserBorrowed<'_> {
     ///
     /// ```
     /// use icu::time::zone::IanaParser;
+    /// use icu::time::zone::TimeZone;
+    /// use std::collections::BTreeSet;
+    /// use tinystr::tinystr;
     ///
-    /// let ids = IanaParser::new()
-    ///     .iter()
-    ///     .skip(30)
-    ///     .take(5)
-    ///     .map(|id| id.to_string())
-    ///     .collect::<Vec<_>>();
+    /// let parser = IanaParser::new();
     ///
-    /// assert_eq!(
-    ///     ids,
-    ///     &[
-    ///         "arush",
-    ///         "asppg",
-    ///         "atvie",
-    ///         "auadl",
-    ///         "aubhq",
-    ///     ]
-    /// );
+    /// let ids = parser.iter().collect::<BTreeSet<_>>();
+    ///
+    /// assert!(ids.contains(&TimeZone(tinystr!(8, "uaiev"))));
     /// ```
     pub fn iter(&self) -> TimeZoneIter {
         TimeZoneIter {
@@ -384,11 +372,6 @@ where
         })
     }
 
-    /// Gets the inner [`IanaParser`] for performing queries.
-    pub fn inner(&self) -> &IanaParser {
-        self.inner.as_ref()
-    }
-
     /// Returns a borrowed version of the parser that can be queried.
     ///
     /// This avoids a small potential indirection cost when querying the parser.
@@ -472,130 +455,143 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     ///     (TimeZone::unknown(), "Etc/Unknown", "Etc/Unknown".into())
     /// );
     /// ```
-    pub fn parse<'b>(&self, iana_id: &'b str) -> (TimeZone, &'a str, Cow<'b, str>) {
+    pub fn parse(&self, iana_id: &str) -> (TimeZone, &'a str, &'a str) {
         self.parse_from_utf8(iana_id.as_bytes())
     }
 
     /// Same as [`Self::parse()`] but works with potentially ill-formed UTF-8.
-    pub fn parse_from_utf8<'b>(&self, iana_id: &'b [u8]) -> (TimeZone, &'a str, Cow<'b, str>) {
-        const FAILURE: (TimeZone, &str, Cow<str>) = (
-            TimeZone::unknown(),
-            "Etc/Unknown",
-            Cow::Borrowed("Etc/Unknown"),
-        );
-        let Some((trie_value, normalized)) = self.iana_lookup_with_normalization(iana_id, |_| {})
-        else {
+    pub fn parse_from_utf8(&self, iana_id: &[u8]) -> (TimeZone, &'a str, &'a str) {
+        const FAILURE: (TimeZone, &str, &str) = (TimeZone::unknown(), "Etc/Unknown", "Etc/Unknown");
+        let mut cursor = self.inner.data.map.cursor();
+        if !iana_id.contains(&b'/') {
+            cursor.step(NON_REGION_CITY_PREFIX);
+        }
+        for &b in iana_id {
+            cursor.step(b);
+        }
+        let Some(trie_value) = cursor.take_value().map(IanaTrieValue) else {
             return FAILURE;
         };
         let Some(bcp47_id) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
             return FAILURE;
         };
-        let Some(canonical) = self.data.canonical_iana_ids.get(trie_value.index()) else {
+        let Some(canonical) = self.data.normalized_iana_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
             return FAILURE;
+        };
+        let normalized = if trie_value.is_canonical() {
+            canonical
+        } else {
+            let Some(Ok(index)) = self.data.normalized_iana_ids.binary_search_in_range_by(
+                |a| {
+                    a.as_bytes()
+                        .iter()
+                        .map(u8::to_ascii_lowercase)
+                        .cmp(iana_id.iter().map(u8::to_ascii_lowercase))
+                },
+                self.inner.data.bcp47_ids.len()..self.data.normalized_iana_ids.len(),
+            ) else {
+                debug_assert!(
+                    false,
+                    "binary search should succeed if trie lookup succeeds"
+                );
+                return FAILURE;
+            };
+            let Some(normalized) = self
+                .data
+                .normalized_iana_ids
+                .get(self.inner.data.bcp47_ids.len() + index)
+            else {
+                debug_assert!(false, "binary search returns valid index");
+                return FAILURE;
+            };
+            normalized
         };
         (bcp47_id, canonical, normalized)
     }
 
-    /// Queries the data for `iana_id` while keeping track of the normalized string.
-    /// This is a fast lookup, but it may require allocating memory.
-    /// TODO: Make this borrow the normalized string from the data
-    fn iana_lookup_with_normalization<'l, 's>(
-        &'l self,
-        iana_id: &'s [u8],
-        mut cursor_fn: impl FnMut(&ZeroAsciiIgnoreCaseTrieCursor<'l>),
-    ) -> Option<(IanaTrieValue, Cow<'s, str>)> {
-        let mut cursor = self.inner.data.map.cursor();
-        if !iana_id.contains(&b'/') {
-            cursor_fn(&cursor);
-            cursor.step(NON_REGION_CITY_PREFIX);
-        }
-        let mut string = Cow::Borrowed(iana_id);
-        let mut i = 0;
-        let trie_value = loop {
-            cursor_fn(&cursor);
-            let Some(&input_byte) = string.get(i) else {
-                break cursor.take_value().map(IanaTrieValue);
-            };
-            let Some(matched_byte) = cursor.step(input_byte) else {
-                break None;
-            };
-            if matched_byte != input_byte {
-                let Some(input_byte) = string.to_mut().get_mut(i) else {
-                    debug_assert!(false, "the same index was just accessed earlier");
-                    break None;
-                };
-                if !input_byte.is_ascii() {
-                    debug_assert!(false, "non-ASCII input byte: {input_byte}");
-                    break None;
-                }
-                if !matched_byte.is_ascii() {
-                    debug_assert!(false, "non-ASCII matched byte: {matched_byte}");
-                    break None;
-                }
-                *input_byte = matched_byte;
-            }
-            i += 1;
-        }?;
-        // Safety: we just checked that both input_byte and matched_byte are ASCII,
-        // so the buffer remains UTF-8 when we replace one with the other.
-        Some((
-            trie_value,
-            match string {
-                Cow::Borrowed(b) => Cow::Borrowed(unsafe { core::str::from_utf8_unchecked(b) }),
-                Cow::Owned(b) => Cow::Owned(unsafe { String::from_utf8_unchecked(b) }),
-            },
-        ))
-    }
-
-    /// Returns an iterator over all canonical IANA time zone identifiers in an arbitrary, unstable order.
-    ///
-    /// To iterate over time zones, use [`IanaParserBorrowed::iter()`].
+    /// Returns an iterator over all known time zones.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::time::zone::iana::IanaParserExtended;
+    /// use icu::time::zone::TimeZone;
+    /// use std::collections::BTreeSet;
+    /// use tinystr::tinystr;
     ///
-    /// let ids = IanaParserExtended::new()
-    ///     .iter_canonical()
-    ///     .map(|id| id.to_string())
-    ///     .collect::<std::collections::BTreeSet<_>>();
+    /// let parser = IanaParserExtended::new();
+    ///
+    /// let ids = parser.iter().collect::<BTreeSet<_>>();
+    ///
+    /// assert!(ids.contains(&TimeZone(tinystr!(8, "uaiev"))));
+    /// assert_eq!(ids.len(), 445);
+    /// ```
+    pub fn iter(&self) -> TimeZoneIter {
+        self.inner.iter()
+    }
+
+    /// Returns an iterator over all IANA time zone identifiers that are canonical for some
+    /// CLDR time zone.
+    ///
+    /// This iterator has the same length and ordering as [`Self::iter()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::time::zone::iana::IanaParserExtended;
+    /// use icu::time::zone::TimeZone;
+    /// use std::collections::BTreeSet;
+    /// use tinystr::tinystr;
+    ///
+    /// let parser = IanaParserExtended::new();
+    ///
+    /// let ids = parser.iter_canonical().collect::<BTreeSet<_>>();
     ///
     /// assert!(ids.contains("Europe/Kyiv"));
     /// assert!(!ids.contains("Europe/Kiev"));
     /// assert_eq!(ids.len(), 445);
+    ///
+    /// assert_eq!(
+    ///     parser.iter().zip(parser.iter_canonical()).nth(367).unwrap(), 
+    ///     (TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv")
+    /// );
     /// ```
     pub fn iter_canonical(&self) -> CanonicalIanaIter<'a> {
-        CanonicalIanaIter(self.data.canonical_iana_ids.iter())
+        CanonicalIanaIter(
+            self.data
+                .normalized_iana_ids
+                .iter()
+                .take(self.inner.data.bcp47_ids.len()),
+        )
     }
 
-    /// Returns an iterator over all normalized IANA time zone identifiers in an arbitrary, unstable order.
+    /// Returns an iterator over all IANA time zone identifiers in an arbitrary, unstable order.
     ///
-    /// To iterate over time zones, use [`IanaParserBorrowed::iter()`].
+    /// To iterate over CLDR time zones, use [`Self::iter()`].
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::time::zone::iana::IanaParserExtended;
     ///
-    /// let ids = IanaParserExtended::new()
-    ///     .iter_all()
-    ///     .collect::<std::collections::BTreeSet<_>>();
+    /// let parser = IanaParserExtended::new();
+    ///
+    /// let ids = parser.iter_normalized().collect::<std::collections::BTreeSet<_>>();
     ///
     /// assert!(ids.contains("Europe/Kyiv"));
     /// assert!(ids.contains("Europe/Kiev"));
     /// assert_eq!(ids.len(), 598);
     /// ```
-    pub fn iter_all(&self) -> NormalizedIanaIter<'a> {
-        NormalizedIanaIter(self.inner.data.map.iter())
+    pub fn iter_normalized(&self) -> NormalizedIanaIter<'a> {
+        NormalizedIanaIter(self.data.normalized_iana_ids.iter())
     }
 }
 
 /// The iterator returned by [`IanaParserExtendedBorrowed::iter_canonical()`]
 #[derive(Debug)]
-pub struct CanonicalIanaIter<'a>(VarZeroSliceIter<'a, str>);
+pub struct CanonicalIanaIter<'a>(core::iter::Take<VarZeroSliceIter<'a, str>>);
 
 impl<'a> Iterator for CanonicalIanaIter<'a> {
     type Item = &'a str;
@@ -605,20 +601,15 @@ impl<'a> Iterator for CanonicalIanaIter<'a> {
     }
 }
 
-/// The iterator returned by [`IanaParserExtendedBorrowed::iter_all()`]
+/// The iterator returned by [`IanaParserExtendedBorrowed::iter_normalized()`]
 #[derive(Debug)]
-pub struct NormalizedIanaIter<'a>(zerotrie::ZeroTrieStringIterator<'a>);
+pub struct NormalizedIanaIter<'a>(VarZeroSliceIter<'a, str>);
 
 impl<'a> Iterator for NormalizedIanaIter<'a> {
-    type Item = Cow<'a, str>;
+    type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(mut k, _)| {
-            if k.as_bytes().starts_with(&[NON_REGION_CITY_PREFIX]) {
-                k.remove(0);
-            }
-            Cow::Owned(k)
-        })
+        self.0.next()
     }
 }
 
@@ -627,7 +618,12 @@ impl<'a> Iterator for NormalizedIanaIter<'a> {
 struct IanaTrieValue(usize);
 
 impl IanaTrieValue {
-    fn index(self) -> usize {
+    #[inline]
+    pub(crate) fn index(self) -> usize {
         self.0 >> 1
+    }
+    #[inline]
+    pub(crate) fn is_canonical(self) -> bool {
+        (self.0 & 0x1) != 0
     }
 }

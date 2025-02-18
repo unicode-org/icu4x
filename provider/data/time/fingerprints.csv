@@ -1,4 +1,4 @@
 time/zone/iana/basic/v1, <singleton>, 9543B, 9500B, 7218ae639c063764
-time/zone/iana/extended/v1, <singleton>, 7622B, 7600B, 35e1d2b320b41234
+time/zone/iana/extended/v1, <singleton>, 9738B, 9716B, d1330317448b453b
 time/zone/offsets/v1, <singleton>, 13410B, 13322B, dda8d1981591b7cc
 time/zone/windows/v1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd
