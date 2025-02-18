@@ -84,13 +84,13 @@ final class Time implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XTime_destroy')
+@_DiplomatFfiUse('ICU4XTime_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XTime_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XTime_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XTime_create')
+@_DiplomatFfiUse('ICU4XTime_create')
 @ffi.Native<
     _ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8,
         ffi.Uint32)>(isLeaf: true, symbol: 'ICU4XTime_create')
@@ -98,31 +98,31 @@ external void _ICU4XTime_destroy(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _ICU4XTime_create(
     int hour, int minute, int second, int nanosecond);
 
-@RecordSymbol('ICU4XTime_create_midnight')
+@_DiplomatFfiUse('ICU4XTime_create_midnight')
 @ffi.Native<_ResultOpaqueInt32 Function()>(
     isLeaf: true, symbol: 'ICU4XTime_create_midnight')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XTime_create_midnight();
 
-@RecordSymbol('ICU4XTime_hour')
+@_DiplomatFfiUse('ICU4XTime_hour')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XTime_hour')
 // ignore: non_constant_identifier_names
 external int _ICU4XTime_hour(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XTime_minute')
+@_DiplomatFfiUse('ICU4XTime_minute')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XTime_minute')
 // ignore: non_constant_identifier_names
 external int _ICU4XTime_minute(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XTime_second')
+@_DiplomatFfiUse('ICU4XTime_second')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XTime_second')
 // ignore: non_constant_identifier_names
 external int _ICU4XTime_second(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XTime_nanosecond')
+@_DiplomatFfiUse('ICU4XTime_nanosecond')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XTime_nanosecond')
 // ignore: non_constant_identifier_names

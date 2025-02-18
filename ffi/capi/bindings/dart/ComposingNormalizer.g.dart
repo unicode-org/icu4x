@@ -20,7 +20,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XComposingNormalizer_destroy')
+  @_DiplomatFfiUse('ICU4XComposingNormalizer_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XComposingNormalizer_destroy));
 
@@ -87,27 +87,27 @@ final class ComposingNormalizer implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XComposingNormalizer_destroy')
+@_DiplomatFfiUse('ICU4XComposingNormalizer_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XComposingNormalizer_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XComposingNormalizer_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XComposingNormalizer_create_nfc')
+@_DiplomatFfiUse('ICU4XComposingNormalizer_create_nfc')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XComposingNormalizer_create_nfc')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfc(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XComposingNormalizer_create_nfkc')
+@_DiplomatFfiUse('ICU4XComposingNormalizer_create_nfkc')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XComposingNormalizer_create_nfkc')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XComposingNormalizer_create_nfkc(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XComposingNormalizer_normalize')
+@_DiplomatFfiUse('ICU4XComposingNormalizer_normalize')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(
@@ -119,7 +119,7 @@ external _ResultVoidInt32 _ICU4XComposingNormalizer_normalize(
     int sLength,
     ffi.Pointer<ffi.Opaque> writeable);
 
-@RecordSymbol('ICU4XComposingNormalizer_is_normalized')
+@_DiplomatFfiUse('ICU4XComposingNormalizer_is_normalized')
 @ffi.Native<
         ffi.Bool Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(

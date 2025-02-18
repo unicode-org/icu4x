@@ -26,7 +26,7 @@ final class IanaToBcp47Mapper implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XIanaToBcp47Mapper_destroy')
+  @_DiplomatFfiUse('ICU4XIanaToBcp47Mapper_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XIanaToBcp47Mapper_destroy));
 
@@ -60,20 +60,20 @@ final class IanaToBcp47Mapper implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XIanaToBcp47Mapper_destroy')
+@_DiplomatFfiUse('ICU4XIanaToBcp47Mapper_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XIanaToBcp47Mapper_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XIanaToBcp47Mapper_create')
+@_DiplomatFfiUse('ICU4XIanaToBcp47Mapper_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XIanaToBcp47Mapper_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XIanaToBcp47Mapper_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XIanaToBcp47Mapper_get')
+@_DiplomatFfiUse('ICU4XIanaToBcp47Mapper_get')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(

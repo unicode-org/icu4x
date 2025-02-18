@@ -24,7 +24,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XUnitsConverterFactory_destroy')
+  @_DiplomatFfiUse('ICU4XUnitsConverterFactory_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XUnitsConverterFactory_destroy));
 
@@ -63,20 +63,20 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XUnitsConverterFactory_destroy')
+@_DiplomatFfiUse('ICU4XUnitsConverterFactory_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XUnitsConverterFactory_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XUnitsConverterFactory_create')
+@_DiplomatFfiUse('ICU4XUnitsConverterFactory_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XUnitsConverterFactory_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XUnitsConverterFactory_converter')
+@_DiplomatFfiUse('ICU4XUnitsConverterFactory_converter')
 @ffi.Native<
         ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
@@ -87,7 +87,7 @@ external ffi.Pointer<ffi.Opaque> _ICU4XUnitsConverterFactory_converter(
     ffi.Pointer<ffi.Opaque> from,
     ffi.Pointer<ffi.Opaque> to);
 
-@RecordSymbol('ICU4XUnitsConverterFactory_parser')
+@_DiplomatFfiUse('ICU4XUnitsConverterFactory_parser')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XUnitsConverterFactory_parser')
 // ignore: non_constant_identifier_names

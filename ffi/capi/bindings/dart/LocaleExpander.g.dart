@@ -71,27 +71,27 @@ final class LocaleExpander implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XLocaleExpander_destroy')
+@_DiplomatFfiUse('ICU4XLocaleExpander_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XLocaleExpander_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleExpander_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XLocaleExpander_create')
+@_DiplomatFfiUse('ICU4XLocaleExpander_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XLocaleExpander_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleExpander_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XLocaleExpander_create_extended')
+@_DiplomatFfiUse('ICU4XLocaleExpander_create_extended')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XLocaleExpander_create_extended')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleExpander_create_extended(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XLocaleExpander_maximize')
+@_DiplomatFfiUse('ICU4XLocaleExpander_maximize')
 @ffi.Native<
         ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XLocaleExpander_maximize')
@@ -99,7 +99,7 @@ external _ResultOpaqueInt32 _ICU4XLocaleExpander_create_extended(
 external int _ICU4XLocaleExpander_maximize(
     ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
-@RecordSymbol('ICU4XLocaleExpander_minimize')
+@_DiplomatFfiUse('ICU4XLocaleExpander_minimize')
 @ffi.Native<
         ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XLocaleExpander_minimize')
@@ -107,7 +107,7 @@ external int _ICU4XLocaleExpander_maximize(
 external int _ICU4XLocaleExpander_minimize(
     ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
 
-@RecordSymbol('ICU4XLocaleExpander_minimize_favor_script')
+@_DiplomatFfiUse('ICU4XLocaleExpander_minimize_favor_script')
 @ffi.Native<
         ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XLocaleExpander_minimize_favor_script')

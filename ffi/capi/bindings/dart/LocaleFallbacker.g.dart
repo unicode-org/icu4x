@@ -64,26 +64,26 @@ final class LocaleFallbacker implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XLocaleFallbacker_destroy')
+@_DiplomatFfiUse('ICU4XLocaleFallbacker_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XLocaleFallbacker_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleFallbacker_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XLocaleFallbacker_create')
+@_DiplomatFfiUse('ICU4XLocaleFallbacker_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleFallbacker_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XLocaleFallbacker_create_without_data')
+@_DiplomatFfiUse('ICU4XLocaleFallbacker_create_without_data')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(
     isLeaf: true, symbol: 'ICU4XLocaleFallbacker_create_without_data')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _ICU4XLocaleFallbacker_create_without_data();
 
-@RecordSymbol('ICU4XLocaleFallbacker_for_config')
+@_DiplomatFfiUse('ICU4XLocaleFallbacker_for_config')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(

@@ -23,7 +23,7 @@ final class CodePointRangeIterator implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('CodePointRangeIterator_destroy')
+  @_DiplomatFfiUse('CodePointRangeIterator_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_CodePointRangeIterator_destroy));
 
@@ -36,13 +36,13 @@ final class CodePointRangeIterator implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('CodePointRangeIterator_destroy')
+@_DiplomatFfiUse('CodePointRangeIterator_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'CodePointRangeIterator_destroy')
 // ignore: non_constant_identifier_names
 external void _CodePointRangeIterator_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('CodePointRangeIterator_next')
+@_DiplomatFfiUse('CodePointRangeIterator_next')
 @ffi.Native<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'CodePointRangeIterator_next')
 // ignore: non_constant_identifier_names

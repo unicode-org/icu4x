@@ -77,7 +77,7 @@ final class TimeZoneIdMapperWithFastCanonicalization
   }
 }
 
-@RecordSymbol('ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
+@_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true,
     symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
@@ -85,7 +85,7 @@ final class TimeZoneIdMapperWithFastCanonicalization
 external void _ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(
     ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XTimeZoneIdMapperWithFastCanonicalization_create')
+@_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true,
     symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_create')
@@ -94,7 +94,8 @@ external _ResultOpaqueInt32
     _ICU4XTimeZoneIdMapperWithFastCanonicalization_create(
         ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
+@_DiplomatFfiUse(
+    'ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(
@@ -108,7 +109,7 @@ external _ResultVoidInt32
         int valueLength,
         ffi.Pointer<ffi.Opaque> writeable);
 
-@RecordSymbol(
+@_DiplomatFfiUse(
     'ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,

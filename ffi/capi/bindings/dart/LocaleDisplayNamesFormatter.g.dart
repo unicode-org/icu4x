@@ -20,7 +20,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XLocaleDisplayNamesFormatter_destroy')
+  @_DiplomatFfiUse('ICU4XLocaleDisplayNamesFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XLocaleDisplayNamesFormatter_destroy));
 
@@ -57,14 +57,14 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XLocaleDisplayNamesFormatter_destroy')
+@_DiplomatFfiUse('ICU4XLocaleDisplayNamesFormatter_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XLocaleDisplayNamesFormatter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleDisplayNamesFormatter_destroy(
     ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XLocaleDisplayNamesFormatter_create')
+@_DiplomatFfiUse('ICU4XLocaleDisplayNamesFormatter_create')
 @ffi.Native<
         _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsFfi)>(
@@ -75,7 +75,7 @@ external _ResultOpaqueInt32 _ICU4XLocaleDisplayNamesFormatter_create(
     ffi.Pointer<ffi.Opaque> locale,
     _DisplayNamesOptionsFfi options);
 
-@RecordSymbol('ICU4XLocaleDisplayNamesFormatter_of')
+@_DiplomatFfiUse('ICU4XLocaleDisplayNamesFormatter_of')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(

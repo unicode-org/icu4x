@@ -23,7 +23,7 @@ final class GraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XGraphemeClusterBreakIteratorLatin1_destroy')
+  @_DiplomatFfiUse('ICU4XGraphemeClusterBreakIteratorLatin1_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XGraphemeClusterBreakIteratorLatin1_destroy));
 
@@ -37,14 +37,14 @@ final class GraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XGraphemeClusterBreakIteratorLatin1_destroy')
+@_DiplomatFfiUse('ICU4XGraphemeClusterBreakIteratorLatin1_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XGraphemeClusterBreakIteratorLatin1_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XGraphemeClusterBreakIteratorLatin1_destroy(
     ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XGraphemeClusterBreakIteratorLatin1_next')
+@_DiplomatFfiUse('ICU4XGraphemeClusterBreakIteratorLatin1_next')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XGraphemeClusterBreakIteratorLatin1_next')
 // ignore: non_constant_identifier_names

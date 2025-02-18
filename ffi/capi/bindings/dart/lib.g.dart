@@ -178,13 +178,13 @@ final class _RustAlloc implements ffi.Allocator {
   }
 }
 
-@RecordSymbol('diplomat_alloc')
+@_DiplomatFfiUse('diplomat_alloc')
 @ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(
     symbol: 'diplomat_alloc', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
 
-@RecordSymbol('diplomat_free')
+@_DiplomatFfiUse('diplomat_free')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(
     symbol: 'diplomat_free', isLeaf: true)
 // ignore: non_constant_identifier_names
@@ -770,34 +770,34 @@ final class _Writeable {
   }
 }
 
-@RecordSymbol('diplomat_buffer_writeable_create')
+@_DiplomatFfiUse('diplomat_buffer_writeable_create')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(
     symbol: 'diplomat_buffer_writeable_create', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _diplomat_buffer_writeable_create(int len);
 
-@RecordSymbol('diplomat_buffer_writeable_len')
+@_DiplomatFfiUse('diplomat_buffer_writeable_len')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
     symbol: 'diplomat_buffer_writeable_len', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_buffer_writeable_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@RecordSymbol('diplomat_buffer_writeable_get_bytes')
+@_DiplomatFfiUse('diplomat_buffer_writeable_get_bytes')
 @ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(
     symbol: 'diplomat_buffer_writeable_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Uint8> _diplomat_buffer_writeable_get_bytes(
     ffi.Pointer<ffi.Opaque> ptr);
 
-@RecordSymbol('diplomat_buffer_writeable_destroy')
+@_DiplomatFfiUse('diplomat_buffer_writeable_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(
     symbol: 'diplomat_buffer_writeable_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
 external void _diplomat_buffer_writeable_destroy(ffi.Pointer<ffi.Opaque> ptr);
 
 @RecordUse()
-class RecordSymbol extends RecordUse {
+class _DiplomatFfiUse extends RecordUse {
   final String symbol;
 
-  const RecordSymbol(@mustBeConst this.symbol);
+  const _DiplomatFfiUse(@mustBeConst this.symbol);
 }

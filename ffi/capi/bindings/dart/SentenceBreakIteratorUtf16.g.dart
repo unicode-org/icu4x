@@ -22,7 +22,7 @@ final class SentenceBreakIteratorUtf16 implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XSentenceBreakIteratorUtf16_destroy')
+  @_DiplomatFfiUse('ICU4XSentenceBreakIteratorUtf16_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XSentenceBreakIteratorUtf16_destroy));
 
@@ -36,14 +36,14 @@ final class SentenceBreakIteratorUtf16 implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XSentenceBreakIteratorUtf16_destroy')
+@_DiplomatFfiUse('ICU4XSentenceBreakIteratorUtf16_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XSentenceBreakIteratorUtf16_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XSentenceBreakIteratorUtf16_destroy(
     ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XSentenceBreakIteratorUtf16_next')
+@_DiplomatFfiUse('ICU4XSentenceBreakIteratorUtf16_next')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XSentenceBreakIteratorUtf16_next')
 // ignore: non_constant_identifier_names

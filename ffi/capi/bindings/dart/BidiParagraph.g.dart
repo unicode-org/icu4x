@@ -96,44 +96,44 @@ final class BidiParagraph implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XBidiParagraph_destroy')
+@_DiplomatFfiUse('ICU4XBidiParagraph_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XBidiParagraph_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XBidiParagraph_set_paragraph_in_text')
+@_DiplomatFfiUse('ICU4XBidiParagraph_set_paragraph_in_text')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_set_paragraph_in_text')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XBidiParagraph_set_paragraph_in_text(
     ffi.Pointer<ffi.Opaque> self, int n);
 
-@RecordSymbol('ICU4XBidiParagraph_direction')
+@_DiplomatFfiUse('ICU4XBidiParagraph_direction')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_direction')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_direction(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XBidiParagraph_size')
+@_DiplomatFfiUse('ICU4XBidiParagraph_size')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_size')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_size(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XBidiParagraph_range_start')
+@_DiplomatFfiUse('ICU4XBidiParagraph_range_start')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_range_start')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_range_start(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XBidiParagraph_range_end')
+@_DiplomatFfiUse('ICU4XBidiParagraph_range_end')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_range_end')
 // ignore: non_constant_identifier_names
 external int _ICU4XBidiParagraph_range_end(ffi.Pointer<ffi.Opaque> self);
 
-@RecordSymbol('ICU4XBidiParagraph_reorder_line')
+@_DiplomatFfiUse('ICU4XBidiParagraph_reorder_line')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size,
             ffi.Pointer<ffi.Opaque>)>(
@@ -145,7 +145,7 @@ external _ResultVoidInt32 _ICU4XBidiParagraph_reorder_line(
     int rangeEnd,
     ffi.Pointer<ffi.Opaque> writeable);
 
-@RecordSymbol('ICU4XBidiParagraph_level_at')
+@_DiplomatFfiUse('ICU4XBidiParagraph_level_at')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>(
     isLeaf: true, symbol: 'ICU4XBidiParagraph_level_at')
 // ignore: non_constant_identifier_names

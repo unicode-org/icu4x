@@ -29,7 +29,7 @@ final class MeasureUnit implements ffi.Finalizable {
       ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XMeasureUnit_destroy));
 }
 
-@RecordSymbol('ICU4XMeasureUnit_destroy')
+@_DiplomatFfiUse('ICU4XMeasureUnit_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XMeasureUnit_destroy')
 // ignore: non_constant_identifier_names

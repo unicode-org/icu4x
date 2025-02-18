@@ -67,13 +67,13 @@ final class PluralRules implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XPluralRules_destroy')
+@_DiplomatFfiUse('ICU4XPluralRules_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XPluralRules_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XPluralRules_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XPluralRules_create_cardinal')
+@_DiplomatFfiUse('ICU4XPluralRules_create_cardinal')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
@@ -82,7 +82,7 @@ external void _ICU4XPluralRules_destroy(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _ICU4XPluralRules_create_cardinal(
     ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@RecordSymbol('ICU4XPluralRules_create_ordinal')
+@_DiplomatFfiUse('ICU4XPluralRules_create_ordinal')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
@@ -91,7 +91,7 @@ external _ResultOpaqueInt32 _ICU4XPluralRules_create_cardinal(
 external _ResultOpaqueInt32 _ICU4XPluralRules_create_ordinal(
     ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@RecordSymbol('ICU4XPluralRules_category_for')
+@_DiplomatFfiUse('ICU4XPluralRules_category_for')
 @ffi.Native<
         ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XPluralRules_category_for')
@@ -99,7 +99,7 @@ external _ResultOpaqueInt32 _ICU4XPluralRules_create_ordinal(
 external int _ICU4XPluralRules_category_for(
     ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> op);
 
-@RecordSymbol('ICU4XPluralRules_categories')
+@_DiplomatFfiUse('ICU4XPluralRules_categories')
 @ffi.Native<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XPluralRules_categories')
 // ignore: non_constant_identifier_names

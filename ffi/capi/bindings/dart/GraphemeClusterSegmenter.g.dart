@@ -23,7 +23,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XGraphemeClusterSegmenter_destroy')
+  @_DiplomatFfiUse('ICU4XGraphemeClusterSegmenter_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XGraphemeClusterSegmenter_destroy));
 
@@ -57,21 +57,21 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XGraphemeClusterSegmenter_destroy')
+@_DiplomatFfiUse('ICU4XGraphemeClusterSegmenter_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XGraphemeClusterSegmenter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XGraphemeClusterSegmenter_destroy(
     ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XGraphemeClusterSegmenter_create')
+@_DiplomatFfiUse('ICU4XGraphemeClusterSegmenter_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XGraphemeClusterSegmenter_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XGraphemeClusterSegmenter_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XGraphemeClusterSegmenter_segment_utf16')
+@_DiplomatFfiUse('ICU4XGraphemeClusterSegmenter_segment_utf16')
 @ffi.Native<
         ffi.Pointer<ffi.Opaque> Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>(

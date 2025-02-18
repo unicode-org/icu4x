@@ -24,7 +24,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XCanonicalDecomposition_destroy')
+  @_DiplomatFfiUse('ICU4XCanonicalDecomposition_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XCanonicalDecomposition_destroy));
 
@@ -50,20 +50,20 @@ final class CanonicalDecomposition implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XCanonicalDecomposition_destroy')
+@_DiplomatFfiUse('ICU4XCanonicalDecomposition_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCanonicalDecomposition_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XCanonicalDecomposition_create')
+@_DiplomatFfiUse('ICU4XCanonicalDecomposition_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCanonicalDecomposition_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XCanonicalDecomposition_decompose')
+@_DiplomatFfiUse('ICU4XCanonicalDecomposition_decompose')
 @ffi.Native<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
     isLeaf: true, symbol: 'ICU4XCanonicalDecomposition_decompose')
 // ignore: non_constant_identifier_names

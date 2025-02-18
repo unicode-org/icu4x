@@ -23,7 +23,7 @@ final class DateTimeFormatter implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XDateTimeFormatter_destroy')
+  @_DiplomatFfiUse('ICU4XDateTimeFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XDateTimeFormatter_destroy));
 
@@ -75,13 +75,13 @@ final class DateTimeFormatter implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XDateTimeFormatter_destroy')
+@_DiplomatFfiUse('ICU4XDateTimeFormatter_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XDateTimeFormatter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XDateTimeFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XDateTimeFormatter_create_with_lengths')
+@_DiplomatFfiUse('ICU4XDateTimeFormatter_create_with_lengths')
 @ffi.Native<
         _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>(
@@ -93,7 +93,7 @@ external _ResultOpaqueInt32 _ICU4XDateTimeFormatter_create_with_lengths(
     int dateLength,
     int timeLength);
 
-@RecordSymbol('ICU4XDateTimeFormatter_format_datetime')
+@_DiplomatFfiUse('ICU4XDateTimeFormatter_format_datetime')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
@@ -104,7 +104,7 @@ external _ResultVoidInt32 _ICU4XDateTimeFormatter_format_datetime(
     ffi.Pointer<ffi.Opaque> value,
     ffi.Pointer<ffi.Opaque> writeable);
 
-@RecordSymbol('ICU4XDateTimeFormatter_format_iso_datetime')
+@_DiplomatFfiUse('ICU4XDateTimeFormatter_format_iso_datetime')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(

@@ -85,13 +85,13 @@ final class ListFormatter implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XListFormatter_destroy')
+@_DiplomatFfiUse('ICU4XListFormatter_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XListFormatter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XListFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XListFormatter_create_and_with_length')
+@_DiplomatFfiUse('ICU4XListFormatter_create_and_with_length')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
@@ -102,7 +102,7 @@ external _ResultOpaqueInt32 _ICU4XListFormatter_create_and_with_length(
     ffi.Pointer<ffi.Opaque> locale,
     int length);
 
-@RecordSymbol('ICU4XListFormatter_create_or_with_length')
+@_DiplomatFfiUse('ICU4XListFormatter_create_or_with_length')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
@@ -113,7 +113,7 @@ external _ResultOpaqueInt32 _ICU4XListFormatter_create_or_with_length(
     ffi.Pointer<ffi.Opaque> locale,
     int length);
 
-@RecordSymbol('ICU4XListFormatter_create_unit_with_length')
+@_DiplomatFfiUse('ICU4XListFormatter_create_unit_with_length')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
@@ -124,7 +124,7 @@ external _ResultOpaqueInt32 _ICU4XListFormatter_create_unit_with_length(
     ffi.Pointer<ffi.Opaque> locale,
     int length);
 
-@RecordSymbol('ICU4XListFormatter_format_utf16')
+@_DiplomatFfiUse('ICU4XListFormatter_format_utf16')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<_SliceUtf16>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(

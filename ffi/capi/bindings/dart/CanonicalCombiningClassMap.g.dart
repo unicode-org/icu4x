@@ -22,7 +22,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XCanonicalCombiningClassMap_destroy')
+  @_DiplomatFfiUse('ICU4XCanonicalCombiningClassMap_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XCanonicalCombiningClassMap_destroy));
 
@@ -48,21 +48,21 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XCanonicalCombiningClassMap_destroy')
+@_DiplomatFfiUse('ICU4XCanonicalCombiningClassMap_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XCanonicalCombiningClassMap_destroy(
     ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XCanonicalCombiningClassMap_create')
+@_DiplomatFfiUse('ICU4XCanonicalCombiningClassMap_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
     isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XCanonicalCombiningClassMap_create(
     ffi.Pointer<ffi.Opaque> provider);
 
-@RecordSymbol('ICU4XCanonicalCombiningClassMap_get')
+@_DiplomatFfiUse('ICU4XCanonicalCombiningClassMap_get')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(
     isLeaf: true, symbol: 'ICU4XCanonicalCombiningClassMap_get')
 // ignore: non_constant_identifier_names

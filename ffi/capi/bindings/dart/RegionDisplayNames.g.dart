@@ -20,7 +20,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XRegionDisplayNames_destroy')
+  @_DiplomatFfiUse('ICU4XRegionDisplayNames_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XRegionDisplayNames_destroy));
 
@@ -58,13 +58,13 @@ final class RegionDisplayNames implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XRegionDisplayNames_destroy')
+@_DiplomatFfiUse('ICU4XRegionDisplayNames_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XRegionDisplayNames_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XRegionDisplayNames_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XRegionDisplayNames_create')
+@_DiplomatFfiUse('ICU4XRegionDisplayNames_create')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
@@ -73,7 +73,7 @@ external void _ICU4XRegionDisplayNames_destroy(ffi.Pointer<ffi.Void> self);
 external _ResultOpaqueInt32 _ICU4XRegionDisplayNames_create(
     ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@RecordSymbol('ICU4XRegionDisplayNames_of')
+@_DiplomatFfiUse('ICU4XRegionDisplayNames_of')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(

@@ -22,7 +22,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
     }
   }
 
-  @RecordSymbol('ICU4XFixedDecimalFormatter_destroy')
+  @_DiplomatFfiUse('ICU4XFixedDecimalFormatter_destroy')
   static final _finalizer = ffi.NativeFinalizer(
       ffi.Native.addressOf(_ICU4XFixedDecimalFormatter_destroy));
 
@@ -57,13 +57,13 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   }
 }
 
-@RecordSymbol('ICU4XFixedDecimalFormatter_destroy')
+@_DiplomatFfiUse('ICU4XFixedDecimalFormatter_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(
     isLeaf: true, symbol: 'ICU4XFixedDecimalFormatter_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XFixedDecimalFormatter_destroy(ffi.Pointer<ffi.Void> self);
 
-@RecordSymbol('ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
+@_DiplomatFfiUse('ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
 @ffi.Native<
         _ResultOpaqueInt32 Function(
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(
@@ -76,7 +76,7 @@ external _ResultOpaqueInt32
         ffi.Pointer<ffi.Opaque> locale,
         int groupingStrategy);
 
-@RecordSymbol('ICU4XFixedDecimalFormatter_format')
+@_DiplomatFfiUse('ICU4XFixedDecimalFormatter_format')
 @ffi.Native<
         _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
             ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(
