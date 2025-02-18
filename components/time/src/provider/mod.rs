@@ -118,8 +118,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
 ///
 /// This should not generally be constructed by client code. Instead, use
-/// * [`TimeZoneInfo::with_rearguard_isdst`]
-/// * [`TimeZoneInfo::infer_zone_variant`]
+/// * [`TimeZoneInfo::with_rearguard_isdst`](crate::TimeZoneInfo::with_rearguard_isdst)
+/// * [`TimeZoneInfo::infer_zone_variant`](crate::TimeZoneInfo::infer_zone_variant)
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(TimeZoneVariantULE)]
 #[repr(u8)]

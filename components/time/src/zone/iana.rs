@@ -605,7 +605,7 @@ impl<'a> Iterator for CanonicalIanaIter<'a> {
     }
 }
 
-/// The iterator returned by [`IanaParserExtendedBorrowed::iter_normalized()`]
+/// The iterator returned by [`IanaParserExtendedBorrowed::iter_all()`]
 #[derive(Debug)]
 pub struct NormalizedIanaIter<'a>(zerotrie::ZeroTrieStringIterator<'a>);
 
