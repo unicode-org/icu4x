@@ -10,8 +10,8 @@ use crate::grouper;
 use crate::options::*;
 use crate::parts;
 use crate::provider::*;
+use fixed_decimal::Decimal;
 use fixed_decimal::Sign;
-use fixed_decimal::SignedFixedDecimal;
 use writeable::Part;
 use writeable::PartsWrite;
 use writeable::Writeable;
@@ -20,7 +20,7 @@ use writeable::Writeable;
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedDecimal<'l> {
-    pub(crate) value: &'l SignedFixedDecimal,
+    pub(crate) value: &'l Decimal,
     pub(crate) options: &'l DecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbols<'l>,
     pub(crate) digits: &'l DecimalDigits,

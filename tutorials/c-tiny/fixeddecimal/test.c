@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "Locale.h"
-#include "SignedFixedDecimal.h"
+#include "Decimal.h"
 #include "DecimalFormatter.h"
 #include <string.h>
 #include <stdio.h>
@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    SignedFixedDecimal* decimal = icu4x_SignedFixedDecimal_from_uint64_mv1(1000007);
-    icu4x_SignedFixedDecimal_round_mv1(decimal, 0);
+    Decimal* decimal = icu4x_Decimal_from_uint64_mv1(1000007);
+    icu4x_Decimal_round_mv1(decimal, 0);
 
     DecimalGroupingStrategy_option o = {.ok = DecimalGroupingStrategy_Auto, .is_ok = true};
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_destroy_mv1(decimal);
+    icu4x_Decimal_destroy_mv1(decimal);
     icu4x_DecimalFormatter_destroy_mv1(fdf);
     icu4x_Locale_destroy_mv1(locale);
 

@@ -5,7 +5,7 @@
 mod fixtures;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_plurals::PluralOperands;
 
 fn operands(c: &mut Criterion) {
@@ -27,8 +27,8 @@ fn operands(c: &mut Criterion) {
                     .expect("Failed to parse a number into an operands.");
             }
             for s in &data.fixed_decimals {
-                let f: SignedFixedDecimal = {
-                    let mut dec = SignedFixedDecimal::from(s.value);
+                let f: Decimal = {
+                    let mut dec = Decimal::from(s.value);
                     dec.multiply_pow10(s.exponent);
                     dec
                 };
@@ -99,8 +99,8 @@ fn operands(c: &mut Criterion) {
         c.bench_function("plurals/operands/create/from_fixed_decimal", |b| {
             b.iter(|| {
                 for s in &data.fixed_decimals {
-                    let f: SignedFixedDecimal = {
-                        let mut dec = SignedFixedDecimal::from(s.value);
+                    let f: Decimal = {
+                        let mut dec = Decimal::from(s.value);
                         dec.multiply_pow10(s.exponent);
                         dec
                     };
@@ -112,17 +112,17 @@ fn operands(c: &mut Criterion) {
         {
             let samples = [
                 {
-                    let mut dec = SignedFixedDecimal::from(1_i128);
+                    let mut dec = Decimal::from(1_i128);
                     dec.multiply_pow10(0);
                     dec
                 },
                 {
-                    let mut dec = SignedFixedDecimal::from(123450_i128);
+                    let mut dec = Decimal::from(123450_i128);
                     dec.multiply_pow10(-4);
                     dec
                 },
                 {
-                    let mut dec = SignedFixedDecimal::from(2500_i128);
+                    let mut dec = Decimal::from(2500_i128);
                     dec.multiply_pow10(-2);
                     dec
                 },

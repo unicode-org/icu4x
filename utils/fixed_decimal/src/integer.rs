@@ -7,42 +7,42 @@ use core::fmt;
 
 use core::str::FromStr;
 
+use crate::Decimal;
 use crate::LimitError;
 use crate::ParseError;
-use crate::SignedFixedDecimal;
 
-/// A [`FixedInteger`] is a [`SignedFixedDecimal`] with no fractional part.
+/// A [`FixedInteger`] is a [`Decimal`] with no fractional part.
 ///
 ///
 /// # Examples
 ///
 /// ```
 /// # use std::str::FromStr;
-/// use fixed_decimal::SignedFixedDecimal;
+/// use fixed_decimal::Decimal;
 /// use fixed_decimal::FixedInteger;
 /// use fixed_decimal::LimitError;
 ///
 /// assert_eq!(
-///     SignedFixedDecimal::from(FixedInteger::from(5)),
-///     SignedFixedDecimal::from(5)
+///     Decimal::from(FixedInteger::from(5)),
+///     Decimal::from(5)
 /// );
 /// assert_eq!(
-///     FixedInteger::try_from(SignedFixedDecimal::from(5)),
+///     FixedInteger::try_from(Decimal::from(5)),
 ///     Ok(FixedInteger::from(5))
 /// );
 /// assert_eq!(
-///     FixedInteger::try_from(SignedFixedDecimal::from_str("05").unwrap()),
+///     FixedInteger::try_from(Decimal::from_str("05").unwrap()),
 ///     Ok(FixedInteger::from_str("05").unwrap())
 /// );
 /// assert_eq!(
-///     FixedInteger::try_from(SignedFixedDecimal::from_str("5.0").unwrap()),
+///     FixedInteger::try_from(Decimal::from_str("5.0").unwrap()),
 ///     Err(LimitError)
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Default)]
-pub struct FixedInteger(SignedFixedDecimal);
+pub struct FixedInteger(Decimal);
 
-impl From<FixedInteger> for SignedFixedDecimal {
+impl From<FixedInteger> for Decimal {
     fn from(value: FixedInteger) -> Self {
         value.0
     }
@@ -52,7 +52,7 @@ macro_rules! impl_fixed_integer_from_integer_type {
     ($type:ident) => {
         impl From<$type> for FixedInteger {
             fn from(value: $type) -> Self {
-                FixedInteger(SignedFixedDecimal::from(value))
+                FixedInteger(Decimal::from(value))
             }
         }
     };
@@ -77,9 +77,9 @@ impl writeable::Writeable for FixedInteger {
     }
 }
 
-impl TryFrom<SignedFixedDecimal> for FixedInteger {
+impl TryFrom<Decimal> for FixedInteger {
     type Error = LimitError;
-    fn try_from(signed_fd: SignedFixedDecimal) -> Result<Self, Self::Error> {
+    fn try_from(signed_fd: Decimal) -> Result<Self, Self::Error> {
         if signed_fd.absolute.magnitude_range().start() != &0 {
             Err(LimitError)
         } else {
@@ -95,7 +95,7 @@ impl FixedInteger {
     }
 
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        FixedInteger::try_from(SignedFixedDecimal::try_from_utf8(code_units)?)
+        FixedInteger::try_from(Decimal::try_from_utf8(code_units)?)
             .map_err(|LimitError| ParseError::Limit)
     }
 }

@@ -1,5 +1,5 @@
-#ifndef icu4x_SignedFixedDecimal_D_HPP
-#define icu4x_SignedFixedDecimal_D_HPP
+#ifndef icu4x_Decimal_D_HPP
+#define icu4x_Decimal_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -11,8 +11,8 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct SignedFixedDecimal; }
-class SignedFixedDecimal;
+namespace capi { struct Decimal; }
+class Decimal;
 struct FixedDecimalLimitError;
 class FixedDecimalParseError;
 class FixedDecimalRoundingIncrement;
@@ -24,31 +24,31 @@ class FixedDecimalSignedRoundingMode;
 
 namespace icu4x {
 namespace capi {
-    struct SignedFixedDecimal;
+    struct Decimal;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
-class SignedFixedDecimal {
+class Decimal {
 public:
 
-  inline static std::unique_ptr<icu4x::SignedFixedDecimal> from(int32_t v);
+  inline static std::unique_ptr<icu4x::Decimal> from(int32_t v);
 
-  inline static std::unique_ptr<icu4x::SignedFixedDecimal> from(uint32_t v);
+  inline static std::unique_ptr<icu4x::Decimal> from(uint32_t v);
 
-  inline static std::unique_ptr<icu4x::SignedFixedDecimal> from(int64_t v);
+  inline static std::unique_ptr<icu4x::Decimal> from(int64_t v);
 
-  inline static std::unique_ptr<icu4x::SignedFixedDecimal> from(uint64_t v);
+  inline static std::unique_ptr<icu4x::Decimal> from(uint64_t v);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SignedFixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_integer_precision(double f);
+  inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::FixedDecimalLimitError> from_double_with_integer_precision(double f);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SignedFixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_lower_magnitude(double f, int16_t magnitude);
+  inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::FixedDecimalLimitError> from_double_with_lower_magnitude(double f, int16_t magnitude);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SignedFixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_significant_digits(double f, uint8_t digits);
+  inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::FixedDecimalLimitError> from_double_with_significant_digits(double f, uint8_t digits);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SignedFixedDecimal>, icu4x::FixedDecimalLimitError> from_double_with_round_trip_precision(double f);
+  inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::FixedDecimalLimitError> from_double_with_round_trip_precision(double f);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::SignedFixedDecimal>, icu4x::FixedDecimalParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::FixedDecimalParseError> from_string(std::string_view v);
 
   inline uint8_t digit_at(int16_t magnitude) const;
 
@@ -96,23 +96,23 @@ public:
 
   inline void round_with_mode_and_increment(int16_t position, icu4x::FixedDecimalSignedRoundingMode mode, icu4x::FixedDecimalRoundingIncrement increment);
 
-  inline diplomat::result<std::monostate, std::monostate> concatenate_end(icu4x::SignedFixedDecimal& other);
+  inline diplomat::result<std::monostate, std::monostate> concatenate_end(icu4x::Decimal& other);
 
   inline std::string to_string() const;
 
-  inline const icu4x::capi::SignedFixedDecimal* AsFFI() const;
-  inline icu4x::capi::SignedFixedDecimal* AsFFI();
-  inline static const icu4x::SignedFixedDecimal* FromFFI(const icu4x::capi::SignedFixedDecimal* ptr);
-  inline static icu4x::SignedFixedDecimal* FromFFI(icu4x::capi::SignedFixedDecimal* ptr);
+  inline const icu4x::capi::Decimal* AsFFI() const;
+  inline icu4x::capi::Decimal* AsFFI();
+  inline static const icu4x::Decimal* FromFFI(const icu4x::capi::Decimal* ptr);
+  inline static icu4x::Decimal* FromFFI(icu4x::capi::Decimal* ptr);
   inline static void operator delete(void* ptr);
 private:
-  SignedFixedDecimal() = delete;
-  SignedFixedDecimal(const icu4x::SignedFixedDecimal&) = delete;
-  SignedFixedDecimal(icu4x::SignedFixedDecimal&&) noexcept = delete;
-  SignedFixedDecimal operator=(const icu4x::SignedFixedDecimal&) = delete;
-  SignedFixedDecimal operator=(icu4x::SignedFixedDecimal&&) noexcept = delete;
+  Decimal() = delete;
+  Decimal(const icu4x::Decimal&) = delete;
+  Decimal(icu4x::Decimal&&) noexcept = delete;
+  Decimal operator=(const icu4x::Decimal&) = delete;
+  Decimal operator=(icu4x::Decimal&&) noexcept = delete;
   static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_SignedFixedDecimal_D_HPP
+#endif // icu4x_Decimal_D_HPP

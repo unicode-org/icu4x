@@ -1,5 +1,5 @@
-#ifndef SignedFixedDecimal_D_H
-#define SignedFixedDecimal_D_H
+#ifndef Decimal_D_H
+#define Decimal_D_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -11,9 +11,9 @@
 
 
 
-typedef struct SignedFixedDecimal SignedFixedDecimal;
+typedef struct Decimal Decimal;
 
 
 
 
-#endif // SignedFixedDecimal_D_H
+#endif // Decimal_D_H

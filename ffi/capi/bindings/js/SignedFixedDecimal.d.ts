@@ -12,21 +12,21 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 */
 
 
-export class SignedFixedDecimal {
+export class Decimal {
     
     get ffiValue(): pointer;
 
-    static fromNumber(v: number): SignedFixedDecimal;
+    static fromNumber(v: number): Decimal;
 
-    static fromBigInt(v: bigint): SignedFixedDecimal;
+    static fromBigInt(v: bigint): Decimal;
 
-    static fromNumberWithLowerMagnitude(f: number, magnitude: number): SignedFixedDecimal;
+    static fromNumberWithLowerMagnitude(f: number, magnitude: number): Decimal;
 
-    static fromNumberWithSignificantDigits(f: number, digits: number): SignedFixedDecimal;
+    static fromNumberWithSignificantDigits(f: number, digits: number): Decimal;
 
-    static fromNumberWithRoundTripPrecision(f: number): SignedFixedDecimal;
+    static fromNumberWithRoundTripPrecision(f: number): Decimal;
 
-    static fromString(v: string): SignedFixedDecimal;
+    static fromString(v: string): Decimal;
 
     digitAt(magnitude: number): number;
 
@@ -74,7 +74,7 @@ export class SignedFixedDecimal {
 
     roundWithModeAndIncrement(position: number, mode: FixedDecimalSignedRoundingMode, increment: FixedDecimalRoundingIncrement): void;
 
-    concatenateEnd(other: SignedFixedDecimal): boolean;
+    concatenateEnd(other: Decimal): boolean;
 
     toString(): string;
 }

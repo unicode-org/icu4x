@@ -3,12 +3,12 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { DecimalGroupingStrategy } from "./DecimalGroupingStrategy.mjs"
 import { Locale } from "./Locale.mjs"
-import { SignedFixedDecimal } from "./SignedFixedDecimal.mjs"
+import { Decimal } from "./Decimal.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Decimal Format object, capable of formatting a [`SignedFixedDecimal`] as a string.
+/** An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
 *
 *See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html) for more information.
 */

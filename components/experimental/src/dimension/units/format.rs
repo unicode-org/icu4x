@@ -5,13 +5,13 @@
 //! Experimental.
 
 use crate::dimension::provider::units::UnitsDisplayName;
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::{impl_display_with_writeable, Writeable};
 
 pub struct FormattedUnit<'l> {
-    pub(crate) value: &'l SignedFixedDecimal,
+    pub(crate) value: &'l Decimal,
     // TODO: review using options and essentials.
     // pub(crate) _options: &'l UnitsFormatterOptions,
     // pub(crate) essential: &'l UnitsEssentials<'l>,

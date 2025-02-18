@@ -13,8 +13,8 @@ import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
-import * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
-export * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
+import * as DecimalDemo from "./Decimal.mjs";
+export * as DecimalDemo from "./Decimal.mjs";
 import * as ListFormatterDemo from "./ListFormatter.mjs";
 export * as ListFormatterDemo from "./ListFormatter.mjs";
 import * as LocaleDemo from "./Locale.mjs";
@@ -449,20 +449,20 @@ let termini = Object.assign({
         ]
     },
 
-    "SignedFixedDecimal.toString": {
-        func: SignedFixedDecimalDemo.toString,
+    "Decimal.toString": {
+        func: DecimalDemo.toString,
         // For avoiding webpacking minifying issues:
-        funcName: "SignedFixedDecimal.toString",
+        funcName: "Decimal.toString",
         parameters: [
             
             {
-                name: "SignedFixedDecimal:F",
+                name: "Decimal:F",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "SignedFixedDecimal:Magnitude",
+                name: "Decimal:Magnitude",
                 type: "number",
                 typeUse: "number"
             }

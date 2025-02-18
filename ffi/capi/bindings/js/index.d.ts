@@ -84,7 +84,7 @@ export { LocaleFallbacker } from "./LocaleFallbacker"
 
 export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 
-export { SignedFixedDecimal } from "./SignedFixedDecimal"
+export { Decimal } from "./Decimal"
 
 export { ListFormatter } from "./ListFormatter"
 

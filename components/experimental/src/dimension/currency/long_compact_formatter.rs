@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 
@@ -172,7 +172,7 @@ impl LongCompactCurrencyFormatter {
         })
     }
 
-    /// Formats in the long format a [`SignedFixedDecimal`] value for the given currency code.
+    /// Formats in the long format a [`Decimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
@@ -193,7 +193,7 @@ impl LongCompactCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l SignedFixedDecimal,
+        value: &'l Decimal,
         currency_code: CurrencyCode,
     ) -> FormattedLongCompactCurrency<'l> {
         FormattedLongCompactCurrency {

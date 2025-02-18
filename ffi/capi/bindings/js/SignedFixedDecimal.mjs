@@ -11,11 +11,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
 */
-const SignedFixedDecimal_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_SignedFixedDecimal_destroy_mv1(ptr);
+const Decimal_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_Decimal_destroy_mv1(ptr);
 });
 
-export class SignedFixedDecimal {
+export class Decimal {
     
     // Internal ptr reference:
     #ptr = null;
@@ -26,7 +26,7 @@ export class SignedFixedDecimal {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("SignedFixedDecimal is an Opaque type. You cannot call its constructor.");
+            console.error("Decimal is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -35,7 +35,7 @@ export class SignedFixedDecimal {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            SignedFixedDecimal_box_destroy_registry.register(this, this.#ptr);
+            Decimal_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -45,20 +45,20 @@ export class SignedFixedDecimal {
     }
 
     static fromNumber(v) {
-        const result = wasm.icu4x_SignedFixedDecimal_from_int32_mv1(v);
+        const result = wasm.icu4x_Decimal_from_int32_mv1(v);
     
         try {
-            return new SignedFixedDecimal(diplomatRuntime.internalConstructor, result, []);
+            return new Decimal(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
     }
 
     static fromBigInt(v) {
-        const result = wasm.icu4x_SignedFixedDecimal_from_int64_mv1(v);
+        const result = wasm.icu4x_Decimal_from_int64_mv1(v);
     
         try {
-            return new SignedFixedDecimal(diplomatRuntime.internalConstructor, result, []);
+            return new Decimal(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -67,14 +67,14 @@ export class SignedFixedDecimal {
     static fromNumberWithLowerMagnitude(f, magnitude) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_SignedFixedDecimal_from_double_with_lower_magnitude_mv1(diplomatReceive.buffer, f, magnitude);
+        const result = wasm.icu4x_Decimal_from_double_with_lower_magnitude_mv1(diplomatReceive.buffer, f, magnitude);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = FixedDecimalLimitError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Decimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -85,14 +85,14 @@ export class SignedFixedDecimal {
     static fromNumberWithSignificantDigits(f, digits) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_SignedFixedDecimal_from_double_with_significant_digits_mv1(diplomatReceive.buffer, f, digits);
+        const result = wasm.icu4x_Decimal_from_double_with_significant_digits_mv1(diplomatReceive.buffer, f, digits);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = FixedDecimalLimitError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Decimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -103,14 +103,14 @@ export class SignedFixedDecimal {
     static fromNumberWithRoundTripPrecision(f) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_SignedFixedDecimal_from_double_with_round_trip_precision_mv1(diplomatReceive.buffer, f);
+        const result = wasm.icu4x_Decimal_from_double_with_round_trip_precision_mv1(diplomatReceive.buffer, f);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = FixedDecimalLimitError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('FixedDecimalLimitError', { cause });
             }
-            return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Decimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -125,14 +125,14 @@ export class SignedFixedDecimal {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_SignedFixedDecimal_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
+        const result = wasm.icu4x_Decimal_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new FixedDecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('FixedDecimalParseError: ' + cause.value, { cause });
             }
-            return new SignedFixedDecimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new Decimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -143,7 +143,7 @@ export class SignedFixedDecimal {
     }
 
     digitAt(magnitude) {
-        const result = wasm.icu4x_SignedFixedDecimal_digit_at_mv1(this.ffiValue, magnitude);
+        const result = wasm.icu4x_Decimal_digit_at_mv1(this.ffiValue, magnitude);
     
         try {
             return result;
@@ -153,7 +153,7 @@ export class SignedFixedDecimal {
     }
 
     get magnitudeStart() {
-        const result = wasm.icu4x_SignedFixedDecimal_magnitude_start_mv1(this.ffiValue);
+        const result = wasm.icu4x_Decimal_magnitude_start_mv1(this.ffiValue);
     
         try {
             return result;
@@ -163,7 +163,7 @@ export class SignedFixedDecimal {
     }
 
     get magnitudeEnd() {
-        const result = wasm.icu4x_SignedFixedDecimal_magnitude_end_mv1(this.ffiValue);
+        const result = wasm.icu4x_Decimal_magnitude_end_mv1(this.ffiValue);
     
         try {
             return result;
@@ -173,7 +173,7 @@ export class SignedFixedDecimal {
     }
 
     get nonzeroMagnitudeStart() {
-        const result = wasm.icu4x_SignedFixedDecimal_nonzero_magnitude_start_mv1(this.ffiValue);
+        const result = wasm.icu4x_Decimal_nonzero_magnitude_start_mv1(this.ffiValue);
     
         try {
             return result;
@@ -183,7 +183,7 @@ export class SignedFixedDecimal {
     }
 
     get nonzeroMagnitudeEnd() {
-        const result = wasm.icu4x_SignedFixedDecimal_nonzero_magnitude_end_mv1(this.ffiValue);
+        const result = wasm.icu4x_Decimal_nonzero_magnitude_end_mv1(this.ffiValue);
     
         try {
             return result;
@@ -193,7 +193,7 @@ export class SignedFixedDecimal {
     }
 
     get isZero() {
-        const result = wasm.icu4x_SignedFixedDecimal_is_zero_mv1(this.ffiValue);
+        const result = wasm.icu4x_Decimal_is_zero_mv1(this.ffiValue);
     
         try {
             return result;
@@ -202,7 +202,7 @@ export class SignedFixedDecimal {
         finally {}
     }
 
-    multiplyPow10(power) {wasm.icu4x_SignedFixedDecimal_multiply_pow10_mv1(this.ffiValue, power);
+    multiplyPow10(power) {wasm.icu4x_Decimal_multiply_pow10_mv1(this.ffiValue, power);
     
         try {}
         
@@ -210,7 +210,7 @@ export class SignedFixedDecimal {
     }
 
     get sign() {
-        const result = wasm.icu4x_SignedFixedDecimal_sign_mv1(this.ffiValue);
+        const result = wasm.icu4x_Decimal_sign_mv1(this.ffiValue);
     
         try {
             return new FixedDecimalSign(diplomatRuntime.internalConstructor, result);
@@ -219,105 +219,105 @@ export class SignedFixedDecimal {
         finally {}
     }
 
-    set sign(sign) {wasm.icu4x_SignedFixedDecimal_set_sign_mv1(this.ffiValue, sign.ffiValue);
+    set sign(sign) {wasm.icu4x_Decimal_set_sign_mv1(this.ffiValue, sign.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    applySignDisplay(signDisplay) {wasm.icu4x_SignedFixedDecimal_apply_sign_display_mv1(this.ffiValue, signDisplay.ffiValue);
+    applySignDisplay(signDisplay) {wasm.icu4x_Decimal_apply_sign_display_mv1(this.ffiValue, signDisplay.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    trimStart() {wasm.icu4x_SignedFixedDecimal_trim_start_mv1(this.ffiValue);
+    trimStart() {wasm.icu4x_Decimal_trim_start_mv1(this.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    trimEnd() {wasm.icu4x_SignedFixedDecimal_trim_end_mv1(this.ffiValue);
+    trimEnd() {wasm.icu4x_Decimal_trim_end_mv1(this.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    trimEndIfInteger() {wasm.icu4x_SignedFixedDecimal_trim_end_if_integer_mv1(this.ffiValue);
+    trimEndIfInteger() {wasm.icu4x_Decimal_trim_end_if_integer_mv1(this.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    padStart(position) {wasm.icu4x_SignedFixedDecimal_pad_start_mv1(this.ffiValue, position);
+    padStart(position) {wasm.icu4x_Decimal_pad_start_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    padEnd(position) {wasm.icu4x_SignedFixedDecimal_pad_end_mv1(this.ffiValue, position);
+    padEnd(position) {wasm.icu4x_Decimal_pad_end_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    setMaxPosition(position) {wasm.icu4x_SignedFixedDecimal_set_max_position_mv1(this.ffiValue, position);
+    setMaxPosition(position) {wasm.icu4x_Decimal_set_max_position_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    round(position) {wasm.icu4x_SignedFixedDecimal_round_mv1(this.ffiValue, position);
+    round(position) {wasm.icu4x_Decimal_round_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    ceil(position) {wasm.icu4x_SignedFixedDecimal_ceil_mv1(this.ffiValue, position);
+    ceil(position) {wasm.icu4x_Decimal_ceil_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    expand(position) {wasm.icu4x_SignedFixedDecimal_expand_mv1(this.ffiValue, position);
+    expand(position) {wasm.icu4x_Decimal_expand_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    floor(position) {wasm.icu4x_SignedFixedDecimal_floor_mv1(this.ffiValue, position);
+    floor(position) {wasm.icu4x_Decimal_floor_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    trunc(position) {wasm.icu4x_SignedFixedDecimal_trunc_mv1(this.ffiValue, position);
+    trunc(position) {wasm.icu4x_Decimal_trunc_mv1(this.ffiValue, position);
     
         try {}
         
         finally {}
     }
 
-    roundWithMode(position, mode) {wasm.icu4x_SignedFixedDecimal_round_with_mode_mv1(this.ffiValue, position, mode.ffiValue);
+    roundWithMode(position, mode) {wasm.icu4x_Decimal_round_with_mode_mv1(this.ffiValue, position, mode.ffiValue);
     
         try {}
         
         finally {}
     }
 
-    roundWithModeAndIncrement(position, mode, increment) {wasm.icu4x_SignedFixedDecimal_round_with_mode_and_increment_mv1(this.ffiValue, position, mode.ffiValue, increment.ffiValue);
+    roundWithModeAndIncrement(position, mode, increment) {wasm.icu4x_Decimal_round_with_mode_and_increment_mv1(this.ffiValue, position, mode.ffiValue, increment.ffiValue);
     
         try {}
         
@@ -325,7 +325,7 @@ export class SignedFixedDecimal {
     }
 
     concatenateEnd(other) {
-        const result = wasm.icu4x_SignedFixedDecimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_Decimal_concatenate_end_mv1(this.ffiValue, other.ffiValue);
     
         try {
             return result === 1;
@@ -336,7 +336,7 @@ export class SignedFixedDecimal {
 
     toString() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_SignedFixedDecimal_to_string_mv1(this.ffiValue, write.buffer);
+        wasm.icu4x_Decimal_to_string_mv1(this.ffiValue, write.buffer);
     
         try {
             return write.readString8();

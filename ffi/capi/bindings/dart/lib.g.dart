@@ -131,7 +131,7 @@ part 'SentenceBreakIteratorLatin1.g.dart';
 part 'SentenceBreakIteratorUtf16.g.dart';
 part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
-part 'SignedFixedDecimal.g.dart';
+part 'Decimal.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
 part 'TimePrecision.g.dart';
