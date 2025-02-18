@@ -192,7 +192,7 @@ pub enum TimeDurationRecord {
     Hours {
         /// Hours value.
         hours: u64,
-        /// The parsed fraction value in nanoseconds.
+        /// The parsed fractional digits.
         fraction: Option<Fraction>,
     },
     // A Minutes Time duration record.
@@ -201,7 +201,7 @@ pub enum TimeDurationRecord {
         hours: u64,
         /// Minutes value.
         minutes: u64,
-        /// The parsed fraction value in nanoseconds.
+        /// The parsed fractional digits.
         fraction: Option<Fraction>,
     },
     // A Seconds Time duration record.
@@ -212,7 +212,7 @@ pub enum TimeDurationRecord {
         minutes: u64,
         /// Seconds value.
         seconds: u64,
-        /// The parsed fraction value in nanoseconds.
+        /// The parsed fractional digits.
         fraction: Option<Fraction>,
     },
 }

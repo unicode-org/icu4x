@@ -603,7 +603,7 @@ fn temporal_duration_parsing() {
                 hours: 0,
                 fraction: Some(Fraction {
                     digits: NonZeroU8::new(1).unwrap(),
-                    value: 18_000
+                    value: 5
                 }),
             })
         }
@@ -663,7 +663,7 @@ fn duration_fraction_extended() {
                 minutes: 1,
                 fraction: Some(Fraction {
                     digits: NonZeroU8::new(12).unwrap(),
-                    value: 7_407_407_347_380,
+                    value: 123_456_789_123,
                 })
             })
         })

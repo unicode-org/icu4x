@@ -194,19 +194,13 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
         // Safety: Max fraction * 3600 is within u64 -> see test maximum_duration_fraction
         TimeUnit::Hour => Ok(Some(TimeDurationRecord::Hours {
             hours: time.0,
-            fraction: time
-                .3
-                .map(|f| adjust_fraction_for_unit(f, 3600))
-                .transpose()?,
+            fraction: time.3,
         })),
         // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
         TimeUnit::Minute => Ok(Some(TimeDurationRecord::Minutes {
             hours: time.0,
             minutes: time.1,
-            fraction: time
-                .3
-                .map(|f| adjust_fraction_for_unit(f, 60))
-                .transpose()?,
+            fraction: time.3,
         })),
         TimeUnit::Second => Ok(Some(TimeDurationRecord::Seconds {
             hours: time.0,
@@ -216,15 +210,4 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
         })),
         TimeUnit::None => Err(ParseError::abrupt_end("TimeDurationDesignator")),
     }
-}
-
-fn adjust_fraction_for_unit(fraction: Fraction, unit: u64) -> ParserResult<Fraction> {
-    let value = fraction
-        .value
-        .checked_mul(unit)
-        .ok_or(ParseError::DurationFractionalDigitsExceededRange)?;
-    Ok(Fraction {
-        digits: fraction.digits,
-        value,
-    })
 }
