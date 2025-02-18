@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use crate::provider::{MinutesSinceEpoch, ZoneOffsetPeriodV1};
+use crate::provider::{MinutesSinceEpoch, TimeZoneOffsetsV1};
 use crate::{Time, TimeZone};
 use icu_calendar::Date;
 use icu_calendar::Iso;
@@ -192,7 +192,7 @@ impl FromStr for UtcOffset {
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct UtcOffsetCalculator {
-    pub(super) offset_period: DataPayload<ZoneOffsetPeriodV1>,
+    pub(super) offset_period: DataPayload<TimeZoneOffsetsV1>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -213,7 +213,7 @@ impl UtcOffsetCalculator {
     pub const fn new() -> Self {
         UtcOffsetCalculator {
             offset_period: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ZONE_OFFSET_PERIOD_V1,
+                crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
             ),
         }
     }
@@ -229,7 +229,7 @@ impl UtcOffsetCalculator {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<ZoneOffsetPeriodV1> + ?Sized),
+        provider: &(impl DataProvider<TimeZoneOffsetsV1> + ?Sized),
     ) -> Result<Self, DataError> {
         let metazone_period = provider.load(Default::default())?.payload;
         Ok(Self {
@@ -286,7 +286,7 @@ impl UtcOffsetCalculator {
         dt: (Date<Iso>, Time),
     ) -> Option<UtcOffsets> {
         use zerovec::ule::AsULE;
-        match self.offset_period.get().0.get0(&time_zone_id) {
+        match self.offset_period.get().get0(&time_zone_id) {
             Some(cursor) => {
                 let mut offsets = None;
                 let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);

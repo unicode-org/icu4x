@@ -83,7 +83,6 @@ part 'GregorianDateFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'HangulSyllableType.g.dart';
 part 'IanaParser.g.dart';
-part 'IanaParserExtended.g.dart';
 part 'IndicSyllabicCategory.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';

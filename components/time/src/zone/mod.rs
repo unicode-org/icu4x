@@ -66,7 +66,7 @@
 //! use tinystr::tinystr;
 //!
 //! // Parse the IANA ID
-//! let id = IanaParser::new().iana_to_bcp47("America/Chicago");
+//! let id = IanaParser::new().parse("America/Chicago");
 //!
 //! // Alternatively, use the BCP47 ID directly
 //! let id = TimeZone(tinystr!(8, "uschi"));

@@ -47,19 +47,19 @@ const _: () = {
         pub use crate as time;
     }
     make_provider!(Baked);
-    impl_bcp47_to_iana_map_v1!(Baked);
-    impl_iana_to_bcp47_map_v3!(Baked);
-    impl_windows_zones_to_bcp47_map_v1!(Baked);
-    impl_zone_offset_period_v1!(Baked);
+    impl_time_zone_iana_basic_v1!(Baked);
+    impl_time_zone_iana_extended_v1!(Baked);
+    impl_time_zone_windows_v1!(Baked);
+    impl_time_zone_offsets_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    iana::Bcp47ToIanaMapV1::INFO,
-    iana::IanaToBcp47MapV3::INFO,
-    windows::WindowsZonesToBcp47MapV1::INFO,
-    ZoneOffsetPeriodV1::INFO,
+    iana::TimeZoneIanaExtendedV1::INFO,
+    iana::TimeZoneIanaBasicV1::INFO,
+    windows::TimeZoneWindowsV1::INFO,
+    TimeZoneOffsetsV1::INFO,
 ];
 
 /// TimeZone ID in BCP47 format
@@ -238,25 +238,14 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
     }
 }
 
-/// An ICU4X mapping to the time zone offsets at a given period.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(ZoneOffsetPeriodV1, "time_zone/offset_period@1", singleton))]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct ZoneOffsetPeriod<'data>(
+icu_provider::data_marker!(
     /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
     /// [`MinutesSinceEpoch`]. It represents when the offsets started to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    TimeZoneOffsetsV1,
+    "time/zone/offsets/v1",
+    ZeroMap2d<'static, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    is_singleton = true
 );

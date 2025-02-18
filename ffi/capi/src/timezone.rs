@@ -201,7 +201,7 @@ pub mod ffi {
             parser: &crate::iana_parser::ffi::IanaParser,
             id: &DiplomatStr,
         ) {
-            self.time_zone_id = parser.0.as_borrowed().iana_bytes_to_bcp47(id);
+            self.time_zone_id = parser.0.as_borrowed().parse_from_utf8(id);
         }
 
         /// Writes the value of the `time_zone_id` field as a string.

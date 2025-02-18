@@ -33,8 +33,8 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
     )?;
 
     let zone =
-        // ICU uses BCP47 time zone IDs
-        IanaParser::new().iana_to_bcp47(zoned.time_zone().iana_name().unwrap_or("Etc/Unknown"))
+        // Parse IANA ID into ICU time zone
+        IanaParser::new().parse(zoned.time_zone().iana_name().unwrap_or_default())
         // In ICU's model, a time zone has a fixed offset, as that's required for formatting
         .with_offset(UtcOffset::try_from_seconds(zoned.offset().seconds()).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to

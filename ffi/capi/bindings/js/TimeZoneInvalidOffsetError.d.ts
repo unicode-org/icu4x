@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.InvalidOffsetError.html)
+/** Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.InvalidOffsetError.html)
 */
 type TimeZoneInvalidOffsetError_obj = {
 };

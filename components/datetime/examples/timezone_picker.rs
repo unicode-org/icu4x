@@ -10,7 +10,7 @@ use icu::locale::locale;
 use icu::time::Time;
 
 fn main() {
-    let mapper = icu::time::zone::IanaParser::new();
+    let parser = icu::time::zone::IanaParser::new();
     let offsets = icu::time::zone::UtcOffsetCalculator::new();
 
     let prefs = locale!("en").into();
@@ -25,7 +25,7 @@ fn main() {
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
-    for tz in mapper.iter_bcp47() {
+    for tz in parser.iter() {
         if tz.0 == "unk" || tz.starts_with("utc") || tz.0 == "gmt" {
             continue;
         }

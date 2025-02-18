@@ -12,7 +12,7 @@ use icu_provider::{
 };
 
 use crate::{
-    provider::windows::{WindowsZonesToBcp47Map, WindowsZonesToBcp47MapV1},
+    provider::windows::{TimeZoneWindowsV1, WindowsZonesToBcp47Map},
     TimeZone,
 };
 
@@ -38,7 +38,7 @@ use crate::{
 /// then the territory will default to the M.49 World Code, `001`.
 #[derive(Debug)]
 pub struct WindowsParser {
-    data: DataPayload<WindowsZonesToBcp47MapV1>,
+    data: DataPayload<TimeZoneWindowsV1>,
 }
 
 impl WindowsParser {
@@ -61,7 +61,7 @@ impl WindowsParser {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<WindowsZonesToBcp47MapV1> + ?Sized,
+        P: DataProvider<TimeZoneWindowsV1> + ?Sized,
     {
         let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
@@ -97,7 +97,7 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         WindowsTimeZoneMapperBorrowed {
-            data: crate::provider::Baked::SINGLETON_WINDOWS_ZONES_TO_BCP47_MAP_V1,
+            data: crate::provider::Baked::SINGLETON_TIME_ZONE_WINDOWS_V1,
         }
     }
 

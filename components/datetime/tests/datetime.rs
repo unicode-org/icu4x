@@ -470,7 +470,7 @@ fn test_time_zone_format_offset_fallback() {
     assert_writeable_eq!(
         tzf.format(
             &IanaParser::new()
-                .iana_to_bcp47("America/Los_Angeles")
+                .parse("America/Los_Angeles")
                 .with_offset(None)
         ),
         "GMT+?",
