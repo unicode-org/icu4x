@@ -8,7 +8,6 @@ import 'dart:io';
 
 const crateName = 'icu_capi';
 
-
 // Copied from Dart's package:intl4x build.dart, see
 // https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
 Future<Uri> buildLib(BuildInput input, String workingDirectory) async {
