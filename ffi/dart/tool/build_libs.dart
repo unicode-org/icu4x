@@ -12,18 +12,24 @@ const crateName = 'icu_capi';
 
 Future<void> main(List<String> args) async {
   final defaultFeatures = ['default_components', 'compiled_data'];
+  var fileKey = 'file';
+  var osKey = 'os';
+  var architectureKey = 'architecture';
+  var simulatorKey = 'simulator';
+  var compileTypeKey = 'compile_type';
+  var cargoFeaturesKey = 'cargo_features';
   final argParser =
       ArgParser()
-        ..addOption('file', mandatory: true)
+        ..addOption(fileKey, mandatory: true)
         ..addOption(
-          'compile_type',
+          compileTypeKey,
           allowed: ['static', 'dynamic'],
           mandatory: true,
         )
-        ..addFlag('simulator', defaultsTo: false)
-        ..addOption('os', mandatory: true)
-        ..addOption('architecture', mandatory: true)
-        ..addMultiOption('cargo_features', defaultsTo: defaultFeatures);
+        ..addFlag(simulatorKey, defaultsTo: false)
+        ..addOption(osKey, mandatory: true)
+        ..addOption(architectureKey, mandatory: true)
+        ..addMultiOption(cargoFeaturesKey, defaultsTo: defaultFeatures);
 
   ArgResults parsed;
   try {
@@ -33,16 +39,16 @@ Future<void> main(List<String> args) async {
     print(argParser.usage);
     exit(1);
   }
-  final buildStatic = parsed.option('compile_type')! == 'static';
-  final simulator = parsed.flag('simulator');
-  final targetOS = OS.values.firstWhere((o) => o.name == parsed.option('os')!);
+  final buildStatic = parsed.option(compileTypeKey)! == 'static';
+  final simulator = parsed.flag(simulatorKey);
+  final targetOS = OS.values.firstWhere((o) => o.name == parsed.option(osKey)!);
   final targetArchitecture = Architecture.values.firstWhere(
-    (o) => o.name == parsed.option('architecture')!,
+    (o) => o.name == parsed.option(architectureKey)!,
   );
 
-  final out = Uri.file(parsed.option('file')!);
+  final out = Uri.file(parsed.option(fileKey)!);
 
-  final cargoFeatures = parsed.multiOption('cargoFeatures');
+  final cargoFeatures = parsed.multiOption(cargoFeaturesKey);
 
   // We assume that the first folder to contain a cargo.toml above the
   // output directory is the directory containing the ICU4X code.
