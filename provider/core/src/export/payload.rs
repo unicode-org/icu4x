@@ -12,6 +12,9 @@ use databake::{Bake, BakeSize, CrateEnv, TokenStream};
 use yoke::*;
 use zerovec::ule::VarULE;
 
+#[cfg(doc)]
+use crate::ule::MaybeAsVarULE;
+
 trait ExportableDataPayload {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
     fn bake_size(&self) -> usize;
@@ -183,7 +186,7 @@ impl DataPayload<ExportMarker> {
     }
 
     /// If this type can be dereferenced as a [`VarULE`], returns bytes
-    /// valid as a [`MaybeExportAsVarULE::VarULE`].
+    /// valid as a [`MaybeAsVarULE::VarULE`].
     pub fn maybe_as_varule_bytes(&self) -> Option<Box<[u8]>> {
         self.get().payload.maybe_as_varule_bytes()
     }

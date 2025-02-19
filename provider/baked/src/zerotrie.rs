@@ -59,7 +59,7 @@ pub(crate) fn bake(
             BakedValue::Struct(tokens) => tokens,
             BakedValue::VarULE(_) => {
                 unreachable!(
-                    "All instances should equivalently return Some or None in MaybeExportAsVarULE"
+                    "All instances should equivalently return Some or None in MaybeEncodeAsVarULE"
                 )
             }
         });
@@ -78,7 +78,7 @@ pub(crate) fn bake(
                 BakedValue::VarULE(bytes) => &**bytes,
                 BakedValue::Struct(_) => {
                     unreachable!(
-                        "All instances should equivalently return Some or None in MaybeExportAsVarULE"
+                        "All instances should equivalently return Some or None in MaybeEncodeAsVarULE"
                     )
                 }
             })
@@ -87,7 +87,7 @@ pub(crate) fn bake(
         let vzv_bytes = vzv.as_bytes().bake(ctx);
         (
             quote! {
-                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeExportAsVarULE>::VarULE> = unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#vzv_bytes) };
+                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeEncodeAsVarULE>::VarULE> = unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#vzv_bytes) };
             },
             quote! {
                 icu_provider_baked::zerotrie::DataForVarULEs

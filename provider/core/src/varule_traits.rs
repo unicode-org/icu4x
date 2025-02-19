@@ -41,7 +41,7 @@ pub trait FromVarULE<'a>: MaybeAsVarULE {
     fn from_varule(varule: &'a Self::VarULE) -> Self;
 }
 
-/// An empty enum used for implementations of [`MaybeExportAsVarULE`]
+/// An empty enum used for implementations of [`MaybeEncodeAsVarULE`]
 /// that do not use the VarULE storage optimization.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // empty enum
@@ -66,7 +66,7 @@ unsafe impl VarULE for NeverVarULE {
     }
 }
 
-/// Implements required traits on data structs, such as [`MaybeExportAsVarULE`].
+/// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
 #[macro_export]
 macro_rules! __data_struct {
     (<$generic:ident: $bound:tt> $ty:path, $(#[$attr:meta])*) => {
