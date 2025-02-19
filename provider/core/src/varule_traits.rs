@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::ule::{UleError, VarULE};
+use zerovec::ule::VarULE;
 
 /// A trait that associates a [`VarULE`] type with a data struct.
 ///
@@ -16,7 +16,7 @@ use zerovec::ule::{UleError, VarULE};
 /// Both [`MaybeAsVarULE`] and [`MaybeEncodeAsVarULE`] should be implemented
 /// on all data structs. The [`data_struct!`] macro provides an impl.
 pub trait MaybeAsVarULE {
-    /// The [`VarULE`] type for this data struct, or [`NeverVarULE`]
+    /// The [`VarULE`] type for this data struct, or `[()]`
     /// if it cannot be represented as [`VarULE`].
     type VarULE: ?Sized + VarULE;
 }
@@ -41,37 +41,12 @@ pub trait FromVarULE<'a>: MaybeAsVarULE {
     fn from_varule(varule: &'a Self::VarULE) -> Self;
 }
 
-/// An empty enum used for implementations of [`MaybeEncodeAsVarULE`]
-/// that do not use the VarULE storage optimization.
-#[derive(Debug)]
-#[allow(clippy::exhaustive_enums)] // empty enum
-pub enum NeverVarULE {}
-
-/// Safety checklist for VarULE:
-///
-/// 1. No uninitialized or padding bytes (empty type)
-/// 2. Type is an empty enum
-/// 3. `VarULE::validate_bytes()` always returns errors
-/// 4. `VarULE::validate_bytes()` always returns errors
-/// 5. `VarULE::from_bytes_unchecked()` returns the same pointer
-/// 6. All other methods are left with their default impl
-/// 7. Byte equality is semantic equality
-unsafe impl VarULE for NeverVarULE {
-    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError> {
-        Err(UleError::parse::<Self>())
-    }
-    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        // Note: this returns a thin pointer instead of a fat pointer
-        &*(bytes.as_ptr() as *const Self)
-    }
-}
-
 /// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
 #[macro_export]
 macro_rules! __data_struct {
     (<$generic:ident: $bound:tt> $ty:path, $(#[$attr:meta])*) => {
         impl<$generic: $bound> $crate::ule::MaybeAsVarULE for $ty {
-            type VarULE = $crate::ule::NeverVarULE;
+            type VarULE = [()];
         }
         $(#[$attr])*
         impl<$generic: $bound> $crate::ule::MaybeEncodeAsVarULE for $ty {
@@ -82,7 +57,7 @@ macro_rules! __data_struct {
     };
     ($ty:path, $(#[$attr:meta])*) => {
         impl $crate::ule::MaybeAsVarULE for $ty {
-            type VarULE = $crate::ule::NeverVarULE;
+            type VarULE = [()];
         }
         $(#[$attr])*
         impl $crate::ule::MaybeEncodeAsVarULE for $ty {

@@ -156,7 +156,6 @@ pub mod ule {
     pub use super::varule_traits::FromVarULE;
     pub use super::varule_traits::MaybeAsVarULE;
     pub use super::varule_traits::MaybeEncodeAsVarULE;
-    pub use super::varule_traits::NeverVarULE;
 }
 
 /// Core selection of APIs and structures for the ICU4X data provider.
