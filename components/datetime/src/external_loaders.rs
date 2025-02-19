@@ -102,12 +102,12 @@ where
 
 impl<P> AnyCalendarLoader for ExternalLoaderUnstable<'_, P>
 where
-    P: DataProvider<icu_calendar::provider::JapaneseErasV1>
-        + DataProvider<icu_calendar::provider::JapaneseExtendedErasV1>
-        + DataProvider<icu_calendar::provider::ChineseCacheV1>
-        + DataProvider<icu_calendar::provider::DangiCacheV1>
-        + DataProvider<icu_calendar::provider::IslamicObservationalCacheV1>
-        + DataProvider<icu_calendar::provider::IslamicUmmAlQuraCacheV1>
+    P: DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
+        + DataProvider<icu_calendar::provider::CalendarJapaneseExtendedV1>
+        + DataProvider<icu_calendar::provider::CalendarChineseV1>
+        + DataProvider<icu_calendar::provider::CalendarDangiV1>
+        + DataProvider<icu_calendar::provider::CalendarIslamicObservationalV1>
+        + DataProvider<icu_calendar::provider::CalendarIslamicUmmalquraV1>
         + ?Sized,
 {
     #[inline]

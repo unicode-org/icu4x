@@ -23,7 +23,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::islamic::{
-    IslamicCache, IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1, PackedIslamicYearInfo,
+    CalendarIslamicObservationalV1, CalendarIslamicUmmalquraV1, IslamicCache, PackedIslamicYearInfo,
 };
 use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -60,7 +60,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
 pub struct IslamicObservational {
-    data: Option<DataPayload<IslamicObservationalCacheV1>>,
+    data: Option<DataPayload<CalendarIslamicObservationalV1>>,
 }
 
 /// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
@@ -89,7 +89,7 @@ pub struct IslamicCivil;
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
 pub struct IslamicUmmAlQura {
-    data: Option<DataPayload<IslamicUmmAlQuraCacheV1>>,
+    data: Option<DataPayload<CalendarIslamicUmmalquraV1>>,
 }
 
 /// A Tabular version of the Arithmetical Islamic Calendar
@@ -116,7 +116,7 @@ impl IslamicObservational {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ISLAMIC_OBSERVATIONAL_CACHE_V1,
+                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMIC_OBSERVATIONAL_V1,
             )),
         }
     }
@@ -130,7 +130,7 @@ impl IslamicObservational {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<IslamicObservationalCacheV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<CalendarIslamicObservationalV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
@@ -161,7 +161,7 @@ impl IslamicUmmAlQura {
     pub const fn new() -> Self {
         Self {
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ISLAMIC_UMM_AL_QURA_CACHE_V1,
+                crate::provider::Baked::SINGLETON_CALENDAR_ISLAMIC_UMMALQURA_V1,
             )),
         }
     }
@@ -175,7 +175,7 @@ impl IslamicUmmAlQura {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<IslamicUmmAlQuraCacheV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<CalendarIslamicUmmalquraV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {

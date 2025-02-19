@@ -18,9 +18,9 @@ fn load<CB: ChineseBased>() -> ChineseBasedCache<'static> {
     ChineseBasedCache::compute_for::<CB>(extended_start..extended_end)
 }
 
-impl DataProvider<ChineseCacheV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ChineseCacheV1>, DataError> {
-        self.check_req::<ChineseCacheV1>(req)?;
+impl DataProvider<CalendarChineseV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarChineseV1>, DataError> {
+        self.check_req::<CalendarChineseV1>(req)?;
         let cache = load::<Chinese>();
         Ok(DataResponse {
             metadata: Default::default(),
@@ -29,9 +29,9 @@ impl DataProvider<ChineseCacheV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<DangiCacheV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DangiCacheV1>, DataError> {
-        self.check_req::<DangiCacheV1>(req)?;
+impl DataProvider<CalendarDangiV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarDangiV1>, DataError> {
+        self.check_req::<CalendarDangiV1>(req)?;
         let cache = load::<Dangi>();
         Ok(DataResponse {
             metadata: Default::default(),
@@ -40,13 +40,13 @@ impl DataProvider<DangiCacheV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ChineseCacheV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarChineseV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl crate::IterableDataProviderCached<DangiCacheV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarDangiV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

@@ -26,7 +26,7 @@
 
 use crate::error::DateError;
 use crate::iso::{Iso, IsoDateInner};
-use crate::provider::{EraStartDate, JapaneseErasV1, JapaneseExtendedErasV1};
+use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
 use crate::types::Era;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 use icu_provider::prelude::*;
@@ -60,7 +60,7 @@ use tinystr::{tinystr, TinyStr16};
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
-    eras: DataPayload<JapaneseErasV1>,
+    eras: DataPayload<CalendarJapaneseModernV1>,
 }
 
 /// The [Japanese Calendar] (with historical eras)
@@ -104,7 +104,9 @@ impl Japanese {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            eras: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_JAPANESE_ERAS_V1),
+            eras: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1,
+            ),
         }
     }
 
@@ -117,7 +119,7 @@ impl Japanese {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<JapaneseErasV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<CalendarJapaneseModernV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
@@ -160,7 +162,7 @@ impl JapaneseExtended {
     pub const fn new() -> Self {
         Self(Japanese {
             eras: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_JAPANESE_EXTENDED_ERAS_V1,
+                crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_EXTENDED_V1,
             ),
         })
     }
@@ -174,7 +176,7 @@ impl JapaneseExtended {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<CalendarJapaneseExtendedV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self(Japanese {
