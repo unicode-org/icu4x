@@ -379,6 +379,41 @@ jobs:
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
  
+  # ci-job-test-dart
+  test-dart-current:
+    runs-on: ubuntu-latest
+
+    # Do not run the job on pull requests, to differentiate between Dart SDK
+    # and ICU breaking changes.
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Software setup/installation for the container
+    - name: Install Rust toolchains
+      run: |
+        rustup toolchain install stable
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@cargo-make
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
+      with:
+        sdk: stable
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-dart`
+      run: cargo make ci-job-test-dart
+      
 
   # ci-job-nostd
   nostd:
