@@ -12,49 +12,46 @@ use icu_locale::{LanguageIdentifier, Locale};
 // This is based on real-world data only, so will hopefully cover most of the more common edge cases
 // Ideally, this would be part of the CLDR dataset, see discussion for more details:
 // https://github.com/unicode-org/icu4x/discussions/6028#discussioncomment-12227372
-const POSIX_LANGUAGE_NAMES: [(&str, &str); 39] = [
-    // Convert the default "C"/"POSIX" locale to `Locale::unknown()`
-    ("c", "und"),
-    ("posix", "und"),
-    // Native language names
-    ("bokmal", "nb"),   // Norwegian Bokmål
-    ("dansk", "da"),    // Danish
-    ("deutsch", "de"),  // German
-    ("eesti", "et"),    // Estonian
-    ("galego", "gl"),   // Galician
-    ("hrvatski", "hr"), // Croatian
-    ("nynorsk", "nn"),  // Norwegian Nynorsk
-    ("slovene", "sl"),  // Slovenian
-    // English language names
-    ("catalan", "ca"),
-    ("croatian", "hr"),
-    ("czech", "cs"),
-    ("danish", "da"),
-    ("dutch", "nl"),
-    ("estonian", "et"),
-    ("finnish", "fi"),
-    ("french", "fr"),
-    ("galician", "gl"),
-    ("german", "de"),
-    ("greek", "el"),
-    ("hebrew", "he"),
-    ("hungarian", "hu"),
-    ("icelandic", "is"),
-    ("italian", "it"),
-    ("japanese", "ja"),
-    ("korean", "ko"),
-    ("lithuanian", "lt"),
-    ("norwegian", "no"),
-    ("polish", "pl"),
-    ("portuguese", "pt"),
-    ("romanian", "ro"),
-    ("russian", "ru"),
-    ("slovak", "sk"),
-    ("slovenian", "sl"),
-    ("spanish", "es"),
-    ("swedish", "sv"),
-    ("thai", "th"),
-    ("turkish", "tr"),
+const POSIX_LANGUAGE_NAMES: [(&str, Language); 39] = [
+    ("bokmal", language!("nb")),
+    ("c", Language::UND),
+    ("catalan", language!("ca")),
+    ("croatian", language!("hr")),
+    ("czech", language!("cs")),
+    ("danish", language!("da")),
+    ("dansk", language!("da")),
+    ("deutsch", language!("de")),
+    ("dutch", language!("nl")),
+    ("eesti", language!("et")),
+    ("estonian", language!("et")),
+    ("finnish", language!("fi")),
+    ("french", language!("fr")),
+    ("galego", language!("gl")),
+    ("galician", language!("gl")),
+    ("german", language!("de")),
+    ("greek", language!("el")),
+    ("hebrew", language!("he")),
+    ("hrvatski", language!("hr")),
+    ("hungarian", language!("hu")),
+    ("icelandic", language!("is")),
+    ("italian", language!("it")),
+    ("japanese", language!("ja")),
+    ("korean", language!("ko")),
+    ("lithuanian", language!("lt")),
+    ("norwegian", language!("no")),
+    ("nynorsk", language!("nn")),
+    ("polish", language!("pl")),
+    ("portuguese", language!("pt")),
+    ("posix", Language::UND),
+    ("romanian", language!("ro")),
+    ("russian", language!("ru")),
+    ("slovak", language!("sk")),
+    ("slovene", language!("sl")),
+    ("slovenian", language!("sl")),
+    ("spanish", language!("es")),
+    ("swedish", language!("sv")),
+    ("thai", language!("th")),
+    ("turkish", language!("tr")),
 ];
 
 #[derive(Debug, PartialEq)]
@@ -233,19 +230,23 @@ impl<'src> PosixLocale<'src> {
     pub fn try_convert_lossy(&self) -> Result<Locale, ConversionError> {
         // Check if the language needs to be mapped to a BCP-47 language subtag
         let language_code = POSIX_LANGUAGE_NAMES
-            .iter()
-            .find(|(posix_name, _subtag)| self.language.eq_ignore_ascii_case(posix_name))
-            .map(|(_posix_name, subtag)| *subtag)
-            .unwrap_or(self.language);
+            .binary_search_by_key(&self.language, |(language, _code)| language)
+            // `binary_search_by_key()` guarantees a valid index
+            .map(|index| POSIX_LANGUAGE_NAMES[index].1);
 
-        let mut language = match Language::try_from_str(language_code) {
+        let mut language = match language_code {
+            // Found a matching language code
             Ok(language) => language,
-            Err(_) => {
-                return Err(ConversionError::InvalidLanguage {
-                    start_offset: 0,
-                    end_offset: self.language.len(),
-                })
-            }
+            // Parse the language directly
+            Err(_) => match Language::try_from_str(self.language) {
+                Ok(language) => language,
+                Err(_) => {
+                    return Err(ConversionError::InvalidLanguage {
+                        start_offset: 0,
+                        end_offset: self.language.len(),
+                    })
+                }
+            },
         };
 
         let region = if let Some(territory) = self.territory {
@@ -275,24 +276,22 @@ impl<'src> PosixLocale<'src> {
         if let Some(modifier) = self.modifier {
             match modifier.to_ascii_lowercase().as_str() {
                 "euro" => {
-                    // `.set()` returns the previous value if overwritten
-                    let first_value = extensions.unicode.keywords.set(key!("cu"), value!("eur"));
-                    // Make sure to not accidentally override any other currency values
-                    debug_assert!(first_value.is_none());
+                    extensions.unicode.keywords.set(key!("cu"), value!("eur"));
                 }
                 // Known script modifiers
-                "cyrillic" | "devanagari" | "latin" => {
-                    script = Some(match modifier {
-                        "cyrillic" => script!("Cyrl"),
-                        "devanagari" => script!("Deva"),
-                        "latin" => script!("Latn"),
-                        // Already matched against one of the known strings above
-                        _ => unreachable!(),
-                    });
-                }
+                "cyrillic" => script = Some(script!("Cyrl")),
+                "devanagari" => script = Some(script!("Deva")),
+                "latin" => script = Some(script!("Latn")),
                 // Saaho seems to be the only "legacy variant" that appears as a modifier:
                 // https://www.unicode.org/reports/tr35/#table-legacy-variant-mappings
-                "saaho" => language = language!("ssy"),
+                "saaho" => {
+                    // The only known locale with this modifier is `aa_ER`
+                    if self.language != "aa" || self.territory != Some("ER") {
+                        icu_provider::log::warn!("Overriding language: `{}`->`ssy`", self.language);
+                    }
+                    language = language!("ssy")
+                }
+                // This keeps `variants` sorted; "-posix" comes before "-valencia"
                 "valencia" => variants.push(variant!("valencia")),
                 // Some modifiers are known but can't be expressed as a BCP-47 identifier
                 // e.g. "@abegede", "@iqtelif"
@@ -364,7 +363,7 @@ mod tests {
         expect_success("aa_ER@saaho", "ssy-ER-posix");
 
         // Variant
-        expect_success("ca_ES@valencia", "ca-ES-valencia-posix");
+        expect_success("ca_ES@valencia", "ca-ES-posix-valencia");
     }
 
     mod error {
