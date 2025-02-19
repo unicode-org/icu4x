@@ -67,13 +67,9 @@ Future<Uri> buildLib(BuildInput input, String workingDirectory) async {
       '-Zbuild-std-features=panic_immediate_abort',
     ],
     '--target=${asRustTarget(input)}',
-    '--target-dir=${tempDir.path}'
+    '--target-dir=${tempDir.path}',
   ];
-  await runProcess(
-    'cargo',
-    arguments,
-    workingDirectory: workingDirectory,
-  );
+  await runProcess('cargo', arguments, workingDirectory: workingDirectory);
 
   final builtPath = path.join(
     tempDir.path,
@@ -125,23 +121,26 @@ String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
     (OS.windows, Architecture.arm64) => 'aarch64-pc-windows-msvc',
     (OS.windows, Architecture.ia32) => 'i686-pc-windows-msvc',
     (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
-    (_, _) => throw UnimplementedError(
-        'Target ${(os, architecture)} not available for rust'),
+    (_, _) =>
+      throw UnimplementedError(
+        'Target ${(os, architecture)} not available for rust',
+      ),
   };
 }
 
 bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
-      (OS.android, Architecture.riscv64),
-      (OS.linux, Architecture.riscv64)
-    ].contains(arg);
+  (OS.android, Architecture.riscv64),
+  (OS.linux, Architecture.riscv64),
+].contains(arg);
 
 extension on BuildConfig {
   bool get buildStatic =>
       code.linkModePreference == LinkModePreference.static || linkingEnabled;
 
-  String Function(String) get filename => buildStatic
-      ? code.targetOS.staticlibFileName
-      : code.targetOS.dylibFileName;
+  String Function(String) get filename =>
+      buildStatic
+          ? code.targetOS.staticlibFileName
+          : code.targetOS.dylibFileName;
 }
 
 Future<void> runProcess(

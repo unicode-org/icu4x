@@ -9,32 +9,32 @@ import 'package:native_assets_cli/code_assets.dart';
 import '../tool/build_libs.dart' show buildLib;
 
 void main(List<String> args) async {
-  await build(
-    args,
-    (input, output) async {
-      // We assume that the first folder to contain a cargo.toml above the
-      // output directory is the directory containing the ICU4X code.
-      var icu4xPath = Directory.fromUri(input.outputDirectory);
-      while (!File.fromUri(icu4xPath.uri.resolve('Cargo.toml')).existsSync()) {
-        icu4xPath = icu4xPath.parent;
-        if (icu4xPath.parent == icu4xPath) {
-          throw ArgumentError(
-              'Running in the wrong directory, as no Cargo.toml exists above ${input.outputDirectory}');
-        }
+  await build(args, (input, output) async {
+    // We assume that the first folder to contain a cargo.toml above the
+    // output directory is the directory containing the ICU4X code.
+    var icu4xPath = Directory.fromUri(input.outputDirectory);
+    while (!File.fromUri(icu4xPath.uri.resolve('Cargo.toml')).existsSync()) {
+      icu4xPath = icu4xPath.parent;
+      if (icu4xPath.parent == icu4xPath) {
+        throw ArgumentError(
+          'Running in the wrong directory, as no Cargo.toml exists above ${input.outputDirectory}',
+        );
       }
+    }
 
-      final outputPath = await buildLib(input, icu4xPath.path);
+    final outputPath = await buildLib(input, icu4xPath.path);
 
-      output.assets.code.add(CodeAsset(
+    output.assets.code.add(
+      CodeAsset(
         package: 'icu',
         name: 'src/lib.g.dart',
         linkMode: DynamicLoadingBundled(),
         os: input.config.code.targetOS,
         architecture: input.config.code.targetArchitecture,
         file: outputPath,
-      ));
+      ),
+    );
 
-      output.addDependency(input.packageRoot.resolve('build.rs'));
-    },
-  );
+    output.addDependency(input.packageRoot.resolve('build.rs'));
+  });
 }
