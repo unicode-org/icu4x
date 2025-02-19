@@ -83,17 +83,26 @@ pub mod ffi {
         }
     }
 
-
     /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
     ///
     /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
     /// It also supports normalizing and canonicalizing the IANA strings.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtended, Struct)]
-    #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtended::as_borrowed, FnInStruct, hidden)]
+    #[diplomat::rust_link(
+        icu::time::zone::iana::IanaParserExtended::as_borrowed,
+        FnInStruct,
+        hidden
+    )]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtendedBorrowed, Struct, hidden)]
-    #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtendedBorrowed::new, FnInStruct, hidden)]
-    pub struct IanaParserExtended(pub icu_time::zone::iana::IanaParserExtended<icu_time::zone::iana::IanaParser>);
+    #[diplomat::rust_link(
+        icu::time::zone::iana::IanaParserExtendedBorrowed::new,
+        FnInStruct,
+        hidden
+    )]
+    pub struct IanaParserExtended(
+        pub icu_time::zone::iana::IanaParserExtended<icu_time::zone::iana::IanaParser>,
+    );
 
     impl IanaParserExtended {
         /// Create a new [`IanaParserExtended`] using compiled data
@@ -110,9 +119,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtended::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<IanaParserExtended>, DataError> {
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<IanaParserExtended>, DataError> {
             Ok(Box::new(IanaParserExtended(
-                icu_time::zone::iana::IanaParserExtended::try_new_with_buffer_provider(provider.get()?)?,
+                icu_time::zone::iana::IanaParserExtended::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
             )))
         }
 
@@ -134,7 +147,6 @@ pub mod ffi {
                 canonical: canonical.into(),
                 normalized: normalized.into(),
             }
-            
         }
 
         #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtendedBorrowed::iter, FnInStruct)]
@@ -142,9 +154,14 @@ pub mod ffi {
             Box::new(TimeZoneAndCanonicalIterator(self.0.as_borrowed().iter()))
         }
 
-        #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtendedBorrowed::iter_all, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::zone::iana::IanaParserExtendedBorrowed::iter_all,
+            FnInStruct
+        )]
         pub fn iter_all<'a>(&'a self) -> Box<TimeZoneAndCanonicalAndNormalizedIterator<'a>> {
-            Box::new(TimeZoneAndCanonicalAndNormalizedIterator(self.0.as_borrowed().iter_all()))
+            Box::new(TimeZoneAndCanonicalAndNormalizedIterator(
+                self.0.as_borrowed().iter_all(),
+            ))
         }
     }
 
@@ -184,11 +201,16 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter, Struct)]
-    pub struct TimeZoneAndCanonicalAndNormalizedIterator<'a>(icu_time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter<'a>);
+    pub struct TimeZoneAndCanonicalAndNormalizedIterator<'a>(
+        icu_time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter<'a>,
+    );
 
     impl<'a> TimeZoneAndCanonicalAndNormalizedIterator<'a> {
         #[diplomat::attr(auto, iterator)]
-        #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::zone::iana::TimeZoneAndCanonicalAndNormalizedIter::next,
+            FnInStruct
+        )]
         pub fn next(&mut self) -> Option<TimeZoneAndCanonicalAndNormalized<'a>> {
             let (time_zone_id, canonical, normalized) = self.0.next()?;
             Some(TimeZoneAndCanonicalAndNormalized {
