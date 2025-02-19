@@ -15,11 +15,15 @@ Future<void> main(List<String> args) async {
   final argParser =
       ArgParser()
         ..addOption('file', mandatory: true)
-        ..addFlag('static', defaultsTo: false)
+        ..addOption(
+          'compile_type',
+          allowed: ['static', 'dynamic'],
+          mandatory: true,
+        )
         ..addFlag('simulator', defaultsTo: false)
         ..addOption('os', mandatory: true)
         ..addOption('architecture', mandatory: true)
-        ..addMultiOption('cargoFeatures', defaultsTo: defaultFeatures);
+        ..addMultiOption('cargo_features', defaultsTo: defaultFeatures);
 
   ArgResults parsed;
   try {
@@ -29,7 +33,7 @@ Future<void> main(List<String> args) async {
     print(argParser.usage);
     exit(1);
   }
-  final buildStatic = parsed.flag('static');
+  final buildStatic = parsed.option('compile_type')! == 'static';
   final simulator = parsed.flag('simulator');
   final targetOS = OS.values.firstWhere((o) => o.name == parsed.option('os')!);
   final targetArchitecture = Architecture.values.firstWhere(
