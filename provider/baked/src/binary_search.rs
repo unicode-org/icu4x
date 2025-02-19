@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Data stored as slices, looked up with binary search
+//!
+//! TODO(#6164): This code is stale; update it before use.
 
 use icu_provider::prelude::*;
 
