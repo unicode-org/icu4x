@@ -3,29 +3,27 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
+use core::hash::Hash;
 use icu::time::provider::iana::*;
 use icu::time::TimeZone;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
-use zerovec::{ZeroSlice, ZeroVec};
 
 impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaMapV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
+        let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
-        // Sort and deduplicate the BCP-47 IDs:
-        let bcp_set: BTreeSet<TimeZone> = iana2bcp.values().copied().collect();
-        let bcp47_ids: ZeroVec<TimeZone> = bcp_set.into_iter().collect();
+        // Sort the BCP-47 IDs by canonical IANA:
+        let mut sorted_by_iana: Vec<(&TimeZone, &String)> = bcp2iana.iter().collect();
+        sorted_by_iana.sort_by_key(|&(_, iana)| iana);
+        let bcp47_ids = sorted_by_iana.iter().map(|&(&tz, _)| tz).collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         // Get the canonical IANA names.
-        // Note: The BTreeMap retains the order of the aliases, which is important for establishing
-        // the canonical order of the IANA names.
-        let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
@@ -33,7 +31,7 @@ impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
             .iter()
             .map(|(iana, bcp)| {
                 let is_canonical = bcp2iana.get(bcp) == Some(iana);
-                let index = bcp47_ids.binary_search(bcp).unwrap();
+                let index = bcp47_ids.iter().position(|x| x == bcp).unwrap();
                 (
                     if iana.contains('/') {
                         iana.to_owned()
@@ -59,7 +57,7 @@ impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
                         .with_display_context(&e)
                 })?
                 .convert_store(),
-            bcp47_ids,
+            bcp47_ids: bcp47_ids.into(),
         };
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
@@ -76,15 +74,19 @@ impl crate::IterableDataProviderCached<TimeZoneIanaMapV1> for SourceDataProvider
 
 impl DataProvider<TimeZoneIanaNamesV1> for SourceDataProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaNamesV1>, DataError> {
-        // Note: The BTreeMap retains the order of the aliases, which is important for establishing
-        // the canonical order of the IANA names.
+        let iana2bcp = self.iana_to_bcp47_map()?;
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
-        let bcp47_ids: ZeroVec<TimeZone> = bcp2iana.keys().copied().collect();
-        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
-        let canonical_iana_ids = bcp2iana.values().collect::<Vec<_>>();
-        let mut non_canonical_iana_ids = self
-            .iana_to_bcp47_map()?
+        let mut sorted_by_iana: Vec<(&TimeZone, &String)> = bcp2iana.iter().collect();
+        sorted_by_iana.sort_by_key(|&(_, iana)| iana);
+        let bcp47_ids_checksum =
+            compute_bcp47_ids_hash(&sorted_by_iana.iter().map(|&(&tz, _)| tz).collect());
+
+        let canonical_iana_ids = sorted_by_iana
+            .iter()
+            .map(|&(_, iana)| iana)
+            .collect::<Vec<_>>();
+        let mut non_canonical_iana_ids = iana2bcp
             .keys()
             .filter(|k| !canonical_iana_ids.contains(k))
             .collect::<Vec<_>>();
@@ -120,91 +122,68 @@ fn create_hasher() -> impl std::hash::Hasher {
     twox_hash::XxHash64::with_seed(0)
 }
 
-fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZone>) -> u64 {
+fn compute_bcp47_ids_hash(bcp47_ids: &Vec<TimeZone>) -> u64 {
     let mut hasher = create_hasher();
-    hasher.write(bcp47_ids.as_bytes());
+    bcp47_ids.hash(&mut hasher);
     hasher.finish()
 }
 
 #[test]
 fn test_compute_bcp47_ids_hash() {
-    let bcp47_ids: ZeroVec<TimeZone> = [
+    let bcp47_ids = vec![
         TimeZone(tinystr::tinystr!(8, "aedxb")),
         TimeZone(tinystr::tinystr!(8, "brfor")),
         TimeZone(tinystr::tinystr!(8, "usinvev")),
-    ]
-    .into_iter()
-    .collect();
+    ];
 
-    // Checksum 1: the default output of the zeroslice hashing function
+    // Checksum 1: the default output of the hashing function
     let checksum1 = compute_bcp47_ids_hash(&bcp47_ids);
-    assert_eq!(checksum1, 0x66FA043B31200DCB); // stability
-
-    // Checksum 2: hashing of each individual element
-    // (should equal 1)
-    let mut hasher = create_hasher();
-    for bcp47 in bcp47_ids.iter() {
-        hasher.write(bcp47.0.all_bytes());
-    }
-    let checksum2 = hasher.finish();
-    assert_eq!(checksum1, checksum2);
+    assert_eq!(checksum1, 2080308884639987833); // stability
 
     // Checksum 3: hashing of a ZeroVec in a different order
     // (should not equal 1)
-    let bcp47_ids_rev: ZeroVec<TimeZone> = [
+    let bcp47_ids_rev = vec![
         TimeZone(tinystr::tinystr!(8, "usinvev")),
         TimeZone(tinystr::tinystr!(8, "aedxb")),
         TimeZone(tinystr::tinystr!(8, "brfor")),
-    ]
-    .into_iter()
-    .collect();
+    ];
     let checksum3 = compute_bcp47_ids_hash(&bcp47_ids_rev);
     assert_ne!(checksum1, checksum3);
 
     // Checksum 4: moving letters between the elements should change the hash
     // (should not equal 1)
-    let bcp47_ids_roll: ZeroVec<TimeZone> = [
+    let bcp47_ids_roll = vec![
         TimeZone(tinystr::tinystr!(8, "aedx")),
         TimeZone(tinystr::tinystr!(8, "bbrfor")),
         TimeZone(tinystr::tinystr!(8, "usinvev")),
-    ]
-    .into_iter()
-    .collect();
+    ];
     let checksum4 = compute_bcp47_ids_hash(&bcp47_ids_roll);
     assert_ne!(checksum1, checksum4);
 
     // Checksum 5: empty strings at the end should change the hash
     // (should not equal 1)
-    let bcp47_ids_empty_end: ZeroVec<TimeZone> = [
+    let bcp47_ids_empty_end = vec![
         TimeZone(tinystr::tinystr!(8, "aedxb")),
         TimeZone(tinystr::tinystr!(8, "brfor")),
         TimeZone(tinystr::tinystr!(8, "usinvev")),
         TimeZone(tinystr::tinystr!(8, "")),
-    ]
-    .into_iter()
-    .collect();
+    ];
     let checksum5 = compute_bcp47_ids_hash(&bcp47_ids_empty_end);
     assert_ne!(checksum1, checksum5);
 
     // Checksum 6: empty strings in the middle should change the hash
     // (should not equal 1 or 5)
-    let bcp47_ids_empty_middle: ZeroVec<TimeZone> = [
+    let bcp47_ids_empty_middle = vec![
         TimeZone(tinystr::tinystr!(8, "aedxb")),
         TimeZone(tinystr::tinystr!(8, "")),
         TimeZone(tinystr::tinystr!(8, "brfor")),
         TimeZone(tinystr::tinystr!(8, "usinvev")),
-    ]
-    .into_iter()
-    .collect();
+    ];
     let checksum6 = compute_bcp47_ids_hash(&bcp47_ids_empty_middle);
     assert_ne!(checksum1, checksum6);
     assert_ne!(checksum5, checksum6);
 
     // Additional coverage
-    assert_ne!(checksum2, checksum3);
-    assert_ne!(checksum2, checksum4);
-    assert_ne!(checksum2, checksum5);
-    assert_ne!(checksum2, checksum6);
     assert_ne!(checksum3, checksum4);
     assert_ne!(checksum3, checksum5);
     assert_ne!(checksum3, checksum6);

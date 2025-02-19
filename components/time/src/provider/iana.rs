@@ -74,7 +74,7 @@ pub struct IanaToBcp47Map<'data> {
     /// (low bit is 1 == odd number) and the index into `bcp47_ids` is 110 (221 >> 1).
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroAsciiIgnoreCaseTrie<ZeroVec<'data, u8>>,
-    /// A sorted list of BCP-47 time zone identifiers.
+    /// A list of BCP-47 time zone identifiers, sorted by canonical IANA ID.
     #[cfg_attr(feature = "serde", serde(borrow))]
     // Note: this is 9739B as `ZeroVec<TimeZone>` (`ZeroVec<TinyStr8>`)
     // and 9335B as `VarZeroVec<str>`

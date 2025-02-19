@@ -510,7 +510,9 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
         (bcp47_id, canonical, normalized)
     }
 
-    /// Returns an iterator over all time zones and their canonical IANA time zone identifiers.
+    /// Returns an iterator over all time zones and their canonical IANA identifiers.
+    ///
+    /// The iterator is sorted by the canonical IANA identifiers.
     ///
     /// # Examples
     ///
@@ -537,28 +539,37 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
         )
     }
 
-    /// Returns an iterator over all time zones, their canonical IANA time zone identifiers
-    /// and any non-canonical IANA time zone identifiers.
+    /// Returns an iterator equivalent to calling [`Self::parse`] on all IANA time zone identifiers.
     ///
-    /// The only guarantee w.r.t iteration order is that the canonical IANA identifier will
-    /// always come before any non-canonical identifiers.
+    /// The only guarantee w.r.t iteration order is that for a given time zone, the canonical IANA
+    /// identifier will come first, and the following non-canonical IANA identifiers will be sorted.
+    /// However, the output is not grouped by time zone.
+    ///
+    /// The current implementation returns all sorted canonical IANA identifiers first, followed by all
+    /// sorted non-canonical identifiers, however this is subject to change.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
-    /// use std::collections::BTreeSet;
+    /// use std::collections::BTreeMap;
     /// use tinystr::tinystr;
     ///
     /// let parser = IanaParserExtended::new();
     ///
-    /// let ids = parser.iter_all().collect::<std::collections::BTreeSet<_>>();
+    /// let ids = parser.iter_all().enumerate().map(|(a, b)| (b, a)).collect::<std::collections::BTreeMap<_, _>>();
     ///
-    /// assert!(ids.contains(&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kyiv")));
-    /// assert!(ids.contains(&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kiev")));
-    /// assert!(ids.contains(&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Uzhgorod")));
-    /// assert!(ids.contains(&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Zaporozhye")));
+    /// let kyiv_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kyiv")];
+    /// let kiev_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kiev")];
+    /// let uzgh_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Uzhgorod")];
+    /// let zapo_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Zaporozhye")];
+    ///
+    /// // The order for a particular time zone is guaranteed
+    /// assert!(kyiv_idx < kiev_idx && kiev_idx < uzgh_idx && uzgh_idx < zapo_idx);
+    /// // It is not guaranteed that the entries for a particular time zone are consecutive
+    /// assert!(kyiv_idx + 1 != kiev_idx);
+    ///
     /// assert_eq!(ids.len(), 598);
     /// ```
     pub fn iter_all(&self) -> TimeZoneAndCanonicalAndNormalizedIter<'a> {
