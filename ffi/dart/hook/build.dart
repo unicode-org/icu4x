@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+import 'dart:io';
+
 import 'package:native_assets_cli/code_assets.dart';
 
 import '../tool/build_libs.dart' show buildLib;
@@ -10,23 +12,18 @@ void main(List<String> args) async {
   await build(
     args,
     (input, output) async {
-      var isIOSSimulator =
-          input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator;
-      final target = isIOSSimulator
-          // This stands for Target.iOSArm64Simulator, see build_libs.dart
-          ? (Architecture.arm, OS.iOS)
-          : (input.config.code.targetArchitecture, input.config.code.targetOS);
+      // We assume that the first folder to contain a cargo.toml above the
+      // output directory is the directory containing the ICU4X code.
+      var icu4xPath = Directory.fromUri(input.outputDirectory);
+      while (!File.fromUri(icu4xPath.uri.resolve('Cargo.toml')).existsSync()) {
+        icu4xPath = icu4xPath.parent;
+        if (icu4xPath.parent == icu4xPath) {
+          throw ArgumentError(
+              'Running in the wrong directory, as no Cargo.toml exists above ${input.outputDirectory}');
+        }
+      }
 
-      final outputPath = input.outputDirectory.resolve('icu4x');
-
-      await buildLib(
-        target.$2,
-        target.$1,
-        input.config.code.linkModePreference,
-        isIOSSimulator,
-        ['default_components', 'experimental_components', 'compiled_data'],
-        outputPath.path,
-      );
+      final outputPath = await buildLib(input, icu4xPath.path);
 
       output.assets.code.add(CodeAsset(
         package: 'icu',

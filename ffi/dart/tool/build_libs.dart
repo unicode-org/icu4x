@@ -3,101 +3,102 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 import 'package:native_assets_cli/code_assets.dart';
+import 'package:path/path.dart' as path;
 import 'dart:io';
 
-Future<void> main(List<String> args) async {
-  if (args.isEmpty) {
-    print(
-        'Usage: ${Platform.script.pathSegments.last} <out_dir> <os:${OS.values}> <architecture:${Architecture.values}> <linkMode:${LinkModePreference.values}> <ios-sim:true,false> <cargo features>');
-    exit(1);
-  }
-  final out = Uri.file(args[0]).toFilePath();
-  final os = OS.values.firstWhere((t) => t.toString() == args[1]);
-  final architecture =
-      Architecture.values.firstWhere((t) => t.toString() == args[2]);
-  final linkModePreference =
-      LinkModePreference.values.firstWhere((t) => t.toString() == args[3]);
-  final iOSSimulator = args.elementAtOrNull(4) == 'true';
+const crateName = 'icu_capi';
 
-  final defaultFeatures = ['default_components', 'compiled_data'];
-  final cargoFeatures = args.elementAtOrNull(3)?.split(',') ?? defaultFeatures;
 
-  await buildLib(
-      os, architecture, linkModePreference, iOSSimulator, cargoFeatures, out);
-}
+// Copied from Dart's package:intl4x build.dart, see
+// https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
+Future<Uri> buildLib(BuildInput input, String workingDirectory) async {
+  final crateNameFixed = crateName.replaceAll('-', '_');
+  final libFileName = input.config.filename(crateNameFixed);
+  final libFileUri = input.outputDirectory.resolve(libFileName);
 
-Future<void> buildLib(
-  OS os,
-  Architecture architecture,
-  LinkModePreference linkModePreference,
-  bool iOSSimulator,
-  Iterable<String> cargoFeatures,
-  String outName,
-) async {
-  var root = Platform.script.toFilePath().split('ffi')[0];
-  root = root.substring(0, root.length - 1); // trim trailing slash
+  final code = input.config.code;
+  final targetOS = code.targetOS;
+  final targetArchitecture = code.targetArchitecture;
 
-  print('Building $outName');
+  final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
 
-  final rustTarget = _asRustTarget(os, architecture, iOSSimulator);
-
-  final isNoStd = _isNoStdTarget((os, architecture));
-
-  final rustupArguments = ['target', 'add', rustTarget];
-  final rustup = await Process.start('rustup', rustupArguments);
-  stdout.addStream(rustup.stdout);
-  stderr.addStream(rustup.stderr);
-
-  final rustupExitCode = await rustup.exitCode;
-  if (rustupExitCode != 0) {
-    throw ProcessException(
+  if (!isNoStd) {
+    final rustArguments = ['target', 'add', asRustTarget(input)];
+    await runProcess(
       'rustup',
-      rustupArguments,
-      'Exited with a non-zero exit code',
-      rustupExitCode,
+      rustArguments,
+      workingDirectory: workingDirectory,
     );
   }
-
-  final features = {
+  final tempDir = await Directory.systemTemp.createTemp();
+  final stdFeatures = [
+    'default_components',
+    'icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals',
+    'compiled_data',
     'buffer_provider',
-    if (isNoStd) ...['libc-alloc', 'panic-handler'],
-    if (!isNoStd) ...['logging', 'simple_logger'],
-    ...cargoFeatures,
-  };
+    'logging',
+    'simple_logger',
+    'experimental_components',
+  ];
+  final noStdFeatures = [
+    'default_components',
+    'icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals',
+    'compiled_data',
+    'buffer_provider',
+    'libc_alloc',
+    'panic_handler',
+    'experimental_components',
+  ];
+  final linkModeType = input.config.buildStatic ? 'staticlib' : 'cdylib';
   final arguments = [
-    if (isNoStd) '+nightly',
+    if (input.config.buildStatic || isNoStd) '+nightly',
     'rustc',
-    '--manifest-path=$root/ffi/capi/Cargo.toml',
-    '--crate-type=${linkModePreference == LinkModePreference.static ? 'staticlib' : 'cdylib'}',
+    '-p=$crateName',
+    '--crate-type=$linkModeType',
     '--release',
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${features.join(',')}',
+    isNoStd
+        ? '--features=${noStdFeatures.join(',')}'
+        : '--features=${stdFeatures.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
-    if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
-    '--target=$rustTarget',
+    if (input.config.buildStatic || isNoStd) ...[
+      '-Zbuild-std=std,panic_abort',
+      '-Zbuild-std-features=panic_immediate_abort',
+    ],
+    '--target=${asRustTarget(input)}',
+    '--target-dir=${tempDir.path}'
   ];
-  final cargo = await Process.start('cargo', arguments);
-  stdout.addStream(cargo.stdout);
-  stderr.addStream(cargo.stderr);
+  await runProcess(
+    'cargo',
+    arguments,
+    workingDirectory: workingDirectory,
+  );
 
-  final cargoExitCode = await cargo.exitCode;
-  if (cargoExitCode != 0) {
-    throw ProcessException(
-      'cargo',
-      arguments,
-      'Exited with a non-zero exit code',
-      cargoExitCode,
-    );
+  final builtPath = path.join(
+    tempDir.path,
+    asRustTarget(input),
+    'release',
+    libFileName,
+  );
+  final file = File(builtPath);
+  if (!(await file.exists())) {
+    throw FileSystemException('Building the dylib failed', builtPath);
   }
+  await file.copy(libFileUri.toFilePath(windows: Platform.isWindows));
+  await tempDir.delete(recursive: true);
+  return libFileUri;
+}
 
-  final filename = linkModePreference == LinkModePreference.static
-      ? os.staticlibFileName
-      : os.dylibFileName;
-  final uri =
-      Uri.file('$root/target/$rustTarget/release/${filename(('icu_capi'))}');
-  await File.fromUri(uri).copy(outName);
+String asRustTarget(BuildInput input) {
+  final rustTarget = _asRustTarget(
+    input.config.code.targetOS,
+    input.config.code.targetArchitecture,
+    input.config.code.targetOS == OS.iOS &&
+        input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
+  );
+  return rustTarget;
 }
 
 String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
@@ -134,3 +135,41 @@ bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
       (OS.android, Architecture.riscv64),
       (OS.linux, Architecture.riscv64)
     ].contains(arg);
+
+extension on BuildConfig {
+  bool get buildStatic =>
+      code.linkModePreference == LinkModePreference.static || linkingEnabled;
+
+  String Function(String) get filename => buildStatic
+      ? code.targetOS.staticlibFileName
+      : code.targetOS.dylibFileName;
+}
+
+Future<void> runProcess(
+  String executable,
+  List<String> arguments, {
+  String? workingDirectory,
+  bool dryRun = false,
+}) async {
+  print('----------');
+  print('Running `$executable $arguments` in $workingDirectory');
+  if (!dryRun) {
+    final processResult = await Process.run(
+      executable,
+      arguments,
+      workingDirectory: workingDirectory,
+    );
+    print('stdout:');
+    print(processResult.stdout);
+    if ((processResult.stderr as String).isNotEmpty) {
+      print('stderr:');
+      print(processResult.stderr);
+    }
+    if (processResult.exitCode != 0) {
+      throw ProcessException(executable, arguments, '', processResult.exitCode);
+    }
+  } else {
+    print('Not running, as --dry-run is set.');
+  }
+  print('==========');
+}
