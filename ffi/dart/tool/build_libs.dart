@@ -149,9 +149,7 @@ Future<void> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    isNoStd
-        ? '--features=${[...features, ...noStdFeatures].join(',')}'
-        : '--features=${[...features, ...stdFeatures].join(',')}',
+    '--features=${[...features, ...(isNoStd ? noStdFeatures : stdFeatures)].join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
