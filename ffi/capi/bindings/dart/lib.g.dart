@@ -2,12 +2,14 @@
 
 import 'dart:convert';
 import 'dart:core' as core;
-import 'dart:core' show int, double, bool, String, Object, override;
+import 'dart:core' show Object, String, bool, double, int, override;
 import 'dart:ffi' as ffi;
 import 'dart:math';
 import 'dart:typed_data';
+
+import 'package:meta/meta.dart' show RecordUse, mustBeConst;
 import 'package:ffi/ffi.dart' as ffi2 show Arena, calloc;
-import 'package:meta/meta.dart' as meta;
+
 part 'AnyCalendarKind.g.dart';
 part 'Bcp47ToIanaMapper.g.dart';
 part 'Bidi.g.dart';
@@ -161,23 +163,25 @@ final _nopFree = core.Finalizer((nothing) => {});
 // ignore: unused_element
 final _rustFree = core.Finalizer((({ffi.Pointer<ffi.Void> pointer, int bytes, int align}) record) => _diplomat_free(record.pointer, record.bytes, record.align));
 
+// ignore: unused_element
 final class _RustAlloc implements ffi.Allocator {
   @override
   ffi.Pointer<T> allocate<T extends ffi.NativeType>(int byteCount, {int? alignment}) {
       return _diplomat_alloc(byteCount, alignment ?? 1).cast();
   }
 
+  @override
   void free(ffi.Pointer<ffi.NativeType> pointer) {
     throw 'Internal error: should not deallocate in Rust memory';
   }
 }
 
-@meta.ResourceIdentifier('diplomat_alloc')
+@_DiplomatFfiUse('diplomat_alloc')
 @ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(symbol: 'diplomat_alloc', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
 
-@meta.ResourceIdentifier('diplomat_free')
+@_DiplomatFfiUse('diplomat_free')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(symbol: 'diplomat_free', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_free(ffi.Pointer<ffi.Void> ptr, int len, int align);
@@ -690,6 +694,7 @@ final class _SliceUtf16 extends ffi.Struct {
   @override
   int get hashCode => _length.hashCode;
 
+  // ignore: unused_element
   String _toDart(core.List<Object> lifetimeEdges) {
     final r = core.String.fromCharCodes(_data.asTypedList(_length));
     if (lifetimeEdges.isEmpty) {
@@ -745,22 +750,29 @@ final class _Writeable {
   }
 }
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_create')
+@_DiplomatFfiUse('diplomat_buffer_writeable_create')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>(symbol: 'diplomat_buffer_writeable_create', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _diplomat_buffer_writeable_create(int len);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_len')
+@_DiplomatFfiUse('diplomat_buffer_writeable_len')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_len', isLeaf: true)
 // ignore: non_constant_identifier_names
 external int _diplomat_buffer_writeable_len(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_get_bytes')
+@_DiplomatFfiUse('diplomat_buffer_writeable_get_bytes')
 @ffi.Native<ffi.Pointer<ffi.Uint8> Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_get_bytes', isLeaf: true)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Uint8> _diplomat_buffer_writeable_get_bytes(ffi.Pointer<ffi.Opaque> ptr);
 
-@meta.ResourceIdentifier('diplomat_buffer_writeable_destroy')
+@_DiplomatFfiUse('diplomat_buffer_writeable_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(symbol: 'diplomat_buffer_writeable_destroy', isLeaf: true)
 // ignore: non_constant_identifier_names
 external void _diplomat_buffer_writeable_destroy(ffi.Pointer<ffi.Opaque> ptr);
+
+@RecordUse()
+class _DiplomatFfiUse extends RecordUse {
+  final String symbol;
+
+  const _DiplomatFfiUse(@mustBeConst this.symbol);
+}

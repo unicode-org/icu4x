@@ -24,6 +24,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XPropertyValueNameToEnumMapper_destroy));
 
   /// Get the property value matching the given name, using strict matching
@@ -163,67 +164,67 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_destroy')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XPropertyValueNameToEnumMapper_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_get_strict')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_get_strict')
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_get_strict')
 // ignore: non_constant_identifier_names
 external int _ICU4XPropertyValueNameToEnumMapper_get_strict(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_get_loose')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_get_loose')
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_get_loose')
 // ignore: non_constant_identifier_names
 external int _ICU4XPropertyValueNameToEnumMapper_get_loose(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_general_category')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_general_category')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_general_category')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_general_category(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_hangul_syllable_type(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_bidi_class(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_line_break')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_line_break')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_line_break')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_line_break(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_word_break')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_word_break')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_word_break')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_word_break(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_sentence_break(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XPropertyValueNameToEnumMapper_load_script')
+@_DiplomatFfiUse('ICU4XPropertyValueNameToEnumMapper_load_script')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XPropertyValueNameToEnumMapper_load_script')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XPropertyValueNameToEnumMapper_load_script(ffi.Pointer<ffi.Opaque> provider);

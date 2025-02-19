@@ -25,6 +25,7 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
     }
   }
 
+  @_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneIdMapperWithFastCanonicalization.html#method.new) for more information.
@@ -69,22 +70,22 @@ final class TimeZoneIdMapperWithFastCanonicalization implements ffi.Finalizable 
   }
 }
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
+@_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XTimeZoneIdMapperWithFastCanonicalization_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_create')
+@_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
+@_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonicalize_iana(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);
 
-@meta.ResourceIdentifier('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47')
+@_DiplomatFfiUse('ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47')
 // ignore: non_constant_identifier_names
 external _ResultVoidInt32 _ICU4XTimeZoneIdMapperWithFastCanonicalization_canonical_iana_from_bcp47(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> valueData, int valueLength, ffi.Pointer<ffi.Opaque> writeable);

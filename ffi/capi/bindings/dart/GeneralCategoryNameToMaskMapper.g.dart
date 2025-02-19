@@ -24,6 +24,7 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XGeneralCategoryNameToMaskMapper_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XGeneralCategoryNameToMaskMapper_destroy));
 
   /// Get the mask value matching the given name, using strict matching
@@ -60,22 +61,22 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XGeneralCategoryNameToMaskMapper_destroy')
+@_DiplomatFfiUse('ICU4XGeneralCategoryNameToMaskMapper_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XGeneralCategoryNameToMaskMapper_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XGeneralCategoryNameToMaskMapper_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XGeneralCategoryNameToMaskMapper_get_strict')
+@_DiplomatFfiUse('ICU4XGeneralCategoryNameToMaskMapper_get_strict')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XGeneralCategoryNameToMaskMapper_get_strict')
 // ignore: non_constant_identifier_names
 external int _ICU4XGeneralCategoryNameToMaskMapper_get_strict(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
 
-@meta.ResourceIdentifier('ICU4XGeneralCategoryNameToMaskMapper_get_loose')
+@_DiplomatFfiUse('ICU4XGeneralCategoryNameToMaskMapper_get_loose')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XGeneralCategoryNameToMaskMapper_get_loose')
 // ignore: non_constant_identifier_names
 external int _ICU4XGeneralCategoryNameToMaskMapper_get_loose(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> nameData, int nameLength);
 
-@meta.ResourceIdentifier('ICU4XGeneralCategoryNameToMaskMapper_load')
+@_DiplomatFfiUse('ICU4XGeneralCategoryNameToMaskMapper_load')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XGeneralCategoryNameToMaskMapper_load')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XGeneralCategoryNameToMaskMapper_load(ffi.Pointer<ffi.Opaque> provider);

@@ -22,6 +22,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('ICU4XLocaleCanonicalizer_destroy')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_ICU4XLocaleCanonicalizer_destroy));
 
   /// Create a new [`LocaleCanonicalizer`].
@@ -57,22 +58,22 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
   }
 }
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_destroy')
+@_DiplomatFfiUse('ICU4XLocaleCanonicalizer_destroy')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_destroy')
 // ignore: non_constant_identifier_names
 external void _ICU4XLocaleCanonicalizer_destroy(ffi.Pointer<ffi.Void> self);
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_create')
+@_DiplomatFfiUse('ICU4XLocaleCanonicalizer_create')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_create_extended')
+@_DiplomatFfiUse('ICU4XLocaleCanonicalizer_create_extended')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_create_extended')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _ICU4XLocaleCanonicalizer_create_extended(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.ResourceIdentifier('ICU4XLocaleCanonicalizer_canonicalize')
+@_DiplomatFfiUse('ICU4XLocaleCanonicalizer_canonicalize')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'ICU4XLocaleCanonicalizer_canonicalize')
 // ignore: non_constant_identifier_names
 external int _ICU4XLocaleCanonicalizer_canonicalize(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
