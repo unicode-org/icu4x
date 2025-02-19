@@ -140,9 +140,23 @@ pub mod marker {
     //! Additional [`DataMarker`](super::DataMarker) helpers.
 
     pub use super::marker_full::{
-        data_marker_id, data_struct, impl_data_provider_never_marker, DataMarkerExt, DataMarkerId,
-        DataMarkerIdHash, ErasedMarker, MaybeExportAsVarULE, NeverMarker, NeverVarULE,
+        data_marker_id, impl_data_provider_never_marker, DataMarkerExt, DataMarkerId,
+        DataMarkerIdHash, ErasedMarker, NeverMarker,
     };
+}
+
+mod varule_traits;
+pub mod ule {
+    //! Traits that data provider implementations can use to optimize storage
+    //! by using [`VarULE`](zerovec::ule::VarULE).
+    //!
+    //! See [`MaybeAsVarULE`] for details.
+
+    pub use super::varule_traits::data_struct;
+    pub use super::varule_traits::FromVarULE;
+    pub use super::varule_traits::MaybeAsVarULE;
+    pub use super::varule_traits::MaybeEncodeAsVarULE;
+    pub use super::varule_traits::NeverVarULE;
 }
 
 /// Core selection of APIs and structures for the ICU4X data provider.

@@ -42,8 +42,8 @@ impl Default for HelloWorld<'_> {
 }
 
 impl<'a> HelloWorld<'a> {
-    fn as_varule(&'a self) -> &'a str {
-        &self.message
+    fn encode_as_varule(&'a self) -> Box<str> {
+        Box::from(&*self.message)
     }
     fn from_varule(message: &'a str) -> Self {
         Self {
@@ -52,10 +52,11 @@ impl<'a> HelloWorld<'a> {
     }
 }
 
-crate::marker::data_struct!(
-    HelloWorld<'a>,
+crate::ule::data_struct!(
+    HelloWorld<'data>,
     varule: str,
-    as_varule: HelloWorld::as_varule,
+    #[cfg(feature = "export")]
+    encode_as_varule: HelloWorld::encode_as_varule,
     from_varule: HelloWorld::from_varule
 );
 

@@ -69,7 +69,10 @@ data_marker!(
     ListFormatterPatterns<'static>,
 );
 
-icu_provider::marker::data_struct!(ListFormatterPatterns<'_>);
+icu_provider::ule::data_struct!(
+    ListFormatterPatterns<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///

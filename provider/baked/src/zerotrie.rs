@@ -8,9 +8,12 @@
 const ID_SEPARATOR: u8 = 0x1E;
 
 pub use icu_provider::DynamicDataMarker;
-use icu_provider::{marker::MaybeExportAsVarULE, prelude::*};
+use icu_provider::{
+    prelude::*,
+    ule::{FromVarULE, MaybeAsVarULE},
+};
 pub use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{ule::VarULE, VarZeroSlice};
+use zerovec::VarZeroSlice;
 
 #[cfg(feature = "export")]
 use zerovec::VarZeroVec;
@@ -198,16 +201,16 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
 
 pub struct DataForVarULEs<M: DataMarker>
 where
-    M::DataStruct: MaybeExportAsVarULE<'static>,
+    M::DataStruct: FromVarULE<'static>,
 {
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE>,
+    values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::VarULE>,
 }
 
 impl<M: DataMarker> DataForVarULEs<M>
 where
-    M::DataStruct: MaybeExportAsVarULE<'static>,
+    M::DataStruct: FromVarULE<'static>,
 {
     /// Construct from a trie and values
     ///
@@ -215,7 +218,7 @@ where
     /// The actual values contained in the trie must be valid indices into `values`
     pub const unsafe fn from_trie_and_values_unchecked(
         trie: ZeroTrieSimpleAscii<&'static [u8]>,
-        values: &'static VarZeroSlice<<M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE>,
+        values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::VarULE>,
     ) -> Self {
         Self { trie, values }
     }
@@ -223,10 +226,7 @@ where
 
 impl<M: DataMarker> super::DataStore<M> for DataForVarULEs<M>
 where
-    M::DataStruct: MaybeExportAsVarULE<'static>,
-    <M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE: VarULE,
-    <M::DataStruct as MaybeExportAsVarULE<'static>>::EncodeAsVarULE:
-        From<&'static <M::DataStruct as MaybeExportAsVarULE<'static>>::VarULE>,
+    M::DataStruct: FromVarULE<'static>,
 {
     fn get(
         &self,
@@ -236,7 +236,7 @@ where
         get_index(self.trie, id, attributes_prefix_match)
             // Safety: Allowed since `i` came from the trie and the field safety invariant
             .map(|i| unsafe { self.values.get_unchecked(i) })
-            .map(|v| M::DataStruct::from_varule(v.into()))
+            .map(M::DataStruct::from_varule)
             .map(DataPayload::from_owned)
     }
 
