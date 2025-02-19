@@ -27,6 +27,7 @@ pub(crate) mod tz {
     pub(crate) use super::MetazoneSpecificNames as MzSpecific;
     pub(crate) use super::MetazoneSpecificNamesLongV1 as MzSpecificLongV1;
     pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
+    pub(crate) use super::MetazoneStandardNamesLongV1 as MzStandardLongV1;
     pub(crate) use super::TimeZoneEssentials as Essentials;
     pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
 }

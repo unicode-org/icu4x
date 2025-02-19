@@ -142,6 +142,8 @@ pub trait ZoneMarkers: UnstableSealed {
     type GenericLongV1: DataMarker<DataStruct = tz::MzGeneric<'static>>;
     /// Marker for loading generic short time zone names.
     type GenericShortV1: DataMarker<DataStruct = tz::MzGeneric<'static>>;
+    /// Marker for loading standard long time zone names.
+    type StandardLongV1: DataMarker<DataStruct = tz::MzGeneric<'static>>;
     /// Marker for loading specific long time zone names.
     type SpecificLongV1: DataMarker<DataStruct = tz::MzSpecific<'static>>;
     /// Marker for loading generic short time zone names.
@@ -288,6 +290,7 @@ pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeM
     + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+    + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -321,6 +324,7 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+        + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -444,6 +448,7 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+    + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -506,6 +511,7 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+        + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -597,6 +603,7 @@ impl ZoneMarkers for () {
     type ExemplarCitiesRootV1 = NeverMarker<tz::ExemplarCities<'static>>;
     type GenericLongV1 = NeverMarker<tz::MzGeneric<'static>>;
     type GenericShortV1 = NeverMarker<tz::MzGeneric<'static>>;
+    type StandardLongV1 = NeverMarker<tz::MzGeneric<'static>>;
     type SpecificLongV1 = NeverMarker<tz::MzSpecific<'static>>;
     type SpecificShortV1 = NeverMarker<tz::MzSpecific<'static>>;
     type MetazonePeriodV1 = NeverMarker<tz::MzPeriod<'static>>;
@@ -741,6 +748,9 @@ macro_rules! datetime_marker_helper {
     (@data/zone/generic_short, yes) => {
         tz::MzGenericShortV1
     };
+    (@data/zone/standard_long, yes) => {
+        tz::MzStandardLongV1
+    };
     (@data/zone/specific_long, yes) => {
         tz::MzSpecificLongV1
     };
@@ -769,6 +779,9 @@ macro_rules! datetime_marker_helper {
         NeverMarker<tz::MzGeneric<'static>>
     };
     (@data/zone/generic_short,) => {
+        NeverMarker<tz::MzGeneric<'static>>
+    };
+    (@data/zone/standard_long,) => {
         NeverMarker<tz::MzGeneric<'static>>
     };
     (@data/zone/specific_long,) => {
@@ -812,6 +825,9 @@ macro_rules! datetime_marker_helper {
     };
     (@names/zone/generic_short, yes) => {
         tz::MzGenericShortV1
+    };
+    (@names/zone/standard_long, yes) => {
+        tz::MzStandardLongV1
     };
     (@names/zone/specific_long, yes) => {
         tz::MzSpecificLongV1

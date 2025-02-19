@@ -54,6 +54,7 @@ const _: () = {
     impl_exemplar_cities_v1!(Baked);
     impl_exemplar_cities_root_v1!(Baked);
     impl_metazone_generic_names_long_v1!(Baked);
+    impl_metazone_standard_names_long_v1!(Baked);
     impl_metazone_generic_names_short_v1!(Baked);
     impl_metazone_period_v1!(Baked);
     impl_metazone_specific_names_long_v1!(Baked);

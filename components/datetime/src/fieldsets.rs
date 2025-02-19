@@ -413,6 +413,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
@@ -571,6 +572,7 @@ macro_rules! impl_date_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
@@ -740,6 +742,7 @@ macro_rules! impl_time_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
@@ -785,17 +788,19 @@ macro_rules! impl_zone_marker {
         // The type in ZoneFieldSet for this field set
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
-        // Whether locations formats can occur.
+        // Whether locations names are needed.
         $(zone_locations = $zone_locations_yes:ident,)?
-        // Whether exemplar city formats can occur.
+        // Whether exemplar city names are needed.
         $(zone_exemplars = $zone_exemplars_yes:ident,)?
-        // Whether generic long formats can occur.
+        // Whether generic long names are needed.
         $(zone_generic_long = $zone_generic_long_yes:ident,)?
-        // Whether generic short formats can occur.
+        // Whether generic short names are needed.
         $(zone_generic_short = $zone_generic_short_yes:ident,)?
-        // Whether specific long formats can occur.
+        // Whether standard long names are needed.
+        $(zone_standard_long = $zone_standard_long_yes:ident,)?
+        // Whether specific long names are needed.
         $(zone_specific_long = $zone_specific_long_yes:ident,)?
-        // Whether specific short formats can occur.
+        // Whether specific short names are needed.
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
         // Whether metazone periods are needed
         $(metazone_periods = $metazone_periods_yes:ident,)?
@@ -854,6 +859,7 @@ macro_rules! impl_zone_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplars_root, $($zone_exemplars_yes)?);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long, $($zone_standard_long_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, $($metazone_periods_yes)?);
@@ -870,6 +876,7 @@ macro_rules! impl_zone_marker {
             type ExemplarCitiesRootV1 = datetime_marker_helper!(@data/zone/exemplars_root, $($zone_exemplars_yes)?);
             type GenericLongV1 = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
             type GenericShortV1 = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
+            type StandardLongV1 = datetime_marker_helper!(@data/zone/standard_long, $($zone_standard_long_yes)?);
             type SpecificLongV1 = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
             type SpecificShortV1 = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazonePeriodV1 = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
@@ -1209,6 +1216,7 @@ pub mod zone {
         field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
         zone_essentials = yes,
         zone_locations = yes,
+        zone_standard_long = yes,
         zone_specific_long = yes,
         metazone_periods = yes,
         input_tzid = yes,
@@ -1437,6 +1445,7 @@ pub mod zone {
         zone_essentials = yes,
         zone_locations = yes,
         zone_generic_long = yes,
+        zone_standard_long = yes,
         metazone_periods = yes,
         input_tzid = yes,
         input_localtime = yes,
