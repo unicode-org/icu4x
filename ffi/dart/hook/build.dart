@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:native_assets_cli/code_assets.dart';
 
-import '../tool/build_libs.dart' show buildLib;
+import '../tool/build_libs.dart' show buildLibraryFromInput;
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
@@ -22,7 +22,7 @@ void main(List<String> args) async {
       }
     }
 
-    final outputPath = await buildLib(input, icu4xPath.path);
+    final outputPath = await buildLibraryFromInput(input, icu4xPath.path);
 
     output.assets.code.add(
       CodeAsset(

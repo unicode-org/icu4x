@@ -2,27 +2,104 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+import 'dart:io';
+
+import 'package:args/args.dart';
 import 'package:native_assets_cli/code_assets.dart';
 import 'package:path/path.dart' as path;
-import 'dart:io';
 
 const crateName = 'icu_capi';
 
-// Copied from Dart's package:intl4x build.dart, see
-// https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
-Future<Uri> buildLib(BuildInput input, String workingDirectory) async {
+Future<void> main(List<String> args) async {
+  final defaultFeatures = ['default_components', 'compiled_data'];
+  final argParser =
+      ArgParser()
+        ..addOption('file', mandatory: true)
+        ..addFlag('static', defaultsTo: false)
+        ..addFlag('simulator', defaultsTo: false)
+        ..addOption('os', mandatory: true)
+        ..addOption('architecture', mandatory: true)
+        ..addMultiOption('cargoFeatures', defaultsTo: defaultFeatures);
+
+  ArgResults parsed;
+  try {
+    parsed = argParser.parse(args);
+  } catch (e) {
+    print('Error parsing $args');
+    print(argParser.usage);
+    exit(1);
+  }
+  final buildStatic = parsed.flag('static');
+  final simulator = parsed.flag('simulator');
+  final targetOS = OS.values.firstWhere((o) => o.name == parsed.option('os')!);
+  final targetArchitecture = Architecture.values.firstWhere(
+    (o) => o.name == parsed.option('architecture')!,
+  );
+
+  final out = Uri.file(parsed.option('file')!);
+
+  final cargoFeatures = parsed.multiOption('cargoFeatures');
+
+  // We assume that the first folder to contain a cargo.toml above the
+  // output directory is the directory containing the ICU4X code.
+  FileSystemEntity icu4xPath = File.fromUri(Platform.script);
+  while (!File.fromUri(icu4xPath.uri.resolve('Cargo.toml')).existsSync()) {
+    icu4xPath = icu4xPath.parent;
+    if (icu4xPath.parent == icu4xPath) {
+      throw ArgumentError(
+        'Running in the wrong directory, as no Cargo.toml exists above ${Platform.script}',
+      );
+    }
+  }
+
+  await buildLib(
+    targetOS,
+    targetArchitecture,
+    buildStatic,
+    simulator,
+    out,
+    out.pathSegments.last,
+    icu4xPath.path,
+    cargoFeatures: cargoFeatures,
+  );
+}
+
+Future<Uri> buildLibraryFromInput(
+  BuildInput input,
+  String workingDirectory,
+) async {
   final crateNameFixed = crateName.replaceAll('-', '_');
   final libFileName = input.config.filename(crateNameFixed);
   final libFileUri = input.outputDirectory.resolve(libFileName);
+  await buildLib(
+    input.config.code.targetOS,
+    input.config.code.targetArchitecture,
+    input.config.buildStatic,
+    input.config.code.targetOS == OS.iOS &&
+        input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
+    libFileUri,
+    libFileName,
+    workingDirectory,
+  );
+  return libFileUri;
+}
 
-  final code = input.config.code;
-  final targetOS = code.targetOS;
-  final targetArchitecture = code.targetArchitecture;
-
+// Copied from Dart's package:intl4x build.dart, see
+// https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
+Future<void> buildLib(
+  OS targetOS,
+  Architecture targetArchitecture,
+  bool buildStatic,
+  bool isSimulator,
+  Uri libFileUri,
+  String libFileName,
+  String workingDirectory, {
+  List<String> cargoFeatures = const [],
+}) async {
   final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
-
+  final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
   if (!isNoStd) {
-    final rustArguments = ['target', 'add', asRustTarget(input)];
+    final rustArguments = ['target', 'add', target];
     await runProcess(
       'rustup',
       rustArguments,
@@ -48,9 +125,9 @@ Future<Uri> buildLib(BuildInput input, String workingDirectory) async {
     'panic_handler',
     'experimental_components',
   ];
-  final linkModeType = input.config.buildStatic ? 'staticlib' : 'cdylib';
+  final linkModeType = buildStatic ? 'staticlib' : 'cdylib';
   final arguments = [
-    if (input.config.buildStatic || isNoStd) '+nightly',
+    if (buildStatic || isNoStd) '+nightly',
     'rustc',
     '-p=$crateName',
     '--crate-type=$linkModeType',
@@ -62,38 +139,22 @@ Future<Uri> buildLib(BuildInput input, String workingDirectory) async {
         ? '--features=${noStdFeatures.join(',')}'
         : '--features=${stdFeatures.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
-    if (input.config.buildStatic || isNoStd) ...[
+    if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
       '-Zbuild-std-features=panic_immediate_abort',
     ],
-    '--target=${asRustTarget(input)}',
+    '--target=${target}',
     '--target-dir=${tempDir.path}',
   ];
   await runProcess('cargo', arguments, workingDirectory: workingDirectory);
 
-  final builtPath = path.join(
-    tempDir.path,
-    asRustTarget(input),
-    'release',
-    libFileName,
-  );
+  final builtPath = path.join(tempDir.path, target, 'release', libFileName);
   final file = File(builtPath);
   if (!(await file.exists())) {
     throw FileSystemException('Building the dylib failed', builtPath);
   }
   await file.copy(libFileUri.toFilePath(windows: Platform.isWindows));
   await tempDir.delete(recursive: true);
-  return libFileUri;
-}
-
-String asRustTarget(BuildInput input) {
-  final rustTarget = _asRustTarget(
-    input.config.code.targetOS,
-    input.config.code.targetArchitecture,
-    input.config.code.targetOS == OS.iOS &&
-        input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
-  );
-  return rustTarget;
 }
 
 String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
