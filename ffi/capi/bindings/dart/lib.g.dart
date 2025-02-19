@@ -83,6 +83,7 @@ part 'GregorianDateFormatter.g.dart';
 part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'HangulSyllableType.g.dart';
 part 'IanaParser.g.dart';
+part 'IanaParserExtended.g.dart';
 part 'IndicSyllabicCategory.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
@@ -134,8 +135,13 @@ part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimeFormatter.g.dart';
 part 'TimePrecision.g.dart';
+part 'TimeZoneAndCanonical.g.dart';
+part 'TimeZoneAndCanonicalAndNormalized.g.dart';
+part 'TimeZoneAndCanonicalAndNormalizedIterator.g.dart';
+part 'TimeZoneAndCanonicalIterator.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
+part 'TimeZoneIterator.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
@@ -431,6 +437,56 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
     final struct = ffi.Struct.create<_ResultOpaqueInt32>();
     struct.isOk = false;
     struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultTimeZoneAndCanonicalAndNormalizedFfiVoidUnion extends ffi.Union {
+  external _TimeZoneAndCanonicalAndNormalizedFfi ok;
+
+}
+
+final class _ResultTimeZoneAndCanonicalAndNormalizedFfiVoid extends ffi.Struct {
+  external _ResultTimeZoneAndCanonicalAndNormalizedFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultTimeZoneAndCanonicalAndNormalizedFfiVoid.ok(_TimeZoneAndCanonicalAndNormalizedFfi val) {
+    final struct = ffi.Struct.create<_ResultTimeZoneAndCanonicalAndNormalizedFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultTimeZoneAndCanonicalAndNormalizedFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultTimeZoneAndCanonicalAndNormalizedFfiVoid>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultTimeZoneAndCanonicalFfiVoidUnion extends ffi.Union {
+  external _TimeZoneAndCanonicalFfi ok;
+
+}
+
+final class _ResultTimeZoneAndCanonicalFfiVoid extends ffi.Struct {
+  external _ResultTimeZoneAndCanonicalFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  
+  factory _ResultTimeZoneAndCanonicalFfiVoid.ok(_TimeZoneAndCanonicalFfi val) {
+    final struct = ffi.Struct.create<_ResultTimeZoneAndCanonicalFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  factory _ResultTimeZoneAndCanonicalFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultTimeZoneAndCanonicalFfiVoid>();
+    struct.isOk = false;
     return struct;
   }
 }

@@ -14,6 +14,7 @@
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "TimeZoneInfo.hpp"
+#include "TimeZoneIterator.hpp"
 
 
 namespace icu4x {
@@ -26,6 +27,8 @@ namespace capi {
     icu4x_IanaParser_create_with_provider_mv1_result icu4x_IanaParser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     icu4x::capi::TimeZoneInfo* icu4x_IanaParser_parse_mv1(const icu4x::capi::IanaParser* self, diplomat::capi::DiplomatStringView value);
+    
+    icu4x::capi::TimeZoneIterator* icu4x_IanaParser_iter_mv1(const icu4x::capi::IanaParser* self);
     
     
     void icu4x_IanaParser_destroy_mv1(IanaParser* self);
@@ -48,6 +51,11 @@ inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::IanaParser::parse(std::string
   auto result = icu4x::capi::icu4x_IanaParser_parse_mv1(this->AsFFI(),
     {value.data(), value.size()});
   return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::TimeZoneIterator> icu4x::IanaParser::iter() const {
+  auto result = icu4x::capi::icu4x_IanaParser_iter_mv1(this->AsFFI());
+  return std::unique_ptr<icu4x::TimeZoneIterator>(icu4x::TimeZoneIterator::FromFFI(result));
 }
 
 inline const icu4x::capi::IanaParser* icu4x::IanaParser::AsFFI() const {

@@ -28,6 +28,10 @@ export { DateTime } from "./DateTime"
 
 export { IsoDateTime } from "./IsoDateTime"
 
+export { TimeZoneAndCanonical } from "./TimeZoneAndCanonical"
+
+export { TimeZoneAndCanonicalAndNormalized } from "./TimeZoneAndCanonicalAndNormalized"
+
 export { Decomposed } from "./Decomposed"
 
 export { PluralCategories } from "./PluralCategories"
@@ -87,6 +91,14 @@ export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 export { Decimal } from "./Decimal"
 
 export { IanaParser } from "./IanaParser"
+
+export { IanaParserExtended } from "./IanaParserExtended"
+
+export { TimeZoneAndCanonicalAndNormalizedIterator } from "./TimeZoneAndCanonicalAndNormalizedIterator"
+
+export { TimeZoneAndCanonicalIterator } from "./TimeZoneAndCanonicalIterator"
+
+export { TimeZoneIterator } from "./TimeZoneIterator"
 
 export { ListFormatter } from "./ListFormatter"
 

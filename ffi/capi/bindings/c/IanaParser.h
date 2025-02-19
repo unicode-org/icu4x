@@ -10,6 +10,7 @@
 #include "DataError.d.h"
 #include "DataProvider.d.h"
 #include "TimeZoneInfo.d.h"
+#include "TimeZoneIterator.d.h"
 
 #include "IanaParser.d.h"
 
@@ -24,6 +25,8 @@ typedef struct icu4x_IanaParser_create_with_provider_mv1_result {union {IanaPars
 icu4x_IanaParser_create_with_provider_mv1_result icu4x_IanaParser_create_with_provider_mv1(const DataProvider* provider);
 
 TimeZoneInfo* icu4x_IanaParser_parse_mv1(const IanaParser* self, DiplomatStringView value);
+
+TimeZoneIterator* icu4x_IanaParser_iter_mv1(const IanaParser* self);
 
 
 void icu4x_IanaParser_destroy_mv1(IanaParser* self);

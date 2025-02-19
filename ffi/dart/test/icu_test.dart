@@ -55,6 +55,12 @@ void main() {
         ]);
   });
 
+  test('Time zones', () {
+    final iter = IanaParserExtended().iterAll();
+    iter.moveNext();
+    expect(iter.current.canonical, 'Africa/Abidjan');
+  });
+
   test('DateTime formatting', () {
     final zonedDateTimeIso = ZonedIsoDateTime.tryFromStr(
         '2025-01-15T14:32:12.34+01[Europe/Zurich]',
