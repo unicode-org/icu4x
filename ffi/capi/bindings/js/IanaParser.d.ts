@@ -2,6 +2,7 @@
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { TimeZoneInfo } from "./TimeZoneInfo"
+import type { TimeZoneIterator } from "./TimeZoneIterator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -21,6 +22,8 @@ export class IanaParser {
     static createWithProvider(provider: DataProvider): IanaParser;
 
     parse(value: string): TimeZoneInfo;
+
+    iter(): TimeZoneIterator;
 
     constructor();
 }

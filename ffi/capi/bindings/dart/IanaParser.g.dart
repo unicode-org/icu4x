@@ -54,6 +54,14 @@ final class IanaParser implements ffi.Finalizable {
     final result = _icu4x_IanaParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena));
     return TimeZoneInfo._fromFfi(result, []);
   }
+
+  /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
+  TimeZoneIterator iter() {
+    // This lifetime edge depends on lifetimes: 'a
+    core.List<Object> aEdges = [this];
+    final result = _icu4x_IanaParser_iter_mv1(_ffi);
+    return TimeZoneIterator._fromFfi(result, [], aEdges);
+  }
 }
 
 @meta.RecordUse()
@@ -75,3 +83,8 @@ external _ResultOpaqueInt32 _icu4x_IanaParser_create_with_provider_mv1(ffi.Point
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IanaParser_parse_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IanaParser_parse_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value);
+
+@meta.RecordUse()
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IanaParser_iter_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_IanaParser_iter_mv1(ffi.Pointer<ffi.Opaque> self);

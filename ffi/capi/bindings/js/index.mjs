@@ -26,6 +26,10 @@ export { DateTime } from "./DateTime.mjs"
 
 export { IsoDateTime } from "./IsoDateTime.mjs"
 
+export { TimeZoneAndCanonical } from "./TimeZoneAndCanonical.mjs"
+
+export { TimeZoneAndCanonicalAndNormalized } from "./TimeZoneAndCanonicalAndNormalized.mjs"
+
 export { Decomposed } from "./Decomposed.mjs"
 
 export { PluralCategories } from "./PluralCategories.mjs"
@@ -85,6 +89,14 @@ export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 export { Decimal } from "./Decimal.mjs"
 
 export { IanaParser } from "./IanaParser.mjs"
+
+export { IanaParserExtended } from "./IanaParserExtended.mjs"
+
+export { TimeZoneAndCanonicalAndNormalizedIterator } from "./TimeZoneAndCanonicalAndNormalizedIterator.mjs"
+
+export { TimeZoneAndCanonicalIterator } from "./TimeZoneAndCanonicalIterator.mjs"
+
+export { TimeZoneIterator } from "./TimeZoneIterator.mjs"
 
 export { ListFormatter } from "./ListFormatter.mjs"
 
