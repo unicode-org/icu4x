@@ -2,38 +2,42 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 
 import '../tool/build_libs.dart' show buildLib;
 
 void main(List<String> args) async {
-  final config = await BuildConfig.fromArgs(args);
+  await build(
+    args,
+    (input, output) async {
+      var isIOSSimulator =
+          input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator;
+      final target = isIOSSimulator
+          // This stands for Target.iOSArm64Simulator, see build_libs.dart
+          ? (Architecture.arm, OS.iOS)
+          : (input.config.code.targetArchitecture, input.config.code.targetOS);
 
-  final target = (config.target == Target.iOSArm64 &&
-          config.targetIOSSdk == IOSSdk.iPhoneSimulator)
-      // This stands for Target.iOSArm64Simulator, see build_libs.dart
-      ? Target.iOSArm
-      : config.target;
+      final outputPath = input.outputDirectory.resolve('icu4x');
 
-  final linkMode = config.linkModePreference.preferredLinkMode;
+      await buildLib(
+        target.$2,
+        target.$1,
+        input.config.code.linkModePreference,
+        isIOSSimulator,
+        ['default_components', 'experimental_components', 'compiled_data'],
+        outputPath.path,
+      );
 
-  final path = '${config.outDir.path}/icu4x';
+      output.assets.code.add(CodeAsset(
+        package: 'icu',
+        name: 'src/lib.g.dart',
+        linkMode: DynamicLoadingBundled(),
+        os: input.config.code.targetOS,
+        architecture: input.config.code.targetArchitecture,
+        file: outputPath,
+      ));
 
-  await buildLib(
-    target,
-    linkMode,
-    ['default_components', 'experimental_components', 'compiled_data'],
-    path,
+      output.addDependency(input.packageRoot.resolve('build.rs'));
+    },
   );
-
-  await BuildOutput(
-    assets: [
-      Asset(
-          id: 'package:icu/src/lib.g.dart',
-          linkMode: linkMode,
-          target: target,
-          path: AssetAbsolutePath(Uri.file(path)))
-    ],
-    dependencies: Dependencies([config.packageRoot.resolve('build.rs')]),
-  ).writeToFile(outDir: config.outDir);
 }

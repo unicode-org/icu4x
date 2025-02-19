@@ -7,7 +7,7 @@ environment:
 
 dependencies:
   ffi: ^2.0.0
-  native_assets_cli: ^0.4.2
+  native_assets_cli: ^0.11.0
   meta: ^1.16.0
 
 dev_dependencies:

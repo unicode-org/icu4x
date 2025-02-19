@@ -2,28 +2,35 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 import 'dart:io';
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     print(
-        'Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> <link mode: ${LinkMode.values}> <cargo features>');
+        'Usage: ${Platform.script.pathSegments.last} <out_dir> <os:${OS.values}> <architecture:${Architecture.values}> <linkMode:${LinkModePreference.values}> <ios-sim:true,false> <cargo features>');
     exit(1);
   }
   final out = Uri.file(args[0]).toFilePath();
-  final target = Target.values.firstWhere((t) => t.toString() == args[1]);
-  final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
+  final os = OS.values.firstWhere((t) => t.toString() == args[1]);
+  final architecture =
+      Architecture.values.firstWhere((t) => t.toString() == args[2]);
+  final linkModePreference =
+      LinkModePreference.values.firstWhere((t) => t.toString() == args[3]);
+  final iOSSimulator = args.elementAtOrNull(4) == 'true';
 
   final defaultFeatures = ['default_components', 'compiled_data'];
   final cargoFeatures = args.elementAtOrNull(3)?.split(',') ?? defaultFeatures;
 
-  await buildLib(target, linkMode, cargoFeatures, out);
+  await buildLib(
+      os, architecture, linkModePreference, iOSSimulator, cargoFeatures, out);
 }
 
 Future<void> buildLib(
-  Target target,
-  LinkMode linkMode,
+  OS os,
+  Architecture architecture,
+  LinkModePreference linkModePreference,
+  bool iOSSimulator,
   Iterable<String> cargoFeatures,
   String outName,
 ) async {
@@ -32,12 +39,9 @@ Future<void> buildLib(
 
   print('Building $outName');
 
-  final rustTarget = dartToRustTargets[target]!;
+  final rustTarget = _asRustTarget(os, architecture, iOSSimulator);
 
-  final isNoStd = [
-    Target.androidRiscv64,
-    Target.linuxRiscv32,
-  ].contains(target);
+  final isNoStd = _isNoStdTarget((os, architecture));
 
   final rustupArguments = ['target', 'add', rustTarget];
   final rustup = await Process.start('rustup', rustupArguments);
@@ -64,7 +68,7 @@ Future<void> buildLib(
     if (isNoStd) '+nightly',
     'rustc',
     '--manifest-path=$root/ffi/capi/Cargo.toml',
-    '--crate-type=${linkMode == LinkMode.static ? 'staticlib' : 'cdylib'}',
+    '--crate-type=${linkModePreference == LinkModePreference.static ? 'staticlib' : 'cdylib'}',
     '--release',
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
@@ -88,34 +92,45 @@ Future<void> buildLib(
     );
   }
 
-  final filename = linkMode == LinkMode.dynamic
-      ? target.os.dylibFileName
-      : target.os.staticlibFileName;
+  final filename = linkModePreference == LinkModePreference.static
+      ? os.staticlibFileName
+      : os.dylibFileName;
   final uri =
       Uri.file('$root/target/$rustTarget/release/${filename(('icu_capi'))}');
   await File.fromUri(uri).copy(outName);
 }
 
-const dartToRustTargets = {
-  Target.androidArm: 'armv7-linux-androideabi',
-  Target.androidArm64: 'aarch64-linux-android',
-  Target.androidIA32: 'i686-linux-android',
-  Target.androidRiscv64: 'riscv64-linux-android',
-  Target.androidX64: 'x86_64-linux-android',
-  Target.fuchsiaArm64: 'aarch64-unknown-fuchsia',
-  Target.fuchsiaX64: 'x86_64-unknown-fuchsia',
-  Target.iOSArm: 'aarch64-apple-ios-sim',
-  Target.iOSArm64: 'aarch64-apple-ios',
-  Target.iOSX64: 'x86_64-apple-ios',
-  Target.linuxArm: 'armv7-unknown-linux-gnueabihf',
-  Target.linuxArm64: 'aarch64-unknown-linux-gnu',
-  Target.linuxIA32: 'i686-unknown-linux-gnu',
-  Target.linuxRiscv32: 'riscv32gc-unknown-linux-gnu',
-  Target.linuxRiscv64: 'riscv64gc-unknown-linux-gnu',
-  Target.linuxX64: 'x86_64-unknown-linux-gnu',
-  Target.macOSArm64: 'aarch64-apple-darwin',
-  Target.macOSX64: 'x86_64-apple-darwin',
-  Target.windowsArm64: 'aarch64-pc-windows-msvc',
-  Target.windowsIA32: 'i686-pc-windows-msvc',
-  Target.windowsX64: 'x86_64-pc-windows-msvc',
-};
+String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
+  if (os == OS.iOS && architecture == Architecture.arm64 && isSimulator) {
+    return 'aarch64-apple-ios-sim';
+  }
+  return switch ((os, architecture)) {
+    (OS.android, Architecture.arm) => 'armv7-linux-androideabi',
+    (OS.android, Architecture.arm64) => 'aarch64-linux-android',
+    (OS.android, Architecture.ia32) => 'i686-linux-android',
+    (OS.android, Architecture.riscv64) => 'riscv64-linux-android',
+    (OS.android, Architecture.x64) => 'x86_64-linux-android',
+    (OS.fuchsia, Architecture.arm64) => 'aarch64-unknown-fuchsia',
+    (OS.fuchsia, Architecture.x64) => 'x86_64-unknown-fuchsia',
+    (OS.iOS, Architecture.arm64) => 'aarch64-apple-ios',
+    (OS.iOS, Architecture.x64) => 'x86_64-apple-ios',
+    (OS.linux, Architecture.arm) => 'armv7-unknown-linux-gnueabihf',
+    (OS.linux, Architecture.arm64) => 'aarch64-unknown-linux-gnu',
+    (OS.linux, Architecture.ia32) => 'i686-unknown-linux-gnu',
+    (OS.linux, Architecture.riscv32) => 'riscv32gc-unknown-linux-gnu',
+    (OS.linux, Architecture.riscv64) => 'riscv64gc-unknown-linux-gnu',
+    (OS.linux, Architecture.x64) => 'x86_64-unknown-linux-gnu',
+    (OS.macOS, Architecture.arm64) => 'aarch64-apple-darwin',
+    (OS.macOS, Architecture.x64) => 'x86_64-apple-darwin',
+    (OS.windows, Architecture.arm64) => 'aarch64-pc-windows-msvc',
+    (OS.windows, Architecture.ia32) => 'i686-pc-windows-msvc',
+    (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
+    (_, _) => throw UnimplementedError(
+        'Target ${(os, architecture)} not available for rust'),
+  };
+}
+
+bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
+      (OS.android, Architecture.riscv64),
+      (OS.linux, Architecture.riscv64)
+    ].contains(arg);
