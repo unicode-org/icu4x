@@ -62,13 +62,16 @@ Future<void> main(List<String> args) async {
     }
   }
 
+  final libFileName = targetOS.filename(buildStatic)(
+    crateName.replaceAll('-', '_'),
+  );
   await buildLib(
     targetOS,
     targetArchitecture,
     buildStatic,
     simulator,
     out,
-    out.pathSegments.last,
+    libFileName,
     icu4xPath.path,
     cargoFeatures: cargoFeatures,
   );
@@ -79,7 +82,9 @@ Future<Uri> buildLibraryFromInput(
   String workingDirectory,
 ) async {
   final crateNameFixed = crateName.replaceAll('-', '_');
-  final libFileName = input.config.filename(crateNameFixed);
+  final libFileName = input.config.code.targetOS.filename(
+    input.config.buildStatic,
+  )(crateNameFixed);
   final libFileUri = input.outputDirectory.resolve(libFileName);
   await buildLib(
     input.config.code.targetOS,
@@ -153,7 +158,7 @@ Future<void> buildLib(
       '-Zbuild-std=std,panic_abort',
       '-Zbuild-std-features=panic_immediate_abort',
     ],
-    '--target=${target}',
+    '--target=$target',
     '--target-dir=${tempDir.path}',
   ];
   await runProcess('cargo', arguments, workingDirectory: workingDirectory);
@@ -207,11 +212,11 @@ bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
 extension on BuildConfig {
   bool get buildStatic =>
       code.linkModePreference == LinkModePreference.static || linkingEnabled;
+}
 
-  String Function(String) get filename =>
-      buildStatic
-          ? code.targetOS.staticlibFileName
-          : code.targetOS.dylibFileName;
+extension on OS {
+  String Function(String) filename(bool buildStatic) =>
+      buildStatic ? staticlibFileName : dylibFileName;
 }
 
 Future<void> runProcess(
