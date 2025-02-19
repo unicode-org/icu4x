@@ -95,12 +95,12 @@ use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 pub use options::*;
 use provider::rules::runtime::test_rule;
-use provider::CardinalV1;
-use provider::OrdinalV1;
 use provider::PluralRulesData;
+use provider::PluralsCardinalV1;
+use provider::PluralsOrdinalV1;
 
 #[cfg(feature = "experimental")]
-use provider::PluralRangesV1;
+use provider::PluralsRangesV1;
 #[cfg(feature = "experimental")]
 use provider::UnvalidatedPluralRange;
 
@@ -295,7 +295,7 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<CardinalV1> + DataProvider<OrdinalV1> + ?Sized),
+        provider: &(impl DataProvider<PluralsCardinalV1> + DataProvider<PluralsOrdinalV1> + ?Sized),
         prefs: PluralRulesPreferences,
         options: PluralRulesOptions,
     ) -> Result<Self, DataError> {
@@ -340,10 +340,10 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
-        provider: &(impl DataProvider<CardinalV1> + ?Sized),
+        provider: &(impl DataProvider<PluralsCardinalV1> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let locale = CardinalV1::make_locale(prefs.locale_preferences);
+        let locale = PluralsCardinalV1::make_locale(prefs.locale_preferences);
         Ok(Self(
             provider
                 .load(DataRequest {
@@ -396,10 +396,10 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
-        provider: &(impl DataProvider<OrdinalV1> + ?Sized),
+        provider: &(impl DataProvider<PluralsOrdinalV1> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
-        let locale = OrdinalV1::make_locale(prefs.locale_preferences);
+        let locale = PluralsOrdinalV1::make_locale(prefs.locale_preferences);
         Ok(Self(
             provider
                 .load(DataRequest {
@@ -560,7 +560,7 @@ impl PluralRules {
 #[derive(Debug)]
 pub struct PluralRulesWithRanges<R> {
     rules: R,
-    ranges: DataPayload<PluralRangesV1>,
+    ranges: DataPayload<PluralsRangesV1>,
 }
 
 #[cfg(feature = "experimental")]
@@ -585,9 +585,9 @@ impl PluralRulesWithRanges<PluralRules> {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<PluralRangesV1>
-              + DataProvider<CardinalV1>
-              + DataProvider<OrdinalV1>
+        provider: &(impl DataProvider<PluralsRangesV1>
+              + DataProvider<PluralsCardinalV1>
+              + DataProvider<PluralsOrdinalV1>
               + ?Sized),
         prefs: PluralRulesPreferences,
         options: PluralRulesOptions,
@@ -626,7 +626,7 @@ impl PluralRulesWithRanges<PluralRules> {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
-        provider: &(impl DataProvider<CardinalV1> + DataProvider<PluralRangesV1> + ?Sized),
+        provider: &(impl DataProvider<PluralsCardinalV1> + DataProvider<PluralsRangesV1> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
         let rules = PluralRules::try_new_cardinal_unstable(provider, prefs)?;
@@ -664,7 +664,7 @@ impl PluralRulesWithRanges<PluralRules> {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
-        provider: &(impl DataProvider<OrdinalV1> + DataProvider<PluralRangesV1> + ?Sized),
+        provider: &(impl DataProvider<PluralsOrdinalV1> + DataProvider<PluralsRangesV1> + ?Sized),
         prefs: PluralRulesPreferences,
     ) -> Result<Self, DataError> {
         let rules = PluralRules::try_new_ordinal_unstable(provider, prefs)?;
@@ -711,11 +711,11 @@ where
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_rules)]
     pub fn try_new_with_rules_unstable(
-        provider: &(impl DataProvider<PluralRangesV1> + ?Sized),
+        provider: &(impl DataProvider<PluralsRangesV1> + ?Sized),
         prefs: PluralRulesPreferences,
         rules: R,
     ) -> Result<Self, DataError> {
-        let locale = PluralRangesV1::make_locale(prefs.locale_preferences);
+        let locale = PluralsRangesV1::make_locale(prefs.locale_preferences);
         let ranges = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),

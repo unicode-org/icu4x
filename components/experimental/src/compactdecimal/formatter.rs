@@ -146,7 +146,7 @@ impl CompactDecimalFormatter {
         D: DataProvider<ShortCompactDecimalFormatDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + ?Sized,
     {
         let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
@@ -232,7 +232,7 @@ impl CompactDecimalFormatter {
         D: DataProvider<LongCompactDecimalFormatDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + ?Sized,
     {
         let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);

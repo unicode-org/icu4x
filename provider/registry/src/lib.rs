@@ -71,8 +71,8 @@ macro_rules! registry(
             icu::normalizer::provider::CompatibilityDecompositionTablesV1: CompatibilityDecompositionTablesV1,
             icu::normalizer::provider::NonRecursiveDecompositionSupplementV1: NonRecursiveDecompositionSupplementV1,
             icu::normalizer::provider::Uts46DecompositionDataV2: Uts46DecompositionDataV2,
-            icu::plurals::provider::CardinalV1: CardinalV1,
-            icu::plurals::provider::OrdinalV1: OrdinalV1,
+            icu::plurals::provider::PluralsCardinalV1: PluralsCardinalV1,
+            icu::plurals::provider::PluralsOrdinalV1: PluralsOrdinalV1,
             icu::properties::provider::AlnumV1: AlnumV1,
             icu::properties::provider::AlphabeticV1: AlphabeticV1,
             icu::properties::provider::AsciiHexDigitV1: AsciiHexDigitV1,
@@ -290,7 +290,7 @@ macro_rules! registry(
             icu::experimental::personnames::provider::PersonNamesFormatV1: PersonNamesFormatV1,
             icu::experimental::transliterate::provider::TransliteratorRulesV1: TransliteratorRulesV1,
             icu::experimental::units::provider::UnitsInfoV1: UnitsInfoV1,
-            icu::plurals::provider::PluralRangesV1: PluralRangesV1,
+            icu::plurals::provider::PluralsRangesV1: PluralsRangesV1,
         );
     }
 );
