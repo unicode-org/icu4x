@@ -103,12 +103,12 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<IcuRatio> {
-        if !(input_unit.contained_units.len() == 1
-            && output_unit.contained_units.len() == 1
-            && input_unit.contained_units[0].power == 1
-            && output_unit.contained_units[0].power == 1
-            && input_unit.contained_units[0].si_prefix.power == 0
-            && output_unit.contained_units[0].si_prefix.power == 0)
+        if !(input_unit.single_units.len() == 1
+            && output_unit.single_units.len() == 1
+            && input_unit.single_units[0].power == 1
+            && output_unit.single_units[0].power == 1
+            && input_unit.single_units[0].si_prefix.power == 0
+            && output_unit.single_units[0].si_prefix.power == 0)
         {
             return Some(IcuRatio::zero());
         }
@@ -117,7 +117,7 @@ impl ConverterFactory {
             .payload
             .get()
             .convert_infos
-            .get(input_unit.contained_units[0].unit_id as usize);
+            .get(input_unit.single_units[0].unit_id as usize);
         debug_assert!(
             input_conversion_info.is_some(),
             "Failed to get input conversion info"
@@ -128,7 +128,7 @@ impl ConverterFactory {
             .payload
             .get()
             .convert_infos
-            .get(output_unit.contained_units[0].unit_id as usize);
+            .get(output_unit.single_units[0].unit_id as usize);
         debug_assert!(
             output_conversion_info.is_some(),
             "Failed to get output conversion info"
@@ -221,8 +221,8 @@ impl ConverterFactory {
             }
         }
 
-        let unit1 = &unit1.contained_units;
-        let unit2 = &unit2.contained_units;
+        let unit1 = &unit1.single_units;
+        let unit2 = &unit2.single_units;
 
         let mut map = LiteMap::new();
         insert_non_basic_units(self, unit1, 1, &mut map)?;
@@ -282,11 +282,11 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_item in input_unit.contained_units.iter() {
+        for input_item in input_unit.single_units.iter() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
-        for output_item in output_unit.contained_units.iter() {
+        for output_item in output_unit.single_units.iter() {
             conversion_rate *=
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }

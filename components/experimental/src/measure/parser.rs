@@ -153,7 +153,7 @@ impl<'data> MeasureUnitParser<'data> {
         }
 
         Ok(MeasureUnit {
-            contained_units: measure_unit_items.into(),
+            single_units: measure_unit_items.into(),
         })
     }
 }

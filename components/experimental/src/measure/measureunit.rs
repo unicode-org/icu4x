@@ -13,7 +13,13 @@ use super::provider::single_unit::SingleUnit;
 ///   - To construct a MeasureUnit from a cldr unit identifier, use the `MeasureUnitParser`.
 #[derive(Debug)]
 pub struct MeasureUnit {
-    // TODO: make this field private and add functions to use it.
     /// Contains the processed units.
-    pub contained_units: SmallVec<[SingleUnit; 8]>,
+    pub(crate) single_units: SmallVec<[SingleUnit; 8]>,
+}
+
+impl MeasureUnit {
+    /// Returns a reference to the single units of the measure unit.
+    pub fn get_single_units(&self) -> &SmallVec<[SingleUnit; 8]> {
+        &self.single_units
+    }
 }
