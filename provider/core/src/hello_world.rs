@@ -42,8 +42,8 @@ impl Default for HelloWorld<'_> {
 }
 
 impl<'a> HelloWorld<'a> {
-    fn encode_as_varule(&'a self) -> Box<str> {
-        Box::from(&*self.message)
+    fn encode_as_varule(&self) -> &str {
+        &self.message
     }
     fn from_varule(message: &'a str) -> Self {
         Self {

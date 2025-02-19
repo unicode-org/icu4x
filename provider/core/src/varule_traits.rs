@@ -27,7 +27,7 @@ pub trait MaybeAsVarULE {
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
     /// Returns the [`MaybeAsVarULE::VarULE`] that represents this data struct,
     /// or `None` if the data struct does not support this representation.
-    fn maybe_encode_as_varule(&self) -> Option<Box<Self::VarULE>>;
+    fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE>;
 }
 
 /// Runtime trait associated with [`MaybeAsVarULE`]. See that trait
@@ -75,7 +75,7 @@ macro_rules! __data_struct {
         }
         $(#[$attr])*
         impl<$generic: $bound> $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<alloc::boxed::Box<Self::VarULE>> {
+            fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE> {
                 None
             }
         }
@@ -86,7 +86,7 @@ macro_rules! __data_struct {
         }
         $(#[$attr])*
         impl $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<alloc::boxed::Box<Self::VarULE>> {
+            fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE> {
                 None
             }
         }
@@ -103,7 +103,7 @@ macro_rules! __data_struct {
         }
         $(#[$attr])*
         impl<'data> $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<Box<Self::VarULE>> {
+            fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE> {
                 Some($encode_as_varule(self))
             }
         }
