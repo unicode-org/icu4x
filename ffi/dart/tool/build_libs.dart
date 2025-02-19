@@ -52,15 +52,7 @@ Future<void> main(List<String> args) async {
 
   // We assume that the first folder to contain a cargo.toml above the
   // output directory is the directory containing the ICU4X code.
-  FileSystemEntity icu4xPath = File.fromUri(Platform.script);
-  while (!File.fromUri(icu4xPath.uri.resolve('Cargo.toml')).existsSync()) {
-    icu4xPath = icu4xPath.parent;
-    if (icu4xPath.parent == icu4xPath) {
-      throw ArgumentError(
-        'Running in the wrong directory, as no Cargo.toml exists above ${Platform.script}',
-      );
-    }
-  }
+  Directory icu4xPath = recurseToParentRustCrate(File.fromUri(Platform.script));
 
   final libFileName = targetOS.filename(buildStatic)(
     crateName.replaceAll('-', '_'),
@@ -75,6 +67,20 @@ Future<void> main(List<String> args) async {
     icu4xPath.path,
     cargoFeatures: cargoFeatures,
   );
+}
+
+Directory recurseToParentRustCrate(FileSystemEntity startingPoint) {
+  var folder =
+      startingPoint is Directory ? startingPoint : startingPoint.parent;
+  while (!File.fromUri(folder.uri.resolve('Cargo.toml')).existsSync()) {
+    folder = folder.parent;
+    if (folder.parent == folder) {
+      throw ArgumentError(
+        'Running in the wrong directory, as no Cargo.toml exists above $startingPoint',
+      );
+    }
+  }
+  return folder;
 }
 
 Future<Uri> buildLibraryFromInput(
@@ -121,55 +127,52 @@ Future<void> buildLib(
       workingDirectory: workingDirectory,
     );
   }
-  final tempDir = await Directory.systemTemp.createTemp();
-  final stdFeatures = [
+  final features = [
     'default_components',
-    'icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals',
+    'icu_collator',
+    'icu_datetime',
+    'icu_list',
+    'icu_decimal',
+    'icu_plurals',
     'compiled_data',
     'buffer_provider',
-    'logging',
-    'simple_logger',
     'experimental_components',
   ];
-  final noStdFeatures = [
-    'default_components',
-    'icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals',
-    'compiled_data',
-    'buffer_provider',
-    'libc_alloc',
-    'panic_handler',
-    'experimental_components',
-  ];
-  final linkModeType = buildStatic ? 'staticlib' : 'cdylib';
+  final stdFeatures = ['logging', 'simple_logger'];
+  final noStdFeatures = ['libc_alloc', 'panic_handler'];
   final arguments = [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
     '-p=$crateName',
-    '--crate-type=$linkModeType',
+    '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
     '--release',
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
     isNoStd
-        ? '--features=${noStdFeatures.join(',')}'
-        : '--features=${stdFeatures.join(',')}',
+        ? '--features=${[...features, ...noStdFeatures].join(',')}'
+        : '--features=${[...features, ...stdFeatures].join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
       '-Zbuild-std-features=panic_immediate_abort',
     ],
     '--target=$target',
-    '--target-dir=${tempDir.path}',
   ];
   await runProcess('cargo', arguments, workingDirectory: workingDirectory);
 
-  final builtPath = path.join(tempDir.path, target, 'release', libFileName);
+  final builtPath = path.join(
+    workingDirectory,
+    'target',
+    target,
+    'release',
+    libFileName,
+  );
   final file = File(builtPath);
   if (!(await file.exists())) {
     throw FileSystemException('Building the dylib failed', builtPath);
   }
   await file.copy(libFileUri.toFilePath(windows: Platform.isWindows));
-  await tempDir.delete(recursive: true);
 }
 
 String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {

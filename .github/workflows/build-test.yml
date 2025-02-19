@@ -371,9 +371,9 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c
+    - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: stable
+        sdk: 3.7.0
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
