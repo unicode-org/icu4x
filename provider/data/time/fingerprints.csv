@@ -1,4 +1,4 @@
-time/zone/iana/map/v1, <singleton>, 9543B, 9500B, 7218ae639c063764
-time/zone/iana/names/v1, <singleton>, 9738B, 9716B, f6a229e9b933e676
+time/zone/iana/map/v1, <singleton>, 9541B, 9498B, 8589308b6a1434ca
+time/zone/iana/names/v1, <singleton>, 9738B, 9716B, d024b109e40c0e01
 time/zone/offsets/v1, <singleton>, 13410B, 13322B, dda8d1981591b7cc
 time/zone/windows/v1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd
