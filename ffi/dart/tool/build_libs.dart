@@ -65,7 +65,7 @@ Future<void> main(List<String> args) async {
     out,
     libFileName,
     icu4xPath.path,
-    cargoFeatures: cargoFeatures,
+    cargoFeatures: cargoFeatures.isNotEmpty ? cargoFeatures : null,
   );
 }
 
@@ -115,7 +115,7 @@ Future<void> buildLib(
   Uri libFileUri,
   String libFileName,
   String workingDirectory, {
-  List<String> cargoFeatures = const [],
+  List<String>? cargoFeatures,
 }) async {
   final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
   final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
@@ -143,13 +143,13 @@ Future<void> buildLib(
   final arguments = [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
-    '-p=$crateName',
+    '--manifest-path=$workingDirectory/ffi/capi/Cargo.toml',
     '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
     '--release',
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${[...features, ...(isNoStd ? noStdFeatures : stdFeatures)].join(',')}',
+    '--features=${cargoFeatures ?? [...features, ...(isNoStd ? noStdFeatures : stdFeatures)].join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
