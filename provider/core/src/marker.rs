@@ -566,7 +566,7 @@ pub use __data_marker_id as data_marker_id;
 #[macro_export]
 #[doc(hidden)] // macro
 macro_rules! __data_marker {
-    ($(#[$doc:meta])* $name:ident, $($debug:literal,)? $struct:ty $(, $info_field:ident = $info_val:expr)* $(,)?) => {
+    ($(#[$doc:meta])* $name:ident, $($debug:literal,)? $struct:ty $(, $(#[$meta:meta])* $info_field:ident = $info_val:expr)* $(,)?) => {
         $(#[$doc])*
         pub struct $name;
         impl $crate::DynamicDataMarker for $name {
@@ -595,7 +595,8 @@ macro_rules! __data_marker {
                 #[allow(unused_mut)]
                 let mut info = $crate::DataMarkerInfo::from_id($crate::marker::data_marker_id!($name));
                 $(
-                    info.$info_field = $info_val;
+                    $(#[$meta])*
+                    {info.$info_field = $info_val;}
                 )*
                 info
             };
