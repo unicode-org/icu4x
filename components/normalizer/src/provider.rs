@@ -80,7 +80,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// Marker for data for UTS-46 decomposition.
     NormalizerUts46DataV1,
-    "normalizer/uts46/data/v2",
+    "normalizer/uts46/data/v1",
     DecompositionData<'static>,
     is_singleton = true
 );
