@@ -104,6 +104,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> 
     }
 }
 
+#[cfg(feature = "experimental")]
 impl DataProvider<PluralsRangesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralsRangesV1>, DataError> {
         self.check_req::<PluralsRangesV1>(req)?;
@@ -132,6 +133,7 @@ impl DataProvider<PluralsRangesV1> for SourceDataProvider {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl IterableDataProviderCached<PluralsRangesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
@@ -144,6 +146,7 @@ impl IterableDataProviderCached<PluralsRangesV1> for SourceDataProvider {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRanges<'static> {
     fn from(other: &cldr_serde::plural_ranges::LocalePluralRanges) -> Self {
         fn convert(s: &str) -> RawPluralCategory {
@@ -210,6 +213,7 @@ fn test_basic() {
 }
 
 #[test]
+#[cfg(feature = "experimental")]
 fn test_ranges() {
     use icu::locale::langid;
 
