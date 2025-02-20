@@ -125,3 +125,34 @@ pub mod preferences {
     #[doc = "\n"] // prevent autoformatting
     pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
 }
+
+/// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
+pub mod input {
+    /// **This is a reexport of a type in [`icu_calendar`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_calendar::AnyCalendar;
+    /// **This is a reexport of a type in [`icu_calendar`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_calendar::Date;
+    /// **This is a reexport of a type in [`icu_calendar`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_calendar::Gregorian;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::zone::UtcOffset;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::DateTime;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::Time;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZone;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZoneInfo;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::ZonedDateTime;
+}
