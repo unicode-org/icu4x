@@ -8,8 +8,8 @@ use crate::{
 };
 use icu_calendar::{
     provider::{
-        ChineseCacheV1, DangiCacheV1, IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1,
-        JapaneseErasV1, JapaneseExtendedErasV1,
+        CalendarChineseV1, CalendarDangiV1, CalendarIslamicObservationalV1,
+        CalendarIslamicUmmalquraV1, CalendarJapaneseExtendedV1, CalendarJapaneseModernV1,
     },
     types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
     Date, Iso,
@@ -530,12 +530,12 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 /// for datetime formatting with any calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
-    DataProvider<ChineseCacheV1>
-    + DataProvider<DangiCacheV1>
-    + DataProvider<IslamicObservationalCacheV1>
-    + DataProvider<IslamicUmmAlQuraCacheV1>
-    + DataProvider<JapaneseErasV1>
-    + DataProvider<JapaneseExtendedErasV1>
+    DataProvider<CalendarChineseV1>
+    + DataProvider<CalendarDangiV1>
+    + DataProvider<CalendarIslamicObservationalV1>
+    + DataProvider<CalendarIslamicUmmalquraV1>
+    + DataProvider<CalendarJapaneseModernV1>
+    + DataProvider<CalendarJapaneseExtendedV1>
     + DataProvider<DecimalSymbolsV2>
     + DataProvider<DecimalDigitsV1>
 {
@@ -543,12 +543,12 @@ pub trait AllAnyCalendarExternalDataMarkers:
 
 impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
-        + DataProvider<ChineseCacheV1>
-        + DataProvider<DangiCacheV1>
-        + DataProvider<IslamicObservationalCacheV1>
-        + DataProvider<IslamicUmmAlQuraCacheV1>
-        + DataProvider<JapaneseErasV1>
-        + DataProvider<JapaneseExtendedErasV1>
+        + DataProvider<CalendarChineseV1>
+        + DataProvider<CalendarDangiV1>
+        + DataProvider<CalendarIslamicObservationalV1>
+        + DataProvider<CalendarIslamicUmmalquraV1>
+        + DataProvider<CalendarJapaneseModernV1>
+        + DataProvider<CalendarJapaneseExtendedV1>
         + DataProvider<DecimalSymbolsV2>
         + DataProvider<DecimalDigitsV1>
 {

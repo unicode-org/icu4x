@@ -17,10 +17,11 @@
 
 pub mod chinese_based;
 pub mod islamic;
-pub use chinese_based::{ChineseCacheV1, DangiCacheV1};
-pub use islamic::{IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1};
+pub use chinese_based::{CalendarChineseV1, CalendarDangiV1};
+pub use islamic::{CalendarIslamicObservationalV1, CalendarIslamicUmmalquraV1};
 
 use crate::types::Weekday;
+use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
@@ -45,25 +46,51 @@ const _: () = {
         pub use icu_calendar_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_chinese_cache_v1!(Baked);
-    impl_dangi_cache_v1!(Baked);
-    impl_islamic_observational_cache_v1!(Baked);
-    impl_islamic_umm_al_qura_cache_v1!(Baked);
-    impl_japanese_eras_v1!(Baked);
-    impl_japanese_extended_eras_v1!(Baked);
-    impl_week_data_v2!(Baked);
+    impl_calendar_chinese_v1!(Baked);
+    impl_calendar_dangi_v1!(Baked);
+    impl_calendar_islamic_observational_v1!(Baked);
+    impl_calendar_islamic_ummalqura_v1!(Baked);
+    impl_calendar_japanese_modern_v1!(Baked);
+    impl_calendar_japanese_extended_v1!(Baked);
+    impl_calendar_week_v2!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// Modern Japanese era names
+    CalendarJapaneseModernV1,
+    "calendar/japanese/modern/v1",
+    JapaneseEras<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Full Japanese era names
+    CalendarJapaneseExtendedV1,
+    "calendar/japanese/extended/v1",
+    JapaneseEras<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Week information
+    CalendarWeekV2,
+    "calendar/week/v2",
+    WeekData,
+    fallback_config = {
+        let mut config = LocaleFallbackConfig::default();
+        config.priority = LocaleFallbackPriority::Region;
+        config
+    },
+);
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    ChineseCacheV1::INFO,
-    DangiCacheV1::INFO,
-    IslamicObservationalCacheV1::INFO,
-    IslamicUmmAlQuraCacheV1::INFO,
-    JapaneseErasV1::INFO,
-    JapaneseExtendedErasV1::INFO,
-    WeekDataV2::INFO,
+    CalendarChineseV1::INFO,
+    CalendarDangiV1::INFO,
+    CalendarIslamicObservationalV1::INFO,
+    CalendarIslamicUmmalquraV1::INFO,
+    CalendarJapaneseModernV1::INFO,
+    CalendarJapaneseExtendedV1::INFO,
+    CalendarWeekV2::INFO,
 ];
 
 /// The date at which an era started
@@ -99,11 +126,7 @@ pub struct EraStartDate {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(JapaneseErasV1, "calendar/japanese@1", singleton),
-    marker(JapaneseExtendedErasV1, "calendar/japanext@1", singleton)
-)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -121,8 +144,7 @@ pub struct JapaneseEras<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(WeekDataV2, "datetime/week_data@2", fallback_by = "region"))]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

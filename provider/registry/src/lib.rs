@@ -21,13 +21,13 @@
 macro_rules! registry(
     ($cb:ident) => {
         cb!(
-            icu::calendar::provider::ChineseCacheV1: ChineseCacheV1,
-            icu::calendar::provider::DangiCacheV1: DangiCacheV1,
-            icu::calendar::provider::JapaneseErasV1: JapaneseErasV1,
-            icu::calendar::provider::IslamicObservationalCacheV1: IslamicObservationalCacheV1,
-            icu::calendar::provider::IslamicUmmAlQuraCacheV1: IslamicUmmAlQuraCacheV1,
-            icu::calendar::provider::JapaneseExtendedErasV1: JapaneseExtendedErasV1,
-            icu::calendar::provider::WeekDataV2: WeekDataV2,
+            icu::calendar::provider::CalendarChineseV1: CalendarChineseV1,
+            icu::calendar::provider::CalendarDangiV1: CalendarDangiV1,
+            icu::calendar::provider::CalendarJapaneseModernV1: CalendarJapaneseModernV1,
+            icu::calendar::provider::CalendarIslamicObservationalV1: CalendarIslamicObservationalV1,
+            icu::calendar::provider::CalendarIslamicUmmalquraV1: CalendarIslamicUmmalquraV1,
+            icu::calendar::provider::CalendarJapaneseExtendedV1: CalendarJapaneseExtendedV1,
+            icu::calendar::provider::CalendarWeekV2: CalendarWeekV2,
             icu::casemap::provider::CaseMapV1: CaseMapV1,
             icu::casemap::provider::CaseMapUnfoldV1: CaseMapUnfoldV1,
             icu::collator::provider::CollationRootV1: CollationRootV1,
@@ -71,8 +71,8 @@ macro_rules! registry(
             icu::normalizer::provider::CompatibilityDecompositionTablesV1: CompatibilityDecompositionTablesV1,
             icu::normalizer::provider::NonRecursiveDecompositionSupplementV1: NonRecursiveDecompositionSupplementV1,
             icu::normalizer::provider::Uts46DecompositionDataV2: Uts46DecompositionDataV2,
-            icu::plurals::provider::CardinalV1: CardinalV1,
-            icu::plurals::provider::OrdinalV1: OrdinalV1,
+            icu::plurals::provider::PluralsCardinalV1: PluralsCardinalV1,
+            icu::plurals::provider::PluralsOrdinalV1: PluralsOrdinalV1,
             icu::properties::provider::AlnumV1: AlnumV1,
             icu::properties::provider::AlphabeticV1: AlphabeticV1,
             icu::properties::provider::AsciiHexDigitV1: AsciiHexDigitV1,
@@ -290,7 +290,7 @@ macro_rules! registry(
             icu::experimental::personnames::provider::PersonNamesFormatV1: PersonNamesFormatV1,
             icu::experimental::transliterate::provider::TransliteratorRulesV1: TransliteratorRulesV1,
             icu::experimental::units::provider::UnitsInfoV1: UnitsInfoV1,
-            icu::plurals::provider::PluralRangesV1: PluralRangesV1,
+            icu::plurals::provider::PluralsRangesV1: PluralsRangesV1,
         );
     }
 );

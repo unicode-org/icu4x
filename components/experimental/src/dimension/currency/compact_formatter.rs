@@ -131,7 +131,7 @@ impl CompactCurrencyFormatter {
             + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
 

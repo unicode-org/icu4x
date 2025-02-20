@@ -18,9 +18,7 @@ impl DataProvider<DecimalDigitsV1> for SourceDataProvider {
             panic!("Found empty numbering system")
         }
 
-        let result = DecimalDigits {
-            digits: self.get_digits_for_numbering_system(nsname)?,
-        };
+        let result = self.get_digits_for_numbering_system(nsname)?;
 
         Ok(DataResponse {
             metadata: Default::default(),

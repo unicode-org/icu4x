@@ -1,7 +1,7 @@
 // @generated
-include!("ordinal_v1.rs.data");
-include!("plural_ranges_v1.rs.data");
-include!("cardinal_v1.rs.data");
+include!("plurals_ordinal_v1.rs.data");
+include!("plurals_cardinal_v1.rs.data");
+include!("plurals_ranges_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -31,8 +31,8 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_ordinal_v1!($provider);
-        impl_plural_ranges_v1!($provider);
-        impl_cardinal_v1!($provider);
+        impl_plurals_ordinal_v1!($provider);
+        impl_plurals_cardinal_v1!($provider);
+        impl_plurals_ranges_v1!($provider);
     };
 }

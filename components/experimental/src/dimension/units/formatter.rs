@@ -136,7 +136,7 @@ impl UnitsFormatter {
             + DataProvider<super::super::provider::units::UnitsDisplayNameV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new_unstable(

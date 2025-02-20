@@ -138,7 +138,7 @@ impl DurationUnitFormatter {
             + DataProvider<UnitsDisplayNameV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     >(
         provider: &D,
         prefs: DurationFormatterPreferences,
@@ -234,7 +234,7 @@ impl DurationFormatter {
             + DataProvider<UnitsDisplayNameV1>
             + DataProvider<DecimalSymbolsV2>
             + DataProvider<DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + DataProvider<icu_list::provider::ListUnitV2>
             + ?Sized,
     >(
