@@ -9,13 +9,6 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "Akre letnje računanje vremena"
-    ],
-    [
-      [
         6,
         "Standard"
       ],
@@ -27,20 +20,6 @@
         "Daylight"
       ],
       "Zapadno-afričko letnje vreme"
-    ],
-    [
-      [
-        7,
-        "Standard"
-      ],
-      "Almati standardno vreme"
-    ],
-    [
-      [
-        7,
-        "Daylight"
-      ],
-      "Almati letnje računanje vremena"
     ],
     [
       [
@@ -135,13 +114,6 @@
     ],
     [
       [
-        14,
-        "Daylight"
-      ],
-      "Anadir letnje računanje vremena"
-    ],
-    [
-      [
         15,
         "Standard"
       ],
@@ -156,27 +128,6 @@
     ],
     [
       [
-        16,
-        "Standard"
-      ],
-      "Akvatau standardno vreme"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "Akvatau letnje računanje vremena"
-    ],
-    [
-      [
-        17,
-        "Standard"
-      ],
-      "Akutobe standardno vreme"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -184,38 +135,10 @@
     ],
     [
       [
-        18,
-        "Daylight"
-      ],
-      "Arabijsko letnje vreme"
-    ],
-    [
-      [
         19,
         "Standard"
       ],
       "Argentina, standardno vreme"
-    ],
-    [
-      [
-        19,
-        "Daylight"
-      ],
-      "Argentina, letnje vreme"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "Zapadna Argentina, standardno vreme"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Zapadna Argentina, letnje vreme"
     ],
     [
       [
@@ -254,13 +177,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "Australijsko centralno zapadno letnje vreme"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -279,13 +195,6 @@
         "Standard"
       ],
       "Australijsko zapadno standardno vreme"
-    ],
-    [
-      [
-        26,
-        "Daylight"
-      ],
-      "Australijsko zapadno letnje vreme"
     ],
     [
       [
@@ -310,13 +219,6 @@
     ],
     [
       [
-        38,
-        "Daylight"
-      ],
-      "Čile, letnje vreme"
-    ],
-    [
-      [
         39,
         "Standard"
       ],
@@ -328,13 +230,6 @@
         "Standard"
       ],
       "Kukova ostrva, standardno vreme"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "Kukova ostrva, polu-letnje vreme"
     ],
     [
       [
@@ -401,13 +296,6 @@
     ],
     [
       [
-        54,
-        "Daylight"
-      ],
-      "Folklandska Ostrva, letnje vreme"
-    ],
-    [
-      [
         62,
         "Standard"
       ],
@@ -457,13 +345,6 @@
     ],
     [
       [
-        69,
-        "Daylight"
-      ],
-      "Hong Kong, letnje vreme"
-    ],
-    [
-      [
         78,
         "Standard"
       ],
@@ -499,13 +380,6 @@
     ],
     [
       [
-        82,
-        "Daylight"
-      ],
-      "Petropavlovsko-kamčatsko letnje računanje vremena"
-    ],
-    [
-      [
         85,
         "Standard"
       ],
@@ -513,24 +387,10 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "Korejsko letnje vreme"
-    ],
-    [
-      [
         87,
         "Standard"
       ],
       "Krasnojarsk, standardno vreme"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "Krasnojarsk, letnje vreme"
     ],
     [
       [
@@ -545,34 +405,6 @@
         "Daylight"
       ],
       "Lord Hov, letnje vreme"
-    ],
-    [
-      [
-        92,
-        "Standard"
-      ],
-      "Makao standardno vreme"
-    ],
-    [
-      [
-        92,
-        "Daylight"
-      ],
-      "Makao letnje računanje vremena"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Magadan, standardno vreme"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "Magadan, letnje vreme"
     ],
     [
       [
@@ -594,13 +426,6 @@
         "Standard"
       ],
       "Moskva, standardno vreme"
-    ],
-    [
-      [
-        103,
-        "Daylight"
-      ],
-      "Moskva, letnje vreme"
     ],
     [
       [
@@ -653,52 +478,10 @@
     ],
     [
       [
-        113,
-        "Daylight"
-      ],
-      "Fernando de Noronja, letnje vreme"
-    ],
-    [
-      [
-        114,
-        "Standard"
-      ],
-      "Novosibirsk, standardno vreme"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "Novosibirsk, letnje vreme"
-    ],
-    [
-      [
-        127,
-        "Standard"
-      ],
-      "Kizilorda standardno vreme"
-    ],
-    [
-      [
-        127,
-        "Daylight"
-      ],
-      "Kizilorda letnje računanje vremena"
-    ],
-    [
-      [
         131,
         "Standard"
       ],
       "Samara standardno vreme"
-    ],
-    [
-      [
-        131,
-        "Daylight"
-      ],
-      "Samara letnje računanje vremena"
     ],
     [
       [
@@ -716,24 +499,10 @@
     ],
     [
       [
-        140,
-        "Daylight"
-      ],
-      "Tajpej, letnje vreme"
-    ],
-    [
-      [
         148,
         "Standard"
       ],
       "Uzbekistan, standardno vreme"
-    ],
-    [
-      [
-        148,
-        "Daylight"
-      ],
-      "Uzbekistan, letnje vreme"
     ],
     [
       [
@@ -744,24 +513,10 @@
     ],
     [
       [
-        151,
-        "Daylight"
-      ],
-      "Vladivostok, letnje vreme"
-    ],
-    [
-      [
         156,
         "Standard"
       ],
       "Jakutsk, standardno vreme"
-    ],
-    [
-      [
-        156,
-        "Daylight"
-      ],
-      "Jakutsk, letnje vreme"
     ]
   ],
   "overrides": [
@@ -802,13 +557,11 @@
     46,
     48,
     49,
-    52,
     56,
     57,
     58,
     59,
     61,
-    65,
     66,
     67,
     71,
@@ -822,7 +575,6 @@
     84,
     86,
     88,
-    89,
     90,
     94,
     95,
@@ -834,7 +586,6 @@
     105,
     107,
     110,
-    111,
     117,
     118,
     122,

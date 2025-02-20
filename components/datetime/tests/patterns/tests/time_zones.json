@@ -146,6 +146,26 @@
   },
   {
     "locale": "en",
+    "datetime": "2008-02-21T12:00:00.000-04:00[America/Argentina/San_Luis]",
+    "expectations": {
+      "z": "GMT-4",
+      "zzzz": "San Luis Standard Time",
+
+      "v": "San Luis Time",
+      "vvvv": "San Luis Time",
+
+      "VVV": "San Luis",
+      "VVVV": "San Luis Time",
+
+      "O": "GMT-4",
+      "OOOO": "GMT-04:00",
+
+      "xxxx": "-0400",
+      "XXXXX": "-04:00"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
     "expectations": {
       "z": "GMT-7",
