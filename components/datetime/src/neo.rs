@@ -163,7 +163,7 @@ where
     ///
     /// ```
     /// use icu::datetime::input::Date;
-    /// use icu::datetime::input::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
@@ -336,7 +336,7 @@ where
     ///
     /// ```compile_fail,E0277
     /// use icu::datetime::input::Time;
-    /// use icu::datetime::input::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::locale::locale;
@@ -745,7 +745,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
@@ -861,7 +861,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};

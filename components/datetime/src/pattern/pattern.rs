@@ -36,7 +36,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// ```
 /// use icu::datetime::input::Date;
-/// use icu::datetime::input::Gregorian;
+/// use icu_calendar::Gregorian;
 /// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::pattern::DateTimePattern;

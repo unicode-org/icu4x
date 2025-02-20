@@ -130,9 +130,6 @@ pub mod input {
     /// **This is a reexport of a type in [`icu_calendar`]**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_calendar::Date;
-    /// **This is a reexport of a type in [`icu_calendar`]**.
-    #[doc = "\n"] // prevent autoformatting
-    pub use icu_calendar::Gregorian;
     /// **This is a reexport of a type in [`icu_time`]**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_time::zone::UtcOffset;
