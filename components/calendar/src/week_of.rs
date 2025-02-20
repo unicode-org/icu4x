@@ -60,7 +60,6 @@ impl WeekCalculator {
                 min_week_days: response.payload.get().min_week_days,
                 weekend: Some(response.payload.get().weekend),
             })
-            .map_err(Into::into)
     }
 
     /// Returns the week of month according to a calendar with min_week_days = 1.
