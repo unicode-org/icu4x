@@ -25,8 +25,8 @@ icu_casemap = { workspace = true }
 icu_collator = { workspace = true }
 icu_collections = { workspace = true }
 icu_datetime = { workspace = true }
-icu_decimal = { workspace = true }
-icu_list = { workspace = true }
+icu_decimal = { workspace = true, features = ["alloc"]  }
+icu_list = { workspace = true, features = ["alloc"] }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
