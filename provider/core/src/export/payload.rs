@@ -77,7 +77,8 @@ where
             .collect();
         let vzv: VarZeroVec<<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::VarULE> =
             VarZeroVec::from(&recovered_vec);
-        Some(vzv.bake(ctx))
+        let vzs = vzv.as_slice();
+        Some(vzs.bake(ctx))
     }
 
     fn as_any(&self) -> &dyn Any {
