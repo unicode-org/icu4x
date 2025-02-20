@@ -16,18 +16,15 @@ pub use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroSlice;
 
 #[cfg(feature = "export")]
-use zerovec::VarZeroVec;
-
-#[cfg(feature = "export")]
-pub(crate) enum BakedValue {
-    VarULE(Box<[u8]>),
-    Struct(databake::TokenStream),
-}
+use icu_provider::export::ExportMarker;
 
 #[cfg(feature = "export")]
 pub(crate) fn bake(
     marker_bake: &databake::TokenStream,
-    bakes_to_ids: &[(BakedValue, &std::collections::BTreeSet<DataIdentifierCow>)],
+    bakes_to_ids: &[(
+        &DataPayload<ExportMarker>,
+        &std::collections::BTreeSet<DataIdentifierCow>,
+    )],
     ctx: &databake::CrateEnv,
 ) -> (databake::TokenStream, usize) {
     use databake::*;
@@ -52,45 +49,30 @@ pub(crate) fn bake(
         const TRIE: icu_provider_baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider_baked:: #baked_trie;
     };
 
-    let use_vzv = matches!(bakes_to_ids.first(), Some((BakedValue::VarULE(_), _)));
+    let payloads = bakes_to_ids
+        .iter()
+        .map(|(payload, _)| *payload)
+        .collect::<Vec<_>>();
 
-    let (baked_values, value_store_ty) = if !use_vzv {
-        let bakes = bakes_to_ids.iter().map(|(bake, _)| match bake {
-            BakedValue::Struct(tokens) => tokens,
-            BakedValue::VarULE(_) => {
-                unreachable!(
-                    "All instances should equivalently return Some or None in MaybeEncodeAsVarULE"
-                )
-            }
-        });
+    let maybe_vzv_tokens = DataPayload::tokenize_to_varzerovec(&payloads, ctx);
+
+    let (baked_values, value_store_ty) = if let Some(vzv_tokens) = maybe_vzv_tokens {
+        (
+            quote! {
+                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeEncodeAsVarULE>::VarULE> = #vzv_tokens;
+            },
+            quote! {
+                icu_provider_baked::zerotrie::DataForVarULEs
+            },
+        )
+    } else {
+        let bakes = payloads.iter().map(|payload| payload.tokenize(ctx));
         (
             quote! {
                 const VALUES: &'static [<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
             },
             quote! {
                 icu_provider_baked::zerotrie::Data
-            },
-        )
-    } else {
-        let byteses = bakes_to_ids
-            .iter()
-            .map(|(bake, _)| match bake {
-                BakedValue::VarULE(bytes) => &**bytes,
-                BakedValue::Struct(_) => {
-                    unreachable!(
-                        "All instances should equivalently return Some or None in MaybeEncodeAsVarULE"
-                    )
-                }
-            })
-            .collect::<Vec<&[u8]>>();
-        let vzv = VarZeroVec::<[u8]>::from(&byteses);
-        let vzv_bytes = vzv.as_bytes().bake(ctx);
-        (
-            quote! {
-                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::marker::MaybeEncodeAsVarULE>::VarULE> = unsafe { zerovec::VarZeroSlice::from_bytes_unchecked(#vzv_bytes) };
-            },
-            quote! {
-                icu_provider_baked::zerotrie::DataForVarULEs
             },
         )
     };

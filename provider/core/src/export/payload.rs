@@ -4,25 +4,29 @@
 
 use core::any::Any;
 
-use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
 use crate::ule::MaybeEncodeAsVarULE;
+use crate::{dynutil::UpcastDataPayload, ule::MaybeAsVarULE};
 use alloc::sync::Arc;
 use databake::{Bake, BakeSize, CrateEnv, TokenStream};
 use yoke::*;
-use zerovec::ule::VarULE;
+use zerovec::VarZeroVec;
 
 #[cfg(doc)]
 use crate::ule::MaybeAsVarULE;
 
 trait ExportableDataPayload {
-    fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
+    fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream;
     fn bake_size(&self) -> usize;
     fn serialize_yoke(
         &self,
         serializer: &mut dyn erased_serde::Serializer,
     ) -> Result<(), DataError>;
-    fn maybe_as_varule_bytes(&self) -> Option<Box<[u8]>>;
+    fn maybe_bake_varule_encoded(
+        &self,
+        rest: &[&DataPayload<ExportMarker>],
+        ctx: &CrateEnv,
+    ) -> Option<TokenStream>;
     fn as_any(&self) -> &dyn Any;
     fn eq_dyn(&self, other: &dyn ExportableDataPayload) -> bool;
 }
@@ -51,11 +55,29 @@ where
         Ok(())
     }
 
-    fn maybe_as_varule_bytes(&self) -> Option<Box<[u8]>> {
-        self.get()
-            .maybe_encode_as_varule()
-            .map(|encode_as_varule| zerovec::ule::encode_varule_to_box(&encode_as_varule))
-            .map(|boxed_varule| boxed_varule.as_bytes().to_boxed())
+    fn maybe_bake_varule_encoded(
+        &self,
+        rest: &[&DataPayload<ExportMarker>],
+        ctx: &CrateEnv,
+    ) -> Option<TokenStream> {
+        let first_varule = self.get().maybe_encode_as_varule()?;
+        let recovered_vec: Vec<
+            &<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::VarULE,
+        > = core::iter::once(first_varule)
+            .chain(rest.iter().map(|v| {
+                v.get()
+                    .payload
+                    .as_any()
+                    .downcast_ref::<Self>()
+                    .expect("payloads expected to be same type")
+                    .get()
+                    .maybe_encode_as_varule()
+                    .expect("MaybeEncodeAsVarULE impl should be symmetric")
+            }))
+            .collect();
+        let vzv: VarZeroVec<<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::VarULE> =
+            VarZeroVec::from(&recovered_vec);
+        Some(vzv.bake(ctx))
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -181,14 +203,15 @@ impl DataPayload<ExportMarker> {
     ///         .collect::<BTreeSet<_>>()
     /// );
     /// ```
-    pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {
-        self.get().payload.bake_yoke(env)
+    pub fn tokenize(&self, ctx: &CrateEnv) -> TokenStream {
+        self.get().payload.bake_yoke(ctx)
     }
 
-    /// If this type can be dereferenced as a [`VarULE`], returns bytes
-    /// valid as a [`MaybeAsVarULE::VarULE`].
-    pub fn maybe_as_varule_bytes(&self) -> Option<Box<[u8]>> {
-        self.get().payload.maybe_as_varule_bytes()
+    /// If this payload's struct can be dereferenced as a [`VarULE`],
+    /// returns a [`TokenStream`] of the slice encoded as a [`VarZeroVec`].
+    pub fn tokenize_to_varzerovec(structs: &[&Self], ctx: &CrateEnv) -> Option<TokenStream> {
+        let (first, rest) = structs.split_first()?;
+        first.get().payload.maybe_bake_varule_encoded(rest, ctx)
     }
 
     /// Returns the data size using postcard encoding

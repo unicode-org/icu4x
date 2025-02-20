@@ -105,8 +105,6 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-use crate::zerotrie::BakedValue;
-
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
 
@@ -572,14 +570,7 @@ impl DataExporter for BakedExporter {
                     stats.structs_count += 1;
                     stats.identifiers_count += ids.len();
                     stats.structs_total_size += payload.baked_size();
-
-                    let baked_value = payload
-                        .maybe_as_varule_bytes()
-                        .map(BakedValue::VarULE)
-                        .unwrap_or_else(|| {
-                            BakedValue::Struct(payload.tokenize(&self.dependencies))
-                        });
-                    (baked_value, ids)
+                    (payload, ids)
                 })
                 .collect::<Vec<_>>();
 
