@@ -133,7 +133,7 @@ part 'SentenceBreakIteratorUtf16.g.dart';
 part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
-part 'TimeFormatter.g.dart';
+part 'NoCalendarFormatter.g.dart';
 part 'TimePrecision.g.dart';
 part 'TimeZoneAndCanonical.g.dart';
 part 'TimeZoneAndCanonicalAndNormalized.g.dart';

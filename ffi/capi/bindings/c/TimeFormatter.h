@@ -1,5 +1,5 @@
-#ifndef TimeFormatter_H
-#define TimeFormatter_H
+#ifndef NoCalendarFormatter_H
+#define NoCalendarFormatter_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -13,26 +13,26 @@
 #include "Locale.d.h"
 #include "Time.d.h"
 
-#include "TimeFormatter.d.h"
+#include "NoCalendarFormatter.d.h"
 
 
 
 
 
 
-typedef struct icu4x_TimeFormatter_create_with_length_mv1_result {union {TimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_mv1_result;
+typedef struct icu4x_TimeFormatter_create_with_length_mv1_result {union {NoCalendarFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_mv1_result;
 icu4x_TimeFormatter_create_with_length_mv1_result icu4x_TimeFormatter_create_with_length_mv1(const Locale* locale, DateTimeLength length);
 
-typedef struct icu4x_TimeFormatter_create_with_length_and_provider_mv1_result {union {TimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_and_provider_mv1_result;
+typedef struct icu4x_TimeFormatter_create_with_length_and_provider_mv1_result {union {NoCalendarFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_and_provider_mv1_result;
 icu4x_TimeFormatter_create_with_length_and_provider_mv1_result icu4x_TimeFormatter_create_with_length_and_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
 
-void icu4x_TimeFormatter_format_mv1(const TimeFormatter* self, const Time* value, DiplomatWrite* write);
+void icu4x_TimeFormatter_format_mv1(const NoCalendarFormatter* self, const Time* value, DiplomatWrite* write);
 
 
-void icu4x_TimeFormatter_destroy_mv1(TimeFormatter* self);
+void icu4x_TimeFormatter_destroy_mv1(NoCalendarFormatter* self);
 
 
 
 
 
-#endif // TimeFormatter_H
+#endif // NoCalendarFormatter_H

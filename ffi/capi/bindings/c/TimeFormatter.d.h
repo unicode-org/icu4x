@@ -1,5 +1,5 @@
-#ifndef TimeFormatter_D_H
-#define TimeFormatter_D_H
+#ifndef NoCalendarFormatter_D_H
+#define NoCalendarFormatter_D_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -11,9 +11,9 @@
 
 
 
-typedef struct TimeFormatter TimeFormatter;
+typedef struct NoCalendarFormatter NoCalendarFormatter;
 
 
 
 
-#endif // TimeFormatter_D_H
+#endif // NoCalendarFormatter_D_H

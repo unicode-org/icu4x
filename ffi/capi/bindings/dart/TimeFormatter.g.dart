@@ -2,12 +2,12 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
+/// An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
 ///
-/// See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.TimeFormatter.html) for more information.
+/// See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
 ///
 /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
-final class TimeFormatter implements ffi.Finalizable {
+final class NoCalendarFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -18,7 +18,7 @@ final class TimeFormatter implements ffi.Finalizable {
   // corresponding to data this may borrow from. These should be flat arrays containing
   // references to objects, and this object will hold on to them to keep them alive and
   // maintain borrow validity.
-  TimeFormatter._fromFfi(this._ffi, this._selfEdge) {
+  NoCalendarFormatter._fromFfi(this._ffi, this._selfEdge) {
     if (_selfEdge.isEmpty) {
       _finalizer.attach(this, _ffi.cast());
     }
@@ -26,30 +26,30 @@ final class TimeFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeFormatter_destroy_mv1));
 
-  /// Creates a new [`TimeFormatter`] using compiled data.
+  /// Creates a new [`NoCalendarFormatter`] using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory TimeFormatter.withLength(Locale locale, DateTimeLength length) {
+  factory NoCalendarFormatter.withLength(Locale locale, DateTimeLength length) {
     final result = _icu4x_TimeFormatter_create_with_length_mv1(locale._ffi, length.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return TimeFormatter._fromFfi(result.union.ok, []);
+    return NoCalendarFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`TimeFormatter`] using a particular data source.
+  /// Creates a new [`NoCalendarFormatter`] using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory TimeFormatter.withLengthAndProvider(DataProvider provider, Locale locale, DateTimeLength length) {
+  factory NoCalendarFormatter.withLengthAndProvider(DataProvider provider, Locale locale, DateTimeLength length) {
     final result = _icu4x_TimeFormatter_create_with_length_and_provider_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
-    return TimeFormatter._fromFfi(result.union.ok, []);
+    return NoCalendarFormatter._fromFfi(result.union.ok, []);
   }
 
   /// Formats a [`Time`] to a string.

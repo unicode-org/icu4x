@@ -17,8 +17,8 @@ namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct Time; }
 class Time;
-namespace capi { struct TimeFormatter; }
-class TimeFormatter;
+namespace capi { struct NoCalendarFormatter; }
+class NoCalendarFormatter;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
 }
@@ -26,31 +26,31 @@ class DateTimeLength;
 
 namespace icu4x {
 namespace capi {
-    struct TimeFormatter;
+    struct NoCalendarFormatter;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
-class TimeFormatter {
+class NoCalendarFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::NoCalendarFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  inline static diplomat::result<std::unique_ptr<icu4x::NoCalendarFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
   inline std::string format(const icu4x::Time& value) const;
 
-  inline const icu4x::capi::TimeFormatter* AsFFI() const;
-  inline icu4x::capi::TimeFormatter* AsFFI();
-  inline static const icu4x::TimeFormatter* FromFFI(const icu4x::capi::TimeFormatter* ptr);
-  inline static icu4x::TimeFormatter* FromFFI(icu4x::capi::TimeFormatter* ptr);
+  inline const icu4x::capi::NoCalendarFormatter* AsFFI() const;
+  inline icu4x::capi::NoCalendarFormatter* AsFFI();
+  inline static const icu4x::NoCalendarFormatter* FromFFI(const icu4x::capi::NoCalendarFormatter* ptr);
+  inline static icu4x::NoCalendarFormatter* FromFFI(icu4x::capi::NoCalendarFormatter* ptr);
   inline static void operator delete(void* ptr);
 private:
-  TimeFormatter() = delete;
-  TimeFormatter(const icu4x::TimeFormatter&) = delete;
-  TimeFormatter(icu4x::TimeFormatter&&) noexcept = delete;
-  TimeFormatter operator=(const icu4x::TimeFormatter&) = delete;
-  TimeFormatter operator=(icu4x::TimeFormatter&&) noexcept = delete;
+  NoCalendarFormatter() = delete;
+  NoCalendarFormatter(const icu4x::NoCalendarFormatter&) = delete;
+  NoCalendarFormatter(icu4x::NoCalendarFormatter&&) noexcept = delete;
+  NoCalendarFormatter operator=(const icu4x::NoCalendarFormatter&) = delete;
+  NoCalendarFormatter operator=(icu4x::NoCalendarFormatter&&) noexcept = delete;
   static void operator delete[](void*, size_t) = delete;
 };
 
