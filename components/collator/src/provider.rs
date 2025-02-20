@@ -75,7 +75,7 @@ const SCRIPT_FALLBACK: icu_provider::fallback::LocaleFallbackConfig = {
 };
 
 icu_provider::data_marker!(
-    /// Data marker for singleton roon collation data.
+    /// Data marker for singleton root collation data.
     CollationRootV1,
     "collation/root/v1",
     CollationData<'static>,
