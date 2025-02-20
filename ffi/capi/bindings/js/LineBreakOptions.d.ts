@@ -25,7 +25,7 @@ export class LineBreakOptions {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : LineBreakOptions_obj) : LineBreakOptions;
-    
+
 
     constructor(structObj : LineBreakOptions_obj);
 }

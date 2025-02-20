@@ -26,8 +26,10 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZoneI
 
   TimeZoneInfo? _current;
 
+  @override
   TimeZoneInfo get current => _current!;
 
+  @override
   bool moveNext() {
     _current = _iteratorNext();
     return _current != null;
@@ -40,12 +42,12 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZoneI
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneIterator_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneIterator_next_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneIterator_next_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);

@@ -97,42 +97,42 @@ final class Time implements ffi.Finalizable {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Time_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Time_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_create_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_Time_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int second, int subsecond);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_from_string_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Time_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(_SliceUtf8 v);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_midnight_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_midnight_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_midnight_mv1();
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_hour_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_hour_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_minute_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_minute_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_minute_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_second_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_second_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_second_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Time_subsecond_mv1')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_subsecond_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Time_subsecond_mv1(ffi.Pointer<ffi.Opaque> self);

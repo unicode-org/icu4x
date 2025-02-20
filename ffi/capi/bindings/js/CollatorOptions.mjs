@@ -65,7 +65,7 @@ export class CollatorOptions {
     static fromFields(structObj) {
         return new CollatorOptions(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("CollatorOptions's constructor takes an object of CollatorOptions's fields.");

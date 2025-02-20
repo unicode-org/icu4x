@@ -80,37 +80,37 @@ final class WeekCalculator implements ffi.Finalizable {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_WeekCalculator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_create_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_create_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WeekCalculator_create_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_create_with_provider_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WeekCalculator_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(int firstWeekday, int minWeekDays);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_first_weekday_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_first_weekday_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_WeekCalculator_first_weekday_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_min_week_days_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_min_week_days_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_WeekCalculator_min_week_days_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_WeekCalculator_weekend_mv1')
 @ffi.Native<_WeekendContainsDayFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WeekCalculator_weekend_mv1')
 // ignore: non_constant_identifier_names
 external _WeekendContainsDayFfi _icu4x_WeekCalculator_weekend_mv1(ffi.Pointer<ffi.Opaque> self);

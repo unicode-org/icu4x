@@ -28,8 +28,10 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
 
   Locale? _current;
 
+  @override
   Locale get current => _current!;
 
+  @override
   bool moveNext() {
     _current = _iteratorNext();
     return _current != null;
@@ -41,12 +43,12 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_LocaleFallbackIterator_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_LocaleFallbackIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_LocaleFallbackIterator_next_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_LocaleFallbackIterator_next_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_LocaleFallbackIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);

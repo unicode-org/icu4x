@@ -35,7 +35,7 @@ export class LineBreakOptions {
     static fromFields(structObj) {
         return new LineBreakOptions(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("LineBreakOptions's constructor takes an object of LineBreakOptions's fields.");

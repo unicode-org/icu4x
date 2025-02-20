@@ -40,7 +40,7 @@ export class CollatorOptions {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : CollatorOptions_obj) : CollatorOptions;
-    
+
 
     constructor(structObj : CollatorOptions_obj);
 }

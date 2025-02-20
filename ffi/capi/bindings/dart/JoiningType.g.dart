@@ -36,12 +36,12 @@ enum JoiningType {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_JoiningType_to_integer_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_JoiningType_to_integer_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_JoiningType_to_integer_mv1(int self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_JoiningType_from_integer_mv1')
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_JoiningType_from_integer_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_JoiningType_from_integer_mv1(int other);

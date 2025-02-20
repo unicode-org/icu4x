@@ -51,7 +51,10 @@ bool diplomat_is_str(const char* buf, size_t len);
 
 #define MAKE_SLICES_AND_OPTIONS(name, c_ty) \
     MAKE_SLICES(name, c_ty) \
-    typedef struct Option##name {union { c_ty ok; }; bool is_ok; } Option##name;
+    typedef struct Option##name {union { c_ty ok; }; bool is_ok; } Option##name; \
+    typedef struct Option##name##View {union { Diplomat##name##View ok; }; bool is_ok; } Option##name##View; \
+    typedef struct Option##name##ViewMut {union { Diplomat##name##ViewMut ok; }; bool is_ok; } Option##name##ViewMut; \
+    typedef struct Option##name##Array {union { Diplomat##name##Array ok; }; bool is_ok; } Option##name##Array; \
 
 MAKE_SLICES_AND_OPTIONS(I8, int8_t)
 MAKE_SLICES_AND_OPTIONS(U8, uint8_t)
@@ -67,10 +70,10 @@ MAKE_SLICES_AND_OPTIONS(F32, float)
 MAKE_SLICES_AND_OPTIONS(F64, double)
 MAKE_SLICES_AND_OPTIONS(Bool, bool)
 MAKE_SLICES_AND_OPTIONS(Char, char32_t)
-MAKE_SLICES(String, char)
-MAKE_SLICES(String16, char16_t)
-MAKE_SLICES(Strings, DiplomatStringView)
-MAKE_SLICES(Strings16, DiplomatString16View)
+MAKE_SLICES_AND_OPTIONS(String, char)
+MAKE_SLICES_AND_OPTIONS(String16, char16_t)
+MAKE_SLICES_AND_OPTIONS(Strings, DiplomatStringView)
+MAKE_SLICES_AND_OPTIONS(Strings16, DiplomatString16View)
 
 } // extern "C"
 } // namespace capi
@@ -78,7 +81,7 @@ MAKE_SLICES(Strings16, DiplomatString16View)
 extern "C" inline void _flush(capi::DiplomatWrite* w) {
   std::string* string = reinterpret_cast<std::string*>(w->context);
   string->resize(w->len);
-};
+}
 
 extern "C" inline bool _grow(capi::DiplomatWrite* w, uintptr_t requested) {
   std::string* string = reinterpret_cast<std::string*>(w->context);
@@ -86,7 +89,7 @@ extern "C" inline bool _grow(capi::DiplomatWrite* w, uintptr_t requested) {
   w->cap = string->length();
   w->buf = &(*string)[0];
   return true;
-};
+}
 
 inline capi::DiplomatWrite WriteFromString(std::string& string) {
   capi::DiplomatWrite w;
@@ -99,11 +102,11 @@ inline capi::DiplomatWrite WriteFromString(std::string& string) {
   w.flush = _flush;
   w.grow = _grow;
   return w;
-};
+}
 
 template<class T> struct Ok {
   T inner;
-  Ok(T&& i): inner(std::move(i)) {}
+  Ok(T&& i): inner(std::forward<T>(i)) {}
   // We don't want to expose an lvalue-capable constructor in general
   // however there is no problem doing this for trivially copyable types
   template<typename X = T, typename = typename std::enable_if<std::is_trivially_copyable<X>::value>::type>
@@ -117,7 +120,7 @@ template<class T> struct Ok {
 
 template<class T> struct Err {
   T inner;
-  Err(T&& i): inner(std::move(i)) {}
+  Err(T&& i): inner(std::forward<T>(i)) {}
   // We don't want to expose an lvalue-capable constructor in general
   // however there is no problem doing this for trivially copyable types
   template<typename X = T, typename = typename std::enable_if<std::is_trivially_copyable<X>::value>::type>
@@ -144,17 +147,17 @@ public:
   ~result() = default;
   bool is_ok() const {
     return std::holds_alternative<Ok<T>>(this->val);
-  };
+  }
   bool is_err() const {
     return std::holds_alternative<Err<E>>(this->val);
-  };
+  }
 
   std::optional<T> ok() && {
     if (!this->is_ok()) {
       return std::nullopt;
     }
     return std::make_optional(std::move(std::get<Ok<T>>(std::move(this->val)).inner));
-  };
+  }
   std::optional<E> err() && {
     if (!this->is_err()) {
       return std::nullopt;

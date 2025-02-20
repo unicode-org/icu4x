@@ -312,137 +312,137 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_unknown_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_unknown_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_unknown_mv1();
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_utc_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_utc_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_utc_mv1();
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_from_parts_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8, ffi.Int32, ffi.Bool)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_from_parts_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_from_parts_mv1(_SliceUtf8 bcp47Id, int offsetSeconds, bool dst);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_try_set_offset_seconds_mv1')
 @ffi.Native<_ResultVoidTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_try_set_offset_seconds_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidTimeZoneInvalidOffsetErrorFfi _icu4x_TimeZoneInfo_try_set_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self, int offsetSeconds);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_set_offset_eighths_of_hour_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int8)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_offset_eighths_of_hour_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_set_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self, int offsetEighthsOfHour);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_try_set_offset_str_mv1')
 @ffi.Native<_ResultVoidTimeZoneInvalidOffsetErrorFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_try_set_offset_str_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidTimeZoneInvalidOffsetErrorFfi _icu4x_TimeZoneInfo_try_set_offset_str_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 offset);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1')
 @ffi.Native<_ResultInt8Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt8Void _icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_clear_offset_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_clear_offset_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_clear_offset_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_seconds_mv1')
 @ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_seconds_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_TimeZoneInfo_offset_seconds_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_is_offset_non_negative_mv1')
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_non_negative_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_TimeZoneInfo_is_offset_non_negative_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_is_offset_zero_mv1')
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_offset_zero_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_TimeZoneInfo_is_offset_zero_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_hours_part_mv1')
 @ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_hours_part_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_TimeZoneInfo_offset_hours_part_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_minutes_part_mv1')
 @ffi.Native<_ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_minutes_part_mv1')
 // ignore: non_constant_identifier_names
 external _ResultUint32Void _icu4x_TimeZoneInfo_offset_minutes_part_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_seconds_part_mv1')
 @ffi.Native<_ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_seconds_part_mv1')
 // ignore: non_constant_identifier_names
 external _ResultUint32Void _icu4x_TimeZoneInfo_offset_seconds_part_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_set_time_zone_id_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_set_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 id);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> parser, _SliceUtf8 id);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_time_zone_id_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_time_zone_id_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_time_zone_id_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> write);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_infer_zone_variant_mv1')
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_infer_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_TimeZoneInfo_infer_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> offsetCalculator);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_clear_zone_variant_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_clear_zone_variant_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_clear_zone_variant_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_set_standard_time_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_standard_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_set_standard_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_set_daylight_time_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_daylight_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_set_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_is_standard_time_mv1')
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_standard_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_TimeZoneInfo_is_standard_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_is_daylight_time_mv1')
 @ffi.Native<_ResultBoolVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_is_daylight_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultBoolVoid _icu4x_TimeZoneInfo_is_daylight_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_set_local_time_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_set_local_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_set_local_time_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_clear_local_time_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_clear_local_time_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneInfo_clear_local_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_get_local_time_mv1')
 @ffi.Native<_ResultIsoDateTimeFfiVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_get_local_time_mv1')
 // ignore: non_constant_identifier_names
 external _ResultIsoDateTimeFfiVoid _icu4x_TimeZoneInfo_get_local_time_mv1(ffi.Pointer<ffi.Opaque> self);

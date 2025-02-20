@@ -35,7 +35,7 @@ export class TitlecaseOptions {
     static fromFields(structObj) {
         return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("TitlecaseOptions's constructor takes an object of TitlecaseOptions's fields.");

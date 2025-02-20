@@ -17,7 +17,7 @@ enum SegmenterWordType {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_SegmenterWordType_is_word_like_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_SegmenterWordType_is_word_like_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_SegmenterWordType_is_word_like_mv1(int self);

@@ -221,7 +221,7 @@ dependencies = [
 name = "bies"
 version = "0.2.3"
 dependencies = [
- "itertools",
+ "itertools 0.10.5",
  "partial-min-max",
  "rand",
  "rand_distr",
@@ -481,7 +481,7 @@ dependencies = [
  "clap",
  "criterion-plot",
  "is-terminal",
- "itertools",
+ "itertools 0.10.5",
  "num-traits",
  "once_cell",
  "oorandom",
@@ -502,7 +502,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6b50826342786a51a89e2da3a28f1c32b06e387201bc2d19791f622c673706b1"
 dependencies = [
  "cast",
- "itertools",
+ "itertools 0.10.5",
 ]
 
 [[package]]
@@ -607,7 +607,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.9.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc#427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d9abfbf037a760f4ffcfaf68022a6025273377bb#d9abfbf037a760f4ffcfaf68022a6025273377bb"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -637,7 +637,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.9.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc#427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d9abfbf037a760f4ffcfaf68022a6025273377bb#d9abfbf037a760f4ffcfaf68022a6025273377bb"
 dependencies = [
  "log",
 ]
@@ -645,7 +645,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.9.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc#427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d9abfbf037a760f4ffcfaf68022a6025273377bb#d9abfbf037a760f4ffcfaf68022a6025273377bb"
 dependencies = [
  "askama",
  "clap",
@@ -654,6 +654,8 @@ dependencies = [
  "displaydoc",
  "heck 0.4.1",
  "indenter",
+ "itertools 0.14.0",
+ "once_cell",
  "pulldown-cmark",
  "quote",
  "serde",
@@ -665,7 +667,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.9.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc#427b6197627a1b6cd1f9b85b5b8fbace2b5d1efc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d9abfbf037a760f4ffcfaf68022a6025273377bb#d9abfbf037a760f4ffcfaf68022a6025273377bb"
 dependencies = [
  "displaydoc",
  "either",
@@ -1653,7 +1655,7 @@ dependencies = [
  "icu_provider_export",
  "icu_provider_registry",
  "icu_segmenter",
- "itertools",
+ "itertools 0.10.5",
  "litemap",
  "log",
  "ndarray",
@@ -1692,7 +1694,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_segmenter_data",
- "itertools",
+ "itertools 0.10.5",
  "potential_utf",
  "serde",
  "serde_json",
@@ -1789,6 +1791,15 @@ name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "itertools"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
 dependencies = [
  "either",
 ]
@@ -1952,7 +1963,7 @@ dependencies = [
  "icu_provider_export",
  "icu_provider_fs",
  "icu_provider_source",
- "itertools",
+ "itertools 0.10.5",
  "litemap",
  "lru",
  "serde",
