@@ -20,7 +20,7 @@
     - `zerovec`
         - derive: Reduce number of panicky calls introduced by derive (unicode-org#6052)
     - `fixed_decimal`
-        - Rename `UnsignedFixedDecimal` to `UnsignedDecimal`, `SignedFixedDecimal` to `Decimal` (unicode-org#6143, unicode-org#6146)
+        - Rename `FixedDecimal` to `Decimal`, introduce `UnsignedDecimal` (unicode-org#6143, unicode-org#6146)
 
 ## icu4x 2.0-beta1
 
