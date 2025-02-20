@@ -72,7 +72,7 @@ export { DateFormatter } from "./DateFormatter"
 
 export { GregorianDateFormatter } from "./GregorianDateFormatter"
 
-export { TimeFormatter } from "./TimeFormatter"
+export { NoCalendarFormatter } from "./NoCalendarFormatter"
 
 export { DecimalFormatter } from "./DecimalFormatter"
 

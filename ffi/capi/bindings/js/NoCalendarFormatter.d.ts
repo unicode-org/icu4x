@@ -7,21 +7,21 @@ import type { Time } from "./Time"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
+/** An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
 *
-*See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.TimeFormatter.html) for more information.
+*See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
 *
 *Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
 */
 
 
-export class TimeFormatter {
+export class NoCalendarFormatter {
     
     get ffiValue(): pointer;
 
-    static createWithLength(locale: Locale, length: DateTimeLength): TimeFormatter;
+    static createWithLength(locale: Locale, length: DateTimeLength): NoCalendarFormatter;
 
-    static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): TimeFormatter;
+    static createWithLengthAndProvider(provider: DataProvider, locale: Locale, length: DateTimeLength): NoCalendarFormatter;
 
     format(value: Time): string;
 }

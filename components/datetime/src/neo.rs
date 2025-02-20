@@ -929,34 +929,34 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     }
 }
 
-/// A formatter optimized for time and time zone formatting.
+/// A formatter optimized for time and time zone formatting, when a calendar is not needed.
 ///
 /// # Examples
 ///
-/// A [`TimeFormatter`] cannot be constructed with a fieldset that involves dates:
+/// A [`NoCalendarFormatter`] cannot be constructed with a fieldset that involves dates:
 ///
 /// ```
-/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::fieldsets::Y;
 /// use icu::locale::locale;
 ///
-/// assert!(TimeFormatter::try_new(locale!("und").into(), Y::medium()).is_err());
+/// assert!(NoCalendarFormatter::try_new(locale!("und").into(), Y::medium()).is_err());
 /// ```
 ///
 /// Furthermore, it is a compile error in the format function:
 ///
 /// ```compile_fail,E0271
-/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::fieldsets::Y;
 /// use icu::locale::locale;
 ///
 /// let date: icu::calendar::Date<icu::calendar::Gregorian> = unimplemented!();
-/// let formatter = TimeFormatter::try_new(locale!("und").into(), Y::medium()).unwrap();
+/// let formatter = NoCalendarFormatter::try_new(locale!("und").into(), Y::medium()).unwrap();
 ///
 /// // error[E0271]: type mismatch resolving `<Gregorian as AsCalendar>::Calendar == ()`
 /// formatter.format(&date);
 /// ```
-pub type TimeFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
+pub type NoCalendarFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 
 /// An intermediate type during a datetime formatting operation.
 ///

@@ -5,7 +5,7 @@
 use std::collections::BTreeMap;
 
 use icu::calendar::Date;
-use icu::datetime::{fieldsets, TimeFormatter};
+use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::Time;
 
@@ -16,10 +16,11 @@ fn main() {
     let prefs = locale!("en").into();
 
     let offset_formatter =
-        TimeFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetLong).unwrap();
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetLong).unwrap();
     let non_location_formatter =
-        TimeFormatter::try_new(prefs, fieldsets::zone::GenericLong).unwrap();
-    let city_formatter = TimeFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::GenericLong).unwrap();
+    let city_formatter =
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
     let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
 
