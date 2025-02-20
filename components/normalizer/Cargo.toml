@@ -24,7 +24,7 @@ displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true, features = ["macros"] }
-smallvec = { workspace = true }
+smallvec = { workspace = true } # alloc
 utf16_iter = { workspace = true, optional = true }
 utf8_iter = { workspace = true, optional = true }
 write16 = { workspace = true, features = ["alloc"], optional = true }
