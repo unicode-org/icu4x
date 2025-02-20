@@ -58,7 +58,7 @@ script = '''
 exec --fail-on-error dart pub get
 exec --fail-on-error dart analyze
 exec --fail-on-error dart --enable-experiment=native-assets test
-exec --fail-on-error dart tool/build_libs.dart --file bin/linux_x64 --os linux --architecture x64 --compile_type dynamic --cargo_features icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals,experimental_components,compiled_data
+exec --fail-on-error (cd ../.. && dart ffi/dart/tool/build_libs.dart --file bin/linux_x64 --os linux --architecture x64 --compile_type dynamic --cargo_features icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals,experimental_components,compiled_data)
 '''
 
 # no_std tasks
