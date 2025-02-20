@@ -24,7 +24,7 @@ final class NoCalendarFormatter implements ffi.Finalizable {
     }
   }
 
-  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeFormatter_destroy_mv1));
+  static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_NoCalendarFormatter_destroy_mv1));
 
   /// Creates a new [`NoCalendarFormatter`] using compiled data.
   ///
@@ -32,7 +32,7 @@ final class NoCalendarFormatter implements ffi.Finalizable {
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NoCalendarFormatter.withLength(Locale locale, DateTimeLength length) {
-    final result = _icu4x_TimeFormatter_create_with_length_mv1(locale._ffi, length.index);
+    final result = _icu4x_NoCalendarFormatter_create_with_length_mv1(locale._ffi, length.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -45,7 +45,7 @@ final class NoCalendarFormatter implements ffi.Finalizable {
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory NoCalendarFormatter.withLengthAndProvider(DataProvider provider, Locale locale, DateTimeLength length) {
-    final result = _icu4x_TimeFormatter_create_with_length_and_provider_mv1(provider._ffi, locale._ffi, length.index);
+    final result = _icu4x_NoCalendarFormatter_create_with_length_and_provider_mv1(provider._ffi, locale._ffi, length.index);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -57,27 +57,27 @@ final class NoCalendarFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   String format(Time value) {
     final write = _Write();
-    _icu4x_TimeFormatter_format_mv1(_ffi, value._ffi, write._ffi);
+    _icu4x_NoCalendarFormatter_format_mv1(_ffi, value._ffi, write._ffi);
     return write.finalize();
   }
 }
 
-@_DiplomatFfiUse('icu4x_TimeFormatter_destroy_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_destroy_mv1')
+@_DiplomatFfiUse('icu4x_NoCalendarFormatter_destroy_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_NoCalendarFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_TimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
+external void _icu4x_NoCalendarFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_TimeFormatter_create_with_length_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_create_with_length_mv1')
+@_DiplomatFfiUse('icu4x_NoCalendarFormatter_create_with_length_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_NoCalendarFormatter_create_with_length_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_TimeFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> locale, int length);
+external _ResultOpaqueInt32 _icu4x_NoCalendarFormatter_create_with_length_mv1(ffi.Pointer<ffi.Opaque> locale, int length);
 
-@_DiplomatFfiUse('icu4x_TimeFormatter_create_with_length_and_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_create_with_length_and_provider_mv1')
+@_DiplomatFfiUse('icu4x_NoCalendarFormatter_create_with_length_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_NoCalendarFormatter_create_with_length_and_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_TimeFormatter_create_with_length_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
+external _ResultOpaqueInt32 _icu4x_NoCalendarFormatter_create_with_length_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, int length);
 
-@_DiplomatFfiUse('icu4x_TimeFormatter_format_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeFormatter_format_mv1')
+@_DiplomatFfiUse('icu4x_NoCalendarFormatter_format_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_NoCalendarFormatter_format_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_TimeFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_NoCalendarFormatter_format_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> value, ffi.Pointer<ffi.Opaque> write);

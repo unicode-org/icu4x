@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeFormatter_D_HPP
-#define icu4x_TimeFormatter_D_HPP
+#ifndef icu4x_NoCalendarFormatter_D_HPP
+#define icu4x_NoCalendarFormatter_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -15,10 +15,10 @@ namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct Locale; }
 class Locale;
-namespace capi { struct Time; }
-class Time;
 namespace capi { struct NoCalendarFormatter; }
 class NoCalendarFormatter;
+namespace capi { struct Time; }
+class Time;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
 }
@@ -55,4 +55,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_TimeFormatter_D_HPP
+#endif // icu4x_NoCalendarFormatter_D_HPP

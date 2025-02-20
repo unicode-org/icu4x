@@ -15,7 +15,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 *Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
 */
 const NoCalendarFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_TimeFormatter_destroy_mv1(ptr);
+    wasm.icu4x_NoCalendarFormatter_destroy_mv1(ptr);
 });
 
 export class NoCalendarFormatter {
@@ -50,7 +50,7 @@ export class NoCalendarFormatter {
     static createWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeFormatter_create_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_NoCalendarFormatter_create_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -68,7 +68,7 @@ export class NoCalendarFormatter {
     static createWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeFormatter_create_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_NoCalendarFormatter_create_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -85,7 +85,7 @@ export class NoCalendarFormatter {
 
     format(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TimeFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_NoCalendarFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
             return write.readString8();
