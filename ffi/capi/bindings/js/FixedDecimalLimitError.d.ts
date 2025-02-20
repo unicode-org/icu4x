@@ -15,7 +15,7 @@ export class FixedDecimalLimitError {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : FixedDecimalLimitError_obj) : FixedDecimalLimitError;
-    
+
 
     constructor(structObj : FixedDecimalLimitError_obj);
 }

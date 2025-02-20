@@ -15,7 +15,7 @@ export class TimeZoneInvalidOffsetError {
     static fromFields(structObj) {
         return new TimeZoneInvalidOffsetError(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("TimeZoneInvalidOffsetError's constructor takes an object of TimeZoneInvalidOffsetError's fields.");

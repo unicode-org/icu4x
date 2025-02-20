@@ -45,7 +45,7 @@ export class WeekendContainsDay {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : WeekendContainsDay_obj) : WeekendContainsDay;
-    
+
 
     constructor(structObj : WeekendContainsDay_obj);
 }

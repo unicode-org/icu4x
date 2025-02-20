@@ -34,7 +34,7 @@ export class DateTimeMismatchedCalendarError {
     static fromFields(structObj) {
         return new DateTimeMismatchedCalendarError(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("DateTimeMismatchedCalendarError's constructor takes an object of DateTimeMismatchedCalendarError's fields.");

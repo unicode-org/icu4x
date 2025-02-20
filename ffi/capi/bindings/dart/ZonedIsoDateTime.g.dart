@@ -65,7 +65,7 @@ final class ZonedIsoDateTime {
       ]);
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_try_from_str_mv1')
 @ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_try_from_str_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_try_from_str_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser, ffi.Pointer<ffi.Opaque> offsetCalculator);

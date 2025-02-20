@@ -22,7 +22,7 @@ export class LocaleFallbackConfig {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : LocaleFallbackConfig_obj) : LocaleFallbackConfig;
-    
+
 
     constructor(structObj : LocaleFallbackConfig_obj);
 }

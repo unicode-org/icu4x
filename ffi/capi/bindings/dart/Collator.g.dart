@@ -73,27 +73,27 @@ final class Collator implements ffi.Finalizable {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Collator_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_Collator_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_Collator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Collator_create_v1_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _CollatorOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Collator_create_v1_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Collator_create_v1_mv1(ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Collator_create_v1_with_provider_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsFfi)>(isLeaf: true, symbol: 'icu4x_Collator_create_v1_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Collator_create_v1_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _CollatorOptionsFfi options);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Collator_compare_utf16_mv1')
 @ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_compare_utf16_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 left, _SliceUtf16 right);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_Collator_resolved_options_v1_mv1')
 @ffi.Native<_CollatorResolvedOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_v1_mv1')
 // ignore: non_constant_identifier_names
 external _CollatorResolvedOptionsFfi _icu4x_Collator_resolved_options_v1_mv1(ffi.Pointer<ffi.Opaque> self);

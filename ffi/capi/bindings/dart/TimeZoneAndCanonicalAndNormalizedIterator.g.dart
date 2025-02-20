@@ -26,8 +26,10 @@ final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable
 
   TimeZoneAndCanonicalAndNormalized? _current;
 
+  @override
   TimeZoneAndCanonicalAndNormalized get current => _current!;
 
+  @override
   bool moveNext() {
     _current = _iteratorNext();
     return _current != null;
@@ -45,12 +47,12 @@ final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1')
 @ffi.Native<_ResultTimeZoneAndCanonicalAndNormalizedFfiVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1')
 // ignore: non_constant_identifier_names
 external _ResultTimeZoneAndCanonicalAndNormalizedFfiVoid _icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(ffi.Pointer<ffi.Opaque> self);

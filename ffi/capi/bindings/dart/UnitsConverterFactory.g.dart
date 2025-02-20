@@ -69,27 +69,27 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_UnitsConverterFactory_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_UnitsConverterFactory_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_UnitsConverterFactory_create_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_create_mv1();
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_UnitsConverterFactory_create_with_provider_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_UnitsConverterFactory_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_UnitsConverterFactory_converter_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_converter_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_converter_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_UnitsConverterFactory_parser_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_parser_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_parser_mv1(ffi.Pointer<ffi.Opaque> self);
