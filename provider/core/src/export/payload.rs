@@ -210,7 +210,7 @@ impl DataPayload<ExportMarker> {
 
     /// If this payload's struct can be dereferenced as a [`VarULE`],
     /// returns a [`TokenStream`] of the slice encoded as a [`VarZeroVec`].
-    pub fn tokenize_to_varzerovec(structs: &[&Self], ctx: &CrateEnv) -> Option<TokenStream> {
+    pub fn tokenize_to_varzeroslice(structs: &[&Self], ctx: &CrateEnv) -> Option<TokenStream> {
         let (first, rest) = structs.split_first()?;
         first.get().payload.maybe_bake_varule_encoded(rest, ctx)
     }
