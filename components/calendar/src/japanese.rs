@@ -52,8 +52,8 @@ use tinystr::{tinystr, TinyStr16};
 ///
 /// Future eras will also be added to this type when they are decided.
 ///
-/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1`]
-/// data (`calendar/japanese@1`).
+/// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseModernV1`]
+/// data.
 ///
 /// # Month codes
 ///
@@ -82,8 +82,8 @@ pub struct Japanese {
 /// are used for dates before the first known era era.
 ///
 ///
-/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseExtendedErasV1`]
-/// data (`calendar/japanext@1`).
+/// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseExtendedV1`]
+/// data.
 #[derive(Clone, Debug, Default)]
 pub struct JapaneseExtended(Japanese);
 

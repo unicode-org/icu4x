@@ -109,19 +109,19 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PluralRulesData<'data> {
-    /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Zero`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::One`](super::PluralCategory::One), or `None` if not present.
+    /// Rule that matches [`PluralCategory::One`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Two`](super::PluralCategory::Two), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Two`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Few`](super::PluralCategory::Few), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Few`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Many`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
 }
