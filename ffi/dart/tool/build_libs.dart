@@ -90,7 +90,7 @@ Future<File> buildLib(
   await runProcess('cargo', [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
-    '--manifest-path=$workingDirectory/ffi/capi/Cargo.toml',
+    '--manifest-path=ffi/capi/Cargo.toml',
     '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
     '--release',
     '--config=profile.release.panic="abort"',
