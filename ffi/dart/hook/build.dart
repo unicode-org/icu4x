@@ -17,7 +17,7 @@ void main(List<String> args) async {
       Directory.fromUri(input.outputDirectory),
     );
 
-    final outputPath = await buildLibraryFromInput(input, icu4xPath.path);
+    final lib = await buildLibraryFromInput(input, icu4xPath.path);
 
     output.assets.code.add(
       CodeAsset(
@@ -26,7 +26,7 @@ void main(List<String> args) async {
         linkMode: DynamicLoadingBundled(),
         os: input.config.code.targetOS,
         architecture: input.config.code.targetArchitecture,
-        file: outputPath,
+        file: lib.uri,
       ),
     );
   });

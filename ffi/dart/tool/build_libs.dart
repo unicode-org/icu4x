@@ -57,16 +57,16 @@ Future<void> main(List<String> args) async {
   final libFileName = targetOS.filename(buildStatic)(
     crateName.replaceAll('-', '_'),
   );
-  await buildLib(
+  final lib = await buildLib(
     targetOS,
     targetArchitecture,
     buildStatic,
     simulator,
-    out,
     libFileName,
     icu4xPath.path,
     cargoFeatures,
   );
+  await lib.copy(out.toFilePath(windows: Platform.isWindows));
 }
 
 Directory recurseToParentRustCrate(FileSystemEntity startingPoint) {
@@ -83,7 +83,7 @@ Directory recurseToParentRustCrate(FileSystemEntity startingPoint) {
   return folder;
 }
 
-Future<Uri> buildLibraryFromInput(
+Future<File> buildLibraryFromInput(
   BuildInput input,
   String workingDirectory,
 ) async {
@@ -91,7 +91,6 @@ Future<Uri> buildLibraryFromInput(
   final libFileName = input.config.code.targetOS.filename(
     input.config.buildStatic,
   )(crateNameFixed);
-  final libFileUri = input.outputDirectory.resolve(libFileName);
   final features = [
     'default_components',
     'icu_collator',
@@ -103,28 +102,25 @@ Future<Uri> buildLibraryFromInput(
     'buffer_provider',
     'experimental_components',
   ];
-  await buildLib(
+  return buildLib(
     input.config.code.targetOS,
     input.config.code.targetArchitecture,
     input.config.buildStatic,
     input.config.code.targetOS == OS.iOS &&
         input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
-    libFileUri,
     libFileName,
     workingDirectory,
     features,
   );
-  return libFileUri;
 }
 
 // Copied from Dart's package:intl4x build.dart, see
 // https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
-Future<void> buildLib(
+Future<File> buildLib(
   OS targetOS,
   Architecture targetArchitecture,
   bool buildStatic,
   bool isSimulator,
-  Uri libFileUri,
   String libFileName,
   String workingDirectory,
   List<String> cargoFeatures,
@@ -160,18 +156,13 @@ Future<void> buildLib(
   ];
   await runProcess('cargo', arguments, workingDirectory: workingDirectory);
 
-  final builtPath = path.join(
-    workingDirectory,
-    'target',
-    target,
-    'release',
-    libFileName,
+  final file = File(
+    path.join(workingDirectory, 'target', target, 'release', libFileName),
   );
-  final file = File(builtPath);
   if (!(await file.exists())) {
-    throw FileSystemException('Building the dylib failed', builtPath);
+    throw FileSystemException('Building the dylib failed', file.path);
   }
-  await file.copy(libFileUri.toFilePath(windows: Platform.isWindows));
+  return file;
 }
 
 String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
