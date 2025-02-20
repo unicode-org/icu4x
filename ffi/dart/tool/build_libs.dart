@@ -65,7 +65,7 @@ Future<void> main(List<String> args) async {
     out,
     libFileName,
     icu4xPath.path,
-    cargoFeatures: cargoFeatures.isNotEmpty ? cargoFeatures : null,
+    cargoFeatures,
   );
 }
 
@@ -92,6 +92,17 @@ Future<Uri> buildLibraryFromInput(
     input.config.buildStatic,
   )(crateNameFixed);
   final libFileUri = input.outputDirectory.resolve(libFileName);
+  final features = [
+    'default_components',
+    'icu_collator',
+    'icu_datetime',
+    'icu_list',
+    'icu_decimal',
+    'icu_plurals',
+    'compiled_data',
+    'buffer_provider',
+    'experimental_components',
+  ];
   await buildLib(
     input.config.code.targetOS,
     input.config.code.targetArchitecture,
@@ -101,6 +112,7 @@ Future<Uri> buildLibraryFromInput(
     libFileUri,
     libFileName,
     workingDirectory,
+    features,
   );
   return libFileUri;
 }
@@ -114,9 +126,9 @@ Future<void> buildLib(
   bool isSimulator,
   Uri libFileUri,
   String libFileName,
-  String workingDirectory, {
-  List<String>? cargoFeatures,
-}) async {
+  String workingDirectory,
+  List<String> cargoFeatures,
+) async {
   final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
   final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
   if (!isNoStd) {
@@ -127,17 +139,6 @@ Future<void> buildLib(
       workingDirectory: workingDirectory,
     );
   }
-  final features = [
-    'default_components',
-    'icu_collator',
-    'icu_datetime',
-    'icu_list',
-    'icu_decimal',
-    'icu_plurals',
-    'compiled_data',
-    'buffer_provider',
-    'experimental_components',
-  ];
   final stdFeatures = ['logging', 'simple_logger'];
   final noStdFeatures = ['libc_alloc', 'panic_handler'];
   final arguments = [
@@ -149,7 +150,7 @@ Future<void> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${cargoFeatures?.join(',') ?? [...features, ...(isNoStd ? noStdFeatures : stdFeatures)].join(',')}',
+    '--features=${{...cargoFeatures, ...(isNoStd ? noStdFeatures : stdFeatures)}.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
