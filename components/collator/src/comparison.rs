@@ -32,10 +32,10 @@ use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_normalizer::provider::CanonicalDecompositionDataV2;
-use icu_normalizer::provider::CanonicalDecompositionTablesV1;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
+use icu_normalizer::provider::NormalizerNfdDataV1;
+use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
@@ -245,8 +245,8 @@ pub struct Collator {
     diacritics: DataPayload<CollationDiacriticsV1>,
     options: CollatorOptionsBitField,
     reordering: Option<DataPayload<CollationReorderingV1>>,
-    decompositions: DataPayload<CanonicalDecompositionDataV2>,
-    tables: DataPayload<CanonicalDecompositionTablesV1>,
+    decompositions: DataPayload<NormalizerNfdDataV1>,
+    tables: DataPayload<NormalizerNfdTablesV1>,
     lithuanian_dot_above: bool,
 }
 
@@ -300,8 +300,8 @@ impl Collator {
             + DataProvider<CollationJamoV1>
             + DataProvider<CollationMetadataV1>
             + DataProvider<CollationReorderingV1>
-            + DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
+            + DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
             + ?Sized,
     {
         Self::try_new_unstable_internal(
@@ -320,8 +320,8 @@ impl Collator {
     fn try_new_unstable_internal<D>(
         provider: &D,
         root: DataPayload<CollationRootV1>,
-        decompositions: DataPayload<CanonicalDecompositionDataV2>,
-        tables: DataPayload<CanonicalDecompositionTablesV1>,
+        decompositions: DataPayload<NormalizerNfdDataV1>,
+        tables: DataPayload<NormalizerNfdTablesV1>,
         jamo: DataPayload<CollationJamoV1>,
         special_primaries: impl FnOnce() -> Result<DataPayload<CollationSpecialPrimariesV1>, DataError>,
         prefs: CollatorPreferences,
@@ -402,9 +402,8 @@ impl CollatorBorrowed<'static> {
         // copypaste-compatible with `Collator::try_new_unstable_internal`.
 
         let provider = &crate::provider::Baked;
-        let decompositions =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V2;
-        let tables = icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1;
+        let decompositions = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1;
+        let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
         let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
         let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
 

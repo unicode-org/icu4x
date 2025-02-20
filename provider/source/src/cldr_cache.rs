@@ -7,7 +7,7 @@
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
-    LikelySubtagsExtendedV1, LikelySubtagsForLanguageV1, LikelySubtagsForScriptRegionV1,
+    LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
@@ -129,11 +129,11 @@ impl CldrCache {
                     common: TransformResult,
                     extended: TransformResult,
                 }
-                impl DataProvider<LikelySubtagsForLanguageV1> for Provider {
+                impl DataProvider<LocaleLikelySubtagsLanguageV1> for Provider {
                     fn load(
                         &self,
                         _req: DataRequest,
-                    ) -> Result<DataResponse<LikelySubtagsForLanguageV1>, DataError>
+                    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError>
                     {
                         Ok(DataResponse {
                             payload: DataPayload::from_owned(self.common.as_langs()),
@@ -141,11 +141,11 @@ impl CldrCache {
                         })
                     }
                 }
-                impl DataProvider<LikelySubtagsForScriptRegionV1> for Provider {
+                impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for Provider {
                     fn load(
                         &self,
                         _req: DataRequest,
-                    ) -> Result<DataResponse<LikelySubtagsForScriptRegionV1>, DataError>
+                    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError>
                     {
                         Ok(DataResponse {
                             payload: DataPayload::from_owned(self.common.as_script_region()),
@@ -153,11 +153,11 @@ impl CldrCache {
                         })
                     }
                 }
-                impl DataProvider<LikelySubtagsExtendedV1> for Provider {
+                impl DataProvider<LocaleLikelySubtagsExtendedV1> for Provider {
                     fn load(
                         &self,
                         _req: DataRequest,
-                    ) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError>
+                    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError>
                     {
                         Ok(DataResponse {
                             payload: DataPayload::from_owned(self.extended.as_extended()),

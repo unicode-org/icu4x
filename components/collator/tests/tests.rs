@@ -30,13 +30,13 @@ const _: () = {
     impl_collation_special_primaries_v1!(TestingProvider);
     impl_collation_reordering_v1!(TestingProvider);
 
-    icu_normalizer_data::impl_canonical_compositions_v1!(TestingProvider);
-    icu_normalizer_data::impl_non_recursive_decomposition_supplement_v1!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_data_v2!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_tables_v1!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_data_v2!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_tables_v1!(TestingProvider);
-    icu_normalizer_data::impl_uts46_decomposition_data_v2!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfc_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_data_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_supplement_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfkd_data_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfkd_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_uts46_data_v1!(TestingProvider);
 };
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;

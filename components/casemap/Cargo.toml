@@ -24,7 +24,7 @@ displaydoc = { workspace = true }
 icu_collections = { workspace = true, features = ["alloc"] }
 icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
