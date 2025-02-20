@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "experimental")]
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
@@ -9,8 +10,11 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::plurals::provider::rules::runtime::ast::Rule;
-use icu::plurals::{provider::*, PluralCategory};
+use icu::plurals::provider::*;
+#[cfg(feature = "experimental")]
+use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
+#[cfg(feature = "experimental")]
 use zerovec::ZeroMap;
 
 impl SourceDataProvider {
@@ -38,6 +42,7 @@ impl SourceDataProvider {
         .ok_or(DataError::custom("Unknown marker for PluralRules"))
     }
 
+    #[cfg(feature = "experimental")]
     fn get_plural_ranges(&self) -> Result<&cldr_serde::plural_ranges::PluralRanges, DataError> {
         Ok(&self
             .cldr()?

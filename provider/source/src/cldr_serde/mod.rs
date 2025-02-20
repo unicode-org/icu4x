@@ -27,6 +27,7 @@ pub(crate) mod numbers;
 pub(crate) mod parent_locales;
 #[cfg(feature = "experimental")]
 pub(crate) mod personnames;
+#[cfg(feature = "experimental")]
 pub(crate) mod plural_ranges;
 pub(crate) mod plurals;
 pub(crate) mod time_zones;

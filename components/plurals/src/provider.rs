@@ -126,10 +126,10 @@ pub struct PluralRulesData<'data> {
     pub many: Option<Rule<'data>>,
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 pub use ranges::*;
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 mod ranges {
     use super::*;
     use zerovec::ZeroMap;
