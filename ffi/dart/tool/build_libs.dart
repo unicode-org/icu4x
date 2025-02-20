@@ -50,15 +50,11 @@ Future<void> main(List<String> args) async {
 
   final cargoFeatures = parsed.multiOption(cargoFeaturesKey);
 
-  final libFileName = targetOS.filename(buildStatic)(
-    crateName.replaceAll('-', '_'),
-  );
   final lib = await buildLib(
     targetOS,
     targetArchitecture,
     buildStatic,
     simulator,
-    libFileName,
     File.fromUri(Platform.script).parent,
     cargoFeatures,
   );
@@ -66,10 +62,6 @@ Future<void> main(List<String> args) async {
 }
 
 Future<File> buildLibraryFromInput(BuildInput input) async {
-  final crateNameFixed = crateName.replaceAll('-', '_');
-  final libFileName = input.config.code.targetOS.filename(
-    input.config.buildStatic,
-  )(crateNameFixed);
   final features = [
     'default_components',
     'icu_collator',
@@ -87,7 +79,6 @@ Future<File> buildLibraryFromInput(BuildInput input) async {
     input.config.buildStatic,
     input.config.code.targetOS == OS.iOS &&
         input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
-    libFileName,
     Directory.fromUri(input.outputDirectory),
     features,
   );
@@ -100,7 +91,6 @@ Future<File> buildLib(
   Architecture targetArchitecture,
   bool buildStatic,
   bool isSimulator,
-  String libFileName,
   Directory startingPoint,
   List<String> cargoFeatures,
 ) async {
@@ -144,7 +134,15 @@ Future<File> buildLib(
   await runProcess('cargo', arguments, workingDirectory: workingDirectory);
 
   final file = File(
-    path.join(workingDirectory, 'target', target, 'release', libFileName),
+    path.join(
+      workingDirectory,
+      'target',
+      target,
+      'release',
+      (buildStatic ? targetOS.staticlibFileName : targetOS.dylibFileName)(
+        crateName.replaceAll('-', '_'),
+      ),
+    ),
   );
   if (!(await file.exists())) {
     throw FileSystemException('Building the dylib failed', file.path);
@@ -192,11 +190,6 @@ bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
 extension on BuildConfig {
   bool get buildStatic =>
       code.linkModePreference == LinkModePreference.static || linkingEnabled;
-}
-
-extension on OS {
-  String Function(String) filename(bool buildStatic) =>
-      buildStatic ? staticlibFileName : dylibFileName;
 }
 
 Future<void> runProcess(
