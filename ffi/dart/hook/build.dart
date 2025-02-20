@@ -6,18 +6,30 @@ import 'dart:io';
 
 import 'package:native_assets_cli/code_assets.dart';
 
-import '../tool/build_libs.dart'
-    show buildLibraryFromInput, recurseToParentRustCrate;
+import '../tool/build_libs.dart' show buildLib;
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
-    // We assume that the first folder to contain a cargo.toml above the
-    // output directory is the directory containing the ICU4X code.
-    final icu4xPath = recurseToParentRustCrate(
+    final lib = await buildLib(
+      input.config.code.targetOS,
+      input.config.code.targetArchitecture,
+      input.config.code.linkModePreference == LinkModePreference.static ||
+          input.config.linkingEnabled,
+      input.config.code.targetOS == OS.iOS &&
+          input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
       Directory.fromUri(input.outputDirectory),
+      [
+        'default_components',
+        'icu_collator',
+        'icu_datetime',
+        'icu_list',
+        'icu_decimal',
+        'icu_plurals',
+        'compiled_data',
+        'buffer_provider',
+        'experimental_components',
+      ],
     );
-
-    final outputPath = await buildLibraryFromInput(input, icu4xPath.path);
 
     output.assets.code.add(
       CodeAsset(
@@ -26,7 +38,7 @@ void main(List<String> args) async {
         linkMode: DynamicLoadingBundled(),
         os: input.config.code.targetOS,
         architecture: input.config.code.targetArchitecture,
-        file: outputPath,
+        file: lib.uri,
       ),
     );
   });
