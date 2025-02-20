@@ -538,21 +538,21 @@ macro_rules! __define_preferences {
             }
         }
 
-        impl From<$name> for $crate::Locale {
-            fn from(other: $name) -> Self {
-                use $crate::preferences::PreferenceKey;
-                let mut result = Self::from(other.locale_preferences);
-                $(
-                    if let Some(value) = other.$key {
-                        if let Some(ue) = <$pref>::unicode_extension_key() {
-                            let val = value.unicode_extension_value().unwrap();
-                            result.extensions.unicode.keywords.set(ue, val);
-                        }
-                    }
-                )*
-                result
-            }
-        }
+        // impl From<$name> for $crate::Locale {
+        //     fn from(other: $name) -> Self {
+        //         use $crate::preferences::PreferenceKey;
+        //         let mut result = Self::from(other.locale_preferences);
+        //         $(
+        //             if let Some(value) = other.$key {
+        //                 if let Some(ue) = <$pref>::unicode_extension_key() {
+        //                     let val = value.unicode_extension_value().unwrap();
+        //                     result.extensions.unicode.keywords.set(ue, val);
+        //                 }
+        //             }
+        //         )*
+        //         result
+        //     }
+        // }
 
         impl $name {
             /// Extends the preferences with the values from another set of preferences.

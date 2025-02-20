@@ -4,8 +4,10 @@
 
 #![allow(non_snake_case)]
 
+#[cfg(feature = "alloc")]
 use crate::preferences::extensions::unicode::enum_keyword;
 
+#[cfg(feature = "alloc")]
 enum_keyword!(
     /// Islamic Calendar sub-type
     ///
@@ -21,6 +23,7 @@ enum_keyword!(
         Rgsa
 });
 
+#[cfg(feature = "alloc")]
 enum_keyword!(
     /// A Unicode Calendar Identifier defines a type of calendar.
     ///

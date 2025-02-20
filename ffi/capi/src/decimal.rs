@@ -92,18 +92,19 @@ pub mod ffi {
             digits: &[DiplomatChar],
             grouping_strategy: Option<DecimalGroupingStrategy>,
         ) -> Result<Box<DecimalFormatter>, DataError> {
-            use alloc::borrow::Cow;
             use core::cell::RefCell;
             use icu_provider::prelude::*;
             use zerovec::VarZeroCow;
 
-            fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> Cow<'_, str> {
-                if s.is_empty() {
-                    Cow::default()
-                } else if let Ok(s) = core::str::from_utf8(s) {
-                    Cow::Borrowed(s)
+            fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> VarZeroCow<'_, str> {
+                if let Ok(s) = core::str::from_utf8(s) {
+                    VarZeroCow::new_borrowed(s)
                 } else {
-                    Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
+                    VarZeroCow::new_owned(
+                        alloc::string::String::from_utf8_lossy(s)
+                            .into_owned()
+                            .into_boxed_str(),
+                    )
                 }
             }
 

@@ -92,6 +92,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod format;
@@ -103,13 +104,11 @@ pub(crate) mod size_test_macro;
 
 pub use format::FormattedDecimal;
 
-use alloc::string::String;
 use fixed_decimal::Decimal;
 use icu_locale_core::locale;
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
-use writeable::Writeable;
 
 size_test!(DecimalFormatter, decimal_formatter_size, 96);
 
@@ -286,7 +285,9 @@ impl DecimalFormatter {
     }
 
     /// Formats a [`Decimal`], returning a [`String`].
-    pub fn format_to_string(&self, value: &Decimal) -> String {
+    #[cfg(feature = "alloc")]
+    pub fn format_to_string(&self, value: &Decimal) -> alloc::string::String {
+        use writeable::Writeable;
         self.format(value).write_to_string().into_owned()
     }
 }

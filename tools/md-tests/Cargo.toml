@@ -21,6 +21,7 @@ databake = { workspace = true, features = ["derive"] }
 litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
+zerovec = { workspace = true }
 
 displaydoc = { workspace = true }
 itertools = { workspace = true }

@@ -1341,6 +1341,7 @@ dependencies = [
  "serde",
  "serde_json",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -2043,6 +2044,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_provider_baked",
+ "icu_time",
  "litemap",
  "potential_utf",
  "tinystr",

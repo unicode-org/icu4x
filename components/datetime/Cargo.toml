@@ -29,7 +29,7 @@ icu_locale_core = { workspace = true }
 icu_pattern = { workspace = true, features = ["zerovec", "alloc"] }
 icu_plurals = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-icu_time = { workspace = true }
+icu_time = { workspace = true, features = ["alloc"] }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
@@ -50,7 +50,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_calendar = { path = "../calendar", features = ["ixdtf"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
-icu_time = { path = "../time", features = ["ixdtf"] }
+icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 litemap = { path = "../../utils/litemap" }
 
 serde = { workspace = true, features = ["derive"] }

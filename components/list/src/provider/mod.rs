@@ -15,11 +15,11 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
+use zerovec::VarZeroCow;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -87,7 +87,7 @@ pub struct ListFormatterPatterns<'data> {
     /// The middle pattern. It doesn't need to be a pattern because it has to start with `{0}`
     /// and end with `{1}`, so we just store the string in between.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub middle: Cow<'data, str>,
+    pub middle: VarZeroCow<'data, str>,
     /// The end pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub end: ConditionalListJoinerPattern<'data>,
@@ -194,7 +194,7 @@ impl<'data> SpecialCasePattern<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
-    pub(crate) string: Cow<'data, str>,
+    pub(crate) string: VarZeroCow<'data, str>,
     /// The index of the first placeholder. Always <= index_1.
     // Always 0 for CLDR data, so we don't need to serialize it.
     // In-memory we have free space for it as index_1 doesn't
@@ -214,7 +214,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
         #[derive(serde::Deserialize)]
         struct Dummy<'data> {
             #[cfg_attr(feature = "serde", serde(borrow))]
-            string: Cow<'data, str>,
+            string: VarZeroCow<'data, str>,
             index_1: u8,
         }
         let Dummy { string, index_1 } = Dummy::deserialize(deserializer)?;
@@ -237,10 +237,9 @@ impl<'a> ListJoinerPattern<'a> {
     ///
     /// # Panics
     /// If `string[..index_1]` panics.
-    pub const fn from_parts(string: &'a str, index_1: u8) -> Self {
-        assert!(string.len() <= 255 && index_1 <= string.len() as u8);
+    pub const fn from_parts(string: VarZeroCow<'a, str>, index_1: u8) -> Self {
         Self {
-            string: Cow::Borrowed(string),
+            string,
             index_0: 0,
             index_1,
         }
@@ -251,7 +250,7 @@ impl<'a> ListJoinerPattern<'a> {
 impl databake::Bake for ListJoinerPattern<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_list");
-        let string = (&*self.string).bake(env);
+        let string = self.string.bake(env);
         let index_1 = self.index_1.bake(env);
         databake::quote! {
             icu_list::provider::ListJoinerPattern::from_parts(#string, #index_1)
@@ -272,7 +271,10 @@ fn databake() {
     databake::test_bake!(
         ListJoinerPattern,
         const,
-        crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
+        crate::provider::ListJoinerPattern::from_parts(
+            unsafe { zerovec::VarZeroCow::from_bytes_unchecked(b", ") },
+            2u8
+        ),
         icu_list
     );
 }

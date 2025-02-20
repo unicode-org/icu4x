@@ -202,6 +202,7 @@ impl serde::Serialize for MinutesSinceEpoch {
     where
         S: serde::Serializer,
     {
+        #[cfg(feature = "alloc")]
         if serializer.is_human_readable() {
             let minute = self.0 % 60;
             let hour = self.0 / 60 % 24;
@@ -210,12 +211,11 @@ impl serde::Serialize for MinutesSinceEpoch {
             let year = date.year().extended_year;
             let month = date.month().month_number();
             let day = date.day_of_month().0;
-            serializer.serialize_str(&alloc::format!(
+            return serializer.serialize_str(&alloc::format!(
                 "{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}"
-            ))
-        } else {
-            serializer.serialize_i32(self.0)
+            ));
         }
+        serializer.serialize_i32(self.0)
     }
 }
 
@@ -225,8 +225,9 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
     where
         D: serde::Deserializer<'de>,
     {
-        use serde::de::Error;
+        #[cfg(feature = "alloc")]
         if deserializer.is_human_readable() {
+            use serde::de::Error;
             let e0 = D::Error::custom("invalid");
             let e1 = |_| D::Error::custom("invalid");
             let e2 = |_| D::Error::custom("invalid");
@@ -241,13 +242,12 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
-            Ok(Self::from((
+            return Ok(Self::from((
                 Date::try_new_iso(year, month, day).map_err(e2)?,
                 Time::try_new(hour, minute, 0, 0).map_err(e3)?,
-            )))
-        } else {
-            i32::deserialize(deserializer).map(Self)
+            )));
         }
+        i32::deserialize(deserializer).map(Self)
     }
 }
 

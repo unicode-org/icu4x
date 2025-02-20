@@ -82,7 +82,6 @@
 #![allow(clippy::exhaustive_structs)]
 #![allow(clippy::exhaustive_enums)]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerovec::VarZeroCow;
 
@@ -157,6 +156,7 @@ pub struct GroupingSizes {
 #[zerovec::make_varule(DecimalSymbolsStrs)]
 #[zerovec::derive(Debug)]
 #[zerovec::skip_derive(Ord)]
+#[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV, ToOwned))]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 // Each affix/separator is at most three characters, which tends to be around 3-12 bytes each
@@ -166,31 +166,32 @@ pub struct GroupingSizes {
 pub struct DecimalSymbolStrsBuilder<'data> {
     /// Prefix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub minus_sign_prefix: Cow<'data, str>,
+    pub minus_sign_prefix: VarZeroCow<'data, str>,
     /// Suffix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub minus_sign_suffix: Cow<'data, str>,
+    pub minus_sign_suffix: VarZeroCow<'data, str>,
 
     /// Prefix to apply when a positive sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub plus_sign_prefix: Cow<'data, str>,
+    pub plus_sign_prefix: VarZeroCow<'data, str>,
     /// Suffix to apply when a positive sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub plus_sign_suffix: Cow<'data, str>,
+    pub plus_sign_suffix: VarZeroCow<'data, str>,
 
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub decimal_separator: Cow<'data, str>,
+    pub decimal_separator: VarZeroCow<'data, str>,
 
     /// Character used to separate groups in the integer part of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub grouping_separator: Cow<'data, str>,
+    pub grouping_separator: VarZeroCow<'data, str>,
 
     /// The numbering system to use.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub numsys: Cow<'data, str>,
+    pub numsys: VarZeroCow<'data, str>,
 }
 
+#[cfg(feature = "alloc")]
 impl DecimalSymbolStrsBuilder<'_> {
     /// Build a [`DecimalSymbolsStrs`]
     pub fn build(&self) -> VarZeroCow<'static, DecimalSymbolsStrs> {
@@ -279,13 +280,13 @@ impl DecimalSymbols<'static> {
     /// Create a new en-US format for use in testing
     pub(crate) fn new_en_for_testing() -> Self {
         let strings = DecimalSymbolStrsBuilder {
-            minus_sign_prefix: Cow::Borrowed("-"),
-            minus_sign_suffix: Cow::Borrowed(""),
-            plus_sign_prefix: Cow::Borrowed("+"),
-            plus_sign_suffix: Cow::Borrowed(""),
-            decimal_separator: ".".into(),
-            grouping_separator: ",".into(),
-            numsys: Cow::Borrowed("latn"),
+            minus_sign_prefix: VarZeroCow::new_borrowed("-"),
+            minus_sign_suffix: VarZeroCow::new_borrowed(""),
+            plus_sign_prefix: VarZeroCow::new_borrowed("+"),
+            plus_sign_suffix: VarZeroCow::new_borrowed(""),
+            decimal_separator: VarZeroCow::new_borrowed("."),
+            grouping_separator: VarZeroCow::new_borrowed(","),
+            numsys: VarZeroCow::new_borrowed("latn"),
         };
         Self {
             strings: VarZeroCow::from_encodeable(&strings),
