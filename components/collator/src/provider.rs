@@ -68,6 +68,70 @@ const _: () = {
     impl_collation_reordering_v1!(Baked);
 };
 
+const SCRIPT_FALLBACK: icu_provider::fallback::LocaleFallbackConfig = {
+    let mut c = icu_provider::fallback::LocaleFallbackConfig::default();
+    c.priority = icu_provider::fallback::LocaleFallbackPriority::Script;
+    c
+};
+
+icu_provider::data_marker!(
+    /// Data marker for singleton roon collation data.
+    CollationRootV1,
+    "collation/root/v1",
+    CollationData<'static>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for collation tailorings.
+    CollationTailoringV1,
+    "collation/tailoring/v1",
+    CollationData<'static>,
+    fallback_config = SCRIPT_FALLBACK,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "collator",
+);
+icu_provider::data_marker!(
+    /// Data marker for collation diacritics data.
+    CollationDiacriticsV1,
+    "collation/diacritics/v1",
+    CollationDiacritics<'static>,
+    fallback_config = SCRIPT_FALLBACK,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "collator",
+);
+icu_provider::data_marker!(
+    /// Data marker for collation jamo data.
+    CollationJamoV1,
+    "collation/jamo/v1",
+    CollationJamo<'static>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for collation reordering data.
+    CollationReorderingV1,
+    "collation/reordering/v1",
+    CollationReordering<'static>,
+    fallback_config = SCRIPT_FALLBACK,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "collator",
+);
+icu_provider::data_marker!(
+    /// Data marker for collation metadata.
+    CollationMetadataV1,
+    "collation/metadata/v1",
+    CollationMetadata,
+    fallback_config = SCRIPT_FALLBACK,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "collator",
+);
+icu_provider::data_marker!(
+    /// Data marker for collcation special primaries data.
+    CollationSpecialPrimariesV1,
+    "collation/special/primaries/v1",
+    CollationSpecialPrimaries<'static>,
+    is_singleton = true,
+);
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
@@ -116,16 +180,7 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(CollationRootV1, "collator/root@1", singleton),
-    marker(
-        CollationTailoringV1,
-        "collator/tailoring@1",
-        fallback_by = "script",
-        attributes_domain = "collator",
-    )
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -235,13 +290,7 @@ impl<'data> CollationData<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationDiacriticsV1,
-    "collator/dia@1",
-    fallback_by = "script",
-    attributes_domain = "collator",
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -261,8 +310,7 @@ pub struct CollationDiacritics<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CollationJamoV1, "collator/jamo@1", singleton))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -280,13 +328,7 @@ pub struct CollationJamo<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationReorderingV1,
-    "collator/reord@1",
-    fallback_by = "script",
-    attributes_domain = "collator",
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -370,13 +412,7 @@ impl CollationReordering<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    CollationMetadataV1,
-    "collator/meta@1",
-    fallback_by = "script",
-    attributes_domain = "collator",
-))]
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -467,8 +503,7 @@ impl CollationMetadata {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CollationSpecialPrimariesV1, "collator/prim@1", singleton))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
