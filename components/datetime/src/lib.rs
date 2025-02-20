@@ -147,8 +147,5 @@ pub mod input {
     pub use icu_time::TimeZone;
     /// **This is a reexport of a type in [`icu_time`]**.
     #[doc = "\n"] // prevent autoformatting
-    pub use icu_time::TimeZoneInfo;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::ZonedDateTime;
 }

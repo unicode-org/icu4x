@@ -817,7 +817,8 @@ macro_rules! impl_zone_marker {
         ///
         /// ```
         /// use icu::datetime::input::Date;
-        /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
+        /// use icu::datetime::input::{Time, TimeZone, UtcOffset};
+        /// use icu_time::zone::TimeZoneInfo;
         /// use icu::datetime::TimeFormatter;
         /// use icu::time::zone::TimeZoneVariant;
         #[doc = concat!("use icu::datetime::fieldsets::zone::", stringify!($type), ";")]
@@ -1144,7 +1145,8 @@ pub mod zone {
         ///
         /// ```
         /// use icu::datetime::input::Date;
-        /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
+        /// use icu::datetime::input::{Time, TimeZone, UtcOffset};
+        /// use icu_time::zone::TimeZoneInfo;
         /// use icu::datetime::input::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};

@@ -434,7 +434,8 @@ size_test!(
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
 /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-/// use icu::datetime::input::{Time, TimeZoneInfo, ZonedDateTime};
+/// use icu::datetime::input::{Time, ZonedDateTime};
+/// use icu_time::zone::TimeZoneInfo;
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -503,7 +504,8 @@ size_test!(
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
-/// use icu::datetime::input::{DateTime, TimeZoneInfo};
+/// use icu::datetime::input::DateTime;
+/// use icu_time::zone::TimeZoneInfo;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
