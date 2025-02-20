@@ -6,7 +6,6 @@
     - General
         - Some crates have been given the ability to be built without `alloc` (unicode-org#6077, unicode-org#6078)
     - `icu_provider`
-        - `GeneralCategoryGroup::contains` now accepts `self` by value (unicode-org#5952)
         - There is now a `data_marker!` macro (unicode-org#6072)
     - `icu_locale`
         - `LocaleExpander`, `LocaleDirectionality`, and `LocaleCanonicalizer` distinguish between `new_common()` and `new_extended()` constructors (unicode-org#5958)
@@ -16,6 +15,7 @@
         - Rename IsoWeekday to Weekday (unicode-org#6140)
     - `icu_properties`
         - Add to/from ICU4C APIs to enumerated properties (unicode-org#6091)
+        - `GeneralCategoryGroup::contains` now accepts `self` by value (unicode-org#5952)
 - Utils
     - `zerovec`
         - derive: Reduce number of panicky calls introduced by derive (unicode-org#6052)
