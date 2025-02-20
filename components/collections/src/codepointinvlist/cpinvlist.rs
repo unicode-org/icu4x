@@ -981,10 +981,7 @@ mod tests {
             CodePointInversionList::try_from_u32_inversion_list_slice(&inv_list).unwrap();
         let round_trip_inv_list = s.get_inversion_list_vec();
         assert_eq!(
-            round_trip_inv_list
-                .into_iter()
-                .map(u32::from)
-                .collect::<ZeroVec<u32>>(),
+            round_trip_inv_list.into_iter().collect::<ZeroVec<u32>>(),
             inv_list
         );
     }
