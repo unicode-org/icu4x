@@ -94,7 +94,6 @@ mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
-pub mod input;
 mod neo;
 pub mod options;
 pub mod parts;
