@@ -407,7 +407,7 @@ where
 {
     count_min_max(charcnt, charcnt, any()).map(|bytes: Vec<u8>| {
         bytes
-            .split_inclusive(|b| *b == 0)
+            .split_inclusive(|&b| b == b'\0')
             .map(|s| String::from_utf8_lossy(&s[0..s.len() - 1]).into_owned())
             .collect()
     })
