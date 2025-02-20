@@ -14,6 +14,10 @@ use crate::elements::{
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
+use crate::options::{
+    AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength,
+};
+use crate::preferences::{CollationCaseFirst, CollationNumericOrdering, CollationType};
 use crate::provider::CollationData;
 use crate::provider::CollationDiacritics;
 use crate::provider::CollationDiacriticsV1;
@@ -26,11 +30,6 @@ use crate::provider::CollationRootV1;
 use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
-use crate::{
-    preferences::CollationCaseFirst, preferences::CollationNumericOrdering,
-    preferences::CollationType, AlternateHandling, CollatorOptions, MaxVariable,
-    ResolvedCollatorOptions, Strength,
-};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_normalizer::provider::CanonicalDecompositionDataV2;

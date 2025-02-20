@@ -137,9 +137,6 @@ icu::datetime::options::FractionalSecondDigits#Enum
 icu::datetime::options::FractionalSecondError#Enum
 icu::datetime::options::TimePrecision#Enum
 icu::datetime::options::YearStyle#Enum
-icu::list::ListFormatterOptions#Struct
-icu::list::ListFormatterOptions::default#FnInStruct
-icu::list::ListFormatterOptions::with_length#FnInStruct
 icu::plurals::PluralElements#Struct
 icu::plurals::PluralElements::as_ref#FnInStruct
 icu::plurals::PluralElements::explicit_one#FnInStruct

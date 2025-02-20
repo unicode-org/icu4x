@@ -6,7 +6,7 @@ use core::cmp::Ordering;
 
 use atoi::FromRadix16;
 use icu_collator::provider::*;
-use icu_collator::{preferences::*, *};
+use icu_collator::{options::*, preferences::*, *};
 use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 

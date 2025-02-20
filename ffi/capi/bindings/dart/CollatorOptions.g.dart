@@ -10,7 +10,7 @@ final class _CollatorOptionsFfi extends ffi.Struct {
   external _ResultInt32Void backwardSecondLevel;
 }
 
-/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
+/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
 final class CollatorOptions {
   CollatorStrength? strength;
   CollatorAlternateHandling? alternateHandling;

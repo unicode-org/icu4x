@@ -20,7 +20,7 @@ As its most basic purpose, `Collator` offers locale-aware ordering:
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 use icu::locale::locale;
 
 let mut options = CollatorOptions::default();
@@ -50,7 +50,7 @@ The degree of sensitivity in how to determine that strings are distinct.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 
 // Primary Level
 
@@ -108,7 +108,7 @@ for Thai, whose default is `AlternateHandling::Shifted`.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 
 // If alternate handling is set to `NonIgnorable`, then differences among
 // these characters are of the same importance as differences among letters.
@@ -158,7 +158,7 @@ without having to use tertiary level just to enable case level differences.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 
 // Primary
 
@@ -229,7 +229,7 @@ Whether to swap the ordering of uppercase and lowercase.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 use icu::collator::preferences::*;
 
 // Use the locale's default.
@@ -265,7 +265,7 @@ numeric value.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 use icu::collator::preferences::*;
 
 // Numerical sorting off
@@ -284,6 +284,8 @@ let collator_num_on =
     Collator::try_new(prefs_num_on, Default::default()).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```
+
+[`CollatorOptions`]: options::CollatorOptions
 
 <!-- cargo-rdme end -->
 

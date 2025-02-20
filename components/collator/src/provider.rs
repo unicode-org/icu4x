@@ -36,7 +36,7 @@ use crate::elements::FFFD_CE_VALUE;
 use crate::elements::NO_CE_PRIMARY;
 use crate::preferences::CollationCaseFirst;
 
-use super::MaxVariable;
+use crate::options::MaxVariable;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]

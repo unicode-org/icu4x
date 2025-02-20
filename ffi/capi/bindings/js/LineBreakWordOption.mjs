@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html) for more information.
+/** See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
 */
 
 

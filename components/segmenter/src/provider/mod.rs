@@ -18,7 +18,7 @@
 mod lstm;
 pub use lstm::*;
 
-use crate::WordType;
+use crate::options::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;

@@ -43,7 +43,11 @@ pub mod ffi {
     impl SentenceSegmenter {
         /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakInvariantOptions, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::options::SentenceBreakInvariantOptions,
+            Struct,
+            hidden
+        )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<SentenceSegmenter> {
@@ -53,7 +57,7 @@ pub mod ffi {
         }
         /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakOptions, Struct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::options::SentenceBreakOptions, Struct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_with_content_locale(
@@ -172,9 +176,11 @@ pub mod ffi {
     }
 }
 
-impl<'a> From<&'a crate::locale_core::ffi::Locale> for icu_segmenter::SentenceBreakOptions<'a> {
+impl<'a> From<&'a crate::locale_core::ffi::Locale>
+    for icu_segmenter::options::SentenceBreakOptions<'a>
+{
     fn from(other: &'a crate::locale_core::ffi::Locale) -> Self {
-        let mut options = icu_segmenter::SentenceBreakOptions::default();
+        let mut options = icu_segmenter::options::SentenceBreakOptions::default();
         options.content_locale = Some(&other.0.id);
         options
     }

@@ -77,7 +77,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+/// use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
 /// let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
@@ -88,7 +88,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+/// use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
 /// let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
@@ -101,7 +101,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+/// # use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
 /// # let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 /// use itertools::Itertools;
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";

@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html) for more information.
+/** See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/options/enum.TrailingCase.html) for more information.
 */
 
 

@@ -15,7 +15,7 @@ use super::{provider, Duration};
 pub use super::validated_options::ValidatedDurationFormatterOptions;
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
-use icu_list::{ListFormatter, ListFormatterPreferences, ListLength};
+use icu_list::{options::ListLength, ListFormatter, ListFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
@@ -171,7 +171,7 @@ impl DurationUnitFormatter {
     }
 }
 
-impl From<BaseStyle> for icu_list::ListFormatterOptions {
+impl From<BaseStyle> for icu_list::options::ListFormatterOptions {
     fn from(style: BaseStyle) -> Self {
         // Section 1.1.13
         // 1. Let lfOpts be OrdinaryObjectCreate(null).

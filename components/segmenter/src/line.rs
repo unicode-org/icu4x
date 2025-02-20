@@ -315,9 +315,9 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust
-/// use icu::segmenter::{
+/// use icu::segmenter::LineSegmenter;
+/// use icu::segmenter::options::{
 ///     LineBreakOptions, LineBreakStrictness, LineBreakWordOption,
-///     LineSegmenter,
 /// };
 ///
 /// let mut options = LineBreakOptions::default();

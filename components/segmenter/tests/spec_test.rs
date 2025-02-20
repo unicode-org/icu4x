@@ -4,10 +4,10 @@
 
 use icu_locale_core::langid;
 use icu_properties::PropertyNamesLong;
+use icu_segmenter::options::WordBreakOptions;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
-use icu_segmenter::WordBreakOptions;
 use icu_segmenter::WordSegmenter;
 use std::char;
 use std::io::BufRead;
