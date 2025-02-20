@@ -11,13 +11,12 @@ import 'package:path/path.dart' as path;
 const crateName = 'icu_capi';
 
 Future<void> main(List<String> args) async {
-  final defaultFeatures = ['default_components', 'compiled_data'];
-  var fileKey = 'file';
-  var osKey = 'os';
-  var architectureKey = 'architecture';
-  var simulatorKey = 'simulator';
-  var compileTypeKey = 'compile_type';
-  var cargoFeaturesKey = 'cargo_features';
+  const fileKey = 'file';
+  const osKey = 'os';
+  const architectureKey = 'architecture';
+  const simulatorKey = 'simulator';
+  const compileTypeKey = 'compile_type';
+  const cargoFeaturesKey = 'cargo_features';
   final argParser =
       ArgParser()
         ..addOption(fileKey, mandatory: true)
@@ -29,7 +28,10 @@ Future<void> main(List<String> args) async {
         ..addFlag(simulatorKey, defaultsTo: false)
         ..addOption(osKey, mandatory: true)
         ..addOption(architectureKey, mandatory: true)
-        ..addMultiOption(cargoFeaturesKey, defaultsTo: defaultFeatures);
+        ..addMultiOption(
+          cargoFeaturesKey,
+          defaultsTo: ['default_components', 'compiled_data'],
+        );
 
   ArgResults parsed;
   try {
@@ -39,26 +41,20 @@ Future<void> main(List<String> args) async {
     print(argParser.usage);
     exit(1);
   }
-  final buildStatic = parsed.option(compileTypeKey)! == 'static';
-  final simulator = parsed.flag(simulatorKey);
-  final targetOS = OS.values.firstWhere((o) => o.name == parsed.option(osKey)!);
-  final targetArchitecture = Architecture.values.firstWhere(
-    (o) => o.name == parsed.option(architectureKey)!,
-  );
-
-  final out = Uri.file(parsed.option(fileKey)!);
-
-  final cargoFeatures = parsed.multiOption(cargoFeaturesKey);
 
   final lib = await buildLib(
-    targetOS,
-    targetArchitecture,
-    buildStatic,
-    simulator,
+    OS.values.firstWhere((o) => o.name == parsed.option(osKey)!),
+    Architecture.values.firstWhere(
+      (o) => o.name == parsed.option(architectureKey)!,
+    ),
+    parsed.option(compileTypeKey)! == 'static',
+    parsed.flag(simulatorKey),
     File.fromUri(Platform.script).parent,
-    cargoFeatures,
+    parsed.multiOption(cargoFeaturesKey),
   );
-  await lib.copy(out.toFilePath(windows: Platform.isWindows));
+  await lib.copy(
+    Uri.file(parsed.option(fileKey)!).toFilePath(windows: Platform.isWindows),
+  );
 }
 
 // Copied from Dart's package:intl4x build.dart, see
@@ -73,11 +69,12 @@ Future<File> buildLib(
 ) async {
   // We assume that the first folder to contain a cargo.toml above the
   // output directory is the directory containing the ICU4X code.
-  var folder = startingPoint;
-  while (!File.fromUri(folder.uri.resolve('Cargo.toml')).existsSync()) {
-    folder = folder.parent;
+  var workingDirectory = startingPoint;
+  while (!File.fromUri(
+    workingDirectory.uri.resolve('Cargo.toml'),
+  ).existsSync()) {
+    workingDirectory = workingDirectory.parent;
   }
-  final workingDirectory = folder.path;
 
   final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
   final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
@@ -89,9 +86,8 @@ Future<File> buildLib(
       workingDirectory: workingDirectory,
     );
   }
-  final stdFeatures = ['logging', 'simple_logger'];
-  final noStdFeatures = ['libc_alloc', 'panic_handler'];
-  final arguments = [
+
+  await runProcess('cargo', [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
     '--manifest-path=$workingDirectory/ffi/capi/Cargo.toml',
@@ -100,19 +96,21 @@ Future<File> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${{...cargoFeatures, ...(isNoStd ? noStdFeatures : stdFeatures)}.join(',')}',
+    '--features=${{
+      ...cargoFeatures,
+      ...(isNoStd ? ['libc_alloc', 'panic_handler'] : ['logging', 'simple_logger']),
+    }.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
       '-Zbuild-std-features=panic_immediate_abort',
     ],
     '--target=$target',
-  ];
-  await runProcess('cargo', arguments, workingDirectory: workingDirectory);
+  ], workingDirectory: workingDirectory);
 
   final file = File(
     path.join(
-      workingDirectory,
+      workingDirectory.path,
       'target',
       target,
       'release',
@@ -167,7 +165,7 @@ bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
 Future<void> runProcess(
   String executable,
   List<String> arguments, {
-  String? workingDirectory,
+  Directory? workingDirectory,
   bool dryRun = false,
 }) async {
   print('----------');
@@ -176,7 +174,7 @@ Future<void> runProcess(
     final processResult = await Process.run(
       executable,
       arguments,
-      workingDirectory: workingDirectory,
+      workingDirectory: workingDirectory?.path,
     );
     print('stdout:');
     print(processResult.stdout);
