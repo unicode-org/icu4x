@@ -122,6 +122,8 @@ pub mod properties_sets;
 pub mod properties_unisets;
 #[cfg(feature = "properties")]
 pub mod script;
+#[cfg(feature = "properties")]
+pub mod string_iter;
 #[cfg(feature = "segmenter")]
 pub mod segmenter_grapheme;
 #[cfg(feature = "segmenter")]

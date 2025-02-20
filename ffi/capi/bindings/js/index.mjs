@@ -182,6 +182,8 @@ export { WordBreakIteratorUtf8 } from "./WordBreakIteratorUtf8.mjs"
 
 export { WordSegmenter } from "./WordSegmenter.mjs"
 
+export { StringIterator } from "./StringIterator.mjs"
+
 export { Time } from "./Time.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
