@@ -929,7 +929,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     }
 }
 
-/// A formatter optimized for time and time zone formatting.
+/// A formatter optimized for time and time zone formatting, when a calendar is not needed.
 ///
 /// # Examples
 ///

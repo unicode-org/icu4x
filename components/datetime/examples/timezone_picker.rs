@@ -19,7 +19,8 @@ fn main() {
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetLong).unwrap();
     let non_location_formatter =
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::GenericLong).unwrap();
-    let city_formatter = NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
+    let city_formatter =
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
     let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
 
