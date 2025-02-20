@@ -376,9 +376,21 @@ jobs:
         sdk: 3.7.0
 
     # Actual job
-    - name: Run `cargo make ci-job-test-dart`
-      run: cargo make ci-job-test-dart
- 
+    - name: Get Dart dependencies
+      working-directory: ffi/dart
+      run: dart pub get
+
+    - name: Analyze Dart code
+      working-directory: ffi/dart
+      run: dart analyze --fatal-infos
+
+    - name: Test Dart code
+      working-directory: ffi/dart
+      run: dart --enable-experiment=native-assets test
+
+    - name: Smoke test by executing build_libs.dart
+      run: dart ffi/dart/tool/build_libs.dart --file bin/linux_x64 --os linux --architecture x64 --compile_type dynamic --cargo_features icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals,experimental_components,compiled_data
+
   # ci-job-test-dart
   test-dart-current:
     runs-on: ubuntu-latest
@@ -411,9 +423,21 @@ jobs:
         sdk: stable
 
     # Actual job
-    - name: Run `cargo make ci-job-test-dart`
-      run: cargo make ci-job-test-dart
-      
+    - name: Get Dart dependencies
+      working-directory: ffi/dart
+      run: dart pub get
+
+    - name: Analyze Dart code
+      working-directory: ffi/dart
+      run: dart analyze --fatal-infos
+
+    - name: Test Dart code
+      working-directory: ffi/dart
+      run: dart --enable-experiment=native-assets test
+
+    - name: Smoke test by executing build_libs.dart
+      run: dart ffi/dart/tool/build_libs.dart --file bin/linux_x64 --os linux --architecture x64 --compile_type dynamic --cargo_features icu_collator,icu_datetime,icu_list,icu_decimal,icu_plurals,experimental_components,compiled_data
+
 
   # ci-job-nostd
   nostd:
