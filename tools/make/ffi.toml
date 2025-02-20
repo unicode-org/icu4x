@@ -84,7 +84,7 @@ args = ["rustc", "-p", "noalloctest",
         "--target", "x86_64-unknown-linux-gnu",
         "--",
         "-Clink-arg=-nostartfiles", "-Cpanic=abort",
-        "--cfg", "icu4x_nostdtest"]
+        "--cfg", "icu4x_noalloctest"]
 
 # Diplomat gen
 
