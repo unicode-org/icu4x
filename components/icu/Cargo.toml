@@ -32,7 +32,7 @@ icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true, features = ["alloc"] }
 icu_segmenter = { workspace = true }
-icu_time = { workspace = true }
+icu_time = { workspace = true, features = ["alloc"] }
 icu_experimental = { workspace = true, optional = true }
 icu_pattern = { workspace = true, optional = true }
 
