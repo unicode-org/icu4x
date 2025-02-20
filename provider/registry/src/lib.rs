@@ -42,6 +42,7 @@ macro_rules! registry(
             icu::datetime::provider::time_zones::ExemplarCitiesV1: ExemplarCitiesV1,
             icu::datetime::provider::time_zones::ExemplarCitiesRootV1: ExemplarCitiesRootV1,
             icu::datetime::provider::time_zones::MetazoneGenericNamesLongV1: MetazoneGenericNamesLongV1,
+            icu::datetime::provider::time_zones::MetazoneStandardNamesLongV1: MetazoneStandardNamesLongV1,
             icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1: MetazoneGenericNamesShortV1,
             icu::datetime::provider::time_zones::MetazonePeriodV1: MetazonePeriodV1,
             icu::datetime::provider::time_zones::MetazoneSpecificNamesLongV1: MetazoneSpecificNamesLongV1,
