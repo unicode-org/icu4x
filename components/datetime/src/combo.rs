@@ -52,7 +52,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// Same thing with a fixed calendar formatter:
 ///
 /// ```
-/// use icu::calendar::Gregorian;
+/// use icu::datetime::input::Gregorian;
 /// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -110,7 +110,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// Format with a time of day and long time zone:
 ///
 /// ```
-/// use icu::calendar::Gregorian;
+/// use icu::datetime::input::Gregorian;
 /// use icu::datetime::fieldsets::{T, zone::SpecificLong};
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;

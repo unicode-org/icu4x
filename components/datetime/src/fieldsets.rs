@@ -349,7 +349,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::datetime::input::Date;
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -370,8 +370,8 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
-            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::input::Date;
+            /// use icu::datetime::input::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -502,7 +502,7 @@ macro_rules! impl_date_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::datetime::input::Date;
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
@@ -525,8 +525,8 @@ macro_rules! impl_date_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
-            /// use icu::calendar::Gregorian;
+            /// use icu::datetime::input::Date;
+            /// use icu::datetime::input::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
@@ -816,7 +816,7 @@ macro_rules! impl_zone_marker {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::datetime::TimeFormatter;
         /// use icu::time::zone::TimeZoneVariant;
@@ -1143,9 +1143,9 @@ pub mod zone {
         /// to the location format for long lengths:
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
-        /// use icu::calendar::Gregorian;
+        /// use icu::datetime::input::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
         /// use icu::locale::locale;
@@ -1187,7 +1187,7 @@ pub mod zone {
         /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
         ///
         /// ```compile_fail,E0271
-        /// use icu::calendar::{Date, Iso};
+        /// use icu::datetime::input::{Date, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificLong;
         /// use icu::locale::locale;
@@ -1230,7 +1230,7 @@ pub mod zone {
         /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
         ///
         /// ```compile_fail,E0271
-        /// use icu::calendar::{Date, Iso};
+        /// use icu::datetime::input::{Date, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::{T, zone::SpecificShort};
         /// use icu::locale::locale;
@@ -1270,7 +1270,7 @@ pub mod zone {
         /// All shapes of time zones can be formatted with this style.
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
         /// use icu::datetime::input::{Time, TimeZone, UtcOffset};
@@ -1337,9 +1337,9 @@ pub mod zone {
         /// When a display name is unavailable, falls back to the location format:
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone};
-        /// use icu::calendar::Gregorian;
+        /// use icu::datetime::input::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::locale::locale;
@@ -1366,7 +1366,7 @@ pub mod zone {
         /// Can also fall back to the UTC offset:
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::Time;
         /// use icu::datetime::TimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
@@ -1497,7 +1497,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::input::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
         /// use icu::datetime::input::UtcOffset;
@@ -1532,7 +1532,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::input::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
         /// use icu::datetime::input::UtcOffset;

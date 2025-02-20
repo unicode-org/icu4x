@@ -49,7 +49,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::Date;
+//! use icu::datetime::input::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
@@ -127,9 +127,6 @@ pub mod preferences {
 
 /// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
 pub mod input {
-    /// **This is a reexport of a type in [`icu_calendar`]**.
-    #[doc = "\n"] // prevent autoformatting
-    pub use icu_calendar::AnyCalendar;
     /// **This is a reexport of a type in [`icu_calendar`]**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_calendar::Date;
