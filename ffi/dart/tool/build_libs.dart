@@ -50,10 +50,6 @@ Future<void> main(List<String> args) async {
 
   final cargoFeatures = parsed.multiOption(cargoFeaturesKey);
 
-  // We assume that the first folder to contain a cargo.toml above the
-  // output directory is the directory containing the ICU4X code.
-  Directory icu4xPath = recurseToParentRustCrate(File.fromUri(Platform.script));
-
   final libFileName = targetOS.filename(buildStatic)(
     crateName.replaceAll('-', '_'),
   );
@@ -63,30 +59,13 @@ Future<void> main(List<String> args) async {
     buildStatic,
     simulator,
     libFileName,
-    icu4xPath.path,
+    File.fromUri(Platform.script).parent,
     cargoFeatures,
   );
   await lib.copy(out.toFilePath(windows: Platform.isWindows));
 }
 
-Directory recurseToParentRustCrate(FileSystemEntity startingPoint) {
-  var folder =
-      startingPoint is Directory ? startingPoint : startingPoint.parent;
-  while (!File.fromUri(folder.uri.resolve('Cargo.toml')).existsSync()) {
-    folder = folder.parent;
-    if (folder.parent == folder) {
-      throw ArgumentError(
-        'Running in the wrong directory, as no Cargo.toml exists above $startingPoint',
-      );
-    }
-  }
-  return folder;
-}
-
-Future<File> buildLibraryFromInput(
-  BuildInput input,
-  String workingDirectory,
-) async {
+Future<File> buildLibraryFromInput(BuildInput input) async {
   final crateNameFixed = crateName.replaceAll('-', '_');
   final libFileName = input.config.code.targetOS.filename(
     input.config.buildStatic,
@@ -109,7 +88,7 @@ Future<File> buildLibraryFromInput(
     input.config.code.targetOS == OS.iOS &&
         input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
     libFileName,
-    workingDirectory,
+    Directory.fromUri(input.outputDirectory),
     features,
   );
 }
@@ -122,9 +101,17 @@ Future<File> buildLib(
   bool buildStatic,
   bool isSimulator,
   String libFileName,
-  String workingDirectory,
+  Directory startingPoint,
   List<String> cargoFeatures,
 ) async {
+  // We assume that the first folder to contain a cargo.toml above the
+  // output directory is the directory containing the ICU4X code.
+  var folder = startingPoint;
+  while (!File.fromUri(folder.uri.resolve('Cargo.toml')).existsSync()) {
+    folder = folder.parent;
+  }
+  final workingDirectory = folder.path;
+
   final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
   final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
   if (!isNoStd) {
