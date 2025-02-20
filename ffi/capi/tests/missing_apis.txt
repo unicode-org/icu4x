@@ -133,8 +133,8 @@ icu::datetime::fieldsets::zone::Location#Struct
 icu::datetime::fieldsets::zone::SpecificLong#Struct
 icu::datetime::fieldsets::zone::SpecificShort#Struct
 icu::datetime::options::Alignment#Enum
-icu::datetime::options::FractionalSecondDigits#Enum
-icu::datetime::options::FractionalSecondError#Enum
+icu::datetime::options::SubsecondDigits#Enum
+icu::datetime::options::SubsecondError#Enum
 icu::datetime::options::TimePrecision#Enum
 icu::datetime::options::YearStyle#Enum
 icu::plurals::PluralElements#Struct

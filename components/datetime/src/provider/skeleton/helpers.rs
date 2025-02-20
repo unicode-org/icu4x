@@ -8,7 +8,7 @@ use core::cmp::Ordering;
 
 use super::plural::PatternPlurals;
 use crate::{
-    options::FractionalSecondDigits,
+    options::SubsecondDigits,
     provider::{
         calendar::{
             patterns::{FullLongMediumShort, GenericLengthPatterns},
@@ -147,7 +147,7 @@ pub fn create_best_pattern_for_fields<'data>(
         pattern_plurals.for_each_mut(|pattern| {
             naively_apply_preferences(pattern, components.hour_cycle);
             naively_apply_time_zone_name(pattern, components.time_zone_name);
-            apply_fractional_seconds(pattern, components.fractional_second);
+            apply_subseconds(pattern, components.subsecond);
         });
         return BestSkeleton::AllFieldsMatch(pattern_plurals);
     }
@@ -164,7 +164,7 @@ pub fn create_best_pattern_for_fields<'data>(
                     pattern_plurals.for_each_mut(|pattern| {
                         naively_apply_preferences(pattern, components.hour_cycle);
                         naively_apply_time_zone_name(pattern, components.time_zone_name);
-                        apply_fractional_seconds(pattern, components.fractional_second);
+                        apply_subseconds(pattern, components.subsecond);
                     });
                 }
                 BestSkeleton::MissingOrExtraFields(pattern_plurals)
@@ -193,7 +193,7 @@ pub fn create_best_pattern_for_fields<'data>(
             pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
         naively_apply_preferences(&mut pattern, components.hour_cycle);
         naively_apply_time_zone_name(&mut pattern, components.time_zone_name);
-        apply_fractional_seconds(&mut pattern, components.fractional_second);
+        apply_subseconds(&mut pattern, components.subsecond);
         pattern
     });
 
@@ -346,11 +346,8 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
 /// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
 /// of ‘S’ characters from the requested skeleton.
 /// (see <https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons>)
-fn apply_fractional_seconds(
-    pattern: &mut runtime::Pattern,
-    fractional_seconds: Option<FractionalSecondDigits>,
-) {
-    if let Some(fractional_seconds) = fractional_seconds {
+fn apply_subseconds(pattern: &mut runtime::Pattern, subseconds: Option<SubsecondDigits>) {
+    if let Some(subseconds) = subseconds {
         let mut items = pattern.items.to_vec();
         for item in items.iter_mut() {
             if let PatternItem::Field(
@@ -361,7 +358,7 @@ fn apply_fractional_seconds(
                 },
             ) = item
             {
-                field.symbol = FieldSymbol::from_fractional_second_digits(fractional_seconds);
+                field.symbol = FieldSymbol::from_subsecond_digits(subseconds);
             };
         }
         *pattern = runtime::Pattern::from(items);
