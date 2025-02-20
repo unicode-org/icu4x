@@ -39,7 +39,7 @@ use tinystr::TinyAsciiStr;
 #[derive(Debug)]
 pub struct LocaleCanonicalizer<Expander = LocaleExpander> {
     /// Data to support canonicalization.
-    aliases: DataPayload<AliasesV2>,
+    aliases: DataPayload<LocaleAliasesV1>,
     /// Likely subtags implementation for delegation.
     expander: Expander,
 }
@@ -163,7 +163,7 @@ fn uts35_replacement<'a, I>(
 #[inline]
 fn uts35_check_language_rules(
     langid: &mut LanguageIdentifier,
-    alias_data: &DataPayload<AliasesV2>,
+    alias_data: &DataPayload<LocaleAliasesV1>,
 ) -> TransformResult {
     if !langid.language.is_default() {
         let lang: TinyAsciiStr<3> = langid.language.into();
@@ -218,9 +218,9 @@ impl LocaleCanonicalizer<LocaleExpander> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2>
-            + DataProvider<LikelySubtagsForLanguageV1>
-            + DataProvider<LikelySubtagsForScriptRegionV1>
+        P: DataProvider<LocaleAliasesV1>
+            + DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_common_unstable(provider)?;
@@ -250,10 +250,10 @@ impl LocaleCanonicalizer<LocaleExpander> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2>
-            + DataProvider<LikelySubtagsForLanguageV1>
-            + DataProvider<LikelySubtagsForScriptRegionV1>
-            + DataProvider<LikelySubtagsExtendedV1>
+        P: DataProvider<LocaleAliasesV1>
+            + DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
+            + DataProvider<LocaleLikelySubtagsExtendedV1>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_extended_unstable(provider)?;
@@ -270,7 +270,9 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: Expander) -> Self {
         Self {
-            aliases: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_ALIASES_V2),
+            aliases: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCALE_ALIASES_V1,
+            ),
             expander,
         }
     }
@@ -281,9 +283,9 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
         expander: Expander,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2> + ?Sized,
+        P: DataProvider<LocaleAliasesV1> + ?Sized,
     {
-        let aliases: DataPayload<AliasesV2> = provider.load(Default::default())?.payload;
+        let aliases: DataPayload<LocaleAliasesV1> = provider.load(Default::default())?.payload;
 
         Ok(Self { aliases, expander })
     }

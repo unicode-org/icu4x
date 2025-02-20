@@ -1,5 +1,5 @@
 // @generated
-/// Implement `DataProvider<AliasesV2>` on the given struct using the data
+/// Implement `DataProvider<LocaleAliasesV1>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 ///
@@ -9,14 +9,14 @@
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_aliases_v2 {
+macro_rules! __impl_locale_aliases_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.81"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_ALIASES_V2: &'static <icu::locale::provider::AliasesV2 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::Aliases {
+            pub const SINGLETON_LOCALE_ALIASES_V1: &'static <icu::locale::provider::LocaleAliasesV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::Aliases {
                 language_variants: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x13\0\r\0\x1B\0*\09\0F\0T\0r\0~\0\x8B\0\x98\0\xA9\0\xB8\0\xC7\0\xD5\0\xE2\0\xF0\0\xFF\0\x0C\x01aa\0\x05\0saahossyart\x06\0lojbanjbocel\x07\0gaulishxtghy\0\x07\0arevmdahywno\0\x06\0bokmalnbno\0\x07\0nynorsknnund\x0E\0hepburn-heplocund-alalc97zh\0\x05\0guoyuzhzh\0\x05\0hakkahakzh\0\x05\0xianghsnund\x06\0aalandund-AXund\x07\0arevelaundund\x07\0arevmdaundund\x06\0bokmalundund\x05\0hakkaundund\x06\0lojbanundund\x07\0nynorskundund\x05\0saahoundund\x05\0xiangund") },
                 sgn_region: unsafe {
                     #[allow(unused_unsafe)]
@@ -58,52 +58,52 @@ macro_rules! __impl_aliases_v2 {
             };
         }
         #[clippy::msrv = "1.81"]
-        impl icu_provider::DataProvider<icu::locale::provider::AliasesV2> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::AliasesV2>, icu_provider::DataError> {
+        impl icu_provider::DataProvider<icu::locale::provider::LocaleAliasesV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::LocaleAliasesV1>, icu_provider::DataError> {
                 if req.id.locale.is_default() {
-                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_ALIASES_V2), metadata: icu_provider::DataResponseMetadata::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCALE_ALIASES_V1), metadata: icu_provider::DataResponseMetadata::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::AliasesV2 as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleAliasesV1 as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
     };
     ($ provider : ty , ITER) => {
-        __impl_aliases_v2!($provider);
+        __impl_locale_aliases_v1!($provider);
         #[clippy::msrv = "1.81"]
-        impl icu_provider::IterableDataProvider<icu::locale::provider::AliasesV2> for $provider {
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LocaleAliasesV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
             }
         }
     };
     ($ provider : ty , DRY) => {
-        __impl_aliases_v2!($provider);
+        __impl_locale_aliases_v1!($provider);
         #[clippy::msrv = "1.81"]
-        impl icu_provider::DryDataProvider<icu::locale::provider::AliasesV2> for $provider {
+        impl icu_provider::DryDataProvider<icu::locale::provider::LocaleAliasesV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponseMetadata::default())
                 } else {
-                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::AliasesV2 as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleAliasesV1 as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
     };
     ($ provider : ty , DRY , ITER) => {
-        __impl_aliases_v2!($provider);
+        __impl_locale_aliases_v1!($provider);
         #[clippy::msrv = "1.81"]
-        impl icu_provider::DryDataProvider<icu::locale::provider::AliasesV2> for $provider {
+        impl icu_provider::DryDataProvider<icu::locale::provider::LocaleAliasesV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponseMetadata::default())
                 } else {
-                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::AliasesV2 as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleAliasesV1 as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
         #[clippy::msrv = "1.81"]
-        impl icu_provider::IterableDataProvider<icu::locale::provider::AliasesV2> for $provider {
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LocaleAliasesV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
             }
@@ -111,4 +111,4 @@ macro_rules! __impl_aliases_v2 {
     };
 }
 #[doc(inline)]
-pub use __impl_aliases_v2 as impl_aliases_v2;
+pub use __impl_locale_aliases_v1 as impl_locale_aliases_v1;

@@ -64,9 +64,9 @@ use crate::TransformResult;
 /// [UTS #35: Likely Subtags]: https://www.unicode.org/reports/tr35/#Likely_Subtags
 #[derive(Debug, Clone)]
 pub struct LocaleExpander {
-    likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1>,
-    likely_subtags_sr: DataPayload<LikelySubtagsForScriptRegionV1>,
-    likely_subtags_ext: Option<DataPayload<LikelySubtagsExtendedV1>>,
+    likely_subtags_l: DataPayload<LocaleLikelySubtagsLanguageV1>,
+    likely_subtags_sr: DataPayload<LocaleLikelySubtagsScriptRegionV1>,
+    likely_subtags_ext: Option<DataPayload<LocaleLikelySubtagsExtendedV1>>,
 }
 
 struct LocaleExpanderBorrowed<'a> {
@@ -224,10 +224,10 @@ impl LocaleExpander {
     pub const fn new_common() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1,
+                crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
             ),
             likely_subtags_sr: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1,
+                crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_SCRIPT_REGION_V1,
             ),
             likely_subtags_ext: None,
         }
@@ -244,8 +244,8 @@ impl LocaleExpander {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1>
-            + DataProvider<LikelySubtagsForScriptRegionV1>
+        P: DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
             + ?Sized,
     {
         let likely_subtags_l = provider.load(Default::default())?.payload;
@@ -272,13 +272,13 @@ impl LocaleExpander {
     pub const fn new_extended() -> Self {
         LocaleExpander {
             likely_subtags_l: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1,
+                crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
             ),
             likely_subtags_sr: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1,
+                crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_SCRIPT_REGION_V1,
             ),
             likely_subtags_ext: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_EXTENDED_V1,
+                crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_EXTENDED_V1,
             )),
         }
     }
@@ -294,9 +294,9 @@ impl LocaleExpander {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1>
-            + DataProvider<LikelySubtagsForScriptRegionV1>
-            + DataProvider<LikelySubtagsExtendedV1>
+        P: DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
+            + DataProvider<LocaleLikelySubtagsExtendedV1>
             + ?Sized,
     {
         let likely_subtags_l = provider.load(Default::default())?.payload;

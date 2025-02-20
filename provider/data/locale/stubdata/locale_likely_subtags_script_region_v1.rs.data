@@ -1,5 +1,5 @@
 // @generated
-/// Implement `DataProvider<LikelySubtagsForScriptRegionV1>` on the given struct using the data
+/// Implement `DataProvider<LocaleLikelySubtagsScriptRegionV1>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 ///
@@ -9,14 +9,14 @@
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_likely_subtags_for_script_region_v1 {
+macro_rules! __impl_locale_likely_subtags_script_region_v1 {
     ($ provider : ty) => {
         #[clippy::msrv = "1.81"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.81"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1: &'static <icu::locale::provider::LikelySubtagsForScriptRegionV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::LikelySubtagsForScriptRegion {
+            pub const SINGLETON_LOCALE_LIKELY_SUBTAGS_SCRIPT_REGION_V1: &'static <icu::locale::provider::LocaleLikelySubtagsScriptRegionV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::LikelySubtagsForScriptRegion {
                 script_region: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ArabAF\0ArabAZ\0ArabBN\0ArabCC\0ArabCN\0ArabGB\0ArabID\0ArabIN\0ArabIR\0ArabMN\0ArabMU\0ArabNG\0ArabPK\0ArabTJ\0CyrlAL\0CyrlAZ\0CyrlBA\0CyrlBG\0CyrlBY\0CyrlGR\0CyrlKG\0CyrlMD\0CyrlME\0CyrlMK\0CyrlMN\0CyrlRO\0CyrlRS\0CyrlSK\0CyrlTJ\0CyrlUA\0CyrlUZ\0CyrlXK\0DevaBT\0DevaMU\0DevaNP\0EthiER\0HantCA\0HantCN\0LatnAE\0LatnAF\0LatnAM\0LatnBD\0LatnBG\0LatnBT\0LatnCC\0LatnCN\0LatnCY\0LatnDZ\0LatnEG\0LatnER\0LatnET\0LatnGE\0LatnGR\0LatnHK\0LatnIL\0LatnIN\0LatnIQ\0LatnIR\0LatnJO\0LatnKM\0LatnKZ\0LatnLB\0LatnLK\0LatnMA\0LatnMK\0LatnMO\0LatnMR\0LatnMV\0LatnNP\0LatnPK\0LatnSD\0LatnSS\0LatnSY\0LatnTD\0LatnTH\0LatnTN\0LatnUA\0LatnYE\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"fa\0az\0ms\0ms\0ug\0ur\0ms\0ur\0fa\0kk\0ur\0ha\0ur\0fa\0mk\0az\0sr\0bg\0be\0mk\0ky\0uk\0sr\0mk\0mn\0bg\0sr\0uk\0tg\0uk\0uz\0sr\0ne\0bhone\0ti\0yueyueen\0tk\0ku\0en\0en\0en\0en\0za\0tr\0fr\0en\0en\0en\0ku\0en\0en\0en\0en\0en\0tk\0en\0fr\0en\0en\0en\0fr\0sq\0en\0fr\0en\0en\0en\0en\0en\0ku\0fr\0en\0fr\0pl\0en\0") })
@@ -32,52 +32,52 @@ macro_rules! __impl_likely_subtags_for_script_region_v1 {
             };
         }
         #[clippy::msrv = "1.81"]
-        impl icu_provider::DataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::LikelySubtagsForScriptRegionV1>, icu_provider::DataError> {
+        impl icu_provider::DataProvider<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1>, icu_provider::DataError> {
                 if req.id.locale.is_default() {
-                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LIKELY_SUBTAGS_FOR_SCRIPT_REGION_V1), metadata: icu_provider::DataResponseMetadata::default() })
+                    Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCALE_LIKELY_SUBTAGS_SCRIPT_REGION_V1), metadata: icu_provider::DataResponseMetadata::default() })
                 } else {
-                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForScriptRegionV1 as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1 as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
     };
     ($ provider : ty , ITER) => {
-        __impl_likely_subtags_for_script_region_v1!($provider);
+        __impl_locale_likely_subtags_script_region_v1!($provider);
         #[clippy::msrv = "1.81"]
-        impl icu_provider::IterableDataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1> for $provider {
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
             }
         }
     };
     ($ provider : ty , DRY) => {
-        __impl_likely_subtags_for_script_region_v1!($provider);
+        __impl_locale_likely_subtags_script_region_v1!($provider);
         #[clippy::msrv = "1.81"]
-        impl icu_provider::DryDataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1> for $provider {
+        impl icu_provider::DryDataProvider<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponseMetadata::default())
                 } else {
-                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForScriptRegionV1 as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1 as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
     };
     ($ provider : ty , DRY , ITER) => {
-        __impl_likely_subtags_for_script_region_v1!($provider);
+        __impl_locale_likely_subtags_script_region_v1!($provider);
         #[clippy::msrv = "1.81"]
-        impl icu_provider::DryDataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1> for $provider {
+        impl icu_provider::DryDataProvider<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_default() {
                     Ok(icu_provider::DataResponseMetadata::default())
                 } else {
-                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LikelySubtagsForScriptRegionV1 as icu_provider::DataMarker>::INFO, req))
+                    Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1 as icu_provider::DataMarker>::INFO, req))
                 }
             }
         }
         #[clippy::msrv = "1.81"]
-        impl icu_provider::IterableDataProvider<icu::locale::provider::LikelySubtagsForScriptRegionV1> for $provider {
+        impl icu_provider::IterableDataProvider<icu::locale::provider::LocaleLikelySubtagsScriptRegionV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
             }
@@ -85,4 +85,4 @@ macro_rules! __impl_likely_subtags_for_script_region_v1 {
     };
 }
 #[doc(inline)]
-pub use __impl_likely_subtags_for_script_region_v1 as impl_likely_subtags_for_script_region_v1;
+pub use __impl_locale_likely_subtags_script_region_v1 as impl_locale_likely_subtags_script_region_v1;

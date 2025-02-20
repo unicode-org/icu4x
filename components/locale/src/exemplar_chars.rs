@@ -145,7 +145,7 @@ macro_rules! make_exemplar_chars_unicode_set_property {
 
 make_exemplar_chars_unicode_set_property!(
     dyn_data_marker: ExemplarCharactersMain;
-    data_marker: ExemplarCharactersMainV1;
+    data_marker: LocaleExemplarCharactersMainV1;
     func:
     pub fn try_new_main_unstable();
 
@@ -176,7 +176,7 @@ make_exemplar_chars_unicode_set_property!(
 
 make_exemplar_chars_unicode_set_property!(
     dyn_data_marker: ExemplarCharactersAuxiliary;
-    data_marker: ExemplarCharactersAuxiliaryV1;
+    data_marker: LocaleExemplarCharactersAuxiliaryV1;
     func:
     pub fn try_new_auxiliary_unstable();
 
@@ -208,7 +208,7 @@ make_exemplar_chars_unicode_set_property!(
 
 make_exemplar_chars_unicode_set_property!(
     dyn_data_marker: ExemplarCharactersPunctuation;
-    data_marker: ExemplarCharactersPunctuationV1;
+    data_marker: LocaleExemplarCharactersPunctuationV1;
     func:
     pub fn try_new_punctuation_unstable();
 
@@ -241,7 +241,7 @@ make_exemplar_chars_unicode_set_property!(
 
 make_exemplar_chars_unicode_set_property!(
     dyn_data_marker: ExemplarCharactersNumbers;
-    data_marker: ExemplarCharactersNumbersV1;
+    data_marker: LocaleExemplarCharactersNumbersV1;
     func:
     pub fn try_new_numbers_unstable();
 
@@ -274,7 +274,7 @@ make_exemplar_chars_unicode_set_property!(
 
 make_exemplar_chars_unicode_set_property!(
     dyn_data_marker: ExemplarCharactersIndex;
-    data_marker: ExemplarCharactersIndexV1;
+    data_marker: LocaleExemplarCharactersIndexV1;
     func:
     pub fn try_new_index_unstable();
 

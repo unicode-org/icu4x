@@ -47,8 +47,8 @@ impl PersonNamesFormatter {
         P: ?Sized
             + DataProvider<icu_properties::provider::ScriptWithExtensionsPropertyV1>
             + DataProvider<icu_properties::provider::ScriptValueToShortNameV1>
-            + DataProvider<icu_locale::provider::LikelySubtagsForLanguageV1>
-            + DataProvider<icu_locale::provider::ParentsV1>,
+            + DataProvider<icu_locale::provider::LocaleLikelySubtagsLanguageV1>
+            + DataProvider<icu_locale::provider::LocaleParentsV1>,
     {
         let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = PropertyNamesShort::try_new_unstable(provider)?;
