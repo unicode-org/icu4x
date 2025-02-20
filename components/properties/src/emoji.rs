@@ -14,7 +14,7 @@ pub struct EmojiSetData {
 }
 
 impl EmojiSetData {
-    /// Creates a new [`EmojiSetData`] for a [`EmojiSet`].
+    /// Creates a new [`EmojiSetDataBorrowed`] for a [`EmojiSet`].
     ///
     /// See the documentation on [`EmojiSet`] implementations for details.
     ///
@@ -24,7 +24,7 @@ impl EmojiSetData {
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
     pub const fn new<P: EmojiSet>() -> EmojiSetDataBorrowed<'static> {
-        EmojiSetDataBorrowed { set: P::SINGLETON }
+        EmojiSetDataBorrowed::new::<P>()
     }
 
     /// A version of `new()` that uses custom data provided by a [`DataProvider`].
@@ -132,6 +132,19 @@ impl EmojiSetDataBorrowed<'_> {
 }
 
 impl EmojiSetDataBorrowed<'static> {
+    /// Creates a new [`EmojiSetDataBorrowed`] for a [`EmojiSet`].
+    ///
+    /// See the documentation on [`EmojiSet`] implementations for details.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[inline]
+    #[cfg(feature = "compiled_data")]
+    pub const fn new<P: EmojiSet>() -> Self {
+        EmojiSetDataBorrowed { set: P::SINGLETON }
+    }
+
     /// Cheaply converts a [`EmojiSetDataBorrowed<'static>`] into a [`EmojiSetData`].
     ///
     /// Note: Due to branching and indirection, using [`EmojiSetData`] might inhibit some

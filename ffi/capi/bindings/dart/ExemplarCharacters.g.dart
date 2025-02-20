@@ -123,7 +123,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
-  /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+  /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
   ///
@@ -136,7 +136,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
-  /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+  /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
   ///
@@ -149,7 +149,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
-  /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+  /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
   ///
@@ -162,7 +162,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
 
-  /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+  /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
   ///
