@@ -53,10 +53,10 @@ pub fn check(
 
 #[test]
 fn test_grouper() {
+    use crate::input::Decimal;
     use crate::options;
     use crate::provider::*;
     use crate::DecimalFormatter;
-    use fixed_decimal::Decimal;
     use icu_provider::prelude::*;
     use std::cell::RefCell;
     use writeable::assert_writeable_eq;
