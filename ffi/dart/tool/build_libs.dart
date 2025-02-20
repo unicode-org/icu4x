@@ -61,29 +61,6 @@ Future<void> main(List<String> args) async {
   await lib.copy(out.toFilePath(windows: Platform.isWindows));
 }
 
-Future<File> buildLibraryFromInput(BuildInput input) async {
-  final features = [
-    'default_components',
-    'icu_collator',
-    'icu_datetime',
-    'icu_list',
-    'icu_decimal',
-    'icu_plurals',
-    'compiled_data',
-    'buffer_provider',
-    'experimental_components',
-  ];
-  return buildLib(
-    input.config.code.targetOS,
-    input.config.code.targetArchitecture,
-    input.config.buildStatic,
-    input.config.code.targetOS == OS.iOS &&
-        input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
-    Directory.fromUri(input.outputDirectory),
-    features,
-  );
-}
-
 // Copied from Dart's package:intl4x build.dart, see
 // https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
 Future<File> buildLib(
@@ -186,11 +163,6 @@ bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
   (OS.android, Architecture.riscv64),
   (OS.linux, Architecture.riscv64),
 ].contains(arg);
-
-extension on BuildConfig {
-  bool get buildStatic =>
-      code.linkModePreference == LinkModePreference.static || linkingEnabled;
-}
 
 Future<void> runProcess(
   String executable,
