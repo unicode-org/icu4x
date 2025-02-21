@@ -72,9 +72,11 @@ pub mod ffi {
     }
 
     impl BidiClass {
+        #[diplomat::rust_link(icu::properties::props::BidiClass::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(icu::properties::props::BidiClass::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::LeftToRight,
@@ -441,9 +443,11 @@ pub mod ffi {
     }
 
     impl Script {
+        #[diplomat::rust_link(icu::properties::props::Script::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u16 {
             self as u16
         }
+        #[diplomat::rust_link(icu::properties::props::Script::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u16) -> Option<Self> {
             Some(match other {
                 167 => Self::Adlam,
@@ -649,9 +653,14 @@ pub mod ffi {
     }
 
     impl HangulSyllableType {
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::from_icu4c_value,
+            FnInStruct
+        )]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NotApplicable,
@@ -683,9 +692,11 @@ pub mod ffi {
     }
 
     impl EastAsianWidth {
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Neutral,
@@ -801,9 +812,11 @@ pub mod ffi {
     }
 
     impl LineBreak {
+        #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(icu::properties::props::LineBreak::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unknown,
@@ -901,9 +914,17 @@ pub mod ffi {
     }
 
     impl GraphemeClusterBreak {
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::to_icu4c_value,
+            FnInStruct
+        )]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::from_icu4c_value,
+            FnInStruct
+        )]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
@@ -981,9 +1002,11 @@ pub mod ffi {
     }
 
     impl WordBreak {
+        #[diplomat::rust_link(icu::properties::props::WordBreak::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(icu::properties::props::WordBreak::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
@@ -1050,9 +1073,11 @@ pub mod ffi {
     }
 
     impl SentenceBreak {
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
@@ -1269,9 +1294,17 @@ pub mod ffi {
     }
 
     impl CanonicalCombiningClass {
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::to_icu4c_value,
+            FnInStruct
+        )]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::from_icu4c_value,
+            FnInStruct
+        )]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NotReordered,
@@ -1504,9 +1537,17 @@ pub mod ffi {
     }
 
     impl IndicSyllabicCategory {
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::to_icu4c_value,
+            FnInStruct
+        )]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::from_icu4c_value,
+            FnInStruct
+        )]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
@@ -1569,9 +1610,11 @@ pub mod ffi {
     }
 
     impl JoiningType {
+        #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
+        #[diplomat::rust_link(icu::properties::props::JoiningType::from_icu4c_value, FnInStruct)]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NonJoining,
@@ -1700,6 +1743,7 @@ pub mod ffi {
 
     impl GeneralCategory {
         /// Convert to an integer using the ICU4C integer mappings for `General_Category`
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
         pub fn to_integer(self) -> u8 {
             self as u8
         }
@@ -1713,7 +1757,12 @@ pub mod ffi {
         }
 
         /// Convert from an integer using the ICU4C integer mappings for `General_Category`
-        #[diplomat::rust_link(icu::properties::props::GeneralCategoryOutOfBoundsError, Struct)]
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory::from_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryOutOfBoundsError,
+            Struct,
+            hidden
+        )]
         pub fn from_integer(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unassigned,
