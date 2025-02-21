@@ -54,7 +54,7 @@ pub(crate) fn bake(
         .map(|(payload, _)| *payload)
         .collect::<Vec<_>>();
 
-    let maybe_vzv_tokens = DataPayload::tokenize_to_varzeroslice(&payloads, ctx);
+    let maybe_vzv_tokens = DataPayload::tokenize_encoded_seq(&payloads, ctx);
 
     let (baked_values, value_store_ty) = if let Some(vzv_tokens) = maybe_vzv_tokens {
         (
