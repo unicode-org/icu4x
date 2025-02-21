@@ -169,8 +169,18 @@ export class IndicSyllabicCategory {
     static VowelIndependent = IndicSyllabicCategory.#objectValues[35];
     static ReorderingKiller = IndicSyllabicCategory.#objectValues[36];
 
-    toInteger() {
-        const result = wasm.icu4x_IndicSyllabicCategory_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_IndicSyllabicCategory_for_char_mv1(ch);
+    
+        try {
+            return new IndicSyllabicCategory(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_IndicSyllabicCategory_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -179,10 +189,10 @@ export class IndicSyllabicCategory {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_IndicSyllabicCategory_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_IndicSyllabicCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

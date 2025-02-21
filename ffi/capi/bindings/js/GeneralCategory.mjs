@@ -153,8 +153,46 @@ export class GeneralCategory {
     static ModifierSymbol = GeneralCategory.#objectValues[26];
     static OtherSymbol = GeneralCategory.#objectValues[27];
 
-    toInteger() {
-        const result = wasm.icu4x_GeneralCategory_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_GeneralCategory_for_char_mv1(ch);
+    
+        try {
+            return new GeneralCategory(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    longName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
+        const result = wasm.icu4x_GeneralCategory_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    shortName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
+        const result = wasm.icu4x_GeneralCategory_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_GeneralCategory_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -173,10 +211,10 @@ export class GeneralCategory {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_GeneralCategory_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_GeneralCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

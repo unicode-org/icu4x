@@ -84,6 +84,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Ascii_Hex_Digit` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool asciiHexDigitForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Ascii_Hex_Digit` property, using compiled data.
   ///
   /// See the [Rust documentation for `AsciiHexDigit`](https://docs.rs/icu/latest/icu/properties/props/struct.AsciiHexDigit.html) for more information.
@@ -103,6 +111,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Alnum` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool alnumForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_alnum_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Alnum` property, using compiled data.
@@ -126,6 +142,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Alphabetic` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool alphabeticForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_alphabetic_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Alphabetic` property, using compiled data.
   ///
   /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/latest/icu/properties/props/struct.Alphabetic.html) for more information.
@@ -145,6 +169,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Bidi_Control` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool bidiControlForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_bidi_control_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Bidi_Control` property, using compiled data.
@@ -168,6 +200,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Bidi_Mirrored` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool bidiMirroredForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_bidi_mirrored_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Bidi_Mirrored` property, using compiled data.
   ///
   /// See the [Rust documentation for `BidiMirrored`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirrored.html) for more information.
@@ -187,6 +227,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Blank` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool blankForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_blank_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Blank` property, using compiled data.
@@ -210,6 +258,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Cased` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool casedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_cased_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Cased` property, using compiled data.
   ///
   /// See the [Rust documentation for `Cased`](https://docs.rs/icu/latest/icu/properties/props/struct.Cased.html) for more information.
@@ -229,6 +285,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Case_Ignorable` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool caseIgnorableForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_case_ignorable_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Case_Ignorable` property, using compiled data.
@@ -252,6 +316,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Full_Composition_Exclusion` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool fullCompositionExclusionForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_full_composition_exclusion_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Full_Composition_Exclusion` property, using compiled data.
   ///
   /// See the [Rust documentation for `FullCompositionExclusion`](https://docs.rs/icu/latest/icu/properties/props/struct.FullCompositionExclusion.html) for more information.
@@ -271,6 +343,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Changes_When_Casefolded` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool changesWhenCasefoldedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_changes_when_casefolded_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Changes_When_Casefolded` property, using compiled data.
@@ -294,6 +374,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Changes_When_Casemapped` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool changesWhenCasemappedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_changes_when_casemapped_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Changes_When_Casemapped` property, using compiled data.
   ///
   /// See the [Rust documentation for `ChangesWhenCasemapped`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenCasemapped.html) for more information.
@@ -313,6 +401,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Changes_When_Nfkc_Casefolded` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool changesWhenNfkcCasefoldedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_changes_when_nfkc_casefolded_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
@@ -336,6 +432,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Changes_When_Lowercased` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool changesWhenLowercasedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_changes_when_lowercased_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Changes_When_Lowercased` property, using compiled data.
   ///
   /// See the [Rust documentation for `ChangesWhenLowercased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenLowercased.html) for more information.
@@ -355,6 +459,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Changes_When_Titlecased` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool changesWhenTitlecasedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_changes_when_titlecased_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Changes_When_Titlecased` property, using compiled data.
@@ -378,6 +490,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Changes_When_Uppercased` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool changesWhenUppercasedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_changes_when_uppercased_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Changes_When_Uppercased` property, using compiled data.
   ///
   /// See the [Rust documentation for `ChangesWhenUppercased`](https://docs.rs/icu/latest/icu/properties/props/struct.ChangesWhenUppercased.html) for more information.
@@ -397,6 +517,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Dash` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool dashForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_dash_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Dash` property, using compiled data.
@@ -420,6 +548,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Deprecated` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool deprecatedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_deprecated_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Deprecated` property, using compiled data.
   ///
   /// See the [Rust documentation for `Deprecated`](https://docs.rs/icu/latest/icu/properties/props/struct.Deprecated.html) for more information.
@@ -439,6 +575,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Default_Ignorable_Code_Point` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool defaultIgnorableCodePointForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_default_ignorable_code_point_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Default_Ignorable_Code_Point` property, using compiled data.
@@ -462,6 +606,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Diacritic` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool diacriticForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_diacritic_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Diacritic` property, using compiled data.
   ///
   /// See the [Rust documentation for `Diacritic`](https://docs.rs/icu/latest/icu/properties/props/struct.Diacritic.html) for more information.
@@ -481,6 +633,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Emoji_Modifier_Base` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool emojiModifierBaseForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_emoji_modifier_base_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Emoji_Modifier_Base` property, using compiled data.
@@ -504,6 +664,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Emoji_Component` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool emojiComponentForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_emoji_component_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Emoji_Component` property, using compiled data.
   ///
   /// See the [Rust documentation for `EmojiComponent`](https://docs.rs/icu/latest/icu/properties/props/struct.EmojiComponent.html) for more information.
@@ -523,6 +691,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Emoji_Modifier` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool emojiModifierForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_emoji_modifier_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Emoji_Modifier` property, using compiled data.
@@ -546,6 +722,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Emoji` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool emojiForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_emoji_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Emoji` property, using compiled data.
   ///
   /// See the [Rust documentation for `Emoji`](https://docs.rs/icu/latest/icu/properties/props/struct.Emoji.html) for more information.
@@ -565,6 +749,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Emoji_Presentation` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool emojiPresentationForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_emoji_presentation_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Emoji_Presentation` property, using compiled data.
@@ -588,6 +780,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Extender` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool extenderForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_extender_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Extender` property, using compiled data.
   ///
   /// See the [Rust documentation for `Extender`](https://docs.rs/icu/latest/icu/properties/props/struct.Extender.html) for more information.
@@ -607,6 +807,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Extended_Pictographic` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool extendedPictographicForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_extended_pictographic_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Extended_Pictographic` property, using compiled data.
@@ -630,6 +838,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Graph` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool graphForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_graph_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Graph` property, using compiled data.
   ///
   /// See the [Rust documentation for `Graph`](https://docs.rs/icu/latest/icu/properties/props/struct.Graph.html) for more information.
@@ -649,6 +865,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Grapheme_Base` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool graphemeBaseForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_grapheme_base_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Grapheme_Base` property, using compiled data.
@@ -672,6 +896,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Grapheme_Extend` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool graphemeExtendForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_grapheme_extend_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Grapheme_Extend` property, using compiled data.
   ///
   /// See the [Rust documentation for `GraphemeExtend`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeExtend.html) for more information.
@@ -691,6 +923,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Grapheme_Link` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool graphemeLinkForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_grapheme_link_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Grapheme_Link` property, using compiled data.
@@ -714,6 +954,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Hex_Digit` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool hexDigitForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_hex_digit_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Hex_Digit` property, using compiled data.
   ///
   /// See the [Rust documentation for `HexDigit`](https://docs.rs/icu/latest/icu/properties/props/struct.HexDigit.html) for more information.
@@ -733,6 +981,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Hyphen` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool hyphenForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_hyphen_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Hyphen` property, using compiled data.
@@ -756,6 +1012,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Id_Continue` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idContinueForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_id_continue_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Id_Continue` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdContinue`](https://docs.rs/icu/latest/icu/properties/props/struct.IdContinue.html) for more information.
@@ -775,6 +1039,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Ideographic` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool ideographicForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_ideographic_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Ideographic` property, using compiled data.
@@ -798,6 +1070,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Id_Start` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idStartForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_id_start_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Id_Start` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdStart`](https://docs.rs/icu/latest/icu/properties/props/struct.IdStart.html) for more information.
@@ -817,6 +1097,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Ids_Binary_Operator` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idsBinaryOperatorForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_ids_binary_operator_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Ids_Binary_Operator` property, using compiled data.
@@ -840,6 +1128,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Ids_Trinary_Operator` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idsTrinaryOperatorForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_ids_trinary_operator_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Ids_Trinary_Operator` property, using compiled data.
   ///
   /// See the [Rust documentation for `IdsTrinaryOperator`](https://docs.rs/icu/latest/icu/properties/props/struct.IdsTrinaryOperator.html) for more information.
@@ -859,6 +1155,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Join_Control` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool joinControlForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_join_control_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Join_Control` property, using compiled data.
@@ -882,6 +1186,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Logical_Order_Exception` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool logicalOrderExceptionForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_logical_order_exception_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Logical_Order_Exception` property, using compiled data.
   ///
   /// See the [Rust documentation for `LogicalOrderException`](https://docs.rs/icu/latest/icu/properties/props/struct.LogicalOrderException.html) for more information.
@@ -901,6 +1213,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Lowercase` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool lowercaseForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_lowercase_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Lowercase` property, using compiled data.
@@ -924,6 +1244,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Math` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool mathForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_math_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Math` property, using compiled data.
   ///
   /// See the [Rust documentation for `Math`](https://docs.rs/icu/latest/icu/properties/props/struct.Math.html) for more information.
@@ -943,6 +1271,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Noncharacter_Code_Point` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool noncharacterCodePointForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Noncharacter_Code_Point` property, using compiled data.
@@ -966,6 +1302,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Nfc_Inert` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool nfcInertForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_nfc_inert_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Nfc_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfcInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfcInert.html) for more information.
@@ -985,6 +1329,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Nfd_Inert` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool nfdInertForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_nfd_inert_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Nfd_Inert` property, using compiled data.
@@ -1008,6 +1360,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Nfkc_Inert` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool nfkcInertForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_nfkc_inert_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Nfkc_Inert` property, using compiled data.
   ///
   /// See the [Rust documentation for `NfkcInert`](https://docs.rs/icu/latest/icu/properties/props/struct.NfkcInert.html) for more information.
@@ -1027,6 +1387,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Nfkd_Inert` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool nfkdInertForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_nfkd_inert_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Nfkd_Inert` property, using compiled data.
@@ -1050,6 +1418,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Pattern_Syntax` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool patternSyntaxForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_pattern_syntax_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Pattern_Syntax` property, using compiled data.
   ///
   /// See the [Rust documentation for `PatternSyntax`](https://docs.rs/icu/latest/icu/properties/props/struct.PatternSyntax.html) for more information.
@@ -1069,6 +1445,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Pattern_White_Space` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool patternWhiteSpaceForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_pattern_white_space_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Pattern_White_Space` property, using compiled data.
@@ -1092,6 +1476,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Prepended_Concatenation_Mark` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool prependedConcatenationMarkForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_prepended_concatenation_mark_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Prepended_Concatenation_Mark` property, using compiled data.
   ///
   /// See the [Rust documentation for `PrependedConcatenationMark`](https://docs.rs/icu/latest/icu/properties/props/struct.PrependedConcatenationMark.html) for more information.
@@ -1111,6 +1503,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Print` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool printForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_print_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Print` property, using compiled data.
@@ -1134,6 +1534,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Quotation_Mark` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool quotationMarkForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_quotation_mark_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Quotation_Mark` property, using compiled data.
   ///
   /// See the [Rust documentation for `QuotationMark`](https://docs.rs/icu/latest/icu/properties/props/struct.QuotationMark.html) for more information.
@@ -1153,6 +1561,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Radical` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool radicalForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_radical_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Radical` property, using compiled data.
@@ -1176,6 +1592,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Regional_Indicator` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool regionalIndicatorForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_regional_indicator_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Regional_Indicator` property, using compiled data.
   ///
   /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/latest/icu/properties/props/struct.RegionalIndicator.html) for more information.
@@ -1195,6 +1619,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Soft_Dotted` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool softDottedForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_soft_dotted_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Soft_Dotted` property, using compiled data.
@@ -1218,6 +1650,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Segment_Starter` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool segmentStarterForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_segment_starter_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Segment_Starter` property, using compiled data.
   ///
   /// See the [Rust documentation for `SegmentStarter`](https://docs.rs/icu/latest/icu/properties/props/struct.SegmentStarter.html) for more information.
@@ -1237,6 +1677,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Case_Sensitive` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool caseSensitiveForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_case_sensitive_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Case_Sensitive` property, using compiled data.
@@ -1260,6 +1708,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Sentence_Terminal` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool sentenceTerminalForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_sentence_terminal_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Sentence_Terminal` property, using compiled data.
   ///
   /// See the [Rust documentation for `SentenceTerminal`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceTerminal.html) for more information.
@@ -1279,6 +1735,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Terminal_Punctuation` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool terminalPunctuationForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_terminal_punctuation_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Terminal_Punctuation` property, using compiled data.
@@ -1302,6 +1766,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Unified_Ideograph` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool unifiedIdeographForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_unified_ideograph_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Unified_Ideograph` property, using compiled data.
   ///
   /// See the [Rust documentation for `UnifiedIdeograph`](https://docs.rs/icu/latest/icu/properties/props/struct.UnifiedIdeograph.html) for more information.
@@ -1321,6 +1793,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Uppercase` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool uppercaseForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_uppercase_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Uppercase` property, using compiled data.
@@ -1344,6 +1824,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Variation_Selector` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool variationSelectorForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_variation_selector_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Variation_Selector` property, using compiled data.
   ///
   /// See the [Rust documentation for `VariationSelector`](https://docs.rs/icu/latest/icu/properties/props/struct.VariationSelector.html) for more information.
@@ -1363,6 +1851,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `White_Space` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool whiteSpaceForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_white_space_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `White_Space` property, using compiled data.
@@ -1386,6 +1882,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Xdigit` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool xdigitForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_xdigit_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Xdigit` property, using compiled data.
   ///
   /// See the [Rust documentation for `Xdigit`](https://docs.rs/icu/latest/icu/properties/props/struct.Xdigit.html) for more information.
@@ -1407,6 +1911,14 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Xid_Continue` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool xidContinueForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_xid_continue_for_char_mv1(ch);
+    return result;
+  }
+
   /// Create a set for the `Xid_Continue` property, using compiled data.
   ///
   /// See the [Rust documentation for `XidContinue`](https://docs.rs/icu/latest/icu/properties/props/struct.XidContinue.html) for more information.
@@ -1426,6 +1938,14 @@ final class CodePointSetData implements ffi.Finalizable {
       throw DataError.values[result.union.err];
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Xid_Start` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool xidStartForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_xid_start_for_char_mv1(ch);
+    return result;
   }
 
   /// Create a set for the `Xid_Start` property, using compiled data.
@@ -1508,6 +2028,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_general_category
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_general_category_group_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, int group);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_ascii_hex_digit_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ascii_hex_digit_mv1')
 // ignore: non_constant_identifier_names
@@ -1517,6 +2042,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_ascii_hex_digit_
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ascii_hex_digit_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_ascii_hex_digit_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_alnum_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_alnum_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_alnum_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_alnum_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_alnum_mv1')
@@ -1528,6 +2058,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_alnum_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_alnum_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_alphabetic_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_alphabetic_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_alphabetic_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_alphabetic_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_alphabetic_mv1')
 // ignore: non_constant_identifier_names
@@ -1537,6 +2072,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_alphabetic_mv1()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_alphabetic_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_alphabetic_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_bidi_control_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_bidi_control_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_bidi_control_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_bidi_control_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_bidi_control_mv1')
@@ -1548,6 +2088,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_bidi_control_mv1
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_bidi_control_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_bidi_mirrored_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_bidi_mirrored_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_bidi_mirrored_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_bidi_mirrored_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_bidi_mirrored_mv1')
 // ignore: non_constant_identifier_names
@@ -1557,6 +2102,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_bidi_mirrored_mv
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_bidi_mirrored_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_bidi_mirrored_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_blank_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_blank_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_blank_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_blank_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_blank_mv1')
@@ -1568,6 +2118,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_blank_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_blank_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_cased_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_cased_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_cased_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_cased_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_cased_mv1')
 // ignore: non_constant_identifier_names
@@ -1577,6 +2132,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_cased_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_cased_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_cased_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_case_ignorable_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_case_ignorable_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_case_ignorable_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_case_ignorable_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_case_ignorable_mv1')
@@ -1588,6 +2148,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_case_ignorable_m
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_case_ignorable_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_full_composition_exclusion_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_full_composition_exclusion_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_full_composition_exclusion_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_full_composition_exclusion_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_full_composition_exclusion_mv1')
 // ignore: non_constant_identifier_names
@@ -1597,6 +2162,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_full_composition
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_full_composition_exclusion_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_full_composition_exclusion_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_changes_when_casefolded_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_changes_when_casefolded_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_changes_when_casefolded_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_changes_when_casefolded_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_casefolded_mv1')
@@ -1608,6 +2178,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_changes_when_cas
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_changes_when_casefolded_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_changes_when_casemapped_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_changes_when_casemapped_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_changes_when_casemapped_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_changes_when_casemapped_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_casemapped_mv1')
 // ignore: non_constant_identifier_names
@@ -1617,6 +2192,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_changes_when_cas
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_casemapped_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_changes_when_casemapped_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_changes_when_nfkc_casefolded_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_changes_when_nfkc_casefolded_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_changes_when_nfkc_casefolded_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_mv1')
@@ -1628,6 +2208,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_changes_when_nfk
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_changes_when_nfkc_casefolded_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_changes_when_lowercased_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_changes_when_lowercased_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_changes_when_lowercased_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_changes_when_lowercased_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_lowercased_mv1')
 // ignore: non_constant_identifier_names
@@ -1637,6 +2222,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_changes_when_low
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_lowercased_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_changes_when_lowercased_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_changes_when_titlecased_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_changes_when_titlecased_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_changes_when_titlecased_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_changes_when_titlecased_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_titlecased_mv1')
@@ -1648,6 +2238,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_changes_when_tit
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_changes_when_titlecased_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_changes_when_uppercased_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_changes_when_uppercased_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_changes_when_uppercased_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_changes_when_uppercased_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_uppercased_mv1')
 // ignore: non_constant_identifier_names
@@ -1657,6 +2252,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_changes_when_upp
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_changes_when_uppercased_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_changes_when_uppercased_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_dash_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_dash_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_dash_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_dash_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_dash_mv1')
@@ -1668,6 +2268,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_dash_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_dash_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_deprecated_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_deprecated_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_deprecated_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_deprecated_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_deprecated_mv1')
 // ignore: non_constant_identifier_names
@@ -1677,6 +2282,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_deprecated_mv1()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_deprecated_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_deprecated_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_default_ignorable_code_point_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_default_ignorable_code_point_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_default_ignorable_code_point_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_default_ignorable_code_point_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_default_ignorable_code_point_mv1')
@@ -1688,6 +2298,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_default_ignorabl
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_default_ignorable_code_point_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_diacritic_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_diacritic_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_diacritic_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_diacritic_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_diacritic_mv1')
 // ignore: non_constant_identifier_names
@@ -1697,6 +2312,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_diacritic_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_diacritic_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_diacritic_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_emoji_modifier_base_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_emoji_modifier_base_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_emoji_modifier_base_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_emoji_modifier_base_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_modifier_base_mv1')
@@ -1708,6 +2328,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_emoji_modifier_b
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_emoji_modifier_base_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_emoji_component_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_emoji_component_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_emoji_component_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_emoji_component_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_component_mv1')
 // ignore: non_constant_identifier_names
@@ -1717,6 +2342,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_emoji_component_
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_component_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_emoji_component_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_emoji_modifier_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_emoji_modifier_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_emoji_modifier_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_emoji_modifier_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_modifier_mv1')
@@ -1728,6 +2358,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_emoji_modifier_m
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_emoji_modifier_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_emoji_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_emoji_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_emoji_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_emoji_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_mv1')
 // ignore: non_constant_identifier_names
@@ -1737,6 +2372,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_emoji_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_emoji_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_emoji_presentation_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_emoji_presentation_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_emoji_presentation_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_emoji_presentation_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_emoji_presentation_mv1')
@@ -1748,6 +2388,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_emoji_presentati
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_emoji_presentation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_extender_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_extender_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_extender_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_extender_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_extender_mv1')
 // ignore: non_constant_identifier_names
@@ -1757,6 +2402,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_extender_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_extender_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_extender_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_extended_pictographic_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_extended_pictographic_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_extended_pictographic_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_extended_pictographic_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_extended_pictographic_mv1')
@@ -1768,6 +2418,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_extended_pictogr
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_extended_pictographic_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_graph_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_graph_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_graph_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_graph_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_graph_mv1')
 // ignore: non_constant_identifier_names
@@ -1777,6 +2432,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_graph_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_graph_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_graph_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_grapheme_base_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_grapheme_base_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_grapheme_base_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_grapheme_base_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_grapheme_base_mv1')
@@ -1788,6 +2448,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_grapheme_base_mv
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_grapheme_base_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_grapheme_extend_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_grapheme_extend_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_grapheme_extend_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_grapheme_extend_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_grapheme_extend_mv1')
 // ignore: non_constant_identifier_names
@@ -1797,6 +2462,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_grapheme_extend_
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_grapheme_extend_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_grapheme_extend_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_grapheme_link_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_grapheme_link_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_grapheme_link_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_grapheme_link_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_grapheme_link_mv1')
@@ -1808,6 +2478,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_grapheme_link_mv
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_grapheme_link_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_hex_digit_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_hex_digit_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_hex_digit_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_hex_digit_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_hex_digit_mv1')
 // ignore: non_constant_identifier_names
@@ -1817,6 +2492,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_hex_digit_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_hex_digit_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_hex_digit_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_hyphen_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_hyphen_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_hyphen_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_hyphen_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_hyphen_mv1')
@@ -1828,6 +2508,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_hyphen_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_hyphen_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_id_continue_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_id_continue_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_id_continue_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_id_continue_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_continue_mv1')
 // ignore: non_constant_identifier_names
@@ -1837,6 +2522,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_id_continue_mv1(
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_continue_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_id_continue_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_ideographic_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_ideographic_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_ideographic_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_ideographic_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ideographic_mv1')
@@ -1848,6 +2538,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_ideographic_mv1(
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_ideographic_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_id_start_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_id_start_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_id_start_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_id_start_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_start_mv1')
 // ignore: non_constant_identifier_names
@@ -1857,6 +2552,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_id_start_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_start_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_id_start_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_ids_binary_operator_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_ids_binary_operator_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_ids_binary_operator_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_ids_binary_operator_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ids_binary_operator_mv1')
@@ -1868,6 +2568,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_ids_binary_opera
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_ids_binary_operator_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_ids_trinary_operator_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_ids_trinary_operator_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_ids_trinary_operator_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_ids_trinary_operator_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ids_trinary_operator_mv1')
 // ignore: non_constant_identifier_names
@@ -1877,6 +2582,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_ids_trinary_oper
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_join_control_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_join_control_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_join_control_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_join_control_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_join_control_mv1')
@@ -1888,6 +2598,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_join_control_mv1
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_join_control_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_logical_order_exception_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_logical_order_exception_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_logical_order_exception_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_logical_order_exception_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_logical_order_exception_mv1')
 // ignore: non_constant_identifier_names
@@ -1897,6 +2612,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_logical_order_ex
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_logical_order_exception_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_logical_order_exception_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_lowercase_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_lowercase_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_lowercase_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_lowercase_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_lowercase_mv1')
@@ -1908,6 +2628,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_lowercase_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_lowercase_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_math_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_math_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_math_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_math_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_math_mv1')
 // ignore: non_constant_identifier_names
@@ -1917,6 +2642,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_math_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_math_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_math_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_noncharacter_code_point_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_noncharacter_code_point_mv1')
@@ -1928,6 +2658,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_noncharacter_cod
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_noncharacter_code_point_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_nfc_inert_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_nfc_inert_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_nfc_inert_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_nfc_inert_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_nfc_inert_mv1')
 // ignore: non_constant_identifier_names
@@ -1937,6 +2672,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_nfc_inert_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_nfc_inert_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_nfd_inert_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_nfd_inert_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_nfd_inert_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_nfd_inert_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_nfd_inert_mv1')
@@ -1948,6 +2688,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_nfd_inert_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_nfd_inert_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_nfkc_inert_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_nfkc_inert_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_nfkc_inert_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_nfkc_inert_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_nfkc_inert_mv1')
 // ignore: non_constant_identifier_names
@@ -1957,6 +2702,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_nfkc_inert_mv1()
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_nfkc_inert_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_nfkd_inert_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_nfkd_inert_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_nfkd_inert_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_nfkd_inert_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_nfkd_inert_mv1')
@@ -1968,6 +2718,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_nfkd_inert_mv1()
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_nfkd_inert_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_pattern_syntax_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_pattern_syntax_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_pattern_syntax_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_pattern_syntax_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_pattern_syntax_mv1')
 // ignore: non_constant_identifier_names
@@ -1977,6 +2732,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_pattern_syntax_m
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_pattern_syntax_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_pattern_syntax_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_pattern_white_space_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_pattern_white_space_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_pattern_white_space_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_pattern_white_space_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_pattern_white_space_mv1')
@@ -1988,6 +2748,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_pattern_white_sp
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_pattern_white_space_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_prepended_concatenation_mark_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_prepended_concatenation_mark_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_prepended_concatenation_mark_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_prepended_concatenation_mark_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_prepended_concatenation_mark_mv1')
 // ignore: non_constant_identifier_names
@@ -1997,6 +2762,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_prepended_concat
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_prepended_concatenation_mark_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_prepended_concatenation_mark_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_print_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_print_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_print_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_print_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_print_mv1')
@@ -2008,6 +2778,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_print_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_print_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_quotation_mark_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_quotation_mark_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_quotation_mark_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_quotation_mark_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_quotation_mark_mv1')
 // ignore: non_constant_identifier_names
@@ -2017,6 +2792,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_quotation_mark_m
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_quotation_mark_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_quotation_mark_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_radical_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_radical_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_radical_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_radical_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_radical_mv1')
@@ -2028,6 +2808,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_radical_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_radical_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_regional_indicator_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_regional_indicator_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_regional_indicator_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_regional_indicator_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_regional_indicator_mv1')
 // ignore: non_constant_identifier_names
@@ -2037,6 +2822,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_regional_indicat
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_regional_indicator_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_regional_indicator_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_soft_dotted_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_soft_dotted_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_soft_dotted_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_soft_dotted_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_soft_dotted_mv1')
@@ -2048,6 +2838,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_soft_dotted_mv1(
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_soft_dotted_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_segment_starter_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_segment_starter_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_segment_starter_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_segment_starter_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_segment_starter_mv1')
 // ignore: non_constant_identifier_names
@@ -2057,6 +2852,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_segment_starter_
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_segment_starter_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_segment_starter_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_case_sensitive_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_case_sensitive_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_case_sensitive_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_case_sensitive_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_case_sensitive_mv1')
@@ -2068,6 +2868,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_case_sensitive_m
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_case_sensitive_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_sentence_terminal_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_sentence_terminal_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_sentence_terminal_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_sentence_terminal_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_sentence_terminal_mv1')
 // ignore: non_constant_identifier_names
@@ -2077,6 +2882,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_sentence_termina
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_sentence_terminal_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_sentence_terminal_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_terminal_punctuation_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_terminal_punctuation_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_terminal_punctuation_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_terminal_punctuation_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_terminal_punctuation_mv1')
@@ -2088,6 +2898,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_terminal_punctua
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_terminal_punctuation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_unified_ideograph_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_unified_ideograph_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_unified_ideograph_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_unified_ideograph_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_unified_ideograph_mv1')
 // ignore: non_constant_identifier_names
@@ -2097,6 +2912,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_unified_ideograp
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_unified_ideograph_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_unified_ideograph_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_uppercase_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_uppercase_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_uppercase_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_uppercase_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_uppercase_mv1')
@@ -2108,6 +2928,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_uppercase_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_uppercase_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_variation_selector_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_variation_selector_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_variation_selector_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_variation_selector_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_variation_selector_mv1')
 // ignore: non_constant_identifier_names
@@ -2117,6 +2942,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_variation_select
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_variation_selector_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_variation_selector_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_white_space_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_white_space_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_white_space_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_white_space_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_white_space_mv1')
@@ -2128,6 +2958,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_white_space_mv1(
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_white_space_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_xdigit_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_xdigit_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_xdigit_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_xdigit_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_xdigit_mv1')
 // ignore: non_constant_identifier_names
@@ -2138,6 +2973,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_xdigit_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_xdigit_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_xid_continue_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_xid_continue_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_xid_continue_for_char_mv1(Rune ch);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_xid_continue_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_xid_continue_mv1')
 // ignore: non_constant_identifier_names
@@ -2147,6 +2987,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_xid_continue_mv1
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_xid_continue_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_xid_continue_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_xid_start_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_xid_start_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_xid_start_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_create_xid_start_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_xid_start_mv1')

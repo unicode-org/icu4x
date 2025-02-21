@@ -15,6 +15,8 @@ part 'Bidi.g.dart';
 part 'BidiClass.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
+part 'BidiMirroringGlyph.g.dart';
+part 'BidiPairedBracketType.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
@@ -537,7 +539,7 @@ final class _ResultUint16Void extends ffi.Struct {
 
 final class _ResultUint32VoidUnion extends ffi.Union {
   @ffi.Uint32()
-  external int ok;
+  external Rune ok;
 
 }
 
@@ -548,7 +550,7 @@ final class _ResultUint32Void extends ffi.Struct {
   external bool isOk;
 
   // ignore: unused_element
-  factory _ResultUint32Void.ok(int val) {
+  factory _ResultUint32Void.ok(Rune val) {
     final struct = ffi.Struct.create<_ResultUint32Void>();
     struct.isOk = true;
     struct.union.ok = val;

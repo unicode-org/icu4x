@@ -67,9 +67,15 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline uint8_t to_integer();
+  inline static icu4x::SentenceBreak for_char(char32_t ch);
 
-  inline static std::optional<icu4x::SentenceBreak> from_integer(uint8_t other);
+  inline std::string_view long_name();
+
+  inline std::string_view short_name();
+
+  inline uint8_t to_integer_value();
+
+  inline static std::optional<icu4x::SentenceBreak> from_integer_value(uint8_t other);
 
   inline icu4x::capi::SentenceBreak AsFFI() const;
   inline static icu4x::SentenceBreak FromFFI(icu4x::capi::SentenceBreak c_enum);

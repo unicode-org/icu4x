@@ -31,9 +31,15 @@ export class SentenceBreak {
     static Lf : SentenceBreak;
     static SContinue : SentenceBreak;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): SentenceBreak;
 
-    static fromInteger(other: number): SentenceBreak | null;
+    longName(): string;
+
+    shortName(): string;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): SentenceBreak | null;
 
     constructor(value: SentenceBreak | string );
 }

@@ -127,8 +127,46 @@ export class BidiClass {
     static RightToLeftIsolate = BidiClass.#objectValues[21];
     static PopDirectionalIsolate = BidiClass.#objectValues[22];
 
-    toInteger() {
-        const result = wasm.icu4x_BidiClass_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_BidiClass_for_char_mv1(ch);
+    
+        try {
+            return new BidiClass(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    longName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
+        const result = wasm.icu4x_BidiClass_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    shortName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        
+        const result = wasm.icu4x_BidiClass_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_BidiClass_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -137,10 +175,10 @@ export class BidiClass {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_BidiClass_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_BidiClass_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

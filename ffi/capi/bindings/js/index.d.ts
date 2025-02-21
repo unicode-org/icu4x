@@ -16,6 +16,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
+export { BidiMirroringGlyph } from "./BidiMirroringGlyph"
+
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 
 export { LineBreakOptions } from "./LineBreakOptions"
@@ -275,6 +277,8 @@ export { TimePrecision } from "./TimePrecision"
 export { YearStyle } from "./YearStyle"
 
 export { PluralCategory } from "./PluralCategory"
+
+export { BidiPairedBracketType } from "./BidiPairedBracketType"
 
 export { BidiClass } from "./BidiClass"
 

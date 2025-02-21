@@ -34,9 +34,11 @@ export class GraphemeClusterBreak {
     static GlueAfterZwj : GraphemeClusterBreak;
     static Zwj : GraphemeClusterBreak;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): GraphemeClusterBreak;
 
-    static fromInteger(other: number): GraphemeClusterBreak | null;
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): GraphemeClusterBreak | null;
 
     constructor(value: GraphemeClusterBreak | string );
 }

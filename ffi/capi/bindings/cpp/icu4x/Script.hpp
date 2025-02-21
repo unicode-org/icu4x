@@ -17,10 +17,16 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    uint16_t icu4x_Script_to_integer_mv1(icu4x::capi::Script self);
+    icu4x::capi::Script icu4x_Script_for_char_mv1(char32_t ch);
     
-    typedef struct icu4x_Script_from_integer_mv1_result {union {icu4x::capi::Script ok; }; bool is_ok;} icu4x_Script_from_integer_mv1_result;
-    icu4x_Script_from_integer_mv1_result icu4x_Script_from_integer_mv1(uint16_t other);
+    diplomat::capi::DiplomatStringView icu4x_Script_long_name_mv1(icu4x::capi::Script self);
+    
+    diplomat::capi::DiplomatStringView icu4x_Script_short_name_mv1(icu4x::capi::Script self);
+    
+    uint16_t icu4x_Script_to_integer_value_mv1(icu4x::capi::Script self);
+    
+    typedef struct icu4x_Script_from_integer_value_mv1_result {union {icu4x::capi::Script ok; }; bool is_ok;} icu4x_Script_from_integer_value_mv1_result;
+    icu4x_Script_from_integer_value_mv1_result icu4x_Script_from_integer_value_mv1(uint16_t other);
     
     
     } // extern "C"
@@ -204,13 +210,28 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
   }
 }
 
-inline uint16_t icu4x::Script::to_integer() {
-  auto result = icu4x::capi::icu4x_Script_to_integer_mv1(this->AsFFI());
+inline icu4x::Script icu4x::Script::for_char(char32_t ch) {
+  auto result = icu4x::capi::icu4x_Script_for_char_mv1(ch);
+  return icu4x::Script::FromFFI(result);
+}
+
+inline std::string_view icu4x::Script::long_name() {
+  auto result = icu4x::capi::icu4x_Script_long_name_mv1(this->AsFFI());
+  return std::string_view(result.data, result.len);
+}
+
+inline std::string_view icu4x::Script::short_name() {
+  auto result = icu4x::capi::icu4x_Script_short_name_mv1(this->AsFFI());
+  return std::string_view(result.data, result.len);
+}
+
+inline uint16_t icu4x::Script::to_integer_value() {
+  auto result = icu4x::capi::icu4x_Script_to_integer_value_mv1(this->AsFFI());
   return result;
 }
 
-inline std::optional<icu4x::Script> icu4x::Script::from_integer(uint16_t other) {
-  auto result = icu4x::capi::icu4x_Script_from_integer_mv1(other);
+inline std::optional<icu4x::Script> icu4x::Script::from_integer_value(uint16_t other) {
+  auto result = icu4x::capi::icu4x_Script_from_integer_value_mv1(other);
   return result.is_ok ? std::optional<icu4x::Script>(icu4x::Script::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // icu4x_Script_HPP

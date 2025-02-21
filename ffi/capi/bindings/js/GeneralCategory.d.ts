@@ -47,11 +47,17 @@ export class GeneralCategory {
     static ModifierSymbol : GeneralCategory;
     static OtherSymbol : GeneralCategory;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): GeneralCategory;
+
+    longName(): string;
+
+    shortName(): string;
+
+    toIntegerValue(): number;
 
     toGroup(): GeneralCategoryGroup;
 
-    static fromInteger(other: number): GeneralCategory | null;
+    static fromIntegerValue(other: number): GeneralCategory | null;
 
     constructor(value: GeneralCategory | string );
 }
