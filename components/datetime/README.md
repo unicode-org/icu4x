@@ -49,7 +49,7 @@ If formatting times and time zones without dates, consider using [`TimeFormatter
 ## Examples
 
 ```rust
-use icu::calendar::Date;
+use icu::datetime::input::Date;
 use icu::datetime::fieldsets;
 use icu::datetime::DateTimeFormatter;
 use icu::locale::{locale, Locale};

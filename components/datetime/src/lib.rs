@@ -49,7 +49,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::Date;
+//! use icu::datetime::input::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
@@ -94,7 +94,6 @@ mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
-pub mod input;
 mod neo;
 pub mod options;
 pub mod parts;
@@ -124,4 +123,26 @@ pub mod preferences {
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
+
+/// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
+pub mod input {
+    /// **This is a reexport of a type in [`icu_calendar`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_calendar::Date;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::zone::UtcOffset;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::DateTime;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::Time;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZone;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::ZonedDateTime;
 }

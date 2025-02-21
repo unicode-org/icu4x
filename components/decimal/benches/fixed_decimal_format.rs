@@ -8,7 +8,7 @@ use rand_pcg::Lcg64Xsh32;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use fixed_decimal::Decimal;
+use icu_decimal::input::Decimal;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::locale;
 

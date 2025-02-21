@@ -321,17 +321,14 @@ lazy_static::lazy_static! {
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
-        "icu::datetime::input::Date",
-        "icu::datetime::input::DateTime",
-        "icu::datetime::input::Time",
-        "icu::datetime::input::TimeZone",
-        "icu::datetime::input::TimeZoneInfo",
-        "icu::datetime::input::UtcOffset",
-        "icu::datetime::input::ZonedDateTime",
         "icu::time::zone::IanaParser",
         "icu::time::zone::WindowsParser",
         "icu::time::zone::TimeZoneInfo",
         "icu::time::zone::TimeZone",
+
+        // Reexported input modules
+        "icu::datetime::input",
+        "icu::decimal::input",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",

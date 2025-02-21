@@ -5,7 +5,7 @@
 use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
 use crate::format::datetime::try_write_pattern_items;
-use crate::input::ExtractedInput;
+use crate::scaffold::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
@@ -66,8 +66,8 @@ where
     /// Format a date:
     ///
     /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::input::Date;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::MonthNameLength;
@@ -106,7 +106,7 @@ where
     /// Format a time:
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
@@ -152,7 +152,7 @@ where
     /// Format a time zone:
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;

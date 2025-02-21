@@ -49,6 +49,7 @@ default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export"]
 compiled_data = ["dep:icu_decimal_data"]
+ryu = ["fixed_decimal/ryu"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }

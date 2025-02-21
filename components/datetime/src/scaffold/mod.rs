@@ -11,6 +11,7 @@ mod calendar;
 mod dynamic_impls;
 mod fieldset_traits;
 mod get_field;
+mod input;
 mod names_storage;
 
 pub(crate) use calendar::AnyCalendarProvider;
@@ -47,6 +48,8 @@ pub use names_storage::MaybePayload;
 pub use names_storage::MaybePayloadError;
 pub use names_storage::NamesContainer;
 pub(crate) use names_storage::OptionalNames;
+
+pub(crate) use input::ExtractedInput;
 
 /// Trait marking other traits that are considered unstable and should not generally be
 /// implemented outside of the datetime crate.

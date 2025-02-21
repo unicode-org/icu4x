@@ -14,8 +14,8 @@ use crate::provider::neo::{marker_attrs, *};
 use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
 use crate::size_test_macro::size_test;
+use crate::FixedCalendarDateTimeFormatter;
 use crate::{external_loaders::*, DateTimeFormatterPreferences};
-use crate::{input, FixedCalendarDateTimeFormatter};
 use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
@@ -391,8 +391,8 @@ size_test!(
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Gregorian;
-/// use icu::calendar::Date;
+/// use icu_calendar::Gregorian;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::pattern::MonthNameLength;
@@ -425,8 +425,8 @@ size_test!(
 /// If the correct data is not loaded, and error will occur:
 ///
 /// ```
-/// use icu::calendar::Gregorian;
-/// use icu::calendar::Date;
+/// use icu_calendar::Gregorian;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -434,7 +434,8 @@ size_test!(
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
 /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-/// use icu::datetime::input::{Time, TimeZoneInfo, ZonedDateTime};
+/// use icu::datetime::input::{Time, ZonedDateTime};
+/// use icu_time::zone::TimeZoneInfo;
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
@@ -496,14 +497,15 @@ size_test!(
 /// If the pattern contains fields inconsistent with the receiver, an error will occur:
 ///
 /// ```
-/// use icu::calendar::Gregorian;
+/// use icu_calendar::Gregorian;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
-/// use icu::datetime::input::{DateTime, TimeZoneInfo};
+/// use icu::datetime::input::DateTime;
+/// use icu_time::zone::TimeZoneInfo;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
@@ -709,8 +711,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Errors occur if a number formatter is not loaded but one is required:
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Date;
+    /// use icu_calendar::Gregorian;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::parts;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -766,7 +768,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, YMDT};
@@ -948,7 +950,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, YMDT};
@@ -1021,7 +1023,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::AnyCalendar;
+    /// use icu_calendar::AnyCalendar;
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
@@ -1161,7 +1163,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::YearNameLength;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1221,7 +1223,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1292,7 +1294,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::pattern::DayPeriodNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1349,7 +1351,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::WeekdayNameLength;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1408,7 +1410,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1519,7 +1521,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1583,7 +1585,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1651,7 +1653,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1724,7 +1726,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1801,7 +1803,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -1874,7 +1876,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -2046,7 +2048,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::input::Date;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
@@ -2120,8 +2123,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Date;
+    /// use icu_calendar::Gregorian;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
@@ -2153,7 +2156,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Converting into a narrower type is not supported:
     ///
     /// ```compile_fail,E0277
-    /// use icu::calendar::Gregorian;
+    /// use icu_calendar::Gregorian;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
     ///
@@ -2980,7 +2983,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-        day: input::Weekday,
+        day: icu_calendar::types::Weekday,
     ) -> Result<&str, GetNameForWeekdayError> {
         let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;

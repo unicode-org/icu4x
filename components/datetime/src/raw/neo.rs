@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
-use crate::input::ExtractedInput;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
@@ -12,6 +11,7 @@ use crate::provider::pattern::{
     GenericPatternItem, PatternItem,
 };
 use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
+use crate::scaffold::ExtractedInput;
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;
