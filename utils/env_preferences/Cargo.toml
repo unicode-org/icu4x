@@ -18,6 +18,8 @@ include.workspace = true
 
 [dependencies]
 core-foundation-sys = "0.8.6"
+icu_locale = { workspace = true }
+icu_provider = { workspace = true }
 libc = "0.2.155"
 
 [dependencies.windows]
@@ -34,4 +36,8 @@ features = [
 ]
 
 [dev-dependencies]
-icu_locale = { path = "../../components/locale" }
+icu_locale = { workspace = true }
+
+[features]
+default = ["logging"]
+logging = ["icu_provider/logging"]
