@@ -274,8 +274,14 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
 
     let name = &input.ident;
 
-    let name_with_lt = if !lifetimes.is_empty() {
+    let name_with_static_lt = if !lifetimes.is_empty() {
         quote!(#name<'static>)
+    } else {
+        quote!(#name)
+    };
+
+    let name_with_implied_lt = if !lifetimes.is_empty() {
+        quote!(#name<'_>)
     } else {
         quote!(#name)
     };
@@ -317,7 +323,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             #[doc = #docs]
             pub struct #marker_name;
             impl icu_provider::DynamicDataMarker for #marker_name {
-                type DataStruct = #name_with_lt;
+                type DataStruct = #name_with_static_lt;
             }
         ));
 
@@ -358,6 +364,14 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
             ));
         }
     }
+
+    // Note: The proc macro is going away soon, and when it does,
+    // the MaybeAsVarULE impl will be customizable.
+    result.extend(quote!(
+        icu_provider::data_struct_new!(
+            #name_with_implied_lt,
+        );
+    ));
 
     result.extend(quote!(
         #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
