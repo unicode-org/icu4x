@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
@@ -136,7 +136,7 @@ impl UnitsFormatter {
             + DataProvider<super::super::provider::units::UnitsDisplayNameV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
@@ -170,8 +170,8 @@ impl UnitsFormatter {
         })
     }
 
-    /// Formats a [`SignedFixedDecimal`] value for the given unit.
-    pub fn format_fixed_decimal<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedUnit<'l> {
+    /// Formats a [`Decimal`] value for the given unit.
+    pub fn format_fixed_decimal<'l>(&'l self, value: &'l Decimal) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
             display_name: self.display_name.get(),

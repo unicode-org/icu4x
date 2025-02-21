@@ -98,17 +98,17 @@ enum AnyCalendarKind {
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_AnyCalendarKind_get_for_locale_mv1')
 @ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_get_for_locale_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_AnyCalendarKind_get_for_bcp47_mv1')
 @ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_get_for_bcp47_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_bcp47_mv1(_SliceUtf8 s);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_AnyCalendarKind_bcp47_mv1')
 @ffi.Native<ffi.Void Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_bcp47_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_AnyCalendarKind_bcp47_mv1(int self, ffi.Pointer<ffi.Opaque> write);

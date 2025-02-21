@@ -190,7 +190,7 @@ pub mod marker_attrs {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     ///
-    /// [`fields`]: crate::fields
+    /// [`fields`]: crate::provider::fields
     #[derive(Copy, Clone, Debug, PartialEq, Eq)]
     #[allow(clippy::exhaustive_enums)] // documented as unstable
     pub enum GlueType {

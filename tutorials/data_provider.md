@@ -266,7 +266,7 @@ To add custom data markers to your baked data or postcard file, create a forking
 
 ```rust
 use icu::locale::locale;
-use icu::plurals::provider::CardinalV1;
+use icu::plurals::provider::PluralsCardinalV1;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 use icu_provider_adapters::fork::ForkByMarkerProvider;
@@ -319,7 +319,7 @@ ExportDriver::new(
     DeduplicationStrategy::None.into(),
     LocaleFallbacker::try_new_unstable(&icu4x_source_provider).unwrap(),
 )
-.with_markers([CardinalV1::INFO, CustomV1::INFO])
+.with_markers([PluralsCardinalV1::INFO, CustomV1::INFO])
 .export(
     &ForkByMarkerProvider::new(icu4x_source_provider, custom_source_provider),
     BlobExporter::new_with_sink(Box::new(&mut buffer)),
@@ -334,7 +334,7 @@ let req = DataRequest {
     metadata: Default::default(),
 };
 
-assert!(blob_provider.load_data(CardinalV1::INFO, req).is_ok());
+assert!(blob_provider.load_data(PluralsCardinalV1::INFO, req).is_ok());
 assert!(blob_provider.load_data(CustomV1::INFO, req).is_ok());
 ```
 

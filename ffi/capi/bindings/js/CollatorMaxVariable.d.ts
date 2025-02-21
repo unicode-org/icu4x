@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/enum.MaxVariable.html) for more information.
+/** See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/options/enum.MaxVariable.html) for more information.
 */
 
 

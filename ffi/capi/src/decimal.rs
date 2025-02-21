@@ -12,7 +12,7 @@ pub mod ffi {
     use crate::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
-    use crate::{errors::ffi::DataError, fixed_decimal::ffi::SignedFixedDecimal};
+    use crate::{errors::ffi::DataError, fixed_decimal::ffi::Decimal};
     use icu_decimal::options::DecimalFormatterOptions;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_decimal::DecimalFormatterPreferences;
@@ -20,7 +20,7 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    /// An ICU4X Decimal Format object, capable of formatting a [`SignedFixedDecimal`] as a string.
+    /// An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
     #[diplomat::rust_link(icu::decimal::DecimalFormatter, Struct)]
     #[diplomat::rust_link(icu::datetime::FormattedDecimal, Struct, hidden)]
     pub struct DecimalFormatter(pub icu_decimal::DecimalFormatter);
@@ -108,8 +108,8 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalDigits, DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols,
-                DecimalSymbolsV2, GroupingSizes,
+                DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols, DecimalSymbolsV2,
+                GroupingSizes,
             };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
@@ -140,7 +140,7 @@ pub mod ffi {
             let mut options = DecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy.map(Into::into);
 
-            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
+            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
             impl DataProvider<DecimalSymbolsV2> for Provider {
                 fn load(
                     &self,
@@ -176,7 +176,7 @@ pub mod ffi {
                     strings: VarZeroCow::from_encodeable(&strings),
                     grouping_sizes,
                 })),
-                DecimalDigits { digits },
+                digits,
             );
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_unstable(
@@ -187,17 +187,13 @@ pub mod ffi {
             )))
         }
 
-        /// Formats a [`SignedFixedDecimal`] to a string.
+        /// Formats a [`Decimal`] to a string.
         #[diplomat::rust_link(icu::decimal::DecimalFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::decimal::DecimalFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal, Struct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal::write_to, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal::to_string, FnInStruct, hidden)]
-        pub fn format(
-            &self,
-            value: &SignedFixedDecimal,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        pub fn format(&self, value: &Decimal, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
     }

@@ -5,6 +5,7 @@
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
@@ -29,22 +30,83 @@ pub(crate) struct Caches {
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZone, Region>>,
     mz_period: Cache<MetazonePeriod<'static>>,
-    offset_period: Cache<ZoneOffsetPeriod<'static>>,
-    reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZone>>>,
+    offset_period: Cache<<TimeZoneOffsetsV1 as DynamicDataMarker>::DataStruct>,
+    reverse_metazones: Cache<BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>>,
+}
+
+#[derive(PartialEq, Eq, Ord, PartialOrd, Clone, Copy, Debug)]
+enum MzMembership {
+    Any,
+    Daylight,
 }
 
 impl SourceDataProvider {
-    fn reverse_metazones(&self) -> Result<&BTreeMap<MetazoneId, Vec<TimeZone>>, DataError> {
+    fn reverse_metazones(
+        &self,
+    ) -> Result<&BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>, DataError> {
         self.cldr()?
             .tz_caches
             .reverse_metazones
             .get_or_init(|| {
                 let mz_period = self.metazone_period()?;
-                let mut reverse_metazones = BTreeMap::<MetazoneId, Vec<TimeZone>>::new();
-                for cursor in mz_period.list.iter0() {
-                    let tz = *cursor.key0();
-                    for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
-                        reverse_metazones.entry(mz).or_default().push(tz);
+                let offset_periods = self.offset_period()?;
+
+                let mut reverse_metazones =
+                    BTreeMap::<(MetazoneId, MzMembership), Vec<TimeZone>>::new();
+
+                for c in mz_period.list.iter0() {
+                    let &tz = c.key0();
+
+                    use zerovec::ule::AsULE;
+                    let mut mzs = c
+                        .into_iter1_copied()
+                        .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
+                        .peekable();
+                    let mut offsets = offset_periods
+                        .get0(&tz)
+                        .unwrap()
+                        .into_iter1_copied()
+                        .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
+                        .peekable();
+
+                    let mut curr_offset = offsets.next().unwrap();
+                    let mut curr_mz = mzs.next().unwrap();
+                    loop {
+                        if let Some(mz) = curr_mz.1 .0 {
+                            reverse_metazones
+                                .entry((mz, MzMembership::Any))
+                                .or_default()
+                                .push(tz);
+                            // The daylight name is only required if a zone usign this metazone actually observes DST
+                            if curr_offset.1 .1 != 0 {
+                                reverse_metazones
+                                    .entry((mz, MzMembership::Daylight))
+                                    .or_default()
+                                    .push(tz);
+                            }
+                        }
+
+                        match (offsets.peek().copied(), mzs.peek().copied()) {
+                            (None, None) => break,
+                            (Some(_), None) => {
+                                curr_offset = offsets.next().unwrap();
+                            }
+                            (None, Some(_)) => {
+                                curr_mz = mzs.next().unwrap();
+                            }
+                            (Some(o), Some(m)) => match o.0.cmp(&m.0) {
+                                Ordering::Less => {
+                                    curr_offset = offsets.next().unwrap();
+                                }
+                                Ordering::Greater => {
+                                    curr_mz = mzs.next().unwrap();
+                                }
+                                Ordering::Equal => {
+                                    curr_offset = offsets.next().unwrap();
+                                    curr_mz = mzs.next().unwrap();
+                                }
+                            },
+                        }
                     }
                 }
                 Ok(reverse_metazones)
@@ -256,6 +318,7 @@ impl_iterable_data_provider!(
     ExemplarCitiesV1,
     ExemplarCitiesRootV1,
     MetazoneGenericNamesLongV1,
+    MetazoneStandardNamesLongV1,
     MetazoneGenericNamesShortV1,
     MetazoneSpecificNamesLongV1,
     MetazoneSpecificNamesShortV1
@@ -267,7 +330,7 @@ impl IterableDataProviderCached<MetazonePeriodV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<ZoneOffsetPeriodV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimeZoneOffsetsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -348,48 +411,64 @@ mod tests {
                 .unwrap()
         };
 
-        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1> =
-            provider.load(en).unwrap();
+        let generic_names_long: DataPayload<MetazoneGenericNamesLongV1> =
+            provider.load(en).unwrap().payload;
+
+        let generic_standard_names_long: DataPayload<MetazoneStandardNamesLongV1> =
+            provider.load(en).unwrap().payload;
+
         assert_eq!(
             "Australian Central Western Time",
             generic_names_long
-                .payload
                 .get()
                 .defaults
                 .get(&metazone_now(TimeZone(tinystr!(8, "aueuc"))))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .defaults
+                    .get(&metazone_now(TimeZone(tinystr!(8, "aueuc")))))
                 .unwrap()
         );
         assert_eq!(
             "Coordinated Universal Time",
             generic_names_long
-                .payload
                 .get()
                 .overrides
                 .get(&TimeZone(tinystr!(8, "utc")))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .overrides
+                    .get(&TimeZone(tinystr!(8, "utc"))))
                 .unwrap()
         );
 
-        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1> =
-            provider.load(en).unwrap();
+        let specific_names_long: DataPayload<MetazoneSpecificNamesLongV1> =
+            provider.load(en).unwrap().payload;
         assert_eq!(
             "Australian Central Western Standard Time",
             specific_names_long
-                .payload
                 .get()
                 .defaults
                 .get(&(
                     metazone_now(TimeZone(tinystr!(8, "aueuc"))),
                     TimeZoneVariant::Standard
                 ))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .defaults
+                    .get(&metazone_now(TimeZone(tinystr!(8, "aueuc")))))
                 .unwrap()
         );
         assert_eq!(
             "Coordinated Universal Time",
             specific_names_long
-                .payload
                 .get()
                 .overrides
                 .get(&(TimeZone(tinystr!(8, "utc")), TimeZoneVariant::Standard))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .overrides
+                    .get(&TimeZone(tinystr!(8, "utc"))))
                 .unwrap()
         );
 

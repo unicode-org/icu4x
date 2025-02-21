@@ -6,7 +6,8 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu::list::{ListFormatter, ListFormatterOptions, ListLength};
+use icu::list::options::{ListFormatterOptions, ListLength};
+use icu::list::ListFormatter;
 use icu::locale::locale;
 
 fn main() {

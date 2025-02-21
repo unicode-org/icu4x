@@ -4,7 +4,7 @@
 
 #include "DataProvider.h"
 #include "Locale.h"
-#include "SignedFixedDecimal.h"
+#include "Decimal.h"
 #include "DecimalFormatter.h"
 #include "Logger.h"
 #include <string.h>
@@ -23,22 +23,22 @@ int main() {
     }
     Locale* locale = locale_result.ok;
 
-    SignedFixedDecimal* decimal = icu4x_SignedFixedDecimal_from_uint64_mv1(1000007);
+    Decimal* decimal = icu4x_Decimal_from_uint64_mv1(1000007);
 
     DecimalGroupingStrategy_option o = {.ok = DecimalGroupingStrategy_Auto, .is_ok = true};
 
-    icu4x_DecimalFormatter_create_with_grouping_strategy_mv1_result fdf_result =
+    icu4x_DecimalFormatter_create_with_grouping_strategy_mv1_result formatter_result =
         icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(locale, o);
-    if (!fdf_result.is_ok)  {
+    if (!formatter_result.is_ok)  {
         printf("Failed to create DecimalFormatter\n");
         return 1;
     }
-    DecimalFormatter* fdf = fdf_result.ok;
+    DecimalFormatter* formatter = formatter_result.ok;
     char output[40];
 
     DiplomatWrite write = diplomat_simple_write(output, 40);
 
-    icu4x_DecimalFormatter_format_mv1(fdf, decimal, &write);
+    icu4x_DecimalFormatter_format_mv1(formatter, decimal, &write);
     if (write.grow_failed) {
         printf("format overflowed the string.\n");
         return 1;
@@ -51,13 +51,13 @@ int main() {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_multiply_pow10_mv1(decimal, 2);
+    icu4x_Decimal_multiply_pow10_mv1(decimal, 2);
 
-    icu4x_SignedFixedDecimal_set_sign_mv1(decimal, FixedDecimalSign_Negative);
+    icu4x_Decimal_set_sign_mv1(decimal, FixedDecimalSign_Negative);
 
     write = diplomat_simple_write(output, 40);
 
-    icu4x_DecimalFormatter_format_mv1(fdf, decimal, &write);
+    icu4x_DecimalFormatter_format_mv1(formatter, decimal, &write);
     if (write.grow_failed) {
         printf("format overflowed the string.\n");
         return 1;
@@ -70,14 +70,14 @@ int main() {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_destroy_mv1(decimal);
+    icu4x_Decimal_destroy_mv1(decimal);
 
     struct DiplomatStringView fixed_decimal_str = {
         "1000007.070",
         11
     };
 
-    icu4x_SignedFixedDecimal_from_string_mv1_result fd_result = icu4x_SignedFixedDecimal_from_string_mv1(fixed_decimal_str);
+    icu4x_Decimal_from_string_mv1_result fd_result = icu4x_Decimal_from_string_mv1(fixed_decimal_str);
     if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;
@@ -86,7 +86,7 @@ int main() {
 
     write = diplomat_simple_write(output, 40);
 
-    icu4x_DecimalFormatter_format_mv1(fdf, decimal, &write);
+    icu4x_DecimalFormatter_format_mv1(formatter, decimal, &write);
     if (write.grow_failed) {
         printf("format overflowed the string.\n");
         return 1;
@@ -99,8 +99,8 @@ int main() {
         return 1;
     }
 
-    icu4x_SignedFixedDecimal_destroy_mv1(decimal);
-    icu4x_DecimalFormatter_destroy_mv1(fdf);
+    icu4x_Decimal_destroy_mv1(decimal);
+    icu4x_DecimalFormatter_destroy_mv1(formatter);
     icu4x_Locale_destroy_mv1(locale);
 
     return 0;

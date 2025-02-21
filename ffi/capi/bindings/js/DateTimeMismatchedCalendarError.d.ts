@@ -24,7 +24,7 @@ export class DateTimeMismatchedCalendarError {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : DateTimeMismatchedCalendarError_obj) : DateTimeMismatchedCalendarError;
-    
+
 
     constructor(structObj : DateTimeMismatchedCalendarError_obj);
 }

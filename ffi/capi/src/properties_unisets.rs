@@ -18,6 +18,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::EmojiSetData, Struct)]
     #[diplomat::rust_link(icu::properties::EmojiSetData::new, FnInStruct)]
+    #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::new, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed, Struct)]
     pub struct EmojiSetData(pub icu_properties::EmojiSetData);
 

@@ -15,7 +15,7 @@ export class FixedDecimalLimitError {
     static fromFields(structObj) {
         return new FixedDecimalLimitError(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("FixedDecimalLimitError's constructor takes an object of FixedDecimalLimitError's fields.");

@@ -39,23 +39,23 @@ final class PluralOperands implements ffi.Finalizable {
   /// Construct from a FixedDecimal
   ///
   /// Retains at most 18 digits each from the integer and fraction parts.
-  factory PluralOperands.fromFixedDecimal(SignedFixedDecimal x) {
+  factory PluralOperands.fromFixedDecimal(Decimal x) {
     final result = _icu4x_PluralOperands_from_fixed_decimal_mv1(x._ffi);
     return PluralOperands._fromFfi(result, []);
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_PluralOperands_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_PluralOperands_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_PluralOperands_from_string_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PluralOperands_from_string_mv1(_SliceUtf8 s);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_PluralOperands_from_fixed_decimal_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_fixed_decimal_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_fixed_decimal_mv1(ffi.Pointer<ffi.Opaque> x);

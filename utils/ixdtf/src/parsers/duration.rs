@@ -12,7 +12,7 @@ use crate::{
             is_month_designator, is_second_designator, is_sign, is_time_designator,
             is_week_designator, is_year_designator,
         },
-        records::{DateDurationRecord, DurationParseRecord, TimeDurationRecord},
+        records::{DateDurationRecord, DurationParseRecord, Fraction, TimeDurationRecord},
         time::parse_fraction,
         Cursor,
     },
@@ -134,7 +134,7 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
         TimeDurationDesignator,
     );
 
-    let mut time: (u64, u64, u64, Option<u32>) = (0, 0, 0, None);
+    let mut time: (u64, u64, u64, Option<Fraction>) = (0, 0, 0, None);
     let mut previous_unit = TimeUnit::None;
     while cursor.check_or(false, |c| c.is_ascii_digit()) {
         let mut value: u64 = 0;
@@ -194,19 +194,19 @@ pub(crate) fn parse_time_duration(cursor: &mut Cursor) -> ParserResult<Option<Ti
         // Safety: Max fraction * 3600 is within u64 -> see test maximum_duration_fraction
         TimeUnit::Hour => Ok(Some(TimeDurationRecord::Hours {
             hours: time.0,
-            fraction: time.3.map(|f| 3600 * u64::from(f)).unwrap_or(0),
+            fraction: time.3,
         })),
         // Safety: Max fraction * 60 is within u64 -> see test maximum_duration_fraction
         TimeUnit::Minute => Ok(Some(TimeDurationRecord::Minutes {
             hours: time.0,
             minutes: time.1,
-            fraction: time.3.map(|f| 60 * u64::from(f)).unwrap_or(0),
+            fraction: time.3,
         })),
         TimeUnit::Second => Ok(Some(TimeDurationRecord::Seconds {
             hours: time.0,
             minutes: time.1,
             seconds: time.2,
-            fraction: time.3.unwrap_or(0),
+            fraction: time.3,
         })),
         TimeUnit::None => Err(ParseError::abrupt_end("TimeDurationDesignator")),
     }

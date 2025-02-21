@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::ops::RangeInclusive;
+use fixed_decimal::Decimal;
 use fixed_decimal::Sign;
-use fixed_decimal::SignedFixedDecimal;
 use fixed_decimal::SignedRoundingMode as SRM;
 use fixed_decimal::UnsignedRoundingMode as URM;
 use writeable::Writeable;
@@ -32,11 +32,11 @@ pub fn test_ecma402_table() {
         ("half_even", SRM::Unsigned(URM::HalfEven), -2, 0, 0, 1, 2),
     ];
     for (name, mode, e1, e2, e3, e4, e5) in cases {
-        let mut fd1: SignedFixedDecimal = "-1.5".parse().unwrap();
-        let mut fd2: SignedFixedDecimal = "0.4".parse().unwrap();
-        let mut fd3: SignedFixedDecimal = "0.5".parse().unwrap();
-        let mut fd4: SignedFixedDecimal = "0.6".parse().unwrap();
-        let mut fd5: SignedFixedDecimal = "1.5".parse().unwrap();
+        let mut fd1: Decimal = "-1.5".parse().unwrap();
+        let mut fd2: Decimal = "0.4".parse().unwrap();
+        let mut fd3: Decimal = "0.5".parse().unwrap();
+        let mut fd4: Decimal = "0.6".parse().unwrap();
+        let mut fd5: Decimal = "1.5".parse().unwrap();
         fd1.round_with_mode(0, mode);
         fd2.round_with_mode(0, mode);
         fd3.round_with_mode(0, mode);
@@ -175,10 +175,10 @@ pub fn test_within_ranges() {
     } in cases
     {
         for n in range_n2000 {
-            let mut fd = SignedFixedDecimal::from(n);
+            let mut fd = Decimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "-2000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n - 1000000);
+            let mut fd = Decimal::from(n - 1000000);
             fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
@@ -188,10 +188,10 @@ pub fn test_within_ranges() {
             );
         }
         for n in range_n1000 {
-            let mut fd = SignedFixedDecimal::from(n);
+            let mut fd = Decimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "-1000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n - 1000000);
+            let mut fd = Decimal::from(n - 1000000);
             fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
@@ -201,7 +201,7 @@ pub fn test_within_ranges() {
             );
         }
         for n in range_0 {
-            let mut fd = SignedFixedDecimal::from(n);
+            let mut fd = Decimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             fd.set_sign(Sign::None); // get rid of -0
             assert_eq!(fd.write_to_string(), "000", "{rounding_mode_name}: {n}");
@@ -209,7 +209,7 @@ pub fn test_within_ranges() {
             let (mut fd, expected) = if n < 0 {
                 (
                     {
-                        let mut fd = SignedFixedDecimal::from(n - 1000000);
+                        let mut fd = Decimal::from(n - 1000000);
                         fd.multiply_pow10(-5);
                         fd
                     },
@@ -218,7 +218,7 @@ pub fn test_within_ranges() {
             } else {
                 (
                     {
-                        let mut fd = SignedFixedDecimal::from(n + 1000000);
+                        let mut fd = Decimal::from(n + 1000000);
                         fd.multiply_pow10(-5);
                         fd
                     },
@@ -233,10 +233,10 @@ pub fn test_within_ranges() {
             );
         }
         for n in range_1000 {
-            let mut fd = SignedFixedDecimal::from(n);
+            let mut fd = Decimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "1000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n + 1000000);
+            let mut fd = Decimal::from(n + 1000000);
             fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
@@ -246,10 +246,10 @@ pub fn test_within_ranges() {
             );
         }
         for n in range_2000 {
-            let mut fd = SignedFixedDecimal::from(n);
+            let mut fd = Decimal::from(n);
             fd.round_with_mode(3, rounding_mode);
             assert_eq!(fd.write_to_string(), "2000", "{rounding_mode_name}: {n}");
-            let mut fd = SignedFixedDecimal::from(n + 1000000);
+            let mut fd = Decimal::from(n + 1000000);
             fd.multiply_pow10(-5);
             fd.round_with_mode(-2, rounding_mode);
             assert_eq!(
@@ -350,7 +350,7 @@ pub fn extra_rounding_mode_cases() {
         for ((rounding_mode_name, rounding_mode), expected) in
             rounding_modes.iter().zip(all_expected.iter())
         {
-            let mut fd: SignedFixedDecimal = input.parse().unwrap();
+            let mut fd: Decimal = input.parse().unwrap();
             fd.round_with_mode(position, *rounding_mode);
             assert_eq!(
                 &*fd.write_to_string(),
@@ -405,11 +405,11 @@ pub fn test_ecma402_table_with_increments() {
 
     for (increment_str, increment, cases) in cases {
         for (rounding_mode_name, rounding_mode, e1, e2, e3, e4, e5) in cases {
-            let mut fd1: SignedFixedDecimal = "-1.5".parse().unwrap();
-            let mut fd2: SignedFixedDecimal = "0.4".parse().unwrap();
-            let mut fd3: SignedFixedDecimal = "0.5".parse().unwrap();
-            let mut fd4: SignedFixedDecimal = "0.6".parse().unwrap();
-            let mut fd5: SignedFixedDecimal = "1.5".parse().unwrap();
+            let mut fd1: Decimal = "-1.5".parse().unwrap();
+            let mut fd2: Decimal = "0.4".parse().unwrap();
+            let mut fd3: Decimal = "0.5".parse().unwrap();
+            let mut fd4: Decimal = "0.6".parse().unwrap();
+            let mut fd5: Decimal = "1.5".parse().unwrap();
             // The original ECMA-402 table tests rounding at magnitude 0.
             // However, testing rounding at magnitude -1 gives more
             // interesting test cases for increments.

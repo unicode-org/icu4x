@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/enum.BackwardSecondLevel.html) for more information.
+/** See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/options/enum.BackwardSecondLevel.html) for more information.
 */
 
 

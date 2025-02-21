@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Titlecasing-specific try_new_with_mapper_unstable
+//! Titlecasing-specific
 use crate::provider::CaseMapV1;
 use crate::{CaseMapper, CaseMapperBorrowed};
 use alloc::string::String;
@@ -19,7 +19,7 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```rust
-/// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
+/// use icu::casemap::options::{TitlecaseOptions, TrailingCase};
 /// use icu::casemap::TitlecaseMapper;
 /// use icu::locale::langid;
 ///
@@ -64,7 +64,7 @@ pub enum TrailingCase {
 /// # Examples
 ///
 /// ```rust
-/// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+/// use icu::casemap::options::{LeadingAdjustment, TitlecaseOptions};
 /// use icu::casemap::TitlecaseMapper;
 /// use icu::locale::langid;
 ///
@@ -411,7 +411,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// Leading adjustment behaviors:
     ///
     /// ```rust
-    /// use icu::casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+    /// use icu::casemap::options::{LeadingAdjustment, TitlecaseOptions};
     /// use icu::casemap::TitlecaseMapper;
     /// use icu::locale::langid;
     ///
@@ -451,7 +451,7 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     /// Tail casing behaviors:
     ///
     /// ```rust
-    /// use icu::casemap::titlecase::{TitlecaseOptions, TrailingCase};
+    /// use icu::casemap::options::{TitlecaseOptions, TrailingCase};
     /// use icu::casemap::TitlecaseMapper;
     /// use icu::locale::langid;
     ///

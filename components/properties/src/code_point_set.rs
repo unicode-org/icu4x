@@ -29,7 +29,7 @@ pub struct CodePointSetData {
 }
 
 impl CodePointSetData {
-    /// Creates a new [`CodePointSetData`] for a [`BinaryProperty`].
+    /// Creates a new [`CodePointSetDataBorrowed`] for a [`BinaryProperty`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -37,7 +37,7 @@ impl CodePointSetData {
     #[allow(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
     pub const fn new<P: BinaryProperty>() -> CodePointSetDataBorrowed<'static> {
-        CodePointSetDataBorrowed { set: P::SINGLETON }
+        CodePointSetDataBorrowed::new::<P>()
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
@@ -112,6 +112,16 @@ pub struct CodePointSetDataBorrowed<'a> {
 }
 
 impl CodePointSetDataBorrowed<'static> {
+    /// Creates a new [`CodePointSetData`] for a [`BinaryProperty`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[inline]
+    #[cfg(feature = "compiled_data")]
+    pub const fn new<P: BinaryProperty>() -> Self {
+        CodePointSetDataBorrowed { set: P::SINGLETON }
+    }
     /// Cheaply converts a [`CodePointSetDataBorrowed<'static>`] into a [`CodePointSetData`].
     ///
     /// Note: Due to branching and indirection, using [`CodePointSetData`] might inhibit some

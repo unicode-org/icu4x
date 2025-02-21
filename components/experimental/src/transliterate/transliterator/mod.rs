@@ -50,9 +50,9 @@ struct ComposingTransliterator(ComposingNormalizer);
 impl ComposingTransliterator {
     fn try_nfc<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        P: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
     {
         let inner = ComposingNormalizer::try_new_nfc_unstable(provider)
@@ -62,10 +62,10 @@ impl ComposingTransliterator {
 
     fn try_nfkc<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        P: DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
     {
         let inner = ComposingNormalizer::try_new_nfkc_unstable(provider)
@@ -89,9 +89,7 @@ struct DecomposingTransliterator(DecomposingNormalizer);
 impl DecomposingTransliterator {
     fn try_nfd<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + ?Sized,
+        P: DataProvider<NormalizerNfdDataV1> + DataProvider<NormalizerNfdTablesV1> + ?Sized,
     {
         let inner = DecomposingNormalizer::try_new_nfd_unstable(provider)
             .map_err(|e| DataError::custom("failed to load NFD").with_debug_context(&e))?;
@@ -100,9 +98,9 @@ impl DecomposingTransliterator {
 
     fn try_nfkd<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
+        P: DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
             + ?Sized,
     {
         let inner = DecomposingNormalizer::try_new_nfkd_unstable(provider)
@@ -267,11 +265,11 @@ impl Transliterator {
     ) -> Result<Self, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
     {
         Self::internal_try_new_with_override_unstable(
@@ -363,11 +361,11 @@ impl Transliterator {
     ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -387,11 +385,11 @@ impl Transliterator {
     ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -423,11 +421,11 @@ impl Transliterator {
     ) -> Result<DataPayload<TransliteratorRulesV1>, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -472,11 +470,11 @@ impl Transliterator {
         normalizer_provider: &P,
     ) -> Option<Result<InternalTransliterator, DataError>>
     where
-        P: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>
+        P: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
     {
         // TODO(#3909, #3910): add more

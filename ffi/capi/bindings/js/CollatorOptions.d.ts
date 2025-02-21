@@ -7,7 +7,7 @@ import type { CollatorStrength } from "./CollatorStrength"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
+/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
 */
 type CollatorOptions_obj = {
     strength?: CollatorStrength | null;
@@ -40,7 +40,7 @@ export class CollatorOptions {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : CollatorOptions_obj) : CollatorOptions;
-    
+
 
     constructor(structObj : CollatorOptions_obj);
 }

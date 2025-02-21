@@ -395,15 +395,15 @@ impl GeneralCategoryGroup {
     /// (`Lo`) Other letters, including syllables and ideographs
     pub const OtherLetter: GeneralCategoryGroup = GCG(1 << (GC::OtherLetter as u32));
     /// (`LC`) The union of UppercaseLetter, LowercaseLetter, and TitlecaseLetter
-    pub const CasedLetter: GeneralCategoryGroup = GCG(1 << (GC::UppercaseLetter as u32)
-        | 1 << (GC::LowercaseLetter as u32)
-        | 1 << (GC::TitlecaseLetter as u32));
+    pub const CasedLetter: GeneralCategoryGroup = GCG((1 << (GC::UppercaseLetter as u32))
+        | (1 << (GC::LowercaseLetter as u32))
+        | (1 << (GC::TitlecaseLetter as u32)));
     /// (`L`) The union of all letter categories
-    pub const Letter: GeneralCategoryGroup = GCG(1 << (GC::UppercaseLetter as u32)
-        | 1 << (GC::LowercaseLetter as u32)
-        | 1 << (GC::TitlecaseLetter as u32)
-        | 1 << (GC::ModifierLetter as u32)
-        | 1 << (GC::OtherLetter as u32));
+    pub const Letter: GeneralCategoryGroup = GCG((1 << (GC::UppercaseLetter as u32))
+        | (1 << (GC::LowercaseLetter as u32))
+        | (1 << (GC::TitlecaseLetter as u32))
+        | (1 << (GC::ModifierLetter as u32))
+        | (1 << (GC::OtherLetter as u32)));
 
     /// (`Mn`) A nonspacing combining mark (zero advance width)
     pub const NonspacingMark: GeneralCategoryGroup = GCG(1 << (GC::NonspacingMark as u32));
@@ -412,9 +412,9 @@ impl GeneralCategoryGroup {
     /// (`Me`) An enclosing combining mark
     pub const SpacingMark: GeneralCategoryGroup = GCG(1 << (GC::SpacingMark as u32));
     /// (`M`) The union of all mark categories
-    pub const Mark: GeneralCategoryGroup = GCG(1 << (GC::NonspacingMark as u32)
-        | 1 << (GC::EnclosingMark as u32)
-        | 1 << (GC::SpacingMark as u32));
+    pub const Mark: GeneralCategoryGroup = GCG((1 << (GC::NonspacingMark as u32))
+        | (1 << (GC::EnclosingMark as u32))
+        | (1 << (GC::SpacingMark as u32)));
 
     /// (`Nd`) A decimal digit
     pub const DecimalNumber: GeneralCategoryGroup = GCG(1 << (GC::DecimalNumber as u32));
@@ -423,9 +423,9 @@ impl GeneralCategoryGroup {
     /// (`No`) A numeric character of other type
     pub const OtherNumber: GeneralCategoryGroup = GCG(1 << (GC::OtherNumber as u32));
     /// (`N`) The union of all number categories
-    pub const Number: GeneralCategoryGroup = GCG(1 << (GC::DecimalNumber as u32)
-        | 1 << (GC::LetterNumber as u32)
-        | 1 << (GC::OtherNumber as u32));
+    pub const Number: GeneralCategoryGroup = GCG((1 << (GC::DecimalNumber as u32))
+        | (1 << (GC::LetterNumber as u32))
+        | (1 << (GC::OtherNumber as u32)));
 
     /// (`Zs`) A space character (of various non-zero widths)
     pub const SpaceSeparator: GeneralCategoryGroup = GCG(1 << (GC::SpaceSeparator as u32));
@@ -434,9 +434,9 @@ impl GeneralCategoryGroup {
     /// (`Zp`) U+2029 PARAGRAPH SEPARATOR only
     pub const ParagraphSeparator: GeneralCategoryGroup = GCG(1 << (GC::ParagraphSeparator as u32));
     /// (`Z`) The union of all separator categories
-    pub const Separator: GeneralCategoryGroup = GCG(1 << (GC::SpaceSeparator as u32)
-        | 1 << (GC::LineSeparator as u32)
-        | 1 << (GC::ParagraphSeparator as u32));
+    pub const Separator: GeneralCategoryGroup = GCG((1 << (GC::SpaceSeparator as u32))
+        | (1 << (GC::LineSeparator as u32))
+        | (1 << (GC::ParagraphSeparator as u32)));
 
     /// (`Cc`) A C0 or C1 control code
     pub const Control: GeneralCategoryGroup = GCG(1 << (GC::Control as u32));
@@ -449,11 +449,11 @@ impl GeneralCategoryGroup {
     /// (`Cn`) A reserved unassigned code point or a noncharacter
     pub const Unassigned: GeneralCategoryGroup = GCG(1 << (GC::Unassigned as u32));
     /// (`C`) The union of all control code, reserved, and unassigned categories
-    pub const Other: GeneralCategoryGroup = GCG(1 << (GC::Control as u32)
-        | 1 << (GC::Format as u32)
-        | 1 << (GC::PrivateUse as u32)
-        | 1 << (GC::Surrogate as u32)
-        | 1 << (GC::Unassigned as u32));
+    pub const Other: GeneralCategoryGroup = GCG((1 << (GC::Control as u32))
+        | (1 << (GC::Format as u32))
+        | (1 << (GC::PrivateUse as u32))
+        | (1 << (GC::Surrogate as u32))
+        | (1 << (GC::Unassigned as u32)));
 
     /// (`Pd`) A dash or hyphen punctuation mark
     pub const DashPunctuation: GeneralCategoryGroup = GCG(1 << (GC::DashPunctuation as u32));
@@ -471,13 +471,13 @@ impl GeneralCategoryGroup {
     /// (`Po`) A punctuation mark of other type
     pub const OtherPunctuation: GeneralCategoryGroup = GCG(1 << (GC::OtherPunctuation as u32));
     /// (`P`) The union of all punctuation categories
-    pub const Punctuation: GeneralCategoryGroup = GCG(1 << (GC::DashPunctuation as u32)
-        | 1 << (GC::OpenPunctuation as u32)
-        | 1 << (GC::ClosePunctuation as u32)
-        | 1 << (GC::ConnectorPunctuation as u32)
-        | 1 << (GC::OtherPunctuation as u32)
-        | 1 << (GC::InitialPunctuation as u32)
-        | 1 << (GC::FinalPunctuation as u32));
+    pub const Punctuation: GeneralCategoryGroup = GCG((1 << (GC::DashPunctuation as u32))
+        | (1 << (GC::OpenPunctuation as u32))
+        | (1 << (GC::ClosePunctuation as u32))
+        | (1 << (GC::ConnectorPunctuation as u32))
+        | (1 << (GC::OtherPunctuation as u32))
+        | (1 << (GC::InitialPunctuation as u32))
+        | (1 << (GC::FinalPunctuation as u32)));
 
     /// (`Sm`) A symbol of mathematical use
     pub const MathSymbol: GeneralCategoryGroup = GCG(1 << (GC::MathSymbol as u32));
@@ -488,10 +488,10 @@ impl GeneralCategoryGroup {
     /// (`So`) A symbol of other type
     pub const OtherSymbol: GeneralCategoryGroup = GCG(1 << (GC::OtherSymbol as u32));
     /// (`S`) The union of all symbol categories
-    pub const Symbol: GeneralCategoryGroup = GCG(1 << (GC::MathSymbol as u32)
-        | 1 << (GC::CurrencySymbol as u32)
-        | 1 << (GC::ModifierSymbol as u32)
-        | 1 << (GC::OtherSymbol as u32));
+    pub const Symbol: GeneralCategoryGroup = GCG((1 << (GC::MathSymbol as u32))
+        | (1 << (GC::CurrencySymbol as u32))
+        | (1 << (GC::ModifierSymbol as u32))
+        | (1 << (GC::OtherSymbol as u32)));
 
     const ALL: u32 = (1 << (GC::FinalPunctuation as u32 + 1)) - 1;
 

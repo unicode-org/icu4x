@@ -13,12 +13,12 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct Decimal; }
+class Decimal;
 namespace capi { struct DecimalFormatter; }
 class DecimalFormatter;
 namespace capi { struct Locale; }
 class Locale;
-namespace capi { struct SignedFixedDecimal; }
-class SignedFixedDecimal;
 class DataError;
 class DecimalGroupingStrategy;
 }
@@ -40,7 +40,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::DecimalFormatter>, icu4x::DataError> create_with_manual_data(std::string_view plus_sign_prefix, std::string_view plus_sign_suffix, std::string_view minus_sign_prefix, std::string_view minus_sign_suffix, std::string_view decimal_separator, std::string_view grouping_separator, uint8_t primary_group_size, uint8_t secondary_group_size, uint8_t min_group_size, diplomat::span<const char32_t> digits, std::optional<icu4x::DecimalGroupingStrategy> grouping_strategy);
 
-  inline std::string format(const icu4x::SignedFixedDecimal& value) const;
+  inline std::string format(const icu4x::Decimal& value) const;
 
   inline const icu4x::capi::DecimalFormatter* AsFFI() const;
   inline icu4x::capi::DecimalFormatter* AsFFI();

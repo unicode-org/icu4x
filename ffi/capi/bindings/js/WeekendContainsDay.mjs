@@ -80,7 +80,7 @@ export class WeekendContainsDay {
     static fromFields(structObj) {
         return new WeekendContainsDay(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("WeekendContainsDay's constructor takes an object of WeekendContainsDay's fields.");

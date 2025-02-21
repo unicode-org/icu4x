@@ -27,7 +27,7 @@ export class LocaleFallbackConfig {
     static fromFields(structObj) {
         return new LocaleFallbackConfig(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("LocaleFallbackConfig's constructor takes an object of LocaleFallbackConfig's fields.");

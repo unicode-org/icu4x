@@ -4,6 +4,8 @@
 
 //! The records that `ixdtf`'s contain the resulting values of parsing.
 
+use core::num::NonZeroU8;
+
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
@@ -55,7 +57,7 @@ pub struct TimeRecord {
     /// A second value.
     pub second: u8,
     /// A nanosecond value representing all sub-second components.
-    pub nanosecond: u32,
+    pub fraction: Option<Fraction>,
 }
 
 /// A `TimeZoneAnnotation` that represents a parsed `TimeZoneRecord` and its critical flag.
@@ -111,7 +113,7 @@ pub struct UtcOffsetRecord {
     /// The second value of the `UtcOffsetRecord`.
     pub second: u8,
     /// Any nanosecond value of the `UTCOffsetRecord`.
-    pub nanosecond: u32,
+    pub fraction: Option<Fraction>,
 }
 
 impl UtcOffsetRecord {
@@ -122,7 +124,7 @@ impl UtcOffsetRecord {
             hour: 0,
             minute: 0,
             second: 0,
-            nanosecond: 0,
+            fraction: None,
         }
     }
 }
@@ -144,7 +146,7 @@ impl UtcOffsetRecordOrZ {
                 hour: 0,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: None,
             },
         }
     }
@@ -190,8 +192,8 @@ pub enum TimeDurationRecord {
     Hours {
         /// Hours value.
         hours: u64,
-        /// The parsed fraction value in nanoseconds.
-        fraction: u64,
+        /// The parsed fractional digits.
+        fraction: Option<Fraction>,
     },
     // A Minutes Time duration record.
     Minutes {
@@ -199,8 +201,8 @@ pub enum TimeDurationRecord {
         hours: u64,
         /// Minutes value.
         minutes: u64,
-        /// The parsed fraction value in nanoseconds.
-        fraction: u64,
+        /// The parsed fractional digits.
+        fraction: Option<Fraction>,
     },
     // A Seconds Time duration record.
     Seconds {
@@ -210,7 +212,80 @@ pub enum TimeDurationRecord {
         minutes: u64,
         /// Seconds value.
         seconds: u64,
-        /// The parsed fraction value in nanoseconds.
-        fraction: u32,
+        /// The parsed fractional digits.
+        fraction: Option<Fraction>,
     },
+}
+
+/// A fraction value in nanoseconds or lower value.
+///
+/// # Precision note
+///
+/// `ixdtf` parses a fraction value to a precision of 18 digits of precision, but
+/// preserves the fraction's digit length
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // A fraction is only a value and its digit length.
+pub struct Fraction {
+    // The count of fraction digits, i.e. the fraction's digit length.
+    pub(crate) digits: NonZeroU8,
+    // The parsed fraction value.
+    pub(crate) value: u64,
+}
+
+impl Fraction {
+    /// Returns Some(`u32`) representing the `Fraction` as it's computed
+    /// nanosecond value or `None` if the digits exceeds 9 digits.
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::IxdtfParser;
+    ///
+    /// // Fraction is below 9 digits.
+    /// let fraction_str = "2025-02-17T05:41:32.12345678";
+    /// let result = IxdtfParser::from_str(fraction_str).parse().unwrap();
+    ///
+    /// let time = result.time.unwrap();
+    /// let fraction = time.fraction.unwrap();
+    ///
+    /// assert_eq!(fraction.to_nanoseconds(), Some(123456780));
+    ///
+    /// // Fraction is 10 digits.
+    /// let fraction_str = "2025-02-17T05:41:32.1234567898";
+    /// let result = IxdtfParser::from_str(fraction_str).parse().unwrap();
+    /// let time = result.time.unwrap();
+    /// let fraction = time.fraction.unwrap();
+    ///
+    /// assert_eq!(fraction.to_nanoseconds(), None);
+    /// ```
+    pub fn to_nanoseconds(&self) -> Option<u32> {
+        if self.digits.get() <= 9 {
+            Some(10u32.pow(9 - u32::from(self.digits.get())) * (self.value as u32))
+        } else {
+            None
+        }
+    }
+
+    /// Returns a `u32` representing the `Fraction` as it's computed
+    /// nanosecond value, truncating any value beyond 9 digits to
+    /// nanoseconds.
+    ///
+    /// This method will return `None` if the value exceeds a represented
+    /// range or the underlying `Fraction` is malformed.
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::IxdtfParser;
+    ///
+    /// // Fraction is 13 digits.
+    /// let fraction_str = "2025-02-17T05:41:32.1234567898765";
+    /// let result = IxdtfParser::from_str(fraction_str).parse().unwrap();
+    ///
+    /// let time = result.time.unwrap();
+    /// let fraction = time.fraction.unwrap();
+    ///
+    /// assert_eq!(fraction.to_truncated_nanoseconds(), 123456789);
+    /// assert_eq!(fraction.to_nanoseconds(), None);
+    /// ```
+    pub fn to_truncated_nanoseconds(&self) -> u32 {
+        self.to_nanoseconds()
+            .unwrap_or((self.value / 10u64.pow(u32::from(self.digits.get() - 9))) as u32)
+    }
 }

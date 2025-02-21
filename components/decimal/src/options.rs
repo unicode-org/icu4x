@@ -36,14 +36,14 @@ impl From<GroupingStrategy> for DecimalFormatterOptions {
 /// let locale = Default::default();
 /// let mut options: options::DecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = Some(options::GroupingStrategy::Min2);
-/// let df = DecimalFormatter::try_new(locale, options)
+/// let formatter = DecimalFormatter::try_new(locale, options)
 ///     .expect("locale should be present");
 ///
 /// let one_thousand = 1000.into();
-/// assert_writeable_eq!(df.format(&one_thousand), "1000");
+/// assert_writeable_eq!(formatter.format(&one_thousand), "1000");
 ///
 /// let ten_thousand = 10000.into();
-/// assert_writeable_eq!(df.format(&ten_thousand), "10,000");
+/// assert_writeable_eq!(formatter.format(&ten_thousand), "10,000");
 /// ```
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Hash, Default)]

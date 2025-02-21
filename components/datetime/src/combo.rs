@@ -182,6 +182,7 @@ where
     type ZoneExemplarsRoot = Z::ZoneExemplarsRoot;
     type ZoneGenericLong = Z::ZoneGenericLong;
     type ZoneGenericShort = Z::ZoneGenericShort;
+    type ZoneStandardLong = Z::ZoneStandardLong;
     type ZoneSpecificLong = Z::ZoneSpecificLong;
     type ZoneSpecificShort = Z::ZoneSpecificShort;
     type MetazoneLookup = Z::MetazoneLookup;

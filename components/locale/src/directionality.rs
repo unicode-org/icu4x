@@ -35,7 +35,7 @@ pub enum Direction {
 /// ```
 #[derive(Debug)]
 pub struct LocaleDirectionality<Expander = LocaleExpander> {
-    script_direction: DataPayload<ScriptDirectionV1>,
+    script_direction: DataPayload<LocaleScriptDirectionV1>,
     expander: Expander,
 }
 
@@ -61,9 +61,9 @@ impl LocaleDirectionality<LocaleExpander> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
     pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
-        P: DataProvider<ScriptDirectionV1>
-            + DataProvider<LikelySubtagsForLanguageV1>
-            + DataProvider<LikelySubtagsForScriptRegionV1>
+        P: DataProvider<LocaleScriptDirectionV1>
+            + DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_common_unstable(provider)?;
@@ -91,10 +91,10 @@ impl LocaleDirectionality<LocaleExpander> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
     pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
-        P: DataProvider<ScriptDirectionV1>
-            + DataProvider<LikelySubtagsForLanguageV1>
-            + DataProvider<LikelySubtagsForScriptRegionV1>
-            + DataProvider<LikelySubtagsExtendedV1>
+        P: DataProvider<LocaleScriptDirectionV1>
+            + DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
+            + DataProvider<LocaleLikelySubtagsExtendedV1>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_extended_unstable(provider)?;
@@ -130,7 +130,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     pub const fn new_with_expander(expander: Expander) -> Self {
         LocaleDirectionality {
             script_direction: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SCRIPT_DIRECTION_V1,
+                crate::provider::Baked::SINGLETON_LOCALE_SCRIPT_DIRECTION_V1,
             ),
             expander,
         }
@@ -142,7 +142,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
         expander: Expander,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<ScriptDirectionV1> + ?Sized,
+        P: DataProvider<LocaleScriptDirectionV1> + ?Sized,
     {
         let script_direction = provider.load(Default::default())?.payload;
 

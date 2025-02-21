@@ -35,34 +35,109 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_aliases_v2!(Baked);
-    impl_likely_subtags_extended_v1!(Baked);
-    impl_likely_subtags_for_language_v1!(Baked);
-    impl_likely_subtags_for_script_region_v1!(Baked);
-    impl_parents_v1!(Baked);
-    impl_script_direction_v1!(Baked);
+    impl_locale_aliases_v1!(Baked);
+    impl_locale_likely_subtags_extended_v1!(Baked);
+    impl_locale_likely_subtags_language_v1!(Baked);
+    impl_locale_likely_subtags_script_region_v1!(Baked);
+    impl_locale_parents_v1!(Baked);
+    impl_locale_script_direction_v1!(Baked);
 
-    impl_exemplar_characters_auxiliary_v1!(Baked);
-    impl_exemplar_characters_index_v1!(Baked);
-    impl_exemplar_characters_main_v1!(Baked);
-    impl_exemplar_characters_numbers_v1!(Baked);
-    impl_exemplar_characters_punctuation_v1!(Baked);
+    impl_locale_exemplar_characters_auxiliary_v1!(Baked);
+    impl_locale_exemplar_characters_index_v1!(Baked);
+    impl_locale_exemplar_characters_main_v1!(Baked);
+    impl_locale_exemplar_characters_numbers_v1!(Baked);
+    impl_locale_exemplar_characters_punctuation_v1!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// Marker for locale alias data.
+    LocaleAliasesV1,
+    "locale/aliases/v1",
+    Aliases<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Marker for data for likely subtags for languages.
+    LocaleLikelySubtagsLanguageV1,
+    "locale/likely/subtags/language/v1",
+    LikelySubtagsForLanguage<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Marker for data for likely subtags for scripts and regions.
+    LocaleLikelySubtagsScriptRegionV1,
+    "locale/likely/subtags/script/region/v1",
+    LikelySubtagsForScriptRegion<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Marker for extended data for likely subtags.
+    LocaleLikelySubtagsExtendedV1,
+    "locale/likely/subtags/extended/v1",
+    LikelySubtagsExtended<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Marker for locale fallback parents data.
+    LocaleParentsV1,
+    "locale/parents/v1",
+    Parents<'static>,
+    is_singleton = true
+);
+
+icu_provider::data_marker!(
+    /// Marker for script direction data.
+    LocaleScriptDirectionV1,
+    "locale/script/direction/v1",
+    ScriptDirection<'static>,
+    is_singleton = true
+);
+
+icu_provider::data_marker!(
+    /// Marker for auxiliary exemplar characters data.
+    LocaleExemplarCharactersAuxiliaryV1,
+    "locale/exemplar/characters/auxiliary/v1",
+    ExemplarCharactersData<'static>,
+);
+icu_provider::data_marker!(
+    /// Marker for index exemplar characters data.
+    LocaleExemplarCharactersIndexV1,
+    "locale/exemplar/characters/index/v1",
+    ExemplarCharactersData<'static>,
+);
+icu_provider::data_marker!(
+    /// Marker for main exemplar characters data.
+    LocaleExemplarCharactersMainV1,
+    "locale/exemplar/characters/main/v1",
+    ExemplarCharactersData<'static>,
+);
+icu_provider::data_marker!(
+    /// Marker for numbers exemplar characters data.
+    LocaleExemplarCharactersNumbersV1,
+    "locale/exemplar/characters/numbers/v1",
+    ExemplarCharactersData<'static>,
+);
+icu_provider::data_marker!(
+    /// Marker for punctuation exemplar characters data.
+    LocaleExemplarCharactersPunctuationV1,
+    "locale/exemplar/characters/punctuation/v1",
+    ExemplarCharactersData<'static>,
+);
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    AliasesV2::INFO,
-    ExemplarCharactersAuxiliaryV1::INFO,
-    ExemplarCharactersIndexV1::INFO,
-    ExemplarCharactersMainV1::INFO,
-    ExemplarCharactersNumbersV1::INFO,
-    ExemplarCharactersPunctuationV1::INFO,
-    LikelySubtagsExtendedV1::INFO,
-    LikelySubtagsForLanguageV1::INFO,
-    LikelySubtagsForScriptRegionV1::INFO,
-    ParentsV1::INFO,
-    ScriptDirectionV1::INFO,
+    LocaleAliasesV1::INFO,
+    LocaleExemplarCharactersAuxiliaryV1::INFO,
+    LocaleExemplarCharactersIndexV1::INFO,
+    LocaleExemplarCharactersMainV1::INFO,
+    LocaleExemplarCharactersNumbersV1::INFO,
+    LocaleExemplarCharactersPunctuationV1::INFO,
+    LocaleLikelySubtagsExtendedV1::INFO,
+    LocaleLikelySubtagsLanguageV1::INFO,
+    LocaleLikelySubtagsScriptRegionV1::INFO,
+    LocaleParentsV1::INFO,
+    LocaleScriptDirectionV1::INFO,
 ];
 
 use alloc::borrow::Cow;
@@ -137,8 +212,7 @@ pub struct LanguageStrStrPair<'a>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );
 
-#[icu_provider::data_struct(marker(AliasesV2, "locale/aliases@2", singleton))]
-#[derive(PartialEq, Clone, Default)]
+#[derive(PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -210,12 +284,7 @@ pub struct Aliases<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
-#[icu_provider::data_struct(marker(
-    LikelySubtagsForLanguageV1,
-    "locale/likelysubtags_l@1",
-    singleton
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -256,12 +325,7 @@ pub struct LikelySubtagsForLanguage<'data> {
     pub und: (Language, Script, Region),
 }
 
-#[icu_provider::data_struct(marker(
-    LikelySubtagsForScriptRegionV1,
-    "locale/likelysubtags_sr@1",
-    singleton
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -300,12 +364,7 @@ pub struct LikelySubtagsForScriptRegion<'data> {
     pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
 }
 
-#[icu_provider::data_struct(marker(
-    LikelySubtagsExtendedV1,
-    "locale/likelysubtags_ext@1",
-    singleton
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -340,8 +399,7 @@ pub struct LikelySubtagsExtended<'data> {
 }
 
 /// Locale fallback rules derived from CLDR parent locales data.
-#[icu_provider::data_struct(marker(ParentsV1, "locale/parents@1", singleton))]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -353,8 +411,7 @@ pub struct Parents<'data> {
     pub parents: ZeroMap<'data, PotentialUtf8, (Language, Option<Script>, Option<Region>)>,
 }
 
-#[icu_provider::data_struct(marker(ScriptDirectionV1, "locale/script_dir@1", singleton))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -382,14 +439,7 @@ pub struct ScriptDirection<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(ExemplarCharactersAuxiliaryV1, "locale/exemplarchars/auxiliary@1"),
-    marker(ExemplarCharactersIndexV1, "locale/exemplarchars/index@1"),
-    marker(ExemplarCharactersMainV1, "locale/exemplarchars/main@1"),
-    marker(ExemplarCharactersNumbersV1, "locale/exemplarchars/numbers@1"),
-    marker(ExemplarCharactersPunctuationV1, "locale/exemplarchars/punctuation@1")
-)]
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),

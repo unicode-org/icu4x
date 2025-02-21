@@ -30,8 +30,6 @@ final class IanaParserExtended implements ffi.Finalizable {
   /// Create a new [`IanaParserExtended`] using compiled data
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
-  ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.new) for more information.
   factory IanaParserExtended() {
     final result = _icu4x_IanaParserExtended_create_mv1();
     return IanaParserExtended._fromFfi(result, []);
@@ -40,8 +38,6 @@ final class IanaParserExtended implements ffi.Finalizable {
   /// Create a new [`IanaParserExtended`] using a particular data source
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
-  ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory IanaParserExtended.withProvider(DataProvider provider) {
@@ -52,50 +48,58 @@ final class IanaParserExtended implements ffi.Finalizable {
     return IanaParserExtended._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `canonicalize_iana`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.canonicalize_iana) for more information.
-  String? canonicalizeIana(String value) {
+  /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
+  TimeZoneAndCanonicalAndNormalized parse(String value) {
     final temp = _FinalizedArena();
-    final write = _Write();
-    final result = _icu4x_IanaParserExtended_canonicalize_iana_mv1(_ffi, value._utf8AllocIn(temp.arena), write._ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return write.finalize();
+    // This lifetime edge depends on lifetimes: 'a
+    core.List<Object> aEdges = [this];
+    final result = _icu4x_IanaParserExtended_parse_mv1(_ffi, value._utf8AllocIn(temp.arena));
+    return TimeZoneAndCanonicalAndNormalized._fromFfi(result, aEdges);
   }
 
-  /// See the [Rust documentation for `canonical_iana_from_bcp47`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.canonical_iana_from_bcp47) for more information.
-  String? canonicalIanaFromBcp47(String value) {
-    final temp = _FinalizedArena();
-    final write = _Write();
-    final result = _icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1(_ffi, value._utf8AllocIn(temp.arena), write._ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return write.finalize();
+  /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
+  TimeZoneAndCanonicalIterator iter() {
+    // This lifetime edge depends on lifetimes: 'a
+    core.List<Object> aEdges = [this];
+    final result = _icu4x_IanaParserExtended_iter_mv1(_ffi);
+    return TimeZoneAndCanonicalIterator._fromFfi(result, [], aEdges);
+  }
+
+  /// See the [Rust documentation for `iter_all`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
+  TimeZoneAndCanonicalAndNormalizedIterator iterAll() {
+    // This lifetime edge depends on lifetimes: 'a
+    core.List<Object> aEdges = [this];
+    final result = _icu4x_IanaParserExtended_iter_all_mv1(_ffi);
+    return TimeZoneAndCanonicalAndNormalizedIterator._fromFfi(result, [], aEdges);
   }
 }
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_IanaParserExtended_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_IanaParserExtended_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_IanaParserExtended_create_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_create_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IanaParserExtended_create_mv1();
 
-@meta.RecordUse()
+@_DiplomatFfiUse('icu4x_IanaParserExtended_create_with_provider_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IanaParserExtended_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@meta.RecordUse()
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_canonicalize_iana_mv1')
+@_DiplomatFfiUse('icu4x_IanaParserExtended_parse_mv1')
+@ffi.Native<_TimeZoneAndCanonicalAndNormalizedFfi Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_parse_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_IanaParserExtended_canonicalize_iana_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value, ffi.Pointer<ffi.Opaque> write);
+external _TimeZoneAndCanonicalAndNormalizedFfi _icu4x_IanaParserExtended_parse_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value);
 
-@meta.RecordUse()
-@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1')
+@_DiplomatFfiUse('icu4x_IanaParserExtended_iter_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_iter_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidVoid _icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 value, ffi.Pointer<ffi.Opaque> write);
+external ffi.Pointer<ffi.Opaque> _icu4x_IanaParserExtended_iter_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_IanaParserExtended_iter_all_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IanaParserExtended_iter_all_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_IanaParserExtended_iter_all_mv1(ffi.Pointer<ffi.Opaque> self);

@@ -41,8 +41,7 @@ use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
-    CanonicalCompositionsV1, CanonicalDecompositionDataV2, CanonicalDecompositionTablesV1,
-    NonRecursiveDecompositionSupplementV1,
+    NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdSupplementV1, NormalizerNfdTablesV1,
 };
 use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
 use icu_properties::provider::{
@@ -214,7 +213,7 @@ impl CombiningClassData {
     /// Construct a new [`CombiningClassData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2> + ?Sized,
+        D: DataProvider<NormalizerNfdDataV1> + ?Sized,
     {
         let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
 
@@ -332,7 +331,7 @@ impl ComposeData {
     /// Construct a new [`ComposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalCompositionsV1> + ?Sized,
+        D: DataProvider<NormalizerNfcV1> + ?Sized,
     {
         let comp = CanonicalComposition::try_new_unstable(provider)?;
 
@@ -367,9 +366,9 @@ impl DecomposeData {
     /// Construct a new [`DecomposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<NonRecursiveDecompositionSupplementV1>
-            + DataProvider<CanonicalDecompositionTablesV1>
+        D: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfdSupplementV1>
+            + DataProvider<NormalizerNfdTablesV1>
             + ?Sized,
     {
         let decomp = CanonicalDecomposition::try_new_unstable(provider)?;

@@ -67,7 +67,7 @@
 //! Find all word boundaries:
 //!
 //!```rust
-//! use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+//! use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 //!
 //! let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 //!
@@ -87,7 +87,7 @@
 //! Segment the string into sentences:
 //!
 //!```rust
-//! use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+//! use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
 //!
 //! let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 //!
@@ -140,15 +140,17 @@ pub use crate::sentence::SentenceSegmenter;
 pub use crate::word::WordBreakIterator;
 pub use crate::word::WordSegmenter;
 
-// Options structs and enums
-pub use crate::line::LineBreakOptions;
-pub use crate::line::LineBreakStrictness;
-pub use crate::line::LineBreakWordOption;
-pub use crate::sentence::SentenceBreakInvariantOptions;
-pub use crate::sentence::SentenceBreakOptions;
-pub use crate::word::WordBreakInvariantOptions;
-pub use crate::word::WordBreakOptions;
-pub use crate::word::WordType;
+/// Options structs and enums
+pub mod options {
+    pub use crate::line::LineBreakOptions;
+    pub use crate::line::LineBreakStrictness;
+    pub use crate::line::LineBreakWordOption;
+    pub use crate::sentence::SentenceBreakInvariantOptions;
+    pub use crate::sentence::SentenceBreakOptions;
+    pub use crate::word::WordBreakInvariantOptions;
+    pub use crate::word::WordBreakOptions;
+    pub use crate::word::WordType;
+}
 
 // Typedefs
 pub use crate::grapheme::GraphemeClusterBreakIteratorLatin1;

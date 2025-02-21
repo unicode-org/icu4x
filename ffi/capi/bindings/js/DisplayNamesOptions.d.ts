@@ -30,7 +30,7 @@ export class DisplayNamesOptions {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : DisplayNamesOptions_obj) : DisplayNamesOptions;
-    
+
 
     constructor(structObj : DisplayNamesOptions_obj);
 }

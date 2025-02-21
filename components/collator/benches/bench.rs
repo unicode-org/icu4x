@@ -4,7 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 
-use icu::collator::*;
+use icu::collator::{options::*, *};
 use icu::locale::locale;
 
 pub fn collator_with_locale(criterion: &mut Criterion) {

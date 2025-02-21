@@ -10,8 +10,8 @@ use crate::grouper;
 use crate::options::*;
 use crate::parts;
 use crate::provider::*;
+use fixed_decimal::Decimal;
 use fixed_decimal::Sign;
-use fixed_decimal::SignedFixedDecimal;
 use writeable::Part;
 use writeable::PartsWrite;
 use writeable::Writeable;
@@ -20,10 +20,10 @@ use writeable::Writeable;
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedDecimal<'l> {
-    pub(crate) value: &'l SignedFixedDecimal,
+    pub(crate) value: &'l Decimal,
     pub(crate) options: &'l DecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbols<'l>,
-    pub(crate) digits: &'l DecimalDigits,
+    pub(crate) digits: &'l [char; 10],
 }
 
 impl FormattedDecimal<'_> {
@@ -63,7 +63,7 @@ impl Writeable for FormattedDecimal<'_> {
                     }
                 };
                 #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-                w.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
+                w.write_char(self.digits[self.value.digit_at(m) as usize])?;
                 if grouper::check(
                     upper_magnitude,
                     m,
@@ -84,7 +84,7 @@ impl Writeable for FormattedDecimal<'_> {
                 let mut m = -1; // read in the previous loop
                 loop {
                     #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-                    w.write_char(self.digits.digits[self.value.digit_at(m) as usize])?;
+                    w.write_char(self.digits[self.value.digit_at(m) as usize])?;
                     m = match range.next() {
                         Some(m) => m,
                         None => {

@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.InvalidOffsetError.html)
+/** Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.InvalidOffsetError.html)
 */
 
 
@@ -15,7 +15,7 @@ export class TimeZoneInvalidOffsetError {
     static fromFields(structObj) {
         return new TimeZoneInvalidOffsetError(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("TimeZoneInvalidOffsetError's constructor takes an object of TimeZoneInvalidOffsetError's fields.");

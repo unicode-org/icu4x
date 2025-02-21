@@ -30,7 +30,7 @@
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
 use crate::{
-    options::FractionalSecondDigits,
+    options::SubsecondDigits,
     provider::fields::{self, Field, FieldLength, FieldSymbol},
     provider::pattern::{reference, runtime::Pattern, PatternItem},
 };
@@ -71,7 +71,7 @@ pub struct Bag {
     /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
     /// Specify the number of fractional second digits such as 1 (".3") or 3 (".003").
-    pub fractional_second: Option<FractionalSecondDigits>,
+    pub subsecond: Option<SubsecondDigits>,
 
     /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
@@ -100,7 +100,7 @@ impl Bag {
             hour: other.hour.or(self.hour),
             minute: other.minute.or(self.minute),
             second: other.second.or(self.second),
-            fractional_second: other.fractional_second.or(self.fractional_second),
+            subsecond: other.subsecond.or(self.subsecond),
             time_zone_name: other.time_zone_name.or(self.time_zone_name),
             hour_cycle: other.hour_cycle.or(self.hour_cycle),
         }
@@ -295,11 +295,9 @@ impl Bag {
         }
 
         if let Some(second) = self.second {
-            let symbol = match self.fractional_second {
+            let symbol = match self.subsecond {
                 None => FieldSymbol::Second(fields::Second::Second),
-                Some(fractional_second) => {
-                    FieldSymbol::from_fractional_second_digits(fractional_second)
-                }
+                Some(subsecond) => FieldSymbol::from_subsecond_digits(subsecond),
             };
             // s    8, 12    Numeric: minimum digits
             // ss  08, 12    Numeric: 2 digits, zero pad if needed
@@ -735,21 +733,21 @@ impl Bag {
                     fields::Second::MillisInDay => unimplemented!("fields::Second::MillisInDay"),
                 },
                 FieldSymbol::DecimalSecond(decimal_second) => {
-                    use FractionalSecondDigits::*;
+                    use SubsecondDigits::*;
                     bag.second = Some(match field.length {
                         FieldLength::Two => Numeric::TwoDigit,
                         _ => Numeric::Numeric,
                     });
-                    bag.fractional_second = Some(match decimal_second {
-                        fields::DecimalSecond::SecondF1 => F1,
-                        fields::DecimalSecond::SecondF2 => F2,
-                        fields::DecimalSecond::SecondF3 => F3,
-                        fields::DecimalSecond::SecondF4 => F4,
-                        fields::DecimalSecond::SecondF5 => F5,
-                        fields::DecimalSecond::SecondF6 => F6,
-                        fields::DecimalSecond::SecondF7 => F7,
-                        fields::DecimalSecond::SecondF8 => F8,
-                        fields::DecimalSecond::SecondF9 => F9,
+                    bag.subsecond = Some(match decimal_second {
+                        fields::DecimalSecond::Subsecond1 => S1,
+                        fields::DecimalSecond::Subsecond2 => S2,
+                        fields::DecimalSecond::Subsecond3 => S3,
+                        fields::DecimalSecond::Subsecond4 => S4,
+                        fields::DecimalSecond::Subsecond5 => S5,
+                        fields::DecimalSecond::Subsecond6 => S6,
+                        fields::DecimalSecond::Subsecond7 => S7,
+                        fields::DecimalSecond::Subsecond8 => S8,
+                        fields::DecimalSecond::Subsecond9 => S9,
                     });
                 }
                 FieldSymbol::TimeZone(time_zone_name) => {
@@ -798,7 +796,7 @@ mod test {
             hour: Some(Numeric::Numeric),
             minute: Some(Numeric::Numeric),
             second: Some(Numeric::Numeric),
-            fractional_second: Some(FractionalSecondDigits::F3),
+            subsecond: Some(SubsecondDigits::S3),
 
             ..Default::default()
         };
@@ -811,7 +809,7 @@ mod test {
                 (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (
-                    Symbol::DecimalSecond(fields::DecimalSecond::SecondF3),
+                    Symbol::DecimalSecond(fields::DecimalSecond::Subsecond3),
                     Length::One
                 )
                     .into(),

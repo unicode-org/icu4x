@@ -26,6 +26,10 @@ export { DateTime } from "./DateTime.mjs"
 
 export { IsoDateTime } from "./IsoDateTime.mjs"
 
+export { TimeZoneAndCanonical } from "./TimeZoneAndCanonical.mjs"
+
+export { TimeZoneAndCanonicalAndNormalized } from "./TimeZoneAndCanonicalAndNormalized.mjs"
+
 export { Decomposed } from "./Decomposed.mjs"
 
 export { PluralCategories } from "./PluralCategories.mjs"
@@ -82,7 +86,17 @@ export { LocaleFallbacker } from "./LocaleFallbacker.mjs"
 
 export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 
-export { SignedFixedDecimal } from "./SignedFixedDecimal.mjs"
+export { Decimal } from "./Decimal.mjs"
+
+export { IanaParser } from "./IanaParser.mjs"
+
+export { IanaParserExtended } from "./IanaParserExtended.mjs"
+
+export { TimeZoneAndCanonicalAndNormalizedIterator } from "./TimeZoneAndCanonicalAndNormalizedIterator.mjs"
+
+export { TimeZoneAndCanonicalIterator } from "./TimeZoneAndCanonicalIterator.mjs"
+
+export { TimeZoneIterator } from "./TimeZoneIterator.mjs"
 
 export { ListFormatter } from "./ListFormatter.mjs"
 
@@ -172,10 +186,6 @@ export { Time } from "./Time.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
-export { IanaParser } from "./IanaParser.mjs"
-
-export { IanaParserExtended } from "./IanaParserExtended.mjs"
-
 export { MeasureUnit } from "./MeasureUnit.mjs"
 
 export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
@@ -184,9 +194,9 @@ export { UnitsConverter } from "./UnitsConverter.mjs"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
-export { WeekCalculator } from "./WeekCalculator.mjs"
+export { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
 
-export { ZonedDateTimeParser } from "./ZonedDateTimeParser.mjs"
+export { WeekCalculator } from "./WeekCalculator.mjs"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 

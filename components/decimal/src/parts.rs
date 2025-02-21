@@ -12,17 +12,17 @@
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_parts_eq;
 //!
-//! let df = DecimalFormatter::try_new(
+//! let formatter = DecimalFormatter::try_new(
 //!     locale!("en").into(),
 //!     Default::default(),
 //! )
 //! .unwrap();
 //!
-//! let fixed_decimal = "-987654.321".parse().unwrap();
+//! let decimal = "-987654.321".parse().unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(
-//!     df.format(&fixed_decimal),
+//!     formatter.format(&decimal),
 //!     "-987,654.321",
 //!     [
 //!         (0, 1, parts::MINUS_SIGN),

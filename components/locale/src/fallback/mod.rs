@@ -57,8 +57,8 @@ mod algorithms;
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
-    likely_subtags: DataPayload<LikelySubtagsForLanguageV1>,
-    parents: DataPayload<ParentsV1>,
+    likely_subtags: DataPayload<LocaleLikelySubtagsLanguageV1>,
+    parents: DataPayload<LocaleParentsV1>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
@@ -127,7 +127,7 @@ impl LocaleFallbacker {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1> + DataProvider<ParentsV1> + ?Sized,
+        P: DataProvider<LocaleLikelySubtagsLanguageV1> + DataProvider<LocaleParentsV1> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
@@ -193,8 +193,8 @@ impl LocaleFallbackerBorrowed<'static> {
     #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
-            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1,
-            parents: crate::provider::Baked::SINGLETON_PARENTS_V1,
+            likely_subtags: crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+            parents: crate::provider::Baked::SINGLETON_LOCALE_PARENTS_V1,
         }
     }
 

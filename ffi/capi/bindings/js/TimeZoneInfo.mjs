@@ -4,6 +4,7 @@ import { IsoDate } from "./IsoDate.mjs"
 import { IsoDateTime } from "./IsoDateTime.mjs"
 import { Time } from "./Time.mjs"
 import { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
+import { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
@@ -259,11 +260,11 @@ export class TimeZoneInfo {
         }
     }
 
-    setIanaTimeZoneId(mapper, id) {
+    setIanaTimeZoneId(parser, id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
-        wasm.icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(this.ffiValue, mapper.ffiValue, ...idSlice.splat());
+        wasm.icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(this.ffiValue, parser.ffiValue, ...idSlice.splat());
     
         try {}
         
@@ -283,6 +284,16 @@ export class TimeZoneInfo {
         finally {
             write.free();
         }
+    }
+
+    inferZoneVariant(offsetCalculator) {
+        const result = wasm.icu4x_TimeZoneInfo_infer_zone_variant_mv1(this.ffiValue, offsetCalculator.ffiValue);
+    
+        try {
+            return result === 1;
+        }
+        
+        finally {}
     }
 
     clearZoneVariant() {wasm.icu4x_TimeZoneInfo_clear_zone_variant_mv1(this.ffiValue);

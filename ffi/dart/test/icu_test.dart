@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 void main() {
   Logger.initSimpleLogger();
 
-  test('SignedFixedDecimal.toString', () {
-    final x = SignedFixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);
+  test('Decimal.toString', () {
+    final x = Decimal.fromDoubleWithLowerMagnitude(1.49403, -7);
     expect(x.toString(), '1.4940300');
   });
 
@@ -55,13 +55,23 @@ void main() {
         ]);
   });
 
-  test('DateTime formatting', () {
-    final zonedDateTimeIso = ZonedDateTimeParser()
-        .tryIsoFromStr('2025-01-15T14:32:12.34+01[Europe/Zurich]');
+  test('Time zones', () {
+    final iter = IanaParserExtended().iterAll();
+    iter.moveNext();
+    expect(iter.current.canonical, 'Africa/Abidjan');
+  });
 
-    final zonedDateTimeBuddhist = ZonedDateTimeParser().tryFromStr(
+  test('DateTime formatting', () {
+    final zonedDateTimeIso = ZonedIsoDateTime.tryFromStr(
+        '2025-01-15T14:32:12.34+01[Europe/Zurich]',
+        IanaParser(),
+        UtcOffsetCalculator());
+
+    final zonedDateTimeBuddhist = ZonedDateTime.tryFromStr(
         '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
-        Calendar.forKind(AnyCalendarKind.buddhist));
+        Calendar.forKind(AnyCalendarKind.buddhist),
+        IanaParser(),
+        UtcOffsetCalculator());
 
     var locale = Locale.fromString('de-u-ca-islamic');
 

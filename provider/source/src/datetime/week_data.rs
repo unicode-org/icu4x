@@ -8,13 +8,13 @@ use crate::cldr_serde::{
 };
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::calendar::provider::{WeekData, WeekDataV2, WeekdaySet};
+use icu::calendar::provider::{CalendarWeekV2, WeekData, WeekdaySet};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl DataProvider<WeekDataV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV2>, DataError> {
-        self.check_req::<WeekDataV2>(req)?;
+impl DataProvider<CalendarWeekV2> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarWeekV2>, DataError> {
+        self.check_req::<CalendarWeekV2>(req)?;
         let territory = req
             .id
             .locale
@@ -76,7 +76,7 @@ impl DataProvider<WeekDataV2> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<WeekDataV2> for SourceDataProvider {
+impl IterableDataProviderCached<CalendarWeekV2> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
@@ -109,7 +109,8 @@ fn test_basic_cldr_week_data_v2() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let default_week_data: DataResponse<WeekDataV2> = provider.load(Default::default()).unwrap();
+    let default_week_data: DataResponse<CalendarWeekV2> =
+        provider.load(Default::default()).unwrap();
     assert_eq!(1, default_week_data.payload.get().min_week_days);
     assert_eq!(Monday, default_week_data.payload.get().first_weekday);
     assert_eq!(
@@ -117,7 +118,7 @@ fn test_basic_cldr_week_data_v2() {
         default_week_data.payload.get().weekend
     );
 
-    let fr_week_data: DataResponse<WeekDataV2> = provider
+    let fr_week_data: DataResponse<CalendarWeekV2> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
             ..Default::default()
@@ -130,7 +131,7 @@ fn test_basic_cldr_week_data_v2() {
         fr_week_data.payload.get().weekend
     );
 
-    let iq_week_data: DataResponse<WeekDataV2> = provider
+    let iq_week_data: DataResponse<CalendarWeekV2> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
             ..Default::default()
@@ -147,7 +148,7 @@ fn test_basic_cldr_week_data_v2() {
         iq_week_data.payload.get().weekend
     );
 
-    let gg_week_data: DataResponse<WeekDataV2> = provider
+    let gg_week_data: DataResponse<CalendarWeekV2> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
             ..Default::default()
@@ -164,7 +165,7 @@ fn test_basic_cldr_week_data_v2() {
         gg_week_data.payload.get().weekend
     );
 
-    let ir_week_data: DataResponse<WeekDataV2> = provider
+    let ir_week_data: DataResponse<CalendarWeekV2> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-IR").into()).as_borrowed(),
             ..Default::default()

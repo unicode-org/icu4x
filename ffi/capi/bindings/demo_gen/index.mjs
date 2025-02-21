@@ -13,8 +13,8 @@ import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
-import * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
-export * as SignedFixedDecimalDemo from "./SignedFixedDecimal.mjs";
+import * as DecimalDemo from "./Decimal.mjs";
+export * as DecimalDemo from "./Decimal.mjs";
 import * as ListFormatterDemo from "./ListFormatter.mjs";
 export * as ListFormatterDemo from "./ListFormatter.mjs";
 import * as LocaleDemo from "./Locale.mjs";
@@ -29,10 +29,6 @@ import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 import * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
 export * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
-import * as IanaParserDemo from "./IanaParser.mjs";
-export * as IanaParserDemo from "./IanaParser.mjs";
-import * as IanaParserExtendedDemo from "./IanaParserExtended.mjs";
-export * as IanaParserExtendedDemo from "./IanaParserExtended.mjs";
 import * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 export * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 import * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
@@ -449,20 +445,20 @@ let termini = Object.assign({
         ]
     },
 
-    "SignedFixedDecimal.toString": {
-        func: SignedFixedDecimalDemo.toString,
+    "Decimal.toString": {
+        func: DecimalDemo.toString,
         // For avoiding webpacking minifying issues:
-        funcName: "SignedFixedDecimal.toString",
+        funcName: "Decimal.toString",
         parameters: [
             
             {
-                name: "SignedFixedDecimal:F",
+                name: "Decimal:F",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "SignedFixedDecimal:Magnitude",
+                name: "Decimal:Magnitude",
                 type: "number",
                 typeUse: "number"
             }
@@ -909,96 +905,6 @@ let termini = Object.assign({
                 name: "TimeZoneInfo:Dst",
                 type: "boolean",
                 typeUse: "boolean"
-            }
-            
-        ]
-    },
-
-    "IanaParser.ianaToBcp47": {
-        func: IanaParserDemo.ianaToBcp47,
-        // For avoiding webpacking minifying issues:
-        funcName: "IanaParser.ianaToBcp47",
-        parameters: [
-            
-            {
-                name: "Value",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "IanaParser.normalizeIana": {
-        func: IanaParserDemo.normalizeIana,
-        // For avoiding webpacking minifying issues:
-        funcName: "IanaParser.normalizeIana",
-        parameters: [
-            
-            {
-                name: "Value",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "IanaParser.canonicalizeIana": {
-        func: IanaParserDemo.canonicalizeIana,
-        // For avoiding webpacking minifying issues:
-        funcName: "IanaParser.canonicalizeIana",
-        parameters: [
-            
-            {
-                name: "Value",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "IanaParser.findCanonicalIanaFromBcp47": {
-        func: IanaParserDemo.findCanonicalIanaFromBcp47,
-        // For avoiding webpacking minifying issues:
-        funcName: "IanaParser.findCanonicalIanaFromBcp47",
-        parameters: [
-            
-            {
-                name: "Value",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "IanaParserExtended.canonicalizeIana": {
-        func: IanaParserExtendedDemo.canonicalizeIana,
-        // For avoiding webpacking minifying issues:
-        funcName: "IanaParserExtended.canonicalizeIana",
-        parameters: [
-            
-            {
-                name: "Value",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "IanaParserExtended.canonicalIanaFromBcp47": {
-        func: IanaParserExtendedDemo.canonicalIanaFromBcp47,
-        // For avoiding webpacking minifying issues:
-        funcName: "IanaParserExtended.canonicalIanaFromBcp47",
-        parameters: [
-            
-            {
-                name: "Value",
-                type: "string",
-                typeUse: "string"
             }
             
         ]

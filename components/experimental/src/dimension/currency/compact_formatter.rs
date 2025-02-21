@@ -10,7 +10,7 @@ use crate::{
         currency::CurrencyEssentialsV1, currency_compact::ShortCurrencyCompactV1,
     },
 };
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
@@ -131,7 +131,7 @@ impl CompactCurrencyFormatter {
             + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyEssentialsV1::make_locale(prefs.locale_preferences);
 
@@ -163,7 +163,7 @@ impl CompactCurrencyFormatter {
         })
     }
 
-    /// Formats in the compact format a [`SignedFixedDecimal`] value for the given currency code.
+    /// Formats in the compact format a [`Decimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
@@ -184,7 +184,7 @@ impl CompactCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l SignedFixedDecimal,
+        value: &'l Decimal,
         currency_code: CurrencyCode,
     ) -> FormattedCompactCurrency<'l> {
         FormattedCompactCurrency {

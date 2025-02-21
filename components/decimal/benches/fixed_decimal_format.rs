@@ -8,7 +8,7 @@ use rand_pcg::Lcg64Xsh32;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::locale;
 
@@ -32,10 +32,10 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             // This benchmark demonstrates the performance of the format function on 1000 numbers
             // ranging from -1e9 to 1e9.
-            let fdf = DecimalFormatter::try_new(prefs, options).unwrap();
+            let formatter = DecimalFormatter::try_new(prefs, options).unwrap();
             for &num in &nums {
-                let fd = SignedFixedDecimal::from(black_box(num));
-                fdf.format_to_string(&fd);
+                let decimal = Decimal::from(black_box(num));
+                formatter.format_to_string(&decimal);
             }
         });
     });

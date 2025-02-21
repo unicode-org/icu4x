@@ -59,7 +59,7 @@ pub struct TestComponentsBag {
     pub hour: Option<components::Numeric>,
     pub minute: Option<components::Numeric>,
     pub second: Option<components::Numeric>,
-    pub fractional_second: Option<u8>,
+    pub subsecond: Option<u8>,
 
     pub time_zone_name: Option<components::TimeZoneName>,
 }

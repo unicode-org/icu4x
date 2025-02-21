@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::langid;
-use icu_segmenter::{SentenceBreakOptions, SentenceSegmenter, WordBreakOptions, WordSegmenter};
+use icu_segmenter::options::{SentenceBreakOptions, WordBreakOptions};
+use icu_segmenter::{SentenceSegmenter, WordSegmenter};
 
 // Additional segmenter tests with locale.
 

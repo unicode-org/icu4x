@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
+/** See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
 */
 
 

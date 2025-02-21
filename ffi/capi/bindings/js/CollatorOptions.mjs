@@ -8,7 +8,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
+/** See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
 */
 
 
@@ -65,7 +65,7 @@ export class CollatorOptions {
     static fromFields(structObj) {
         return new CollatorOptions(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("CollatorOptions's constructor takes an object of CollatorOptions's fields.");

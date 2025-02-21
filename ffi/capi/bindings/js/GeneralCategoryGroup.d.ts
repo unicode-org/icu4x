@@ -22,7 +22,7 @@ export class GeneralCategoryGroup {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : GeneralCategoryGroup_obj) : GeneralCategoryGroup;
-    
+
 
     contains(val: GeneralCategory): boolean;
 

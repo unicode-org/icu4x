@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options::FractionalSecondDigits;
+use icu_datetime::options::SubsecondDigits;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -48,15 +48,15 @@ pub mod ffi {
         Minute,
         MinuteOptional,
         Second,
-        SecondF1,
-        SecondF2,
-        SecondF3,
-        SecondF4,
-        SecondF5,
-        SecondF6,
-        SecondF7,
-        SecondF8,
-        SecondF9,
+        Subsecond1,
+        Subsecond2,
+        Subsecond3,
+        Subsecond4,
+        Subsecond5,
+        Subsecond6,
+        Subsecond7,
+        Subsecond8,
+        Subsecond9,
     }
 
     #[diplomat::opaque]
@@ -1022,33 +1022,15 @@ impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
             ffi::TimePrecision::Minute => TimePrecision::Minute,
             ffi::TimePrecision::MinuteOptional => TimePrecision::MinuteOptional,
             ffi::TimePrecision::Second => TimePrecision::Second,
-            ffi::TimePrecision::SecondF1 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F1)
-            }
-            ffi::TimePrecision::SecondF2 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F2)
-            }
-            ffi::TimePrecision::SecondF3 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F3)
-            }
-            ffi::TimePrecision::SecondF4 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F4)
-            }
-            ffi::TimePrecision::SecondF5 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F5)
-            }
-            ffi::TimePrecision::SecondF6 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F6)
-            }
-            ffi::TimePrecision::SecondF7 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F7)
-            }
-            ffi::TimePrecision::SecondF8 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F8)
-            }
-            ffi::TimePrecision::SecondF9 => {
-                TimePrecision::FractionalSecond(FractionalSecondDigits::F9)
-            }
+            ffi::TimePrecision::Subsecond1 => TimePrecision::Subsecond(SubsecondDigits::S1),
+            ffi::TimePrecision::Subsecond2 => TimePrecision::Subsecond(SubsecondDigits::S2),
+            ffi::TimePrecision::Subsecond3 => TimePrecision::Subsecond(SubsecondDigits::S3),
+            ffi::TimePrecision::Subsecond4 => TimePrecision::Subsecond(SubsecondDigits::S4),
+            ffi::TimePrecision::Subsecond5 => TimePrecision::Subsecond(SubsecondDigits::S5),
+            ffi::TimePrecision::Subsecond6 => TimePrecision::Subsecond(SubsecondDigits::S6),
+            ffi::TimePrecision::Subsecond7 => TimePrecision::Subsecond(SubsecondDigits::S7),
+            ffi::TimePrecision::Subsecond8 => TimePrecision::Subsecond(SubsecondDigits::S8),
+            ffi::TimePrecision::Subsecond9 => TimePrecision::Subsecond(SubsecondDigits::S9),
         }
     }
 }
