@@ -8,6 +8,9 @@
 pub mod ffi {
     use icu_properties::props;
 
+    #[cfg(feature = "compiled_data")]
+    use diplomat_runtime::DiplomatChar;
+
     #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
     #[diplomat::enum_convert(icu_properties::props::BidiClass, needs_wildcard)]
     pub enum BidiClass {
@@ -72,6 +75,13 @@ pub mod ffi {
     }
 
     impl BidiClass {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::BidiClass>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::BidiClass::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
@@ -443,6 +453,13 @@ pub mod ffi {
     }
 
     impl Script {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::Script>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::Script::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u16 {
             self as u16
@@ -653,7 +670,17 @@ pub mod ffi {
     }
 
     impl HangulSyllableType {
-        #[diplomat::rust_link(icu::properties::props::HangulSyllableType::to_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::HangulSyllableType>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::to_icu4c_value,
+            FnInStruct
+        )]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
         }
@@ -692,6 +719,13 @@ pub mod ffi {
     }
 
     impl EastAsianWidth {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::EastAsianWidth>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
@@ -812,6 +846,13 @@ pub mod ffi {
     }
 
     impl LineBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::LineBreak>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
@@ -914,6 +955,13 @@ pub mod ffi {
     }
 
     impl GraphemeClusterBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::GraphemeClusterBreak>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(
             icu::properties::props::GraphemeClusterBreak::to_icu4c_value,
             FnInStruct
@@ -1002,6 +1050,13 @@ pub mod ffi {
     }
 
     impl WordBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::WordBreak>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::WordBreak::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
@@ -1073,6 +1128,13 @@ pub mod ffi {
     }
 
     impl SentenceBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::SentenceBreak>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
@@ -1294,6 +1356,13 @@ pub mod ffi {
     }
 
     impl CanonicalCombiningClass {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(
             icu::properties::props::CanonicalCombiningClass::to_icu4c_value,
             FnInStruct
@@ -1537,6 +1606,13 @@ pub mod ffi {
     }
 
     impl IndicSyllabicCategory {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(
             icu::properties::props::IndicSyllabicCategory::to_icu4c_value,
             FnInStruct
@@ -1610,6 +1686,13 @@ pub mod ffi {
     }
 
     impl JoiningType {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::JoiningType>::new()
+                .get32(ch)
+                .into()
+        }
         #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
             self as u8
@@ -1742,6 +1825,13 @@ pub mod ffi {
     }
 
     impl GeneralCategory {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::GeneralCategory>::new()
+                .get32(ch)
+                .into()
+        }
         /// Convert to an integer using the ICU4C integer mappings for `General_Category`
         #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
         pub fn to_icu4c_value(self) -> u8 {
@@ -1757,7 +1847,10 @@ pub mod ffi {
         }
 
         /// Convert from an integer using the ICU4C integer mappings for `General_Category`
-        #[diplomat::rust_link(icu::properties::props::GeneralCategory::from_icu4c_value, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategory::from_icu4c_value,
+            FnInStruct
+        )]
         #[diplomat::rust_link(
             icu::properties::props::GeneralCategoryOutOfBoundsError,
             Struct,
@@ -1922,77 +2015,77 @@ mod test {
     #[test]
     fn test_all_cases_covered() {
         for prop in props::BidiClass::ALL_VALUES {
-            let ffi_prop = BidiClass::from_integer(prop.to_icu4c_value())
+            let ffi_prop = BidiClass::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found BidiClass value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
         }
 
         for prop in props::Script::ALL_VALUES {
-            let ffi_prop = Script::from_integer(prop.to_icu4c_value())
+            let ffi_prop = Script::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found Script value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::Script::from(ffi_prop));
         }
 
         for prop in props::HangulSyllableType::ALL_VALUES {
-            let ffi_prop = HangulSyllableType::from_integer(prop.to_icu4c_value())
+            let ffi_prop = HangulSyllableType::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found HangulSyllableType value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::HangulSyllableType::from(ffi_prop));
         }
         for prop in props::EastAsianWidth::ALL_VALUES {
-            let ffi_prop = EastAsianWidth::from_integer(prop.to_icu4c_value())
+            let ffi_prop = EastAsianWidth::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found EastAsianWidth value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::EastAsianWidth::from(ffi_prop));
         }
         for prop in props::LineBreak::ALL_VALUES {
-            let ffi_prop = LineBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = LineBreak::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found LineBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::LineBreak::from(ffi_prop));
         }
         for prop in props::GraphemeClusterBreak::ALL_VALUES {
-            let ffi_prop = GraphemeClusterBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = GraphemeClusterBreak::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found GraphemeClusterBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::GraphemeClusterBreak::from(ffi_prop));
         }
         for prop in props::WordBreak::ALL_VALUES {
-            let ffi_prop = WordBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = WordBreak::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found WordBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::WordBreak::from(ffi_prop));
         }
         for prop in props::SentenceBreak::ALL_VALUES {
-            let ffi_prop = SentenceBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = SentenceBreak::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found SentenceBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::SentenceBreak::from(ffi_prop));
         }
         for prop in props::CanonicalCombiningClass::ALL_VALUES {
-            let ffi_prop = CanonicalCombiningClass::from_integer(prop.to_icu4c_value())
+            let ffi_prop = CanonicalCombiningClass::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found CanonicalCombiningClass value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::CanonicalCombiningClass::from(ffi_prop));
         }
         for prop in props::IndicSyllabicCategory::ALL_VALUES {
-            let ffi_prop = IndicSyllabicCategory::from_integer(prop.to_icu4c_value())
+            let ffi_prop = IndicSyllabicCategory::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
-            let ffi_prop = JoiningType::from_integer(prop.to_icu4c_value())
+            let ffi_prop = JoiningType::from_icu4c_value(prop.to_icu4c_value())
                 .expect("Found JoiningType value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::JoiningType::from(ffi_prop));
         }
         for prop in props::GeneralCategory::ALL_VALUES {
-            let ffi_prop = GeneralCategory::from_integer(*prop as u8)
+            let ffi_prop = GeneralCategory::from_icu4c_value(*prop as u8)
                 .expect("Found GeneralCategory value not supported in ffi");
-            assert_eq!(*prop as u8, ffi_prop.to_integer());
+            assert_eq!(*prop as u8, ffi_prop.to_icu4c_value());
             assert_eq!(*prop, props::GeneralCategory::from(ffi_prop));
         }
     }
