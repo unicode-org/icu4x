@@ -219,7 +219,6 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
 ///
-/// [`CodePointSetData`]: crate::sets::CodePointSetData
 /// [`TR44`]: https://www.unicode.org/reports/tr44
 /// [`TR18`]: https://www.unicode.org/reports/tr18
 pub trait BinaryProperty: crate::private::Sealed + Sized {
