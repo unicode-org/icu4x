@@ -101,7 +101,6 @@ pub mod ffi {
                 .unwrap_or("")
         }
 
-
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
@@ -508,7 +507,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get_locale_script, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::PropertyNamesShortBorrowed::get_locale_script,
+            FnInStruct,
+            hidden
+        )]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
         pub fn short_name(self) -> &'static str {
