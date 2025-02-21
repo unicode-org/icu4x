@@ -41,23 +41,12 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-impl<'a> HelloWorld<'a> {
-    fn encode_as_varule(&self) -> &str {
-        &self.message
-    }
-    fn from_varule(message: &'a str) -> Self {
-        Self {
-            message: Cow::Borrowed(message),
-        }
-    }
-}
-
 crate::data_struct_new!(
     HelloWorld<'data>,
     varule: str,
     #[cfg(feature = "export")]
-    encode_as_varule: HelloWorld::encode_as_varule,
-    from_varule: HelloWorld::from_varule
+    encode_as_varule: |v: &HelloWorld<'_>| &*v.message,
+    from_varule: |message: &str| HelloWorld { message: Cow::Borrowed(message) }
 );
 
 data_marker!(

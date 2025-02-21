@@ -79,12 +79,16 @@ macro_rules! __data_struct {
         $(#[$attr])*
         impl<'data> $crate::ule::MaybeEncodeAsVarULE for $ty {
             fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
-                Some($encode_as_varule(self))
+                // Workaround for <https://rust-lang.github.io/rfcs/3216-closure-lifetime-binder.html>
+                fn bind_lifetimes<F>(f: F) -> F where F: for<'data> Fn(&'data $ty) -> &'data $varule { f }
+                Some(bind_lifetimes($encode_as_varule)(self))
             }
         }
         impl<'data> $crate::ule::FromVarULE<'data> for $ty {
             fn from_varule(input: &'data Self::EncodedStruct) -> Self {
-                $from_varule(input)
+                // Workaround for <https://rust-lang.github.io/rfcs/3216-closure-lifetime-binder.html>
+                fn bind_lifetimes<F>(f: F) -> F where F: for<'data> Fn(&'data $varule) -> $ty { f }
+                bind_lifetimes($from_varule)(input)
             }
         }
     };

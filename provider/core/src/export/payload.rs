@@ -75,8 +75,9 @@ where
                     .expect("MaybeEncodeAsVarULE impl should be symmetric")
             }))
             .collect();
-        let vzv: VarZeroVec<<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct> =
-            VarZeroVec::from(&recovered_vec);
+        let vzv: VarZeroVec<
+            <<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct,
+        > = VarZeroVec::from(&recovered_vec);
         let vzs = vzv.as_slice();
         Some(vzs.bake(ctx))
     }
