@@ -175,7 +175,6 @@ icu::properties::PropertyNamesShortBorrowed::get_locale_script#FnInStruct
 icu::properties::PropertyNamesShortBorrowed::new#FnInStruct
 icu::properties::props::BidiMirroringGlyph#Struct
 icu::properties::props::BidiPairedBracketType#Enum
-icu::properties::props::BinaryProperty::for_char#FnInTrait
 icu::properties::props::NamedEnumeratedProperty::long_name#FnInTrait
 icu::properties::props::NamedEnumeratedProperty::short_name#FnInTrait
 icu::properties::props::NamedEnumeratedProperty::try_from_str#FnInTrait
