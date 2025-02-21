@@ -23,7 +23,7 @@ pub trait MaybeAsVarULE {
 
 /// Export-only trait associated with [`MaybeAsVarULE`]. See that trait
 /// for additional details.
-// #[cfg(feature = "export")] // TODO
+// #[cfg(feature = "export")] // TODO(#5230): Enable feature gating
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
     /// Returns the [`MaybeAsVarULE::VarULE`] that represents this data struct,
     /// or `None` if the data struct does not support this representation.
