@@ -67,11 +67,11 @@ macro_rules! __data_struct {
         }
     };
     (
-        $ty:path,
-        varule: $varule:path,
+        $ty:ty,
+        varule: $varule:ty,
         $(#[$attr:meta])*
-        encode_as_varule: $encode_as_varule:path,
-        from_varule: $from_varule:path
+        encode_as_varule: $encode_as_varule:expr,
+        from_varule: $from_varule:expr
     ) => {
         impl<'data> $crate::ule::MaybeAsVarULE for $ty {
             type EncodedStruct = $varule;
