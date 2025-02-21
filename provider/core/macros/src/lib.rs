@@ -368,7 +368,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
     // Note: The proc macro is going away soon, and when it does,
     // the MaybeAsVarULE impl will be customizable.
     result.extend(quote!(
-        icu_provider::ule::data_struct!(
+        icu_provider::data_struct_new!(
             #name_with_implied_lt,
         );
     ));

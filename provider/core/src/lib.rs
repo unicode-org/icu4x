@@ -152,11 +152,12 @@ pub mod ule {
     //!
     //! See [`MaybeAsVarULE`] for details.
 
-    pub use super::varule_traits::data_struct;
     pub use super::varule_traits::FromVarULE;
     pub use super::varule_traits::MaybeAsVarULE;
     pub use super::varule_traits::MaybeEncodeAsVarULE;
 }
+
+pub use varule_traits::data_struct as data_struct_new;
 
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {

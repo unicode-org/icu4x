@@ -52,7 +52,7 @@ impl<'a> HelloWorld<'a> {
     }
 }
 
-crate::ule::data_struct!(
+crate::data_struct_new!(
     HelloWorld<'data>,
     varule: str,
     #[cfg(feature = "export")]
