@@ -119,11 +119,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::BidiClass::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::BidiClass::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::LeftToRight,
                 1 => Self::RightToLeft,
@@ -520,11 +522,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::Script::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u16 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u16 {
             self as u16
         }
         #[diplomat::rust_link(icu::properties::props::Script::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u16) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u16) -> Option<Self> {
             Some(match other {
                 167 => Self::Adlam,
                 161 => Self::Ahom,
@@ -740,14 +744,16 @@ pub mod ffi {
             icu::properties::props::HangulSyllableType::to_icu4c_value,
             FnInStruct
         )]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(
             icu::properties::props::HangulSyllableType::from_icu4c_value,
             FnInStruct
         )]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NotApplicable,
                 1 => Self::LeadingJamo,
@@ -804,11 +810,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Neutral,
                 1 => Self::Ambiguous,
@@ -949,11 +957,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::LineBreak::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unknown,
                 1 => Self::Ambiguous,
@@ -1061,14 +1071,16 @@ pub mod ffi {
             icu::properties::props::GraphemeClusterBreak::to_icu4c_value,
             FnInStruct
         )]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(
             icu::properties::props::GraphemeClusterBreak::from_icu4c_value,
             FnInStruct
         )]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::Control,
@@ -1171,11 +1183,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::WordBreak::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::WordBreak::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::ALetter,
@@ -1267,11 +1281,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::SentenceBreak::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::ATerm,
@@ -1498,14 +1514,16 @@ pub mod ffi {
             icu::properties::props::CanonicalCombiningClass::to_icu4c_value,
             FnInStruct
         )]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(
             icu::properties::props::CanonicalCombiningClass::from_icu4c_value,
             FnInStruct
         )]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NotReordered,
                 1 => Self::Overlay,
@@ -1748,14 +1766,16 @@ pub mod ffi {
             icu::properties::props::IndicSyllabicCategory::to_icu4c_value,
             FnInStruct
         )]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(
             icu::properties::props::IndicSyllabicCategory::from_icu4c_value,
             FnInStruct
         )]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::Avagraha,
@@ -1843,11 +1863,13 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::JoiningType::from_icu4c_value, FnInStruct)]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NonJoining,
                 1 => Self::JoinCausing,
@@ -2001,7 +2023,8 @@ pub mod ffi {
                 .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
-        pub fn to_icu4c_value(self) -> u8 {
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
 
@@ -2023,7 +2046,8 @@ pub mod ffi {
             Struct,
             hidden
         )]
-        pub fn from_icu4c_value(other: u8) -> Option<Self> {
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unassigned,
                 1 => Self::UppercaseLetter,
@@ -2182,77 +2206,77 @@ mod test {
     #[test]
     fn test_all_cases_covered() {
         for prop in props::BidiClass::ALL_VALUES {
-            let ffi_prop = BidiClass::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = BidiClass::from_integer_value(prop.to_icu4c_value())
                 .expect("Found BidiClass value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
         }
 
         for prop in props::Script::ALL_VALUES {
-            let ffi_prop = Script::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = Script::from_integer_value(prop.to_icu4c_value())
                 .expect("Found Script value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::Script::from(ffi_prop));
         }
 
         for prop in props::HangulSyllableType::ALL_VALUES {
-            let ffi_prop = HangulSyllableType::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = HangulSyllableType::from_integer_value(prop.to_icu4c_value())
                 .expect("Found HangulSyllableType value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::HangulSyllableType::from(ffi_prop));
         }
         for prop in props::EastAsianWidth::ALL_VALUES {
-            let ffi_prop = EastAsianWidth::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = EastAsianWidth::from_integer_value(prop.to_icu4c_value())
                 .expect("Found EastAsianWidth value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::EastAsianWidth::from(ffi_prop));
         }
         for prop in props::LineBreak::ALL_VALUES {
-            let ffi_prop = LineBreak::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = LineBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found LineBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::LineBreak::from(ffi_prop));
         }
         for prop in props::GraphemeClusterBreak::ALL_VALUES {
-            let ffi_prop = GraphemeClusterBreak::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = GraphemeClusterBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found GraphemeClusterBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::GraphemeClusterBreak::from(ffi_prop));
         }
         for prop in props::WordBreak::ALL_VALUES {
-            let ffi_prop = WordBreak::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = WordBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found WordBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::WordBreak::from(ffi_prop));
         }
         for prop in props::SentenceBreak::ALL_VALUES {
-            let ffi_prop = SentenceBreak::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = SentenceBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found SentenceBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::SentenceBreak::from(ffi_prop));
         }
         for prop in props::CanonicalCombiningClass::ALL_VALUES {
-            let ffi_prop = CanonicalCombiningClass::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = CanonicalCombiningClass::from_integer_value(prop.to_icu4c_value())
                 .expect("Found CanonicalCombiningClass value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::CanonicalCombiningClass::from(ffi_prop));
         }
         for prop in props::IndicSyllabicCategory::ALL_VALUES {
-            let ffi_prop = IndicSyllabicCategory::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = IndicSyllabicCategory::from_integer_value(prop.to_icu4c_value())
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
-            let ffi_prop = JoiningType::from_icu4c_value(prop.to_icu4c_value())
+            let ffi_prop = JoiningType::from_integer_value(prop.to_icu4c_value())
                 .expect("Found JoiningType value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_icu4c_value());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::JoiningType::from(ffi_prop));
         }
         for prop in props::GeneralCategory::ALL_VALUES {
-            let ffi_prop = GeneralCategory::from_icu4c_value(*prop as u8)
+            let ffi_prop = GeneralCategory::from_integer_value(*prop as u8)
                 .expect("Found GeneralCategory value not supported in ffi");
-            assert_eq!(*prop as u8, ffi_prop.to_icu4c_value());
+            assert_eq!(*prop as u8, ffi_prop.to_integer_value());
             assert_eq!(*prop, props::GeneralCategory::from(ffi_prop));
         }
     }
