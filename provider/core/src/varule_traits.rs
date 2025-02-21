@@ -18,7 +18,7 @@ use zerovec::ule::VarULE;
 pub trait MaybeAsVarULE {
     /// The [`VarULE`] type for this data struct, or `[()]`
     /// if it cannot be represented as [`VarULE`].
-    type VarULE: ?Sized + VarULE;
+    type EncodedStruct: ?Sized + VarULE;
 }
 
 /// Export-only trait associated with [`MaybeAsVarULE`]. See that trait
@@ -27,7 +27,7 @@ pub trait MaybeAsVarULE {
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
     /// Returns the [`MaybeAsVarULE::VarULE`] that represents this data struct,
     /// or `None` if the data struct does not support this representation.
-    fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE>;
+    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct>;
 }
 
 /// Runtime trait associated with [`MaybeAsVarULE`]. See that trait
@@ -38,7 +38,7 @@ pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
 pub trait FromVarULE<'a>: MaybeAsVarULE {
     /// Returns an instance of the data struct that borrows from the
     /// [`MaybeAsVarULE::VarULE`].
-    fn from_varule(varule: &'a Self::VarULE) -> Self;
+    fn from_varule(varule: &'a Self::EncodedStruct) -> Self;
 }
 
 /// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
@@ -46,22 +46,22 @@ pub trait FromVarULE<'a>: MaybeAsVarULE {
 macro_rules! __data_struct {
     (<$generic:ident: $bound:tt> $ty:path, $(#[$attr:meta])*) => {
         impl<$generic: $bound> $crate::ule::MaybeAsVarULE for $ty {
-            type VarULE = [()];
+            type EncodedStruct = [()];
         }
         $(#[$attr])*
         impl<$generic: $bound> $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE> {
+            fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
                 None
             }
         }
     };
     ($ty:path, $(#[$attr:meta])*) => {
         impl $crate::ule::MaybeAsVarULE for $ty {
-            type VarULE = [()];
+            type EncodedStruct = [()];
         }
         $(#[$attr])*
         impl $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE> {
+            fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
                 None
             }
         }
@@ -74,16 +74,16 @@ macro_rules! __data_struct {
         from_varule: $from_varule:path
     ) => {
         impl<'data> $crate::ule::MaybeAsVarULE for $ty {
-            type VarULE = $varule;
+            type EncodedStruct = $varule;
         }
         $(#[$attr])*
         impl<'data> $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<&Self::VarULE> {
+            fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
                 Some($encode_as_varule(self))
             }
         }
         impl<'data> $crate::ule::FromVarULE<'data> for $ty {
-            fn from_varule(input: &'data Self::VarULE) -> Self {
+            fn from_varule(input: &'data Self::EncodedStruct) -> Self {
                 $from_varule(input)
             }
         }

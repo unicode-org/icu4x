@@ -59,7 +59,7 @@ pub(crate) fn bake(
     let (baked_values, value_store_ty) = if let Some(vzv_tokens) = maybe_vzv_tokens {
         (
             quote! {
-                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::VarULE> = #vzv_tokens;
+                const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider_baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct> = #vzv_tokens;
             },
             quote! {
                 icu_provider_baked::zerotrie::DataForVarULEs
@@ -187,7 +187,7 @@ where
 {
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::VarULE>,
+    values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
 }
 
 impl<M: DataMarker> DataForVarULEs<M>
@@ -200,7 +200,7 @@ where
     /// The actual values contained in the trie must be valid indices into `values`
     pub const unsafe fn from_trie_and_values_unchecked(
         trie: ZeroTrieSimpleAscii<&'static [u8]>,
-        values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::VarULE>,
+        values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
     ) -> Self {
         Self { trie, values }
     }

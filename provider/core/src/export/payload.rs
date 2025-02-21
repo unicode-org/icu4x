@@ -62,7 +62,7 @@ where
     ) -> Option<TokenStream> {
         let first_varule = self.get().maybe_encode_as_varule()?;
         let recovered_vec: Vec<
-            &<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::VarULE,
+            &<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct,
         > = core::iter::once(first_varule)
             .chain(rest.iter().map(|v| {
                 v.get()
@@ -75,7 +75,7 @@ where
                     .expect("MaybeEncodeAsVarULE impl should be symmetric")
             }))
             .collect();
-        let vzv: VarZeroVec<<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::VarULE> =
+        let vzv: VarZeroVec<<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct> =
             VarZeroVec::from(&recovered_vec);
         let vzs = vzv.as_slice();
         Some(vzs.bake(ctx))
