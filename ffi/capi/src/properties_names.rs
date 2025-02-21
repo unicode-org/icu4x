@@ -18,6 +18,11 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::PropertyParserBorrowed, Struct)]
     #[diplomat::rust_link(icu::properties::PropertyParser::new, FnInStruct)]
     #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(
+        icu::properties::props::NamedEnumeratedProperty::try_from_str,
+        FnInTrait,
+        hidden
+    )]
     pub struct PropertyValueNameToEnumMapper(icu_properties::PropertyParser<u16>);
 
     impl PropertyValueNameToEnumMapper {

@@ -111,9 +111,11 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline uint8_t to_integer();
+  inline static icu4x::IndicSyllabicCategory for_char(char32_t ch);
 
-  inline static std::optional<icu4x::IndicSyllabicCategory> from_integer(uint8_t other);
+  inline uint8_t to_integer_value();
+
+  inline static std::optional<icu4x::IndicSyllabicCategory> from_integer_value(uint8_t other);
 
   inline icu4x::capi::IndicSyllabicCategory AsFFI() const;
   inline static icu4x::IndicSyllabicCategory FromFFI(icu4x::capi::IndicSyllabicCategory c_enum);

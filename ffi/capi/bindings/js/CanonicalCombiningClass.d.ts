@@ -74,9 +74,11 @@ export class CanonicalCombiningClass {
     static DoubleAbove : CanonicalCombiningClass;
     static IotaSubscript : CanonicalCombiningClass;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): CanonicalCombiningClass;
 
-    static fromInteger(other: number): CanonicalCombiningClass | null;
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): CanonicalCombiningClass | null;
 
     constructor(value: CanonicalCombiningClass | string );
 }

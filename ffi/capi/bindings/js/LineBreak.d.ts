@@ -64,9 +64,15 @@ export class LineBreak {
     static ViramaFinal : LineBreak;
     static Virama : LineBreak;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): LineBreak;
 
-    static fromInteger(other: number): LineBreak | null;
+    longName(): string;
+
+    shortName(): string;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): LineBreak | null;
 
     constructor(value: LineBreak | string );
 }

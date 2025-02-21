@@ -39,9 +39,15 @@ export class BidiClass {
     static RightToLeftIsolate : BidiClass;
     static PopDirectionalIsolate : BidiClass;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): BidiClass;
 
-    static fromInteger(other: number): BidiClass | null;
+    longName(): string;
+
+    shortName(): string;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): BidiClass | null;
 
     constructor(value: BidiClass | string );
 }

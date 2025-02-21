@@ -76,8 +76,18 @@ export class HangulSyllableType {
     static LeadingVowelSyllable = HangulSyllableType.#objectValues[4];
     static LeadingVowelTrailingSyllable = HangulSyllableType.#objectValues[5];
 
-    toInteger() {
-        const result = wasm.icu4x_HangulSyllableType_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_HangulSyllableType_for_char_mv1(ch);
+    
+        try {
+            return new HangulSyllableType(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_HangulSyllableType_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -86,10 +96,10 @@ export class HangulSyllableType {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_HangulSyllableType_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_HangulSyllableType_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

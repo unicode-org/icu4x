@@ -112,8 +112,18 @@ export class GraphemeClusterBreak {
     static GlueAfterZwj = GraphemeClusterBreak.#objectValues[16];
     static Zwj = GraphemeClusterBreak.#objectValues[17];
 
-    toInteger() {
-        const result = wasm.icu4x_GraphemeClusterBreak_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_GraphemeClusterBreak_for_char_mv1(ch);
+    
+        try {
+            return new GraphemeClusterBreak(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_GraphemeClusterBreak_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -122,10 +132,10 @@ export class GraphemeClusterBreak {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_GraphemeClusterBreak_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_GraphemeClusterBreak_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

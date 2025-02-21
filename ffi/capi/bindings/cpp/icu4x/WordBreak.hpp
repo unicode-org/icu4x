@@ -17,10 +17,16 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    uint8_t icu4x_WordBreak_to_integer_mv1(icu4x::capi::WordBreak self);
+    icu4x::capi::WordBreak icu4x_WordBreak_for_char_mv1(char32_t ch);
     
-    typedef struct icu4x_WordBreak_from_integer_mv1_result {union {icu4x::capi::WordBreak ok; }; bool is_ok;} icu4x_WordBreak_from_integer_mv1_result;
-    icu4x_WordBreak_from_integer_mv1_result icu4x_WordBreak_from_integer_mv1(uint8_t other);
+    diplomat::capi::DiplomatStringView icu4x_WordBreak_long_name_mv1(icu4x::capi::WordBreak self);
+    
+    diplomat::capi::DiplomatStringView icu4x_WordBreak_short_name_mv1(icu4x::capi::WordBreak self);
+    
+    uint8_t icu4x_WordBreak_to_integer_value_mv1(icu4x::capi::WordBreak self);
+    
+    typedef struct icu4x_WordBreak_from_integer_value_mv1_result {union {icu4x::capi::WordBreak ok; }; bool is_ok;} icu4x_WordBreak_from_integer_value_mv1_result;
+    icu4x_WordBreak_from_integer_value_mv1_result icu4x_WordBreak_from_integer_value_mv1(uint8_t other);
     
     
     } // extern "C"
@@ -62,13 +68,28 @@ inline icu4x::WordBreak icu4x::WordBreak::FromFFI(icu4x::capi::WordBreak c_enum)
   }
 }
 
-inline uint8_t icu4x::WordBreak::to_integer() {
-  auto result = icu4x::capi::icu4x_WordBreak_to_integer_mv1(this->AsFFI());
+inline icu4x::WordBreak icu4x::WordBreak::for_char(char32_t ch) {
+  auto result = icu4x::capi::icu4x_WordBreak_for_char_mv1(ch);
+  return icu4x::WordBreak::FromFFI(result);
+}
+
+inline std::string_view icu4x::WordBreak::long_name() {
+  auto result = icu4x::capi::icu4x_WordBreak_long_name_mv1(this->AsFFI());
+  return std::string_view(result.data, result.len);
+}
+
+inline std::string_view icu4x::WordBreak::short_name() {
+  auto result = icu4x::capi::icu4x_WordBreak_short_name_mv1(this->AsFFI());
+  return std::string_view(result.data, result.len);
+}
+
+inline uint8_t icu4x::WordBreak::to_integer_value() {
+  auto result = icu4x::capi::icu4x_WordBreak_to_integer_value_mv1(this->AsFFI());
   return result;
 }
 
-inline std::optional<icu4x::WordBreak> icu4x::WordBreak::from_integer(uint8_t other) {
-  auto result = icu4x::capi::icu4x_WordBreak_from_integer_mv1(other);
+inline std::optional<icu4x::WordBreak> icu4x::WordBreak::from_integer_value(uint8_t other) {
+  auto result = icu4x::capi::icu4x_WordBreak_from_integer_value_mv1(other);
   return result.is_ok ? std::optional<icu4x::WordBreak>(icu4x::WordBreak::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // icu4x_WordBreak_HPP

@@ -16,12 +16,18 @@
 
 
 
-uint8_t icu4x_GeneralCategory_to_integer_mv1(GeneralCategory self);
+GeneralCategory icu4x_GeneralCategory_for_char_mv1(char32_t ch);
+
+DiplomatStringView icu4x_GeneralCategory_long_name_mv1(GeneralCategory self);
+
+DiplomatStringView icu4x_GeneralCategory_short_name_mv1(GeneralCategory self);
+
+uint8_t icu4x_GeneralCategory_to_integer_value_mv1(GeneralCategory self);
 
 GeneralCategoryGroup icu4x_GeneralCategory_to_group_mv1(GeneralCategory self);
 
-typedef struct icu4x_GeneralCategory_from_integer_mv1_result {union {GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_from_integer_mv1_result;
-icu4x_GeneralCategory_from_integer_mv1_result icu4x_GeneralCategory_from_integer_mv1(uint8_t other);
+typedef struct icu4x_GeneralCategory_from_integer_value_mv1_result {union {GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_from_integer_value_mv1_result;
+icu4x_GeneralCategory_from_integer_value_mv1_result icu4x_GeneralCategory_from_integer_value_mv1(uint8_t other);
 
 
 

@@ -236,8 +236,18 @@ export class CanonicalCombiningClass {
     static DoubleAbove = CanonicalCombiningClass.#objectValues[234];
     static IotaSubscript = CanonicalCombiningClass.#objectValues[240];
 
-    toInteger() {
-        const result = wasm.icu4x_CanonicalCombiningClass_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_CanonicalCombiningClass_for_char_mv1(ch);
+    
+        try {
+            return new CanonicalCombiningClass(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_CanonicalCombiningClass_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -246,10 +256,10 @@ export class CanonicalCombiningClass {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CanonicalCombiningClass_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_CanonicalCombiningClass_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

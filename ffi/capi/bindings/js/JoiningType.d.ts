@@ -22,9 +22,15 @@ export class JoiningType {
     static RightJoining : JoiningType;
     static Transparent : JoiningType;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): JoiningType;
 
-    static fromInteger(other: number): JoiningType | null;
+    longName(): string;
+
+    shortName(): string;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): JoiningType | null;
 
     constructor(value: JoiningType | string );
 }
