@@ -5,7 +5,7 @@
 #include <icu4x/GregorianDateFormatter.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatterGregorian.hpp>
-#include <icu4x/TimeFormatter.hpp>
+#include <icu4x/NoCalendarFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/IanaParser.hpp>
@@ -96,7 +96,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
+    std::unique_ptr<NoCalendarFormatter> tf = NoCalendarFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
     out = tf->format(*time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "13:06") {

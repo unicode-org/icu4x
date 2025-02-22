@@ -70,7 +70,7 @@ export { DateFormatter } from "./DateFormatter.mjs"
 
 export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
 
-export { TimeFormatter } from "./TimeFormatter.mjs"
+export { NoCalendarFormatter } from "./NoCalendarFormatter.mjs"
 
 export { DecimalFormatter } from "./DecimalFormatter.mjs"
 

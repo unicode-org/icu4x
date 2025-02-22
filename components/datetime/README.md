@@ -44,7 +44,7 @@ and calendar systems:
 | Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 
-If formatting times and time zones without dates, consider using [`TimeFormatter`].
+If formatting times and time zones without dates, consider using [`NoCalendarFormatter`].
 
 ## Examples
 
