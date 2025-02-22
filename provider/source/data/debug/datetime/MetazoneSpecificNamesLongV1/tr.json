@@ -9,13 +9,6 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "Acre Yaz Saati"
-    ],
-    [
-      [
         6,
         "Standard"
       ],
@@ -135,38 +128,10 @@
     ],
     [
       [
-        18,
-        "Daylight"
-      ],
-      "Arabistan Yaz Saati"
-    ],
-    [
-      [
         19,
         "Standard"
       ],
       "Arjantin Standart Saati"
-    ],
-    [
-      [
-        19,
-        "Daylight"
-      ],
-      "Arjantin Yaz Saati"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "Batı Arjantin Standart Saati"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Batı Arjantin Yaz Saati"
     ],
     [
       [
@@ -205,13 +170,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "İç Batı Avustralya Yaz Saati"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -230,13 +188,6 @@
         "Standard"
       ],
       "Batı Avustralya Standart Saati"
-    ],
-    [
-      [
-        26,
-        "Daylight"
-      ],
-      "Batı Avustralya Yaz Saati"
     ],
     [
       [
@@ -282,24 +233,10 @@
     ],
     [
       [
-        38,
-        "Daylight"
-      ],
-      "Şili Yaz Saati"
-    ],
-    [
-      [
         39,
         "Standard"
       ],
       "Çin Standart Saati"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "Cook Adaları Yarı Yaz Saati"
     ],
     [
       [
@@ -394,31 +331,10 @@
     ],
     [
       [
-        79,
-        "Standard"
-      ],
-      "İsrail Standart Saati"
-    ],
-    [
-      [
-        79,
-        "Daylight"
-      ],
-      "İsrail Yaz Saati"
-    ],
-    [
-      [
         82,
         "Standard"
       ],
       "Petropavlovsk-Kamçatski Standart Saati"
-    ],
-    [
-      [
-        82,
-        "Daylight"
-      ],
-      "Petropavlovsk-Kamçatski Yaz Saati"
     ],
     [
       [
@@ -429,38 +345,10 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "Kore Yaz Saati"
-    ],
-    [
-      [
         87,
         "Standard"
       ],
       "Krasnoyarsk Standart Saati"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "Krasnoyarsk Yaz Saati"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Magadan Standart Saati"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "Magadan Yaz Saati"
     ],
     [
       [
@@ -482,13 +370,6 @@
         "Standard"
       ],
       "Moskova Standart Saati"
-    ],
-    [
-      [
-        103,
-        "Daylight"
-      ],
-      "Moskova Yaz Saati"
     ],
     [
       [
@@ -520,20 +401,6 @@
     ],
     [
       [
-        114,
-        "Standard"
-      ],
-      "Novosibirsk Standart Saati"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "Novosibirsk Yaz Saati"
-    ],
-    [
-      [
         132,
         "Standard"
       ],
@@ -548,24 +415,10 @@
     ],
     [
       [
-        140,
-        "Daylight"
-      ],
-      "Taipei Yaz Saati"
-    ],
-    [
-      [
         148,
         "Standard"
       ],
       "Özbekistan Standart Saati"
-    ],
-    [
-      [
-        148,
-        "Daylight"
-      ],
-      "Özbekistan Yaz Saati"
     ],
     [
       [
@@ -576,24 +429,10 @@
     ],
     [
       [
-        151,
-        "Daylight"
-      ],
-      "Vladivostok Yaz Saati"
-    ],
-    [
-      [
         156,
         "Standard"
       ],
       "Yakutsk Standart Saati"
-    ],
-    [
-      [
-        156,
-        "Daylight"
-      ],
-      "Yakutsk Yaz Saati"
     ]
   ],
   "overrides": [
@@ -635,7 +474,6 @@
     46,
     48,
     49,
-    52,
     56,
     57,
     58,
@@ -654,7 +492,6 @@
     84,
     86,
     88,
-    89,
     90,
     94,
     95,
@@ -666,7 +503,6 @@
     105,
     107,
     110,
-    111,
     117,
     118,
     122,
