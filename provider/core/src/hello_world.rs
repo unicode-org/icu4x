@@ -41,6 +41,14 @@ impl Default for HelloWorld<'_> {
     }
 }
 
+crate::data_struct_new!(
+    HelloWorld<'data>,
+    varule: str,
+    #[cfg(feature = "export")]
+    encode_as_varule: |v: &HelloWorld<'_>| &*v.message,
+    from_varule: |message: &str| HelloWorld { message: Cow::Borrowed(message) }
+);
+
 data_marker!(
     /// Marker type for [`HelloWorld`].
     #[derive(Debug)]
