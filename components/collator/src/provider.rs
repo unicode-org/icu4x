@@ -202,6 +202,8 @@ pub struct CollationData<'data> {
     pub contexts: ZeroVec<'data, u16>,
 }
 
+icu_provider::data_struct_new!(CollationData<'_>,);
+
 impl<'data> CollationData<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
         CollationElement32::new(self.trie.get32(c as u32))
@@ -303,6 +305,8 @@ pub struct CollationDiacritics<'data> {
     pub secondaries: ZeroVec<'data, u16>,
 }
 
+icu_provider::data_struct_new!(CollationDiacritics<'_>,);
+
 /// `CollationElement32`s for the Hangul Jamo Unicode Block
 ///
 /// <div class="stab unstable">
@@ -320,6 +324,8 @@ pub struct CollationJamo<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ce32s: ZeroVec<'data, u32>,
 }
+
+icu_provider::data_struct_new!(CollationJamo<'_>,);
 
 /// Script reordering data
 ///
@@ -370,6 +376,8 @@ pub struct CollationReordering<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
+
+icu_provider::data_struct_new!(CollationReordering<'_>,);
 
 impl CollationReordering<'_> {
     pub(crate) fn reorder(&self, primary: u32) -> u32 {
@@ -428,6 +436,8 @@ pub struct CollationMetadata {
     /// so there is no need for invariant validation.
     pub bits: u32,
 }
+
+icu_provider::data_struct_new!(CollationMetadata,);
 
 impl CollationMetadata {
     const MAX_VARIABLE_MASK: u32 = 0b11;
@@ -517,6 +527,8 @@ pub struct CollationSpecialPrimaries<'data> {
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
 }
+
+icu_provider::data_struct_new!(CollationSpecialPrimaries<'_>,);
 
 impl CollationSpecialPrimaries<'_> {
     #[allow(clippy::unwrap_used)]

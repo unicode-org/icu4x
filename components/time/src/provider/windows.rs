@@ -46,3 +46,5 @@ pub struct WindowsZonesToBcp47Map<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub bcp47_ids: ZeroVec<'data, TimeZone>,
 }
+
+icu_provider::data_struct_new!(WindowsZonesToBcp47Map<'_>,);

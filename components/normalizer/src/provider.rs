@@ -132,6 +132,8 @@ pub struct DecompositionData<'data> {
     pub passthrough_cap: u16,
 }
 
+icu_provider::data_struct_new!(DecompositionData<'_>,);
+
 /// The expansion tables for cases where the decomposition isn't
 /// contained in the trie value
 ///
@@ -154,6 +156,8 @@ pub struct DecompositionTables<'data> {
     pub scalars24: ZeroVec<'data, char>,
 }
 
+icu_provider::data_struct_new!(DecompositionTables<'_>,);
+
 /// Non-Hangul canonical compositions
 ///
 /// <div class="stab unstable">
@@ -172,6 +176,8 @@ pub struct CanonicalCompositions<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub canonical_compositions: Char16Trie<'data>,
 }
+
+icu_provider::data_struct_new!(CanonicalCompositions<'_>,);
 
 /// Non-recursive canonical decompositions that differ from
 /// `DecompositionData`.
@@ -194,3 +200,5 @@ pub struct NonRecursiveDecompositionSupplement<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub scalars24: ZeroVec<'data, char>,
 }
+
+icu_provider::data_struct_new!(NonRecursiveDecompositionSupplement<'_>,);

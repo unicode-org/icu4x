@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::ule::VarULE;
+use zerovec::{maps::ZeroMapKV, ule::VarULE, ZeroMap2d};
 
 /// A trait that associates a [`VarULE`] type with a data struct.
 ///
@@ -95,3 +95,41 @@ macro_rules! __data_struct {
 }
 #[doc(inline)]
 pub use __data_struct as data_struct;
+
+//=== Standard impls ===//
+
+impl<'a, K0, K1, V> MaybeAsVarULE for ZeroMap2d<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a>,
+    K1: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
+    type EncodedStruct = [()];
+}
+
+impl<'a, K0, K1, V> MaybeEncodeAsVarULE for ZeroMap2d<'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a>,
+    K1: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: ?Sized,
+{
+    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+        None
+    }
+}
+
+impl<T, const N: usize> MaybeAsVarULE for [T; N] {
+    type EncodedStruct = [()];
+}
+
+impl<T, const N: usize> MaybeEncodeAsVarULE for [T; N] {
+    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+        None
+    }
+}
