@@ -9,8 +9,8 @@ const ID_SEPARATOR: u8 = 0x1E;
 
 pub use icu_provider::DynamicDataMarker;
 use icu_provider::{
-    prelude::*,
-    ule::{FromVarULE, MaybeAsVarULE},
+    prelude::{zerofrom::ZeroFrom, *},
+    ule::MaybeAsVarULE,
 };
 pub use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroSlice;
@@ -183,7 +183,8 @@ impl<M: DataMarker> super::DataStore<M> for Data<M> {
 
 pub struct DataForVarULEs<M: DataMarker>
 where
-    M::DataStruct: FromVarULE<'static>,
+    M::DataStruct: MaybeAsVarULE,
+    M::DataStruct: ZeroFrom<'static, <M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
 {
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
@@ -192,7 +193,8 @@ where
 
 impl<M: DataMarker> DataForVarULEs<M>
 where
-    M::DataStruct: FromVarULE<'static>,
+    M::DataStruct: MaybeAsVarULE,
+    M::DataStruct: ZeroFrom<'static, <M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
 {
     /// Construct from a trie and values
     ///
@@ -208,7 +210,8 @@ where
 
 impl<M: DataMarker> super::DataStore<M> for DataForVarULEs<M>
 where
-    M::DataStruct: FromVarULE<'static>,
+    M::DataStruct: MaybeAsVarULE,
+    M::DataStruct: ZeroFrom<'static, <M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
 {
     fn get(
         &self,
@@ -218,7 +221,7 @@ where
         get_index(self.trie, id, attributes_prefix_match)
             // Safety: Allowed since `i` came from the trie and the field safety invariant
             .map(|i| unsafe { self.values.get_unchecked(i) })
-            .map(M::DataStruct::from_varule)
+            .map(M::DataStruct::zero_from)
             .map(DataPayload::from_owned)
     }
 

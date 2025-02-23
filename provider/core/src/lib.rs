@@ -152,7 +152,6 @@ pub mod ule {
     //!
     //! See [`MaybeAsVarULE`] for details.
 
-    pub use super::varule_traits::FromVarULE;
     pub use super::varule_traits::MaybeAsVarULE;
     pub use super::varule_traits::MaybeEncodeAsVarULE;
 }

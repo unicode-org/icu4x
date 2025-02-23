@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::{maps::ZeroMapKV, ule::VarULE, ZeroMap2d};
+use zerovec::ule::VarULE;
+
+#[cfg(feature = "alloc")]
+use zerovec::{maps::ZeroMapKV, ZeroMap2d};
 
 /// A trait that associates a [`VarULE`] type with a data struct.
 ///
@@ -28,17 +31,6 @@ pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
     /// Returns the [`MaybeAsVarULE::EncodedStruct`] that represents this data struct,
     /// or `None` if the data struct does not support this representation.
     fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct>;
-}
-
-/// Runtime trait associated with [`MaybeAsVarULE`]. See that trait
-/// for additional details.
-///
-/// Only data structs that use the opimization are required to implement
-/// this trait.
-pub trait FromVarULE<'a>: MaybeAsVarULE {
-    /// Returns an instance of the data struct that borrows from the
-    /// [`MaybeAsVarULE::EncodedStruct`].
-    fn from_varule(varule: &'a Self::EncodedStruct) -> Self;
 }
 
 /// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
@@ -70,8 +62,7 @@ macro_rules! __data_struct {
         $ty:ty,
         varule: $varule:ty,
         $(#[$attr:meta])*
-        encode_as_varule: $encode_as_varule:expr,
-        from_varule: $from_varule:expr
+        encode_as_varule: $encode_as_varule:expr
     ) => {
         impl<'data> $crate::ule::MaybeAsVarULE for $ty {
             type EncodedStruct = $varule;
@@ -84,13 +75,6 @@ macro_rules! __data_struct {
                 Some(bind_lifetimes($encode_as_varule)(self))
             }
         }
-        impl<'data> $crate::ule::FromVarULE<'data> for $ty {
-            fn from_varule(input: &'data Self::EncodedStruct) -> Self {
-                // Workaround for <https://rust-lang.github.io/rfcs/3216-closure-lifetime-binder.html>
-                fn bind_lifetimes<F>(f: F) -> F where F: for<'data> Fn(&'data $varule) -> $ty { f }
-                bind_lifetimes($from_varule)(input)
-            }
-        }
     };
 }
 #[doc(inline)]
@@ -98,6 +82,7 @@ pub use __data_struct as data_struct;
 
 //=== Standard impls ===//
 
+#[cfg(feature = "alloc")]
 impl<'a, K0, K1, V> MaybeAsVarULE for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
@@ -110,6 +95,7 @@ where
     type EncodedStruct = [()];
 }
 
+#[cfg(feature = "alloc")]
 impl<'a, K0, K1, V> MaybeEncodeAsVarULE for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
