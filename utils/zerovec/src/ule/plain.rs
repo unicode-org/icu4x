@@ -367,7 +367,7 @@ unsafe impl EqULE for bool {}
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. () does not include any uninitialized or padding bytes (it has no bytes)
-//  2. () is aligned to any number of bytes (it is zero-sized)
+//  2. () is a ZST that is safe to construct
 //  3. The impl of validate_bytes() returns an error if any byte is not valid (any byte).
 //  4. The impl of validate_bytes() returns an error if there are leftover bytes (always).
 //  5. The other ULE methods use the default impl.
