@@ -25,7 +25,7 @@ pub trait MaybeAsVarULE {
 /// for additional details.
 // #[cfg(feature = "export")] // TODO(#5230): Enable feature gating
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
-    /// Returns the [`MaybeAsVarULE::VarULE`] that represents this data struct,
+    /// Returns the [`MaybeAsVarULE::EncodedStruct`] that represents this data struct,
     /// or `None` if the data struct does not support this representation.
     fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct>;
 }
@@ -37,7 +37,7 @@ pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
 /// this trait.
 pub trait FromVarULE<'a>: MaybeAsVarULE {
     /// Returns an instance of the data struct that borrows from the
-    /// [`MaybeAsVarULE::VarULE`].
+    /// [`MaybeAsVarULE::EncodedStruct`].
     fn from_varule(varule: &'a Self::EncodedStruct) -> Self;
 }
 

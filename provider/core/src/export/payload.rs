@@ -13,7 +13,7 @@ use yoke::*;
 use zerovec::VarZeroVec;
 
 #[cfg(doc)]
-use crate::ule::MaybeAsVarULE;
+use zerovec::ule::VarULE;
 
 trait ExportableDataPayload {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream;
