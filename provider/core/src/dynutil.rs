@@ -7,8 +7,6 @@
 /// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>`.
 ///
 /// This trait can be manually implemented in order to enable [`impl_dynamic_data_provider`].
-///
-/// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
 where
     M: crate::DynamicDataMarker,
