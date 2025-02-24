@@ -109,6 +109,8 @@ pub mod normalizer_properties;
 #[cfg(feature = "plurals")]
 pub mod pluralrules;
 #[cfg(feature = "properties")]
+pub mod properties_bidi;
+#[cfg(feature = "properties")]
 pub mod properties_enums;
 #[cfg(feature = "properties")]
 pub mod properties_iter;

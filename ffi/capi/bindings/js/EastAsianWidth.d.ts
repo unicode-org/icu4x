@@ -22,9 +22,15 @@ export class EastAsianWidth {
     static Narrow : EastAsianWidth;
     static Wide : EastAsianWidth;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): EastAsianWidth;
 
-    static fromInteger(other: number): EastAsianWidth | null;
+    longName(): string | null;
+
+    shortName(): string | null;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): EastAsianWidth | null;
 
     constructor(value: EastAsianWidth | string );
 }

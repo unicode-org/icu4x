@@ -22,9 +22,11 @@ export class HangulSyllableType {
     static LeadingVowelSyllable : HangulSyllableType;
     static LeadingVowelTrailingSyllable : HangulSyllableType;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): HangulSyllableType;
 
-    static fromInteger(other: number): HangulSyllableType | null;
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): HangulSyllableType | null;
 
     constructor(value: HangulSyllableType | string );
 }

@@ -16,6 +16,8 @@ part 'Bidi.g.dart';
 part 'BidiClass.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
+part 'BidiMirroringGlyph.g.dart';
+part 'BidiPairedBracketType.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
@@ -434,6 +436,32 @@ final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
   }
 }
 
+final class _ResultSliceUtf8VoidUnion extends ffi.Union {
+  external _SliceUtf8 ok;
+
+}
+
+final class _ResultSliceUtf8Void extends ffi.Struct {
+  external _ResultSliceUtf8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultSliceUtf8Void.ok(_SliceUtf8 val) {
+    final struct = ffi.Struct.create<_ResultSliceUtf8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultSliceUtf8Void.err() {
+    final struct = ffi.Struct.create<_ResultSliceUtf8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultTimeZoneAndCanonicalAndNormalizedFfiVoidUnion extends ffi.Union {
   external _TimeZoneAndCanonicalAndNormalizedFfi ok;
 
@@ -508,6 +536,33 @@ final class _ResultUint16Void extends ffi.Struct {
   // ignore: unused_element
   factory _ResultUint16Void.err() {
     final struct = ffi.Struct.create<_ResultUint16Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultUint32VoidUnion extends ffi.Union {
+  @ffi.Uint32()
+  external Rune ok;
+
+}
+
+final class _ResultUint32Void extends ffi.Struct {
+  external _ResultUint32VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultUint32Void.ok(Rune val) {
+    final struct = ffi.Struct.create<_ResultUint32Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultUint32Void.err() {
+    final struct = ffi.Struct.create<_ResultUint32Void>();
     struct.isOk = false;
     return struct;
   }

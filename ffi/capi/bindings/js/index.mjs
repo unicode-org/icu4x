@@ -14,6 +14,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError.mjs"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig.mjs"
 
+export { BidiMirroringGlyph } from "./BidiMirroringGlyph.mjs"
+
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
@@ -281,6 +283,8 @@ export { TimePrecision } from "./TimePrecision.mjs"
 export { YearStyle } from "./YearStyle.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
+
+export { BidiPairedBracketType } from "./BidiPairedBracketType.mjs"
 
 export { BidiClass } from "./BidiClass.mjs"
 
