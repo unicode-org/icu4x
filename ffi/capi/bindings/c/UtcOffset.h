@@ -15,13 +15,13 @@
 
 
 
-typedef struct icu4x_UtcOffset_try_from_seconds_mv1_result {union {UtcOffset* ok; }; bool is_ok;} icu4x_UtcOffset_try_from_seconds_mv1_result;
-icu4x_UtcOffset_try_from_seconds_mv1_result icu4x_UtcOffset_try_from_seconds_mv1(int32_t seconds);
+typedef struct icu4x_UtcOffset_from_seconds_mv1_result {union {UtcOffset* ok; }; bool is_ok;} icu4x_UtcOffset_from_seconds_mv1_result;
+icu4x_UtcOffset_from_seconds_mv1_result icu4x_UtcOffset_from_seconds_mv1(int32_t seconds);
 
 UtcOffset* icu4x_UtcOffset_from_eighths_of_hour_mv1(int8_t eighths_of_hour);
 
-typedef struct icu4x_UtcOffset_try_from_str_mv1_result {union {UtcOffset* ok; }; bool is_ok;} icu4x_UtcOffset_try_from_str_mv1_result;
-icu4x_UtcOffset_try_from_str_mv1_result icu4x_UtcOffset_try_from_str_mv1(DiplomatStringView offset);
+typedef struct icu4x_UtcOffset_from_string_mv1_result {union {UtcOffset* ok; }; bool is_ok;} icu4x_UtcOffset_from_string_mv1_result;
+icu4x_UtcOffset_from_string_mv1_result icu4x_UtcOffset_from_string_mv1(DiplomatStringView offset);
 
 int8_t icu4x_UtcOffset_eighths_of_hour_mv1(const UtcOffset* self);
 

@@ -24,11 +24,11 @@ export class ZonedDateTime {
     get zone() : TimeZoneInfo;
     
 
-    static tryFromStr(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedDateTime;
+    static fromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedDateTime;
 
-    static tryLocationOnlyFromStr(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+    static locationOnlyFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 
-    static tryOffsetOnlyFromStr(v: string, calendar: Calendar): ZonedDateTime;
+    static offsetOnlyFromString(v: string, calendar: Calendar): ZonedDateTime;
 
-    static tryLooseFromStr(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+    static looseFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 }

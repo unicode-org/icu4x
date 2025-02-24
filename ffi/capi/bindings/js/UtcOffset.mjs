@@ -39,10 +39,10 @@ export class UtcOffset {
         return this.#ptr;
     }
 
-    static tryFromSeconds(seconds) {
+    static fromSeconds(seconds) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_UtcOffset_try_from_seconds_mv1(diplomatReceive.buffer, seconds);
+        const result = wasm.icu4x_UtcOffset_from_seconds_mv1(diplomatReceive.buffer, seconds);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -67,14 +67,14 @@ export class UtcOffset {
         finally {}
     }
 
-    static tryFromStr(offset) {
+    static fromString(offset) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const offsetSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, offset));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_UtcOffset_try_from_str_mv1(diplomatReceive.buffer, ...offsetSlice.splat());
+        const result = wasm.icu4x_UtcOffset_from_string_mv1(diplomatReceive.buffer, ...offsetSlice.splat());
     
         try {
             if (!diplomatReceive.resultFlag) {

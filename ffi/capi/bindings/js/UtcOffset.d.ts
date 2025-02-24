@@ -11,11 +11,11 @@ export class UtcOffset {
     
     get ffiValue(): pointer;
 
-    static tryFromSeconds(seconds: number): UtcOffset;
+    static fromSeconds(seconds: number): UtcOffset;
 
     static fromEighthsOfHour(eighthsOfHour: number): UtcOffset;
 
-    static tryFromStr(offset: string): UtcOffset;
+    static fromString(offset: string): UtcOffset;
 
     get eighthsOfHour(): number;
 

@@ -30,7 +30,8 @@ pub mod ffi {
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
-        pub fn try_from_str(
+        #[diplomat::attr(auto, named_constructor = "from_string")]
+        pub fn from_string(
             v: &DiplomatStr,
             iana_parser: &IanaParser,
             offset_calculator: &UtcOffsetCalculator,
@@ -63,7 +64,8 @@ pub mod ffi {
         /// Creates a new [`ZonedDateTime`] from an IXDTF string.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
-        pub fn try_from_str(
+        #[diplomat::attr(auto, named_constructor = "from_string")]
+        pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
@@ -90,7 +92,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn try_location_only_from_str(
+        #[diplomat::attr(auto, named_constructor = "location_only_from_string")]
+        pub fn location_only_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
@@ -115,7 +118,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn try_offset_only_from_str(
+        #[diplomat::attr(auto, named_constructor = "offset_only_from_string")]
+        pub fn offset_only_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
         ) -> Result<ZonedDateTime, CalendarParseError> {
@@ -131,7 +135,8 @@ pub mod ffi {
         /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_loose_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_loose_from_utf8, FnInStruct, hidden)]
-        pub fn try_loose_from_str(
+        #[diplomat::attr(auto, named_constructor = "loose_from_string")]
+        pub fn loose_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,

@@ -23,5 +23,5 @@ export class ZonedIsoDateTime {
     get zone() : TimeZoneInfo;
     
 
-    static tryFromStr(v: string, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedIsoDateTime;
+    static fromString(v: string, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedIsoDateTime;
 }

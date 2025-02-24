@@ -17,7 +17,7 @@ export function formatIso(gregorianZonedDateTimeFormatterLocaleName, gregorianZo
     
     let zoneTimeZoneId = TimeZone.createFromBcp47(zoneTimeZoneIdId);
     
-    let zoneOffset = UtcOffset.tryFromStr(zoneOffsetOffset);
+    let zoneOffset = UtcOffset.fromString(zoneOffsetOffset);
     
     let zone = new TimeZoneInfo(zoneTimeZoneId,zoneOffset,zoneZoneVariant);
     

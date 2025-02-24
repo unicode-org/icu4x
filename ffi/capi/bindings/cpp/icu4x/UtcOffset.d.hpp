@@ -27,11 +27,11 @@ namespace icu4x {
 class UtcOffset {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> try_from_seconds(int32_t seconds);
+  inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_seconds(int32_t seconds);
 
   inline static std::unique_ptr<icu4x::UtcOffset> from_eighths_of_hour(int8_t eighths_of_hour);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> try_from_str(std::string_view offset);
+  inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_string(std::string_view offset);
 
   inline int8_t eighths_of_hour() const;
 

@@ -19,17 +19,17 @@
 
 
 
-typedef struct icu4x_ZonedDateTime_try_from_str_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_try_from_str_mv1_result;
-icu4x_ZonedDateTime_try_from_str_mv1_result icu4x_ZonedDateTime_try_from_str_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser, const UtcOffsetCalculator* offset_calculator);
+typedef struct icu4x_ZonedDateTime_from_string_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_from_string_mv1_result;
+icu4x_ZonedDateTime_from_string_mv1_result icu4x_ZonedDateTime_from_string_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser, const UtcOffsetCalculator* offset_calculator);
 
-typedef struct icu4x_ZonedDateTime_try_location_only_from_str_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_try_location_only_from_str_mv1_result;
-icu4x_ZonedDateTime_try_location_only_from_str_mv1_result icu4x_ZonedDateTime_try_location_only_from_str_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser);
+typedef struct icu4x_ZonedDateTime_location_only_from_string_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_location_only_from_string_mv1_result;
+icu4x_ZonedDateTime_location_only_from_string_mv1_result icu4x_ZonedDateTime_location_only_from_string_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser);
 
-typedef struct icu4x_ZonedDateTime_try_offset_only_from_str_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_try_offset_only_from_str_mv1_result;
-icu4x_ZonedDateTime_try_offset_only_from_str_mv1_result icu4x_ZonedDateTime_try_offset_only_from_str_mv1(DiplomatStringView v, const Calendar* calendar);
+typedef struct icu4x_ZonedDateTime_offset_only_from_string_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_offset_only_from_string_mv1_result;
+icu4x_ZonedDateTime_offset_only_from_string_mv1_result icu4x_ZonedDateTime_offset_only_from_string_mv1(DiplomatStringView v, const Calendar* calendar);
 
-typedef struct icu4x_ZonedDateTime_try_loose_from_str_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_try_loose_from_str_mv1_result;
-icu4x_ZonedDateTime_try_loose_from_str_mv1_result icu4x_ZonedDateTime_try_loose_from_str_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser);
+typedef struct icu4x_ZonedDateTime_loose_from_string_mv1_result {union {ZonedDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_loose_from_string_mv1_result;
+icu4x_ZonedDateTime_loose_from_string_mv1_result icu4x_ZonedDateTime_loose_from_string_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser);
 
 
 
