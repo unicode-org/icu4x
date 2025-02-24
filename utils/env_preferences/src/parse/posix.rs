@@ -7,52 +7,7 @@ use icu_locale::extensions::Extensions;
 use icu_locale::subtags::{language, script, variant, Language, Region, Variants};
 use icu_locale::{LanguageIdentifier, Locale};
 
-// An incomplete list of POSIX language names that need to be converted to a BCP-47 equivalent
-// Some of these are approximate and not exact (e.g. "C"->"und")
-// This is based on real-world data only, so will hopefully cover most of the more common edge cases
-// Ideally, this would be part of the CLDR dataset, see discussion for more details:
-// https://github.com/unicode-org/icu4x/discussions/6028#discussioncomment-12227372
-const POSIX_LANGUAGE_NAMES: [(&str, Language); 39] = [
-    ("bokmal", language!("nb")),
-    ("c", Language::UND),
-    ("catalan", language!("ca")),
-    ("croatian", language!("hr")),
-    ("czech", language!("cs")),
-    ("danish", language!("da")),
-    ("dansk", language!("da")),
-    ("deutsch", language!("de")),
-    ("dutch", language!("nl")),
-    ("eesti", language!("et")),
-    ("estonian", language!("et")),
-    ("finnish", language!("fi")),
-    ("french", language!("fr")),
-    ("galego", language!("gl")),
-    ("galician", language!("gl")),
-    ("german", language!("de")),
-    ("greek", language!("el")),
-    ("hebrew", language!("he")),
-    ("hrvatski", language!("hr")),
-    ("hungarian", language!("hu")),
-    ("icelandic", language!("is")),
-    ("italian", language!("it")),
-    ("japanese", language!("ja")),
-    ("korean", language!("ko")),
-    ("lithuanian", language!("lt")),
-    ("norwegian", language!("no")),
-    ("nynorsk", language!("nn")),
-    ("polish", language!("pl")),
-    ("portuguese", language!("pt")),
-    ("posix", Language::UND),
-    ("romanian", language!("ro")),
-    ("russian", language!("ru")),
-    ("slovak", language!("sk")),
-    ("slovene", language!("sl")),
-    ("slovenian", language!("sl")),
-    ("spanish", language!("es")),
-    ("swedish", language!("sv")),
-    ("thai", language!("th")),
-    ("turkish", language!("tr")),
-];
+use super::posix_aliases::get_bcp47_subtags_from_posix_alias;
 
 #[derive(Debug, PartialEq)]
 pub enum ParseError {
@@ -228,42 +183,32 @@ impl<'src> PosixLocale<'src> {
     ///
     /// If the "logging" feature is enabled, this ignored data will be logged as a warning.
     pub fn try_convert_lossy(&self) -> Result<Locale, ConversionError> {
-        // Check if the language needs to be mapped to a BCP-47 language subtag
-        let language_code = POSIX_LANGUAGE_NAMES
-            .binary_search_by_key(&self.language, |(language, _code)| language)
-            // `binary_search_by_key()` guarantees a valid index
-            .map(|index| POSIX_LANGUAGE_NAMES[index].1);
+        // Check if the language matches a known alias
+        let mut language = get_bcp47_subtags_from_posix_alias(self.language)
+            .map(|(language, _region)| language)
+            .or(Language::try_from_str(self.language).ok())
+            .ok_or(ConversionError::InvalidLanguage {
+                start_offset: 0,
+                end_offset: self.language.len(),
+            })?;
 
-        let mut language = match language_code {
-            // Found a matching language code
-            Ok(language) => language,
-            // Parse the language directly
-            Err(_) => match Language::try_from_str(self.language) {
-                Ok(language) => language,
-                Err(_) => {
-                    return Err(ConversionError::InvalidLanguage {
-                        start_offset: 0,
-                        end_offset: self.language.len(),
+        // Use the associated region if the language matches a known alias
+        let region = get_bcp47_subtags_from_posix_alias(self.language)
+            .map(|(_language, region)| Ok(region))
+            .unwrap_or(
+                self.territory
+                    .map(|territory| {
+                        Region::try_from_str(territory).map_err(|_err| {
+                            ConversionError::InvalidRegion {
+                                // Add 1 to skip the delimiter
+                                start_offset: self.language.len() + 1,
+                                // Add 1 to include the final character
+                                end_offset: self.language.len() + territory.len() + 1,
+                            }
+                        })
                     })
-                }
-            },
-        };
-
-        let region = if let Some(territory) = self.territory {
-            match Region::try_from_str(territory) {
-                Ok(region) => Some(region),
-                Err(_) => {
-                    return Err(ConversionError::InvalidRegion {
-                        // Add 1 to skip the delimiter
-                        start_offset: self.language.len() + 1,
-                        // Add 1 to include the final character
-                        end_offset: self.language.len() + territory.len() + 1,
-                    });
-                }
-            }
-        } else {
-            None
-        };
+                    .transpose(),
+            )?;
 
         if let Some(codeset) = self.codeset {
             icu_provider::log::warn!("Ignoring codeset: `{codeset}`");
