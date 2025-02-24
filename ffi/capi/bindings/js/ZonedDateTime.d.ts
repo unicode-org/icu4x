@@ -25,4 +25,10 @@ export class ZonedDateTime {
     
 
     static tryFromStr(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedDateTime;
+
+    static tryLocationOnlyFromStr(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+
+    static tryOffsetOnlyFromStr(v: string, calendar: Calendar): ZonedDateTime;
+
+    static tryLooseFromStr(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 }

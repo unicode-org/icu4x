@@ -142,6 +142,78 @@ export class ZonedDateTime {
         }
     }
 
+    static tryLocationOnlyFromStr(v, calendar, ianaParser) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+        
+        const result = wasm.icu4x_ZonedDateTime_try_location_only_from_str_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
+    static tryOffsetOnlyFromStr(v, calendar) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+        
+        const result = wasm.icu4x_ZonedDateTime_try_offset_only_from_str_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
+    static tryLooseFromStr(v, calendar, ianaParser) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+        
+        const result = wasm.icu4x_ZonedDateTime_try_loose_from_str_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
     constructor(structObj, internalConstructor) {
         return this.#internalConstructor(...arguments)
     }

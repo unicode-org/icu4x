@@ -166,6 +166,17 @@ pub mod ffi {
     }
 }
 
+impl From<icu_time::zone::UtcOffset> for TimeZoneInfo {
+    fn from(other: icu_time::zone::UtcOffset) -> Self {
+        Self {
+            time_zone_id: icu_time::TimeZone::unknown(),
+            offset: Some(other),
+            zone_variant: None,
+            local_time: None,
+        }
+    }
+}
+
 impl From<icu_time::TimeZoneInfo<icu_time::zone::models::Base>> for TimeZoneInfo {
     fn from(other: icu_time::TimeZoneInfo<icu_time::zone::models::Base>) -> Self {
         Self {
@@ -173,6 +184,17 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::Base>> for TimeZoneInfo
             offset: other.offset(),
             zone_variant: None,
             local_time: None,
+        }
+    }
+}
+
+impl From<icu_time::TimeZoneInfo<icu_time::zone::models::AtTime>> for TimeZoneInfo {
+    fn from(other: icu_time::TimeZoneInfo<icu_time::zone::models::AtTime>) -> Self {
+        Self {
+            time_zone_id: other.time_zone_id(),
+            offset: other.offset(),
+            zone_variant: None,
+            local_time: Some(other.local_time()),
         }
     }
 }
