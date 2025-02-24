@@ -19,9 +19,11 @@ namespace capi {
     
     icu4x::capi::Script icu4x_Script_for_char_mv1(char32_t ch);
     
-    diplomat::capi::DiplomatStringView icu4x_Script_long_name_mv1(icu4x::capi::Script self);
+    typedef struct icu4x_Script_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_Script_long_name_mv1_result;
+    icu4x_Script_long_name_mv1_result icu4x_Script_long_name_mv1(icu4x::capi::Script self);
     
-    diplomat::capi::DiplomatStringView icu4x_Script_short_name_mv1(icu4x::capi::Script self);
+    typedef struct icu4x_Script_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_Script_short_name_mv1_result;
+    icu4x_Script_short_name_mv1_result icu4x_Script_short_name_mv1(icu4x::capi::Script self);
     
     uint16_t icu4x_Script_to_integer_value_mv1(icu4x::capi::Script self);
     
@@ -215,14 +217,14 @@ inline icu4x::Script icu4x::Script::for_char(char32_t ch) {
   return icu4x::Script::FromFFI(result);
 }
 
-inline std::string_view icu4x::Script::long_name() {
+inline std::optional<std::string_view> icu4x::Script::long_name() {
   auto result = icu4x::capi::icu4x_Script_long_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::string_view icu4x::Script::short_name() {
+inline std::optional<std::string_view> icu4x::Script::short_name() {
   auto result = icu4x::capi::icu4x_Script_short_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint16_t icu4x::Script::to_integer_value() {

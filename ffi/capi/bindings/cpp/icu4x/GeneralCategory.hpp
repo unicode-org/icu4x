@@ -20,9 +20,11 @@ namespace capi {
     
     icu4x::capi::GeneralCategory icu4x_GeneralCategory_for_char_mv1(char32_t ch);
     
-    diplomat::capi::DiplomatStringView icu4x_GeneralCategory_long_name_mv1(icu4x::capi::GeneralCategory self);
+    typedef struct icu4x_GeneralCategory_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_long_name_mv1_result;
+    icu4x_GeneralCategory_long_name_mv1_result icu4x_GeneralCategory_long_name_mv1(icu4x::capi::GeneralCategory self);
     
-    diplomat::capi::DiplomatStringView icu4x_GeneralCategory_short_name_mv1(icu4x::capi::GeneralCategory self);
+    typedef struct icu4x_GeneralCategory_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_short_name_mv1_result;
+    icu4x_GeneralCategory_short_name_mv1_result icu4x_GeneralCategory_short_name_mv1(icu4x::capi::GeneralCategory self);
     
     uint8_t icu4x_GeneralCategory_to_integer_value_mv1(icu4x::capi::GeneralCategory self);
     
@@ -83,14 +85,14 @@ inline icu4x::GeneralCategory icu4x::GeneralCategory::for_char(char32_t ch) {
   return icu4x::GeneralCategory::FromFFI(result);
 }
 
-inline std::string_view icu4x::GeneralCategory::long_name() {
+inline std::optional<std::string_view> icu4x::GeneralCategory::long_name() {
   auto result = icu4x::capi::icu4x_GeneralCategory_long_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::string_view icu4x::GeneralCategory::short_name() {
+inline std::optional<std::string_view> icu4x::GeneralCategory::short_name() {
   auto result = icu4x::capi::icu4x_GeneralCategory_short_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::GeneralCategory::to_integer_value() {

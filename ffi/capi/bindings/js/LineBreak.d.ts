@@ -66,9 +66,9 @@ export class LineBreak {
 
     static forChar(ch: codepoint): LineBreak;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

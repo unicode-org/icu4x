@@ -458,6 +458,32 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
   }
 }
 
+final class _ResultSliceUtf8VoidUnion extends ffi.Union {
+  external _SliceUtf8 ok;
+
+}
+
+final class _ResultSliceUtf8Void extends ffi.Struct {
+  external _ResultSliceUtf8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultSliceUtf8Void.ok(_SliceUtf8 val) {
+    final struct = ffi.Struct.create<_ResultSliceUtf8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultSliceUtf8Void.err() {
+    final struct = ffi.Struct.create<_ResultSliceUtf8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultTimeZoneAndCanonicalAndNormalizedFfiVoidUnion extends ffi.Union {
   external _TimeZoneAndCanonicalAndNormalizedFfi ok;
 

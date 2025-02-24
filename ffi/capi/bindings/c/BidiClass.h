@@ -17,9 +17,11 @@
 
 BidiClass icu4x_BidiClass_for_char_mv1(char32_t ch);
 
-DiplomatStringView icu4x_BidiClass_long_name_mv1(BidiClass self);
+typedef struct icu4x_BidiClass_long_name_mv1_result {union {DiplomatStringView ok; }; bool is_ok;} icu4x_BidiClass_long_name_mv1_result;
+icu4x_BidiClass_long_name_mv1_result icu4x_BidiClass_long_name_mv1(BidiClass self);
 
-DiplomatStringView icu4x_BidiClass_short_name_mv1(BidiClass self);
+typedef struct icu4x_BidiClass_short_name_mv1_result {union {DiplomatStringView ok; }; bool is_ok;} icu4x_BidiClass_short_name_mv1_result;
+icu4x_BidiClass_short_name_mv1_result icu4x_BidiClass_short_name_mv1(BidiClass self);
 
 uint8_t icu4x_BidiClass_to_integer_value_mv1(BidiClass self);
 

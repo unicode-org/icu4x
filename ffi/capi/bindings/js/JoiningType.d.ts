@@ -24,9 +24,9 @@ export class JoiningType {
 
     static forChar(ch: codepoint): JoiningType;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

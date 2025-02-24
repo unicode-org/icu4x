@@ -41,9 +41,9 @@ export class BidiClass {
 
     static forChar(ch: codepoint): BidiClass;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

@@ -95,10 +95,8 @@ pub mod ffi {
         )]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
-            icu_properties::PropertyNamesLongBorrowed::<props::BidiClass>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::BidiClass>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
@@ -113,10 +111,8 @@ pub mod ffi {
         )]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
-            icu_properties::PropertyNamesShortBorrowed::<props::BidiClass>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::BidiClass>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::BidiClass::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -502,10 +498,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
-            icu_properties::PropertyNamesLongBorrowed::<props::Script>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::Script>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
@@ -516,10 +510,8 @@ pub mod ffi {
         )]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
-            icu_properties::PropertyNamesShortBorrowed::<props::Script>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::Script>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::Script::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -795,19 +787,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
+        pub fn long_name(self) -> Option<&'static str> {
             icu_properties::PropertyNamesLongBorrowed::<props::EastAsianWidth>::new()
                 .get(self.into())
-                .unwrap_or("")
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
+        pub fn short_name(self) -> Option<&'static str> {
             icu_properties::PropertyNamesShortBorrowed::<props::EastAsianWidth>::new()
                 .get(self.into())
-                .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -942,19 +932,15 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
-            icu_properties::PropertyNamesLongBorrowed::<props::LineBreak>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::LineBreak>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
-            icu_properties::PropertyNamesShortBorrowed::<props::LineBreak>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::LineBreak>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -1168,19 +1154,15 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
-            icu_properties::PropertyNamesLongBorrowed::<props::WordBreak>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::WordBreak>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
-            icu_properties::PropertyNamesShortBorrowed::<props::WordBreak>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::WordBreak>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::WordBreak::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -1266,19 +1248,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
+        pub fn long_name(self) -> Option<&'static str> {
             icu_properties::PropertyNamesLongBorrowed::<props::SentenceBreak>::new()
                 .get(self.into())
-                .unwrap_or("")
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
+        pub fn short_name(self) -> Option<&'static str> {
             icu_properties::PropertyNamesShortBorrowed::<props::SentenceBreak>::new()
                 .get(self.into())
-                .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -1848,19 +1828,15 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
-            icu_properties::PropertyNamesLongBorrowed::<props::JoiningType>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::JoiningType>::new().get(self.into())
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
-            icu_properties::PropertyNamesShortBorrowed::<props::JoiningType>::new()
-                .get(self.into())
-                .unwrap_or("")
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::JoiningType>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -2008,19 +1984,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "long" name of this property value (returns empty if property value is unknown)
-        pub fn long_name(self) -> &'static str {
+        pub fn long_name(self) -> Option<&'static str> {
             icu_properties::PropertyNamesLongBorrowed::<props::GeneralCategory>::new()
                 .get(self.into())
-                .unwrap_or("")
         }
 
         #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
         #[cfg(feature = "compiled_data")]
         /// Get the "short" name of this property value (returns empty if property value is unknown)
-        pub fn short_name(self) -> &'static str {
+        pub fn short_name(self) -> Option<&'static str> {
             icu_properties::PropertyNamesShortBorrowed::<props::GeneralCategory>::new()
                 .get(self.into())
-                .unwrap_or("")
         }
         #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData

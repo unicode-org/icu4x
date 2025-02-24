@@ -49,9 +49,9 @@ export class GeneralCategory {
 
     static forChar(ch: codepoint): GeneralCategory;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

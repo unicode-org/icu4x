@@ -568,11 +568,14 @@ export class Script {
     }
 
     longName() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
         const result = wasm.icu4x_Script_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
         
@@ -582,11 +585,14 @@ export class Script {
     }
 
     shortName() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
         const result = wasm.icu4x_Script_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
         

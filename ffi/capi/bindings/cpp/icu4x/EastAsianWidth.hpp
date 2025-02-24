@@ -19,9 +19,11 @@ namespace capi {
     
     icu4x::capi::EastAsianWidth icu4x_EastAsianWidth_for_char_mv1(char32_t ch);
     
-    diplomat::capi::DiplomatStringView icu4x_EastAsianWidth_long_name_mv1(icu4x::capi::EastAsianWidth self);
+    typedef struct icu4x_EastAsianWidth_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_EastAsianWidth_long_name_mv1_result;
+    icu4x_EastAsianWidth_long_name_mv1_result icu4x_EastAsianWidth_long_name_mv1(icu4x::capi::EastAsianWidth self);
     
-    diplomat::capi::DiplomatStringView icu4x_EastAsianWidth_short_name_mv1(icu4x::capi::EastAsianWidth self);
+    typedef struct icu4x_EastAsianWidth_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_EastAsianWidth_short_name_mv1_result;
+    icu4x_EastAsianWidth_short_name_mv1_result icu4x_EastAsianWidth_short_name_mv1(icu4x::capi::EastAsianWidth self);
     
     uint8_t icu4x_EastAsianWidth_to_integer_value_mv1(icu4x::capi::EastAsianWidth self);
     
@@ -56,14 +58,14 @@ inline icu4x::EastAsianWidth icu4x::EastAsianWidth::for_char(char32_t ch) {
   return icu4x::EastAsianWidth::FromFFI(result);
 }
 
-inline std::string_view icu4x::EastAsianWidth::long_name() {
+inline std::optional<std::string_view> icu4x::EastAsianWidth::long_name() {
   auto result = icu4x::capi::icu4x_EastAsianWidth_long_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::string_view icu4x::EastAsianWidth::short_name() {
+inline std::optional<std::string_view> icu4x::EastAsianWidth::short_name() {
   auto result = icu4x::capi::icu4x_EastAsianWidth_short_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::EastAsianWidth::to_integer_value() {

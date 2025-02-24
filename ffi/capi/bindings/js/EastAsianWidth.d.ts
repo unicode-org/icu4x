@@ -24,9 +24,9 @@ export class EastAsianWidth {
 
     static forChar(ch: codepoint): EastAsianWidth;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

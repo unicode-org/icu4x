@@ -33,9 +33,9 @@ export class SentenceBreak {
 
     static forChar(ch: codepoint): SentenceBreak;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

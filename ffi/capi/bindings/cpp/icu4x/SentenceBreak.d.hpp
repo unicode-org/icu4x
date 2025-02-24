@@ -69,9 +69,9 @@ public:
 
   inline static icu4x::SentenceBreak for_char(char32_t ch);
 
-  inline std::string_view long_name();
+  inline std::optional<std::string_view> long_name();
 
-  inline std::string_view short_name();
+  inline std::optional<std::string_view> short_name();
 
   inline uint8_t to_integer_value();
 

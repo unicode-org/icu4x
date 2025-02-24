@@ -41,9 +41,9 @@ export class WordBreak {
 
     static forChar(ch: codepoint): WordBreak;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

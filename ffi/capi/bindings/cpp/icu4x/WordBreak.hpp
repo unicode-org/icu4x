@@ -19,9 +19,11 @@ namespace capi {
     
     icu4x::capi::WordBreak icu4x_WordBreak_for_char_mv1(char32_t ch);
     
-    diplomat::capi::DiplomatStringView icu4x_WordBreak_long_name_mv1(icu4x::capi::WordBreak self);
+    typedef struct icu4x_WordBreak_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_WordBreak_long_name_mv1_result;
+    icu4x_WordBreak_long_name_mv1_result icu4x_WordBreak_long_name_mv1(icu4x::capi::WordBreak self);
     
-    diplomat::capi::DiplomatStringView icu4x_WordBreak_short_name_mv1(icu4x::capi::WordBreak self);
+    typedef struct icu4x_WordBreak_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_WordBreak_short_name_mv1_result;
+    icu4x_WordBreak_short_name_mv1_result icu4x_WordBreak_short_name_mv1(icu4x::capi::WordBreak self);
     
     uint8_t icu4x_WordBreak_to_integer_value_mv1(icu4x::capi::WordBreak self);
     
@@ -73,14 +75,14 @@ inline icu4x::WordBreak icu4x::WordBreak::for_char(char32_t ch) {
   return icu4x::WordBreak::FromFFI(result);
 }
 
-inline std::string_view icu4x::WordBreak::long_name() {
+inline std::optional<std::string_view> icu4x::WordBreak::long_name() {
   auto result = icu4x::capi::icu4x_WordBreak_long_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::string_view icu4x::WordBreak::short_name() {
+inline std::optional<std::string_view> icu4x::WordBreak::short_name() {
   auto result = icu4x::capi::icu4x_WordBreak_short_name_mv1(this->AsFFI());
-  return std::string_view(result.data, result.len);
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::WordBreak::to_integer_value() {

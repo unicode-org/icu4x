@@ -183,9 +183,9 @@ export class Script {
 
     static forChar(ch: codepoint): Script;
 
-    longName(): string;
+    longName(): string | null;
 
-    shortName(): string;
+    shortName(): string | null;
 
     toIntegerValue(): number;
 

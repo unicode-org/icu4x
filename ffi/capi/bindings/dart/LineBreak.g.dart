@@ -157,17 +157,23 @@ enum LineBreak {
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-  String longName() {
+  String? longName() {
     final result = _icu4x_LineBreak_long_name_mv1(index);
-    return result._toDart([]);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([]);
   }
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-  String shortName() {
+  String? shortName() {
     final result = _icu4x_LineBreak_short_name_mv1(index);
-    return result._toDart([]);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([]);
   }
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -196,14 +202,14 @@ enum LineBreak {
 external int _icu4x_LineBreak_for_char_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_LineBreak_long_name_mv1')
-@ffi.Native<_SliceUtf8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_long_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_long_name_mv1')
 // ignore: non_constant_identifier_names
-external _SliceUtf8 _icu4x_LineBreak_long_name_mv1(int self);
+external _ResultSliceUtf8Void _icu4x_LineBreak_long_name_mv1(int self);
 
 @_DiplomatFfiUse('icu4x_LineBreak_short_name_mv1')
-@ffi.Native<_SliceUtf8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_short_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_short_name_mv1')
 // ignore: non_constant_identifier_names
-external _SliceUtf8 _icu4x_LineBreak_short_name_mv1(int self);
+external _ResultSliceUtf8Void _icu4x_LineBreak_short_name_mv1(int self);
 
 @_DiplomatFfiUse('icu4x_LineBreak_to_integer_value_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_to_integer_value_mv1')

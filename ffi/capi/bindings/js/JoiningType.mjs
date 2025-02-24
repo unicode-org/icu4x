@@ -87,11 +87,14 @@ export class JoiningType {
     }
 
     longName() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
         const result = wasm.icu4x_JoiningType_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
         
@@ -101,11 +104,14 @@ export class JoiningType {
     }
 
     shortName() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
         const result = wasm.icu4x_JoiningType_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
         
