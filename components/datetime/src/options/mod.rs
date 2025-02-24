@@ -16,7 +16,7 @@ use icu_time::scaffold::IntoOption;
 ///
 /// ```
 /// use icu::datetime::input::Date;
-/// use icu_calendar::Gregorian;
+/// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -95,7 +95,7 @@ impl IntoOption<Length> for Length {
 ///
 /// ```
 /// use icu::datetime::input::Date;
-/// use icu_calendar::Gregorian;
+/// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::options::Alignment;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -173,7 +173,7 @@ impl IntoOption<Alignment> for Alignment {
 ///
 /// ```
 /// use icu::datetime::input::Date;
-/// use icu_calendar::Gregorian;
+/// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::options::YearStyle;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -517,7 +517,7 @@ impl From<TimePrecisionSerde> for TimePrecision {
 /// Times can be displayed with a custom number of fractional digits from 0-9:
 ///
 /// ```
-/// use icu_calendar::Gregorian;
+/// use icu::calendar::Gregorian;
 /// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::SubsecondDigits;

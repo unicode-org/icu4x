@@ -67,7 +67,7 @@ where
     ///
     /// ```
     /// use icu::datetime::input::Date;
-    /// use icu_calendar::Gregorian;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::MonthNameLength;
@@ -106,7 +106,7 @@ where
     /// Format a time:
     ///
     /// ```
-    /// use icu_calendar::Gregorian;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
@@ -152,7 +152,7 @@ where
     /// Format a time zone:
     ///
     /// ```
-    /// use icu_calendar::Gregorian;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;

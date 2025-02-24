@@ -371,7 +371,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             ///
             /// ```
             /// use icu::datetime::input::Date;
-            /// use icu_calendar::Gregorian;
+            /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -526,7 +526,7 @@ macro_rules! impl_date_marker {
             ///
             /// ```
             /// use icu::datetime::input::Date;
-            /// use icu_calendar::Gregorian;
+            /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
@@ -1145,7 +1145,7 @@ pub mod zone {
         /// ```
         /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
-        /// use icu_calendar::Gregorian;
+        /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
         /// use icu::locale::locale;
@@ -1339,7 +1339,7 @@ pub mod zone {
         /// ```
         /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone};
-        /// use icu_calendar::Gregorian;
+        /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::locale::locale;
