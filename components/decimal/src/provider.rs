@@ -237,7 +237,10 @@ pub struct DecimalSymbols<'data> {
     pub grouping_sizes: GroupingSizes,
 }
 
-icu_provider::data_struct_new!(DecimalSymbols<'_>,);
+icu_provider::data_struct_new!(
+    DecimalSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl DecimalSymbols<'_> {
     /// Return (prefix, suffix) for the minus sign

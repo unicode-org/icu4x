@@ -51,7 +51,10 @@ pub struct IslamicCache<'data> {
     pub data: ZeroVec<'data, PackedIslamicYearInfo>,
 }
 
-icu_provider::data_struct_new!(IslamicCache<'_>,);
+icu_provider::data_struct_new!(
+    IslamicCache<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl IslamicCache<'_> {
     /// Compute this data for a range of years

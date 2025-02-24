@@ -284,7 +284,10 @@ pub struct Aliases<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
-icu_provider::data_struct_new!(Aliases<'_>,);
+icu_provider::data_struct_new!(
+    Aliases<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -327,7 +330,10 @@ pub struct LikelySubtagsForLanguage<'data> {
     pub und: (Language, Script, Region),
 }
 
-icu_provider::data_struct_new!(LikelySubtagsForLanguage<'_>,);
+icu_provider::data_struct_new!(
+    LikelySubtagsForLanguage<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -368,7 +374,10 @@ pub struct LikelySubtagsForScriptRegion<'data> {
     pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
 }
 
-icu_provider::data_struct_new!(LikelySubtagsForScriptRegion<'_>,);
+icu_provider::data_struct_new!(
+    LikelySubtagsForScriptRegion<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -404,7 +413,10 @@ pub struct LikelySubtagsExtended<'data> {
     pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
 }
 
-icu_provider::data_struct_new!(LikelySubtagsExtended<'_>,);
+icu_provider::data_struct_new!(
+    LikelySubtagsExtended<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// Locale fallback rules derived from CLDR parent locales data.
 #[derive(Default, Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -419,7 +431,10 @@ pub struct Parents<'data> {
     pub parents: ZeroMap<'data, PotentialUtf8, (Language, Option<Script>, Option<Region>)>,
 }
 
-icu_provider::data_struct_new!(Parents<'_>,);
+icu_provider::data_struct_new!(
+    Parents<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -442,7 +457,10 @@ pub struct ScriptDirection<'data> {
     pub ltr: ZeroVec<'data, UnvalidatedScript>,
 }
 
-icu_provider::data_struct_new!(ScriptDirection<'_>,);
+icu_provider::data_struct_new!(
+    ScriptDirection<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// A set of characters and strings which share a particular property value.
 ///
@@ -462,4 +480,7 @@ pub struct ExemplarCharactersData<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointInversionListAndStringList<'data>,
 );
 
-icu_provider::data_struct_new!(ExemplarCharactersData<'_>,);
+icu_provider::data_struct_new!(
+    ExemplarCharactersData<'_>,
+    #[cfg(feature = "datagen")]
+);

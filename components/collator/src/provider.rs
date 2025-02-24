@@ -202,7 +202,10 @@ pub struct CollationData<'data> {
     pub contexts: ZeroVec<'data, u16>,
 }
 
-icu_provider::data_struct_new!(CollationData<'_>,);
+icu_provider::data_struct_new!(
+    CollationData<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl<'data> CollationData<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
@@ -305,7 +308,10 @@ pub struct CollationDiacritics<'data> {
     pub secondaries: ZeroVec<'data, u16>,
 }
 
-icu_provider::data_struct_new!(CollationDiacritics<'_>,);
+icu_provider::data_struct_new!(
+    CollationDiacritics<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// `CollationElement32`s for the Hangul Jamo Unicode Block
 ///
@@ -325,7 +331,10 @@ pub struct CollationJamo<'data> {
     pub ce32s: ZeroVec<'data, u32>,
 }
 
-icu_provider::data_struct_new!(CollationJamo<'_>,);
+icu_provider::data_struct_new!(
+    CollationJamo<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// Script reordering data
 ///
@@ -377,7 +386,10 @@ pub struct CollationReordering<'data> {
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
 
-icu_provider::data_struct_new!(CollationReordering<'_>,);
+icu_provider::data_struct_new!(
+    CollationReordering<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl CollationReordering<'_> {
     pub(crate) fn reorder(&self, primary: u32) -> u32 {
@@ -437,7 +449,10 @@ pub struct CollationMetadata {
     pub bits: u32,
 }
 
-icu_provider::data_struct_new!(CollationMetadata,);
+icu_provider::data_struct_new!(
+    CollationMetadata,
+    #[cfg(feature = "datagen")]
+);
 
 impl CollationMetadata {
     const MAX_VARIABLE_MASK: u32 = 0b11;
@@ -528,7 +543,10 @@ pub struct CollationSpecialPrimaries<'data> {
     pub numeric_primary: u8,
 }
 
-icu_provider::data_struct_new!(CollationSpecialPrimaries<'_>,);
+icu_provider::data_struct_new!(
+    CollationSpecialPrimaries<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl CollationSpecialPrimaries<'_> {
     #[allow(clippy::unwrap_used)]

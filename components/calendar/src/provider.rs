@@ -136,7 +136,10 @@ pub struct JapaneseEras<'data> {
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
-icu_provider::data_struct_new!(JapaneseEras<'_>,);
+icu_provider::data_struct_new!(
+    JapaneseEras<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
@@ -161,7 +164,10 @@ pub struct WeekData {
     pub weekend: WeekdaySet,
 }
 
-icu_provider::data_struct_new!(WeekData,);
+icu_provider::data_struct_new!(
+    WeekData,
+    #[cfg(feature = "datagen")]
+);
 
 /// Bitset representing weekdays.
 //
