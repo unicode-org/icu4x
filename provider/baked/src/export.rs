@@ -567,6 +567,7 @@ impl DataExporter for BakedExporter {
             let mut baked_values = deduplicated_values
                 .iter()
                 .map(|(payload, ids)| {
+                    // TODO(#5230): Update these size calculations for EncodedStruct storage
                     stats.structs_count += 1;
                     stats.identifiers_count += ids.len();
                     stats.structs_total_size += payload.baked_size();
