@@ -3,6 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod datetime;
-pub(crate) mod time_zone;
 mod input;
+pub(crate) mod time_zone;
 pub(crate) use input::ExtractedInput;

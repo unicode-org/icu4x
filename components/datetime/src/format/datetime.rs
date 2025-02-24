@@ -4,10 +4,10 @@
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
 use crate::error::{DateTimeWriteError, ErrorField};
+use crate::format::ExtractedInput;
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
-use crate::format::ExtractedInput;
 use crate::{parts, pattern::*};
 
 use core::fmt::{self, Write};
