@@ -158,6 +158,7 @@ part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
 part 'Weekday.g.dart';
 part 'WeekendContainsDay.g.dart';
+part 'WindowsParser.g.dart';
 part 'WordBreak.g.dart';
 part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';

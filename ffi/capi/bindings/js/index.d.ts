@@ -206,6 +206,8 @@ export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
 
 export { WeekCalculator } from "./WeekCalculator"
 
+export { WindowsParser } from "./WindowsParser"
+
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 
 export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"

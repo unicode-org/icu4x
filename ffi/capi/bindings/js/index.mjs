@@ -204,6 +204,8 @@ export { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
 
 export { WeekCalculator } from "./WeekCalculator.mjs"
 
+export { WindowsParser } from "./WindowsParser.mjs"
+
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 
 export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter.mjs"

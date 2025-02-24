@@ -42,11 +42,11 @@ pub struct WindowsParser {
 }
 
 impl WindowsParser {
-    /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
+    /// Creates a new static [`WindowsParserBorrowed`].
     #[allow(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> WindowsTimeZoneMapperBorrowed<'static> {
-        WindowsTimeZoneMapperBorrowed::new()
+    pub fn new() -> WindowsParserBorrowed<'static> {
+        WindowsParserBorrowed::new()
     }
 
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
@@ -72,8 +72,8 @@ impl WindowsParser {
     ///
     /// Using the borrowed version allows one to avoid a small potential
     /// indirection cost when querying the mapper from the owned version.
-    pub fn as_borrowed(&self) -> WindowsTimeZoneMapperBorrowed {
-        WindowsTimeZoneMapperBorrowed {
+    pub fn as_borrowed(&self) -> WindowsParserBorrowed {
+        WindowsParserBorrowed {
             data: self.data.get(),
         }
     }
@@ -81,22 +81,34 @@ impl WindowsParser {
 
 /// A borrowed wrapper around the windows time zone mapper data.
 #[derive(Debug, Copy, Clone)]
-pub struct WindowsTimeZoneMapperBorrowed<'a> {
+pub struct WindowsParserBorrowed<'a> {
     data: &'a WindowsZonesToBcp47Map<'a>,
 }
 
+impl WindowsParserBorrowed<'static> {
+    /// Cheaply converts a [`WindowsParserBorrowed<'static>`] into a [`WindowsParser`].
+    ///
+    /// Note: Due to branching and indirection, using [`WindowsParser`] might inhibit some
+    /// compile-time optimizations that are possible with [`WindowsParserBorrowed`].
+    pub fn static_to_owned(&self) -> WindowsParser {
+        WindowsParser {
+            data: DataPayload::from_static_ref(self.data),
+        }
+    }
+}
+
 #[cfg(feature = "compiled_data")]
-impl Default for WindowsTimeZoneMapperBorrowed<'_> {
+impl Default for WindowsParserBorrowed<'_> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl WindowsTimeZoneMapperBorrowed<'_> {
-    /// Creates a new static [`WindowsTimeZoneMapperBorrowed`].
+impl WindowsParserBorrowed<'_> {
+    /// Creates a new static [`WindowsParserBorrowed`].
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
-        WindowsTimeZoneMapperBorrowed {
+        WindowsParserBorrowed {
             data: crate::provider::Baked::SINGLETON_TIME_ZONE_WINDOWS_V1,
         }
     }
@@ -125,14 +137,17 @@ impl WindowsTimeZoneMapperBorrowed<'_> {
     ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("CA")));
     /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "cawnp"))));
     /// ```
-    pub fn windows_tz_to_bcp47_id(
-        self,
-        windows_tz: &str,
-        region: Option<Region>,
-    ) -> Option<TimeZone> {
+    pub fn parse(self, windows_tz: &str, region: Option<Region>) -> Option<TimeZone> {
+        self.parse_from_utf8(windows_tz.as_bytes(), region)
+    }
+
+    /// See [`Self::parse`].
+    pub fn parse_from_utf8(self, windows_tz: &[u8], region: Option<Region>) -> Option<TimeZone> {
         let mut cursor = self.data.map.cursor();
         // Returns None if input is non-ASCII
-        cursor.write_str(windows_tz).ok()?;
+        for &byte in windows_tz {
+            cursor.step(byte);
+        }
         cursor.step(b'/');
         cursor
             .write_str(region.unwrap_or(region!("001")).as_str())
@@ -151,16 +166,16 @@ mod tests {
     fn basic_windows_tz_lookup() {
         let win_map = WindowsParser::new();
 
-        let result = win_map.windows_tz_to_bcp47_id("Central Standard Time", None);
+        let result = win_map.parse("Central Standard Time", None);
         assert_eq!(result, Some(TimeZone(tinystr!(8, "uschi"))));
 
-        let result = win_map.windows_tz_to_bcp47_id("Eastern Standard Time", None);
+        let result = win_map.parse("Eastern Standard Time", None);
         assert_eq!(result, Some(TimeZone(tinystr!(8, "usnyc"))));
 
-        let result = win_map.windows_tz_to_bcp47_id("Eastern Standard Time", Some(region!("CA")));
+        let result = win_map.parse("Eastern Standard Time", Some(region!("CA")));
         assert_eq!(result, Some(TimeZone(tinystr!(8, "cator"))));
 
-        let result = win_map.windows_tz_to_bcp47_id("GMT Standard Time", None);
+        let result = win_map.parse("GMT Standard Time", None);
         assert_eq!(result, Some(TimeZone(tinystr!(8, "gblon"))));
     }
 }
