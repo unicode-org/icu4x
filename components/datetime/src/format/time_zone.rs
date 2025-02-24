@@ -6,7 +6,7 @@
 
 use crate::pattern::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
-use crate::{provider::fields::FieldLength, scaffold::ExtractedInput};
+use crate::{provider::fields::FieldLength, format::ExtractedInput};
 use core::fmt;
 use fixed_decimal::Decimal;
 use icu_calendar::{Date, Iso};

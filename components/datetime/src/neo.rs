@@ -11,7 +11,7 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::pattern::*;
 use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
-use crate::scaffold::ExtractedInput;
+use crate::format::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, ConvertCalendar, DateDataMarkers, DateInputMarkers, DateTimeMarkers, GetField,
