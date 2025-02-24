@@ -17,7 +17,7 @@ void main(List<String> args) async {
           input.config.linkingEnabled,
       input.config.code.targetOS == OS.iOS &&
           input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
-      Directory.fromUri(input.outputDirectory),
+      Directory.fromUri(input.packageRoot),
       [
         'default_components',
         'collator',
@@ -29,6 +29,13 @@ void main(List<String> args) async {
         'buffer_provider',
         'experimental',
       ],
+    );
+
+    // Rebuild if bindings change
+    output.addDependencies(
+      Directory(
+        '${input.packageRoot.path}/lib/src',
+      ).listSync().map((e) => Uri.file(e.path)),
     );
 
     output.assets.code.add(
