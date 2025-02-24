@@ -223,13 +223,11 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.4.0-204.0.dev
+        sdk: 3.7.0
         
     - name: Build docs
       run: |
         cd ffi/dart
-        make lib/src/lib.g.dart
-        # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
         cd ../..
