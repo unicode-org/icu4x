@@ -28,10 +28,10 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
-    #[diplomat::rust_link(icu::datetime::TimeFormatter, Typedef)]
+    /// An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
+    #[diplomat::rust_link(icu::datetime::NoCalendarFormatter, Typedef)]
     #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct, compact)]
-    pub struct TimeFormatter(pub icu_datetime::TimeFormatter<T>);
+    pub struct NoCalendarFormatter(pub icu_datetime::NoCalendarFormatter<T>);
 
     #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::Length, Enum)]
@@ -41,8 +41,8 @@ pub mod ffi {
         Short,
     }
 
-    impl TimeFormatter {
-        /// Creates a new [`TimeFormatter`] using compiled data.
+    impl NoCalendarFormatter {
+        /// Creates a new [`NoCalendarFormatter`] using compiled data.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
@@ -50,16 +50,16 @@ pub mod ffi {
         pub fn create_with_length(
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<NoCalendarFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = T::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(TimeFormatter(
+            Ok(Box::new(NoCalendarFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?,
             )))
         }
 
-        /// Creates a new [`TimeFormatter`] using a particular data source.
+        /// Creates a new [`NoCalendarFormatter`] using a particular data source.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_length_and_provider")]
         #[cfg(feature = "buffer_provider")]
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
@@ -67,11 +67,11 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: DateTimeLength,
-        ) -> Result<Box<TimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<NoCalendarFormatter>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let options = T::with_length(Length::from(length)).hm();
 
-            Ok(Box::new(TimeFormatter(
+            Ok(Box::new(NoCalendarFormatter(
                 icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
                     provider.get()?,
                     prefs,

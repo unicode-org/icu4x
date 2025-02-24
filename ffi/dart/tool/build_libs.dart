@@ -28,10 +28,7 @@ Future<void> main(List<String> args) async {
         ..addFlag(simulatorKey, defaultsTo: false)
         ..addOption(osKey, mandatory: true)
         ..addOption(architectureKey, mandatory: true)
-        ..addMultiOption(
-          cargoFeaturesKey,
-          defaultsTo: ['default_components'],
-        );
+        ..addMultiOption(cargoFeaturesKey, defaultsTo: ['default_components']);
 
   ArgResults parsed;
   try {

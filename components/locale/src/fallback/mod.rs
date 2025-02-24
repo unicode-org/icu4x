@@ -53,7 +53,6 @@ mod algorithms;
 ///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
-/// [language identifier]: icu::locale::LanguageIdentifier
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
