@@ -11,15 +11,15 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct TimeZoneInfo; }
-class TimeZoneInfo;
+namespace capi { struct TimeZone; }
+class TimeZone;
 }
 
 
 namespace icu4x {
 namespace capi {
     struct TimeZoneAndCanonicalAndNormalized {
-      icu4x::capi::TimeZoneInfo* time_zone;
+      icu4x::capi::TimeZone* time_zone;
       diplomat::capi::DiplomatStringView canonical;
       diplomat::capi::DiplomatStringView normalized;
     };
@@ -31,7 +31,7 @@ namespace capi {
 
 namespace icu4x {
 struct TimeZoneAndCanonicalAndNormalized {
-  std::unique_ptr<icu4x::TimeZoneInfo> time_zone;
+  std::unique_ptr<icu4x::TimeZone> time_zone;
   std::string_view canonical;
   std::string_view normalized;
 

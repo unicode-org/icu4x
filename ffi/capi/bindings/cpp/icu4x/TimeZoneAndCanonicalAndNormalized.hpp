@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "TimeZoneInfo.hpp"
+#include "TimeZone.hpp"
 
 
 namespace icu4x {
@@ -34,7 +34,7 @@ inline icu4x::capi::TimeZoneAndCanonicalAndNormalized icu4x::TimeZoneAndCanonica
 
 inline icu4x::TimeZoneAndCanonicalAndNormalized icu4x::TimeZoneAndCanonicalAndNormalized::FromFFI(icu4x::capi::TimeZoneAndCanonicalAndNormalized c_struct) {
   return icu4x::TimeZoneAndCanonicalAndNormalized {
-    /* .time_zone = */ std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(c_struct.time_zone)),
+    /* .time_zone = */ std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(c_struct.time_zone)),
     /* .canonical = */ std::string_view(c_struct.canonical.data, c_struct.canonical.len),
     /* .normalized = */ std::string_view(c_struct.normalized.data, c_struct.normalized.len),
   };

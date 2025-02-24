@@ -9,13 +9,13 @@ final class _TimeZoneAndCanonicalAndNormalizedFfi extends ffi.Struct {
 }
 
 final class TimeZoneAndCanonicalAndNormalized {
-  final TimeZoneInfo timeZone;
+  final TimeZone timeZone;
   final String canonical;
   final String normalized;
 
   // ignore: unused_element
   TimeZoneAndCanonicalAndNormalized._fromFfi(_TimeZoneAndCanonicalAndNormalizedFfi ffi, core.List<Object> aEdges) :
-    timeZone = TimeZoneInfo._fromFfi(ffi.timeZone, []),
+    timeZone = TimeZone._fromFfi(ffi.timeZone, []),
     canonical = ffi.canonical._toDart(aEdges),
     normalized = ffi.normalized._toDart(aEdges);
 

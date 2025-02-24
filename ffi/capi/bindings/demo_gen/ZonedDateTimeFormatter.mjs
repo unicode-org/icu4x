@@ -3,9 +3,11 @@ import { Date } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
+import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
+import { UtcOffset } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, dateCalendarLocaleName, timeHour, timeMinute, timeSecond, timeSubsecond, zoneBcp47Id, zoneOffsetSeconds, zoneDst) {
+export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, dateCalendarLocaleName, timeHour, timeMinute, timeSecond, timeSubsecond, zoneTimeZoneIdId, zoneOffsetOffset, zoneZoneVariant) {
     
     let zonedDateTimeFormatterLocale = Locale.fromString(zonedDateTimeFormatterLocaleName);
     
@@ -19,14 +21,18 @@ export function format(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterL
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
-    let zone = new TimeZoneInfo(zoneBcp47Id,zoneOffsetSeconds,zoneDst);
+    let zoneTimeZoneId = TimeZone.createFromBcp47(zoneTimeZoneIdId);
+    
+    let zoneOffset = UtcOffset.tryFromStr(zoneOffsetOffset);
+    
+    let zone = new TimeZoneInfo(zoneTimeZoneId,zoneOffset,zoneZoneVariant);
     
     let out = zonedDateTimeFormatter.format(date,time,zone);
     
 
     return out;
 }
-export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneBcp47Id, zoneOffsetSeconds, zoneDst) {
+export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterLength, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneTimeZoneIdId, zoneOffsetOffset, zoneZoneVariant) {
     
     let zonedDateTimeFormatterLocale = Locale.fromString(zonedDateTimeFormatterLocaleName);
     
@@ -36,7 +42,11 @@ export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatt
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
-    let zone = new TimeZoneInfo(zoneBcp47Id,zoneOffsetSeconds,zoneDst);
+    let zoneTimeZoneId = TimeZone.createFromBcp47(zoneTimeZoneIdId);
+    
+    let zoneOffset = UtcOffset.tryFromStr(zoneOffsetOffset);
+    
+    let zone = new TimeZoneInfo(zoneTimeZoneId,zoneOffset,zoneZoneVariant);
     
     let out = zonedDateTimeFormatter.formatIso(date,time,zone);
     

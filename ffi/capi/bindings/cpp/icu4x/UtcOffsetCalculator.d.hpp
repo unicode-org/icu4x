@@ -13,8 +13,15 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
+namespace capi { struct IsoDate; }
+class IsoDate;
+namespace capi { struct Time; }
+class Time;
+namespace capi { struct TimeZone; }
+class TimeZone;
 namespace capi { struct UtcOffsetCalculator; }
 class UtcOffsetCalculator;
+struct UtcOffsets;
 class DataError;
 }
 
@@ -32,6 +39,8 @@ public:
   inline static std::unique_ptr<icu4x::UtcOffsetCalculator> create();
 
   inline static diplomat::result<std::unique_ptr<icu4x::UtcOffsetCalculator>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+
+  inline std::optional<icu4x::UtcOffsets> compute_offsets_from_time_zone(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& local_date, const icu4x::Time& local_time) const;
 
   inline const icu4x::capi::UtcOffsetCalculator* AsFFI() const;
   inline icu4x::capi::UtcOffsetCalculator* AsFFI();

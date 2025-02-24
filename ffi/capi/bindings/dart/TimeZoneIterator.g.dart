@@ -3,7 +3,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
-final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZoneInfo> {
+final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZone> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   // These are "used" in the sense that they keep dependencies alive
@@ -24,10 +24,10 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZoneI
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneIterator_destroy_mv1));
 
-  TimeZoneInfo? _current;
+  TimeZone? _current;
 
   @override
-  TimeZoneInfo get current => _current!;
+  TimeZone get current => _current!;
 
   @override
   bool moveNext() {
@@ -36,9 +36,9 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZoneI
   }
 
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
-  TimeZoneInfo? _iteratorNext() {
+  TimeZone? _iteratorNext() {
     final result = _icu4x_TimeZoneIterator_next_mv1(_ffi);
-    return result.address == 0 ? null : TimeZoneInfo._fromFfi(result, []);
+    return result.address == 0 ? null : TimeZone._fromFfi(result, []);
   }
 }
 
