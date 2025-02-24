@@ -15,7 +15,7 @@ use icu_time::scaffold::IntoOption;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Date;
+/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -94,7 +94,7 @@ impl IntoOption<Length> for Length {
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Date;
+/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::options::Alignment;
@@ -172,7 +172,7 @@ impl IntoOption<Alignment> for Alignment {
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Date;
+/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::options::YearStyle;

@@ -35,7 +35,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// then check the resolved components:
 ///
 /// ```
-/// use icu::calendar::Date;
+/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::YMD;

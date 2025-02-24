@@ -11,8 +11,8 @@ use icu_calendar::Iso;
 use icu_time::scaffold::IntoOption;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
-pub use icu_calendar::Date;
-pub use icu_time::{zone::UtcOffset, DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime};
+use icu_calendar::Date;
+use icu_time::{zone::UtcOffset, Time, TimeZone};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
