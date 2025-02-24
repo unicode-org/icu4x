@@ -18,6 +18,7 @@ include.workspace = true
 
 [dependencies]
 core-foundation-sys = "0.8.6"
+displaydoc = { workspace = true }
 icu_locale = { workspace = true }
 icu_provider = { workspace = true }
 libc = "0.2.155"

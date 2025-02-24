@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use icu_locale::extensions::unicode::{key, value};
 use icu_locale::extensions::Extensions;
 use icu_locale::subtags::{language, script, variant, Language, Region, Variants};
@@ -9,32 +10,38 @@ use icu_locale::{LanguageIdentifier, Locale};
 
 use super::posix_aliases::get_bcp47_subtags_from_posix_alias;
 
-#[derive(Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum ParseError {
+    #[displaydoc("Empty locale")]
     EmptyLocale,
-    EmptySection {
-        offset: usize,
-    },
-    InvalidCharacter {
-        offset: usize,
-    },
+    #[displaydoc("Empty section beginning at offset {offset}")]
+    EmptySection { offset: usize },
+    #[displaydoc("Invalid character at offset {offset}")]
+    InvalidCharacter { offset: usize },
+    #[displaydoc("Invalid locale")]
     InvalidLocale,
+    #[displaydoc("Delimiter repeated at offsets {first_offset} and {second_offset}")]
     RepeatedDelimiter {
         first_offset: usize,
         second_offset: usize,
     },
+    #[displaydoc(
+        "Delimiter at offset {second_offset} should appear before delimiter at offset {first_offset}"
+    )]
     UnorderedDelimiter {
         first_offset: usize,
         second_offset: usize,
     },
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum ConversionError {
+    #[displaydoc("Invalid language")]
     InvalidLanguage {
         start_offset: usize,
         end_offset: usize,
     },
+    #[displaydoc("Invalid region")]
     InvalidRegion {
         start_offset: usize,
         end_offset: usize,
