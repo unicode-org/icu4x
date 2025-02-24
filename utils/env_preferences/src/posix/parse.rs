@@ -8,7 +8,7 @@ use icu_locale::extensions::Extensions;
 use icu_locale::subtags::{language, script, variant, Language, Region, Variants};
 use icu_locale::{LanguageIdentifier, Locale};
 
-use super::posix_aliases::get_bcp47_subtags_from_posix_alias;
+use super::aliases::get_bcp47_subtags_from_posix_alias;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum ParseError {

@@ -17,13 +17,12 @@
 //! & [`TimeZone`](https://crates.io/crates/icu_time)
 
 mod error;
-mod parse;
 pub use error::RetrievalError;
 
 #[cfg(target_os = "linux")]
-mod linux;
+mod posix;
 #[cfg(target_os = "linux")]
-pub use linux::*;
+pub use posix::fetch::*;
 #[cfg(target_os = "macos")]
 mod apple;
 #[cfg(target_os = "macos")]

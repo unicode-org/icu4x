@@ -1,4 +1,4 @@
-use crate::parse::posix::PosixLocale;
+use crate::posix::parse::PosixLocale;
 use icu_locale::Locale;
 
 fn expect_success(src: &str, expected: &str) {
@@ -51,7 +51,7 @@ fn modifier() {
 
 mod error {
     mod parse {
-        use crate::parse::posix::{ParseError, PosixLocale};
+        use crate::posix::parse::{ParseError, PosixLocale};
 
         fn expect_error(src: &str, expected: ParseError) {
             let result = PosixLocale::try_from_str(src);
@@ -262,7 +262,7 @@ mod error {
     }
 
     mod conversion {
-        use crate::parse::posix::{ConversionError, PosixLocale};
+        use crate::posix::parse::{ConversionError, PosixLocale};
 
         fn expect_error(src: &str, expected: ConversionError) {
             let result = PosixLocale::try_from_str(src)

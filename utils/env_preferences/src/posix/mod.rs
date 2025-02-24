@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod posix;
-mod posix_aliases;
-
 #[cfg(test)]
 mod tests;
+
+mod aliases;
+pub mod fetch;
+mod parse;
