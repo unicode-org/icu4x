@@ -129,7 +129,7 @@ int main() {
 
     std::unique_ptr<TimeZone> time_zone = parser->parse("america/chicago");
 
-    std::unique_ptr<UtcOffset> utc_offset = UtcOffset::try_from_str("-05:00").ok().value();
+    std::unique_ptr<UtcOffset> utc_offset = UtcOffset::from_string("-05:00").ok().value();
     if (utc_offset->seconds() != -18000) {
         std::cout << "UTC offset doesn't parse" << std::endl;
         return 1;
