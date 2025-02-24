@@ -773,7 +773,6 @@ dependencies = [
  "core-foundation-sys",
  "displaydoc",
  "icu_locale",
- "icu_provider",
  "libc",
  "windows",
 ]

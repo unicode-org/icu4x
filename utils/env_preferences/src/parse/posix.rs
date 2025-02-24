@@ -187,8 +187,6 @@ impl<'src> PosixLocale<'src> {
     /// POSIX locales that will return an error or silently ignore data.
     /// In particular, the codeset section is always ignored, and only some common modifiers are handled
     /// (unknown modifiers will be silently ignored).
-    ///
-    /// If the "logging" feature is enabled, this ignored data will be logged as a warning.
     pub fn try_convert_lossy(&self) -> Result<Locale, ConversionError> {
         // Check if the language matches a known alias
         let mut language = get_bcp47_subtags_from_posix_alias(self.language)
@@ -217,10 +215,6 @@ impl<'src> PosixLocale<'src> {
                     .transpose(),
             )?;
 
-        if let Some(codeset) = self.codeset {
-            icu_provider::log::warn!("Ignoring codeset: `{codeset}`");
-        }
-
         let mut extensions = Extensions::new();
         let mut script = None;
         let mut variants = vec![variant!("posix")];
@@ -236,20 +230,12 @@ impl<'src> PosixLocale<'src> {
                 "latin" => script = Some(script!("Latn")),
                 // Saaho seems to be the only "legacy variant" that appears as a modifier:
                 // https://www.unicode.org/reports/tr35/#table-legacy-variant-mappings
-                "saaho" => {
-                    // The only known locale with this modifier is `aa_ER`
-                    if self.language != "aa" || self.territory != Some("ER") {
-                        icu_provider::log::warn!("Overriding language: `{}`->`ssy`", self.language);
-                    }
-                    language = language!("ssy")
-                }
+                "saaho" => language = language!("ssy"),
                 // This keeps `variants` sorted; "-posix" comes before "-valencia"
                 "valencia" => variants.push(variant!("valencia")),
                 // Some modifiers are known but can't be expressed as a BCP-47 identifier
                 // e.g. "@abegede", "@iqtelif"
-                _ => {
-                    icu_provider::log::warn!("Ignoring modifier: `{modifier}`");
-                }
+                _ => (),
             }
         }
 
