@@ -25,9 +25,7 @@ pub enum ParseError {
         first_offset: usize,
         second_offset: usize,
     },
-    #[displaydoc(
-        "Delimiter at offset {second_offset} should appear before delimiter at offset {first_offset}"
-    )]
+    #[displaydoc("Delimiters found out-of-order at offsets {first_offset} and {second_offset}")]
     UnorderedDelimiter {
         first_offset: usize,
         second_offset: usize,
