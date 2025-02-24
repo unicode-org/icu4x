@@ -41,9 +41,9 @@ use core::mem;
 ///
 /// # Reverse-encoding VarULE
 ///
-/// This trait maps a struct to its bytes representation ("serialization"), and [`ZeroFrom`]
-/// performs the opposite operation, taking those bytes and creating a struct
-/// from them ("deserialization").
+/// This trait maps a struct to its bytes representation ("serialization"), and
+/// [`ZeroFrom`](zerofrom::ZeroFrom) performs the opposite operation, taking those bytes and
+/// creating a struct from them ("deserialization").
 ///
 /// # Safety
 ///
