@@ -44,7 +44,7 @@
 //! | Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 //! | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 //!
-//! If formatting times and time zones without dates, consider using [`TimeFormatter`].
+//! If formatting times and time zones without dates, consider using [`NoCalendarFormatter`].
 //!
 //! # Examples
 //!
@@ -109,7 +109,7 @@ pub use neo::DateTimeFormatter;
 pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
-pub use neo::TimeFormatter;
+pub use neo::NoCalendarFormatter;
 pub use options::Length;
 
 /// Locale preferences used by this crate

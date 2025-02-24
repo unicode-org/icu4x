@@ -5,7 +5,7 @@
 #include <icu4x/GregorianDateFormatter.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatterGregorian.hpp>
-#include <icu4x/TimeFormatter.hpp>
+#include <icu4x/NoCalendarFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/IanaParser.hpp>
@@ -96,7 +96,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
+    std::unique_ptr<NoCalendarFormatter> tf = NoCalendarFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
     out = tf->format(*time.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "13:06") {
@@ -127,23 +127,20 @@ int main() {
 
     std::unique_ptr<IanaParser> parser = IanaParser::create();
 
-    std::unique_ptr<TimeZoneInfo> time_zone = parser->parse("america/chicago");
-    std::string time_zone_id_return = time_zone->time_zone_id();
-    if (time_zone_id_return != "uschi") {
-        std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
-        return 1;
-    }
-    time_zone->try_set_offset_str("-05:00").ok().value();
-    int32_t offset = time_zone->offset_seconds().value();
-    if (offset != -18000) {
-        std::cout << "GMT offset doesn't parse" << std::endl;
-        return 1;
-    }
-    time_zone->set_local_time(*date.get(), *time.get());
-    time_zone->infer_zone_variant(*UtcOffsetCalculator::create().get());
+    std::unique_ptr<TimeZone> time_zone = parser->parse("america/chicago");
 
+    std::unique_ptr<UtcOffset> utc_offset = UtcOffset::from_string("-05:00").ok().value();
+    if (utc_offset->seconds() != -18000) {
+        std::cout << "UTC offset doesn't parse" << std::endl;
+        return 1;
+    }
+
+    std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
+    
+    time_zone_info->infer_zone_variant(*UtcOffsetCalculator::create().get());
+    
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone.get()).ok().value();
+    out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -151,7 +148,7 @@ int main() {
     }
 
     std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = zdtf->format(*any_date.get(), *any_time.get(), *time_zone.get()).ok().value();
+    out = zdtf->format(*any_date.get(), *any_time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;

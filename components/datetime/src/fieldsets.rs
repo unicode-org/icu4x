@@ -700,12 +700,12 @@ macro_rules! impl_time_marker {
             ///
             /// ```
             /// use icu::datetime::input::Time;
-            /// use icu::datetime::TimeFormatter;
+            /// use icu::datetime::NoCalendarFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_writeable_eq;
             ///
-            #[doc = concat!("let fmt = TimeFormatter::try_new(")]
+            #[doc = concat!("let fmt = NoCalendarFormatter::try_new(")]
             ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
@@ -818,14 +818,14 @@ macro_rules! impl_zone_marker {
         /// ```
         /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone,TimeZoneInfo,  UtcOffset};
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::time::zone::TimeZoneVariant;
         #[doc = concat!("use icu::datetime::fieldsets::zone::", stringify!($type), ";")]
         /// use icu::locale::locale;
         /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let fmt = TimeFormatter::try_new(
+        /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
         #[doc = concat!("    ", stringify!($type))]
         /// )
@@ -1043,14 +1043,14 @@ impl_time_marker!(
     /// ```
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::TimeFormatter;
+    /// use icu::datetime::NoCalendarFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
     /// // but we can set overrides.
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h12").into(),
     ///     T::short().hm(),
     /// )
@@ -1060,7 +1060,7 @@ impl_time_marker!(
     ///     "4:12 PM"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h23").into(),
     ///     T::short().hm(),
     /// )
@@ -1070,7 +1070,7 @@ impl_time_marker!(
     ///     "16:12"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h12").into(),
     ///     T::short().hm(),
     /// )
@@ -1080,7 +1080,7 @@ impl_time_marker!(
     ///     "4:12 PM"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h23").into(),
     ///     T::short().hm(),
     /// )
@@ -1096,11 +1096,11 @@ impl_time_marker!(
     /// ```
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::TimeFormatter;
+    /// use icu::datetime::NoCalendarFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h11").into(),
     ///     T::short().hm(),
     /// )
@@ -1111,7 +1111,7 @@ impl_time_marker!(
     ///     "0:00 AM"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h24").into(),
     ///     T::short().hm(),
     /// )
@@ -1271,7 +1271,7 @@ pub mod zone {
         ///
         /// ```
         /// use icu::datetime::input::Date;
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
         /// use icu::datetime::input::{Time, TimeZone, UtcOffset};
         /// use icu::time::zone::TimeZoneVariant;
@@ -1288,7 +1288,7 @@ pub mod zone {
         ///
         /// let time_zone_full = time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
         ///
-        /// let formatter = TimeFormatter::try_new(
+        /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
         ///     LocalizedOffsetLong,
         /// )
@@ -1368,7 +1368,7 @@ pub mod zone {
         /// ```
         /// use icu::datetime::input::Date;
         /// use icu::datetime::input::Time;
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::datetime::DateTimeWriteError;
         /// use icu::locale::locale;
@@ -1377,7 +1377,7 @@ pub mod zone {
         /// use writeable::assert_writeable_eq;
         ///
         /// // Set up the formatter
-        /// let mut tzf = TimeFormatter::try_new(
+        /// let mut tzf = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
         ///     GenericShort,
         /// )
@@ -1418,7 +1418,7 @@ pub mod zone {
         /// this time zone style requires a reference time.
         ///
         /// ```compile_fail,E0271
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericLong;
         /// use icu::datetime::input::TimeZone;
         /// use tinystr::tinystr;
@@ -1427,14 +1427,14 @@ pub mod zone {
         ///
         /// let time_zone_basic = TimeZone(tinystr!(8, "uschi")).without_offset();
         ///
-        /// let formatter = TimeFormatter::try_new(
+        /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
         ///     GenericLong,
         /// )
         /// .unwrap();
         ///
         /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
-        /// // note: required by a bound in `TimeFormatter::<C, FSet>::format`
+        /// // note: required by a bound in `NoCalendarFormatter::<C, FSet>::format`
         /// formatter.format(&time_zone_basic);
         /// ```
         GenericLong,

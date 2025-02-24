@@ -438,16 +438,16 @@ pub trait PreferenceKey: Sized {
 ///
 /// define_preferences!(
 ///     [Copy]
-///     TimeFormatterPreferences,
+///     NoCalendarFormatterPreferences,
 ///     {
 ///         hour_cycle: HourCycle
 ///     }
 /// );
 ///
-/// struct TimeFormatter {}
+/// struct NoCalendarFormatter {}
 ///
-/// impl TimeFormatter {
-///     pub fn try_new(prefs: TimeFormatterPreferences) -> Result<Self, ()> {
+/// impl NoCalendarFormatter {
+///     pub fn try_new(prefs: NoCalendarFormatterPreferences) -> Result<Self, ()> {
 ///         // load data and set struct fields based on the prefs input
 ///         Ok(Self {})
 ///     }
@@ -455,7 +455,7 @@ pub trait PreferenceKey: Sized {
 ///
 /// let loc = locale!("en-US");
 ///
-/// let tf = TimeFormatter::try_new(loc.into());
+/// let tf = NoCalendarFormatter::try_new(loc.into());
 /// ```
 ///
 /// [`Locale`]: crate::Locale

@@ -9,8 +9,8 @@ import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
 import * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
 export * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
-import * as TimeFormatterDemo from "./TimeFormatter.mjs";
-export * as TimeFormatterDemo from "./TimeFormatter.mjs";
+import * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
+export * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 import * as DecimalDemo from "./Decimal.mjs";
@@ -27,8 +27,6 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
-import * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
-export * as TimeZoneInfoDemo from "./TimeZoneInfo.mjs";
 import * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 export * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 import * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
@@ -367,20 +365,20 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeFormatter.format": {
-        func: TimeFormatterDemo.format,
+    "NoCalendarFormatter.format": {
+        func: NoCalendarFormatterDemo.format,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeFormatter.format",
+        funcName: "NoCalendarFormatter.format",
         parameters: [
             
             {
-                name: "TimeFormatter:Locale:Name",
+                name: "NoCalendarFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "TimeFormatter:Length",
+                name: "NoCalendarFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
@@ -883,33 +881,6 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeZoneInfo.timeZoneId": {
-        func: TimeZoneInfoDemo.timeZoneId,
-        // For avoiding webpacking minifying issues:
-        funcName: "TimeZoneInfo.timeZoneId",
-        parameters: [
-            
-            {
-                name: "TimeZoneInfo:Bcp47Id",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "TimeZoneInfo:OffsetSeconds",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "TimeZoneInfo:Dst",
-                type: "boolean",
-                typeUse: "boolean"
-            }
-            
-        ]
-    },
-
     "GregorianZonedDateTimeFormatter.formatIso": {
         func: GregorianZonedDateTimeFormatterDemo.formatIso,
         // For avoiding webpacking minifying issues:
@@ -971,21 +942,21 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:Bcp47Id",
+                name: "Zone:TimeZoneId:Id",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Zone:OffsetSeconds",
-                type: "number",
-                typeUse: "number"
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
             },
             
             {
-                name: "Zone:Dst",
-                type: "boolean",
-                typeUse: "boolean"
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
             }
             
         ]
@@ -1058,21 +1029,21 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:Bcp47Id",
+                name: "Zone:TimeZoneId:Id",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Zone:OffsetSeconds",
-                type: "number",
-                typeUse: "number"
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
             },
             
             {
-                name: "Zone:Dst",
-                type: "boolean",
-                typeUse: "boolean"
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
             }
             
         ]
@@ -1139,21 +1110,21 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:Bcp47Id",
+                name: "Zone:TimeZoneId:Id",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "Zone:OffsetSeconds",
-                type: "number",
-                typeUse: "number"
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
             },
             
             {
-                name: "Zone:Dst",
-                type: "boolean",
-                typeUse: "boolean"
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
             }
             
         ]
