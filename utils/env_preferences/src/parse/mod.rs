@@ -4,3 +4,6 @@
 
 mod posix;
 mod posix_aliases;
+
+#[cfg(test)]
+mod tests;
