@@ -40,6 +40,8 @@ export { PluralCategories } from "./PluralCategories"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
 
+export { UtcOffsets } from "./UtcOffsets"
+
 export { WeekOf } from "./WeekOf"
 
 export { ZonedDateTime } from "./ZonedDateTime"
@@ -188,6 +190,8 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
+export { TimeZone } from "./TimeZone"
+
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { MeasureUnit } from "./MeasureUnit"
@@ -198,9 +202,13 @@ export { UnitsConverter } from "./UnitsConverter"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
+export { UtcOffset } from "./UtcOffset"
+
 export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
 
 export { WeekCalculator } from "./WeekCalculator"
+
+export { WindowsParser } from "./WindowsParser"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 
@@ -309,5 +317,7 @@ export { LineBreakStrictness } from "./LineBreakStrictness"
 export { LineBreakWordOption } from "./LineBreakWordOption"
 
 export { SegmenterWordType } from "./SegmenterWordType"
+
+export { TimeZoneVariant } from "./TimeZoneVariant"
 
 export { WeekRelativeUnit } from "./WeekRelativeUnit"

@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "TimeZoneInfo.d.h"
+#include "TimeZone.d.h"
 
 #include "TimeZoneIterator.d.h"
 
@@ -16,7 +16,7 @@
 
 
 
-TimeZoneInfo* icu4x_TimeZoneIterator_next_mv1(TimeZoneIterator* self);
+TimeZone* icu4x_TimeZoneIterator_next_mv1(TimeZoneIterator* self);
 
 
 void icu4x_TimeZoneIterator_destroy_mv1(TimeZoneIterator* self);

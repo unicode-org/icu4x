@@ -50,10 +50,10 @@ final class IanaParser implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
-  TimeZoneInfo parse(String value) {
+  TimeZone parse(String value) {
     final temp = _FinalizedArena();
     final result = _icu4x_IanaParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena));
-    return TimeZoneInfo._fromFfi(result, []);
+    return TimeZone._fromFfi(result, []);
   }
 
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.

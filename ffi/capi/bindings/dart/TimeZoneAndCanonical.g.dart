@@ -9,12 +9,12 @@ final class _TimeZoneAndCanonicalFfi extends ffi.Struct {
 }
 
 final class TimeZoneAndCanonical {
-  final TimeZoneInfo timeZone;
+  final TimeZone timeZone;
   final String canonical;
 
   // ignore: unused_element
   TimeZoneAndCanonical._fromFfi(_TimeZoneAndCanonicalFfi ffi, core.List<Object> aEdges) :
-    timeZone = TimeZoneInfo._fromFfi(ffi.timeZone, []),
+    timeZone = TimeZone._fromFfi(ffi.timeZone, []),
     canonical = ffi.canonical._toDart(aEdges);
 
   // If this struct contains any slices, their lifetime-edge-relevant objects (typically _FinalizedArenas) will only

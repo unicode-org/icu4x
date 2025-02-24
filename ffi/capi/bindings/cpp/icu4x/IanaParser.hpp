@@ -13,7 +13,7 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
-#include "TimeZoneInfo.hpp"
+#include "TimeZone.hpp"
 #include "TimeZoneIterator.hpp"
 
 
@@ -26,7 +26,7 @@ namespace capi {
     typedef struct icu4x_IanaParser_create_with_provider_mv1_result {union {icu4x::capi::IanaParser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_IanaParser_create_with_provider_mv1_result;
     icu4x_IanaParser_create_with_provider_mv1_result icu4x_IanaParser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
-    icu4x::capi::TimeZoneInfo* icu4x_IanaParser_parse_mv1(const icu4x::capi::IanaParser* self, diplomat::capi::DiplomatStringView value);
+    icu4x::capi::TimeZone* icu4x_IanaParser_parse_mv1(const icu4x::capi::IanaParser* self, diplomat::capi::DiplomatStringView value);
     
     icu4x::capi::TimeZoneIterator* icu4x_IanaParser_iter_mv1(const icu4x::capi::IanaParser* self);
     
@@ -47,10 +47,10 @@ inline diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError> ic
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::IanaParser>>(std::unique_ptr<icu4x::IanaParser>(icu4x::IanaParser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::IanaParser::parse(std::string_view value) const {
+inline std::unique_ptr<icu4x::TimeZone> icu4x::IanaParser::parse(std::string_view value) const {
   auto result = icu4x::capi::icu4x_IanaParser_parse_mv1(this->AsFFI(),
     {value.data(), value.size()});
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+  return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::TimeZoneIterator> icu4x::IanaParser::iter() const {

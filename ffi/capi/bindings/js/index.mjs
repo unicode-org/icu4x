@@ -38,6 +38,8 @@ export { PluralCategories } from "./PluralCategories.mjs"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult.mjs"
 
+export { UtcOffsets } from "./UtcOffsets.mjs"
+
 export { WeekOf } from "./WeekOf.mjs"
 
 export { ZonedDateTime } from "./ZonedDateTime.mjs"
@@ -186,6 +188,8 @@ export { WordSegmenter } from "./WordSegmenter.mjs"
 
 export { Time } from "./Time.mjs"
 
+export { TimeZone } from "./TimeZone.mjs"
+
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
 export { MeasureUnit } from "./MeasureUnit.mjs"
@@ -196,9 +200,13 @@ export { UnitsConverter } from "./UnitsConverter.mjs"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
+export { UtcOffset } from "./UtcOffset.mjs"
+
 export { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
 
 export { WeekCalculator } from "./WeekCalculator.mjs"
+
+export { WindowsParser } from "./WindowsParser.mjs"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter.mjs"
 
@@ -307,5 +315,7 @@ export { LineBreakStrictness } from "./LineBreakStrictness.mjs"
 export { LineBreakWordOption } from "./LineBreakWordOption.mjs"
 
 export { SegmenterWordType } from "./SegmenterWordType.mjs"
+
+export { TimeZoneVariant } from "./TimeZoneVariant.mjs"
 
 export { WeekRelativeUnit } from "./WeekRelativeUnit.mjs"

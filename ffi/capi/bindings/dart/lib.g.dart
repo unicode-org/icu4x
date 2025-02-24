@@ -138,6 +138,7 @@ part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimePrecision.g.dart';
+part 'TimeZone.g.dart';
 part 'TimeZoneAndCanonical.g.dart';
 part 'TimeZoneAndCanonicalAndNormalized.g.dart';
 part 'TimeZoneAndCanonicalAndNormalizedIterator.g.dart';
@@ -145,18 +146,22 @@ part 'TimeZoneAndCanonicalIterator.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TimeZoneIterator.g.dart';
+part 'TimeZoneVariant.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnitsConverter.g.dart';
 part 'UnitsConverterFactory.g.dart';
+part 'UtcOffset.g.dart';
 part 'UtcOffsetCalculator.g.dart';
+part 'UtcOffsets.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
 part 'Weekday.g.dart';
 part 'WeekendContainsDay.g.dart';
+part 'WindowsParser.g.dart';
 part 'WordBreak.g.dart';
 part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
@@ -239,33 +244,6 @@ class _FinalizedArena {
   }
 }
 
-final class _ResultBoolVoidUnion extends ffi.Union {
-  @ffi.Bool()
-  external bool ok;
-
-}
-
-final class _ResultBoolVoid extends ffi.Struct {
-  external _ResultBoolVoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultBoolVoid.ok(bool val) {
-    final struct = ffi.Struct.create<_ResultBoolVoid>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultBoolVoid.err() {
-    final struct = ffi.Struct.create<_ResultBoolVoid>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
 final class _ResultDateTimeFfiInt32Union extends ffi.Union {
   external _DateTimeFfi ok;
 
@@ -317,33 +295,6 @@ final class _ResultInt32Void extends ffi.Struct {
   // ignore: unused_element
   factory _ResultInt32Void.err() {
     final struct = ffi.Struct.create<_ResultInt32Void>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
-final class _ResultInt8VoidUnion extends ffi.Union {
-  @ffi.Int8()
-  external int ok;
-
-}
-
-final class _ResultInt8Void extends ffi.Struct {
-  external _ResultInt8VoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultInt8Void.ok(int val) {
-    final struct = ffi.Struct.create<_ResultInt8Void>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultInt8Void.err() {
-    final struct = ffi.Struct.create<_ResultInt8Void>();
     struct.isOk = false;
     return struct;
   }
@@ -455,6 +406,32 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
     final struct = ffi.Struct.create<_ResultOpaqueInt32>();
     struct.isOk = false;
     struct.union.err = val;
+    return struct;
+  }
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  external _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = false;
     return struct;
   }
 }
@@ -618,6 +595,32 @@ final class _ResultUint8Void extends ffi.Struct {
   }
 }
 
+final class _ResultUtcOffsetsFfiVoidUnion extends ffi.Union {
+  external _UtcOffsetsFfi ok;
+
+}
+
+final class _ResultUtcOffsetsFfiVoid extends ffi.Struct {
+  external _ResultUtcOffsetsFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultUtcOffsetsFfiVoid.ok(_UtcOffsetsFfi val) {
+    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultUtcOffsetsFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultVoidDateTimeMismatchedCalendarErrorFfiUnion extends ffi.Union {
 
   external _DateTimeMismatchedCalendarErrorFfi err;
@@ -667,26 +670,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
     final struct = ffi.Struct.create<_ResultVoidInt32>();
     struct.isOk = false;
     struct.union.err = val;
-    return struct;
-  }
-}
-
-final class _ResultVoidTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
-  
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultVoidTimeZoneInvalidOffsetErrorFfi.ok() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidOffsetErrorFfi>();
-    struct.isOk = true;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultVoidTimeZoneInvalidOffsetErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidOffsetErrorFfi>();
-    struct.isOk = false;
     return struct;
   }
 }
