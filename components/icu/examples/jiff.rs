@@ -7,7 +7,7 @@ use icu::{
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
     time::{
-        zone::{IanaParser, UtcOffset, UtcOffsetCalculator},
+        zone::{IanaParser, TimeZoneVariant, UtcOffset, UtcOffsetCalculator},
         Time, ZonedDateTime,
     },
 };
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn core::error::Error>> {
         .at_time((date, time))
         // And finally, the zone variant is also required for formatting
         // TODO(jiff#258): Jiff does not currently guarantee rearguard semantics
-        .with_rearguard_isdst(zoned.time_zone().to_offset_info(zoned.timestamp()).dst().is_dst());
+        .with_zone_variant(TimeZoneVariant::from_rearguard_isdst(zoned.time_zone().to_offset_info(zoned.timestamp()).dst().is_dst()));
 
     let zoned_date_time = ZonedDateTime { date, time, zone };
 

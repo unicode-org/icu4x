@@ -7,13 +7,13 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "TimeZoneInfo.d.h"
+#include "TimeZone.d.h"
 
 
 
 
 typedef struct TimeZoneAndCanonicalAndNormalized {
-  TimeZoneInfo* time_zone;
+  TimeZone* time_zone;
   DiplomatStringView canonical;
   DiplomatStringView normalized;
 } TimeZoneAndCanonicalAndNormalized;

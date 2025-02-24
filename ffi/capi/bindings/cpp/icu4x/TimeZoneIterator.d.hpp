@@ -11,8 +11,8 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct TimeZoneInfo; }
-class TimeZoneInfo;
+namespace capi { struct TimeZone; }
+class TimeZone;
 }
 
 
@@ -26,7 +26,7 @@ namespace icu4x {
 class TimeZoneIterator {
 public:
 
-  inline std::unique_ptr<icu4x::TimeZoneInfo> next();
+  inline std::unique_ptr<icu4x::TimeZone> next();
 
   inline const icu4x::capi::TimeZoneIterator* AsFFI() const;
   inline icu4x::capi::TimeZoneIterator* AsFFI();
