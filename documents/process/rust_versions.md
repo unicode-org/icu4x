@@ -126,7 +126,7 @@ Policy: Must be available on GitHub actions `ubuntu-latest` (i.e. ICU4X CI shoul
 
 Command `apt install llvm-18` on ICU4X CI.
 
-Verification:  `ubuntu-latest` is always older than the oldest still-supported Ubuntu LTS, so this does not need to be verified separately. There are potential edge cases where GitHub's package repository mirrors are lagging behind where this policy basically means that we should wait a few days for things to smooth out.
+Verification:  `ubuntu-latest` is always older than the oldest still-supported Ubuntu LTS, so this does not need to be verified separately. There are potential edge cases where GitHub's package repository mirrors are lagging behind where this policy basically means that we should wait a few days for things to smooth out. GitHub's precise runner image version can be looked up [here](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md).
 
 #### ICU4X developer machines
 
