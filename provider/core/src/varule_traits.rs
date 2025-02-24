@@ -13,7 +13,7 @@ use zerovec::{maps::ZeroMapKV, ZeroMap2d};
 /// such as `str` or a packed pattern. This trait allows for data providers
 /// to use storage optimizations for such types.
 ///
-/// ❗ Not all data structs benefit from this optimization. It is best when the
+/// ❗ Not all data structs benefit from this optimization. It works best when the
 /// data struct is multiplied across a large number of data marker attributes.
 ///
 /// Both [`MaybeAsVarULE`] and [`MaybeEncodeAsVarULE`] should be implemented
