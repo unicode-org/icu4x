@@ -46,6 +46,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesOptions, Struct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesOptions::default, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesOptions::with_type, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
         pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
@@ -129,7 +132,6 @@ pub mod ffi {
                 &fixed_decimal::Decimal::try_from_utf8(s)?,
             ))))
         }
-
         /// Construct from a FixedDecimal
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
@@ -137,6 +139,15 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor)]
         pub fn from_fixed_decimal(x: &crate::fixed_decimal::ffi::Decimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
+        }
+
+        #[diplomat::rust_link(icu::plurals::PluralOperands::is_exactly_one, FnInStruct)]
+        pub fn is_exactly_one(&self) -> bool {
+            self.0.is_exactly_one()
+        }
+        #[diplomat::rust_link(icu::plurals::PluralOperands::is_exactly_zero, FnInStruct)]
+        pub fn is_exactly_zero(&self) -> bool {
+            self.0.is_exactly_zero()
         }
     }
 

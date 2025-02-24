@@ -15,4 +15,8 @@ export class PluralOperands {
     static fromString(s: string): PluralOperands;
 
     static fromFixedDecimal(x: Decimal): PluralOperands;
+
+    isExactlyOne(): boolean;
+
+    isExactlyZero(): boolean;
 }

@@ -44,6 +44,18 @@ final class PluralOperands implements ffi.Finalizable {
     final result = _icu4x_PluralOperands_from_fixed_decimal_mv1(x._ffi);
     return PluralOperands._fromFfi(result, []);
   }
+
+  /// See the [Rust documentation for `is_exactly_one`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.is_exactly_one) for more information.
+  bool isExactlyOne() {
+    final result = _icu4x_PluralOperands_is_exactly_one_mv1(_ffi);
+    return result;
+  }
+
+  /// See the [Rust documentation for `is_exactly_zero`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.is_exactly_zero) for more information.
+  bool isExactlyZero() {
+    final result = _icu4x_PluralOperands_is_exactly_zero_mv1(_ffi);
+    return result;
+  }
 }
 
 @_DiplomatFfiUse('icu4x_PluralOperands_destroy_mv1')
@@ -60,5 +72,15 @@ external _ResultOpaqueInt32 _icu4x_PluralOperands_from_string_mv1(_SliceUtf8 s);
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_fixed_decimal_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_fixed_decimal_mv1(ffi.Pointer<ffi.Opaque> x);
+
+@_DiplomatFfiUse('icu4x_PluralOperands_is_exactly_one_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_is_exactly_one_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_PluralOperands_is_exactly_one_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_PluralOperands_is_exactly_zero_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_is_exactly_zero_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_PluralOperands_is_exactly_zero_mv1(ffi.Pointer<ffi.Opaque> self);
 
 // dart format on

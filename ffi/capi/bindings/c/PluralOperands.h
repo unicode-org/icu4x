@@ -22,6 +22,10 @@ icu4x_PluralOperands_from_string_mv1_result icu4x_PluralOperands_from_string_mv1
 
 PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const Decimal* x);
 
+bool icu4x_PluralOperands_is_exactly_one_mv1(const PluralOperands* self);
+
+bool icu4x_PluralOperands_is_exactly_zero_mv1(const PluralOperands* self);
+
 
 void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
 

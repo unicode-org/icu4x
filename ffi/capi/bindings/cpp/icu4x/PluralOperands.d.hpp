@@ -33,6 +33,10 @@ public:
 
   inline static std::unique_ptr<icu4x::PluralOperands> from_fixed_decimal(const icu4x::Decimal& x);
 
+  inline bool is_exactly_one() const;
+
+  inline bool is_exactly_zero() const;
+
   inline const icu4x::capi::PluralOperands* AsFFI() const;
   inline icu4x::capi::PluralOperands* AsFFI();
   inline static const icu4x::PluralOperands* FromFFI(const icu4x::capi::PluralOperands* ptr);
