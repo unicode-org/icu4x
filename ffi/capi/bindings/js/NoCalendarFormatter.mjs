@@ -8,17 +8,17 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
+/** An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
 *
-*See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.TimeFormatter.html) for more information.
+*See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
 *
 *Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
 */
-const TimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_TimeFormatter_destroy_mv1(ptr);
+const NoCalendarFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_NoCalendarFormatter_destroy_mv1(ptr);
 });
 
-export class TimeFormatter {
+export class NoCalendarFormatter {
     
     // Internal ptr reference:
     #ptr = null;
@@ -29,7 +29,7 @@ export class TimeFormatter {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("TimeFormatter is an Opaque type. You cannot call its constructor.");
+            console.error("NoCalendarFormatter is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -38,7 +38,7 @@ export class TimeFormatter {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            TimeFormatter_box_destroy_registry.register(this, this.#ptr);
+            NoCalendarFormatter_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -50,14 +50,14 @@ export class TimeFormatter {
     static createWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeFormatter_create_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_NoCalendarFormatter_create_with_length_mv1(diplomatReceive.buffer, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new NoCalendarFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -68,14 +68,14 @@ export class TimeFormatter {
     static createWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TimeFormatter_create_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
+        const result = wasm.icu4x_NoCalendarFormatter_create_with_length_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, length.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new NoCalendarFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -85,7 +85,7 @@ export class TimeFormatter {
 
     format(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TimeFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_NoCalendarFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
             return write.readString8();

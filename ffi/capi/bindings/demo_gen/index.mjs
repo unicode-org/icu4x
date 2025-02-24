@@ -9,8 +9,8 @@ import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
 import * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
 export * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
-import * as TimeFormatterDemo from "./TimeFormatter.mjs";
-export * as TimeFormatterDemo from "./TimeFormatter.mjs";
+import * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
+export * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 import * as DecimalDemo from "./Decimal.mjs";
@@ -365,20 +365,20 @@ let termini = Object.assign({
         ]
     },
 
-    "TimeFormatter.format": {
-        func: TimeFormatterDemo.format,
+    "NoCalendarFormatter.format": {
+        func: NoCalendarFormatterDemo.format,
         // For avoiding webpacking minifying issues:
-        funcName: "TimeFormatter.format",
+        funcName: "NoCalendarFormatter.format",
         parameters: [
             
             {
-                name: "TimeFormatter:Locale:Name",
+                name: "NoCalendarFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "TimeFormatter:Length",
+                name: "NoCalendarFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },

@@ -81,12 +81,12 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// use icu::datetime::provider::fields::components;
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::TimeFormatter;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 /// use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
 /// use writeable::assert_writeable_eq;
 ///
-/// let pattern = TimeFormatter::try_new(
+/// let pattern = NoCalendarFormatter::try_new(
 ///     locale!("es-MX").into(),
 ///     T::medium(),
 /// )
