@@ -126,15 +126,15 @@ impl WindowsParserBorrowed<'_> {
     /// let win_tz_mapper = WindowsParser::new();
     ///
     /// let bcp47_id =
-    ///     win_tz_mapper.windows_tz_to_bcp47_id("Central Standard Time", None);
+    ///     win_tz_mapper.parse("Central Standard Time", None);
     /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
     ///
     /// let bcp47_id = win_tz_mapper
-    ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("US")));
+    ///     .parse("Central Standard Time", Some(region!("US")));
     /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
     ///
     /// let bcp47_id = win_tz_mapper
-    ///     .windows_tz_to_bcp47_id("Central Standard Time", Some(region!("CA")));
+    ///     .parse("Central Standard Time", Some(region!("CA")));
     /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "cawnp"))));
     /// ```
     pub fn parse(self, windows_tz: &str, region: Option<Region>) -> Option<TimeZone> {
