@@ -11,7 +11,7 @@ use zerovec::{maps::ZeroMapKV, ZeroMap2d};
 ///
 /// Some data structs can be represented compactly as a single [`VarULE`],
 /// such as `str` or a packed pattern. This trait allows for data providers
-/// to use storage optimizations for such types.
+/// to use optimizations for such types.
 ///
 /// ❗ Not all data structs benefit from this optimization. It works best when the
 /// data struct is multiplied across a large number of data marker attributes.
