@@ -22,7 +22,7 @@
 //! resource-constrained environments.
 //!
 //! The formatters accept input types from the [`calendar`](icu_calendar) and
-//! [`timezone`](icu_time) crates:
+//! [`timezone`](icu_time) crates (Also reexported from the [`input`] module of this crate):
 //!
 //! 1. [`Date`](icu_calendar::Date)
 //! 2. [`DateTime`](icu_time::DateTime)
@@ -142,6 +142,9 @@ pub mod input {
     /// **This is a reexport of a type in [`icu_time`]**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_time::TimeZone;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZoneInfo;
     /// **This is a reexport of a type in [`icu_time`]**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_time::ZonedDateTime;

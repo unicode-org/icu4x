@@ -22,7 +22,7 @@ options, and calendar systems. Additional formatter types are available to devel
 resource-constrained environments.
 
 The formatters accept input types from the [`calendar`](icu_calendar) and
-[`timezone`](icu_time) crates:
+[`timezone`](icu_time) crates (Also reexported from the [`input`] module of this crate):
 
 1. [`Date`](icu_calendar::Date)
 2. [`DateTime`](icu_time::DateTime)
