@@ -139,9 +139,8 @@
         - Mmke litemap no-alloc (unicode-org#6077)
     - `potential_utf`: `0.1.1 -> 0.1.2`
         - No changes other than general cross-crate changes
-    - `tinystr`: `0.8.0 -> 0.9.0`
+    - `tinystr`: `0.8.0 -> 0.8.1`
         - Add explicit features list to Cargo.toml (unicode-org#6040)
-        - Remove `std` feature (unicode-org#5973)
     - `tzif`: `0.3.0 -> 0.4.0`
         - Rename `ZoneVariantInfo` to `TimeZoneVariantInfo` (unicode-org#6123)
         - Preserve stucture of timezone designation list (unicode-org#5581)
@@ -154,11 +153,10 @@
         - No changes other than general cross-crate changes
     - `zerotrie`: `0.2.0 -> 0.2.1`
         - Improved unsafe code (unicode-org#6054)
-    - `zerovec`, `zerovec_derive`: `0.11.0 -> 0.12.0`
+    - `zerovec`, `zerovec_derive`: `0.11.0 -> 0.11.1`
         - derive: Reduce number of panicky calls introduced by derive (unicode-org#6052)
         - Add `VarZeroSliceIter`, `ZeroSliceIter` (unicode-org#5924)
         - Add manual eyepatch to `VarZeroCow` (unicode-org#6189)
-        - Remove `std` feature (unicode-org#5973)
 
 ## icu4x 2.0-beta1
 
