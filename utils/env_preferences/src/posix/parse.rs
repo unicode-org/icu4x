@@ -11,7 +11,7 @@ use icu_locale::{LanguageIdentifier, Locale};
 use super::aliases::get_bcp47_subtags_from_posix_alias;
 
 #[derive(Display, Debug, PartialEq)]
-pub enum ParseError {
+pub enum PosixParseError {
     #[displaydoc("Empty locale")]
     EmptyLocale,
     #[displaydoc("Empty section beginning at offset {offset}")]
@@ -55,7 +55,7 @@ enum Delimiter {
 
 impl Delimiter {
     /// Find any optional sections, returning an error if the delimiters are invalid
-    pub fn try_find_sections(src: &str) -> Result<Vec<(usize, Self)>, ParseError> {
+    pub fn try_find_sections(src: &str) -> Result<Vec<(usize, Self)>, PosixParseError> {
         // Find the offset and delimiter of each optional section
         let optional_sections = src
             .chars()
@@ -77,7 +77,7 @@ impl Delimiter {
                 .skip(index + 1)
                 .find(|(_second_offset, second_delimiter)| first_delimiter == second_delimiter)
             {
-                return Err(ParseError::RepeatedDelimiter {
+                return Err(PosixParseError::RepeatedDelimiter {
                     first_offset: *first_offset,
                     second_offset: *second_offset,
                 });
@@ -87,7 +87,7 @@ impl Delimiter {
             // For example "en.utf8_US" is invalid because codeset appears before territory
             if let Some((second_offset, second_delimiter)) = optional_sections.get(index + 1) {
                 if first_delimiter > second_delimiter {
-                    return Err(ParseError::UnorderedDelimiter {
+                    return Err(PosixParseError::UnorderedDelimiter {
                         first_offset: *first_offset,
                         second_offset: *second_offset,
                     });
@@ -117,19 +117,19 @@ impl<'src> PosixLocale<'src> {
     ///
     /// See section 8.2 of the POSIX spec for more details:
     /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html#tag_08_02>
-    pub fn try_from_str(src: &'src str) -> Result<Self, ParseError> {
+    pub fn try_from_str(src: &'src str) -> Result<Self, PosixParseError> {
         // These cases are implementation-defined and can be ignored:
         // - Empty locales
         if src.is_empty() {
-            return Err(ParseError::EmptyLocale);
+            return Err(PosixParseError::EmptyLocale);
         }
         // - Any locale containing '/'
         if let Some(offset) = src.find('/') {
-            return Err(ParseError::InvalidCharacter { offset });
+            return Err(PosixParseError::InvalidCharacter { offset });
         }
         // - Locales consisting of "." or ".."
         if src == "." || src == ".." {
-            return Err(ParseError::InvalidLocale);
+            return Err(PosixParseError::InvalidLocale);
         }
 
         // Find any optional sections, and return any delimiter-related errors
@@ -143,7 +143,7 @@ impl<'src> PosixLocale<'src> {
 
         // Make sure the language itself is non-empty
         if language.is_empty() {
-            return Err(ParseError::EmptySection { offset: 0 });
+            return Err(PosixParseError::EmptySection { offset: 0 });
         }
 
         let mut locale = Self {
@@ -162,7 +162,7 @@ impl<'src> PosixLocale<'src> {
 
             // Make sure this section is non-empty (more characters than just the delimiter)
             if start_offset + 1 >= end_offset {
-                return Err(ParseError::EmptySection {
+                return Err(PosixParseError::EmptySection {
                     offset: *start_offset,
                 });
             }
