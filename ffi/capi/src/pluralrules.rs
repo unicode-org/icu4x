@@ -130,6 +130,14 @@ pub mod ffi {
             ))))
         }
 
+        /// Construct for a given integer
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_integer(int: i64) -> Box<PluralOperands> {
+            Box::new(PluralOperands(icu_plurals::PluralOperands::from(
+                int,
+            )))
+        }
+
         /// Construct from a FixedDecimal
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.

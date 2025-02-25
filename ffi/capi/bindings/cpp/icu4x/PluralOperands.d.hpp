@@ -31,6 +31,8 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError> from_string(std::string_view s);
 
+  inline static std::unique_ptr<icu4x::PluralOperands> from_integer(int64_t int);
+
   inline static std::unique_ptr<icu4x::PluralOperands> from_fixed_decimal(const icu4x::Decimal& x);
 
   inline const icu4x::capi::PluralOperands* AsFFI() const;

@@ -64,6 +64,16 @@ export class PluralOperands {
         }
     }
 
+    static fromInteger(int) {
+        const result = wasm.icu4x_PluralOperands_from_integer_mv1(int);
+    
+        try {
+            return new PluralOperands(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
     static fromFixedDecimal(x) {
         const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
     
