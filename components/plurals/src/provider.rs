@@ -126,6 +126,11 @@ pub struct PluralRulesData<'data> {
     pub many: Option<Rule<'data>>,
 }
 
+icu_provider::data_struct_new!(
+    PluralRulesData<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 #[cfg(feature = "experimental")]
 pub use ranges::*;
 
@@ -345,6 +350,11 @@ mod ranges {
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
     }
+
+    icu_provider::data_struct_new!(
+        PluralRanges<'_>,
+        #[cfg(feature = "datagen")]
+    );
 }
 
 /// A sized packed [`PluralElements`] suitable for use in data structs.

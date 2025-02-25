@@ -1555,6 +1555,7 @@ dependencies = [
  "proc-macro2",
  "writeable",
  "zerotrie",
+ "zerovec",
 ]
 
 [[package]]
