@@ -9,13 +9,6 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "heure d’été de l’Acre"
-    ],
-    [
-      [
         6,
         "Standard"
       ],
@@ -27,20 +20,6 @@
         "Daylight"
       ],
       "heure d’été d’Afrique de l’Ouest"
-    ],
-    [
-      [
-        7,
-        "Standard"
-      ],
-      "heure normale d’Alma Ata"
-    ],
-    [
-      [
-        7,
-        "Daylight"
-      ],
-      "heure d’été d’Alma Ata"
     ],
     [
       [
@@ -135,13 +114,6 @@
     ],
     [
       [
-        14,
-        "Daylight"
-      ],
-      "heure d’été d’Anadyr"
-    ],
-    [
-      [
         15,
         "Standard"
       ],
@@ -156,38 +128,10 @@
     ],
     [
       [
-        16,
-        "Standard"
-      ],
-      "heure normale d’Aktaou"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "heure d’été d’Aktaou"
-    ],
-    [
-      [
-        17,
-        "Standard"
-      ],
-      "heure normale d’Aqtöbe"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
       "heure normale de l’Arabie"
-    ],
-    [
-      [
-        18,
-        "Daylight"
-      ],
-      "heure d’été de l’Arabie"
     ],
     [
       [
@@ -198,38 +142,10 @@
     ],
     [
       [
-        19,
-        "Daylight"
-      ],
-      "heure d’été de l’Argentine"
-    ],
-    [
-      [
         20,
         "Standard"
       ],
       "heure normale de l’Arménie"
-    ],
-    [
-      [
-        20,
-        "Daylight"
-      ],
-      "heure d’été d’Arménie"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "heure normale de l’Ouest argentin"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "heure d’été de l’Ouest argentin"
     ],
     [
       [
@@ -268,13 +184,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "heure d’été du centre-ouest de l’Australie"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -293,13 +202,6 @@
         "Standard"
       ],
       "heure normale de l’Ouest de l’Australie"
-    ],
-    [
-      [
-        26,
-        "Daylight"
-      ],
-      "heure d’été de l’Ouest de l’Australie"
     ],
     [
       [
@@ -335,13 +237,6 @@
         "Standard"
       ],
       "heure normale du Bangladesh"
-    ],
-    [
-      [
-        29,
-        "Daylight"
-      ],
-      "heure d’été du Bangladesh"
     ],
     [
       [
@@ -401,13 +296,6 @@
     ],
     [
       [
-        39,
-        "Daylight"
-      ],
-      "heure d’été de Chine"
-    ],
-    [
-      [
         42,
         "Standard"
       ],
@@ -415,24 +303,10 @@
     ],
     [
       [
-        42,
-        "Daylight"
-      ],
-      "heure d’été de Colombie"
-    ],
-    [
-      [
         43,
         "Standard"
       ],
       "heure normale des îles Cook"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "heure d’été des îles Cook"
     ],
     [
       [
@@ -513,13 +387,6 @@
     ],
     [
       [
-        54,
-        "Daylight"
-      ],
-      "heure d’été des îles Malouines"
-    ],
-    [
-      [
         55,
         "Standard"
       ],
@@ -538,13 +405,6 @@
         "Standard"
       ],
       "heure normale de la Géorgie"
-    ],
-    [
-      [
-        60,
-        "Daylight"
-      ],
-      "heure d’été de Géorgie"
     ],
     [
       [
@@ -597,13 +457,6 @@
     ],
     [
       [
-        69,
-        "Daylight"
-      ],
-      "heure d’été de Hong Kong"
-    ],
-    [
-      [
         70,
         "Standard"
       ],
@@ -639,13 +492,6 @@
     ],
     [
       [
-        78,
-        "Daylight"
-      ],
-      "heure d’été d’Irkoutsk"
-    ],
-    [
-      [
         79,
         "Standard"
       ],
@@ -674,13 +520,6 @@
     ],
     [
       [
-        82,
-        "Daylight"
-      ],
-      "heure d’été de Petropavlovsk-Kamchatski"
-    ],
-    [
-      [
         85,
         "Standard"
       ],
@@ -688,24 +527,10 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "heure d’été de Corée"
-    ],
-    [
-      [
         87,
         "Standard"
       ],
       "heure normale de Krasnoïarsk"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "heure d’été de Krasnoïarsk"
     ],
     [
       [
@@ -730,24 +555,10 @@
     ],
     [
       [
-        93,
-        "Daylight"
-      ],
-      "heure d’été de Magadan"
-    ],
-    [
-      [
         98,
         "Standard"
       ],
       "heure normale de Maurice"
-    ],
-    [
-      [
-        98,
-        "Daylight"
-      ],
-      "heure d’été de Maurice"
     ],
     [
       [
@@ -786,24 +597,10 @@
     ],
     [
       [
-        103,
-        "Daylight"
-      ],
-      "heure d’été de Moscou"
-    ],
-    [
-      [
         106,
         "Standard"
       ],
       "heure normale de la Nouvelle-Calédonie"
-    ],
-    [
-      [
-        106,
-        "Daylight"
-      ],
-      "heure d’été de Nouvelle-Calédonie"
     ],
     [
       [
@@ -856,24 +653,10 @@
     ],
     [
       [
-        113,
-        "Daylight"
-      ],
-      "heure d’été de Fernando de Noronha"
-    ],
-    [
-      [
         114,
         "Standard"
       ],
       "heure normale de Novossibirsk"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "heure d’été de Novossibirsk"
     ],
     [
       [
@@ -884,24 +667,10 @@
     ],
     [
       [
-        115,
-        "Daylight"
-      ],
-      "heure d’été de Omsk"
-    ],
-    [
-      [
         116,
         "Standard"
       ],
       "heure normale du Pakistan"
-    ],
-    [
-      [
-        116,
-        "Daylight"
-      ],
-      "heure d’été du Pakistan"
     ],
     [
       [
@@ -926,24 +695,10 @@
     ],
     [
       [
-        120,
-        "Daylight"
-      ],
-      "heure d’été du Pérou"
-    ],
-    [
-      [
         121,
         "Standard"
       ],
       "heure normale des Philippines"
-    ],
-    [
-      [
-        121,
-        "Daylight"
-      ],
-      "heure d’été des Philippines"
     ],
     [
       [
@@ -968,24 +723,10 @@
     ],
     [
       [
-        130,
-        "Daylight"
-      ],
-      "heure d’été de Sakhaline"
-    ],
-    [
-      [
         131,
         "Standard"
       ],
       "heure normale de Samara"
-    ],
-    [
-      [
-        131,
-        "Daylight"
-      ],
-      "heure d’été de Samara"
     ],
     [
       [
@@ -1000,13 +741,6 @@
         "Standard"
       ],
       "heure normale de Taipei"
-    ],
-    [
-      [
-        140,
-        "Daylight"
-      ],
-      "heure d’été de Taipei"
     ],
     [
       [
@@ -1031,24 +765,10 @@
     ],
     [
       [
-        145,
-        "Daylight"
-      ],
-      "heure d’été du Turkménistan"
-    ],
-    [
-      [
         147,
         "Standard"
       ],
       "heure normale de l’Uruguay"
-    ],
-    [
-      [
-        147,
-        "Daylight"
-      ],
-      "heure d’été de l’Uruguay"
     ],
     [
       [
@@ -1059,24 +779,10 @@
     ],
     [
       [
-        148,
-        "Daylight"
-      ],
-      "heure d’été de l’Ouzbékistan"
-    ],
-    [
-      [
         149,
         "Standard"
       ],
       "heure normale du Vanuatu"
-    ],
-    [
-      [
-        149,
-        "Daylight"
-      ],
-      "heure d’été de Vanuatu"
     ],
     [
       [
@@ -1087,24 +793,10 @@
     ],
     [
       [
-        151,
-        "Daylight"
-      ],
-      "heure d’été de Vladivostok"
-    ],
-    [
-      [
         152,
         "Standard"
       ],
       "heure normale de Volgograd"
-    ],
-    [
-      [
-        152,
-        "Daylight"
-      ],
-      "heure d’été de Volgograd"
     ],
     [
       [
@@ -1115,24 +807,10 @@
     ],
     [
       [
-        156,
-        "Daylight"
-      ],
-      "heure d’été de Iakoutsk"
-    ],
-    [
-      [
         157,
         "Standard"
       ],
       "heure normale d’Ekaterinbourg"
-    ],
-    [
-      [
-        157,
-        "Daylight"
-      ],
-      "heure d’été d’Ekaterinbourg"
     ]
   ],
   "overrides": [
@@ -1173,13 +851,11 @@
     46,
     48,
     49,
-    52,
     56,
     57,
     58,
     59,
     61,
-    65,
     66,
     67,
     71,
@@ -1204,7 +880,6 @@
     105,
     107,
     110,
-    111,
     117,
     118,
     122,
