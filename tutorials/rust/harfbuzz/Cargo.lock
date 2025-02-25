@@ -151,7 +151,7 @@ checksum = "2b2b09c6c4711837cc213910511345490ee139c6dbb368800f775b6a53b373ec"
 
 [[package]]
 name = "icu_collections"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "potential_utf",
@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_core"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -184,7 +184,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -197,14 +197,14 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "icu_provider_baked",
 ]
 
 [[package]]
 name = "icu_properties"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -218,14 +218,14 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "icu_provider_baked",
 ]
 
 [[package]]
 name = "icu_provider"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
@@ -240,16 +240,17 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_baked"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "icu_provider",
  "writeable",
  "zerotrie",
+ "zerovec",
 ]
 
 [[package]]
 name = "icu_provider_macros"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -264,7 +265,7 @@ checksum = "433bfe06b8c75da9b2e3fbea6e5329ff87748f0b144ef75306e674c3f6f7c13f"
 
 [[package]]
 name = "litemap"
-version = "0.7.4"
+version = "0.7.5"
 
 [[package]]
 name = "pkg-config"
@@ -274,9 +275,8 @@ checksum = "953ec861398dccce10c670dfeaf3ec4911ca479e9c02154b3a215178c5f566f2"
 
 [[package]]
 name = "potential_utf"
-version = "0.1.1-dev"
+version = "0.1.2"
 dependencies = [
- "serde",
  "zerovec",
 ]
 
@@ -360,7 +360,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "displaydoc",
  "zerovec",
@@ -404,11 +404,11 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "writeable"
-version = "0.6.0"
+version = "0.6.1"
 
 [[package]]
 name = "yoke"
-version = "0.7.5"
+version = "0.8.0"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -418,7 +418,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.5"
+version = "0.8.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -428,14 +428,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -445,7 +445,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -454,7 +454,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.1-dev"
+version = "0.11.1"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -463,7 +463,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.0"
+version = "0.11.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -492,15 +492,15 @@ version = "0.1.7"
 
 [[patch.unused]]
 name = "fixed_decimal"
-version = "0.6.0"
+version = "0.7.0"
 
 [[patch.unused]]
 name = "icu"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu4x-datagen"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
@@ -512,23 +512,23 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_calendar"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_calendar_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_capi"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_casemap"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_casemap_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
@@ -536,111 +536,111 @@ version = "0.4.0"
 
 [[patch.unused]]
 name = "icu_collator"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_collator_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_datetime"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_datetime_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_decimal"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_decimal_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.2.0"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_experimental_data"
-version = "0.2.0-dev"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_freertos"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_list"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_list_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_locale"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_locale_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_pattern"
-version = "0.3.0"
+version = "0.4.0"
 
 [[patch.unused]]
 name = "icu_plurals"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_plurals_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_adapters"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_blob"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_export"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_fs"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_registry"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_segmenter"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_segmenter_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_time"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_time_data"
-version = "2.0.0-dev"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.3.0"
+version = "0.4.0"
 
 [[patch.unused]]
 name = "tzif"

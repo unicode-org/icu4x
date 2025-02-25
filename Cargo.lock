@@ -1261,7 +1261,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1300,7 +1300,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.2.0-dev"
+version = "0.3.0"
 dependencies = [
  "icu_locale",
  "icu_provider_baked",
@@ -1435,7 +1435,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "databake",
  "displaydoc",
