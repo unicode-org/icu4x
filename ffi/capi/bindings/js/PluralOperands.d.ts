@@ -14,7 +14,7 @@ export class PluralOperands {
 
     static fromString(s: string): PluralOperands;
 
-    static fromInteger(int: bigint): PluralOperands;
+    static fromInt64(i: bigint): PluralOperands;
 
     static fromFixedDecimal(x: Decimal): PluralOperands;
 }

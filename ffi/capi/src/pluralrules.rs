@@ -46,6 +46,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesOptions, Struct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesOptions::default, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::plurals::PluralRulesOptions::with_type, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
         pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
@@ -132,10 +135,8 @@ pub mod ffi {
 
         /// Construct for a given integer
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_integer(int: i64) -> Box<PluralOperands> {
-            Box::new(PluralOperands(icu_plurals::PluralOperands::from(
-                int,
-            )))
+        pub fn from_int64(i: i64) -> Box<PluralOperands> {
+            Box::new(PluralOperands(icu_plurals::PluralOperands::from(int)))
         }
 
         /// Construct from a FixedDecimal

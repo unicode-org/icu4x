@@ -38,8 +38,8 @@ final class PluralOperands implements ffi.Finalizable {
   }
 
   /// Construct for a given integer
-  factory PluralOperands.fromInteger(int int) {
-    final result = _icu4x_PluralOperands_from_integer_mv1(int);
+  factory PluralOperands.fromInt64(int i) {
+    final result = _icu4x_PluralOperands_from_int64_mv1(i);
     return PluralOperands._fromFfi(result, []);
   }
 
@@ -62,10 +62,10 @@ external void _icu4x_PluralOperands_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PluralOperands_from_string_mv1(_SliceUtf8 s);
 
-@_DiplomatFfiUse('icu4x_PluralOperands_from_integer_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_integer_mv1')
+@_DiplomatFfiUse('icu4x_PluralOperands_from_int64_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_int64_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_integer_mv1(int int);
+external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_int64_mv1(int i);
 
 @_DiplomatFfiUse('icu4x_PluralOperands_from_fixed_decimal_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_fixed_decimal_mv1')

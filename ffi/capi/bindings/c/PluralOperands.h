@@ -20,7 +20,7 @@
 typedef struct icu4x_PluralOperands_from_string_mv1_result {union {PluralOperands* ok; FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_from_string_mv1_result;
 icu4x_PluralOperands_from_string_mv1_result icu4x_PluralOperands_from_string_mv1(DiplomatStringView s);
 
-PluralOperands* icu4x_PluralOperands_from_integer_mv1(int64_t int);
+PluralOperands* icu4x_PluralOperands_from_int64_mv1(int64_t i);
 
 PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const Decimal* x);
 
