@@ -125,7 +125,7 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "two-digit",
-                    "fractional_second": 0
+                    "subsecond": 0
                 },
                 "semantic": {
                     "timePrecision": "second"
@@ -147,10 +147,10 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "two-digit",
-                    "fractional_second": 9
+                    "subsecond": 9
                 },
                 "semantic": {
-                    "timePrecision": "secondF9"
+                    "timePrecision": "subsecond9"
                 },
                 "hourCycle": "h23"
             }

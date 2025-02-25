@@ -192,7 +192,7 @@ impl IanaParserBorrowed<'static> {
     }
 }
 
-impl IanaParserBorrowed<'_> {
+impl<'a> IanaParserBorrowed<'a> {
     /// Gets the BCP-47 time zone ID from an IANA time zone ID
     /// with a case-insensitive lookup.
     ///
@@ -259,7 +259,7 @@ impl IanaParserBorrowed<'_> {
     ///
     /// assert!(ids.contains(&TimeZone(tinystr!(8, "uaiev"))));
     /// ```
-    pub fn iter(&self) -> TimeZoneIter {
+    pub fn iter(&self) -> TimeZoneIter<'a> {
         TimeZoneIter {
             inner: self.data.bcp47_ids.iter(),
         }

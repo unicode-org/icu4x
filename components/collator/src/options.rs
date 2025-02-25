@@ -33,7 +33,7 @@ pub enum Strength {
     /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
@@ -47,7 +47,7 @@ pub enum Strength {
     /// to the ECMA-402 sensitivity "accent".
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Secondary);
@@ -71,7 +71,7 @@ pub enum Strength {
     /// sensitivity "variant".
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     /// use icu::locale::locale;
     ///
     /// let mut options = CollatorOptions::default();
@@ -116,7 +116,7 @@ pub enum Strength {
     /// level.
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     /// use icu::locale::locale;
     ///
     /// let mut options = CollatorOptions::default();
@@ -152,7 +152,7 @@ pub enum Strength {
     /// distinguishing full-width and half-width forms.
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     /// use icu::locale::locale;
     ///
     /// let mut options = CollatorOptions::default();
@@ -242,7 +242,7 @@ pub enum BackwardSecondLevel {
 /// Options settable by the user of the API.
 ///
 /// With the exception of reordering (BCP47 `kr`), options that can by implied by locale are
-/// set via [`CollatorPreferences`][crate::CollatorPreferences].
+/// set via [`CollatorPreferences`].
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options).
 ///

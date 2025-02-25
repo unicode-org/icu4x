@@ -22,7 +22,7 @@
 //! resource-constrained environments.
 //!
 //! The formatters accept input types from the [`calendar`](icu_calendar) and
-//! [`timezone`](icu_time) crates:
+//! [`timezone`](icu_time) crates (Also reexported from the [`input`] module of this crate):
 //!
 //! 1. [`Date`](icu_calendar::Date)
 //! 2. [`DateTime`](icu_time::DateTime)
@@ -44,12 +44,12 @@
 //! | Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 //! | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 //!
-//! If formatting times and time zones without dates, consider using [`TimeFormatter`].
+//! If formatting times and time zones without dates, consider using [`NoCalendarFormatter`].
 //!
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::Date;
+//! use icu::datetime::input::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
@@ -94,7 +94,6 @@ mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
-pub mod input;
 mod neo;
 pub mod options;
 pub mod parts;
@@ -110,7 +109,7 @@ pub use neo::DateTimeFormatter;
 pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
-pub use neo::TimeFormatter;
+pub use neo::NoCalendarFormatter;
 pub use options::Length;
 
 /// Locale preferences used by this crate
@@ -124,4 +123,29 @@ pub mod preferences {
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
+
+/// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
+pub mod input {
+    /// **This is a reexport of a type in [`icu_calendar`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_calendar::Date;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::zone::UtcOffset;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::DateTime;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::Time;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZone;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZoneInfo;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::ZonedDateTime;
 }

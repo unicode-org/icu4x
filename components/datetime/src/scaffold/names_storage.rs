@@ -37,6 +37,7 @@ pub trait DateTimeNamesMarker: UnstableSealed {
     type ZoneExemplarsRoot: NamesContainer<tz::ExemplarCitiesRootV1, ()>;
     type ZoneGenericLong: NamesContainer<tz::MzGenericLongV1, ()>;
     type ZoneGenericShort: NamesContainer<tz::MzGenericShortV1, ()>;
+    type ZoneStandardLong: NamesContainer<tz::MzStandardLongV1, ()>;
     type ZoneSpecificLong: NamesContainer<tz::MzSpecificLongV1, ()>;
     type ZoneSpecificShort: NamesContainer<tz::MzSpecificShortV1, ()>;
     type MetazoneLookup: NamesContainer<tz::MzPeriodV1, ()>;
@@ -86,6 +87,7 @@ impl_holder_trait!(tz::ExemplarCitiesV1);
 impl_holder_trait!(tz::ExemplarCitiesRootV1);
 impl_holder_trait!(tz::MzGenericLongV1);
 impl_holder_trait!(tz::MzGenericShortV1);
+impl_holder_trait!(tz::MzStandardLongV1);
 impl_holder_trait!(tz::MzSpecificLongV1);
 impl_holder_trait!(tz::MzSpecificShortV1);
 impl_holder_trait!(tz::MzPeriodV1);
@@ -391,6 +393,9 @@ pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
     fn map_zone_generic_short(
         other: <M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
     ) -> <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container;
+    fn map_zone_standard_long(
+        other: <M::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container,
+    ) -> <Self::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container;
     fn map_zone_specific_long(
         other: <M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container,
     ) -> <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container;
@@ -428,6 +433,8 @@ where
         From<<M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container>,
     <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container:
         From<<M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container>,
+    <Self::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container:
+        From<<M::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container>,
     <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container:
         From<<M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container>,
     <Self::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1, ()>>::Container:
@@ -500,6 +507,12 @@ where
     fn map_zone_generic_short(
         other: <M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
     ) -> <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_standard_long(
+        other: <M::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container,
+    ) -> <Self::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container {
         other.into()
     }
     #[inline]

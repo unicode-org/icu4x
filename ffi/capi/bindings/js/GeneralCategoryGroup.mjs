@@ -27,7 +27,7 @@ export class GeneralCategoryGroup {
     static fromFields(structObj) {
         return new GeneralCategoryGroup(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("GeneralCategoryGroup's constructor takes an object of GeneralCategoryGroup's fields.");

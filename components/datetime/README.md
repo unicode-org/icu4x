@@ -22,7 +22,7 @@ options, and calendar systems. Additional formatter types are available to devel
 resource-constrained environments.
 
 The formatters accept input types from the [`calendar`](icu_calendar) and
-[`timezone`](icu_time) crates:
+[`timezone`](icu_time) crates (Also reexported from the [`input`] module of this crate):
 
 1. [`Date`](icu_calendar::Date)
 2. [`DateTime`](icu_time::DateTime)
@@ -44,12 +44,12 @@ and calendar systems:
 | Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 
-If formatting times and time zones without dates, consider using [`TimeFormatter`].
+If formatting times and time zones without dates, consider using [`NoCalendarFormatter`].
 
 ## Examples
 
 ```rust
-use icu::calendar::Date;
+use icu::datetime::input::Date;
 use icu::datetime::fieldsets;
 use icu::datetime::DateTimeFormatter;
 use icu::locale::{locale, Locale};

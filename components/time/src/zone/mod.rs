@@ -304,8 +304,10 @@ impl TimeZoneInfo<models::AtTime> {
         };
         self.with_zone_variant(zone_variant)
     }
+}
 
-    /// Sets a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with
+impl TimeZoneVariant {
+    /// Creates a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with
     /// `DATAFORM=rearguard`.
     ///
     /// If it is known that the database was *not* built with `rearguard`, a caller can try to adjust
@@ -315,12 +317,12 @@ impl TimeZoneInfo<models::AtTime> {
     /// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24
     /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
     ///
-    /// If the TZDB build mode is unknown or variable, use [`Self::infer_zone_variant`].
-    pub const fn with_rearguard_isdst(self, isdst: bool) -> TimeZoneInfo<models::Full> {
-        self.with_zone_variant(if isdst {
+    /// If the TZDB build mode is unknown or variable, use [`TimeZoneInfo::infer_zone_variant`].
+    pub const fn from_rearguard_isdst(isdst: bool) -> Self {
+        if isdst {
             TimeZoneVariant::Daylight
         } else {
             TimeZoneVariant::Standard
-        })
+        }
     }
 }

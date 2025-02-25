@@ -9,41 +9,6 @@
     ],
     [
       [
-        1,
-        "Daylight"
-      ],
-      "Akre letnje računanje vremena"
-    ],
-    [
-      [
-        2,
-        "Standard"
-      ],
-      "Centralno-afričko vreme"
-    ],
-    [
-      [
-        3,
-        "Standard"
-      ],
-      "Istočno-afričko vreme"
-    ],
-    [
-      [
-        4,
-        "Standard"
-      ],
-      "Avganistan vreme"
-    ],
-    [
-      [
-        5,
-        "Standard"
-      ],
-      "Južno-afričko vreme"
-    ],
-    [
-      [
         6,
         "Standard"
       ],
@@ -55,20 +20,6 @@
         "Daylight"
       ],
       "Zapadno-afričko letnje vreme"
-    ],
-    [
-      [
-        7,
-        "Standard"
-      ],
-      "Almati standardno vreme"
-    ],
-    [
-      [
-        7,
-        "Daylight"
-      ],
-      "Almati letnje računanje vremena"
     ],
     [
       [
@@ -163,13 +114,6 @@
     ],
     [
       [
-        14,
-        "Daylight"
-      ],
-      "Anadir letnje računanje vremena"
-    ],
-    [
-      [
         15,
         "Standard"
       ],
@@ -184,34 +128,6 @@
     ],
     [
       [
-        16,
-        "Standard"
-      ],
-      "Akvatau standardno vreme"
-    ],
-    [
-      [
-        16,
-        "Daylight"
-      ],
-      "Akvatau letnje računanje vremena"
-    ],
-    [
-      [
-        17,
-        "Standard"
-      ],
-      "Akutobe standardno vreme"
-    ],
-    [
-      [
-        17,
-        "Daylight"
-      ],
-      "Akutobe letnje računanje vremena"
-    ],
-    [
-      [
         18,
         "Standard"
       ],
@@ -219,38 +135,10 @@
     ],
     [
       [
-        18,
-        "Daylight"
-      ],
-      "Arabijsko letnje vreme"
-    ],
-    [
-      [
         19,
         "Standard"
       ],
       "Argentina, standardno vreme"
-    ],
-    [
-      [
-        19,
-        "Daylight"
-      ],
-      "Argentina, letnje vreme"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "Zapadna Argentina, standardno vreme"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "Zapadna Argentina, letnje vreme"
     ],
     [
       [
@@ -289,13 +177,6 @@
     ],
     [
       [
-        24,
-        "Daylight"
-      ],
-      "Australijsko centralno zapadno letnje vreme"
-    ],
-    [
-      [
         25,
         "Standard"
       ],
@@ -317,27 +198,6 @@
     ],
     [
       [
-        26,
-        "Daylight"
-      ],
-      "Australijsko zapadno letnje vreme"
-    ],
-    [
-      [
-        30,
-        "Standard"
-      ],
-      "Butan vreme"
-    ],
-    [
-      [
-        31,
-        "Standard"
-      ],
-      "Bolivija vreme"
-    ],
-    [
-      [
         32,
         "Standard"
       ],
@@ -352,31 +212,10 @@
     ],
     [
       [
-        33,
-        "Standard"
-      ],
-      "Brunej Darusalum vreme"
-    ],
-    [
-      [
-        36,
-        "Standard"
-      ],
-      "Čamoro vreme"
-    ],
-    [
-      [
         38,
         "Standard"
       ],
       "Čile, standardno vreme"
-    ],
-    [
-      [
-        38,
-        "Daylight"
-      ],
-      "Čile, letnje vreme"
     ],
     [
       [
@@ -387,52 +226,10 @@
     ],
     [
       [
-        39,
-        "Daylight"
-      ],
-      "Kina, letnje vreme"
-    ],
-    [
-      [
-        40,
-        "Standard"
-      ],
-      "Božićno ostrvo vreme"
-    ],
-    [
-      [
-        41,
-        "Standard"
-      ],
-      "Kokos (Keling) Ostrva vreme"
-    ],
-    [
-      [
         43,
         "Standard"
       ],
       "Kukova ostrva, standardno vreme"
-    ],
-    [
-      [
-        43,
-        "Daylight"
-      ],
-      "Kukova ostrva, polu-letnje vreme"
-    ],
-    [
-      [
-        45,
-        "Standard"
-      ],
-      "Dejvis vreme"
-    ],
-    [
-      [
-        46,
-        "Standard"
-      ],
-      "Dimon d’Urvil vreme"
     ],
     [
       [
@@ -447,20 +244,6 @@
         "Daylight"
       ],
       "Uskršnja ostrva, letnje vreme"
-    ],
-    [
-      [
-        48,
-        "Standard"
-      ],
-      "Istočni timor vreme"
-    ],
-    [
-      [
-        49,
-        "Standard"
-      ],
-      "Ekvador vreme"
     ],
     [
       [
@@ -492,13 +275,6 @@
     ],
     [
       [
-        52,
-        "Standard"
-      ],
-      "Vreme daljeg istoka Evrope"
-    ],
-    [
-      [
         53,
         "Standard"
       ],
@@ -517,48 +293,6 @@
         "Standard"
       ],
       "Folklandska Ostrva, standardno vreme"
-    ],
-    [
-      [
-        54,
-        "Daylight"
-      ],
-      "Folklandska Ostrva, letnje vreme"
-    ],
-    [
-      [
-        56,
-        "Standard"
-      ],
-      "Francuska Gvajana vreme"
-    ],
-    [
-      [
-        57,
-        "Standard"
-      ],
-      "Francusko južno i antarktičko vreme"
-    ],
-    [
-      [
-        58,
-        "Standard"
-      ],
-      "Galapagos vreme"
-    ],
-    [
-      [
-        59,
-        "Standard"
-      ],
-      "Gambije vreme"
-    ],
-    [
-      [
-        61,
-        "Standard"
-      ],
-      "Gilbert ostrva vreme"
     ],
     [
       [
@@ -590,27 +324,6 @@
     ],
     [
       [
-        65,
-        "Standard"
-      ],
-      "Guam standardno vreme"
-    ],
-    [
-      [
-        66,
-        "Standard"
-      ],
-      "Zalivsko vreme"
-    ],
-    [
-      [
-        67,
-        "Standard"
-      ],
-      "Gvajana vreme"
-    ],
-    [
-      [
         68,
         "Standard"
       ],
@@ -632,66 +345,10 @@
     ],
     [
       [
-        69,
-        "Daylight"
-      ],
-      "Hong Kong, letnje vreme"
-    ],
-    [
-      [
-        71,
-        "Standard"
-      ],
-      "Centralno-indonezijsko vreme"
-    ],
-    [
-      [
-        72,
-        "Standard"
-      ],
-      "Indijsko standardno vreme"
-    ],
-    [
-      [
-        73,
-        "Standard"
-      ],
-      "Indokina vreme"
-    ],
-    [
-      [
-        74,
-        "Standard"
-      ],
-      "Istočno-indonezijsko vreme"
-    ],
-    [
-      [
-        75,
-        "Standard"
-      ],
-      "Indijsko okeansko vreme"
-    ],
-    [
-      [
-        76,
-        "Standard"
-      ],
-      "Zapadno-indonezijsko vreme"
-    ],
-    [
-      [
         78,
         "Standard"
       ],
       "Irkuck, standardno vreme"
-    ],
-    [
-      [
-        78,
-        "Daylight"
-      ],
-      "Irkuck, letnje vreme"
     ],
     [
       [
@@ -716,45 +373,10 @@
     ],
     [
       [
-        80,
-        "Daylight"
-      ],
-      "Japansko letnje vreme"
-    ],
-    [
-      [
-        81,
-        "Standard"
-      ],
-      "Istočno-kazahstansko vreme"
-    ],
-    [
-      [
         82,
         "Standard"
       ],
       "Petropavlovsko-kamčatsko standardno vreme"
-    ],
-    [
-      [
-        82,
-        "Daylight"
-      ],
-      "Petropavlovsko-kamčatsko letnje računanje vremena"
-    ],
-    [
-      [
-        83,
-        "Standard"
-      ],
-      "Zapadno-kazahstansko vreme"
-    ],
-    [
-      [
-        84,
-        "Standard"
-      ],
-      "Kazahstansko vreme"
     ],
     [
       [
@@ -765,52 +387,10 @@
     ],
     [
       [
-        85,
-        "Daylight"
-      ],
-      "Korejsko letnje vreme"
-    ],
-    [
-      [
-        86,
-        "Standard"
-      ],
-      "Košre vreme"
-    ],
-    [
-      [
         87,
         "Standard"
       ],
       "Krasnojarsk, standardno vreme"
-    ],
-    [
-      [
-        87,
-        "Daylight"
-      ],
-      "Krasnojarsk, letnje vreme"
-    ],
-    [
-      [
-        88,
-        "Standard"
-      ],
-      "Kirgistan vreme"
-    ],
-    [
-      [
-        89,
-        "Standard"
-      ],
-      "Šri Lanka vreme"
-    ],
-    [
-      [
-        90,
-        "Standard"
-      ],
-      "Ostrva Lajn vreme"
     ],
     [
       [
@@ -828,69 +408,6 @@
     ],
     [
       [
-        92,
-        "Standard"
-      ],
-      "Makao standardno vreme"
-    ],
-    [
-      [
-        92,
-        "Daylight"
-      ],
-      "Makao letnje računanje vremena"
-    ],
-    [
-      [
-        93,
-        "Standard"
-      ],
-      "Magadan, standardno vreme"
-    ],
-    [
-      [
-        93,
-        "Daylight"
-      ],
-      "Magadan, letnje vreme"
-    ],
-    [
-      [
-        94,
-        "Standard"
-      ],
-      "Maršalska Ostrva vreme"
-    ],
-    [
-      [
-        95,
-        "Standard"
-      ],
-      "Malezija vreme"
-    ],
-    [
-      [
-        96,
-        "Standard"
-      ],
-      "Maldivi vreme"
-    ],
-    [
-      [
-        97,
-        "Standard"
-      ],
-      "Markiz vreme"
-    ],
-    [
-      [
-        99,
-        "Standard"
-      ],
-      "Moson vreme"
-    ],
-    [
-      [
         100,
         "Standard"
       ],
@@ -905,45 +422,10 @@
     ],
     [
       [
-        101,
-        "Standard"
-      ],
-      "Srednje vreme po Griniču"
-    ],
-    [
-      [
         103,
         "Standard"
       ],
       "Moskva, standardno vreme"
-    ],
-    [
-      [
-        103,
-        "Daylight"
-      ],
-      "Moskva, letnje vreme"
-    ],
-    [
-      [
-        104,
-        "Standard"
-      ],
-      "Mijanmar vreme"
-    ],
-    [
-      [
-        105,
-        "Standard"
-      ],
-      "Nauru vreme"
-    ],
-    [
-      [
-        107,
-        "Standard"
-      ],
-      "Nepal vreme"
     ],
     [
       [
@@ -975,20 +457,6 @@
     ],
     [
       [
-        110,
-        "Standard"
-      ],
-      "Niue vreme"
-    ],
-    [
-      [
-        111,
-        "Standard"
-      ],
-      "Severna Marijanska Ostrva vreme"
-    ],
-    [
-      [
         112,
         "Standard"
       ],
@@ -1010,108 +478,10 @@
     ],
     [
       [
-        113,
-        "Daylight"
-      ],
-      "Fernando de Noronja, letnje vreme"
-    ],
-    [
-      [
-        114,
-        "Standard"
-      ],
-      "Novosibirsk, standardno vreme"
-    ],
-    [
-      [
-        114,
-        "Daylight"
-      ],
-      "Novosibirsk, letnje vreme"
-    ],
-    [
-      [
-        117,
-        "Standard"
-      ],
-      "Palau vreme"
-    ],
-    [
-      [
-        118,
-        "Standard"
-      ],
-      "Papua Nova Gvineja vreme"
-    ],
-    [
-      [
-        122,
-        "Standard"
-      ],
-      "Feniks ostrva vreme"
-    ],
-    [
-      [
-        124,
-        "Standard"
-      ],
-      "Pitkern vreme"
-    ],
-    [
-      [
-        125,
-        "Standard"
-      ],
-      "Ponpej vreme"
-    ],
-    [
-      [
-        126,
-        "Standard"
-      ],
-      "Pjongjanško vreme"
-    ],
-    [
-      [
-        127,
-        "Standard"
-      ],
-      "Kizilorda standardno vreme"
-    ],
-    [
-      [
-        127,
-        "Daylight"
-      ],
-      "Kizilorda letnje računanje vremena"
-    ],
-    [
-      [
-        128,
-        "Standard"
-      ],
-      "Reinion vreme"
-    ],
-    [
-      [
-        129,
-        "Standard"
-      ],
-      "Rotera vreme"
-    ],
-    [
-      [
         131,
         "Standard"
       ],
       "Samara standardno vreme"
-    ],
-    [
-      [
-        131,
-        "Daylight"
-      ],
-      "Samara letnje računanje vremena"
     ],
     [
       [
@@ -1122,94 +492,10 @@
     ],
     [
       [
-        132,
-        "Daylight"
-      ],
-      "Samoa, letnje vreme"
-    ],
-    [
-      [
-        133,
-        "Standard"
-      ],
-      "Sejšeli vreme"
-    ],
-    [
-      [
-        135,
-        "Standard"
-      ],
-      "Južna Džordžija vreme"
-    ],
-    [
-      [
-        136,
-        "Standard"
-      ],
-      "Solomonska Ostrva vreme"
-    ],
-    [
-      [
-        137,
-        "Standard"
-      ],
-      "Surinam vreme"
-    ],
-    [
-      [
-        138,
-        "Standard"
-      ],
-      "Šova vreme"
-    ],
-    [
-      [
-        139,
-        "Standard"
-      ],
-      "Tahiti vreme"
-    ],
-    [
-      [
         140,
         "Standard"
       ],
       "Tajpej, standardno vreme"
-    ],
-    [
-      [
-        140,
-        "Daylight"
-      ],
-      "Tajpej, letnje vreme"
-    ],
-    [
-      [
-        141,
-        "Standard"
-      ],
-      "Tadžikistan vreme"
-    ],
-    [
-      [
-        142,
-        "Standard"
-      ],
-      "Tokelau vreme"
-    ],
-    [
-      [
-        144,
-        "Standard"
-      ],
-      "Čuuk vreme"
-    ],
-    [
-      [
-        146,
-        "Standard"
-      ],
-      "Tuvalu vreme"
     ],
     [
       [
@@ -1220,20 +506,6 @@
     ],
     [
       [
-        148,
-        "Daylight"
-      ],
-      "Uzbekistan, letnje vreme"
-    ],
-    [
-      [
-        150,
-        "Standard"
-      ],
-      "Venecuela vreme"
-    ],
-    [
-      [
         151,
         "Standard"
       ],
@@ -1241,52 +513,10 @@
     ],
     [
       [
-        151,
-        "Daylight"
-      ],
-      "Vladivostok, letnje vreme"
-    ],
-    [
-      [
-        153,
-        "Standard"
-      ],
-      "Vostok vreme"
-    ],
-    [
-      [
-        154,
-        "Standard"
-      ],
-      "Vejk ostrvo vreme"
-    ],
-    [
-      [
-        155,
-        "Standard"
-      ],
-      "Valis i Futuna Ostrva vreme"
-    ],
-    [
-      [
         156,
         "Standard"
       ],
       "Jakutsk, standardno vreme"
-    ],
-    [
-      [
-        156,
-        "Daylight"
-      ],
-      "Jakutsk, letnje vreme"
-    ],
-    [
-      [
-        158,
-        "Standard"
-      ],
-      "Jukon"
     ]
   ],
   "overrides": [
@@ -1311,5 +541,73 @@
       ],
       "Koordinisano univerzalno vreme"
     ]
+  ],
+  "use_standard": [
+    2,
+    3,
+    4,
+    5,
+    30,
+    31,
+    33,
+    36,
+    40,
+    41,
+    45,
+    46,
+    48,
+    49,
+    56,
+    57,
+    58,
+    59,
+    61,
+    66,
+    67,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    81,
+    83,
+    84,
+    86,
+    88,
+    90,
+    94,
+    95,
+    96,
+    97,
+    99,
+    101,
+    104,
+    105,
+    107,
+    110,
+    117,
+    118,
+    122,
+    124,
+    125,
+    126,
+    128,
+    129,
+    133,
+    135,
+    136,
+    137,
+    138,
+    139,
+    141,
+    142,
+    144,
+    146,
+    150,
+    153,
+    154,
+    155,
+    158
   ]
 }

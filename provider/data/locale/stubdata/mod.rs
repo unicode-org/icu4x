@@ -1,15 +1,15 @@
 // @generated
-include!("exemplar_characters_punctuation_v1.rs.data");
-include!("script_direction_v1.rs.data");
-include!("likely_subtags_for_language_v1.rs.data");
-include!("likely_subtags_for_script_region_v1.rs.data");
-include!("exemplar_characters_main_v1.rs.data");
-include!("exemplar_characters_auxiliary_v1.rs.data");
-include!("aliases_v2.rs.data");
-include!("exemplar_characters_index_v1.rs.data");
-include!("likely_subtags_extended_v1.rs.data");
-include!("parents_v1.rs.data");
-include!("exemplar_characters_numbers_v1.rs.data");
+include!("locale_likely_subtags_language_v1.rs.data");
+include!("locale_parents_v1.rs.data");
+include!("locale_exemplar_characters_main_v1.rs.data");
+include!("locale_exemplar_characters_numbers_v1.rs.data");
+include!("locale_aliases_v1.rs.data");
+include!("locale_exemplar_characters_index_v1.rs.data");
+include!("locale_exemplar_characters_auxiliary_v1.rs.data");
+include!("locale_likely_subtags_extended_v1.rs.data");
+include!("locale_script_direction_v1.rs.data");
+include!("locale_likely_subtags_script_region_v1.rs.data");
+include!("locale_exemplar_characters_punctuation_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -39,16 +39,16 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_exemplar_characters_punctuation_v1!($provider);
-        impl_script_direction_v1!($provider);
-        impl_likely_subtags_for_language_v1!($provider);
-        impl_likely_subtags_for_script_region_v1!($provider);
-        impl_exemplar_characters_main_v1!($provider);
-        impl_exemplar_characters_auxiliary_v1!($provider);
-        impl_aliases_v2!($provider);
-        impl_exemplar_characters_index_v1!($provider);
-        impl_likely_subtags_extended_v1!($provider);
-        impl_parents_v1!($provider);
-        impl_exemplar_characters_numbers_v1!($provider);
+        impl_locale_likely_subtags_language_v1!($provider);
+        impl_locale_parents_v1!($provider);
+        impl_locale_exemplar_characters_main_v1!($provider);
+        impl_locale_exemplar_characters_numbers_v1!($provider);
+        impl_locale_aliases_v1!($provider);
+        impl_locale_exemplar_characters_index_v1!($provider);
+        impl_locale_exemplar_characters_auxiliary_v1!($provider);
+        impl_locale_likely_subtags_extended_v1!($provider);
+        impl_locale_script_direction_v1!($provider);
+        impl_locale_likely_subtags_script_region_v1!($provider);
+        impl_locale_exemplar_characters_punctuation_v1!($provider);
     };
 }

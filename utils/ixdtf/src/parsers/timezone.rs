@@ -155,9 +155,9 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UtcOffset
         // If `UtcOffsetWithSubMinuteComponents`, continue parsing.
         utc_to_minute.second = parse_minute_second(cursor, true)?;
 
-        let nanosecond = parse_fraction(cursor)?.unwrap_or(0);
+        let fraction = parse_fraction(cursor)?;
 
-        utc_to_minute.nanosecond = nanosecond;
+        utc_to_minute.fraction = fraction;
     }
 
     Ok(UtcOffsetRecordOrZ::Offset(utc_to_minute))
@@ -185,7 +185,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
                 hour,
                 minute: 0,
                 second: 0,
-                nanosecond: 0,
+                fraction: None,
             },
             false,
         ));
@@ -201,7 +201,7 @@ pub(crate) fn parse_utc_offset_minute_precision(
             hour,
             minute,
             second: 0,
-            nanosecond: 0,
+            fraction: None,
         },
         true,
     ))

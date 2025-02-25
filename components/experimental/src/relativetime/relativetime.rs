@@ -9,7 +9,7 @@ use icu_decimal::{
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
-use icu_plurals::{provider::CardinalV1, PluralRules};
+use icu_plurals::{provider::PluralsCardinalV1, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
@@ -177,7 +177,7 @@ macro_rules! constructor {
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError>
         where
-            D: DataProvider<CardinalV1>
+            D: DataProvider<PluralsCardinalV1>
                 + DataProvider<$marker>
                 + DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1>
                 + ?Sized,

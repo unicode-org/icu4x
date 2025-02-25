@@ -15,7 +15,7 @@ export class TimeZoneInvalidOffsetError {
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : TimeZoneInvalidOffsetError_obj) : TimeZoneInvalidOffsetError;
-    
+
 
     constructor(structObj : TimeZoneInvalidOffsetError_obj);
 }

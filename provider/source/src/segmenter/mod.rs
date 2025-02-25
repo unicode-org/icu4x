@@ -16,8 +16,8 @@ use icu::properties::{
     },
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
+use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
-use icu::segmenter::WordType;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_provider::prelude::*;
 use std::collections::HashSet;

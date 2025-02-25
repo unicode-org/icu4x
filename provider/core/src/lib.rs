@@ -145,6 +145,19 @@ pub mod marker {
     };
 }
 
+mod varule_traits;
+pub mod ule {
+    //! Traits that data provider implementations can use to optimize storage
+    //! by using [`VarULE`](zerovec::ule::VarULE).
+    //!
+    //! See [`MaybeAsVarULE`] for details.
+
+    pub use super::varule_traits::MaybeAsVarULE;
+    pub use super::varule_traits::MaybeEncodeAsVarULE;
+}
+
+pub use varule_traits::data_struct as data_struct_new;
+
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
     #[doc(no_inline)]

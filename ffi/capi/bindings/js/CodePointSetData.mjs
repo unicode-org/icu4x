@@ -116,6 +116,16 @@ export class CodePointSetData {
         }
     }
 
+    static asciiHexDigitForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_ascii_hex_digit_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createAsciiHexDigit() {
         const result = wasm.icu4x_CodePointSetData_create_ascii_hex_digit_mv1();
     
@@ -142,6 +152,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static alnumForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_alnum_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createAlnum() {
@@ -172,6 +192,16 @@ export class CodePointSetData {
         }
     }
 
+    static alphabeticForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_alphabetic_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createAlphabetic() {
         const result = wasm.icu4x_CodePointSetData_create_alphabetic_mv1();
     
@@ -198,6 +228,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static bidiControlForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_bidi_control_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createBidiControl() {
@@ -228,6 +268,16 @@ export class CodePointSetData {
         }
     }
 
+    static bidiMirroredForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_bidi_mirrored_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createBidiMirrored() {
         const result = wasm.icu4x_CodePointSetData_create_bidi_mirrored_mv1();
     
@@ -254,6 +304,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static blankForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_blank_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createBlank() {
@@ -284,6 +344,16 @@ export class CodePointSetData {
         }
     }
 
+    static casedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_cased_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createCased() {
         const result = wasm.icu4x_CodePointSetData_create_cased_mv1();
     
@@ -310,6 +380,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static caseIgnorableForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_case_ignorable_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createCaseIgnorable() {
@@ -340,6 +420,16 @@ export class CodePointSetData {
         }
     }
 
+    static fullCompositionExclusionForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_full_composition_exclusion_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createFullCompositionExclusion() {
         const result = wasm.icu4x_CodePointSetData_create_full_composition_exclusion_mv1();
     
@@ -366,6 +456,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static changesWhenCasefoldedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_changes_when_casefolded_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createChangesWhenCasefolded() {
@@ -396,6 +496,16 @@ export class CodePointSetData {
         }
     }
 
+    static changesWhenCasemappedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_changes_when_casemapped_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createChangesWhenCasemapped() {
         const result = wasm.icu4x_CodePointSetData_create_changes_when_casemapped_mv1();
     
@@ -422,6 +532,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static changesWhenNfkcCasefoldedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_changes_when_nfkc_casefolded_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createChangesWhenNfkcCasefolded() {
@@ -452,6 +572,16 @@ export class CodePointSetData {
         }
     }
 
+    static changesWhenLowercasedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_changes_when_lowercased_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createChangesWhenLowercased() {
         const result = wasm.icu4x_CodePointSetData_create_changes_when_lowercased_mv1();
     
@@ -478,6 +608,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static changesWhenTitlecasedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_changes_when_titlecased_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createChangesWhenTitlecased() {
@@ -508,6 +648,16 @@ export class CodePointSetData {
         }
     }
 
+    static changesWhenUppercasedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_changes_when_uppercased_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createChangesWhenUppercased() {
         const result = wasm.icu4x_CodePointSetData_create_changes_when_uppercased_mv1();
     
@@ -534,6 +684,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static dashForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_dash_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createDash() {
@@ -564,6 +724,16 @@ export class CodePointSetData {
         }
     }
 
+    static deprecatedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_deprecated_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createDeprecated() {
         const result = wasm.icu4x_CodePointSetData_create_deprecated_mv1();
     
@@ -590,6 +760,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static defaultIgnorableCodePointForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_default_ignorable_code_point_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createDefaultIgnorableCodePoint() {
@@ -620,6 +800,16 @@ export class CodePointSetData {
         }
     }
 
+    static diacriticForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_diacritic_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createDiacritic() {
         const result = wasm.icu4x_CodePointSetData_create_diacritic_mv1();
     
@@ -646,6 +836,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static emojiModifierBaseForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_emoji_modifier_base_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createEmojiModifierBase() {
@@ -676,6 +876,16 @@ export class CodePointSetData {
         }
     }
 
+    static emojiComponentForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_emoji_component_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createEmojiComponent() {
         const result = wasm.icu4x_CodePointSetData_create_emoji_component_mv1();
     
@@ -702,6 +912,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static emojiModifierForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_emoji_modifier_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createEmojiModifier() {
@@ -732,6 +952,16 @@ export class CodePointSetData {
         }
     }
 
+    static emojiForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_emoji_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createEmoji() {
         const result = wasm.icu4x_CodePointSetData_create_emoji_mv1();
     
@@ -758,6 +988,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static emojiPresentationForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_emoji_presentation_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createEmojiPresentation() {
@@ -788,6 +1028,16 @@ export class CodePointSetData {
         }
     }
 
+    static extenderForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_extender_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createExtender() {
         const result = wasm.icu4x_CodePointSetData_create_extender_mv1();
     
@@ -814,6 +1064,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static extendedPictographicForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_extended_pictographic_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createExtendedPictographic() {
@@ -844,6 +1104,16 @@ export class CodePointSetData {
         }
     }
 
+    static graphForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_graph_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createGraph() {
         const result = wasm.icu4x_CodePointSetData_create_graph_mv1();
     
@@ -870,6 +1140,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static graphemeBaseForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_grapheme_base_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createGraphemeBase() {
@@ -900,6 +1180,16 @@ export class CodePointSetData {
         }
     }
 
+    static graphemeExtendForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_grapheme_extend_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createGraphemeExtend() {
         const result = wasm.icu4x_CodePointSetData_create_grapheme_extend_mv1();
     
@@ -926,6 +1216,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static graphemeLinkForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_grapheme_link_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createGraphemeLink() {
@@ -956,6 +1256,16 @@ export class CodePointSetData {
         }
     }
 
+    static hexDigitForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_hex_digit_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createHexDigit() {
         const result = wasm.icu4x_CodePointSetData_create_hex_digit_mv1();
     
@@ -982,6 +1292,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static hyphenForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_hyphen_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createHyphen() {
@@ -1012,6 +1332,16 @@ export class CodePointSetData {
         }
     }
 
+    static idContinueForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_id_continue_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createIdContinue() {
         const result = wasm.icu4x_CodePointSetData_create_id_continue_mv1();
     
@@ -1038,6 +1368,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static ideographicForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_ideographic_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createIdeographic() {
@@ -1068,6 +1408,16 @@ export class CodePointSetData {
         }
     }
 
+    static idStartForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_id_start_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createIdStart() {
         const result = wasm.icu4x_CodePointSetData_create_id_start_mv1();
     
@@ -1094,6 +1444,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static idsBinaryOperatorForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_ids_binary_operator_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createIdsBinaryOperator() {
@@ -1124,6 +1484,16 @@ export class CodePointSetData {
         }
     }
 
+    static idsTrinaryOperatorForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_ids_trinary_operator_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createIdsTrinaryOperator() {
         const result = wasm.icu4x_CodePointSetData_create_ids_trinary_operator_mv1();
     
@@ -1150,6 +1520,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static joinControlForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_join_control_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createJoinControl() {
@@ -1180,6 +1560,16 @@ export class CodePointSetData {
         }
     }
 
+    static logicalOrderExceptionForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_logical_order_exception_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createLogicalOrderException() {
         const result = wasm.icu4x_CodePointSetData_create_logical_order_exception_mv1();
     
@@ -1206,6 +1596,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static lowercaseForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_lowercase_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createLowercase() {
@@ -1236,6 +1636,16 @@ export class CodePointSetData {
         }
     }
 
+    static mathForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_math_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createMath() {
         const result = wasm.icu4x_CodePointSetData_create_math_mv1();
     
@@ -1262,6 +1672,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static noncharacterCodePointForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createNoncharacterCodePoint() {
@@ -1292,6 +1712,16 @@ export class CodePointSetData {
         }
     }
 
+    static nfcInertForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_nfc_inert_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createNfcInert() {
         const result = wasm.icu4x_CodePointSetData_create_nfc_inert_mv1();
     
@@ -1318,6 +1748,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static nfdInertForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_nfd_inert_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createNfdInert() {
@@ -1348,6 +1788,16 @@ export class CodePointSetData {
         }
     }
 
+    static nfkcInertForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_nfkc_inert_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createNfkcInert() {
         const result = wasm.icu4x_CodePointSetData_create_nfkc_inert_mv1();
     
@@ -1374,6 +1824,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static nfkdInertForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_nfkd_inert_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createNfkdInert() {
@@ -1404,6 +1864,16 @@ export class CodePointSetData {
         }
     }
 
+    static patternSyntaxForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_pattern_syntax_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createPatternSyntax() {
         const result = wasm.icu4x_CodePointSetData_create_pattern_syntax_mv1();
     
@@ -1430,6 +1900,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static patternWhiteSpaceForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_pattern_white_space_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createPatternWhiteSpace() {
@@ -1460,6 +1940,16 @@ export class CodePointSetData {
         }
     }
 
+    static prependedConcatenationMarkForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_prepended_concatenation_mark_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createPrependedConcatenationMark() {
         const result = wasm.icu4x_CodePointSetData_create_prepended_concatenation_mark_mv1();
     
@@ -1486,6 +1976,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static printForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_print_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createPrint() {
@@ -1516,6 +2016,16 @@ export class CodePointSetData {
         }
     }
 
+    static quotationMarkForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_quotation_mark_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createQuotationMark() {
         const result = wasm.icu4x_CodePointSetData_create_quotation_mark_mv1();
     
@@ -1542,6 +2052,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static radicalForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_radical_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createRadical() {
@@ -1572,6 +2092,16 @@ export class CodePointSetData {
         }
     }
 
+    static regionalIndicatorForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_regional_indicator_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createRegionalIndicator() {
         const result = wasm.icu4x_CodePointSetData_create_regional_indicator_mv1();
     
@@ -1598,6 +2128,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static softDottedForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_soft_dotted_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createSoftDotted() {
@@ -1628,6 +2168,16 @@ export class CodePointSetData {
         }
     }
 
+    static segmentStarterForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_segment_starter_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createSegmentStarter() {
         const result = wasm.icu4x_CodePointSetData_create_segment_starter_mv1();
     
@@ -1654,6 +2204,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static caseSensitiveForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_case_sensitive_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createCaseSensitive() {
@@ -1684,6 +2244,16 @@ export class CodePointSetData {
         }
     }
 
+    static sentenceTerminalForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_sentence_terminal_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createSentenceTerminal() {
         const result = wasm.icu4x_CodePointSetData_create_sentence_terminal_mv1();
     
@@ -1710,6 +2280,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static terminalPunctuationForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_terminal_punctuation_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createTerminalPunctuation() {
@@ -1740,6 +2320,16 @@ export class CodePointSetData {
         }
     }
 
+    static unifiedIdeographForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_unified_ideograph_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createUnifiedIdeograph() {
         const result = wasm.icu4x_CodePointSetData_create_unified_ideograph_mv1();
     
@@ -1766,6 +2356,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static uppercaseForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_uppercase_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createUppercase() {
@@ -1796,6 +2396,16 @@ export class CodePointSetData {
         }
     }
 
+    static variationSelectorForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_variation_selector_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createVariationSelector() {
         const result = wasm.icu4x_CodePointSetData_create_variation_selector_mv1();
     
@@ -1822,6 +2432,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static whiteSpaceForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_white_space_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createWhiteSpace() {
@@ -1852,6 +2472,16 @@ export class CodePointSetData {
         }
     }
 
+    static xdigitForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_xdigit_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createXdigit() {
         const result = wasm.icu4x_CodePointSetData_create_xdigit_mv1();
     
@@ -1880,6 +2510,16 @@ export class CodePointSetData {
         }
     }
 
+    static xidContinueForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_xid_continue_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
     static createXidContinue() {
         const result = wasm.icu4x_CodePointSetData_create_xid_continue_mv1();
     
@@ -1906,6 +2546,16 @@ export class CodePointSetData {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    static xidStartForChar(ch) {
+        const result = wasm.icu4x_CodePointSetData_xid_start_for_char_mv1(ch);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
     }
 
     static createXidStart() {

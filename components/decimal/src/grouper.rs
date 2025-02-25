@@ -53,10 +53,10 @@ pub fn check(
 
 #[test]
 fn test_grouper() {
+    use crate::input::Decimal;
     use crate::options;
     use crate::provider::*;
     use crate::DecimalFormatter;
-    use fixed_decimal::Decimal;
     use icu_provider::prelude::*;
     use std::cell::RefCell;
     use writeable::assert_writeable_eq;
@@ -162,10 +162,8 @@ fn test_grouper() {
                 grouping_sizes: cas.sizes,
                 ..DecimalSymbols::new_en_for_testing()
             };
-            let digits = crate::provider::DecimalDigits {
-                digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-            };
-            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
+            let digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
             impl DataProvider<DecimalSymbolsV2> for Provider {
                 fn load(
                     &self,

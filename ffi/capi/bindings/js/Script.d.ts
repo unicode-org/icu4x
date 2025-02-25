@@ -181,9 +181,15 @@ export class Script {
     static Yi : Script;
     static ZanabazarSquare : Script;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): Script;
 
-    static fromInteger(other: number): Script | null;
+    longName(): string | null;
+
+    shortName(): string | null;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): Script | null;
 
     constructor(value: Script | string );
 }

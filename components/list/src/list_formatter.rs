@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options::{ListFormatterOptions, ListLength};
 use crate::provider::*;
-use crate::{ListFormatterOptions, ListLength};
 use core::fmt::{self, Write};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
@@ -102,7 +102,8 @@ impl ListFormatter {
     /// # Example
     ///
     /// ```
-    /// use icu::list::*;
+    /// use icu::list::{parts, ListFormatter};
+    /// use icu::list::options::*;
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and(

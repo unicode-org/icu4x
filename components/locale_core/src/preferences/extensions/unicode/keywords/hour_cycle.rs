@@ -11,12 +11,14 @@ enum_keyword!(
     ///
     /// The valid values are listed in [LDML](https://unicode.org/reports/tr35/#UnicodeHourCycleIdentifier).
     HourCycle {
-        /// The typical 12-hour clock. Hour system using 1–12; corresponds to 'h' in patterns.
+        /// The typical 12-hour clock. Hours are numbered 1–12. Corresponds to 'h' in patterns.
         ("h12" => H12),
-        /// The 24-hour clock. Hour system using 0–23; corresponds to 'H' in patterns.
+        /// The 24-hour clock. Hour are numbered 0–23. Corresponds to 'H' in patterns.
         ("h23" => H23),
-        /// Variant of the 12-hour clock only used in Japan. Hour system using 0–11; corresponds to 'K' in patterns.
+        /// Variant of the 12-hour clock, sometimes used in Japan. Hours are numbered 0–11. Corresponds to 'K' in patterns.
         ("h11" => H11),
-        /// __Not actually in use!__ See `H23` above for the 24-hour clock! Included for theoretical completeness. Hour system using 1–24; corresponds to 'k' in pattern.
+        /// Variant of the 24-hour clock, not in common use. Hours are numbered 1–24. Corresponds to 'k' in patterns.
+        ///
+        /// ❗ This is not the typical 24-hour clock! See `H23` above for the 24-hour clock used throughout most of the world.
         ("h24" => H24),
 }, "hc");

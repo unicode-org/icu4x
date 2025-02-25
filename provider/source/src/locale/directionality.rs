@@ -10,9 +10,9 @@ use icu::locale::provider::*;
 
 use icu_provider::prelude::*;
 
-impl DataProvider<ScriptDirectionV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1>, DataError> {
-        self.check_req::<ScriptDirectionV1>(req)?;
+impl DataProvider<LocaleScriptDirectionV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleScriptDirectionV1>, DataError> {
+        self.check_req::<LocaleScriptDirectionV1>(req)?;
         let data: &cldr_serde::directionality::Resource =
             self.cldr()?.core().read_and_parse("scriptMetadata.json")?;
         Ok(DataResponse {
@@ -22,7 +22,7 @@ impl DataProvider<ScriptDirectionV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ScriptDirectionV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleScriptDirectionV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -54,7 +54,7 @@ fn test_basic() {
     use icu::locale::subtags::script;
 
     let provider = SourceDataProvider::new_testing();
-    let data: DataResponse<ScriptDirectionV1> = provider.load(Default::default()).unwrap();
+    let data: DataResponse<LocaleScriptDirectionV1> = provider.load(Default::default()).unwrap();
 
     assert!(data
         .payload

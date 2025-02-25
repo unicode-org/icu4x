@@ -20,7 +20,7 @@ impl SourceDataProvider {
     fn load_japanese_eras(
         &self,
         japanext: bool,
-    ) -> Result<DataResponse<JapaneseErasV1>, DataError> {
+    ) -> Result<DataResponse<CalendarJapaneseModernV1>, DataError> {
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -105,16 +105,19 @@ impl SourceDataProvider {
     }
 }
 
-impl DataProvider<JapaneseErasV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1>, DataError> {
-        self.check_req::<JapaneseErasV1>(req)?;
+impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarJapaneseModernV1>, DataError> {
+        self.check_req::<CalendarJapaneseModernV1>(req)?;
         self.load_japanese_eras(false)
     }
 }
 
-impl DataProvider<JapaneseExtendedErasV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseExtendedErasV1>, DataError> {
-        self.check_req::<JapaneseExtendedErasV1>(req)?;
+impl DataProvider<CalendarJapaneseExtendedV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CalendarJapaneseExtendedV1>, DataError> {
+        self.check_req::<CalendarJapaneseExtendedV1>(req)?;
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {
             metadata,
@@ -168,13 +171,13 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-impl crate::IterableDataProviderCached<JapaneseErasV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarJapaneseModernV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl crate::IterableDataProviderCached<JapaneseExtendedErasV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarJapaneseExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "experimental")]
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
@@ -9,8 +10,11 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::plurals::provider::rules::runtime::ast::Rule;
-use icu::plurals::{provider::*, PluralCategory};
+use icu::plurals::provider::*;
+#[cfg(feature = "experimental")]
+use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
+#[cfg(feature = "experimental")]
 use zerovec::ZeroMap;
 
 impl SourceDataProvider {
@@ -18,14 +22,14 @@ impl SourceDataProvider {
         &self,
         marker: DataMarkerInfo,
     ) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        if marker == CardinalV1::INFO {
+        if marker == PluralsCardinalV1::INFO {
             self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
                 .as_ref()
-        } else if marker == OrdinalV1::INFO {
+        } else if marker == PluralsOrdinalV1::INFO {
             self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
@@ -38,6 +42,7 @@ impl SourceDataProvider {
         .ok_or(DataError::custom("Unknown marker for PluralRules"))
     }
 
+    #[cfg(feature = "experimental")]
     fn get_plural_ranges(&self) -> Result<&cldr_serde::plural_ranges::PluralRanges, DataError> {
         Ok(&self
             .cldr()?
@@ -84,8 +89,8 @@ macro_rules! implement {
     };
 }
 
-implement!(CardinalV1);
-implement!(OrdinalV1);
+implement!(PluralsCardinalV1);
+implement!(PluralsOrdinalV1);
 
 impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> {
     fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
@@ -104,9 +109,10 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> 
     }
 }
 
-impl DataProvider<PluralRangesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1>, DataError> {
-        self.check_req::<PluralRangesV1>(req)?;
+#[cfg(feature = "experimental")]
+impl DataProvider<PluralsRangesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PluralsRangesV1>, DataError> {
+        self.check_req::<PluralsRangesV1>(req)?;
         if req.id.locale.is_default() {
             Ok(DataResponse {
                 metadata: Default::default(),
@@ -132,7 +138,8 @@ impl DataProvider<PluralRangesV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<PluralRangesV1> for SourceDataProvider {
+#[cfg(feature = "experimental")]
+impl IterableDataProviderCached<PluralsRangesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .get_plural_ranges()?
@@ -144,6 +151,7 @@ impl IterableDataProviderCached<PluralRangesV1> for SourceDataProvider {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRanges<'static> {
     fn from(other: &cldr_serde::plural_ranges::LocalePluralRanges) -> Self {
         fn convert(s: &str) -> RawPluralCategory {
@@ -186,7 +194,7 @@ fn test_basic() {
     let provider = SourceDataProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: DataResponse<CardinalV1> = provider
+    let cs_rules: DataResponse<PluralsCardinalV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("cs").into()).as_borrowed(),
             ..Default::default()
@@ -210,13 +218,14 @@ fn test_basic() {
 }
 
 #[test]
+#[cfg(feature = "experimental")]
 fn test_ranges() {
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
 
     // locale 'sl' seems to have a lot of interesting cases.
-    let plural_ranges: DataResponse<PluralRangesV1> = provider
+    let plural_ranges: DataResponse<PluralsRangesV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("sl").into()).as_borrowed(),
             ..Default::default()

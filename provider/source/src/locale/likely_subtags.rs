@@ -12,9 +12,12 @@ use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 
-impl DataProvider<LikelySubtagsExtendedV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError> {
-        self.check_req::<LikelySubtagsExtendedV1>(req)?;
+impl DataProvider<LocaleLikelySubtagsExtendedV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError> {
+        self.check_req::<LocaleLikelySubtagsExtendedV1>(req)?;
         let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         Ok(DataResponse {
@@ -24,18 +27,18 @@ impl DataProvider<LikelySubtagsExtendedV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LikelySubtagsExtendedV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleLikelySubtagsExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<LikelySubtagsForLanguageV1> for SourceDataProvider {
+impl DataProvider<LocaleLikelySubtagsLanguageV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LikelySubtagsForLanguageV1>, DataError> {
-        self.check_req::<LikelySubtagsForLanguageV1>(req)?;
+    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError> {
+        self.check_req::<LocaleLikelySubtagsLanguageV1>(req)?;
         let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         Ok(DataResponse {
@@ -45,18 +48,18 @@ impl DataProvider<LikelySubtagsForLanguageV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LikelySubtagsForLanguageV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleLikelySubtagsLanguageV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<LikelySubtagsForScriptRegionV1> for SourceDataProvider {
+impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LikelySubtagsForScriptRegionV1>, DataError> {
-        self.check_req::<LikelySubtagsForScriptRegionV1>(req)?;
+    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError> {
+        self.check_req::<LocaleLikelySubtagsScriptRegionV1>(req)?;
         let resources = LikelySubtagsResources::try_from_cldr_cache(self.cldr()?)?;
 
         Ok(DataResponse {
@@ -66,7 +69,7 @@ impl DataProvider<LikelySubtagsForScriptRegionV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<LikelySubtagsForScriptRegionV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleLikelySubtagsScriptRegionV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -321,9 +324,9 @@ fn test_basic() {
     use icu::locale::subtags::{language, region, script};
 
     let provider = SourceDataProvider::new_testing();
-    let result_common_sr: DataResponse<LikelySubtagsForScriptRegionV1> =
+    let result_common_sr: DataResponse<LocaleLikelySubtagsScriptRegionV1> =
         provider.load(Default::default()).unwrap();
-    let result_extended: DataResponse<LikelySubtagsExtendedV1> =
+    let result_extended: DataResponse<LocaleLikelySubtagsExtendedV1> =
         provider.load(Default::default()).unwrap();
 
     let entry = result_common_sr

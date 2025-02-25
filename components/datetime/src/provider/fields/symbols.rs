@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::FractionalSecondDigits;
+use crate::options::SubsecondDigits;
 #[cfg(feature = "datagen")]
 use crate::provider::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
@@ -173,20 +173,18 @@ impl FieldSymbol {
         self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
     }
 
-    pub(crate) fn from_fractional_second_digits(
-        fractional_second_digits: FractionalSecondDigits,
-    ) -> Self {
-        use FractionalSecondDigits::*;
-        match fractional_second_digits {
-            F1 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF1),
-            F2 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF2),
-            F3 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF3),
-            F4 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF4),
-            F5 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF5),
-            F6 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF6),
-            F7 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF7),
-            F8 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF8),
-            F9 => FieldSymbol::DecimalSecond(DecimalSecond::SecondF9),
+    pub(crate) fn from_subsecond_digits(subsecond_digits: SubsecondDigits) -> Self {
+        use SubsecondDigits::*;
+        match subsecond_digits {
+            S1 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond1),
+            S2 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond2),
+            S3 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond3),
+            S4 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond4),
+            S5 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond5),
+            S6 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond6),
+            S7 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond7),
+            S8 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond8),
+            S9 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond9),
         }
     }
 
@@ -303,15 +301,15 @@ impl FieldSymbol {
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
             Self::Second(Second::MillisInDay) => 24,
-            Self::DecimalSecond(DecimalSecond::SecondF1) => 31,
-            Self::DecimalSecond(DecimalSecond::SecondF2) => 32,
-            Self::DecimalSecond(DecimalSecond::SecondF3) => 33,
-            Self::DecimalSecond(DecimalSecond::SecondF4) => 34,
-            Self::DecimalSecond(DecimalSecond::SecondF5) => 35,
-            Self::DecimalSecond(DecimalSecond::SecondF6) => 36,
-            Self::DecimalSecond(DecimalSecond::SecondF7) => 37,
-            Self::DecimalSecond(DecimalSecond::SecondF8) => 38,
-            Self::DecimalSecond(DecimalSecond::SecondF9) => 39,
+            Self::DecimalSecond(DecimalSecond::Subsecond1) => 31,
+            Self::DecimalSecond(DecimalSecond::Subsecond2) => 32,
+            Self::DecimalSecond(DecimalSecond::Subsecond3) => 33,
+            Self::DecimalSecond(DecimalSecond::Subsecond4) => 34,
+            Self::DecimalSecond(DecimalSecond::Subsecond5) => 35,
+            Self::DecimalSecond(DecimalSecond::Subsecond6) => 36,
+            Self::DecimalSecond(DecimalSecond::Subsecond7) => 37,
+            Self::DecimalSecond(DecimalSecond::Subsecond8) => 38,
+            Self::DecimalSecond(DecimalSecond::Subsecond9) => 39,
             Self::TimeZone(TimeZone::SpecificNonLocation) => 100,
             Self::TimeZone(TimeZone::LocalizedOffset) => 102,
             Self::TimeZone(TimeZone::GenericNonLocation) => 103,
@@ -604,7 +602,7 @@ impl Hour {
     }
 }
 
-// NOTE: 'S' FractionalSecond is represented via DecimalSecond,
+// NOTE: 'S' Subsecond is represented via DecimalSecond,
 // so it is not included in the Second enum.
 
 field_type!(
@@ -786,23 +784,23 @@ impl LengthType for TimeZone {
 #[allow(clippy::exhaustive_enums)] // used in data struct
 pub enum DecimalSecond {
     /// A second with 1 fractional digit: "1.0"
-    SecondF1 = 1,
+    Subsecond1 = 1,
     /// A second with 2 fractional digits: "1.00"
-    SecondF2 = 2,
+    Subsecond2 = 2,
     /// A second with 3 fractional digits: "1.000"
-    SecondF3 = 3,
+    Subsecond3 = 3,
     /// A second with 4 fractional digits: "1.0000"
-    SecondF4 = 4,
+    Subsecond4 = 4,
     /// A second with 5 fractional digits: "1.00000"
-    SecondF5 = 5,
+    Subsecond5 = 5,
     /// A second with 6 fractional digits: "1.000000"
-    SecondF6 = 6,
+    Subsecond6 = 6,
     /// A second with 7 fractional digits: "1.0000000"
-    SecondF7 = 7,
+    Subsecond7 = 7,
     /// A second with 8 fractional digits: "1.00000000"
-    SecondF8 = 8,
+    Subsecond8 = 8,
     /// A second with 9 fractional digits: "1.000000000"
-    SecondF9 = 9,
+    Subsecond9 = 9,
 }
 
 impl DecimalSecond {

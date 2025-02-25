@@ -14,8 +14,8 @@ use crate::provider::neo::{marker_attrs, *};
 use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
 use crate::size_test_macro::size_test;
+use crate::FixedCalendarDateTimeFormatter;
 use crate::{external_loaders::*, DateTimeFormatterPreferences};
-use crate::{input, FixedCalendarDateTimeFormatter};
 use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
@@ -392,7 +392,7 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::Date;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
 /// use icu::datetime::pattern::MonthNameLength;
@@ -426,7 +426,7 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::Date;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::DateTimeWriteError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -581,6 +581,8 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
     mz_generic_short:
         <FSet::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
+    mz_standard_long:
+        <FSet::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container,
     mz_specific_long:
         <FSet::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container,
     mz_specific_short:
@@ -624,6 +626,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             exemplars: FSet2::map_zone_exemplars(self.exemplars),
             mz_generic_long: FSet2::map_zone_generic_long(self.mz_generic_long),
             mz_generic_short: FSet2::map_zone_generic_short(self.mz_generic_short),
+            mz_standard_long: FSet2::map_zone_standard_long(self.mz_standard_long),
             mz_specific_long: FSet2::map_zone_specific_long(self.mz_specific_long),
             mz_specific_short: FSet2::map_zone_specific_short(self.mz_specific_short),
             mz_periods: FSet2::map_metazone_lookup(self.mz_periods),
@@ -645,6 +648,7 @@ pub(crate) struct RawDateTimeNamesBorrowed<'l> {
     exemplars_root: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
     exemplars: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
     mz_generic_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_standard_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
     mz_generic_short: OptionalNames<(), &'l tz::MzGeneric<'l>>,
     mz_specific_long: OptionalNames<(), &'l tz::MzSpecific<'l>>,
     mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
@@ -706,7 +710,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Date;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::parts;
     /// use icu::datetime::DateTimeWriteError;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
@@ -762,7 +766,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, YMDT};
@@ -944,7 +948,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::fieldsets::{YMD, YMDT};
@@ -1622,10 +1626,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzGenericLongV1> + DataProvider<tz::MzPeriodV1> + ?Sized,
+        P: DataProvider<tz::MzGenericLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
     {
         self.inner.load_time_zone_generic_long_names(
             &tz::MzGenericLongV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
         )?;
@@ -1768,10 +1776,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzSpecificLongV1> + DataProvider<tz::MzPeriodV1> + ?Sized,
+        P: DataProvider<tz::MzSpecificLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
     {
         self.inner.load_time_zone_specific_long_names(
             &tz::MzSpecificLongV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
         )?;
@@ -1990,6 +2002,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             + DataProvider<tz::ExemplarCitiesRootV1>
             + DataProvider<tz::MzGenericLongV1>
             + DataProvider<tz::MzGenericShortV1>
+            + DataProvider<tz::MzStandardLongV1>
             + DataProvider<tz::MzSpecificLongV1>
             + DataProvider<tz::MzSpecificShortV1>
             + DataProvider<tz::MzPeriodV1>
@@ -2011,6 +2024,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             &tz::ExemplarCitiesV1::bind(provider),
             &tz::MzGenericLongV1::bind(provider),
             &tz::MzGenericShortV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
             &tz::MzSpecificLongV1::bind(provider),
             &tz::MzSpecificShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
@@ -2032,7 +2046,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::input::Date;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
@@ -2079,6 +2094,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             &tz::ExemplarCitiesRootV1::bind(&crate::provider::Baked),
             &tz::MzGenericLongV1::bind(&crate::provider::Baked),
             &tz::MzGenericShortV1::bind(&crate::provider::Baked),
+            &tz::MzStandardLongV1::bind(&crate::provider::Baked),
             &tz::MzSpecificLongV1::bind(&crate::provider::Baked),
             &tz::MzSpecificShortV1::bind(&crate::provider::Baked),
             &tz::MzPeriodV1::bind(&crate::provider::Baked),
@@ -2106,7 +2122,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Date;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
@@ -2221,6 +2237,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 tz::MzGenericShortV1,
                 (),
             >>::Container::new_empty(),
+            mz_standard_long: <FSet::ZoneStandardLong as NamesContainer<
+                tz::MzStandardLongV1,
+                (),
+            >>::Container::new_empty(),
             mz_specific_long: <FSet::ZoneSpecificLong as NamesContainer<
                 tz::MzSpecificLongV1,
                 (),
@@ -2251,6 +2271,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             exemplars: self.exemplars.get().inner,
             mz_generic_long: self.mz_generic_long.get().inner,
             mz_generic_short: self.mz_generic_short.get().inner,
+            mz_standard_long: self.mz_standard_long.get().inner,
             mz_specific_long: self.mz_specific_long.get().inner,
             mz_specific_short: self.mz_specific_short.get().inner,
             mz_periods: self.mz_periods.get().inner,
@@ -2453,11 +2474,12 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
     pub(crate) fn load_time_zone_generic_long_names(
         &mut self,
-        provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
+        mz_generic_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
+        mz_standard_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider
+        let locale = mz_generic_provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
@@ -2471,17 +2493,23 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         let cs1 = self
             .mz_generic_long
-            .load_put(provider, req, variables)
+            .load_put(mz_generic_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
         let cs2 = self
+            .mz_standard_long
+            .load_put(mz_standard_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        let cs3 = self
             .mz_periods
             .load_put(mz_period_provider, Default::default(), ())
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 {
+        if cs1.is_none() || cs1 != cs2 || cs1 != cs3 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzGenericLongV1::INFO, req),
@@ -2533,11 +2561,12 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
     pub(crate) fn load_time_zone_specific_long_names(
         &mut self,
-        provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
+        mz_specific_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
+        mz_standard_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), PatternLoadError> {
-        let locale = provider
+        let locale = mz_specific_provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);
         let error_field = ErrorField(fields::Field {
@@ -2551,17 +2580,23 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         let cs1 = self
             .mz_specific_long
-            .load_put(provider, req, variables)
+            .load_put(mz_specific_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
         let cs2 = self
+            .mz_standard_long
+            .load_put(mz_standard_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum;
+        let cs3 = self
             .mz_periods
             .load_put(mz_period_provider, Default::default(), ())
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 {
+        if cs1.is_none() || cs1 != cs2 || cs1 != cs3 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificLongV1::INFO, req),
@@ -2647,6 +2682,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
+        mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
@@ -2752,6 +2788,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
                     self.load_time_zone_specific_long_names(
                         mz_specific_long_provider,
+                        mz_standard_long_provider,
                         mz_period_provider,
                         prefs,
                     )?;
@@ -2784,6 +2821,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
                     self.load_time_zone_generic_long_names(
                         mz_generic_long_provider,
+                        mz_standard_long_provider,
                         mz_period_provider,
                         prefs,
                     )?;
@@ -2943,7 +2981,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-        day: input::Weekday,
+        day: icu_calendar::types::Weekday,
     ) -> Result<&str, GetNameForWeekdayError> {
         let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;
@@ -3048,6 +3086,8 @@ pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     pub(crate) exemplars: Option<&'a tz::ExemplarCities<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(crate) mz_generic_long: Option<&'a tz::MzGeneric<'a>>,
+    /// The long metazone names shared between generic and standard, e.g. Gulf Standard Time
+    pub(crate) mz_standard_long: Option<&'a tz::MzGeneric<'a>>,
     /// The generic short metazone names, e.g. PT
     pub(crate) mz_generic_short: Option<&'a tz::MzGeneric<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
@@ -3067,6 +3107,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             exemplars: self.exemplars.get_option(),
             exemplars_root: self.exemplars_root.get_option(),
             mz_generic_long: self.mz_generic_long.get_option(),
+            mz_standard_long: self.mz_standard_long.get_option(),
             mz_generic_short: self.mz_generic_short.get_option(),
             mz_specific_long: self.mz_specific_long.get_option(),
             mz_specific_short: self.mz_specific_short.get_option(),

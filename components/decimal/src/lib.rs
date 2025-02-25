@@ -15,7 +15,7 @@
 //! ## Format a number with Bangla digits
 //!
 //! ```
-//! use fixed_decimal::Decimal;
+//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -34,7 +34,7 @@
 //! ## Format a number with digits after the decimal separator
 //!
 //! ```
-//! use fixed_decimal::Decimal;
+//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
 //! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
@@ -57,7 +57,7 @@
 //! Numbering systems specified in the `-u-nu` subtag will be followed.
 //!
 //! ```
-//! use fixed_decimal::Decimal;
+//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
@@ -132,6 +132,22 @@ pub mod preferences {
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
+
+/// Types that can be fed to [`DecimalFormatter`] and their utilities
+pub mod input {
+    /// **This is a reexport of a type in [`fixed_decimal`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use fixed_decimal::Decimal;
+    /// **This is a reexport of a type in [`fixed_decimal`]**.
+    ///
+    /// This type can be made available with the `"ryu"` Cargo feature.
+    #[doc = "\n"] // prevent autoformatting
+    #[cfg(feature = "ryu")]
+    pub use fixed_decimal::FloatPrecision;
+    /// **This is a reexport of a type in [`fixed_decimal`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use fixed_decimal::SignDisplay;
 }
 
 /// A formatter for [`Decimal`], rendering decimal digits in an i18n-friendly way.

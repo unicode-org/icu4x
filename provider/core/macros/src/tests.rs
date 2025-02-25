@@ -21,6 +21,7 @@ fn test_basic() {
             pub struct Foo;
         ),
         quote!(
+            icu_provider::data_struct_new!(Foo,);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo;
         ),
@@ -41,6 +42,7 @@ fn test_dyn_data_marker() {
             impl icu_provider::DynamicDataMarker for FooV1 {
                 type DataStruct = Foo;
             }
+            icu_provider::data_struct_new!(Foo,);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo;
         ),
@@ -70,6 +72,7 @@ fn test_data_marker() {
                     info
                 };
             }
+            icu_provider::data_struct_new!(Foo,);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo;
         ),
@@ -118,6 +121,7 @@ fn test_multi_named_keyed_data_marker() {
                     info
                 };
             }
+            icu_provider::data_struct_new!(Foo<'_>,);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo<'data>;
         ),
@@ -161,6 +165,7 @@ fn test_attributes() {
                     info
                 };
             }
+            icu_provider::data_struct_new!(Foo<'_>,);
             #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct Foo<'data>;
         ),

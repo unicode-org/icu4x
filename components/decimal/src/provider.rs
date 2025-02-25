@@ -109,6 +109,23 @@ const _: () = {
     impl_decimal_digits_v1!(Baked);
 };
 
+icu_provider::data_marker!(
+    /// Data marker for decimal symbols
+    DecimalSymbolsV2,
+    "decimal/symbols/v2",
+    DecimalSymbols<'static>,
+);
+
+icu_provider::data_marker!(
+    /// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
+    /// set to the numbering system code.
+    DecimalDigitsV1,
+    "decimal/digits/v1",
+    [char; 10],
+    #[cfg(feature = "datagen")]
+    attributes_domain = "numbering_system"
+);
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[DecimalSymbolsV2::INFO, DecimalDigitsV1::INFO];
@@ -206,8 +223,7 @@ impl DecimalSymbolStrsBuilder<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(DecimalSymbolsV2 = "decimal/symbols@2")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
@@ -222,28 +238,10 @@ pub struct DecimalSymbols<'data> {
     pub grouping_sizes: GroupingSizes,
 }
 
-/// The digits for a given numbering system. This data ought to be stored in the `und` locale with an auxiliary key
-/// set to the numbering system code.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[icu_provider::data_struct(marker(
-    DecimalDigitsV1,
-    "decimal/digits@1",
-    attributes_domain = "numbering_system"
-))]
-#[derive(Debug, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-pub struct DecimalDigits {
-    /// Digit characters for the current numbering system. In most systems, these digits are
-    /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
-    pub digits: [char; 10],
-}
+icu_provider::data_struct_new!(
+    DecimalSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl DecimalSymbols<'_> {
     /// Return (prefix, suffix) for the minus sign

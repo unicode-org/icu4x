@@ -109,8 +109,8 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalDigits, DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols,
-                DecimalSymbolsV2, GroupingSizes,
+                DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols, DecimalSymbolsV2,
+                GroupingSizes,
             };
             let mut new_digits = ['\0'; 10];
             for (old, new) in digits
@@ -141,7 +141,7 @@ pub mod ffi {
             let mut options = DecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy.map(Into::into);
 
-            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
+            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
             impl DataProvider<DecimalSymbolsV2> for Provider {
                 fn load(
                     &self,
@@ -177,7 +177,7 @@ pub mod ffi {
                     strings: VarZeroCow::from_encodeable(&strings),
                     grouping_sizes,
                 })),
-                DecimalDigits { digits },
+                digits,
             );
             Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_unstable(

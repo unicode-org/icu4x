@@ -57,19 +57,41 @@ const _: () = {
     }
 
     make_provider!(Baked);
-    impl_cardinal_v1!(Baked);
-    impl_ordinal_v1!(Baked);
+    impl_plurals_cardinal_v1!(Baked);
+    impl_plurals_ordinal_v1!(Baked);
     #[cfg(feature = "experimental")]
-    impl_plural_ranges_v1!(Baked);
+    impl_plurals_ranges_v1!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// Data for cardinal classification
+    PluralsCardinalV1,
+    "plurals/cardinal/v1",
+    PluralRulesData<'static>,
+);
+
+icu_provider::data_marker!(
+    /// Data for ordinal classification
+    PluralsOrdinalV1,
+    "plurals/ordinal/v1",
+    PluralRulesData<'static>,
+);
+
+#[cfg(feature = "experimental")]
+icu_provider::data_marker!(
+    /// Data for plural range formatting
+    PluralsRangesV1,
+    "plurals/ranges/v1",
+    PluralRanges<'static>
+);
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CardinalV1::INFO,
-    OrdinalV1::INFO,
+    PluralsCardinalV1::INFO,
+    PluralsOrdinalV1::INFO,
     #[cfg(feature = "experimental")]
-    PluralRangesV1::INFO,
+    PluralsRangesV1::INFO,
 ];
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
@@ -82,36 +104,39 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CardinalV1 = "plurals/cardinal@1", OrdinalV1 = "plurals/ordinal@1")]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PluralRulesData<'data> {
-    /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Zero`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::One`](super::PluralCategory::One), or `None` if not present.
+    /// Rule that matches [`PluralCategory::One`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Two`](super::PluralCategory::Two), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Two`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Few`](super::PluralCategory::Few), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Few`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Many`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
 }
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+icu_provider::data_struct_new!(
+    PluralRulesData<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+#[cfg(feature = "experimental")]
 pub use ranges::*;
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 mod ranges {
-    use crate::PluralCategory;
-    use icu_provider::prelude::*;
+    use super::*;
     use zerovec::ZeroMap;
 
     /// [`PluralCategory`] but serializable as provider data.
@@ -311,8 +336,7 @@ mod ranges {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    #[icu_provider::data_struct(PluralRangesV1 = "plurals/ranges@1")]
-    #[derive(Clone, PartialEq, Debug)]
+    #[derive(Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -326,6 +350,11 @@ mod ranges {
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
     }
+
+    icu_provider::data_struct_new!(
+        PluralRanges<'_>,
+        #[cfg(feature = "datagen")]
+    );
 }
 
 /// A sized packed [`PluralElements`] suitable for use in data structs.

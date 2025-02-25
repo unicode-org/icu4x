@@ -15,8 +15,10 @@ namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct IanaParser; }
 class IanaParser;
-namespace capi { struct TimeZoneInfo; }
-class TimeZoneInfo;
+namespace capi { struct TimeZone; }
+class TimeZone;
+namespace capi { struct TimeZoneIterator; }
+class TimeZoneIterator;
 class DataError;
 }
 
@@ -35,7 +37,9 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-  inline std::unique_ptr<icu4x::TimeZoneInfo> parse(std::string_view value) const;
+  inline std::unique_ptr<icu4x::TimeZone> parse(std::string_view value) const;
+
+  inline std::unique_ptr<icu4x::TimeZoneIterator> iter() const;
 
   inline const icu4x::capi::IanaParser* AsFFI() const;
   inline icu4x::capi::IanaParser* AsFFI();

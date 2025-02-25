@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 icu_locale_core = { path = "../../components/locale_core" }
 writeable = { workspace = true }
 zerovec = { workspace = true }
@@ -47,8 +47,9 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export", "alloc"]
 compiled_data = ["dep:icu_decimal_data"]
+ryu = ["fixed_decimal/ryu"]
 alloc = ["serde?/alloc", "zerovec/alloc"]
 
 [lints.rust]

@@ -232,11 +232,11 @@ impl RuleCollection {
             + DataProvider<ScriptWithExtensionsPropertyV1>
             + DataProvider<XidStartV1>,
         NP: ?Sized
-            + DataProvider<CanonicalDecompositionDataV2>
-            + DataProvider<CompatibilityDecompositionDataV2>
-            + DataProvider<CanonicalDecompositionTablesV1>
-            + DataProvider<CompatibilityDecompositionTablesV1>
-            + DataProvider<CanonicalCompositionsV1>,
+            + DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>,
     {
         Ok(RuleCollectionProvider {
             collection: self,
@@ -412,11 +412,11 @@ macro_rules! redirect {
 }
 
 redirect!(
-    CanonicalDecompositionDataV2,
-    CompatibilityDecompositionDataV2,
-    CanonicalDecompositionTablesV1,
-    CompatibilityDecompositionTablesV1,
-    CanonicalCompositionsV1
+    NormalizerNfdDataV1,
+    NormalizerNfkdDataV1,
+    NormalizerNfdTablesV1,
+    NormalizerNfkdTablesV1,
+    NormalizerNfcV1
 );
 
 #[cfg(feature = "datagen")]

@@ -45,7 +45,7 @@ export class DisplayNamesOptions {
     static fromFields(structObj) {
         return new DisplayNamesOptions(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("DisplayNamesOptions's constructor takes an object of DisplayNamesOptions's fields.");

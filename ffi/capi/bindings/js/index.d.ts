@@ -16,6 +16,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
+export { BidiMirroringGlyph } from "./BidiMirroringGlyph"
+
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 
 export { LineBreakOptions } from "./LineBreakOptions"
@@ -28,11 +30,17 @@ export { DateTime } from "./DateTime"
 
 export { IsoDateTime } from "./IsoDateTime"
 
+export { TimeZoneAndCanonical } from "./TimeZoneAndCanonical"
+
+export { TimeZoneAndCanonicalAndNormalized } from "./TimeZoneAndCanonicalAndNormalized"
+
 export { Decomposed } from "./Decomposed"
 
 export { PluralCategories } from "./PluralCategories"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
+
+export { UtcOffsets } from "./UtcOffsets"
 
 export { WeekOf } from "./WeekOf"
 
@@ -68,7 +76,7 @@ export { DateFormatter } from "./DateFormatter"
 
 export { GregorianDateFormatter } from "./GregorianDateFormatter"
 
-export { TimeFormatter } from "./TimeFormatter"
+export { NoCalendarFormatter } from "./NoCalendarFormatter"
 
 export { DecimalFormatter } from "./DecimalFormatter"
 
@@ -87,6 +95,14 @@ export { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 export { Decimal } from "./Decimal"
 
 export { IanaParser } from "./IanaParser"
+
+export { IanaParserExtended } from "./IanaParserExtended"
+
+export { TimeZoneAndCanonicalAndNormalizedIterator } from "./TimeZoneAndCanonicalAndNormalizedIterator"
+
+export { TimeZoneAndCanonicalIterator } from "./TimeZoneAndCanonicalIterator"
+
+export { TimeZoneIterator } from "./TimeZoneIterator"
 
 export { ListFormatter } from "./ListFormatter"
 
@@ -174,6 +190,8 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
+export { TimeZone } from "./TimeZone"
+
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { MeasureUnit } from "./MeasureUnit"
@@ -184,9 +202,13 @@ export { UnitsConverter } from "./UnitsConverter"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
+export { UtcOffset } from "./UtcOffset"
+
 export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
 
 export { WeekCalculator } from "./WeekCalculator"
+
+export { WindowsParser } from "./WindowsParser"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 
@@ -264,6 +286,8 @@ export { YearStyle } from "./YearStyle"
 
 export { PluralCategory } from "./PluralCategory"
 
+export { BidiPairedBracketType } from "./BidiPairedBracketType"
+
 export { BidiClass } from "./BidiClass"
 
 export { CanonicalCombiningClass } from "./CanonicalCombiningClass"
@@ -293,5 +317,7 @@ export { LineBreakStrictness } from "./LineBreakStrictness"
 export { LineBreakWordOption } from "./LineBreakWordOption"
 
 export { SegmenterWordType } from "./SegmenterWordType"
+
+export { TimeZoneVariant } from "./TimeZoneVariant"
 
 export { WeekRelativeUnit } from "./WeekRelativeUnit"

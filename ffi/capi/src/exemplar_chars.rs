@@ -52,6 +52,11 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_main,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "main")]
         #[cfg(feature = "compiled_data")]
         pub fn create_main(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -87,6 +92,11 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_auxiliary,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auxiliary")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auxiliary(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -121,6 +131,11 @@ pub mod ffi {
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_punctuation,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "punctuation")]
         #[cfg(feature = "compiled_data")]
         pub fn create_punctuation(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
@@ -150,10 +165,15 @@ pub mod ffi {
             )))
         }
 
-        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+        /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_numbers,
+            FnInStruct,
+            hidden
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numbers")]
         #[cfg(feature = "compiled_data")]
@@ -165,7 +185,7 @@ pub mod ffi {
             )))
         }
 
-        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+        /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
@@ -185,10 +205,15 @@ pub mod ffi {
             )))
         }
 
-        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_index,
+            FnInStruct,
+            hidden
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "index")]
         #[cfg(feature = "compiled_data")]
@@ -200,7 +225,7 @@ pub mod ffi {
             )))
         }
 
-        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct

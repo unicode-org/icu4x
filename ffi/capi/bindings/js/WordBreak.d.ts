@@ -39,9 +39,15 @@ export class WordBreak {
     static Zwj : WordBreak;
     static WSegSpace : WordBreak;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): WordBreak;
 
-    static fromInteger(other: number): WordBreak | null;
+    longName(): string | null;
+
+    shortName(): string | null;
+
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): WordBreak | null;
 
     constructor(value: WordBreak | string );
 }

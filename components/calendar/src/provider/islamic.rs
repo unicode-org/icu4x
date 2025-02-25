@@ -20,18 +20,26 @@ use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
 
+icu_provider::data_marker!(
+    /// Precomputed data for the Islamic obsevational calendar
+    CalendarIslamicObservationalV1,
+    "calendar/islamic/observational/v1",
+    IslamicCache<'static>,
+    is_singleton = true,
+);
+
+icu_provider::data_marker!(
+    /// Precomputed data for the Islamic Umm-Al-Qura calendar
+    CalendarIslamicUmmalquraV1,
+    "calendar/islamic/ummalqura/v1",
+    IslamicCache<'static>,
+    is_singleton = true,
+);
+
 /// Cached/precompiled data for a certain range of years for a chinese-based
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
-#[icu_provider::data_struct(
-    marker(
-        IslamicObservationalCacheV1,
-        "calendar/islamicobservationalcache@1",
-        singleton
-    ),
-    marker(IslamicUmmAlQuraCacheV1, "calendar/islamicummalquracache@1", singleton)
-)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::islamic))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -42,6 +50,11 @@ pub struct IslamicCache<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, PackedIslamicYearInfo>,
 }
+
+icu_provider::data_struct_new!(
+    IslamicCache<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl IslamicCache<'_> {
     /// Compute this data for a range of years

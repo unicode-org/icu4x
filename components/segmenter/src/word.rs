@@ -124,7 +124,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 /// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
@@ -135,7 +135,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 /// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
@@ -148,7 +148,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// # use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+/// # use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
 /// # let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
@@ -170,7 +170,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu::segmenter::{WordType, WordSegmenter, WordBreakInvariantOptions};
+/// # use icu::segmenter::WordSegmenter;
+/// # use icu::segmenter::options::{WordType, WordBreakInvariantOptions};
 /// # let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter
@@ -205,7 +206,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -296,7 +297,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
@@ -385,7 +386,7 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";

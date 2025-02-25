@@ -21,12 +21,12 @@ fn load<IB: IslamicBasedMarker>() -> IslamicCache<'static> {
     IslamicCache::compute_for::<IB>(extended_start..extended_end)
 }
 
-impl DataProvider<IslamicObservationalCacheV1> for SourceDataProvider {
+impl DataProvider<CalendarIslamicObservationalV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<IslamicObservationalCacheV1>, DataError> {
-        self.check_req::<IslamicObservationalCacheV1>(req)?;
+    ) -> Result<DataResponse<CalendarIslamicObservationalV1>, DataError> {
+        self.check_req::<CalendarIslamicObservationalV1>(req)?;
         let cache = load::<ObservationalIslamicMarker>();
         Ok(DataResponse {
             metadata: Default::default(),
@@ -35,15 +35,18 @@ impl DataProvider<IslamicObservationalCacheV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<IslamicObservationalCacheV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarIslamicObservationalV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<IslamicUmmAlQuraCacheV1> for crate::SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<IslamicUmmAlQuraCacheV1>, DataError> {
-        self.check_req::<IslamicUmmAlQuraCacheV1>(req)?;
+impl DataProvider<CalendarIslamicUmmalquraV1> for crate::SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CalendarIslamicUmmalquraV1>, DataError> {
+        self.check_req::<CalendarIslamicUmmalquraV1>(req)?;
         let cache = load::<SaudiIslamicMarker>();
         Ok(DataResponse {
             metadata: Default::default(),
@@ -52,7 +55,7 @@ impl DataProvider<IslamicUmmAlQuraCacheV1> for crate::SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<IslamicUmmAlQuraCacheV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarIslamicUmmalquraV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
