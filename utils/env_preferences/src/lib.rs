@@ -17,21 +17,48 @@
 //! & [`TimeZone`](https://crates.io/crates/icu_time)
 
 mod error;
-pub use error::RetrievalError;
 
-#[cfg(target_os = "linux")]
-mod posix;
-#[cfg(target_os = "linux")]
-pub use posix::fetch::*;
-#[cfg(target_os = "macos")]
-mod apple;
-#[cfg(target_os = "macos")]
-pub use apple::*;
-#[cfg(target_os = "windows")]
-mod windows;
-#[cfg(target_os = "windows")]
-pub use windows::*;
+pub use error::{LocaleError, RetrievalError};
+
+#[cfg(any(doc, target_os = "macos"))]
+pub mod apple;
+#[cfg(any(doc, target_os = "linux"))]
+pub mod posix;
+#[cfg(any(doc, target_os = "windows"))]
+pub mod windows;
 #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
 compile_error!(
     "Unsupported target OS. Supported operating systems are Apple, Linux & Windows as of now"
 );
+
+#[cfg(target_os = "macos")]
+pub use apple::{self as system, AppleLocale as SystemLocale};
+#[cfg(target_os = "linux")]
+pub use posix::{self as system, PosixLocale as SystemLocale};
+#[cfg(target_os = "windows")]
+pub use windows::{self as system, WindowsLocale as SystemLocale};
+
+#[cfg(not(target_os = "linux"))]
+// There are no parsing errors on most platforms, so just alias to the broader [`LocaleError`] enum
+use error::LocaleError as SystemLocaleError;
+#[cfg(target_os = "linux")]
+use posix::PosixParseError as SystemLocaleError;
+
+pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
+    system::get_raw_locales()
+}
+
+pub fn get_locales_lossy() -> Result<Vec<icu_locale::Locale>, LocaleError> {
+    let raw_locales = get_raw_locales()?;
+    let system_locales = raw_locales
+        .iter()
+        .map(String::as_str)
+        .map(SystemLocale::try_from_str)
+        .collect::<Result<Vec<SystemLocale>, SystemLocaleError>>()?;
+
+    system_locales
+        .iter()
+        .map(SystemLocale::try_convert_lossy)
+        .map(|result| result.map_err(LocaleError::from))
+        .collect()
+}

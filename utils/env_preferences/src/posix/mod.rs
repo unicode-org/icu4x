@@ -5,6 +5,23 @@
 #[cfg(test)]
 mod tests;
 
-mod aliases;
+pub mod aliases;
 pub mod fetch;
-mod parse;
+pub mod parse;
+
+pub use parse::{PosixLocale, PosixParseError};
+use std::env;
+
+// TODO: this is intentionally incomplete, to be replaced once the
+// cross-platform category API is finalized
+pub fn get_raw_locales() -> Result<Vec<String>, crate::RetrievalError> {
+    Ok([
+        env::var("LC_ALL"),
+        env::var("LANG"),
+        env::var("LANGUAGE"),
+        env::var("C"),
+    ]
+    .into_iter()
+    .filter_map(Result::ok)
+    .collect())
+}

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
+use icu_locale::ParseError;
 use std::{ffi::FromVecWithNulError, str::Utf8Error};
 
 #[derive(Debug)]
@@ -28,6 +30,10 @@ pub enum RetrievalError {
     #[cfg(target_os = "windows")]
     Windows(windows::core::Error),
 
+    /// Errors from parsing POSIX locales
+    #[cfg(target_os = "linux")]
+    Posix(crate::posix::PosixParseError),
+
     Other(String),
 }
 
@@ -47,5 +53,32 @@ impl From<Utf8Error> for RetrievalError {
 impl From<FromVecWithNulError> for RetrievalError {
     fn from(input: FromVecWithNulError) -> Self {
         Self::FromVecWithNulError(input)
+    }
+}
+
+#[derive(Display, Debug)]
+pub enum LocaleError {
+    #[displaydoc("Unable to retrieve locales: {0:?}")]
+    Retrieval(RetrievalError),
+    #[displaydoc("Unable to parse locale: {0}")]
+    Parse(ParseError),
+}
+
+#[cfg(target_os = "linux")]
+impl From<crate::posix::PosixParseError> for LocaleError {
+    fn from(value: crate::posix::PosixParseError) -> Self {
+        Self::Retrieval(RetrievalError::Posix(value))
+    }
+}
+
+impl From<RetrievalError> for LocaleError {
+    fn from(value: RetrievalError) -> Self {
+        Self::Retrieval(value)
+    }
+}
+
+impl From<ParseError> for LocaleError {
+    fn from(value: ParseError) -> Self {
+        Self::Parse(value)
     }
 }
