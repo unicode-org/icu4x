@@ -59,6 +59,8 @@ yoke = ["dep:yoke"]
 serde = ["dep:serde", "alloc"]
 databake = ["dep:databake"]
 alloc = []
+# No longer does anything
+std = []
 
 [package.metadata.cargo-all-features]
 # We have tons of features here, limit the amount of tests we run
