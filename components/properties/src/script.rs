@@ -576,6 +576,13 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = [
+    ///     0x0303..=0x0304, // COMBINING TILDE..COMBINING MACRON
+    ///     0x0307..=0x0308, // COMBINING DOT ABOVE..COMBINING DIAERESIS
+    ///     0x030A..=0x030A, // COMBINING RING ABOVE
+    ///     0x0320..=0x0320, // COMBINING MINUS SIGN BELOW
+    ///     0x0323..=0x0325, // COMBINING DOT BELOW..COMBINING RING BELOW
+    ///     0x032D..=0x032E, // COMBINING CIRCUMFLEX ACCENT BELOW..COMBINING BREVE BELOW
+    ///     0x0330..=0x0330, // COMBINING TILDE BELOW
     ///     0x060C..=0x060C, // ARABIC COMMA
     ///     0x061B..=0x061C, // ARABIC SEMICOLON, ARABIC LETTER MARK
     ///     0x061F..=0x061F, // ARABIC QUESTION MARK
@@ -586,8 +593,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     0x070F..=0x074A, // Syriac block
     ///     0x074D..=0x074F, // Syriac block ends at U+074F
     ///     0x0860..=0x086A, // Syriac Supplement block is U+0860..=U+086F
-    ///     0x1DF8..=0x1DF8, // U+1DF8 COMBINING DOT ABOVE LEFT
-    ///     0x1DFA..=0x1DFA, // U+1DFA COMBINING DOT BELOW LEFT
+    ///     0x1DF8..=0x1DF8, // COMBINING DOT ABOVE LEFT
+    ///     0x1DFA..=0x1DFA, // COMBINING DOT BELOW LEFT
     /// ];
     ///
     /// assert_eq!(
