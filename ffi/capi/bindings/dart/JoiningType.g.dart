@@ -37,7 +37,7 @@ enum JoiningType {
     if (!result.isOk) {
       return null;
     }
-    return result.union.ok._toDart([]);
+    return result.union.ok._toDart([], isStatic: true);
   }
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
@@ -48,7 +48,7 @@ enum JoiningType {
     if (!result.isOk) {
       return null;
     }
-    return result.union.ok._toDart([]);
+    return result.union.ok._toDart([], isStatic: true);
   }
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
