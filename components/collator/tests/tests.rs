@@ -943,7 +943,6 @@ fn test_zh() {
 
     assert_zhuyin(locale!("zh-u-co-zhuyin").into());
     assert_unihan(locale!("zh-u-co-unihan").into());
-    // See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
 
     fn assert_root(prefs: CollatorPreferences) {
         let collator = Collator::try_new(prefs, Default::default()).unwrap();

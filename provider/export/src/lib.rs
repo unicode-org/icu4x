@@ -209,8 +209,7 @@ impl ExportDriver {
 
     /// This option is only relevant if using `icu::collator`.
     ///
-    /// By default, the collations `big5han`, `gb2312`, and those starting with `search`
-    /// are excluded. This method can be used to reennable them.
+    /// By default, collations starting with `search` are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
     pub fn with_additional_collations(
@@ -221,11 +220,8 @@ impl ExportDriver {
         self.with_marker_attributes_filter("collator", move |attrs| {
             attrs.is_empty()
                 || set.contains(attrs.as_str())
-                || if attrs.as_str().starts_with("search") {
-                    set.contains("search*")
-                } else {
-                    !["big5han", "gb2312"].contains(&attrs.as_str())
-                }
+                || !attrs.as_str().starts_with("search")
+                || set.contains("search*")
         })
     }
 

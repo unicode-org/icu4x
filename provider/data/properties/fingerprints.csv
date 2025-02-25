@@ -95,7 +95,7 @@ script/name/to/value/v2, <singleton>, 2611B, 2590B, b465e178f65d487b
 script/v1, <singleton>, 25752B, 25697B, 22c8c91d530f8df7
 script/value/to/long/name/v1, <singleton>, 2055B, 2033B, d7e6f6b1e5a0721c
 script/value/to/short/name/v1, <singleton>, 856B, 834B, 3b291a6aedd05159
-script/with/extensions/property/v1, <singleton>, 27554B, 27476B, ed41a2aefcf7f044
+script/with/extensions/property/v1, <singleton>, 28204B, 28126B, 98f0cb89412ac406
 segment/starter/v1, <singleton>, 1406B, 1377B, 430aa62e436e6153
 sentence/break/name/to/value/v2, <singleton>, 164B, 143B, 7a8e570bdbb11805
 sentence/break/v1, <singleton>, 13992B, 13935B, a6b131153b3e7839

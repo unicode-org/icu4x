@@ -509,8 +509,6 @@ fn test_collation_filtering() {
                     (locale!("und"), "eor"),
                     (locale!("und"), "search"),
                     (locale!("und"), ""),
-                    (locale!("zh"), "big5han"),
-                    (locale!("zh"), "gb2312"),
                     (locale!("zh"), "stroke"),
                     (locale!("zh"), "unihan"),
                     (locale!("zh"), "zhuyin"),
@@ -546,19 +544,9 @@ fn test_collation_filtering() {
             expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
-            include_collations: &["gb2312"],
+            include_collations: &["search*"],
             language: locale!("zh").into(),
-            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
-        },
-        TestCase {
-            include_collations: &["big5han"],
-            language: locale!("zh").into(),
-            expected: &["", "big5han", "stroke", "unihan", "zhuyin"],
-        },
-        TestCase {
-            include_collations: &["gb2312", "search*"],
-            language: locale!("zh").into(),
-            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
+            expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &[],
@@ -581,7 +569,7 @@ fn test_collation_filtering() {
             expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
-            include_collations: &["search*", "big5han"],
+            include_collations: &["search*"],
             language: locale!("ko").into(),
             expected: &["", "search", "searchjl", "unihan"],
         },

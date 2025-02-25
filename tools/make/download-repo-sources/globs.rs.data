@@ -92,8 +92,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "collation/implicithan/root_emoji_meta.toml",
     "collation/implicithan/root_eor_data.toml",
     "collation/implicithan/root_eor_meta.toml",
-    "collation/implicithan/zh_big5han_data.toml",
-    "collation/implicithan/zh_gb2312han_data.toml",
     "collation/implicithan/zh_pinyin_data.toml",
     "collation/implicithan/zh_stroke_data.toml",
     "collation/implicithan/zh_unihan_data.toml",

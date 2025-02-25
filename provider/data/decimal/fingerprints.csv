@@ -27,7 +27,7 @@ decimal/digits/v1, und/telu, 40B, 40B, 4084dfba70dc949
 decimal/digits/v1, und/thai, 40B, 40B, 470541c261160c5a
 decimal/digits/v1, und/tibt, 40B, 40B, a199e0054f3d55b9
 decimal/digits/v1, und/vaii, 40B, 40B, f3247f156118e197
-decimal/symbols/v2, <lookup>, 1356B, 263 identifiers
+decimal/symbols/v2, <lookup>, 1352B, 262 identifiers
 decimal/symbols/v2, <total>, 2363B, 991B, 49 unique payloads
 decimal/symbols/v2, af, 47B, 19B, 3e51d5d2bbc1f2d7
 decimal/symbols/v2, ar, 52B, 24B, c3d6103c042fed33
@@ -226,7 +226,6 @@ decimal/symbols/v2, or/orya, -> kxv-Orya/orya
 decimal/symbols/v2, pa, -> as/latn
 decimal/symbols/v2, pa/guru, 46B, 18B, 14d76079b3cbe52
 decimal/symbols/v2, pl, -> be
-decimal/symbols/v2, prg, -> af
 decimal/symbols/v2, ps, -> ks
 decimal/symbols/v2, ps/latn, 54B, 26B, 1582078748090142
 decimal/symbols/v2, pt, -> ast

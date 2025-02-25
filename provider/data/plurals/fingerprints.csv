@@ -1,4 +1,4 @@
-plurals/cardinal/v1, <lookup>, 457B, 110 identifiers
+plurals/cardinal/v1, <lookup>, 452B, 109 identifiers
 plurals/cardinal/v1, <total>, 6910B, 3077B, 34 unique payloads
 plurals/cardinal/v1, af, 135B, 21B, aba9719df257b5da
 plurals/cardinal/v1, ak, 135B, 21B, 4842967deaecb34e
@@ -76,7 +76,6 @@ plurals/cardinal/v1, or, -> af
 plurals/cardinal/v1, pa, -> ak
 plurals/cardinal/v1, pcm, -> am
 plurals/cardinal/v1, pl, 300B, 188B, e7bd214cb5268762
-plurals/cardinal/v1, prg, -> lv
 plurals/cardinal/v1, ps, -> af
 plurals/cardinal/v1, pt, 210B, 97B, 17d22114bdf762a5
 plurals/cardinal/v1, pt-PT, -> ca
