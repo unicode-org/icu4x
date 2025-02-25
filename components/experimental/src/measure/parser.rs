@@ -96,6 +96,7 @@ impl<'data> MeasureUnitParser<'data> {
             return Err(InvalidUnitError);
         }
 
+        let mut constant_denominator = 0;
         let mut measure_unit_items = Vec::<SingleUnit>::new();
         let mut sign = 1;
         while !code_units.is_empty() {
@@ -123,9 +124,26 @@ impl<'data> MeasureUnitParser<'data> {
                                 }
                                 // If the sign is negative, this means that the identifier may contain more than one `per-` keyword.
                                 Err(_) if sign == 1 => {
-                                    if let Some(remainder) = code_units.strip_prefix(b"per-") {
+                                    if let Some(remain) = code_units.strip_prefix(b"per-") {
+                                        // First time locating `per-` keyword.
                                         sign = -1;
-                                        code_units = remainder;
+                                        code_units = remain;
+
+                                        // Extract the constant denominator if present.
+                                        let mut split = remain.splitn(2, |c| *c == b'-');
+                                        if let Some(possible_constant_denominator) = split.next() {
+                                            // Try to parse the possible constant denominator as a u64.
+                                            if let Some(parsed_denominator) =
+                                                core::str::from_utf8(possible_constant_denominator)
+                                                    .ok()
+                                                    .and_then(|s| s.parse::<f64>().ok())
+                                                    .map(|num| num as u64)
+                                            {
+                                                constant_denominator = parsed_denominator;
+                                                code_units = split.next().unwrap_or(&[]);
+                                            }
+                                        }
+
                                         continue;
                                     }
 
@@ -154,6 +172,30 @@ impl<'data> MeasureUnitParser<'data> {
 
         Ok(MeasureUnit {
             single_units: measure_unit_items.into(),
+            constant_denominator,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::units::converter_factory::ConverterFactory;
+
+    #[test]
+    fn test_parser_cases() {
+        let test_cases = vec![
+            ("meter-per-square-second", 2, 0),
+            ("portion-per-1e9", 1, 1_000_000_000),
+            ("portion-per-1000000000", 1, 1_000_000_000),
+            ("liter-per-100-kilometer", 2, 100),
+        ];
+
+        for (input, expected_len, expected_denominator) in test_cases {
+            let converter_factory = ConverterFactory::new();
+            let parser = converter_factory.parser();
+            let measure_unit = parser.try_from_str(input).unwrap();
+            assert_eq!(measure_unit.single_units.len(), expected_len);
+            assert_eq!(measure_unit.constant_denominator, expected_denominator);
+        }
     }
 }

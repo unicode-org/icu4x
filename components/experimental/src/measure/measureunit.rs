@@ -20,11 +20,30 @@ use super::provider::single_unit::SingleUnit;
 pub struct MeasureUnit {
     /// Contains the processed units.
     pub(crate) single_units: SmallVec<[SingleUnit; 8]>,
+
+    /// Represents the constant denominator of this measure unit.
+    ///
+    /// Examples:
+    ///   - For the unit `meter-per-second`, the constant denominator is `0`, because there is no denominator.
+    ///   - For the unit `liter-per-100-kilometer`, the constant denominator is `100`.
+    ///   - For the unit `portion-per-1e9`, the constant denominator is `1_000_000_000`.
+    ///
+    /// NOTE:
+    ///   If the constant denominator is not set, the value defaults to `0`.
+    pub(crate) constant_denominator: u64,
 }
 
 impl MeasureUnit {
     /// Returns a reference to the single units contained within this measure unit.
     pub fn get_single_units(&self) -> &SmallVec<[SingleUnit; 8]> {
         &self.single_units
+    }
+
+    /// Returns the constant denominator of this measure unit.
+    ///
+    /// NOTE:
+    ///   If the constant denominator is not set, a value of `0` is returned.
+    pub fn get_constant_denominator(&self) -> u64 {
+        self.constant_denominator
     }
 }
