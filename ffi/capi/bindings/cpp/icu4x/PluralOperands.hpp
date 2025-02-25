@@ -24,10 +24,6 @@ namespace capi {
     
     icu4x::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const icu4x::capi::Decimal* x);
     
-    bool icu4x_PluralOperands_is_exactly_one_mv1(const icu4x::capi::PluralOperands* self);
-    
-    bool icu4x_PluralOperands_is_exactly_zero_mv1(const icu4x::capi::PluralOperands* self);
-    
     
     void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
     
@@ -43,16 +39,6 @@ inline diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDeci
 inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_fixed_decimal(const icu4x::Decimal& x) {
   auto result = icu4x::capi::icu4x_PluralOperands_from_fixed_decimal_mv1(x.AsFFI());
   return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
-}
-
-inline bool icu4x::PluralOperands::is_exactly_one() const {
-  auto result = icu4x::capi::icu4x_PluralOperands_is_exactly_one_mv1(this->AsFFI());
-  return result;
-}
-
-inline bool icu4x::PluralOperands::is_exactly_zero() const {
-  auto result = icu4x::capi::icu4x_PluralOperands_is_exactly_zero_mv1(this->AsFFI());
-  return result;
 }
 
 inline const icu4x::capi::PluralOperands* icu4x::PluralOperands::AsFFI() const {

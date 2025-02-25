@@ -74,26 +74,6 @@ export class PluralOperands {
         finally {}
     }
 
-    isExactlyOne() {
-        const result = wasm.icu4x_PluralOperands_is_exactly_one_mv1(this.ffiValue);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
-    }
-
-    isExactlyZero() {
-        const result = wasm.icu4x_PluralOperands_is_exactly_zero_mv1(this.ffiValue);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
-    }
-
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }

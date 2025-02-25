@@ -270,7 +270,7 @@ impl PluralOperands {
     }
 
     /// Whether these [`PluralOperands`] are exactly the number 0, which might be a special case.
-    pub fn is_exactly_zero(self) -> bool {
+    pub(crate) fn is_exactly_zero(self) -> bool {
         self == Self {
             i: 0,
             v: 0,
@@ -282,7 +282,7 @@ impl PluralOperands {
     }
 
     /// Whether these [`PluralOperands`] are exactly the number 1, which might be a special case.
-    pub fn is_exactly_one(self) -> bool {
+    pub(crate) fn is_exactly_one(self) -> bool {
         self == Self {
             i: 1,
             v: 0,
