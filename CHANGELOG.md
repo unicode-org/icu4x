@@ -5,7 +5,7 @@
 - Components
     - General
         - Update data to CLDR 47 Beta 1, ICU 77 RC
-        - Some crates have been given the ability to be built without `alloc` (unicode-org#6077, unicode-org#6078)
+        - Some crates have been given the ability to be built without `alloc` (unicode-org#6077, unicode-org#6078, unicode-org#6166)
         - Consistently wrap all options in None in Rust and FFI (unicode-org#6084)
         - Options now consistently live in `options` modules (unicode-org#6138)
     - `icu_provider`
@@ -34,7 +34,7 @@
     - `icu_time`
         - Renamed from `icu_timezone`
         - `Time` and `DateTime` moved to `icu_time` component (unicode-org#5961)
-        - `DateTime` only functionality is now IXDTF parsing, all existing methods can be called on `Date` directly (unicode-org#5985)
+        - Replace `ZonedDateTimeParser` by methods on `ZonedDateTime` (unicode-org#5985)
 
 - Utils
     - `fixed_decimal`: `0.6.0 -> 0.7.0`
