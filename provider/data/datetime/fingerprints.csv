@@ -1,4 +1,4 @@
-buddhist/date/neo/skeleton/patterns/v1, <lookup>, 6453B, 1296 identifiers
+buddhist/date/neo/skeleton/patterns/v1, <lookup>, 6460B, 1297 identifiers
 buddhist/date/neo/skeleton/patterns/v1, <total>, 60767B, 43443B, 583 unique payloads
 buddhist/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 buddhist/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -260,6 +260,7 @@ buddhist/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 buddhist/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 buddhist/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 buddhist/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+buddhist/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 buddhist/date/neo/skeleton/patterns/v1, en-HK/y, -> ast/y
 buddhist/date/neo/skeleton/patterns/v1, en-HK/ym0, -> ast/ym0
 buddhist/date/neo/skeleton/patterns/v1, en-HK/ym0d, 104B, 74B, 9e5a9a68ddae19fc
@@ -1296,8 +1297,8 @@ buddhist/date/neo/skeleton/patterns/v1, zu/y, -> af/y
 buddhist/date/neo/skeleton/patterns/v1, zu/ym0, -> af/ym0
 buddhist/date/neo/skeleton/patterns/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 buddhist/date/neo/skeleton/patterns/v1, zu/ym0de, 140B, 110B, 76113a98ac4f0e65
-buddhist/month/names/v1, <lookup>, 4470B, 1039 identifiers
-buddhist/month/names/v1, <total>, 69384B, 54915B, 487 unique payloads
+buddhist/month/names/v1, <lookup>, 4452B, 1035 identifiers
+buddhist/month/names/v1, <total>, 69245B, 54806B, 486 unique payloads
 buddhist/month/names/v1, af/3, 103B, 73B, b1fff1d318decf4d
 buddhist/month/names/v1, af/3s, -> af/3
 buddhist/month/names/v1, af/4, 68B, 38B, 63f4f03a0f96dd84
@@ -2015,10 +2016,6 @@ buddhist/month/names/v1, pl/4, 68B, 38B, d9ac980d80eb95d
 buddhist/month/names/v1, pl/4s, 68B, 38B, a308e4a2bfb987b
 buddhist/month/names/v1, pl/5, 145B, 115B, d25efb333e56212
 buddhist/month/names/v1, pl/5s, 147B, 117B, d4d5a17979879992
-buddhist/month/names/v1, prg/3, 139B, 109B, 1b204a072535844
-buddhist/month/names/v1, prg/3s, -> prg/3
-buddhist/month/names/v1, prg/5, -> prg/3
-buddhist/month/names/v1, prg/5s, -> prg/3
 buddhist/month/names/v1, ps/3, 170B, 141B, fdad1c7644cba98c
 buddhist/month/names/v1, ps/3s, 168B, 139B, c2428e8af96ba3c3
 buddhist/month/names/v1, ps/4, -> fa-AF/4
@@ -2456,7 +2453,7 @@ buddhist/year/names/v1, zh-Hant/5, -> yue/3
 buddhist/year/names/v1, zh/3, -> yue-Hans/3
 buddhist/year/names/v1, zh/4, -> yue-Hans/3
 buddhist/year/names/v1, zh/5, -> yue-Hans/3
-chinese/date/neo/skeleton/patterns/v1, <lookup>, 2420B, 425 identifiers
+chinese/date/neo/skeleton/patterns/v1, <lookup>, 2427B, 426 identifiers
 chinese/date/neo/skeleton/patterns/v1, <total>, 19269B, 13662B, 195 unique payloads
 chinese/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 890083ab5102739
 chinese/date/neo/skeleton/patterns/v1, ak/ej, -> af-NA/ej
@@ -2543,6 +2540,7 @@ chinese/date/neo/skeleton/patterns/v1, en-FK/ej, -> en-150/ej
 chinese/date/neo/skeleton/patterns/v1, en-GB/ej, -> en-150/ej
 chinese/date/neo/skeleton/patterns/v1, en-GG/ej, -> en-150/ej
 chinese/date/neo/skeleton/patterns/v1, en-GI/ej, -> en-150/ej
+chinese/date/neo/skeleton/patterns/v1, en-GS/ej, -> en-150/ej
 chinese/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-150/ej
 chinese/date/neo/skeleton/patterns/v1, en-IE/ej, -> en-150/ej
 chinese/date/neo/skeleton/patterns/v1, en-IL/ej, -> en-150/ej
@@ -3114,7 +3112,7 @@ chinese/year/names/v1, zh-Hant/5, -> ja/3
 chinese/year/names/v1, zh/3, -> ja/3
 chinese/year/names/v1, zh/4, -> ja/3
 chinese/year/names/v1, zh/5, -> ja/3
-coptic/date/neo/skeleton/patterns/v1, <lookup>, 6489B, 1304 identifiers
+coptic/date/neo/skeleton/patterns/v1, <lookup>, 6496B, 1305 identifiers
 coptic/date/neo/skeleton/patterns/v1, <total>, 60710B, 43278B, 586 unique payloads
 coptic/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 coptic/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -3374,6 +3372,7 @@ coptic/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 coptic/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 coptic/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 coptic/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+coptic/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 coptic/date/neo/skeleton/patterns/v1, en-HK/y, -> ast/y
 coptic/date/neo/skeleton/patterns/v1, en-HK/ym0, -> ast/ym0
 coptic/date/neo/skeleton/patterns/v1, en-HK/ym0d, 104B, 74B, 9e5a9a68ddae19fc
@@ -4687,7 +4686,7 @@ coptic/year/names/v1, ur/5, -> ur/3
 coptic/year/names/v1, zh/3, 63B, 33B, 228576003f13c8e2
 coptic/year/names/v1, zh/4, -> zh/3
 coptic/year/names/v1, zh/5, -> zh/3
-dangi/date/neo/skeleton/patterns/v1, <lookup>, 2427B, 428 identifiers
+dangi/date/neo/skeleton/patterns/v1, <lookup>, 2434B, 429 identifiers
 dangi/date/neo/skeleton/patterns/v1, <total>, 19629B, 13935B, 198 unique payloads
 dangi/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 890083ab5102739
 dangi/date/neo/skeleton/patterns/v1, ak/ej, -> af-NA/ej
@@ -4779,6 +4778,7 @@ dangi/date/neo/skeleton/patterns/v1, en-FK/ej, -> en-150/ej
 dangi/date/neo/skeleton/patterns/v1, en-GB/ej, -> en-150/ej
 dangi/date/neo/skeleton/patterns/v1, en-GG/ej, -> en-150/ej
 dangi/date/neo/skeleton/patterns/v1, en-GI/ej, -> en-150/ej
+dangi/date/neo/skeleton/patterns/v1, en-GS/ej, -> en-150/ej
 dangi/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-150/ej
 dangi/date/neo/skeleton/patterns/v1, en-IE/ej, -> en-150/ej
 dangi/date/neo/skeleton/patterns/v1, en-IL/ej, -> en-150/ej
@@ -5338,8 +5338,8 @@ dangi/year/names/v1, zh-Hant/5, -> ja/3
 dangi/year/names/v1, zh/3, -> ja/3
 dangi/year/names/v1, zh/4, -> ja/3
 dangi/year/names/v1, zh/5, -> ja/3
-day/period/names/v1, <lookup>, 4341B, 1000 identifiers
-day/period/names/v1, <total>, 16668B, 9676B, 304 unique payloads
+day/period/names/v1, <lookup>, 4334B, 999 identifiers
+day/period/names/v1, <total>, 16615B, 9646B, 303 unique payloads
 day/period/names/v1, af/3, 47B, 24B, dc2d3f22238d96ba
 day/period/names/v1, af/3s, -> af/3
 day/period/names/v1, af/4, 36B, 13B, 5fab3f486a766900
@@ -6044,7 +6044,6 @@ day/period/names/v1, pl/4, 50B, 27B, 676be44aed7abccf
 day/period/names/v1, pl/4s, 46B, 23B, 3b08defbe71ac5e4
 day/period/names/v1, pl/5, -> pl/3
 day/period/names/v1, pl/5s, -> pl/3s
-day/period/names/v1, prg/5, 53B, 30B, 2abba946f852a58b
 day/period/names/v1, ps/3s, 40B, 17B, b0861a547ba20a9e
 day/period/names/v1, ps/4, -> ps/3s
 day/period/names/v1, ps/4s, -> ps/3s
@@ -6340,7 +6339,7 @@ day/period/names/v1, zh/4s, -> yue-Hans/3
 day/period/names/v1, zh/5, -> yue-Hans/3
 day/period/names/v1, zh/5s, -> yue-Hans/3
 day/period/names/v1, zu/4, -> ast/4
-ethiopian/date/neo/skeleton/patterns/v1, <lookup>, 6491B, 1305 identifiers
+ethiopian/date/neo/skeleton/patterns/v1, <lookup>, 6498B, 1306 identifiers
 ethiopian/date/neo/skeleton/patterns/v1, <total>, 60675B, 43273B, 585 unique payloads
 ethiopian/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 ethiopian/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -6601,6 +6600,7 @@ ethiopian/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 ethiopian/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 ethiopian/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 ethiopian/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+ethiopian/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 ethiopian/date/neo/skeleton/patterns/v1, en-HK/y, -> ast/y
 ethiopian/date/neo/skeleton/patterns/v1, en-HK/ym0, -> ast/ym0
 ethiopian/date/neo/skeleton/patterns/v1, en-HK/ym0d, 104B, 74B, 9e5a9a68ddae19fc
@@ -7999,7 +7999,7 @@ exemplar/cities/root/v1, yue, 3622B, 3578B, 3a4da3572f8c81b0
 exemplar/cities/root/v1, yue-Hans, 3621B, 3577B, 7b3f7f288f0b99a6
 exemplar/cities/root/v1, zh, -> yue-Hans
 exemplar/cities/root/v1, zh-Hant, -> yue
-exemplar/cities/v1, <lookup>, 845B, 162 identifiers
+exemplar/cities/v1, <lookup>, 840B, 161 identifiers
 exemplar/cities/v1, <total>, 248266B, 241799B, 146 unique payloads
 exemplar/cities/v1, af, 882B, 838B, 1f378152ac0f4a7f
 exemplar/cities/v1, ak, 1941B, 1897B, 3f1fb20add456e1d
@@ -8098,7 +8098,6 @@ exemplar/cities/v1, oc, -> gaa
 exemplar/cities/v1, om, 991B, 947B, 61a9570fd786bf3a
 exemplar/cities/v1, pcm, 3526B, 3482B, ee69c379c9509e84
 exemplar/cities/v1, pl, 1635B, 1591B, 6655bfb454ad7578
-exemplar/cities/v1, prg, -> gaa
 exemplar/cities/v1, ps, 4132B, 4088B, 3eb42e392f978023
 exemplar/cities/v1, ps-PK, 4148B, 4104B, a9154eefdeb79e58
 exemplar/cities/v1, pt, 1492B, 1448B, d83c5e2e84cb9c77
@@ -8651,8 +8650,8 @@ glue/pattern/v1, xnr/mdt, -> ak/ldt
 glue/pattern/v1, xnr/mdtz, -> ak/ldtz
 glue/pattern/v1, xnr/sdt, -> ak/ldt
 glue/pattern/v1, xnr/sdtz, -> ak/ldtz
-gregorian/date/neo/skeleton/patterns/v1, <lookup>, 7122B, 1456 identifiers
-gregorian/date/neo/skeleton/patterns/v1, <total>, 99134B, 79377B, 700 unique payloads
+gregorian/date/neo/skeleton/patterns/v1, <lookup>, 7119B, 1456 identifiers
+gregorian/date/neo/skeleton/patterns/v1, <total>, 98952B, 79222B, 699 unique payloads
 gregorian/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 gregorian/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
 gregorian/date/neo/skeleton/patterns/v1, af/m0d, 68B, 38B, 673b1be34498351c
@@ -8946,6 +8945,7 @@ gregorian/date/neo/skeleton/patterns/v1, en-GB/ej, -> be/ej
 gregorian/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 gregorian/date/neo/skeleton/patterns/v1, en-GG/ej, -> be/ej
 gregorian/date/neo/skeleton/patterns/v1, en-GI/ej, -> be/ej
+gregorian/date/neo/skeleton/patterns/v1, en-GS/ej, -> be/ej
 gregorian/date/neo/skeleton/patterns/v1, en-HK/ym0d, 158B, 130B, 3c769078bd78a96c
 gregorian/date/neo/skeleton/patterns/v1, en-HK/ym0de, 179B, 152B, 41fb660c509c5c7a
 gregorian/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-DK/ej
@@ -9684,7 +9684,6 @@ gregorian/date/neo/skeleton/patterns/v1, pl/y, -> af/y
 gregorian/date/neo/skeleton/patterns/v1, pl/ym0, 104B, 76B, 8278f393fcd92446
 gregorian/date/neo/skeleton/patterns/v1, pl/ym0d, 158B, 130B, 662472c36580abe4
 gregorian/date/neo/skeleton/patterns/v1, pl/ym0de, 179B, 152B, dcf0a890e3f46afc
-gregorian/date/neo/skeleton/patterns/v1, prg/ym0d, 182B, 155B, 5eafa0da52edd436
 gregorian/date/neo/skeleton/patterns/v1, ps-PK/ej, -> bal-Latn/ej
 gregorian/date/neo/skeleton/patterns/v1, ps/m0de, 95B, 65B, 56e32bb0cd882678
 gregorian/date/neo/skeleton/patterns/v1, ps/ym0d, 158B, 130B, 7f8c7807486540bf
@@ -10109,8 +10108,8 @@ gregorian/date/neo/skeleton/patterns/v1, zu/y, -> ak/y
 gregorian/date/neo/skeleton/patterns/v1, zu/ym0, 116B, 88B, bc9f7d42268bcb07
 gregorian/date/neo/skeleton/patterns/v1, zu/ym0d, 182B, 155B, ba251bfe4caa3bd5
 gregorian/date/neo/skeleton/patterns/v1, zu/ym0de, 212B, 185B, b58b3b61abc49aa2
-gregorian/month/names/v1, <lookup>, 4470B, 1039 identifiers
-gregorian/month/names/v1, <total>, 69384B, 54915B, 487 unique payloads
+gregorian/month/names/v1, <lookup>, 4452B, 1035 identifiers
+gregorian/month/names/v1, <total>, 69245B, 54806B, 486 unique payloads
 gregorian/month/names/v1, af/3, 103B, 73B, b1fff1d318decf4d
 gregorian/month/names/v1, af/3s, -> af/3
 gregorian/month/names/v1, af/4, 68B, 38B, 63f4f03a0f96dd84
@@ -10828,10 +10827,6 @@ gregorian/month/names/v1, pl/4, 68B, 38B, d9ac980d80eb95d
 gregorian/month/names/v1, pl/4s, 68B, 38B, a308e4a2bfb987b
 gregorian/month/names/v1, pl/5, 145B, 115B, d25efb333e56212
 gregorian/month/names/v1, pl/5s, 147B, 117B, d4d5a17979879992
-gregorian/month/names/v1, prg/3, 139B, 109B, 1b204a072535844
-gregorian/month/names/v1, prg/3s, -> prg/3
-gregorian/month/names/v1, prg/5, -> prg/3
-gregorian/month/names/v1, prg/5s, -> prg/3
 gregorian/month/names/v1, ps/3, 170B, 141B, fdad1c7644cba98c
 gregorian/month/names/v1, ps/3s, 168B, 139B, c2428e8af96ba3c3
 gregorian/month/names/v1, ps/4, -> fa-AF/4
@@ -11619,7 +11614,7 @@ gregorian/year/names/v1, zh/5, -> zh-HK/3
 gregorian/year/names/v1, zu/3, -> ceb/3
 gregorian/year/names/v1, zu/4, -> ceb/3
 gregorian/year/names/v1, zu/5, -> ceb/3
-hebrew/date/neo/skeleton/patterns/v1, <lookup>, 6120B, 1231 identifiers
+hebrew/date/neo/skeleton/patterns/v1, <lookup>, 6127B, 1232 identifiers
 hebrew/date/neo/skeleton/patterns/v1, <total>, 59094B, 42168B, 570 unique payloads
 hebrew/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 hebrew/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -11855,6 +11850,7 @@ hebrew/date/neo/skeleton/patterns/v1, en-GB/m0de, -> en-AU/m0de
 hebrew/date/neo/skeleton/patterns/v1, en-GB/ym0de, 158B, 130B, 6fd2f70fbb2dc109
 hebrew/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 hebrew/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+hebrew/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 hebrew/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-DK/ej
 hebrew/date/neo/skeleton/patterns/v1, en-IE/ej, -> ar-IL/ej
 hebrew/date/neo/skeleton/patterns/v1, en-IL/ej, 146B, 118B, e1dcaadb92418eff
@@ -13127,7 +13123,7 @@ hebrew/year/names/v1, zh-Hant/5, -> yue/3
 hebrew/year/names/v1, zh/3, 46B, 16B, 6d1b49262997ab5
 hebrew/year/names/v1, zh/4, -> zh/3
 hebrew/year/names/v1, zh/5, -> zh/3
-indian/date/neo/skeleton/patterns/v1, <lookup>, 6475B, 1300 identifiers
+indian/date/neo/skeleton/patterns/v1, <lookup>, 6482B, 1301 identifiers
 indian/date/neo/skeleton/patterns/v1, <total>, 60365B, 43113B, 580 unique payloads
 indian/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 indian/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -13387,6 +13383,7 @@ indian/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 indian/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 indian/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 indian/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+indian/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 indian/date/neo/skeleton/patterns/v1, en-HK/y, -> ast/y
 indian/date/neo/skeleton/patterns/v1, en-HK/ym0, -> ast/ym0
 indian/date/neo/skeleton/patterns/v1, en-HK/ym0d, 104B, 74B, 9e5a9a68ddae19fc
@@ -14819,7 +14816,7 @@ indian/year/names/v1, zh-Hant/5, -> yue/3
 indian/year/names/v1, zh/3, -> yue-Hans/3
 indian/year/names/v1, zh/4, -> yue-Hans/3
 indian/year/names/v1, zh/5, -> yue-Hans/3
-islamic/date/neo/skeleton/patterns/v1, <lookup>, 6211B, 1248 identifiers
+islamic/date/neo/skeleton/patterns/v1, <lookup>, 6218B, 1249 identifiers
 islamic/date/neo/skeleton/patterns/v1, <total>, 59069B, 42097B, 571 unique payloads
 islamic/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 islamic/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -15062,6 +15059,7 @@ islamic/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 islamic/date/neo/skeleton/patterns/v1, en-GB/m0, -> en-AU/m0
 islamic/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 islamic/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+islamic/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 islamic/date/neo/skeleton/patterns/v1, en-HK/m0de, 89B, 59B, 4dea947782e18d5a
 islamic/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-DK/ej
 islamic/date/neo/skeleton/patterns/v1, en-IE/ej, -> ar-IL/ej
@@ -16441,7 +16439,7 @@ islamic/year/names/v1, zh-Hant/5, -> yue/3
 islamic/year/names/v1, zh/3, -> yue-Hans/3
 islamic/year/names/v1, zh/4, -> yue-Hans/3
 islamic/year/names/v1, zh/5, -> yue-Hans/3
-japanese/date/neo/skeleton/patterns/v1, <lookup>, 6095B, 1222 identifiers
+japanese/date/neo/skeleton/patterns/v1, <lookup>, 6102B, 1223 identifiers
 japanese/date/neo/skeleton/patterns/v1, <total>, 57335B, 40719B, 559 unique payloads
 japanese/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 japanese/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -16694,6 +16692,7 @@ japanese/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 japanese/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 japanese/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 japanese/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+japanese/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 japanese/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-DK/ej
 japanese/date/neo/skeleton/patterns/v1, en-IE/ej, -> ar-IL/ej
 japanese/date/neo/skeleton/patterns/v1, en-IE/m0d, -> bn/m0d
@@ -17665,7 +17664,7 @@ japanese/date/neo/skeleton/patterns/v1, zu/y, -> af/y
 japanese/date/neo/skeleton/patterns/v1, zu/ym0, -> af/ym0
 japanese/date/neo/skeleton/patterns/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 japanese/date/neo/skeleton/patterns/v1, zu/ym0de, 140B, 110B, 76113a98ac4f0e65
-japanese/extended/date/neo/skeleton/patterns/v1, <lookup>, 6095B, 1222 identifiers
+japanese/extended/date/neo/skeleton/patterns/v1, <lookup>, 6102B, 1223 identifiers
 japanese/extended/date/neo/skeleton/patterns/v1, <total>, 57335B, 40719B, 559 unique payloads
 japanese/extended/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 japanese/extended/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -17918,6 +17917,7 @@ japanese/extended/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 japanese/extended/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 japanese/extended/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 japanese/extended/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+japanese/extended/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 japanese/extended/date/neo/skeleton/patterns/v1, en-ID/ej, -> en-DK/ej
 japanese/extended/date/neo/skeleton/patterns/v1, en-IE/ej, -> ar-IL/ej
 japanese/extended/date/neo/skeleton/patterns/v1, en-IE/m0d, -> bn/m0d
@@ -18889,8 +18889,8 @@ japanese/extended/date/neo/skeleton/patterns/v1, zu/y, -> af/y
 japanese/extended/date/neo/skeleton/patterns/v1, zu/ym0, -> af/ym0
 japanese/extended/date/neo/skeleton/patterns/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 japanese/extended/date/neo/skeleton/patterns/v1, zu/ym0de, 140B, 110B, 76113a98ac4f0e65
-japanese/extended/month/names/v1, <lookup>, 4470B, 1039 identifiers
-japanese/extended/month/names/v1, <total>, 69384B, 54915B, 487 unique payloads
+japanese/extended/month/names/v1, <lookup>, 4452B, 1035 identifiers
+japanese/extended/month/names/v1, <total>, 69245B, 54806B, 486 unique payloads
 japanese/extended/month/names/v1, af/3, 103B, 73B, b1fff1d318decf4d
 japanese/extended/month/names/v1, af/3s, -> af/3
 japanese/extended/month/names/v1, af/4, 68B, 38B, 63f4f03a0f96dd84
@@ -19608,10 +19608,6 @@ japanese/extended/month/names/v1, pl/4, 68B, 38B, d9ac980d80eb95d
 japanese/extended/month/names/v1, pl/4s, 68B, 38B, a308e4a2bfb987b
 japanese/extended/month/names/v1, pl/5, 145B, 115B, d25efb333e56212
 japanese/extended/month/names/v1, pl/5s, 147B, 117B, d4d5a17979879992
-japanese/extended/month/names/v1, prg/3, 139B, 109B, 1b204a072535844
-japanese/extended/month/names/v1, prg/3s, -> prg/3
-japanese/extended/month/names/v1, prg/5, -> prg/3
-japanese/extended/month/names/v1, prg/5s, -> prg/3
 japanese/extended/month/names/v1, ps/3, 170B, 141B, fdad1c7644cba98c
 japanese/extended/month/names/v1, ps/3s, 168B, 139B, c2428e8af96ba3c3
 japanese/extended/month/names/v1, ps/4, -> fa-AF/4
@@ -20399,8 +20395,8 @@ japanese/extended/year/names/v1, zh/5, -> zh/3
 japanese/extended/year/names/v1, zu/3, -> ceb/3
 japanese/extended/year/names/v1, zu/4, -> ceb/4
 japanese/extended/year/names/v1, zu/5, -> ceb/3
-japanese/month/names/v1, <lookup>, 4470B, 1039 identifiers
-japanese/month/names/v1, <total>, 69384B, 54915B, 487 unique payloads
+japanese/month/names/v1, <lookup>, 4452B, 1035 identifiers
+japanese/month/names/v1, <total>, 69245B, 54806B, 486 unique payloads
 japanese/month/names/v1, af/3, 103B, 73B, b1fff1d318decf4d
 japanese/month/names/v1, af/3s, -> af/3
 japanese/month/names/v1, af/4, 68B, 38B, 63f4f03a0f96dd84
@@ -21118,10 +21114,6 @@ japanese/month/names/v1, pl/4, 68B, 38B, d9ac980d80eb95d
 japanese/month/names/v1, pl/4s, 68B, 38B, a308e4a2bfb987b
 japanese/month/names/v1, pl/5, 145B, 115B, d25efb333e56212
 japanese/month/names/v1, pl/5s, 147B, 117B, d4d5a17979879992
-japanese/month/names/v1, prg/3, 139B, 109B, 1b204a072535844
-japanese/month/names/v1, prg/3s, -> prg/3
-japanese/month/names/v1, prg/5, -> prg/3
-japanese/month/names/v1, prg/5s, -> prg/3
 japanese/month/names/v1, ps/3, 170B, 141B, fdad1c7644cba98c
 japanese/month/names/v1, ps/3s, 168B, 139B, c2428e8af96ba3c3
 japanese/month/names/v1, ps/4, -> fa-AF/4
@@ -21985,8 +21977,8 @@ locations/root/v1, yue, 9038B, 8902B, 4375be605dec8cf4
 locations/root/v1, yue-Hans, 9130B, 8994B, 8e7a3b849401980e
 locations/root/v1, zh, -> yue-Hans
 locations/root/v1, zh-Hant, -> yue
-locations/v1, <lookup>, 1097B, 218 identifiers
-locations/v1, <total>, 920197B, 892373B, 204 unique payloads
+locations/v1, <lookup>, 1092B, 217 identifiers
+locations/v1, <total>, 916825B, 889137B, 203 unique payloads
 locations/v1, af, 3765B, 3629B, 7224f23499632ab5
 locations/v1, ak, 5735B, 5599B, db8c4787c5615982
 locations/v1, am, 218B, 80B, 8ba0fd77e5364c34
@@ -22129,7 +22121,6 @@ locations/v1, or, 226B, 88B, 55ea76f265a6d7cb
 locations/v1, pa, 229B, 91B, db067529d51754dd
 locations/v1, pcm, 8955B, 8819B, 4b8a3b627991c932
 locations/v1, pl, 4665B, 4529B, 40523ddd67be6ff6
-locations/v1, prg, 3372B, 3236B, 67cd1c873dab59c2
 locations/v1, ps, 10630B, 10494B, 7c67d2a9fc0e6ab8
 locations/v1, ps-PK, 10630B, 10494B, 17687f6f9145bee6
 locations/v1, pt, 4624B, 4488B, d48e4e71ea48667a
@@ -22514,7 +22505,7 @@ metazone/generic/names/short/v1, yrl, -> kgp
 metazone/generic/names/short/v1, zh-Hant, 152B, 60B, 7df8afdf8c7361dc
 metazone/generic/names/short/v1, zh-SG, -> ta-MY
 metazone/period/v1, <singleton>, 7421B, 7333B, dc8b2c86e8d8ffcf
-metazone/specific/names/long/v1, <lookup>, 944B, 193 identifiers
+metazone/specific/names/long/v1, <lookup>, 940B, 192 identifiers
 metazone/specific/names/long/v1, <total>, 725436B, 706246B, 170 unique payloads
 metazone/specific/names/long/v1, af, 2309B, 2196B, 866c2a589949b10c
 metazone/specific/names/long/v1, ak, 3319B, 3206B, af7538e2fe20ced6
@@ -22637,7 +22628,6 @@ metazone/specific/names/long/v1, or, 7055B, 6943B, 9edcc622af7b0d13
 metazone/specific/names/long/v1, pa, 5910B, 5798B, 478453db4a6f1981
 metazone/specific/names/long/v1, pcm, 3111B, 2998B, 885de60f68743e26
 metazone/specific/names/long/v1, pl, 2358B, 2244B, 610256d91e70d1a7
-metazone/specific/names/long/v1, prg, -> bgc
 metazone/specific/names/long/v1, ps, 4935B, 4822B, 105d27d19094dc08
 metazone/specific/names/long/v1, ps-PK, 4887B, 4774B, 1d9537ef290fd188
 metazone/specific/names/long/v1, pt, 4382B, 4269B, 99ba3e2b9626f993
@@ -22845,8 +22835,8 @@ metazone/specific/names/short/v1, vi, -> chr
 metazone/specific/names/short/v1, yrl, -> kgp
 metazone/specific/names/short/v1, zh-Hant, 243B, 128B, 88e1615e5abccd60
 metazone/specific/names/short/v1, zh-SG, -> ta-MY
-metazone/standard/names/long/v1, <lookup>, 1008B, 203 identifiers
-metazone/standard/names/long/v1, <total>, 276733B, 259961B, 184 unique payloads
+metazone/standard/names/long/v1, <lookup>, 1003B, 202 identifiers
+metazone/standard/names/long/v1, <total>, 276618B, 259938B, 183 unique payloads
 metazone/standard/names/long/v1, af, 825B, 734B, b1dd071963de6d9f
 metazone/standard/names/long/v1, ak, 1479B, 1388B, 6b302a9ee93e53
 metazone/standard/names/long/v1, am, 2508B, 2417B, f13ae8ef0b20ea47
@@ -22979,7 +22969,6 @@ metazone/standard/names/long/v1, or, 2768B, 2677B, 32155b6d26444124
 metazone/standard/names/long/v1, pa, 2347B, 2256B, 7a0a5ec0769ebe36
 metazone/standard/names/long/v1, pcm, 1017B, 926B, a76e15a7d356cb99
 metazone/standard/names/long/v1, pl, 1424B, 1333B, fc29168a4078eab5
-metazone/standard/names/long/v1, prg, 115B, 23B, 6a906cf29f2da0ff
 metazone/standard/names/long/v1, ps, 2045B, 1954B, c71f64dacf793ff7
 metazone/standard/names/long/v1, ps-PK, 2044B, 1953B, 68e96c177ca45286
 metazone/standard/names/long/v1, pt, 1905B, 1814B, f0def66e0ce595b3
@@ -23050,7 +23039,7 @@ metazone/standard/names/long/v1, zh-HK, 910B, 819B, 21a182ee8b42305d
 metazone/standard/names/long/v1, zh-Hant, 841B, 750B, 1bc1f1b4952783ea
 metazone/standard/names/long/v1, zh-MO, -> zh-HK
 metazone/standard/names/long/v1, zu, 2090B, 1999B, f35f8f0e56044fef
-persian/date/neo/skeleton/patterns/v1, <lookup>, 6489B, 1304 identifiers
+persian/date/neo/skeleton/patterns/v1, <lookup>, 6496B, 1305 identifiers
 persian/date/neo/skeleton/patterns/v1, <total>, 60934B, 43481B, 587 unique payloads
 persian/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 persian/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -23310,6 +23299,7 @@ persian/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 persian/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 persian/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 persian/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+persian/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 persian/date/neo/skeleton/patterns/v1, en-HK/y, -> ast/y
 persian/date/neo/skeleton/patterns/v1, en-HK/ym0, -> ast/ym0
 persian/date/neo/skeleton/patterns/v1, en-HK/ym0d, 104B, 74B, 9e5a9a68ddae19fc
@@ -24647,7 +24637,7 @@ persian/year/names/v1, zh-Hant/5, -> yue/3
 persian/year/names/v1, zh/3, -> yue-Hans/3
 persian/year/names/v1, zh/4, -> yue-Hans/3
 persian/year/names/v1, zh/5, -> yue-Hans/3
-roc/date/neo/skeleton/patterns/v1, <lookup>, 6475B, 1303 identifiers
+roc/date/neo/skeleton/patterns/v1, <lookup>, 6482B, 1304 identifiers
 roc/date/neo/skeleton/patterns/v1, <total>, 60135B, 42913B, 579 unique payloads
 roc/date/neo/skeleton/patterns/v1, af-NA/ej, 176B, 149B, 56d4eca9d5a55004
 roc/date/neo/skeleton/patterns/v1, af/de, 56B, 26B, faf5f931c7465223
@@ -24909,6 +24899,7 @@ roc/date/neo/skeleton/patterns/v1, en-GB/ej, -> ar-IL/ej
 roc/date/neo/skeleton/patterns/v1, en-GB/m0de, -> br/m0de
 roc/date/neo/skeleton/patterns/v1, en-GG/ej, -> ar-IL/ej
 roc/date/neo/skeleton/patterns/v1, en-GI/ej, -> ar-IL/ej
+roc/date/neo/skeleton/patterns/v1, en-GS/ej, -> ar-IL/ej
 roc/date/neo/skeleton/patterns/v1, en-HK/y, -> ast/y
 roc/date/neo/skeleton/patterns/v1, en-HK/ym0, -> ast/ym0
 roc/date/neo/skeleton/patterns/v1, en-HK/ym0d, 104B, 74B, 9e5a9a68ddae19fc
@@ -25952,8 +25943,8 @@ roc/date/neo/skeleton/patterns/v1, zu/y, -> af/y
 roc/date/neo/skeleton/patterns/v1, zu/ym0, -> af/ym0
 roc/date/neo/skeleton/patterns/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 roc/date/neo/skeleton/patterns/v1, zu/ym0de, 140B, 110B, 76113a98ac4f0e65
-roc/month/names/v1, <lookup>, 4470B, 1039 identifiers
-roc/month/names/v1, <total>, 69384B, 54915B, 487 unique payloads
+roc/month/names/v1, <lookup>, 4452B, 1035 identifiers
+roc/month/names/v1, <total>, 69245B, 54806B, 486 unique payloads
 roc/month/names/v1, af/3, 103B, 73B, b1fff1d318decf4d
 roc/month/names/v1, af/3s, -> af/3
 roc/month/names/v1, af/4, 68B, 38B, 63f4f03a0f96dd84
@@ -26671,10 +26662,6 @@ roc/month/names/v1, pl/4, 68B, 38B, d9ac980d80eb95d
 roc/month/names/v1, pl/4s, 68B, 38B, a308e4a2bfb987b
 roc/month/names/v1, pl/5, 145B, 115B, d25efb333e56212
 roc/month/names/v1, pl/5s, 147B, 117B, d4d5a17979879992
-roc/month/names/v1, prg/3, 139B, 109B, 1b204a072535844
-roc/month/names/v1, prg/3s, -> prg/3
-roc/month/names/v1, prg/5, -> prg/3
-roc/month/names/v1, prg/5s, -> prg/3
 roc/month/names/v1, ps/3, 170B, 141B, fdad1c7644cba98c
 roc/month/names/v1, ps/3s, 168B, 139B, c2428e8af96ba3c3
 roc/month/names/v1, ps/4, -> fa-AF/4
@@ -27190,7 +27177,7 @@ roc/year/names/v1, zh-Hant/5, -> yue/3
 roc/year/names/v1, zh/3, -> ja/3
 roc/year/names/v1, zh/4, -> ja/3
 roc/year/names/v1, zh/5, -> ja/3
-time/neo/skeleton/patterns/v1, <lookup>, 1856B, 293 identifiers
+time/neo/skeleton/patterns/v1, <lookup>, 1862B, 294 identifiers
 time/neo/skeleton/patterns/v1, <total>, 3807B, 2547B, 45 unique payloads
 time/neo/skeleton/patterns/v1, af-NA/j, 86B, 58B, d356c26a1a707da8
 time/neo/skeleton/patterns/v1, af/h, -> af-NA/j
@@ -27266,6 +27253,7 @@ time/neo/skeleton/patterns/v1, en-FK/j, -> ar-IL/j
 time/neo/skeleton/patterns/v1, en-GB/j, -> ar-IL/j
 time/neo/skeleton/patterns/v1, en-GG/j, -> ar-IL/j
 time/neo/skeleton/patterns/v1, en-GI/j, -> ar-IL/j
+time/neo/skeleton/patterns/v1, en-GS/j, -> ar-IL/j
 time/neo/skeleton/patterns/v1, en-ID/h, -> da/h
 time/neo/skeleton/patterns/v1, en-ID/h0, -> da/h0
 time/neo/skeleton/patterns/v1, en-ID/j, -> da/h0
@@ -27534,8 +27522,8 @@ time/zone/essentials/v1, ur-IN, -> und
 time/zone/essentials/v1, vec, -> eo
 time/zone/essentials/v1, xnr, 173B, 81B, 331c125b1ab74aab
 time/zone/essentials/v1, yo, 109B, 17B, 6f563aca2d7a093
-weekday/names/v1, <lookup>, 5497B, 1345 identifiers
-weekday/names/v1, <total>, 44297B, 32311B, 523 unique payloads
+weekday/names/v1, <lookup>, 5472B, 1339 identifiers
+weekday/names/v1, <total>, 44193B, 32230B, 522 unique payloads
 weekday/names/v1, af/3, 59B, 36B, 350be85e06f55fc4
 weekday/names/v1, af/3s, -> af/3
 weekday/names/v1, af/4, 45B, 22B, de36433a8583edf6
@@ -28413,12 +28401,6 @@ weekday/names/v1, pl/5, 93B, 70B, 276e3f502eee19d4
 weekday/names/v1, pl/5s, -> pl/5
 weekday/names/v1, pl/6, 61B, 38B, 45eed760be6aaf7b
 weekday/names/v1, pl/6s, -> pl/6
-weekday/names/v1, prg/3, 104B, 81B, ac967f3aac811bbe
-weekday/names/v1, prg/3s, -> prg/3
-weekday/names/v1, prg/5, -> prg/3
-weekday/names/v1, prg/5s, -> prg/3
-weekday/names/v1, prg/6, -> prg/3
-weekday/names/v1, prg/6s, -> prg/3
 weekday/names/v1, ps/3, 102B, 79B, 8d547d54f1d37741
 weekday/names/v1, ps/3s, -> ps/3
 weekday/names/v1, ps/5, -> ps/3

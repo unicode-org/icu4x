@@ -107,10 +107,10 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0-ALPHA1";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0-BETA1";
 
     /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-12-16/76.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-77-rc";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";

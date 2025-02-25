@@ -165,8 +165,8 @@ locale/exemplar/characters/auxiliary/v1, yue-Hans, 374B, 321B, b586017ffccc55b4
 locale/exemplar/characters/auxiliary/v1, zh, 7934B, 7881B, b3aa6d9c6dc9b5fc
 locale/exemplar/characters/auxiliary/v1, zh-Hant, 2924B, 2871B, 6c9978e80b4fde3
 locale/exemplar/characters/auxiliary/v1, zu, -> en
-locale/exemplar/characters/index/v1, <lookup>, 673B, 142 identifiers
-locale/exemplar/characters/index/v1, <total>, 12977B, 6987B, 111 unique payloads
+locale/exemplar/characters/index/v1, <lookup>, 668B, 141 identifiers
+locale/exemplar/characters/index/v1, <total>, 12837B, 6901B, 110 unique payloads
 locale/exemplar/characters/index/v1, af, 62B, 8B, e5424e495f6a6037
 locale/exemplar/characters/index/v1, ak, 74B, 20B, 5c90d94fee1b7d62
 locale/exemplar/characters/index/v1, am, 284B, 231B, 363ff8bb95e65821
@@ -260,7 +260,6 @@ locale/exemplar/characters/index/v1, or, 103B, 49B, 434c5431bde2b163
 locale/exemplar/characters/index/v1, pa, 104B, 50B, 6516d8b9dbdc2fc8
 locale/exemplar/characters/index/v1, pcm, 84B, 30B, 2ed7c869627b86d1
 locale/exemplar/characters/index/v1, pl, 98B, 44B, 28276cfc5c902f78
-locale/exemplar/characters/index/v1, prg, 140B, 86B, b704184e57007fb6
 locale/exemplar/characters/index/v1, ps, 164B, 110B, d1c3e16d2ca5ffdd
 locale/exemplar/characters/index/v1, pt, -> af
 locale/exemplar/characters/index/v1, qu, 112B, 58B, a1d8f7b4c83ae6fd
@@ -309,8 +308,8 @@ locale/exemplar/characters/index/v1, za, -> af
 locale/exemplar/characters/index/v1, zh, -> af
 locale/exemplar/characters/index/v1, zh-Hant, 1340B, 1287B, 974910b31430c6ca
 locale/exemplar/characters/index/v1, zu, -> af
-locale/exemplar/characters/main/v1, <lookup>, 869B, 175 identifiers
-locale/exemplar/characters/main/v1, <total>, 73518B, 64895B, 160 unique payloads
+locale/exemplar/characters/main/v1, <lookup>, 864B, 174 identifiers
+locale/exemplar/characters/main/v1, <total>, 73378B, 64809B, 159 unique payloads
 locale/exemplar/characters/main/v1, af, 98B, 44B, d73fc42a75b51bdd
 locale/exemplar/characters/main/v1, ak, 104B, 50B, 75856fb4a06dafbb
 locale/exemplar/characters/main/v1, am, 176B, 122B, a95d77a59cc8ebc4
@@ -424,7 +423,6 @@ locale/exemplar/characters/main/v1, or, 161B, 107B, 3f04cf8b47e24f7
 locale/exemplar/characters/main/v1, pa, 174B, 120B, 8fc980fcda8e7ac2
 locale/exemplar/characters/main/v1, pcm, 156B, 102B, 5d165e4b5005e50
 locale/exemplar/characters/main/v1, pl, 134B, 80B, bdb3daa02d955a6c
-locale/exemplar/characters/main/v1, prg, 140B, 86B, 4a3a775f7ef21af6
 locale/exemplar/characters/main/v1, ps, 188B, 135B, d800e92e58ac2ae6
 locale/exemplar/characters/main/v1, ps-PK, 194B, 141B, c650f71e1b88d287
 locale/exemplar/characters/main/v1, pt, 98B, 44B, 7c8118e8689f4460
@@ -486,7 +484,7 @@ locale/exemplar/characters/main/v1, za, -> en
 locale/exemplar/characters/main/v1, zh, 10346B, 10293B, eaeb380c74d27fe3
 locale/exemplar/characters/main/v1, zh-Hant, 10862B, 10809B, 6228bf8b8d851e60
 locale/exemplar/characters/main/v1, zu, 208B, 155B, 153a1bfa1781e39f
-locale/exemplar/characters/numbers/v1, <lookup>, 469B, 95 identifiers
+locale/exemplar/characters/numbers/v1, <lookup>, 465B, 94 identifiers
 locale/exemplar/characters/numbers/v1, <total>, 3120B, 1392B, 32 unique payloads
 locale/exemplar/characters/numbers/v1, af, 86B, 32B, 7e863eaf847ae93c
 locale/exemplar/characters/numbers/v1, ar, 110B, 56B, 37da6e5b7a925dd9
@@ -555,7 +553,6 @@ locale/exemplar/characters/numbers/v1, nqo, 98B, 44B, 1e7b4f215d67045e
 locale/exemplar/characters/numbers/v1, or, 92B, 38B, 88746f358a55ab33
 locale/exemplar/characters/numbers/v1, pa, 92B, 38B, 274026f9043f848e
 locale/exemplar/characters/numbers/v1, pl, -> af
-locale/exemplar/characters/numbers/v1, prg, -> af
 locale/exemplar/characters/numbers/v1, ps, 116B, 62B, 79ae7aa1be8f4872
 locale/exemplar/characters/numbers/v1, pt-PT, -> af
 locale/exemplar/characters/numbers/v1, raj, -> bgc
@@ -583,7 +580,7 @@ locale/exemplar/characters/numbers/v1, yue, 146B, 92B, 489c004c9c03d756
 locale/exemplar/characters/numbers/v1, yue-Hans, -> yue
 locale/exemplar/characters/numbers/v1, zh, -> yue
 locale/exemplar/characters/numbers/v1, zh-Hant, -> yue
-locale/exemplar/characters/punctuation/v1, <lookup>, 721B, 158 identifiers
+locale/exemplar/characters/punctuation/v1, <lookup>, 716B, 157 identifiers
 locale/exemplar/characters/punctuation/v1, <total>, 12779B, 7978B, 89 unique payloads
 locale/exemplar/characters/punctuation/v1, af, 146B, 92B, 598fb8b71c82bbb8
 locale/exemplar/characters/punctuation/v1, am, 134B, 80B, ad144f7c484b013d
@@ -691,7 +688,6 @@ locale/exemplar/characters/punctuation/v1, or, -> af
 locale/exemplar/characters/punctuation/v1, pa, 128B, 74B, 7b1db63111353fdc
 locale/exemplar/characters/punctuation/v1, pcm, -> af
 locale/exemplar/characters/punctuation/v1, pl, 158B, 104B, b7d5cb1c7077da80
-locale/exemplar/characters/punctuation/v1, prg, -> lt
 locale/exemplar/characters/punctuation/v1, ps, 104B, 50B, 5b83aaf4c505062
 locale/exemplar/characters/punctuation/v1, pt, -> af
 locale/exemplar/characters/punctuation/v1, pt-PT, 152B, 98B, b3135f0f7cbc8782
@@ -743,8 +739,8 @@ locale/exemplar/characters/punctuation/v1, yue-Hans, 296B, 243B, 6f5dc7c33d9cb21
 locale/exemplar/characters/punctuation/v1, za, -> af
 locale/exemplar/characters/punctuation/v1, zh, -> yue-Hans
 locale/exemplar/characters/punctuation/v1, zh-Hant, -> yue
-locale/likely/subtags/extended/v1, <singleton>, 72418B, 72150B, f237b07e0364998
-locale/likely/subtags/language/v1, <singleton>, 2330B, 2191B, 85986e5c29062319
+locale/likely/subtags/extended/v1, <singleton>, 72428B, 72160B, 11843be7dd4d75be
+locale/likely/subtags/language/v1, <singleton>, 2320B, 2181B, 36b60e76bc0d9a20
 locale/likely/subtags/script/region/v1, <singleton>, 3304B, 3172B, d955ac1bc856facc
-locale/parents/v1, <singleton>, 2827B, 2783B, 3c1c3b647a08f3a0
+locale/parents/v1, <singleton>, 2846B, 2802B, 20f2dd2d3f0748bd
 locale/script/direction/v1, <singleton>, 740B, 696B, b43c5a46f6b655d7
