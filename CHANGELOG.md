@@ -4,10 +4,9 @@
 
 - Components
     - General
+        - Update data to CLDR 47 Beta 1, ICU 77 RC
         - Some crates have been given the ability to be built without `alloc` (unicode-org#6077, unicode-org#6078)
-        - Consistently wrap all options bags in None in Rust and FFI (unicode-org#6084)
-        - Remove `Vn` from data structs, `Marker` from data markers (unicode-org#6070)
-        - Data markers have been renamed to be consistent (unicode-org#4991)
+        - Consistently wrap all options in None in Rust and FFI (unicode-org#6084)
         - Options now consistently live in `options` modules (unicode-org#6138)
     - `icu_provider`
         - There is now a `data_marker!` macro (unicode-org#6072)
@@ -21,25 +20,23 @@
         - Add `Date::wrap_calendar_in_ref` (unicode-org#6016)
         - `Time` and `DateTime` moved to `icu_time` component (unicode-org#5961)
         - Audit exhaustiveness of icu_calendar::types (unicode-org#5978)
-        - Add calendar argument to IXDTF parsing (unicode-org#5982)
+        - Add calendar argument to IXDTF parsing, making it available without `compiled_data` feature (unicode-org#5982)
         - Use correct day of year for Japanese (unicode-org#5992)
     - `icu_casemap`
         - Add Borrowed variants to casemapper types (unicode-org#6088)
     - `icu_casemap`
         - Add missing keys to `CollatorPreferences` (unicode-org#5950)
     - `icu_collections`
-        - Remove some panics from zerovec's derive and icu_codepointtrie (unicode-org#6052)
+        - Remove some panics (unicode-org#6052)
     - `icu_properties`
         - Add to/from ICU4C APIs to enumerated properties (unicode-org#6091)
         - `GeneralCategoryGroup::contains` now accepts `self` by value (unicode-org#5952)
     - `icu_time`
         - Renamed from `icu_timezone`
         - `Time` and `DateTime` moved to `icu_time` component (unicode-org#5961)
-        - Dumb down DateTime (unicode-org#5985)
+        - `DateTime` only functionality is now IXDTF parsing, all existing methods can be called on `Date` directly (unicode-org#5985)
 
 - Utils
-    - `env_preferences`: `0.1.0 -> 0.2.0`
-        - Fix timezone naming convention (unicode-org#5954)
     - `fixed_decimal`: `0.6.0 -> 0.7.0`
         - Rename `FixedDecimal` to `Decimal`, introduce `UnsignedDecimal` (unicode-org#5667, unicode-org#6143, unicode-org#6146)
         - Add trim_end_if_integer (unicode-org#5903)
@@ -48,7 +45,7 @@
         - Bug fix for subsecond part (unicode-org#6004)
     - `litemap`: `0.7.3 -> 0.7.4`
         - Implement Entry apis for LiteMap (unicode-org#6131)
-        - Add `BTreeMap` like apis to `LiteMap` (unicode-org#5894)
+        - Add `BTreeMap`-like apis to `LiteMap` (unicode-org#5894)
     - `tinystr`: `0.8.0 -> 0.8.1`
         - Add explicit features list to Cargo.toml (unicode-org#6040)
     - `yoke`, `yoke_derive`: `0.7.5 -> 0.7.6`
