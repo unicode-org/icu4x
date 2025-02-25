@@ -6,7 +6,7 @@ use displaydoc::Display;
 use icu_locale::extensions::unicode::{key, value};
 use icu_locale::extensions::Extensions;
 use icu_locale::subtags::{language, script, variant, Language, Region, Variants};
-use icu_locale::{LanguageIdentifier, Locale};
+use icu_locale::{LanguageIdentifier, Locale, ParseError};
 
 use super::aliases::get_bcp47_subtags_from_posix_alias;
 
@@ -29,20 +29,6 @@ pub enum PosixParseError {
     UnorderedDelimiter {
         first_offset: usize,
         second_offset: usize,
-    },
-}
-
-#[derive(Display, Debug, PartialEq)]
-pub enum ConversionError {
-    #[displaydoc("Invalid language")]
-    InvalidLanguage {
-        start_offset: usize,
-        end_offset: usize,
-    },
-    #[displaydoc("Invalid region")]
-    InvalidRegion {
-        start_offset: usize,
-        end_offset: usize,
     },
 }
 
@@ -185,33 +171,17 @@ impl<'src> PosixLocale<'src> {
     /// POSIX locales that will return an error or silently ignore data.
     /// In particular, the codeset section is always ignored, and only some common modifiers are handled
     /// (unknown modifiers will be silently ignored).
-    pub fn try_convert_lossy(&self) -> Result<Locale, ConversionError> {
-        // Check if the language matches a known alias
-        let mut language = get_bcp47_subtags_from_posix_alias(self.language)
-            .map(|(language, _region)| language)
-            .or(Language::try_from_str(self.language).ok())
-            .ok_or(ConversionError::InvalidLanguage {
-                start_offset: 0,
-                end_offset: self.language.len(),
-            })?;
+    pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
+        // Check if the language matches a known alias (e.g. "nynorsk"->("nn", "NO"))
+        let (mut language, region) = match get_bcp47_subtags_from_posix_alias(self.language) {
+            Some((language, region)) => (language, region),
+            None => {
+                let language = Language::try_from_str(self.language)?;
+                let region = self.territory.map(Region::try_from_str).transpose()?;
 
-        // Use the associated region if the language matches a known alias
-        let region = get_bcp47_subtags_from_posix_alias(self.language)
-            .map(|(_language, region)| Ok(region))
-            .unwrap_or(
-                self.territory
-                    .map(|territory| {
-                        Region::try_from_str(territory).map_err(|_err| {
-                            ConversionError::InvalidRegion {
-                                // Add 1 to skip the delimiter
-                                start_offset: self.language.len() + 1,
-                                // Add 1 to include the final character
-                                end_offset: self.language.len() + territory.len() + 1,
-                            }
-                        })
-                    })
-                    .transpose(),
-            )?;
+                (language, region)
+            }
+        };
 
         let mut extensions = Extensions::new();
         let mut script = None;

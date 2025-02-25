@@ -265,9 +265,10 @@ mod error {
     }
 
     mod conversion {
-        use crate::posix::parse::{ConversionError, PosixLocale};
+        use crate::posix::parse::PosixLocale;
+        use icu_locale::ParseError;
 
-        fn expect_error(src: &str, expected: ConversionError) {
+        fn expect_error(src: &str, expected: ParseError) {
             let result = PosixLocale::try_from_str(src)
                 .expect(&format!("Unable to parse POSIX locale: `{src}`"))
                 .try_convert_lossy();
@@ -283,24 +284,12 @@ mod error {
 
         #[test]
         fn invalid_language() {
-            expect_error(
-                "invalid",
-                ConversionError::InvalidLanguage {
-                    start_offset: 0,
-                    end_offset: 7,
-                },
-            );
+            expect_error("invalid", ParseError::InvalidLanguage);
         }
 
         #[test]
         fn invalid_region() {
-            expect_error(
-                "en_invalid",
-                ConversionError::InvalidRegion {
-                    start_offset: 3,
-                    end_offset: 10,
-                },
-            );
+            expect_error("en_invalid", ParseError::InvalidSubtag);
         }
     }
 }
