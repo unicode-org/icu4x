@@ -8,8 +8,10 @@ use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, Type, WherePredicate};
+use syn::punctuated::Punctuated;
+use syn::{parse_macro_input, Token, MetaList, parse_quote, DeriveInput, Ident, Lifetime, Type, WherePredicate};
 use synstructure::Structure;
+use std::collections::{HashMap, HashSet};
 
 mod visitor;
 
@@ -31,6 +33,28 @@ mod visitor;
 pub fn yokeable_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(yokeable_derive_impl(&input))
+}
+
+
+// Collects all idents from #[yoke(may_borrow(A, B, C, D))]
+// needed since #[yoke(may_borrow)] doesn't work yet
+// (https://github.com/rust-lang/rust/issues/114393)
+fn get_may_borrow_attr(attrs: &[syn::Attribute]) -> Result<HashSet<Ident>, Span> {
+    let mut params = HashSet::new();
+    for attr in attrs {
+        if let Ok(list) = attr.parse_args::<MetaList>() {
+            if list.path.is_ident("may_borrow") {
+                if let Ok(list) =
+                    list.parse_args_with(Punctuated::<Ident, Token![,]>::parse_terminated)
+                {
+                    params.extend(list.into_iter())
+                } else {
+                    return Err(attr.span());
+                }
+            }
+        }
+    }
+    Ok(params)
 }
 
 fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
@@ -56,7 +80,33 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .map(|ty| parse_quote!(#ty: 'static))
         .collect();
     let lts = input.generics.lifetimes().count();
-    if lts == 0 {
+
+    let may_borrow_attrs = match get_may_borrow_attr(&input.attrs) {
+        Ok(mb) => mb,
+        Err(span) => {
+            return syn::Error::new(
+            span,
+            "#[yoke(may_borrow)] on the struct takes in a comma separated list of type parameters, like so: `#[zerofrom(may_borrow(A, B, C, D)]`",
+        ).to_compile_error();
+        }
+    };
+
+    let generics_env: HashMap<Ident, bool> = tybounds
+        .iter()
+        .map(|param| {
+            (
+                param.ident.clone(),
+                // Can't check
+                may_borrow_attrs.contains(&param.ident),
+            )
+        })
+        .collect();
+
+    // Do any of the generics potentially borrow?
+    let generics_may_borrow = generics_env.values().any(|x| *x);
+
+
+    if lts == 0 && !generics_may_borrow {
         let name = &input.ident;
         quote! {
             // This is safe because there are no lifetime parameters.
@@ -83,7 +133,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
         }
     } else {
-        if lts != 1 {
+        if lts > 1 {
             return syn::Error::new(
                 input.generics.span(),
                 "derive(Yokeable) cannot have multiple lifetime parameters",
@@ -99,9 +149,14 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             }
             false
         });
+        // Due to the possibility of generics_may_borrow, we might reach here with no lifetimes on self
+        let (maybe_static_lifetime, maybe_a_lifetime) = if lts == 0 {
+            (quote!(), quote!())
+        } else {
+            (quote!('static,), quote!('a,))
+        };
         if manual_covariance {
             let mut structure = Structure::new(input);
-            let generics_env = typarams.iter().cloned().collect();
             let static_bounds: Vec<WherePredicate> = typarams
                 .iter()
                 .map(|ty| parse_quote!(#ty: 'static))
@@ -169,10 +224,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 }
             });
             return quote! {
-                unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
+                unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#maybe_static_lifetime #(#typarams),*>
                     where #(#static_bounds,)*
                     #(#yoke_bounds,)* {
-                    type Output = #name<'a, #(#typarams),*>;
+                    type Output = #name<#maybe_a_lifetime #(#typarams),*>;
                     #[inline]
                     fn transform(&'a self) -> &'a Self::Output {
                         // These are just type asserts, we don't need them for anything
