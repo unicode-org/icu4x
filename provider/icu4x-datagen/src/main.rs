@@ -243,8 +243,6 @@ enum CollationHanDatabase {
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum CollationTable {
-    Gb2312,
-    Big5han,
     Search,
     Searchji,
     #[value(alias = "search*")] // for backwards compatability
@@ -254,8 +252,6 @@ enum CollationTable {
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
-            Self::Gb2312 => "gb2312",
-            Self::Big5han => "big5han",
             Self::Search => "search",
             Self::Searchji => "searchji",
             Self::SearchAll => "search*",
