@@ -14,7 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::collator::CollatorPreferences::extend#FnInStruct
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D#Struct

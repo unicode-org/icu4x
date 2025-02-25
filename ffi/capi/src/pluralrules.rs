@@ -136,7 +136,7 @@ pub mod ffi {
         /// Construct for a given integer
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_int64(i: i64) -> Box<PluralOperands> {
-            Box::new(PluralOperands(icu_plurals::PluralOperands::from(int)))
+            Box::new(PluralOperands(icu_plurals::PluralOperands::from(i)))
         }
 
         /// Construct from a FixedDecimal
