@@ -1961,6 +1961,7 @@ dependencies = [
  "time",
  "tinystr",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
