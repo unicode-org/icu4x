@@ -198,7 +198,6 @@ impl SourceDataProvider {
             tzdb_paths: Some(Arc::new(TzdbCache {
                 root: AbstractFs::new(root)?,
                 transitions: Default::default(),
-                zone_tab: Default::default(),
             })),
             ..self
         })
@@ -270,7 +269,6 @@ impl SourceDataProvider {
                     "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
                 )),
                 transitions: Default::default(),
-                zone_tab: Default::default(),
             })),
             ..self
         }
