@@ -133,7 +133,7 @@
         - Handle unbound fraction length (unicode-org#6036)
         - Bug fix for subsecond part (unicode-org#6004)
         - Expand size of duration records to support ECMA402 (unicode-org#5996)
-    - `litemap`: `0.7.3 -> 0.7.4`
+    - `litemap`: `0.7.4 -> 0.7.5`
         - Implement Entry apis for LiteMap (unicode-org#6131)
         - Add `BTreeMap`-like apis to `LiteMap` (unicode-org#5894)
         - Mmke litemap no-alloc (unicode-org#6077)
