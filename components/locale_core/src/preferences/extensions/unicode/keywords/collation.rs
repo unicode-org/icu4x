@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "alloc")]
 use crate::preferences::extensions::unicode::enum_keyword;
 
+#[cfg(feature = "alloc")]
 enum_keyword!(
     /// A Unicode Collation Identifier defines a type of collation (sort order).
     ///
@@ -41,6 +43,7 @@ enum_keyword!(
         ("zhuyin" => Zhuyin),
 }, "co");
 
+#[cfg(feature = "alloc")]
 enum_keyword!(
     /// Collation parameter key for ordering by case.
     ///
@@ -59,6 +62,7 @@ enum_keyword!(
         ("false" => False),
 }, "kf");
 
+#[cfg(feature = "alloc")]
 enum_keyword!(
     /// Collation parameter key for numeric handling.
     ///

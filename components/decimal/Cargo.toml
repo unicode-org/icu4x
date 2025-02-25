@@ -22,12 +22,12 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["alloc"] }
+icu_provider = { workspace = true }
 icu_locale_core = { path = "../../components/locale_core" }
 writeable = { workspace = true }
 zerovec = { workspace = true }
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
 
 icu_decimal_data = { workspace = true, optional = true }
 tinystr = { workspace = true }
@@ -47,9 +47,10 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export", "alloc"]
 compiled_data = ["dep:icu_decimal_data"]
 ryu = ["fixed_decimal/ryu"]
+alloc = ["serde?/alloc", "zerovec/alloc"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }

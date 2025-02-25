@@ -20,12 +20,13 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-icu_provider = { workspace = true, features = ["alloc"] }
+icu_provider = { workspace = true }
 regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }
+zerovec = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
 
 icu_list_data = { workspace = true, optional = true }
 
@@ -39,10 +40,11 @@ serde_json = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-serde = ["dep:serde", "icu_provider/serde", "icu_provider/alloc"]
-serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax"]
-datagen = ["serde", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax"]
+serde = ["dep:serde", "icu_provider/serde", "icu_provider/alloc", "zerovec/serde"]
+serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax", "alloc"]
+datagen = ["serde", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax", "zerovec/databake", "alloc", "serde_human"]
 compiled_data = ["dep:icu_list_data"]
+alloc = ["zerovec/alloc", "icu_provider/alloc", "serde?/alloc"]
 
 [[example]]
 name = "and_list"

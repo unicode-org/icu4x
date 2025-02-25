@@ -203,8 +203,8 @@ use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
 use icu::locale::subtags::region;
-use std::borrow::Cow;
 use tinystr::tinystr;
+use zerovec::VarZeroCow;
 
 pub struct CustomDecimalSymbolsProvider<P>(P);
 
@@ -221,8 +221,10 @@ where
                 decimal_payload.with_mut(|data| {
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'
-                    builder.grouping_separator = "🐮".into();
-                    data.strings = builder.build();
+                    builder.grouping_separator = VarZeroCow::new_owned("🐮".into());
+                    let strings = builder.build();
+                    drop(builder);
+                    data.strings = strings;
                 });
             }
         }
