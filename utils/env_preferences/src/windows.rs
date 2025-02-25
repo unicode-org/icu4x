@@ -11,7 +11,12 @@ pub struct WindowsLocale<'src>(&'src str);
 
 impl<'src> WindowsLocale<'src> {
     pub fn try_from_str(src: &'src str) -> Result<Self, LocaleError> {
-        Ok(Self(src))
+        // Check for known edge cases
+        Ok(Self(match src {
+            "es-ES_tradnl" => "es-ES-u-co-trad",
+            "zh-yue-HK" => "yue-HK",
+            _ => src,
+        }))
     }
 
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
