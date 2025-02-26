@@ -78,9 +78,18 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 ///
 /// let parser = IanaParser::new();
 /// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
-/// assert_eq!(parser.parse("Europe/Berlin"), TimeZone(tinystr!(8, "deber")));
-/// assert_eq!(parser.parse("Europe/Belfast"), TimeZone(tinystr!(8, "gblon")));
-/// assert_eq!(parser.parse("Europe/London"), TimeZone(tinystr!(8, "gblon")));
+/// assert_eq!(
+///     parser.parse("Europe/Berlin"),
+///     TimeZone(tinystr!(8, "deber"))
+/// );
+/// assert_eq!(
+///     parser.parse("Europe/Belfast"),
+///     TimeZone(tinystr!(8, "gblon"))
+/// );
+/// assert_eq!(
+///     parser.parse("Europe/London"),
+///     TimeZone(tinystr!(8, "gblon"))
+/// );
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]

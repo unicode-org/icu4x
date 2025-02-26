@@ -61,8 +61,10 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::{Date, Gregorian};
     ///
     /// let date = Date::try_from_str("2024-07-17", Gregorian).unwrap();
-    /// let date = Date::try_from_str("2024-07-17[u-ca=gregory]", Gregorian).unwrap();
-    /// let _ = Date::try_from_str("2024-07-17[u-ca=julian]", Gregorian).unwrap_err();
+    /// let date =
+    ///     Date::try_from_str("2024-07-17[u-ca=gregory]", Gregorian).unwrap();
+    /// let _ =
+    ///     Date::try_from_str("2024-07-17[u-ca=julian]", Gregorian).unwrap_err();
     ///
     /// assert_eq!(date.year().era_year_or_extended(), 2024);
     /// assert_eq!(

@@ -41,7 +41,7 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::{*, options::*};
+//! use icu::collator::{options::*, *};
 //! use icu::locale::locale;
 //!
 //! let mut options = CollatorOptions::default();
@@ -71,7 +71,7 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::{*, options::*};
+//! use icu::collator::{options::*, *};
 //!
 //! // Primary Level
 //!
@@ -250,8 +250,8 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::{*, options::*};
 //! use icu::collator::preferences::*;
+//! use icu::collator::{options::*, *};
 //!
 //! // Use the locale's default.
 //!
@@ -286,8 +286,8 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::{*, options::*};
 //! use icu::collator::preferences::*;
+//! use icu::collator::{options::*, *};
 //!
 //! // Numerical sorting off
 //!

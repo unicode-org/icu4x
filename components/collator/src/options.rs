@@ -33,7 +33,7 @@ pub enum Strength {
     /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
-    /// use icu::collator::{*, options::*};
+    /// use icu::collator::{options::*, *};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
@@ -47,7 +47,7 @@ pub enum Strength {
     /// to the ECMA-402 sensitivity "accent".
     ///
     /// ```
-    /// use icu::collator::{*, options::*};
+    /// use icu::collator::{options::*, *};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Secondary);

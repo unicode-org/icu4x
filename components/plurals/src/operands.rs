@@ -28,8 +28,8 @@ use fixed_decimal::{CompactDecimal, Decimal};
 /// From int
 ///
 /// ```
-/// use icu::plurals::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
+/// use icu::plurals::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
@@ -47,8 +47,8 @@ use fixed_decimal::{CompactDecimal, Decimal};
 /// From &str
 ///
 /// ```
-/// use icu::plurals::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
+/// use icu::plurals::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     Ok(PluralOperands::from(RawPluralOperands {
@@ -67,8 +67,8 @@ use fixed_decimal::{CompactDecimal, Decimal};
 ///
 /// ```
 /// use fixed_decimal::Decimal;
-/// use icu::plurals::RawPluralOperands;
 /// use icu::plurals::PluralOperands;
+/// use icu::plurals::RawPluralOperands;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
@@ -83,7 +83,8 @@ use fixed_decimal::{CompactDecimal, Decimal};
 ///         let mut decimal = Decimal::from(12345);
 ///         decimal.multiply_pow10(-2);
 ///         decimal
-///     }).into()
+///     })
+///         .into()
 /// );
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -312,10 +313,10 @@ impl From<&CompactDecimal> for PluralOperands {
     /// use fixed_decimal::CompactDecimal;
     /// use fixed_decimal::Decimal;
     /// use icu::locale::locale;
-    /// use icu::plurals::RawPluralOperands;
     /// use icu::plurals::PluralCategory;
     /// use icu::plurals::PluralOperands;
     /// use icu::plurals::PluralRules;
+    /// use icu::plurals::RawPluralOperands;
     ///
     /// let fixed_decimal = "1000000.20".parse::<Decimal>().unwrap();
     /// let compact_decimal = "1.00000020c6".parse::<CompactDecimal>().unwrap();

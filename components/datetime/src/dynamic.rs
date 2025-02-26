@@ -31,9 +31,9 @@
 //! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
+//! use icu::datetime::input::{DateTime, Time};
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
-//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
@@ -50,7 +50,10 @@
 //!     }
 //! }
 //!
-//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 0, 0, 0).unwrap() };
+//! let datetime = DateTime {
+//!     date: Date::try_new_iso(2025, 1, 15).unwrap(),
+//!     time: Time::try_new(16, 0, 0, 0).unwrap(),
+//! };
 //!
 //! let results = [true, false]
 //!     .map(get_field_set)

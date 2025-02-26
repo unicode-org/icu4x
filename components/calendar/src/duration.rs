@@ -13,9 +13,7 @@ use core::marker::PhantomData;
 /// # Example
 ///
 /// ```rust
-/// use icu::calendar::{
-///     types::Weekday, Date, DateDuration, DateDurationUnit,
-/// };
+/// use icu::calendar::{types::Weekday, Date, DateDuration, DateDurationUnit};
 ///
 /// // Creating ISO date: 1992-09-02.
 /// let mut date_iso = Date::try_new_iso(1992, 9, 2)

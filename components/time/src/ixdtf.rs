@@ -444,7 +444,8 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// ```
     /// use icu_calendar::cal::Hebrew;
     /// use icu_time::{
-    ///     ZonedDateTime, TimeZone, TimeZoneInfo, zone::{UtcOffset, TimeZoneVariant, IanaParser, UtcOffsetCalculator}
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset, UtcOffsetCalculator},
+    ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     /// use tinystr::tinystr;
     ///
@@ -491,10 +492,13 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu_calendar::Iso;
-    /// use icu_time::{ZonedDateTime, TimeZoneInfo, zone::UtcOffset};
+    /// use icu_time::{zone::UtcOffset, TimeZoneInfo, ZonedDateTime};
     ///
-    /// let tz_from_offset = ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19-05:00", Iso)
-    ///     .unwrap();
+    /// let tz_from_offset = ZonedDateTime::try_offset_only_from_str(
+    ///     "2024-08-08T12:08:19-05:00",
+    ///     Iso,
+    /// )
+    /// .unwrap();
     ///
     /// assert_eq!(
     ///     tz_from_offset.zone,
@@ -509,14 +513,22 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// ```
     /// use icu_calendar::Iso;
     /// use icu_time::{
-    ///     ZonedDateTime, TimeZone, TimeZoneInfo, zone::{UtcOffset, TimeZoneVariant, IanaParser}
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
+    ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     /// use tinystr::tinystr;
     ///
-    /// let tz_from_offset_annotation = ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19[-05:00]", Iso)
-    ///     .unwrap();
-    /// let tz_from_iana_annotation = ZonedDateTime::try_location_only_from_str("2024-08-08T12:08:19[America/Chicago]", Iso, IanaParser::new())
-    ///     .unwrap();
+    /// let tz_from_offset_annotation = ZonedDateTime::try_offset_only_from_str(
+    ///     "2024-08-08T12:08:19[-05:00]",
+    ///     Iso,
+    /// )
+    /// .unwrap();
+    /// let tz_from_iana_annotation = ZonedDateTime::try_location_only_from_str(
+    ///     "2024-08-08T12:08:19[America/Chicago]",
+    ///     Iso,
+    ///     IanaParser::new(),
+    /// )
+    /// .unwrap();
     ///
     /// assert_eq!(
     ///     tz_from_offset_annotation.zone,
@@ -575,21 +587,25 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// ```
     /// use icu_calendar::Iso;
     /// use icu_time::{
-    ///     ZonedDateTime, ParseError, TimeZone, TimeZoneInfo, zone::UtcOffset,
+    ///     zone::UtcOffset, ParseError, TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     /// use tinystr::tinystr;
     ///
-    /// let consistent_tz_from_both = ZonedDateTime::
-    ///     try_offset_only_from_str("2024-08-08T12:08:19-05:00[-05:00]", Iso)
-    ///     .unwrap();
+    /// let consistent_tz_from_both = ZonedDateTime::try_offset_only_from_str(
+    ///     "2024-08-08T12:08:19-05:00[-05:00]",
+    ///     Iso,
+    /// )
+    /// .unwrap();
     ///
     /// assert_eq!(
     ///     consistent_tz_from_both.zone,
     ///     UtcOffset::try_from_seconds(-18000).unwrap()
     /// );
     ///
-    /// let inconsistent_tz_from_both = ZonedDateTime::
-    ///     try_offset_only_from_str("2024-08-08T12:08:19-05:00[+05:00]", Iso);
+    /// let inconsistent_tz_from_both = ZonedDateTime::try_offset_only_from_str(
+    ///     "2024-08-08T12:08:19-05:00[+05:00]",
+    ///     Iso,
+    /// );
     ///
     /// assert!(matches!(
     ///     inconsistent_tz_from_both,
@@ -651,7 +667,8 @@ impl<A: AsCalendar> DateTime<A> {
     /// use icu::time::DateTime;
     ///
     /// let datetime =
-    ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]", Hebrew).unwrap();
+    ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]", Hebrew)
+    ///         .unwrap();
     ///
     /// assert_eq!(datetime.date.year().era_year_or_extended(), 5784);
     /// assert_eq!(

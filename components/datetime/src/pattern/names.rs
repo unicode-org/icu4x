@@ -837,15 +837,18 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::pattern::{FixedCalendarDateTimeNames, DayPeriodNameLength};
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::pattern::{
+    ///     DayPeriodNameLength, FixedCalendarDateTimeNames,
+    /// };
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let names = FixedCalendarDateTimeNames::<(), _>::new_without_number_formatting(
-    ///     locale!("es-MX").into(),
-    /// );
+    /// let names =
+    ///     FixedCalendarDateTimeNames::<(), _>::new_without_number_formatting(
+    ///         locale!("es-MX").into(),
+    ///     );
     ///
     /// let field_set = T::long().hm();
     ///
@@ -853,16 +856,15 @@ where
     /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
     ///
     /// // Load the data we need:
-    /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
     /// names.include_decimal_formatter().unwrap();
     ///
     /// // Now the conversion is successful:
     /// let formatter = names.try_into_formatter(field_set).unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&Time::midnight()),
-    ///     "12:00 a.m."
-    /// );
+    /// assert_writeable_eq!(formatter.format(&Time::midnight()), "12:00 a.m.");
     /// ```
     #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
@@ -1022,8 +1024,8 @@ where
     ///
     /// ```
     /// use icu::calendar::AnyCalendar;
-    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -1039,16 +1041,16 @@ where
     /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
     ///
     /// // Load the data we need:
-    /// names.as_mut().include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// names
+    ///     .as_mut()
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
     /// names.as_mut().include_decimal_formatter().unwrap();
     ///
     /// // Now the conversion is successful:
     /// let formatter = names.try_into_formatter(field_set).unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&Time::midnight()),
-    ///     "12:00 a.m."
-    /// );
+    /// assert_writeable_eq!(formatter.format(&Time::midnight()), "12:00 a.m.");
     /// ```
     #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
@@ -1162,9 +1164,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::YearNameLength;
-    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -1222,9 +1224,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
-    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -1232,14 +1234,10 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names
-    ///     .include_month_names(MonthNameLength::Wide)
-    ///     .unwrap();
+    /// names.include_month_names(MonthNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names
-    ///     .include_month_names(MonthNameLength::Wide)
-    ///     .unwrap();
+    /// names.include_month_names(MonthNameLength::Wide).unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
@@ -1294,8 +1292,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::pattern::DayPeriodNameLength;
-    /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+    /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -1303,10 +1301,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_day_period_names(DayPeriodNameLength::Wide).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_day_period_names(DayPeriodNameLength::Wide).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
@@ -1350,9 +1352,9 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::PatternLoadError;
     /// use icu::datetime::pattern::WeekdayNameLength;
-    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
@@ -1410,24 +1412,35 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     ///
@@ -1521,21 +1534,27 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_location_names().unwrap();
@@ -1585,21 +1604,27 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_location_names().unwrap();
     /// names.include_time_zone_exemplar_city_names().unwrap();
@@ -1653,24 +1678,35 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_long_names().unwrap();
@@ -1726,24 +1762,35 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_short_names().unwrap();
@@ -1803,24 +1850,35 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_long_names().unwrap();
@@ -1876,24 +1934,35 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use icu::datetime::input::ZonedDateTime;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     &UtcOffsetCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_short_names().unwrap();
@@ -1938,16 +2007,17 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut names =
-    ///     FixedCalendarDateTimeNames::<(), TimeFieldSet>::try_new(locale!("bn").into())
-    ///         .unwrap();
+    /// let mut names = FixedCalendarDateTimeNames::<(), TimeFieldSet>::try_new(
+    ///     locale!("bn").into(),
+    /// )
+    /// .unwrap();
     /// names.include_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers
@@ -2046,24 +2116,27 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::Date;
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::datetime::input::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into()).unwrap();
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "MMM d (EEEE) 'of year' y G 'at' h:mm a";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// // Load data for the pattern and format:
-    /// let datetime =
-    ///     DateTime { date: Date::try_new_gregorian(2023, 12, 5).unwrap(), time: Time::try_new(17, 43, 12, 0).unwrap() };
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_gregorian(2023, 12, 5).unwrap(),
+    ///     time: Time::try_new(17, 43, 12, 0).unwrap(),
+    /// };
     /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
@@ -2122,13 +2195,15 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::enums::{
+    ///     CompositeDateTimeFieldSet, DateFieldSet,
+    /// };
     /// use icu::datetime::input::Date;
+    /// use icu::datetime::input::{DateTime, Time};
+    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
-    /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
-    /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::locale::locale;
-    /// use icu::datetime::input::{DateTime, Time};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// // Create an instance that can format abbreviated month names:
@@ -2141,14 +2216,25 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// // Test it with a pattern:
     /// let pattern_str = "MMM d y";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
-    /// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::midnight() };
-    /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_gregorian(2023, 11, 20).unwrap(),
+    ///     time: Time::midnight(),
+    /// };
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern_unchecked(&pattern).format(&datetime),
+    ///     "лист. 20 2023"
+    /// );
     ///
     /// // Convert the field set to `CompositeDateTimeFieldSet`:
     /// let composite_names = names.cast_into_fset::<CompositeDateTimeFieldSet>();
     ///
     /// // It should still work:
-    /// assert_try_writeable_eq!(composite_names.with_pattern_unchecked(&pattern).format(&datetime), "лист. 20 2023");
+    /// assert_try_writeable_eq!(
+    ///     composite_names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&datetime),
+    ///     "лист. 20 2023"
+    /// );
     /// ```
     ///
     /// Converting into a narrower type is not supported:

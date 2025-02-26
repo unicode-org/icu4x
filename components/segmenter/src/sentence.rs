@@ -77,8 +77,11 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
-/// let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
+/// use icu::segmenter::{
+///     options::SentenceBreakInvariantOptions, SentenceSegmenter,
+/// };
+/// let segmenter =
+///     SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -88,8 +91,11 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::{SentenceSegmenter, options::SentenceBreakInvariantOptions};
-/// let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
+/// use icu::segmenter::{
+///     options::SentenceBreakInvariantOptions, SentenceSegmenter,
+/// };
+/// let segmenter =
+///     SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();

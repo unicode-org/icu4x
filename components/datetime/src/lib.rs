@@ -49,11 +49,11 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::input::Date;
 //! use icu::datetime::fieldsets;
+//! use icu::datetime::input::Date;
+//! use icu::datetime::input::{DateTime, Time};
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
-//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
@@ -64,7 +64,10 @@
 //! let dtf = DateTimeFormatter::try_new(locale.into(), field_set).unwrap();
 //!
 //! // Format something:
-//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 9, 35, 0).unwrap() };
+//! let datetime = DateTime {
+//!     date: Date::try_new_iso(2025, 1, 15).unwrap(),
+//!     time: Time::try_new(16, 9, 35, 0).unwrap(),
+//! };
 //! let formatted_date = dtf.format(&datetime);
 //!
 //! assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");

@@ -124,8 +124,9 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
-/// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+/// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+/// let segmenter =
+///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -135,8 +136,9 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
-/// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+/// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
+/// let segmenter =
+///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -206,12 +208,13 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
+    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+    /// let segmenter =
+    ///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -297,12 +300,13 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
+    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_lstm(WordBreakInvariantOptions::default());
+    /// let segmenter =
+    ///     WordSegmenter::new_lstm(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
@@ -386,12 +390,13 @@ impl WordSegmenter {
     /// Behavior with complex scripts:
     ///
     /// ```
-    /// use icu::segmenter::{WordSegmenter, options::WordBreakInvariantOptions};
+    /// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
     ///
     /// let th_str = "ทุกสองสัปดาห์";
     /// let ja_str = "こんにちは世界";
     ///
-    /// let segmenter = WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
+    /// let segmenter =
+    ///     WordSegmenter::new_dictionary(WordBreakInvariantOptions::default());
     ///
     /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
