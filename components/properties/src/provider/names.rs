@@ -19,6 +19,229 @@ use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
+icu_provider::data_marker!(
+    /// `BidiClassNameToValueV2`
+    BidiClassNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `CanonicalCombiningClassNameToValueV2`
+    CanonicalCombiningClassNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `EastAsianWidthNameToValueV2`
+    EastAsianWidthNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GeneralCategoryMaskNameToValueV2`
+    GeneralCategoryMaskNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GeneralCategoryNameToValueV2`
+    GeneralCategoryNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GraphemeClusterBreakNameToValueV2`
+    GraphemeClusterBreakNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `HangulSyllableTypeNameToValueV2`
+    HangulSyllableTypeNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `IndicSyllabicCategoryNameToValueV2`
+    IndicSyllabicCategoryNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `JoiningTypeNameToValueV2`
+    JoiningTypeNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `LineBreakNameToValueV2`
+    LineBreakNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `ScriptNameToValueV2`
+    ScriptNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `SentenceBreakNameToValueV2`
+    SentenceBreakNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `WordBreakNameToValueV2`
+    WordBreakNameToValueV2,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `BidiClassValueToLongNameV1`
+    BidiClassValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `BidiClassValueToShortNameV1`
+    BidiClassValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `EastAsianWidthValueToLongNameV1`
+    EastAsianWidthValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `EastAsianWidthValueToShortNameV1`
+    EastAsianWidthValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GeneralCategoryValueToLongNameV1`
+    GeneralCategoryValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GeneralCategoryValueToShortNameV1`
+    GeneralCategoryValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GraphemeClusterBreakValueToLongNameV1`
+    GraphemeClusterBreakValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GraphemeClusterBreakValueToShortNameV1`
+    GraphemeClusterBreakValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `HangulSyllableTypeValueToLongNameV1`
+    HangulSyllableTypeValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `HangulSyllableTypeValueToShortNameV1`
+    HangulSyllableTypeValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `IndicSyllabicCategoryValueToLongNameV1`
+    IndicSyllabicCategoryValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `IndicSyllabicCategoryValueToShortNameV1`
+    IndicSyllabicCategoryValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `JoiningTypeValueToLongNameV1`
+    JoiningTypeValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `JoiningTypeValueToShortNameV1`
+    JoiningTypeValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `LineBreakValueToLongNameV1`
+    LineBreakValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `LineBreakValueToShortNameV1`
+    LineBreakValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `ScriptValueToLongNameV1`
+    ScriptValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `SentenceBreakValueToLongNameV1`
+    SentenceBreakValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `SentenceBreakValueToShortNameV1`
+    SentenceBreakValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `WordBreakValueToLongNameV1`
+    WordBreakValueToLongNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `WordBreakValueToShortNameV1`
+    WordBreakValueToShortNameV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `CanonicalCombiningClassValueToLongNameV1`
+    CanonicalCombiningClassValueToLongNameV1,
+    PropertyEnumToValueNameSparseMap<'static>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// `CanonicalCombiningClassValueToShortNameV1`
+    CanonicalCombiningClassValueToShortNameV1,
+    PropertyEnumToValueNameSparseMap<'static>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// `ScriptValueToShortNameV1`
+    ScriptValueToShortNameV1,
+    PropertyScriptToIcuScriptMap<'static>,
+    is_singleton = true,
+);
+
 /// A set of characters and strings which share a particular property value.
 ///
 /// <div class="stab unstable">
@@ -26,26 +249,7 @@ use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(
-    marker(BidiClassNameToValueV2, "propnames/from/bc@2", singleton),
-    marker(
-        CanonicalCombiningClassNameToValueV2,
-        "propnames/from/ccc@2",
-        singleton
-    ),
-    marker(EastAsianWidthNameToValueV2, "propnames/from/ea@2", singleton),
-    marker(GeneralCategoryMaskNameToValueV2, "propnames/from/gcm@2", singleton),
-    marker(GeneralCategoryNameToValueV2, "propnames/from/gc@2", singleton),
-    marker(GraphemeClusterBreakNameToValueV2, "propnames/from/GCB@2", singleton),
-    marker(HangulSyllableTypeNameToValueV2, "propnames/from/hst@2", singleton),
-    marker(IndicSyllabicCategoryNameToValueV2, "propnames/from/InSC@2", singleton),
-    marker(JoiningTypeNameToValueV2, "propnames/from/jt@2", singleton),
-    marker(LineBreakNameToValueV2, "propnames/from/lb@2", singleton),
-    marker(ScriptNameToValueV2, "propnames/from/sc@2", singleton),
-    marker(SentenceBreakNameToValueV2, "propnames/from/SB@2", singleton),
-    marker(WordBreakNameToValueV2, "propnames/from/WB@2", singleton)
-)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -55,6 +259,11 @@ pub struct PropertyValueNameToEnumMap<'data> {
     pub map: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
+icu_provider::data_struct_new!(
+    PropertyValueNameToEnumMap<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// A mapping of property values to their names. A single instance of this map will only cover
 /// either long or short names, determined whilst loading data.
 ///
@@ -63,19 +272,7 @@ pub struct PropertyValueNameToEnumMap<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(
-    marker(
-        CanonicalCombiningClassValueToLongNameV1,
-        "propnames/to/long/sparse/ccc@1",
-        singleton
-    ),
-    marker(
-        CanonicalCombiningClassValueToShortNameV1,
-        "propnames/to/short/sparse/ccc@1",
-        singleton
-    )
-)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -86,6 +283,11 @@ pub struct PropertyEnumToValueNameSparseMap<'data> {
     pub map: ZeroMap<'data, u16, str>,
 }
 
+icu_provider::data_struct_new!(
+    PropertyEnumToValueNameSparseMap<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// A mapping of property values to their names. A single instance of this map will only cover
 /// either long or short names, determined whilst loading data.
 ///
@@ -94,98 +296,7 @@ pub struct PropertyEnumToValueNameSparseMap<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(
-    marker(BidiClassValueToLongNameV1, "propnames/to/long/linear/bc@1", singleton),
-    marker(
-        BidiClassValueToShortNameV1,
-        "propnames/to/short/linear/bc@1",
-        singleton
-    ),
-    marker(
-        EastAsianWidthValueToLongNameV1,
-        "propnames/to/long/linear/ea@1",
-        singleton
-    ),
-    marker(
-        EastAsianWidthValueToShortNameV1,
-        "propnames/to/short/linear/ea@1",
-        singleton
-    ),
-    marker(
-        GeneralCategoryValueToLongNameV1,
-        "propnames/to/long/linear/gc@1",
-        singleton
-    ),
-    marker(
-        GeneralCategoryValueToShortNameV1,
-        "propnames/to/short/linear/gc@1",
-        singleton
-    ),
-    marker(
-        GraphemeClusterBreakValueToLongNameV1,
-        "propnames/to/long/linear/GCB@1",
-        singleton
-    ),
-    marker(
-        GraphemeClusterBreakValueToShortNameV1,
-        "propnames/to/short/linear/GCB@1",
-        singleton
-    ),
-    marker(
-        HangulSyllableTypeValueToLongNameV1,
-        "propnames/to/long/linear/hst@1",
-        singleton
-    ),
-    marker(
-        HangulSyllableTypeValueToShortNameV1,
-        "propnames/to/short/linear/hst@1",
-        singleton
-    ),
-    marker(
-        IndicSyllabicCategoryValueToLongNameV1,
-        "propnames/to/long/linear/InSC@1",
-        singleton
-    ),
-    marker(
-        IndicSyllabicCategoryValueToShortNameV1,
-        "propnames/to/short/linear/InSC@1",
-        singleton
-    ),
-    marker(
-        JoiningTypeValueToLongNameV1,
-        "propnames/to/long/linear/jt@1",
-        singleton
-    ),
-    marker(
-        JoiningTypeValueToShortNameV1,
-        "propnames/to/short/linear/jt@1",
-        singleton
-    ),
-    marker(LineBreakValueToLongNameV1, "propnames/to/long/linear/lb@1", singleton),
-    marker(
-        LineBreakValueToShortNameV1,
-        "propnames/to/short/linear/lb@1",
-        singleton
-    ),
-    marker(ScriptValueToLongNameV1, "propnames/to/long/linear/sc@1", singleton),
-    marker(
-        SentenceBreakValueToLongNameV1,
-        "propnames/to/long/linear/SB@1",
-        singleton
-    ),
-    marker(
-        SentenceBreakValueToShortNameV1,
-        "propnames/to/short/linear/SB@1",
-        singleton
-    ),
-    marker(WordBreakValueToLongNameV1, "propnames/to/long/linear/WB@1", singleton),
-    marker(
-        WordBreakValueToShortNameV1,
-        "propnames/to/short/linear/WB@1",
-        singleton
-    )
-)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -197,6 +308,11 @@ pub struct PropertyEnumToValueNameLinearMap<'data> {
     pub map: VarZeroVec<'data, str>,
 }
 
+icu_provider::data_struct_new!(
+    PropertyEnumToValueNameLinearMap<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// A mapping of property values to their names. A single instance of this map will only cover
 /// either long or short names, determined whilst loading data.
 ///
@@ -205,12 +321,7 @@ pub struct PropertyEnumToValueNameLinearMap<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq)]
-#[icu_provider::data_struct(marker(
-    ScriptValueToShortNameV1,
-    "propnames/to/short/linear4/sc@1",
-    singleton
-))]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::names))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -221,3 +332,8 @@ pub struct PropertyScriptToIcuScriptMap<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroVec<'data, NichedOption<Script, 4>>,
 }
+
+icu_provider::data_struct_new!(
+    PropertyScriptToIcuScriptMap<'_>,
+    #[cfg(feature = "datagen")]
+);

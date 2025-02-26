@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 databake = { workspace = true, features = ["derive"], optional = true}
