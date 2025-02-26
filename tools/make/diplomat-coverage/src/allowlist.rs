@@ -344,6 +344,9 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::wrap_calendar_in_arc",
         "icu::calendar::Date::wrap_calendar_in_ref",
 
+        // Generic type, primarily exists for use by ICU4X data struct internals.
+        "icu::plurals::PluralElements",
+
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
         // calendar types exist to implement the trait
