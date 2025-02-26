@@ -63,7 +63,7 @@ pub struct UnitsEssentials<'data> {
     pub times: Cow<'data, str>,
 }
 
-icu_provider::data_struct_new!(UnitsEssentials<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(UnitsEssentials<'_>, #[cfg(feature = "datagen")]);
 
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>. // TODO??

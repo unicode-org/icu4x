@@ -37,7 +37,7 @@ where
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// icu_provider::data_struct_new!(Foo<'_>);
+/// icu_provider::data_struct!(Foo<'_>);
 ///
 /// icu_provider::dynutil::impl_casting_upcast!(
 ///     FooV1,

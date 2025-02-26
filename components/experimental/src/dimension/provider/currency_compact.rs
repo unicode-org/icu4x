@@ -39,7 +39,7 @@ pub struct ShortCurrencyCompact<'data> {
     pub compact_patterns: ZeroMap<'data, (i8, CompactCount), str>,
 }
 
-icu_provider::data_struct_new!(ShortCurrencyCompact<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(ShortCurrencyCompact<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

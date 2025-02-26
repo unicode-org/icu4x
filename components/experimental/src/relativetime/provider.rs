@@ -167,4 +167,4 @@ pub struct RelativeTimePatternData<'data> {
     pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
-icu_provider::data_struct_new!(RelativeTimePatternData<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(RelativeTimePatternData<'_>, #[cfg(feature = "datagen")]);

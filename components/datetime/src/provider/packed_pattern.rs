@@ -193,7 +193,7 @@ pub struct PackedPatterns<'data> {
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PackedPatterns<'_>,
     #[cfg(feature = "datagen")]
 );

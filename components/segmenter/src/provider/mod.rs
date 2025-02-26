@@ -168,7 +168,7 @@ pub struct RuleBreakData<'data> {
     pub complex_property: u8,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     RuleBreakData<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -190,7 +190,7 @@ pub struct UCharDictionaryBreakData<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     UCharDictionaryBreakData<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -215,7 +215,7 @@ pub struct RuleBreakDataOverride<'data> {
     pub property_table_override: CodePointTrie<'data, u8>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     RuleBreakDataOverride<'_>,
     #[cfg(feature = "datagen")]
 );

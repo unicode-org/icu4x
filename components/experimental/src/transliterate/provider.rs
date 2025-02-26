@@ -54,7 +54,7 @@ pub struct RuleBasedTransliterator<'a> {
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE, Index32>, Index32>,
 }
 
-icu_provider::data_struct_new!(RuleBasedTransliterator<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(RuleBasedTransliterator<'_>, #[cfg(feature = "datagen")]);
 
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for RuleBasedTransliterator<'de> {

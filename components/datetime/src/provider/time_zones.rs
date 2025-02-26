@@ -141,7 +141,7 @@ pub struct TimeZoneEssentials<'data> {
     pub offset_unknown: Cow<'data, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     TimeZoneEssentials<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -201,7 +201,7 @@ pub struct Locations<'data> {
     pub pattern_partial_location: Cow<'data, DoublePlaceholderPattern>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     Locations<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -226,7 +226,7 @@ pub struct ExemplarCities<'data> {
     pub exemplars: ZeroMap<'data, TimeZone, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     ExemplarCities<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -253,7 +253,7 @@ pub struct MetazoneGenericNames<'data> {
     pub overrides: ZeroMap<'data, TimeZone, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     MetazoneGenericNames<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -286,7 +286,7 @@ pub struct MetazoneSpecificNames<'data> {
     pub use_standard: ZeroVec<'data, MetazoneId>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     MetazoneSpecificNames<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -320,7 +320,7 @@ pub struct MetazonePeriod<'data> {
     pub list: ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     MetazonePeriod<'_>,
     #[cfg(feature = "datagen")]
 );

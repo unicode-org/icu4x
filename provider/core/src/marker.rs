@@ -69,7 +69,7 @@ pub trait DynamicDataMarker: 'static {
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
 ///
-/// [`data_struct!`]: crate::data_struct_new
+/// [`data_struct!`]: crate::data_struct
 /// [`DataProvider`]: crate::DataProvider
 /// [`BufferMarker`]: crate::buf::BufferMarker
 pub trait DataMarker: DynamicDataMarker {

@@ -48,7 +48,7 @@ impl<'a> zerofrom::ZeroFrom<'a, str> for HelloWorld<'a> {
     }
 }
 
-crate::data_struct_new!(
+crate::data_struct!(
     HelloWorld<'data>,
     varule: str,
     #[cfg(feature = "export")]

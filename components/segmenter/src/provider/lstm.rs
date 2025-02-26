@@ -369,7 +369,7 @@ pub enum LstmData<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     LstmData<'_>,
     #[cfg(feature = "datagen")]
 );

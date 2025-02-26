@@ -105,7 +105,7 @@ pub struct DateLengths<'data> {
     pub length_combinations: patterns::GenericLengthPatterns<'data>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     DateLengths<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -147,7 +147,7 @@ pub struct TimeLengths<'data> {
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
 }
 
-icu_provider::data_struct_new!(TimeLengths<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(TimeLengths<'_>, #[cfg(feature = "datagen")]);
 
 /// Data structs for date / time patterns that store data corresponding to pattern lengths
 /// and/or plural forms.

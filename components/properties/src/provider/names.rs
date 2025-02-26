@@ -259,7 +259,7 @@ pub struct PropertyValueNameToEnumMap<'data> {
     pub map: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PropertyValueNameToEnumMap<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -283,7 +283,7 @@ pub struct PropertyEnumToValueNameSparseMap<'data> {
     pub map: ZeroMap<'data, u16, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PropertyEnumToValueNameSparseMap<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -308,7 +308,7 @@ pub struct PropertyEnumToValueNameLinearMap<'data> {
     pub map: VarZeroVec<'data, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PropertyEnumToValueNameLinearMap<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -333,7 +333,7 @@ pub struct PropertyScriptToIcuScriptMap<'data> {
     pub map: ZeroVec<'data, NichedOption<Script, 4>>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PropertyScriptToIcuScriptMap<'_>,
     #[cfg(feature = "datagen")]
 );

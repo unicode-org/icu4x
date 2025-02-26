@@ -108,7 +108,7 @@ pub struct DateSymbols<'data> {
     pub eras: Eras<'data>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     DateSymbols<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -142,7 +142,7 @@ pub struct TimeSymbols<'data> {
     pub day_periods: day_periods::Contexts<'data>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     TimeSymbols<'_>,
     #[cfg(feature = "datagen")]
 );

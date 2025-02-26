@@ -75,7 +75,7 @@ pub struct RegionDisplayNames<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
 
-icu_provider::data_struct_new!(RegionDisplayNames<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(RegionDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -98,7 +98,7 @@ pub struct LanguageDisplayNames<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLanguage, str>,
 }
 
-icu_provider::data_struct_new!(LanguageDisplayNames<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(LanguageDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -115,7 +115,7 @@ pub struct ScriptDisplayNames<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedScript, str>,
 }
 
-icu_provider::data_struct_new!(ScriptDisplayNames<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(ScriptDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -138,7 +138,7 @@ pub struct LocaleDisplayNames<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLocale, str>,
 }
 
-icu_provider::data_struct_new!(LocaleDisplayNames<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(LocaleDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -152,4 +152,4 @@ pub struct VariantDisplayNames<'data> {
     pub names: ZeroMap<'data, UnvalidatedVariant, str>,
 }
 
-icu_provider::data_struct_new!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);

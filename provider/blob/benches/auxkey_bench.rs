@@ -33,7 +33,7 @@ icu_provider::data_marker!(MarkerV4, Empty);
 #[databake(path = crate)]
 pub struct Empty;
 
-icu_provider::data_struct_new!(Empty);
+icu_provider::data_struct!(Empty);
 
 struct Baked;
 

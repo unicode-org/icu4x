@@ -74,7 +74,7 @@ pub struct CompactDecimalPatternData<'data> {
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
 }
 
-icu_provider::data_struct_new!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);
 
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.

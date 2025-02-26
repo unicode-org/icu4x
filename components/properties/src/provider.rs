@@ -812,7 +812,7 @@ pub enum PropertyCodePointSet<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PropertyCodePointSet<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -895,7 +895,7 @@ pub enum PropertyCodePointMap<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     <T: TrieValue> PropertyCodePointMap<'_, T>,
     #[cfg(feature = "datagen")]
 );
@@ -991,7 +991,7 @@ pub enum PropertyUnicodeSet<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PropertyUnicodeSet<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -1083,7 +1083,7 @@ pub struct ScriptWithExtensionsProperty<'data> {
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     ScriptWithExtensionsProperty<'_>,
     #[cfg(feature = "datagen")]
 );

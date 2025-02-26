@@ -86,7 +86,7 @@ pub struct PersonNamesFormat<'data> {
     pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVarULE>,
 }
 
-icu_provider::data_struct_new!(PersonNamesFormat<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(PersonNamesFormat<'_>, #[cfg(feature = "datagen")]);
 
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}

@@ -75,4 +75,4 @@ pub struct PercentEssentials<'data> {
     pub plus_sign: Cow<'data, str>,
 }
 
-icu_provider::data_struct_new!(PercentEssentials<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(PercentEssentials<'_>, #[cfg(feature = "datagen")]);

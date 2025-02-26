@@ -32,7 +32,7 @@ pub struct UnitsDisplayName<'data> {
     pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
-icu_provider::data_struct_new!(UnitsDisplayName<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(UnitsDisplayName<'_>, #[cfg(feature = "datagen")]);
 
 impl<'data> UnitsDisplayName<'data> {
     /// Construct an instance directly from a byte slice.

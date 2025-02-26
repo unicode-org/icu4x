@@ -52,7 +52,7 @@ pub struct UnitsInfo<'data> {
     pub convert_infos: VarZeroVec<'data, ConversionInfoULE>,
 }
 
-icu_provider::data_struct_new!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
 
 /// Represents the conversion information for a unit.
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.

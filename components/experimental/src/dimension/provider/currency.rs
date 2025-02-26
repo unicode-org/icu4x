@@ -88,7 +88,7 @@ pub struct CurrencyEssentials<'data> {
     pub default_pattern_config: CurrencyPatternConfig,
 }
 
-icu_provider::data_struct_new!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
 
 #[zerovec::make_ule(PatternSelectionULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

@@ -566,7 +566,7 @@ pub enum YearNames<'data> {
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     YearNames<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -629,7 +629,7 @@ pub enum MonthNames<'data> {
     ),
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     MonthNames<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -663,7 +663,7 @@ pub struct LinearNames<'data> {
     pub names: VarZeroVec<'data, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     LinearNames<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -716,7 +716,7 @@ pub struct GluePattern<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     GluePattern<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -736,7 +736,7 @@ pub struct DateTimeSkeletons<'data> {
     pub map: ZeroMap<'data, str, PatternULE>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     DateTimeSkeletons<'_>,
     #[cfg(feature = "datagen")]
 );

@@ -40,7 +40,7 @@ pub struct DigitalDurationData<'data> {
     pub ms_padding: MsPadding,
 }
 
-icu_provider::data_struct_new!(DigitalDurationData<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(DigitalDurationData<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

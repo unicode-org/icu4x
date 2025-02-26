@@ -42,4 +42,4 @@ pub struct CurrencyDisplayname<'data> {
     pub display_name: Cow<'data, str>,
 }
 
-icu_provider::data_struct_new!(CurrencyDisplayname<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(CurrencyDisplayname<'_>, #[cfg(feature = "datagen")]);

@@ -48,4 +48,4 @@ pub struct UnitsTrie<'data> {
     pub trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
-icu_provider::data_struct_new!(UnitsTrie<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(UnitsTrie<'_>, #[cfg(feature = "datagen")]);

@@ -48,7 +48,7 @@ pub struct CurrencyExtendedData<'data> {
     pub display_names: PluralElementsPackedCow<'data, str>,
 }
 
-icu_provider::data_struct_new!(CurrencyExtendedData<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(CurrencyExtendedData<'_>, #[cfg(feature = "datagen")]);
 
 impl<'data> CurrencyExtendedData<'data> {
     /// Construct an instance directly from a byte slice.

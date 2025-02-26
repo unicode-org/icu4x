@@ -31,4 +31,4 @@ pub struct CurrencyPatternsData<'data> {
     pub patterns: PluralElementsPackedCow<'data, DoublePlaceholderPattern>,
 }
 
-icu_provider::data_struct_new!(CurrencyPatternsData<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(CurrencyPatternsData<'_>, #[cfg(feature = "datagen")]);
