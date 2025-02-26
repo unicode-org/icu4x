@@ -235,7 +235,7 @@ enum TrieType {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-// Mirrors crate::CollationHanDatabase
+// Mirrors icu_provider_export::CollationHanDatabase
 enum CollationHanDatabase {
     Unihan,
     Implicit,
@@ -259,17 +259,7 @@ impl CollationTable {
     }
 }
 
-// Mirrors crate::FallbackMode
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum Fallback {
-    Auto,
-    Hybrid,
-    Runtime,
-    RuntimeManual,
-    Preresolved,
-}
-
-// Mirrors crate::DeduplicationStrategy
+// Mirrors icu_provider_export::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Deduplication {
     Maximal,
