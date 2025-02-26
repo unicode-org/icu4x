@@ -21,7 +21,7 @@ use zerovec::VarZeroCow;
 pub struct SerdeDFA<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: VarZeroCow<'data, [u8]>,
-    #[cfg(feature = "serde_human")]
+    #[cfg(feature = "datagen")]
     pattern: Option<alloc::borrow::Cow<'data, str>>,
 }
 
@@ -116,7 +116,7 @@ impl<'data> SerdeDFA<'data> {
 
         Ok(Some(SerdeDFA {
             dfa_bytes,
-            #[cfg(feature = "serde_human")]
+            #[cfg(feature = "datagen")]
             pattern: None,
         }))
     }
@@ -132,13 +132,13 @@ impl<'data> SerdeDFA<'data> {
         Self {
             // SAFETY: safe for VarZeroCow<[u8]>
             dfa_bytes: unsafe { VarZeroCow::from_bytes_unchecked(dfa_bytes) },
-            #[cfg(feature = "serde_human")]
+            #[cfg(feature = "datagen")]
             pattern: None,
         }
     }
 
     /// Creates a `SerdeDFA` from a regex.
-    #[cfg(any(feature = "datagen", feature = "serde_human",))]
+    #[cfg(any(feature = "datagen", feature = "serde_human"))]
     pub fn new(pattern: alloc::borrow::Cow<'data, str>) -> Result<Self, icu_provider::DataError> {
         use regex_automata::dfa::dense::{Builder, Config};
 
@@ -171,6 +171,7 @@ impl<'data> SerdeDFA<'data> {
 
         Ok(Self {
             dfa_bytes: VarZeroCow::new_owned(dfa.to_bytes_native_endian().into_boxed_slice()),
+            #[cfg(feature = "datagen")]
             pattern: Some(pattern),
         })
     }
