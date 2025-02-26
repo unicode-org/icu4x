@@ -41,7 +41,6 @@ members = [
     "provider/baked",
     "provider/source",
     "provider/blob",
-    "provider/core/macros",
     "provider/export",
     "provider/fs",
     "provider/registry",
@@ -162,7 +161,6 @@ icu_capi = { version = "~2.0.0-beta2", path = "ffi/capi", default-features = fal
 # Provider
 icu_provider_export = { version = "~2.0.0-beta2", path = "provider/export", default-features = false }
 icu_provider_source = { version = "~2.0.0-beta2", path = "provider/source", default-features = false }
-icu_provider_macros = { version = "~2.0.0-beta2", path = "provider/core/macros", default-features = false }
 icu_provider_adapters = { version = "~2.0.0-beta2", path = "provider/adapters", default-features = false }
 icu_provider_baked = { version = "~2.0.0-beta2", path = "provider/baked", default-features = false }
 icu_provider_blob = { version = "~2.0.0-beta2", path = "provider/blob", default-features = false }
@@ -257,7 +255,7 @@ serde = { version = "1.0.110", default-features = false }
 serde-json-core = { version = "0.4.0", default-features = false }
 smallvec = { version = "1.10.0", default-features = false }
 stable_deref_trait = { version = "1.2.0", default-features = false }
-twox-hash = { version = "1.4.2", default-features = false }
+twox-hash = { version = "2.0.0", default-features = false, features = ["xxhash64"] }
 unicode-bidi = { version = "0.3.11", default-features = false }
 utf16_iter = { version = "1.0.2", default-features = false }
 utf8_iter = { version = "1.0.2", default-features = false }

@@ -94,9 +94,14 @@ use std::borrow::Cow;
 use icu_provider::prelude::*;
 use icu::decimal::provider::GroupingSizes;
 
-/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(DecimalSymbolsV2 = "decimal/symbols@2")]
-#[derive(Debug, PartialEq, Clone)]
+icu_provider::data_marker!(
+    /// Data marker for decimal symbols
+    DecimalSymbolsV1,
+    "decimal/symbols/v1",
+    DecimalSymbols<'static>,
+);
+
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

@@ -81,7 +81,7 @@ pub struct IanaToBcp47Map<'data> {
     pub bcp47_ids: ZeroVec<'data, TimeZone>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     IanaToBcp47Map<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -111,7 +111,7 @@ pub struct IanaNames<'data> {
     pub normalized_iana_ids: VarZeroVec<'data, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     IanaNames<'_>,
     #[cfg(feature = "datagen")]
 );

@@ -69,7 +69,7 @@ data_marker!(
     ListFormatterPatterns<'static>,
 );
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     ListFormatterPatterns<'_>,
     #[cfg(feature = "datagen")]
 );

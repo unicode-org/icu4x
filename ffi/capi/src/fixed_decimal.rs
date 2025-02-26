@@ -82,7 +82,7 @@ pub mod ffi {
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
         pub fn from_uint32(v: u32) -> Box<Decimal> {
             Box::new(Decimal(fixed_decimal::Decimal::from(v)))
         }

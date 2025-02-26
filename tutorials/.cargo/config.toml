@@ -41,7 +41,6 @@ icu_harfbuzz = { path = "../ffi/harfbuzz" }
 # Provider
 icu_provider_export = { path = "../provider/export" }
 icu_provider_source = { path = "../provider/source" }
-icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_baked = { path = "../provider/baked" }
 icu_provider_blob = { path = "../provider/blob" }

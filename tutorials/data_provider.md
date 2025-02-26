@@ -222,9 +222,7 @@ where
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'
                     builder.grouping_separator = VarZeroCow::new_owned("🐮".into());
-                    let strings = builder.build();
-                    drop(builder);
-                    data.strings = strings;
+                    data.strings = builder.build();
                 });
             }
         }
@@ -279,12 +277,15 @@ use icu_provider_source::SourceDataProvider;
 use std::borrow::Cow;
 use std::collections::BTreeSet;
 
-#[icu_provider::data_struct(marker(CustomV1, "x/custom@1"))]
-#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake)]
+icu_provider::data_marker!(CustomV1, Custom<'static>);
+
+#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[databake(path = crate)]
 pub struct Custom<'data> {
     message: Cow<'data, str>,
 };
+
+icu_provider::data_struct!(Custom<'_>);
 
 struct CustomProvider;
 impl DataProvider<CustomV1> for CustomProvider {

@@ -37,6 +37,12 @@ final class PluralOperands implements ffi.Finalizable {
     return PluralOperands._fromFfi(result.union.ok, []);
   }
 
+  /// Construct for a given integer
+  factory PluralOperands.fromInt(int i) {
+    final result = _icu4x_PluralOperands_from_int64_mv1(i);
+    return PluralOperands._fromFfi(result, []);
+  }
+
   /// Construct from a FixedDecimal
   ///
   /// Retains at most 18 digits each from the integer and fraction parts.
@@ -55,6 +61,11 @@ external void _icu4x_PluralOperands_destroy_mv1(ffi.Pointer<ffi.Void> self);
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PluralOperands_from_string_mv1(_SliceUtf8 s);
+
+@_DiplomatFfiUse('icu4x_PluralOperands_from_int64_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_int64_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PluralOperands_from_int64_mv1(int i);
 
 @_DiplomatFfiUse('icu4x_PluralOperands_from_fixed_decimal_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PluralOperands_from_fixed_decimal_mv1')

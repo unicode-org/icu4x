@@ -133,24 +133,22 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// const W: usize = size_of::<usize>();
 ///
-/// // SampleStruct is 3 words:
-/// # #[icu_provider::data_struct(SampleStructMarker)]
-/// # pub struct SampleStruct<'data>(usize, usize, &'data ());
-/// assert_eq!(W * 3, size_of::<SampleStruct>());
+/// // Data struct is 3 words:
+/// icu_provider::data_marker!(SampleV1, [usize; 3]);
 ///
 /// // DataPayload adds a word for a total of 4 words:
-/// assert_eq!(W * 4, size_of::<DataPayload<SampleStructMarker>>());
+/// assert_eq!(W * 4, size_of::<DataPayload<SampleV1>>());
 ///
 /// // Option<DataPayload> balloons to 5 words:
-/// assert_eq!(W * 5, size_of::<Option<DataPayload<SampleStructMarker>>>());
+/// assert_eq!(W * 5, size_of::<Option<DataPayload<SampleV1>>>());
 ///
 /// // But, using DataPayloadOr is the same size as DataPayload:
-/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, ()>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleV1, ()>>());
 ///
 /// // The largest optimized Other type is two words smaller than the DataPayload:
-/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, [usize; 1]>>());
-/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleStructMarker, [usize; 2]>>());
-/// assert_eq!(W * 5, size_of::<DataPayloadOr<SampleStructMarker, [usize; 3]>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleV1, [usize; 1]>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<SampleV1, [usize; 2]>>());
+/// assert_eq!(W * 5, size_of::<DataPayloadOr<SampleV1, [usize; 3]>>());
 /// ```
 pub struct DataPayloadOr<M: DynamicDataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
 

@@ -121,9 +121,6 @@ pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
 mod error;
 pub use error::{DataError, DataErrorKind, ResultDataError};
 
-#[cfg(feature = "macros")]
-pub use icu_provider_macros::data_struct;
-
 mod request;
 pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
 
@@ -156,7 +153,7 @@ pub mod ule {
     pub use super::varule_traits::MaybeEncodeAsVarULE;
 }
 
-pub use varule_traits::data_struct as data_struct_new;
+pub use varule_traits::data_struct;
 
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
