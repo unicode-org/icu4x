@@ -129,6 +129,7 @@
         - No changes other than general cross-crate changes
     - `tinystr`: `0.8.0 -> 0.8.1`
         - Add explicit features list to Cargo.toml (unicode-org#6040)
+        - Implement Borrow for `TinyAsciiStr` (unicode-org#6179)
     - `tzif`: `0.3.0 -> 0.4.0`
         - Preserve stucture of timezone designation list (unicode-org#5581)
     - `writeable`: `0.6.0 -> 0.6.1`
