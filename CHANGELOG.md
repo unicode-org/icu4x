@@ -126,7 +126,7 @@
         - Add `BTreeMap`-like apis to `LiteMap` (unicode-org#5894)
         - Make `litemap` no-alloc (unicode-org#6077)
     - `potential_utf`: `0.1.1 -> 0.1.2`
-        - No changes other than general cross-crate changes
+        - Add `PartialEq` (etc) impls for `PotentialUtf` types (unicode-org#5994)
     - `tinystr`: `0.8.0 -> 0.8.1`
         - Add explicit features list to Cargo.toml (unicode-org#6040)
         - Implement Borrow for `TinyAsciiStr` (unicode-org#6179)
