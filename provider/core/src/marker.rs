@@ -13,15 +13,7 @@ use zerovec::ule::*;
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
 ///
-/// Structs implementing this trait are normally generated with the [`data_struct`] macro.
-///
-/// By convention, the non-standard `Marker` suffix is used by types implementing DynamicDataMarker.
-///
-/// In addition to a marker type implementing DynamicDataMarker, the following impls must also be present
-/// for the data struct:
-///
-/// - `impl<'a> Yokeable<'a>` (required)
-/// - `impl ZeroFrom<Self>`
+/// Data markers normally generated with the [`data_marker`] macro.
 ///
 /// Also see [`DataMarker`].
 ///
@@ -37,7 +29,7 @@ use zerovec::ule::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+/// #[derive(yoke::Yokeable)]
 /// struct MyDataStruct<'data> {
 ///     message: Cow<'data, str>,
 /// }
