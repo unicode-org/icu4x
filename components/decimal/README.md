@@ -20,11 +20,9 @@ use icu::decimal::DecimalFormatter;
 use icu::locale::locale;
 use writeable::assert_writeable_eq;
 
-let formatter = DecimalFormatter::try_new(
-    locale!("bn").into(),
-    Default::default(),
-)
-.expect("locale should be present");
+let formatter =
+    DecimalFormatter::try_new(locale!("bn").into(), Default::default())
+        .expect("locale should be present");
 
 let decimal = Decimal::from(1000007);
 
