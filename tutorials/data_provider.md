@@ -79,7 +79,6 @@ use std::borrow::{Borrow, Cow};
 use std::convert::TryInto;
 use std::sync::Mutex;
 use yoke::Yokeable;
-use zerofrom::ZeroFrom;
 
 /// A data provider that caches response payloads in an LRU cache.
 pub struct LruDataCache<P> {
@@ -106,7 +105,6 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: DataMarker,
-    M::DataStruct: ZeroFrom<'static, M::DataStruct>,
     for<'a> <M::DataStruct as Yokeable<'a>>::Output: Clone,
     P: DataProvider<M>,
 {
@@ -198,7 +196,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 ```rust
 use core::any::Any;
 use icu::decimal::DecimalFormatter;
-use icu::decimal::provider::{DecimalSymbolsV2, DecimalSymbolStrsBuilder};
+use icu::decimal::provider::{DecimalSymbols, DecimalSymbolsV2, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -218,11 +216,14 @@ where
         let mut res = self.0.load(req)?;
         if req.id.locale.region == Some(region!("CH")) {
             if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2>() {
-                decimal_payload.with_mut(|data| {
+                *decimal_payload = decimal_payload.map_project_cloned::<DecimalSymbolsV2, _>(|data, _| {
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'
                     builder.grouping_separator = VarZeroCow::new_owned("🐮".into());
-                    data.strings = builder.build();
+                    DecimalSymbols {
+                        strings: builder.build(),
+                        ..data.clone()
+                    }
                 });
             }
         }
@@ -279,7 +280,7 @@ use std::collections::BTreeSet;
 
 icu_provider::data_marker!(CustomV1, Custom<'static>);
 
-#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake, yoke::Yokeable)]
 #[databake(path = crate)]
 pub struct Custom<'data> {
     message: Cow<'data, str>,

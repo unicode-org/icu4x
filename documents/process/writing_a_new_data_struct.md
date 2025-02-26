@@ -101,7 +101,7 @@ icu_provider::data_marker!(
     DecimalSymbols<'static>,
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

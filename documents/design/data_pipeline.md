@@ -96,7 +96,7 @@ icu_provider::data_marker!(
 );
 
 /// This is a sample data struct.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "datagen", derive(Serialize))]
 pub struct SampleDataStruct<'data> {
