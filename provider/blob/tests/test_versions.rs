@@ -132,7 +132,6 @@ fn test_format_bigger() {
 
     // Rather than check in a 10MB file, we just compute hashes
     println!("Computing hash ....");
-    // Construct a hasher with a random, stable seed
     let hash = twox_hash::XxHash64::oneshot(1234, &blob);
 
     assert_eq!(
