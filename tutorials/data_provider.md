@@ -277,8 +277,9 @@ use icu_provider_source::SourceDataProvider;
 use std::borrow::Cow;
 use std::collections::BTreeSet;
 
-#[icu_provider::data_struct(marker(CustomV1, "x/custom@1"))]
-#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake)]
+icu_provider::data_marker!(CustomV1, Custom<'static>);
+
+#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[databake(path = crate)]
 pub struct Custom<'data> {
     message: Cow<'data, str>,

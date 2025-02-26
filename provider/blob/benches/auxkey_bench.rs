@@ -15,15 +15,25 @@ use icu_provider_blob::export::BlobExporter;
 use icu_provider_blob::BlobDataProvider;
 use std::collections::BTreeSet;
 
-#[icu_provider::data_struct(
-    marker(MarkerV1, "a@1"),
-    marker(MarkerV2, "b@1"),
-    marker(MarkerV3, "c@1"),
-    marker(MarkerV4, "d@1")
+icu_provider::data_marker!(MarkerV1, Empty);
+icu_provider::data_marker!(MarkerV2, Empty);
+icu_provider::data_marker!(MarkerV3, Empty);
+icu_provider::data_marker!(MarkerV4, Empty);
+
+#[derive(
+    serde::Serialize,
+    serde::Deserialize,
+    Clone,
+    Copy,
+    databake::Bake,
+    PartialEq,
+    yoke::Yokeable,
+    zerofrom::ZeroFrom,
 )]
-#[derive(serde::Serialize, serde::Deserialize, Clone, Copy, databake::Bake, PartialEq)]
 #[databake(path = crate)]
 pub struct Empty;
+
+icu_provider::data_struct_new!(Empty);
 
 struct Baked;
 

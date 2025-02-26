@@ -168,8 +168,8 @@ mod test {
     use icu_provider::export::*;
     use icu_provider::hello_world::*;
 
-    #[icu_provider::data_struct(marker(HelloSingletonV1, "hello/singleton@1", singleton))]
-    #[derive(Clone, Copy)]
+    icu_provider::data_marker!(HelloSingletonV1, HelloSingleton, is_singleton = true);
+    #[derive(Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
     pub struct HelloSingleton;
 
     #[test]
