@@ -121,9 +121,6 @@ pub use data_provider::{IterableDataProvider, IterableDynamicDataProvider};
 mod error;
 pub use error::{DataError, DataErrorKind, ResultDataError};
 
-#[cfg(feature = "macros")]
-pub use icu_provider_macros::data_struct;
-
 mod request;
 pub use request::{DataLocale, DataMarkerAttributes, DataRequest, DataRequestMetadata, *};
 

@@ -99,6 +99,8 @@
         - Remove YokeTraitHack from icu (unicode-org#6126)
         - Add a checksum field to `DataResponseMetadata` (unicode-org#6046)
         - Remove data marker paths from release binaries (unicode-org#5981)
+    - `icu_provider_macros`
+        - Removed
     - `icu_provider_baked`
         - Change DataStore to return DataPayload (#6135)
     - `icu_provider_export`

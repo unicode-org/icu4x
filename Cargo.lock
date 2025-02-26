@@ -1516,7 +1516,6 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_provider_adapters",
- "icu_provider_macros",
  "log",
  "postcard",
  "serde",
@@ -1618,16 +1617,6 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "writeable",
-]
-
-[[package]]
-name = "icu_provider_macros"
-version = "2.0.0-dev"
-dependencies = [
- "icu_provider",
- "proc-macro2",
- "quote",
- "syn 2.0.89",
 ]
 
 [[package]]
