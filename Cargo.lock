@@ -1753,10 +1753,6 @@ dependencies = [
 [[package]]
 name = "icu_provider_registry"
 version = "2.0.0-beta2"
-dependencies = [
- "icu",
- "icu_provider 2.0.0-beta2",
-]
 
 [[package]]
 name = "icu_provider_source"
