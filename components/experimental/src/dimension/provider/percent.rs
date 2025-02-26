@@ -26,8 +26,13 @@ use icu_pattern::{DoublePlaceholder, SinglePlaceholder};
 /// </div>
 pub use crate::provider::Baked;
 
-#[icu_provider::data_struct(PercentEssentialsV1 = "percent/essentials@1")]
-#[derive(Clone, PartialEq, Debug)]
+icu_provider::data_marker!(
+   /// `PercentEssentialsV1`
+   PercentEssentialsV1,
+   PercentEssentials<'static>
+);
+
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::percent))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -69,3 +74,5 @@ pub struct PercentEssentials<'data> {
     /// The localize plus sign.
     pub plus_sign: Cow<'data, str>,
 }
+
+icu_provider::data_struct_new!(PercentEssentials<'_>, #[cfg(feature = "datagen")]);

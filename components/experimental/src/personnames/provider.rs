@@ -31,6 +31,12 @@ use crate::personnames::api::FormattingUsage;
 /// </div>
 pub use crate::provider::Baked;
 
+icu_provider::data_marker!(
+    /// `PersonNamesFormatV1`
+    PersonNamesFormatV1,
+    PersonNamesFormat<'static>,
+);
+
 /// This is the equivalent of
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element>
 ///
@@ -41,8 +47,7 @@ pub use crate::provider::Baked;
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-#[icu_provider::data_struct(PersonNamesFormatV1 = "personnames/personnames@1")]
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -80,6 +85,8 @@ pub struct PersonNamesFormat<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVarULE>,
 }
+
+icu_provider::data_struct_new!(PersonNamesFormat<'_>, #[cfg(feature = "datagen")]);
 
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}

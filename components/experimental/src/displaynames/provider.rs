@@ -34,8 +34,33 @@ type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 /// </div>
 pub use crate::provider::Baked;
 
-#[icu_provider::data_struct(RegionDisplayNamesV1 = "displaynames/regions@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_marker!(
+    /// `LocaleDisplayNamesV1`
+    LocaleDisplayNamesV1,
+    LocaleDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `VariantDisplayNamesV1`
+    VariantDisplayNamesV1,
+    VariantDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `ScriptDisplayNamesV1`
+    ScriptDisplayNamesV1,
+    ScriptDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `LanguageDisplayNamesV1`
+    LanguageDisplayNamesV1,
+    LanguageDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `RegionDisplayNamesV1`
+    RegionDisplayNamesV1,
+    RegionDisplayNames<'static>
+);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -50,8 +75,9 @@ pub struct RegionDisplayNames<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
 
-#[icu_provider::data_struct(LanguageDisplayNamesV1 = "displaynames/languages@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct_new!(RegionDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -72,8 +98,9 @@ pub struct LanguageDisplayNames<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLanguage, str>,
 }
 
-#[icu_provider::data_struct(ScriptDisplayNamesV1 = "displaynames/scripts@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct_new!(LanguageDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -88,8 +115,9 @@ pub struct ScriptDisplayNames<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedScript, str>,
 }
 
-#[icu_provider::data_struct(LocaleDisplayNamesV1 = "displaynames/locales@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct_new!(ScriptDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -110,8 +138,9 @@ pub struct LocaleDisplayNames<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLocale, str>,
 }
 
-#[icu_provider::data_struct(VariantDisplayNamesV1 = "displaynames/variants@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct_new!(LocaleDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -122,3 +151,5 @@ pub struct VariantDisplayNames<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedVariant, str>,
 }
+
+icu_provider::data_struct_new!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);

@@ -13,12 +13,15 @@ use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
-#[icu_provider::data_struct(marker(
+icu_provider::data_marker!(
+    /// `UnitsDisplayNameV1`
     UnitsDisplayNameV1,
-    "units/displaynames@1",
+    UnitsDisplayName<'static>,
+    #[cfg(feature = "datagen")]
     attributes_domain = "units"
-))]
-#[derive(Clone, PartialEq, Debug)]
+);
+
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -28,6 +31,8 @@ pub struct UnitsDisplayName<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
+
+icu_provider::data_struct_new!(UnitsDisplayName<'_>, #[cfg(feature = "datagen")]);
 
 impl<'data> UnitsDisplayName<'data> {
     /// Construct an instance directly from a byte slice.

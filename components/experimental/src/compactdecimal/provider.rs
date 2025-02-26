@@ -26,6 +26,17 @@ use zerovec::ZeroMap2d;
 /// </div>
 pub use crate::provider::Baked;
 
+icu_provider::data_marker!(
+    /// `LongCompactDecimalFormatDataV1`
+    LongCompactDecimalFormatDataV1,
+    CompactDecimalPatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortCompactDecimalFormatDataV1`
+    ShortCompactDecimalFormatDataV1,
+    CompactDecimalPatternData<'static>,
+);
+
 /// Compact Decimal Pattern  data struct.
 ///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
@@ -52,11 +63,7 @@ pub use crate::provider::Baked;
 ///
 /// Finally, the pattern indicating noncompact notation for the first few powers
 /// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
-#[icu_provider::data_struct(
-    LongCompactDecimalFormatDataV1 = "compactdecimal/long@1",
-    ShortCompactDecimalFormatDataV1 = "compactdecimal/short@1"
-)]
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
@@ -66,6 +73,8 @@ pub struct CompactDecimalPatternData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
 }
+
+icu_provider::data_struct_new!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);
 
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.

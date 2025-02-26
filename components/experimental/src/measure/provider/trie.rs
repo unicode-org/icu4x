@@ -23,6 +23,13 @@ use zerovec::ZeroVec;
 /// </div>
 pub use crate::provider::Baked;
 
+icu_provider::data_marker!(
+    /// `UnitsTrieV1`
+    UnitsTrieV1,
+    UnitsTrie<'static>,
+    is_singleton = true,
+);
+
 /// This type encapsulates all the constant data required for unit conversions.
 ///
 /// <div class="stab unstable">
@@ -30,8 +37,7 @@ pub use crate::provider::Baked;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(UnitsTrieV1, "units/trie@1", singleton))]
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::trie))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -41,3 +47,5 @@ pub struct UnitsTrie<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
+
+icu_provider::data_struct_new!(UnitsTrie<'_>, #[cfg(feature = "datagen")]);

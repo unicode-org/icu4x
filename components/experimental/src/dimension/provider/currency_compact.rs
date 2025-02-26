@@ -13,9 +13,14 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
+icu_provider::data_marker!(
+    /// `ShortCurrencyCompactV1`
+    ShortCurrencyCompactV1,
+    ShortCurrencyCompact<'static>
+);
+
 /// Currency Compact  data struct.
-#[icu_provider::data_struct(marker(ShortCurrencyCompactV1, "currency/compact@1"))]
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_compact))]
@@ -33,6 +38,8 @@ pub struct ShortCurrencyCompact<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub compact_patterns: ZeroMap<'data, (i8, CompactCount), str>,
 }
+
+icu_provider::data_struct_new!(ShortCurrencyCompact<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

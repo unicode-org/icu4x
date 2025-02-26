@@ -26,6 +26,12 @@ pub use crate::provider::Baked;
 
 use super::pattern_key::PatternKey;
 
+icu_provider::data_marker!(
+   /// `UnitsEssentialsV1`
+   UnitsEssentialsV1,
+   UnitsEssentials<'static>
+);
+
 // TODO: use `Pattern`s instead of `str` for the patterns' string representations.
 /// This type contains all of the essential data for units formatting such as `per`, `power`, `times`, etc.
 ///
@@ -38,8 +44,7 @@ use super::pattern_key::PatternKey;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(UnitsEssentialsV1 = "units/essentials@1")]
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units_essentials))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -57,6 +62,8 @@ pub struct UnitsEssentials<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub times: Cow<'data, str>,
 }
+
+icu_provider::data_struct_new!(UnitsEssentials<'_>, #[cfg(feature = "datagen")]);
 
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>. // TODO??
