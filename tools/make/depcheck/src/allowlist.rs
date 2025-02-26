@@ -203,6 +203,8 @@ pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "crc32fast",
     "flate2",
     "miniz_oxide",
+    "ordered-float",
+    "serde-value",
     "zip",
 ];
 
