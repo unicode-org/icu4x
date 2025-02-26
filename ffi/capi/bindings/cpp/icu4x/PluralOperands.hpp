@@ -38,7 +38,7 @@ inline diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDeci
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::PluralOperands>>(std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError>(diplomat::Err<icu4x::FixedDecimalParseError>(icu4x::FixedDecimalParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_int64(int64_t i) {
+inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from(int64_t i) {
   auto result = icu4x::capi::icu4x_PluralOperands_from_int64_mv1(i);
   return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
 }

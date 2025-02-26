@@ -64,7 +64,7 @@ export class PluralOperands {
         }
     }
 
-    static fromInt64(i) {
+    static fromBigInt(i) {
         const result = wasm.icu4x_PluralOperands_from_int64_mv1(i);
     
         try {

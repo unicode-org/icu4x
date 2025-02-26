@@ -134,7 +134,10 @@ pub mod ffi {
         }
 
         /// Construct for a given integer
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[diplomat::attr(auto, named_constructor)]
+        #[diplomat::attr(dart, rename = "from_int")]
+        #[diplomat::attr(js, rename = "from_big_int")]
+        #[diplomat::attr(supports = method_overloading, rename = "from")]
         pub fn from_int64(i: i64) -> Box<PluralOperands> {
             Box::new(PluralOperands(icu_plurals::PluralOperands::from(i)))
         }

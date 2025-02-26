@@ -38,7 +38,7 @@ final class PluralOperands implements ffi.Finalizable {
   }
 
   /// Construct for a given integer
-  factory PluralOperands.fromInt64(int i) {
+  factory PluralOperands.fromInt(int i) {
     final result = _icu4x_PluralOperands_from_int64_mv1(i);
     return PluralOperands._fromFfi(result, []);
   }
