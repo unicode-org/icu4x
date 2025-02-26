@@ -31,29 +31,53 @@ use zerofrom::ZeroFrom;
 /// During human-readable serialization, it will fall back to the serde impls on `V`, which ought to have
 /// a human-readable variant.
 pub struct VarZeroCow<'a, V: ?Sized> {
+    /// Safety invariant: Contained slice must be a valid V
+    /// It may or may not have a lifetime valid for 'a, it must be valid for as long as this type is around.
+    raw: RawVarZeroCow,
+    marker1: PhantomData<&'a V>,
+    #[cfg(feature = "alloc")]
+    marker2: PhantomData<Box<V>>,
+}
+
+/// VarZeroCow without the `V` to simulate a dropck eyepatch
+/// (i.e., prove to rustc that the dtor is not able to observe V or 'a)
+///
+/// This is effectively `Cow<'a, [u8]>`, with the lifetime managed externally
+struct RawVarZeroCow {
     /// Pointer to data
     ///
     /// # Safety Invariants
     ///
     /// 1. This slice must always be valid as a byte slice
-    /// 2. This slice must represent a valid `V`
-    /// 3. If `owned` is true, this slice can be freed.
-    ///
-    /// The slice may NOT have the lifetime of `'a`.
+    /// 2. If `owned` is true, this slice can be freed.
+    /// 3. VarZeroCow, the only user of this type, will impose an additional invariant that the buffer is a valid V
     buf: NonNull<[u8]>,
     /// The buffer is `Box<[u8]>` if true
     #[cfg(feature = "alloc")]
     owned: bool,
-    marker1: PhantomData<&'a V>,
-    #[cfg(feature = "alloc")]
-    marker2: PhantomData<V>,
+    // Safety: We do not need any PhantomDatas here, since the Drop impl does not observe borrowed data
+    // if there is any.
+}
+
+#[cfg(feature = "alloc")]
+impl Drop for RawVarZeroCow {
+    fn drop(&mut self) {
+        // Note: this drop impl NEVER observes borrowed data (which may have already been cleaned up by the time the impl is called)
+        if self.owned {
+            unsafe {
+                // Safety: (Invariant 2 on buf)
+                // since owned is true, this is a valid Box<[u8]> and can be cleaned up
+                let _ = Box::<[u8]>::from_raw(self.buf.as_ptr());
+            }
+        }
+    }
 }
 
 // This is mostly just a `Cow<[u8]>`, safe to implement Send and Sync on
-unsafe impl<'a, V: ?Sized> Send for VarZeroCow<'a, V> {}
-unsafe impl<'a, V: ?Sized> Sync for VarZeroCow<'a, V> {}
+unsafe impl Send for RawVarZeroCow {}
+unsafe impl Sync for RawVarZeroCow {}
 
-impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
+impl Clone for RawVarZeroCow {
     fn clone(&self) -> Self {
         #[cfg(feature = "alloc")]
         if self.is_owned() {
@@ -63,39 +87,30 @@ impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
             let buf: NonNull<[u8]> = (&**b).into();
             return Self {
                 // Invariants upheld:
-                // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
-                // 3: This is owned (we cloned it), so we set owned to true.
+                // 1 & 3: The bytes came from `self` so they're a valid value and byte slice
+                // 2: This is owned (we cloned it), so we set owned to true.
                 buf,
                 owned: true,
-                marker1: PhantomData,
-                marker2: PhantomData,
             };
         }
         // Unfortunately we can't just use `new_borrowed(self.deref())` since the lifetime is shorter
         Self {
             // Invariants upheld:
-            // 1 & 2: The bytes came from `self` so they're a valid value and byte slice
-            // 3: This is borrowed (we're sharing a borrow), so we set owned to false.
+            // 1 & 3: The bytes came from `self` so they're a valid value and byte slice
+            // 2: This is borrowed (we're sharing a borrow), so we set owned to false.
             buf: self.buf,
             #[cfg(feature = "alloc")]
             owned: false,
-            marker1: PhantomData,
-            #[cfg(feature = "alloc")]
-            marker2: PhantomData,
         }
     }
 }
 
-#[cfg(feature = "alloc")]
-impl<'a, V: ?Sized> Drop for VarZeroCow<'a, V> {
-    fn drop(&mut self) {
-        if self.owned {
-            unsafe {
-                // Safety: (Invariant 3 on buf)
-                // since owned is true, this is a valid Box<[u8]> and can be cleaned up
-                let _ = Box::<[u8]>::from_raw(self.buf.as_ptr());
-            }
-        }
+impl<'a, V: ?Sized> Clone for VarZeroCow<'a, V> {
+    fn clone(&self) -> Self {
+        let raw = self.raw.clone();
+        // Invariant upheld: raw came from a valid VarZeroCow, so it
+        // is a valid V
+        unsafe { Self::from_raw(raw) }
     }
 }
 
@@ -112,13 +127,17 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
         V::validate_bytes(&bytes)?;
         let bytes = ManuallyDrop::new(bytes);
         let buf: NonNull<[u8]> = (&**bytes).into();
-        Ok(Self {
+        let raw = RawVarZeroCow {
             // Invariants upheld:
-            // 1 & 2: The bytes came from `val` so they're a valid value and byte slice
-            // 3: This is owned, so we set owned to true.
+            // 1 & 3: The bytes came from `val` so they're a valid value and byte slice
+            // 2: This is owned, so we set owned to true.
             buf,
             owned: true,
+        };
+        Ok(Self {
+            raw,
             marker1: PhantomData,
+            #[cfg(feature = "alloc")]
             marker2: PhantomData,
         })
     }
@@ -133,17 +152,16 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
         unsafe {
             // Safety: bytes is an &T which is always non-null
             let buf: NonNull<[u8]> = NonNull::new_unchecked(bytes as *const [u8] as *mut [u8]);
-            Self {
+            let raw = RawVarZeroCow {
                 // Invariants upheld:
-                // 1 & 2: Passed upstream to caller
-                // 3: This is borrowed, so we set owned to false.
+                // 1 & 3: Passed upstream to caller
+                // 2: This is borrowed, so we set owned to false.
                 buf,
                 #[cfg(feature = "alloc")]
                 owned: false,
-                marker1: PhantomData,
-                #[cfg(feature = "alloc")]
-                marker2: PhantomData,
-            }
+            };
+            // Invariant passed upstream to caller
+            Self::from_raw(raw)
         }
     }
 
@@ -169,13 +187,39 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     pub fn new_owned(val: Box<V>) -> Self {
         let val = ManuallyDrop::new(val);
         let buf: NonNull<[u8]> = val.as_bytes().into();
-        Self {
+        let raw = RawVarZeroCow {
             // Invariants upheld:
-            // 1 & 2: The bytes came from `val` so they're a valid value and byte slice
-            // 3: This is owned, so we set owned to true.
+            // 1 & 3: The bytes came from `val` so they're a valid value and byte slice
+            // 2: This is owned, so we set owned to true.
             buf,
             #[cfg(feature = "alloc")]
             owned: true,
+        };
+        // The bytes came from `val`, so it's a valid value
+        unsafe { Self::from_raw(raw) }
+    }
+}
+
+impl<'a, V: ?Sized> VarZeroCow<'a, V> {
+    /// Whether or not this is owned
+    pub fn is_owned(&self) -> bool {
+        self.raw.is_owned()
+    }
+
+    /// Get the byte representation of this type
+    ///
+    /// Is also always a valid `V` and can be passed to
+    /// `V::from_bytes_unchecked()`
+    pub fn as_bytes(&self) -> &[u8] {
+        // The valid V invariant comes from Invariant 2
+        self.raw.as_bytes()
+    }
+
+    /// Invariant: `raw` must wrap a valid V, either owned or borrowed for 'a
+    const unsafe fn from_raw(raw: RawVarZeroCow) -> Self {
+        Self {
+            // Invariant passed up to caller
+            raw,
             marker1: PhantomData,
             #[cfg(feature = "alloc")]
             marker2: PhantomData,
@@ -183,8 +227,9 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     }
 }
 
-impl<'a, V: ?Sized> VarZeroCow<'a, V> {
+impl RawVarZeroCow {
     /// Whether or not this is owned
+    #[inline]
     pub fn is_owned(&self) -> bool {
         #[cfg(feature = "alloc")]
         return self.owned;
@@ -193,12 +238,9 @@ impl<'a, V: ?Sized> VarZeroCow<'a, V> {
     }
 
     /// Get the byte representation of this type
-    ///
-    /// Is also always a valid `V` and can be passed to
-    /// `V::from_bytes_unchecked()`
+    #[inline]
     pub fn as_bytes(&self) -> &[u8] {
         // Safety: Invariant 1 on self.buf
-        // The valid V invariant comes from Invariant 2
         unsafe { self.buf.as_ref() }
     }
 }
@@ -371,5 +413,26 @@ mod tests {
             let deserialized: VarZeroCow<Messy> = serde_json::from_str(&json).unwrap();
             assert_eq!(messy, deserialized, "Single element roundtrips with serde");
         }
+    }
+
+    struct TwoCows<'a> {
+        cow1: VarZeroCow<'a, str>,
+        cow2: VarZeroCow<'a, str>,
+    }
+
+    #[test]
+    fn test_eyepatch_works() {
+        // This code should compile
+        let mut two = TwoCows {
+            cow1: VarZeroCow::new_borrowed("hello"),
+            cow2: VarZeroCow::new_owned("world".into()),
+        };
+        let three = VarZeroCow::new_borrowed(&*two.cow2);
+        two.cow1 = three;
+
+        // Without the eyepatch, dropck will be worried that the dtor of two.cow1 can observe the
+        // data it borrowed from two.cow2, which may have already been deleted
+
+        // This test will fail if you add an empty `impl<'a, V: ?Sized> Drop for VarZeroCow<'a, V>`
     }
 }

@@ -222,9 +222,7 @@ where
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'
                     builder.grouping_separator = VarZeroCow::new_owned("🐮".into());
-                    let strings = builder.build();
-                    drop(builder);
-                    data.strings = strings;
+                    data.strings = builder.build();
                 });
             }
         }
