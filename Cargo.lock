@@ -1403,10 +1403,18 @@ dependencies = [
 name = "icu_locale_core"
 version = "2.0.0-beta2"
 dependencies = [
+ "criterion",
  "databake",
  "displaydoc",
+ "iai",
+ "icu",
+ "icu_benchmark_macros",
+ "icu_provider 2.0.0-beta2",
  "litemap 0.7.5",
+ "postcard",
+ "potential_utf",
  "serde",
+ "serde_json",
  "tinystr 0.8.1",
  "writeable 0.6.1",
  "zerovec 0.11.1",
