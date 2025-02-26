@@ -121,14 +121,15 @@
         - Handle unbound fraction length (unicode-org#6036)
         - Bug fix for subsecond part (unicode-org#6004)
         - Expand size of duration records to support ECMA402 (unicode-org#5996)
-    - `litemap`: `0.7.3 -> 0.7.4`
+    - `litemap`: `0.7.4 -> 0.7.5`
         - Implement `Entry` apis for `LiteMap` (unicode-org#6131)
         - Add `BTreeMap`-like apis to `LiteMap` (unicode-org#5894)
         - Make `litemap` no-alloc (unicode-org#6077)
     - `potential_utf`: `0.1.1 -> 0.1.2`
-        - No changes other than general cross-crate changes
+        - Add `PartialEq` (etc) impls for `PotentialUtf` types (unicode-org#5994)
     - `tinystr`: `0.8.0 -> 0.8.1`
         - Add explicit features list to Cargo.toml (unicode-org#6040)
+        - Implement Borrow for `TinyAsciiStr` (unicode-org#6179)
     - `tzif`: `0.3.0 -> 0.4.0`
         - Preserve stucture of timezone designation list (unicode-org#5581)
     - `writeable`: `0.6.0 -> 0.6.1`
