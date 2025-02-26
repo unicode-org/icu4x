@@ -16,9 +16,10 @@ use core::fmt::Debug;
 use icu_locale_core::preferences::define_preferences;
 use writeable::Writeable;
 use yoke::*;
+use zerofrom::*;
 
 /// A struct containing "Hello World" in the requested language.
-#[derive(Debug, PartialEq, Clone, Yokeable)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     any(feature = "deserialize_json", feature = "export"),
@@ -40,7 +41,7 @@ impl Default for HelloWorld<'_> {
     }
 }
 
-impl<'a> zerofrom::ZeroFrom<'a, str> for HelloWorld<'a> {
+impl<'a> ZeroFrom<'a, str> for HelloWorld<'a> {
     fn zero_from(message: &'a str) -> Self {
         HelloWorld {
             message: Cow::Borrowed(message),

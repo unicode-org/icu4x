@@ -285,6 +285,8 @@ pub struct Custom<'data> {
     message: Cow<'data, str>,
 };
 
+icu_provider::data_struct!(Custom<'_>);
+
 struct CustomProvider;
 impl DataProvider<CustomV1> for CustomProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CustomV1>, DataError> {

@@ -29,7 +29,7 @@ use zerovec::ule::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// #[derive(yoke::Yokeable)]
+/// #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
 /// struct MyDataStruct<'data> {
 ///     message: Cow<'data, str>,
 /// }
