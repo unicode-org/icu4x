@@ -8,12 +8,9 @@
 const ID_SEPARATOR: u8 = 0x1E;
 
 pub use icu_provider::DynamicDataMarker;
-use icu_provider::{
-    prelude::{zerofrom::ZeroFrom, *},
-    ule::MaybeAsVarULE,
-};
+use icu_provider::{prelude::*, ule::MaybeAsVarULE};
 pub use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::VarZeroSlice;
+use zerovec::{ule::ZeroFrom, VarZeroSlice};
 
 #[cfg(feature = "export")]
 use icu_provider::export::ExportMarker;

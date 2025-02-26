@@ -17,7 +17,7 @@ use zerovec::VarZeroCow;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, yoke::Yokeable)]
 pub struct SerdeDFA<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: VarZeroCow<'data, [u8]>,

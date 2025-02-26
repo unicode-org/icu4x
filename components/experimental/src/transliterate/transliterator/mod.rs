@@ -23,7 +23,7 @@ use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
-use zerofrom::ZeroFrom;
+use zerovec::ule::ZeroFrom;
 use zerovec::vecs::Index32;
 use zerovec::VarZeroSlice;
 

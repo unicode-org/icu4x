@@ -60,7 +60,7 @@ icu_provider::data_marker!(
     RegionDisplayNames<'static>
 );
 
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -77,7 +77,7 @@ pub struct RegionDisplayNames<'data> {
 
 icu_provider::data_struct!(RegionDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -100,7 +100,7 @@ pub struct LanguageDisplayNames<'data> {
 
 icu_provider::data_struct!(LanguageDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -117,7 +117,7 @@ pub struct ScriptDisplayNames<'data> {
 
 icu_provider::data_struct!(ScriptDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
@@ -140,7 +140,7 @@ pub struct LocaleDisplayNames<'data> {
 
 icu_provider::data_struct!(LocaleDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]

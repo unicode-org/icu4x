@@ -396,7 +396,7 @@ macro_rules! field_type {
         }
     );
     ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $($ule_name:ident)?) => (
-        #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+        #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable)]
         // FIXME: This should be replaced with a custom derive.
         // See: https://github.com/unicode-org/icu4x/issues/1044
         #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -771,9 +771,7 @@ impl LengthType for TimeZone {
 }
 
 /// A second field with fractional digits.
-#[derive(
-    Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom,
-)]
+#[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

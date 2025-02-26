@@ -511,7 +511,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
             .get()
             .language_variants
             .iter()
-            .map(zerofrom::ZeroFrom::zero_from)
+            .map(zerovec::ule::ZeroFrom::zero_from)
         {
             let raw_variants = raw_variants.split('-');
             // if is_iter_sorted(raw_variants.clone()) { // can we sort at construction?
@@ -538,7 +538,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
             .get()
             .language
             .iter()
-            .map(zerofrom::ZeroFrom::zero_from)
+            .map(zerovec::ule::ZeroFrom::zero_from)
         {
             if let Ok(from) = raw_from.parse::<LanguageIdentifier>() {
                 if uts35_rule_matches(

@@ -177,8 +177,6 @@ pub mod prelude {
     pub use icu_locale_core;
     #[doc(no_inline)]
     pub use yoke;
-    #[doc(no_inline)]
-    pub use zerofrom;
 }
 
 #[doc(hidden)] // internal

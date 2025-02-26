@@ -117,8 +117,7 @@ mod tests {
     use super::*;
     use icu::locale::langid;
     use std::borrow::Cow;
-    use zerofrom::ZeroFrom;
-    use zerovec::ule::AsULE;
+    use zerovec::ule::{AsULE, ZeroFrom};
 
     #[test]
 

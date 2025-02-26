@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use zerovec::{ZeroMap, ZeroVec};
 
-// We do this instead of const generics because ZeroFrom and Yokeable derives, as well as serde
+// We do this instead of const generics because Yokeable derive, as well as serde
 // don't support them
 macro_rules! lstm_matrix {
     ($name:ident, $generic:literal) => {
@@ -22,7 +22,7 @@ macro_rules! lstm_matrix {
         /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
         /// to be stable, their Rust representation might not be. Use with caution.
         /// </div>
-        #[derive(PartialEq, Debug, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
+        #[derive(PartialEq, Debug, Clone, yoke::Yokeable)]
         #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
         pub struct $name<'data> {
             // Invariant: dims.product() == data.len()
@@ -125,7 +125,7 @@ pub enum ModelType {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmDataFloat32<'data> {
@@ -355,7 +355,7 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

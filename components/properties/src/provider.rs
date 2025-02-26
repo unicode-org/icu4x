@@ -44,8 +44,7 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use zerofrom::ZeroFrom;
-use zerovec::{VarZeroVec, ZeroSlice};
+use zerovec::{ule::ZeroFrom, VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -799,7 +798,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -976,7 +975,7 @@ impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -1052,7 +1051,7 @@ impl<'data> PropertyUnicodeSet<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

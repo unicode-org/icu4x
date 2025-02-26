@@ -43,9 +43,8 @@ litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["zerovec"] }
 writeable = { workspace = true }
-zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
+zerotrie = { workspace = true, features = ["yoke"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
-zerofrom = { workspace = true }
 
 displaydoc = { workspace = true }
 log = { workspace = true, optional = true }

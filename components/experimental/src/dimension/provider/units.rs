@@ -21,7 +21,7 @@ icu_provider::data_marker!(
     attributes_domain = "units"
 );
 
-#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]

@@ -47,7 +47,7 @@ icu_provider::data_marker!(
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-#[derive(PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

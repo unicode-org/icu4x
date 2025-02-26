@@ -150,7 +150,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormat<'_> {
 #[cfg(test)]
 mod tests {
     use icu::locale::langid;
-    use zerofrom::ZeroFrom;
+    use zerovec::ule::ZeroFrom;
 
     use super::*;
 

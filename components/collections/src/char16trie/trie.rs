@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerofrom::ZeroFrom;
 use zerovec::{ZeroSlice, ZeroVec};
 
 // Match-node lead unit values, after masking off intermediate-value bits:
@@ -78,7 +77,7 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::char16trie))]
-#[derive(Clone, Debug, PartialEq, Eq, ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
     #[cfg_attr(feature = "serde", serde(borrow))]

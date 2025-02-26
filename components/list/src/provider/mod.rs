@@ -81,7 +81,7 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -123,7 +123,7 @@ impl ListFormatterPatterns<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -146,7 +146,7 @@ pub struct ConditionalListJoinerPattern<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 pub struct SpecialCasePattern<'data> {
@@ -195,7 +195,7 @@ impl<'data> SpecialCasePattern<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders

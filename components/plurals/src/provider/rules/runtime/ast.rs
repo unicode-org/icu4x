@@ -18,7 +18,7 @@ use zerovec::{
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
+#[derive(yoke::Yokeable, Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider::rules::runtime::ast))]
 #[allow(clippy::exhaustive_structs)] // Reference AST is non-public and this type is stable
@@ -282,7 +282,7 @@ impl RelationULE {
     /// Convert to a Relation
     #[inline]
     pub fn as_relation(&self) -> Relation {
-        zerofrom::ZeroFrom::zero_from(self)
+        zerovec::ule::ZeroFrom::zero_from(self)
     }
 }
 

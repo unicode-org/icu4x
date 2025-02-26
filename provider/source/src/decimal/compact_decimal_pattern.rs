@@ -371,9 +371,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_provider::prelude::*;
-    use zerofrom::ZeroFrom;
-    use zerovec::ule::AsULE;
+    use zerovec::ule::{AsULE, ZeroFrom};
 
     #[test]
     fn test_french_compressibility() {

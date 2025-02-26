@@ -107,8 +107,8 @@ fn test_basic() {
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
-    use zerofrom::ZeroFrom;
     use zerovec::maps::ZeroVecLike;
+    use zerovec::ule::ZeroFrom;
     use zerovec::ZeroVec;
 
     let provider = SourceDataProvider::new_testing();

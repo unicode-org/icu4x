@@ -36,7 +36,7 @@ icu_provider::data_marker!(UnitsInfoV1, UnitsInfo<'static>, is_singleton = true)
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

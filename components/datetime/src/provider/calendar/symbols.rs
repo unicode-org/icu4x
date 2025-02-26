@@ -91,7 +91,7 @@ size_test!(DateSymbols, date_symbols_v1_size, 3792);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -131,7 +131,7 @@ size_test!(TimeSymbols, time_symbols_v1_size, 768);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -163,7 +163,7 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -201,7 +201,7 @@ macro_rules! symbols {
         pub mod $name {
             use super::*;
 
-            #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
+            #[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
             #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
             #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -217,7 +217,7 @@ macro_rules! symbols {
 
             // UTS 35 specifies that `format` widths are mandatory,
             // except for `short`.
-            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
             #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
             #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -247,7 +247,7 @@ macro_rules! symbols {
             }
 
             // UTS 35 specifies that `stand_alone` widths are optional
-            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
             #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
             #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -275,7 +275,7 @@ macro_rules! symbols {
                 pub wide: Option<Symbols<'data>>,
             }
 
-            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
             #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
             #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::$name))]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

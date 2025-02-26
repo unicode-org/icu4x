@@ -21,14 +21,7 @@ icu_provider::data_marker!(MarkerV3, Empty);
 icu_provider::data_marker!(MarkerV4, Empty);
 
 #[derive(
-    serde::Serialize,
-    serde::Deserialize,
-    Clone,
-    Copy,
-    databake::Bake,
-    PartialEq,
-    yoke::Yokeable,
-    zerofrom::ZeroFrom,
+    serde::Serialize, serde::Deserialize, Clone, Copy, databake::Bake, PartialEq, yoke::Yokeable,
 )]
 #[databake(path = crate)]
 pub struct Empty;

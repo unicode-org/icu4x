@@ -32,7 +32,7 @@ icu_provider::data_marker!(
    PercentEssentials<'static>
 );
 
-#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::percent))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

@@ -27,9 +27,7 @@ pub use item::{GenericPatternItem, PatternItem};
 
 /// The granularity of time represented in a [`Pattern`](runtime::Pattern).
 /// Ordered from least granular to most granular for comparison.
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::pattern))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

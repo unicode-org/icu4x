@@ -20,7 +20,7 @@ use super::provider::{
 use super::specifications;
 use icu_locale_core::Locale;
 use icu_provider::prelude::*;
-use zerofrom::ZeroFrom;
+use zerovec::ule::ZeroFrom;
 
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,

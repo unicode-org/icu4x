@@ -984,7 +984,7 @@ fn test_conformance() {
 // #[test]
 // fn test_hangul() {
 //     use icu_collections::codepointinvlist::{CodePointSet, CodePointSetBuilder};
-//     use zerofrom::ZeroFrom;
+//     use zerovec::ule::ZeroFrom;
 //     let builder = CodePointSetBuilder::new();
 //     let set: CodePointSet = builder.build();
 

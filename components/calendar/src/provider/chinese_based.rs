@@ -40,7 +40,7 @@ icu_provider::data_marker!(
 /// Cached/precompiled data for a certain range of years for a chinese-based
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::chinese_based))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

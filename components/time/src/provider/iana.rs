@@ -57,7 +57,7 @@ icu_provider::data_marker!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq, zerofrom::ZeroFrom, yoke::Yokeable)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -95,7 +95,7 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, PartialEq, zerofrom::ZeroFrom, yoke::Yokeable)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider::iana))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

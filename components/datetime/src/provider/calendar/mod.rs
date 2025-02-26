@@ -91,7 +91,7 @@ icu_provider::data_marker!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -126,7 +126,7 @@ size_test!(TimeLengths, time_lengths_v1_size, 264);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -176,7 +176,7 @@ pub mod patterns {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -202,7 +202,7 @@ pub mod patterns {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar::patterns))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

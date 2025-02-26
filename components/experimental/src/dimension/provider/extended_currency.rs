@@ -31,7 +31,7 @@ icu_provider::data_marker!(
 );
 
 /// Currency Extended  data struct.
-#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]

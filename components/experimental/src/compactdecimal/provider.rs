@@ -63,7 +63,7 @@ icu_provider::data_marker!(
 ///
 /// Finally, the pattern indicating noncompact notation for the first few powers
 /// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
@@ -120,9 +120,7 @@ impl From<PluralCategory> for Count {
 
 /// A compact decimal pattern, representing some literal text with an optional
 /// placeholder, and the power of 10 expressed by the text.
-#[derive(
-    Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq,
-)]
+#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, Ord, PartialOrd, Eq)]
 #[zerovec::make_varule(PatternULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

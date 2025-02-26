@@ -33,7 +33,7 @@ icu_provider::data_marker!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(PartialEq, Debug, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider::windows))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

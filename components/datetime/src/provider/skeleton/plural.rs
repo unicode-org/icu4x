@@ -9,7 +9,7 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[allow(missing_docs)]
 pub struct PluralPattern<'data> {
     /// The field that 'variants' are predicated on.
@@ -109,7 +109,7 @@ impl<'data> PluralPattern<'data> {
 /// patterns when there are plural variants.
 ///
 /// Currently, the plural forms are only based on the week number.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[allow(clippy::large_enum_variant)]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.

@@ -34,6 +34,8 @@ pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
+#[doc(no_inline)]
+pub use zerofrom::ZeroFrom;
 
 use core::{any, fmt, mem, slice};
 
@@ -253,7 +255,7 @@ where
 /// If deserialization with `VarZeroVec` is desired is recommended to implement `Deserialize` for
 /// `Box<T>` (serde does not do this automatically for unsized `T`).
 ///
-/// For convenience it is typically desired to implement [`EncodeAsVarULE`] and [`ZeroFrom`](zerofrom::ZeroFrom)
+/// For convenience it is typically desired to implement [`EncodeAsVarULE`] and [`ZeroFrom`]
 /// on some stack type to convert to and from the ULE type efficiently when necessary.
 ///
 /// # Safety

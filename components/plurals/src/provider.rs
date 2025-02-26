@@ -24,7 +24,6 @@ use core::fmt;
 use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use yoke::Yokeable;
-use zerofrom::ZeroFrom;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::ule::AsULE;
@@ -104,7 +103,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Default, Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
+#[derive(Default, Clone, PartialEq, Debug, Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -336,7 +335,7 @@ mod ranges {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    #[derive(Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
+    #[derive(Clone, PartialEq, Debug, Yokeable)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -366,7 +365,7 @@ mod ranges {
 /// 3. It always serializes the [`FourBitMetadata`] as 0
 ///
 /// Use [`PluralElementsPackedULE`] directly if you need these additional features.
-#[derive(Debug, PartialEq, Yokeable, ZeroFrom)]
+#[derive(Debug, PartialEq, Yokeable)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]

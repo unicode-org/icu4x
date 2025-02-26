@@ -181,7 +181,7 @@ icu_provider::data_marker!(
 /// postcard and other size-optimized serialization formats.
 ///
 /// [`YearStyle::Auto`]: crate::options::YearStyle::Auto
-#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider))]
 pub struct PackedPatterns<'data> {

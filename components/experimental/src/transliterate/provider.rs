@@ -36,7 +36,7 @@ icu_provider::data_marker!(
 );
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[derive(Debug, Clone, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone, PartialEq, Eq, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
@@ -103,7 +103,7 @@ impl RuleBasedTransliterator<'_> {
     ///
     /// Note that this may contain duplicate entries.
     pub fn deps(&self) -> impl Iterator<Item = Cow<str>> {
-        use zerofrom::ZeroFrom;
+        use zerovec::ule::ZeroFrom;
         self.id_group_list
             .iter()
             .flat_map(|id_group| id_group.iter().map(|s| SimpleId::zero_from(s).id))
@@ -173,7 +173,7 @@ pub struct Rule<'a> {
 }
 
 /// The special matchers and replacers used by this transliterator.
-#[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]

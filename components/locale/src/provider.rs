@@ -212,7 +212,7 @@ pub struct LanguageStrStrPair<'a>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );
 
-#[derive(PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(PartialEq, Clone, Default, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -289,7 +289,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -335,7 +335,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -379,7 +379,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -419,7 +419,7 @@ icu_provider::data_struct!(
 );
 
 /// Locale fallback rules derived from CLDR parent locales data.
-#[derive(Default, Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Default, Clone, PartialEq, Debug, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -436,7 +436,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -469,7 +469,7 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable)]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
