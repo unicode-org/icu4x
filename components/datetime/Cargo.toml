@@ -28,7 +28,7 @@ icu_decimal = { workspace = true }
 icu_locale_core = { workspace = true }
 icu_pattern = { workspace = true, features = ["zerovec", "alloc"] }
 icu_plurals = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 icu_time = { workspace = true, features = ["alloc"] }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
@@ -85,6 +85,7 @@ datagen = [
     "icu_pattern/databake",
     "icu_plurals/datagen",
     "icu_time/datagen",
+    "icu_provider/export",
     "serde",
 ]
 logging = ["icu_calendar/logging"]

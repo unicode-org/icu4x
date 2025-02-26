@@ -202,7 +202,7 @@ pub struct CollationData<'data> {
     pub contexts: ZeroVec<'data, u16>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CollationData<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -308,7 +308,7 @@ pub struct CollationDiacritics<'data> {
     pub secondaries: ZeroVec<'data, u16>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CollationDiacritics<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -331,7 +331,7 @@ pub struct CollationJamo<'data> {
     pub ce32s: ZeroVec<'data, u32>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CollationJamo<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -386,7 +386,7 @@ pub struct CollationReordering<'data> {
     pub reorder_ranges: ZeroVec<'data, u32>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CollationReordering<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -449,7 +449,7 @@ pub struct CollationMetadata {
     pub bits: u32,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CollationMetadata,
     #[cfg(feature = "datagen")]
 );
@@ -543,7 +543,7 @@ pub struct CollationSpecialPrimaries<'data> {
     pub numeric_primary: u8,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CollationSpecialPrimaries<'_>,
     #[cfg(feature = "datagen")]
 );

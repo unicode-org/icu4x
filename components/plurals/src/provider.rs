@@ -126,7 +126,7 @@ pub struct PluralRulesData<'data> {
     pub many: Option<Rule<'data>>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     PluralRulesData<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -351,7 +351,7 @@ mod ranges {
         pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
     }
 
-    icu_provider::data_struct_new!(
+    icu_provider::data_struct!(
         PluralRanges<'_>,
         #[cfg(feature = "datagen")]
     );

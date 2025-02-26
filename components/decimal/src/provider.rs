@@ -238,7 +238,7 @@ pub struct DecimalSymbols<'data> {
     pub grouping_sizes: GroupingSizes,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     DecimalSymbols<'_>,
     #[cfg(feature = "datagen")]
 );

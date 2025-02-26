@@ -136,7 +136,7 @@ pub struct JapaneseEras<'data> {
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     JapaneseEras<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -164,7 +164,7 @@ pub struct WeekData {
     pub weekend: WeekdaySet,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     WeekData,
     #[cfg(feature = "datagen")]
 );
