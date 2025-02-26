@@ -20,10 +20,10 @@
 //! contains the resolved numbering system as its attribute:
 //!
 //! ```
-//! use icu_provider::prelude::*;
-//! use icu::decimal::DecimalFormatter;
 //! use icu::decimal::provider::DecimalDigitsV1;
+//! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
+//! use icu_provider::prelude::*;
 //! use std::any::TypeId;
 //! use std::cell::RefCell;
 //!
@@ -39,7 +39,8 @@
 //! {
 //!     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
 //!         if TypeId::of::<M>() == TypeId::of::<DecimalDigitsV1>() {
-//!             *self.numbering_system.try_borrow_mut().unwrap() = Some(req.id.marker_attributes.to_owned());
+//!             *self.numbering_system.try_borrow_mut().unwrap() =
+//!                 Some(req.id.marker_attributes.to_owned());
 //!         }
 //!         self.inner.load(req)
 //!     }
@@ -57,7 +58,14 @@
 //! )
 //! .unwrap();
 //!
-//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("latn"));
+//! assert_eq!(
+//!     provider
+//!         .numbering_system
+//!         .borrow()
+//!         .as_ref()
+//!         .map(|x| x.as_str()),
+//!     Some("latn")
+//! );
 //!
 //! let formatter = DecimalFormatter::try_new_unstable(
 //!     &provider,
@@ -66,7 +74,14 @@
 //! )
 //! .unwrap();
 //!
-//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("thai"));
+//! assert_eq!(
+//!     provider
+//!         .numbering_system
+//!         .borrow()
+//!         .as_ref()
+//!         .map(|x| x.as_str()),
+//!     Some("thai")
+//! );
 //!
 //! let formatter = DecimalFormatter::try_new_unstable(
 //!     &provider,
@@ -75,7 +90,14 @@
 //! )
 //! .unwrap();
 //!
-//! assert_eq!(provider.numbering_system.borrow().as_ref().map(|x| x.as_str()), Some("adlm"));
+//! assert_eq!(
+//!     provider
+//!         .numbering_system
+//!         .borrow()
+//!         .as_ref()
+//!         .map(|x| x.as_str()),
+//!     Some("adlm")
+//! );
 //! ```
 
 // Provider structs must be stable

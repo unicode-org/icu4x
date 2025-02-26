@@ -377,8 +377,7 @@ where
     ///     message: Cow::Owned("example".to_owned()),
     /// };
     ///
-    /// let payload =
-    ///     DataPayload::<HelloWorldV1>::from_owned(local_struct.clone());
+    /// let payload = DataPayload::<HelloWorldV1>::from_owned(local_struct.clone());
     ///
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
@@ -410,8 +409,7 @@ where
     /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload =
-    ///     DataPayload::<HelloWorldV1>::from_static_str("Hello");
+    /// let mut payload = DataPayload::<HelloWorldV1>::from_static_str("Hello");
     ///
     /// payload.with_mut(|s| s.message.to_mut().push_str(" World"));
     ///
@@ -424,8 +422,7 @@ where
     /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload =
-    ///     DataPayload::<HelloWorldV1>::from_static_str("Hello");
+    /// let mut payload = DataPayload::<HelloWorldV1>::from_static_str("Hello");
     ///
     /// let suffix = " World";
     /// payload.with_mut(move |s| s.message.to_mut().push_str(suffix));
@@ -562,10 +559,9 @@ where
     /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1> =
-    ///     DataPayload::from_owned(HelloWorld {
-    ///         message: Cow::Borrowed("Hello World"),
-    ///     });
+    /// let p1: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
+    ///     message: Cow::Borrowed("Hello World"),
+    /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -614,10 +610,9 @@ where
     /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1> =
-    ///     DataPayload::from_owned(HelloWorld {
-    ///         message: Cow::Borrowed("Hello World"),
-    ///     });
+    /// let p1: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
+    ///     message: Cow::Borrowed("Hello World"),
+    /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -670,10 +665,9 @@ where
     /// #     type DataStruct = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1> =
-    ///     DataPayload::from_owned(HelloWorld {
-    ///         message: Cow::Borrowed("Hello World"),
-    ///     });
+    /// let p1: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
+    ///     message: Cow::Borrowed("Hello World"),
+    /// });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -780,11 +774,11 @@ where
     /// a result from a different data provider:
     ///
     /// ```
+    /// use core::any::TypeId;
     /// use icu_locale_core::locale;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::empty::EmptyDataProvider;
-    /// use core::any::TypeId;
     /// use std::borrow::Cow;
     ///
     /// struct MyForkingProvider<P0, P1> {

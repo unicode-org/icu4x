@@ -244,8 +244,8 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::Weekday;
     /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::types::Weekday;
     /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso(2022, 8, 10).unwrap(); // second Wednesday

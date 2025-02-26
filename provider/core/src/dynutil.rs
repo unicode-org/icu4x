@@ -39,10 +39,7 @@ where
 ///
 /// icu_provider::data_struct!(Foo<'_>);
 ///
-/// icu_provider::dynutil::impl_casting_upcast!(
-///     FooV1,
-///     [BarV1, BazV1,]
-/// );
+/// icu_provider::dynutil::impl_casting_upcast!(FooV1, [BarV1, BazV1,]);
 /// ```
 ///
 /// [`DynamicDataMarker::DataStruct`]: crate::DynamicDataMarker::DataStruct

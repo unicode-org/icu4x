@@ -487,12 +487,18 @@ impl DataMarkerInfo {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     ///
-    /// icu_provider::data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
+    /// icu_provider::data_marker!(
+    ///     DummyV1,
+    ///     <HelloWorldV1 as DynamicDataMarker>::DataStruct
+    /// );
     ///
-    /// assert!(matches!(HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO), Ok(())));
+    /// assert!(matches!(
+    ///     HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO),
+    ///     Ok(())
+    /// ));
     /// assert!(matches!(
     ///     HelloWorldV1::INFO.match_marker(DummyV1::INFO),
     ///     Err(DataError {
@@ -502,7 +508,13 @@ impl DataMarkerInfo {
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyV1::INFO).unwrap_err().marker, Some(DummyV1::INFO.id));
+    /// assert_eq!(
+    ///     HelloWorldV1::INFO
+    ///         .match_marker(DummyV1::INFO)
+    ///         .unwrap_err()
+    ///         .marker,
+    ///     Some(DummyV1::INFO.id)
+    /// );
     /// ```
     pub fn match_marker(self, marker: Self) -> Result<(), DataError> {
         if self == marker {

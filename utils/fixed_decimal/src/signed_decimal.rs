@@ -224,19 +224,16 @@ impl Decimal {
     /// use fixed_decimal::{Decimal, FloatPrecision};
     /// use writeable::assert_writeable_eq;
     ///
-    /// let decimal =
-    ///     Decimal::try_from_f64(-5.1, FloatPrecision::Magnitude(-2))
-    ///         .expect("Finite quantity with limited precision");
+    /// let decimal = Decimal::try_from_f64(-5.1, FloatPrecision::Magnitude(-2))
+    ///     .expect("Finite quantity with limited precision");
     /// assert_writeable_eq!(decimal, "-5.10");
     ///
-    /// let decimal =
-    ///     Decimal::try_from_f64(0.012345678, FloatPrecision::RoundTrip)
-    ///         .expect("Finite quantity");
+    /// let decimal = Decimal::try_from_f64(0.012345678, FloatPrecision::RoundTrip)
+    ///     .expect("Finite quantity");
     /// assert_writeable_eq!(decimal, "0.012345678");
     ///
-    /// let decimal =
-    ///     Decimal::try_from_f64(12345678000., FloatPrecision::Integer)
-    ///         .expect("Finite, integer-valued quantity");
+    /// let decimal = Decimal::try_from_f64(12345678000., FloatPrecision::Integer)
+    ///     .expect("Finite, integer-valued quantity");
     /// assert_writeable_eq!(decimal, "12345678000");
     /// ```
     ///
@@ -248,9 +245,8 @@ impl Decimal {
     ///
     /// // IEEE 754 for floating point defines the sign bit separate
     /// // from the mantissa and exponent, allowing for -0.
-    /// let negative_zero =
-    ///     Decimal::try_from_f64(-0.0, FloatPrecision::Integer)
-    ///         .expect("Negative zero");
+    /// let negative_zero = Decimal::try_from_f64(-0.0, FloatPrecision::Integer)
+    ///     .expect("Negative zero");
     /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, LimitError> {
@@ -571,13 +567,22 @@ impl Decimal {
     /// dec.round_with_mode(0, SignedRoundingMode::Ceil);
     /// assert_eq!("-3", dec.to_string());
     /// let mut dec = Decimal::from_str("5.455").unwrap();
-    /// dec.round_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand));
+    /// dec.round_with_mode(
+    ///     -2,
+    ///     SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand),
+    /// );
     /// assert_eq!("5.46", dec.to_string());
     /// let mut dec = Decimal::from_str("-7.235").unwrap();
-    /// dec.round_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc));
+    /// dec.round_with_mode(
+    ///     -2,
+    ///     SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc),
+    /// );
     /// assert_eq!("-7.23", dec.to_string());
     /// let mut dec = Decimal::from_str("9.75").unwrap();
-    /// dec.round_with_mode(-1, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven));
+    /// dec.round_with_mode(
+    ///     -1,
+    ///     SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven),
+    /// );
     /// assert_eq!("9.8", dec.to_string());
     /// ```
     pub fn round_with_mode(&mut self, position: i16, mode: SignedRoundingMode) {
@@ -619,30 +624,41 @@ impl Decimal {
     /// let mut dec = Decimal::from_str("-3.5").unwrap();
     /// assert_eq!(
     ///     "-4",
-    ///     dec.rounded_with_mode(0, SignedRoundingMode::Floor).to_string()
+    ///     dec.rounded_with_mode(0, SignedRoundingMode::Floor)
+    ///         .to_string()
     /// );
     /// let mut dec = Decimal::from_str("-3.5").unwrap();
     /// assert_eq!(
     ///     "-3",
-    ///     dec.rounded_with_mode(0, SignedRoundingMode::Ceil).to_string()
+    ///     dec.rounded_with_mode(0, SignedRoundingMode::Ceil)
+    ///         .to_string()
     /// );
     /// let mut dec = Decimal::from_str("5.455").unwrap();
     /// assert_eq!(
     ///     "5.46",
-    ///     dec.rounded_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand))
-    ///         .to_string()
+    ///     dec.rounded_with_mode(
+    ///         -2,
+    ///         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfExpand)
+    ///     )
+    ///     .to_string()
     /// );
     /// let mut dec = Decimal::from_str("-7.235").unwrap();
     /// assert_eq!(
     ///     "-7.23",
-    ///     dec.rounded_with_mode(-2, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc))
-    ///         .to_string()
+    ///     dec.rounded_with_mode(
+    ///         -2,
+    ///         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfTrunc)
+    ///     )
+    ///     .to_string()
     /// );
     /// let mut dec = Decimal::from_str("9.75").unwrap();
     /// assert_eq!(
     ///     "9.8",
-    ///     dec.rounded_with_mode(-1, SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven))
-    ///         .to_string()
+    ///     dec.rounded_with_mode(
+    ///         -1,
+    ///         SignedRoundingMode::Unsigned(UnsignedRoundingMode::HalfEven)
+    ///     )
+    ///     .to_string()
     /// );
     /// ```
     pub fn rounded_with_mode(mut self, position: i16, mode: SignedRoundingMode) -> Self {
@@ -655,7 +671,9 @@ impl Decimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{Decimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode};
+    /// use fixed_decimal::{
+    ///     Decimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode,
+    /// };
     /// # use std::str::FromStr;
     ///
     /// let mut dec = Decimal::from_str("-3.5").unwrap();
@@ -732,7 +750,9 @@ impl Decimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{Decimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode};
+    /// use fixed_decimal::{
+    ///     Decimal, RoundingIncrement, SignedRoundingMode, UnsignedRoundingMode,
+    /// };
     /// # use std::str::FromStr;
     ///
     /// let mut dec = Decimal::from_str("-3.5").unwrap();

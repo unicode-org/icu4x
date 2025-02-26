@@ -120,21 +120,20 @@ impl WindowsParserBorrowed<'_> {
     ///
     /// ```rust
     /// use icu::locale::subtags::region;
-    /// use icu::time::{TimeZone, zone::WindowsParser};
+    /// use icu::time::{zone::WindowsParser, TimeZone};
     /// use tinystr::tinystr;
     ///
     /// let win_tz_mapper = WindowsParser::new();
     ///
+    /// let bcp47_id = win_tz_mapper.parse("Central Standard Time", None);
+    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
+    ///
     /// let bcp47_id =
-    ///     win_tz_mapper.parse("Central Standard Time", None);
+    ///     win_tz_mapper.parse("Central Standard Time", Some(region!("US")));
     /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
     ///
-    /// let bcp47_id = win_tz_mapper
-    ///     .parse("Central Standard Time", Some(region!("US")));
-    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
-    ///
-    /// let bcp47_id = win_tz_mapper
-    ///     .parse("Central Standard Time", Some(region!("CA")));
+    /// let bcp47_id =
+    ///     win_tz_mapper.parse("Central Standard Time", Some(region!("CA")));
     /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "cawnp"))));
     /// ```
     pub fn parse(self, windows_tz: &str, region: Option<Region>) -> Option<TimeZone> {
