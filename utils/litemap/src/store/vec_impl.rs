@@ -107,31 +107,12 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 
     /// Extends this store with items from an iterator.
     ///
-    /// It uses a three-pass approach to avoid any potential quadratic costs.
-    /// The asymptotic worst case complexity of this method is O((n + m) log(n + m)),
-    /// where `n` is the number of elements already in `self` and `m` is the number
-    /// of elements in the iterator.
+    /// It uses a multi-pass approach to avoid any potential quadratic costs.
     ///
-    /// ```text
-    /// Example:
-    ///   self:         [1,3,5]
-    ///   incoming:     [2,2,4,1,6]
-    ///
-    /// After First Pass
-    ///   self:         [1,3,5,6] <- 6 was directly appended
-    ///   out_of_order: [2,2,1,4] <- elements that couldn't be directly appended
-    ///
-    /// Second Pass
-    ///   1) sort out_of_order → [1,2,2,4]
-    ///   2) merge into self   → [1,3,5,6,2,4]
-    ///                           |       |--> second sorted run starts here but it's deduplicated
-    ///                           |--> 1 was already in self and was updated in place
-    ///
-    /// Third Pass
-    ///   sort self → [1,2,3,4,5,6]
-    /// ```
-    ///
-    /// In practice the function can exit early, skipping the second and/or third passes.
+    /// The asymptotic worst case complexity is O((n + m) log(n + m)), where `n`
+    /// is the number of elements already in `self` and `m` is the number of elements
+    /// in the iterator. The best case complexity is O(m), when the input iterator is
+    /// already sorted and all items sort after the existing items.
     #[inline]
     fn lm_extend<I>(&mut self, iter: I)
     where
@@ -139,74 +120,168 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
         K: Ord,
     {
         // Pre-allocate space to minimize reallocations
-        // From HashBrown's implementation:
-        // Keys may be already present or show multiple times in the iterator.
-        // Reserve the entire hint lower bound if the map is empty (e.g. from_iter).
-        // Otherwise reserve half the hint (rounded up), so the map
-        // will only resize twice in the worst case (assuming growth by doubling).
-        let iter = iter.into_iter();
+        let mut iter = iter.into_iter();
         let (size_hint_lower, _) = iter.size_hint();
-        let reserve = if self.is_empty() {
-            size_hint_lower
-        } else {
-            (size_hint_lower + 1) / 2
-        };
-        self.reserve_exact(reserve);
+        self.reserve_exact(size_hint_lower);
 
-        // Scratch space for elements that can't be directly appended.
-        let mut out_of_order: Vec<(K, V)> = Vec::new();
+        // First N elements in self that are already sorted and not duplicated.
+        let mut sorted_len = self.len();
 
         // First pass: fast-path append or collect out-of-order elements
-        for (key, value) in iter {
-            // The fast path checks if the incoming key is >= the last key in self.
-            match self.last_mut().map(|l| (key.cmp(&l.0), l)) {
-                // Empty vector or new key is greater than last: append
-                None | Some((Ordering::Greater, _)) => self.push((key, value)),
-                // Key equals last: update in place
-                Some((Ordering::Equal, l)) => *l = (key, value),
-                // Key is less than last: collect for second pass
-                // Note: Attempting to update existing keys here hurts performance.
-                // Likely because of cache misses during search. We'll perform
-                // updates later, after sorting the scratch space.
-                _ => out_of_order.push((key, value)),
+        while let Some((key, value)) = iter.next() {
+            // The fast path checks if the incoming key is > the last key in self.
+            // This is the case when the incoming iterator is already sorted and deduplicated.
+            let key_gt_last = self.last().map_or(true, |(lk, _)| &key > lk);
+            self.push((key, value));
+            if !key_gt_last {
+                // extend self with the rest of the iterator and exit early
+                self.extend(iter);
+                break;
             }
+            sorted_len += 1;
         }
 
         // If everything was in order, we're done
-        if out_of_order.is_empty() {
+        if sorted_len >= self.len() {
             return;
         }
-
-        // Second pass: handle out-of-order elements
-        // Elements already in self are already sorted.
-        let sorted_len = self.len();
-        // Stable sort out_of_order to preserve the order of any repeated keys.
+        let (existing, out_of_order) = self.split_at_mut(sorted_len);
+        // Stable sort out of order to preserve the order of any repeated keys.
         out_of_order.sort_by(|a, b| a.0.cmp(&b.0));
-        // Extend the sorted self with the out_of_order (now sorted).
-        // The scratch may have elements that already exist in self that need to be updated.
-        // We'll perform the updates in place to avoid a costly deduplication operation in the end.
-        // This process may create a second sorted run in self that we'll sort later.
-        for pair in out_of_order {
-            // We need to look for the key in the sorted section of self but also the last position
-            // of self to prevent adding duplicated elements from the scratch space.
+        // Deduplicate the elements, keeping the last element of each duplicate run, if any.
+        let (new, _new_duplicates) = partition_dedup_by(out_of_order, |a, b| a.0 == b.0);
+
+        let mut sorted_runs_len_sum = existing.len() + new.len();
+        // If the last element of the existing run is less than the first element of the new sorted run
+        // both runs are already sorted and we can skip the merge step.
+        if existing
+            .last()
+            .zip(new.first())
+            .is_some_and(|(a, b)| a.0 >= b.0)
+        {
+            // Sorted runs overlap, we need to merge and dedup them.
+            // sorted_runs_len_sum is the sum of the lengths of two non-overlaping subslices of self
             #[allow(clippy::indexing_slicing)]
-            if let Some((Ordering::Equal, last)) = self.last_mut().map(|l| (l.0.cmp(&pair.0), l)) {
-                *last = pair;
-            } else if let Ok(idx) = self[..sorted_len].binary_search_by(|(k, _)| k.cmp(&pair.0)) {
-                // `sorted_len` remains valid as we do not remove items from self and only update existing keys in place.
-                // Note: Attempting to reduce the range of the search slice hurts performance.
-                // Likely due to less predictable memory access.
-                self[idx] = pair
-            } else {
-                self.push(pair);
-            }
+            let both_runs = &mut self[..sorted_runs_len_sum];
+            // Use stable sort again as it's often significantly faster for already sorted data.
+            both_runs.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+            let (dedup, _merged_dup) = partition_dedup_by(both_runs, |a, b| a.0 == b.0);
+            sorted_runs_len_sum = dedup.len();
         }
-        // If we pushed new items above we ended up with two sorted runs in self.
-        if self.len() != sorted_len {
-            // While this could be sort_unstable the stable sort is faster when merging two sorted runs.
-            self.sort_by(|a, b| a.0.cmp(&b.0));
+        self.truncate(sorted_runs_len_sum);
+    }
+}
+
+/// Moves all but the _last_ of consecutive elements to the end of the slice satisfying
+/// a given equality relation.
+///
+/// Returns two slices. The first contains no consecutive repeated elements.
+/// The second contains all the duplicates in no specified order.
+///
+/// This is based from std::slice::partition_dedup_by (current unstable) but retains the
+/// _last_ element of the duplicate run in the first slice (instead of first).
+#[inline]
+fn partition_dedup_by<T, F>(v: &mut [T], mut same_bucket: F) -> (&mut [T], &mut [T])
+where
+    F: FnMut(&mut T, &mut T) -> bool,
+{
+    // Although we have a mutable reference to `self`, we cannot make
+    // *arbitrary* changes. The `same_bucket` calls could panic, so we
+    // must ensure that the slice is in a valid state at all times.
+    //
+    // The way that we handle this is by using swaps; we iterate
+    // over all the elements, swapping as we go so that at the end
+    // the elements we wish to keep are in the front, and those we
+    // wish to reject are at the back. We can then split the slice.
+    // This operation is still `O(n)`.
+    //
+    // Example: We start in this state, where `r` represents "next
+    // read" and `w` represents "next_write".
+    //
+    //              r
+    //     | 0,0 | 1,0 | 1,1 | 2,0 | 3,0 | 3,1 |
+    //             w
+    //
+    // Comparing self[r] against self[w-1], this is not a duplicate, so
+    // we swap self[r] and self[w] (no effect as r==w) and then increment both
+    // r and w, leaving us with:
+    //
+    //                    r
+    //     | 0,0 | 1,0 | 1,1 | 2,0 | 3,0 | 3,0 |
+    //                    w
+    //
+    // Comparing self[r] against self[w-1], this value is a duplicate,
+    // we swap self[r] and self[w-1] and then increment `r`:
+    //
+    //                          r
+    //     | 0,0 | 1,1 | 1,0 | 2,0 | 3,0 | 3,1 |
+    //                   w
+    //
+    // Comparing self[r] against self[w-1], this is not a duplicate,
+    // so swap self[r] and self[w] and advance r and w:
+    //
+    //                                r
+    //     | 0,0 | 1,1 | 2,0 | 1,0 | 3,0 | 3,1 |
+    //                          w
+    //
+    // Comparing self[r] against self[w-1], this is not a duplicate,
+    // so swap self[r] and self[w] and advance r and w:
+    //
+    //                                      r
+    //     | 0,0 | 1,1 | 2,0 | 3,0 | 1,0 | 3,1 |
+    //                                w
+    //
+    // Comparing self[r] against self[w-1], this value is a duplicate,
+    // we swap self[r] and self[w-1] and then increment `r`:
+    //                                             r
+    //     | 0,0 | 1,1 | 2,0 | 3,1 | 1,0 | 3,0 |
+    //                                w
+    //
+    // End of slice, as r > len. Split at w.
+
+    let len = v.len();
+    if len <= 1 {
+        return (v, &mut []);
+    }
+
+    let ptr = v.as_mut_ptr();
+    let mut next_read: usize = 1;
+    let mut next_write: usize = 1;
+
+    // SAFETY: the `while` condition guarantees `next_read` and `next_write`
+    // are less than `len`, thus are inside `self`. `prev_ptr_write` points to
+    // one element before `ptr_write`, but `next_write` starts at 1, so
+    // `prev_ptr_write` is never less than 0 and is inside the slice.
+    // This fulfils the requirements for dereferencing `ptr_read`, `prev_ptr_write`
+    // and `ptr_write`, and for using `ptr.add(next_read)`, `ptr.add(next_write - 1)`
+    // and `prev_ptr_write.offset(1)`.
+    //
+    // `next_write` is also incremented at most once per loop at most meaning
+    // no element is skipped when it may need to be swapped.
+    //
+    // `ptr_read` and `prev_ptr_write` never point to the same element. This
+    // is required for `&mut *ptr_read`, `&mut *prev_ptr_write` to be safe.
+    // The explanation is simply that `next_read >= next_write` is always true,
+    // thus `next_read > next_write - 1` is too.
+    unsafe {
+        // Avoid bounds checks by using raw pointers.
+        while next_read < len {
+            let ptr_read = ptr.add(next_read);
+            let prev_ptr_write = ptr.add(next_write - 1);
+            if same_bucket(&mut *ptr_read, &mut *prev_ptr_write) {
+                core::ptr::swap(&mut *ptr_read, &mut *prev_ptr_write);
+            } else {
+                if next_read != next_write {
+                    let ptr_write = prev_ptr_write.add(1);
+                    core::ptr::swap(&mut *ptr_read, &mut *ptr_write);
+                }
+                next_write += 1;
+            }
+            next_read += 1;
         }
     }
+
+    v.split_at_mut(next_write)
 }
 
 impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
