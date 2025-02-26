@@ -286,9 +286,21 @@ impl ConverterFactory {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
+        if input_unit.constant_denominator != 0 {
+            conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator);
+        }
+
         for output_item in output_unit.single_units.iter() {
             conversion_rate *=
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
+        }
+
+        if output_unit.constant_denominator != 0 {
+            if is_reciprocal {
+                conversion_rate /= IcuRatio::from_integer(output_unit.constant_denominator);
+            } else {
+                conversion_rate *= IcuRatio::from_integer(output_unit.constant_denominator);
+            }
         }
 
         let offset = self.compute_offset(input_unit, output_unit)?;
@@ -321,5 +333,55 @@ impl ConverterFactory {
                 },
             )))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ConverterFactory;
+
+    #[test]
+    fn test_converter_factory() {
+        let factory = ConverterFactory::new();
+        let input_unit = factory.parser().try_from_str("meter").unwrap();
+        let output_unit = factory.parser().try_from_str("foot").unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let result = converter.convert(&1000.0);
+        assert!(
+            ((result - 3280.84) / 3280.84).abs() < 0.00001,
+            "The relative difference between the result and the expected value is too large: {}",
+            ((result - 3280.84) / 3280.84).abs()
+        );
+    }
+
+    #[test]
+    fn test_converter_factory_with_constant_denominator() {
+        let factory = ConverterFactory::new();
+        let input_unit = factory
+            .parser()
+            .try_from_str("liter-per-100-kilometer")
+            .unwrap();
+        let output_unit = factory.parser().try_from_str("mile-per-gallon").unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let result = converter.convert(&1.0);
+        assert!(
+            ((result - 235.21) / 235.21).abs() < 0.0001,
+            "The relative difference between the result and the expected value is too large: {}",
+            ((result - 235.21) / 235.21).abs()
+        );
+    }
+
+    #[test]
+    fn test_converter_factory_with_offset() {
+        let factory = ConverterFactory::new();
+        let input_unit = factory.parser().try_from_str("celsius").unwrap();
+        let output_unit = factory.parser().try_from_str("fahrenheit").unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let result = converter.convert(&0.0);
+        assert!(
+            ((result - 32.0) / 32.0).abs() < 0.00001,
+            "The relative difference between the result and the expected value is too large: {}",
+            ((result - 32.0) / 32.0).abs()
+        );
     }
 }
