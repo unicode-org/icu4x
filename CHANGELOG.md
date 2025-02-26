@@ -80,6 +80,7 @@
         - Implement `LongCurrencyFormatter` for Long Currency Formatting (unicode-org#5351)
         - Improvements to transliteration (unicode-org#5469, unicode-org#5489, unicode-org#5712)
         - Expose `CompactDecimalFormatterOptions` in the compactdecimal module (unicode-org#5770)
+        - Add constant denominator support to MeasureUnit (unicode-org#6193)
     - `icu_locale`
         - New crate (with parts of `icu_locid` and `icu_locid_transform`)
         - Add preferences module (unicode-org#4996, unicode-org#5729)
