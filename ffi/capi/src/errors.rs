@@ -242,6 +242,21 @@ impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
 }
 
 #[cfg(feature = "datetime")]
+impl From<icu_datetime::pattern::PatternLoadError> for ffi::DateTimeFormatterLoadError {
+    fn from(value: icu_datetime::pattern::PatternLoadError) -> Self {
+        match value {
+            icu_datetime::pattern::PatternLoadError::ConflictingField(_) => Self::ConflictingField,
+            icu_datetime::pattern::PatternLoadError::UnsupportedLength(_) => {
+                Self::UnsupportedLength
+            }
+            icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
+            icu_datetime::pattern::PatternLoadError::Data(data_error, _) => data_error.into(),
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
 impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCalendarError {
     fn from(value: icu_datetime::MismatchedCalendarError) -> Self {
         Self {
