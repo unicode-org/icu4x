@@ -385,7 +385,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
                 return self.trie_error_val_index();
             };
         let masked_cp = code_point & FAST_TYPE_DATA_MASK;
-        let fast_index_val: u32 = w!((index_array_val as u32) + masked_cp);
+        let index_array_val = index_array_val as u32;
+        let fast_index_val: u32 = w!(index_array_val + masked_cp);
         fast_index_val
     }
 
