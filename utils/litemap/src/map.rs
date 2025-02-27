@@ -1217,20 +1217,12 @@ impl_const_get_with_index_for_integer!(isize);
 
 /// An entry in a `LiteMap`, which may be either occupied or vacant.
 #[allow(clippy::exhaustive_enums)]
-pub enum Entry<'a, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+pub enum Entry<'a, K, V, S> {
     Occupied(OccupiedEntry<'a, K, V, S>),
     Vacant(VacantEntry<'a, K, V, S>),
 }
 
-impl<K, V, S> Debug for Entry<'_, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+impl<K, V, S> Debug for Entry<'_, K, V, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Occupied(arg0) => f.debug_tuple("Occupied").field(arg0).finish(),
@@ -1240,20 +1232,12 @@ where
 }
 
 /// A view into an occupied entry in a `LiteMap`.
-pub struct OccupiedEntry<'a, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+pub struct OccupiedEntry<'a, K, V, S> {
     map: &'a mut LiteMap<K, V, S>,
     index: usize,
 }
 
-impl<K, V, S> Debug for OccupiedEntry<'_, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+impl<K, V, S> Debug for OccupiedEntry<'_, K, V, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("OccupiedEntry")
             .field("index", &self.index)
@@ -1262,21 +1246,13 @@ where
 }
 
 /// A view into a vacant entry in a `LiteMap`.
-pub struct VacantEntry<'a, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+pub struct VacantEntry<'a, K, V, S> {
     map: &'a mut LiteMap<K, V, S>,
     key: K,
     index: usize,
 }
 
-impl<K, V, S> Debug for VacantEntry<'_, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+impl<K, V, S> Debug for VacantEntry<'_, K, V, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("VacantEntry")
             .field("index", &self.index)
