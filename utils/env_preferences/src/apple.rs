@@ -13,10 +13,23 @@ use core_foundation_sys::{
     },
     timezone,
 };
+use icu_locale::{Locale, ParseError};
 use libc::c_char;
 use std::ffi::{CStr, CString};
 
-use crate::RetrievalError;
+use crate::{LocaleError, RetrievalError};
+
+pub struct AppleLocale<'src>(&'src str);
+
+impl<'src> AppleLocale<'src> {
+    pub fn try_from_str(src: &'src str) -> Result<Self, LocaleError> {
+        Ok(Self(src))
+    }
+
+    pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
+        Locale::try_from_str(&self.0)
+    }
+}
 
 /// Helps to get string, it tries to get the string directly from the pointer itself, in case it is unable to retrieve
 /// the string (c_str_ptr is NULL) a buffer is created of size `length + 1` and we perform manual allocations to get
@@ -62,7 +75,7 @@ fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
 /// Retrieves system locales for Apple operating systems, in the order preferred by the
 /// user, it consumes [`CFLocaleCopyPreferredLanguages`](https://developer.apple.com/documentation/corefoundation/1542887-cflocalecopypreferredlanguages)
 /// to copy the languages prefered by the user.
-pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
+pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
     let mut languages: Vec<String> = Vec::new();
 
     // SAFETY: The call to `CFLocaleCopyPreferredLanguages` returns an immutable reference to `CFArray` which is owned by us
