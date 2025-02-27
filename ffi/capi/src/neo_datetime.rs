@@ -555,7 +555,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
         pub fn with_zone_generic_long(
             &self,
-        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             use icu_datetime::fieldsets::zone::GenericLong as Zone;
             let mut names =
                 icu_datetime::pattern::DateTimeNames::from_formatter(self.1, self.0.clone())
@@ -565,7 +565,7 @@ pub mod ffi {
                 .try_into_formatter(self.2.zone(Zone))
                 .map_err(|(e, _)| e)?
                 .cast_into_fset();
-            Ok(Box::new(ZonedDateTimeFormatter(formatter)))
+            Ok(Box::new(NeoZonedDateTimeFormatter(formatter)))
         }
 
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
@@ -603,12 +603,13 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter, Typedef)]
-    pub struct ZonedDateTimeFormatter(
+    #[diplomat::rust_link(icu::datetime::NeoZonedDateTimeFormatter, Typedef)]
+    #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
+    pub struct NeoZonedDateTimeFormatter(
         pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::CompositeFieldSet>,
     );
 
-    impl ZonedDateTimeFormatter {
+    impl NeoZonedDateTimeFormatter {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
