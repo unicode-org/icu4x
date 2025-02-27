@@ -107,68 +107,40 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 
     /// Extends this store with items from an iterator.
     ///
-    /// It uses a multi-pass approach to avoid any potential quadratic costs.
+    /// It uses a two-pass (sort + dedup) approach to avoid any potential quadratic costs.
     ///
     /// The asymptotic worst case complexity is O((n + m) log(n + m)), where `n`
     /// is the number of elements already in `self` and `m` is the number of elements
     /// in the iterator. The best case complexity is O(m), when the input iterator is
-    /// already sorted and all items sort after the existing items.
+    /// already sorted, keys aren't duplicated and all keys sort after the existing ones.
     #[inline]
     fn lm_extend<I>(&mut self, iter: I)
     where
         I: IntoIterator<Item = (K, V)>,
         K: Ord,
     {
-        // Pre-allocate space to minimize reallocations
-        let mut iter = iter.into_iter();
-        let (size_hint_lower, _) = iter.size_hint();
-        self.reserve_exact(size_hint_lower);
-
         // First N elements in self that are already sorted and not duplicated.
         let mut sorted_len = self.len();
-
-        // First pass: fast-path append or collect out-of-order elements
-        while let Some((key, value)) = iter.next() {
-            // The fast path checks if the incoming key is > the last key in self.
-            // This is the case when the incoming iterator is already sorted and deduplicated.
-            let key_gt_last = self.last().map_or(true, |(lk, _)| &key > lk);
-            self.push((key, value));
-            if !key_gt_last {
-                // extend self with the rest of the iterator and exit early
-                self.extend(iter);
-                break;
-            }
-            sorted_len += 1;
-        }
+        // Use Vec::extend as it has a specialized code for slice and trusted-len iterators.
+        self.extend(iter);
+        // Count new elements that are sorted and non-duplicated.
+        // Starting from the end of the existing sorted run, if any.
+        sorted_len += self[sorted_len.saturating_sub(1)..]
+            .windows(2)
+            .take_while(|w| w[0].0 < w[1].0)
+            .count()
+            + (sorted_len == 0) as usize;
 
         // If everything was in order, we're done
         if sorted_len >= self.len() {
             return;
         }
-        let (existing, out_of_order) = self.split_at_mut(sorted_len);
-        // Stable sort out of order to preserve the order of any repeated keys.
-        out_of_order.sort_by(|a, b| a.0.cmp(&b.0));
-        // Deduplicate the elements, keeping the last element of each duplicate run, if any.
-        let (new, _new_duplicates) = partition_dedup_by(out_of_order, |a, b| a.0 == b.0);
 
-        let mut sorted_runs_len_sum = existing.len() + new.len();
-        // If the last element of the existing run is less than the first element of the new sorted run
-        // both runs are already sorted and we can skip the merge step.
-        if existing
-            .last()
-            .zip(new.first())
-            .is_some_and(|(a, b)| a.0 >= b.0)
-        {
-            // Sorted runs overlap, we need to merge and dedup them.
-            // sorted_runs_len_sum is the sum of the lengths of two non-overlaping subslices of self
-            #[allow(clippy::indexing_slicing)]
-            let both_runs = &mut self[..sorted_runs_len_sum];
-            // Use stable sort again as it's often significantly faster for already sorted data.
-            both_runs.sort_unstable_by(|a, b| a.0.cmp(&b.0));
-            let (dedup, _merged_dup) = partition_dedup_by(both_runs, |a, b| a.0 == b.0);
-            sorted_runs_len_sum = dedup.len();
-        }
-        self.truncate(sorted_runs_len_sum);
+        // Use stable sort to keep relative order of duplicates.
+        self.sort_by(|a, b| a.0.cmp(&b.0));
+        let (dedup, _merged_dup) = partition_dedup_by(self, |a, b| a.0 == b.0);
+        sorted_len = dedup.len();
+        self.truncate(sorted_len);
     }
 }
 
@@ -178,7 +150,7 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 /// Returns two slices. The first contains no consecutive repeated elements.
 /// The second contains all the duplicates in no specified order.
 ///
-/// This is based from std::slice::partition_dedup_by (current unstable) but retains the
+/// This is based on std::slice::partition_dedup_by (currently unstable) but retains the
 /// _last_ element of the duplicate run in the first slice (instead of first).
 #[inline]
 fn partition_dedup_by<T, F>(v: &mut [T], mut same_bucket: F) -> (&mut [T], &mut [T])
@@ -195,11 +167,14 @@ where
     // wish to reject are at the back. We can then split the slice.
     // This operation is still `O(n)`.
     //
-    // Example: We start in this state, where `r` represents "next
+    // Example:
+    // Assume T is (char, u8) and the bucketing function is equality on the char.
+    //
+    // We start in this state, where `r` represents "next
     // read" and `w` represents "next_write".
     //
     //              r
-    //     | 0,0 | 1,0 | 1,1 | 2,0 | 3,0 | 3,1 |
+    //     | a,0 | b,0 | b,1 | c,0 | d,0 | d,1 |
     //             w
     //
     // Comparing self[r] against self[w-1], this is not a duplicate, so
@@ -207,34 +182,34 @@ where
     // r and w, leaving us with:
     //
     //                    r
-    //     | 0,0 | 1,0 | 1,1 | 2,0 | 3,0 | 3,0 |
+    //     | a,0 | b,0 | b,1 | c,0 | d,0 | d,0 |
     //                    w
     //
     // Comparing self[r] against self[w-1], this value is a duplicate,
     // we swap self[r] and self[w-1] and then increment `r`:
     //
     //                          r
-    //     | 0,0 | 1,1 | 1,0 | 2,0 | 3,0 | 3,1 |
+    //     | a,0 | b,1 | b,0 | c,0 | d,0 | d,1 |
     //                   w
     //
     // Comparing self[r] against self[w-1], this is not a duplicate,
     // so swap self[r] and self[w] and advance r and w:
     //
     //                                r
-    //     | 0,0 | 1,1 | 2,0 | 1,0 | 3,0 | 3,1 |
+    //     | a,0 | b,1 | c,0 | b,0 | d,0 | d,1 |
     //                          w
     //
     // Comparing self[r] against self[w-1], this is not a duplicate,
     // so swap self[r] and self[w] and advance r and w:
     //
     //                                      r
-    //     | 0,0 | 1,1 | 2,0 | 3,0 | 1,0 | 3,1 |
+    //     | a,0 | b,1 | c,0 | d,0 | b,0 | d,1 |
     //                                w
     //
     // Comparing self[r] against self[w-1], this value is a duplicate,
     // we swap self[r] and self[w-1] and then increment `r`:
     //                                             r
-    //     | 0,0 | 1,1 | 2,0 | 3,1 | 1,0 | 3,0 |
+    //     | a,0 | b,1 | c,0 | d,1 | b,0 | d,0 |
     //                                w
     //
     // End of slice, as r > len. Split at w.
@@ -279,9 +254,8 @@ where
             }
             next_read += 1;
         }
+        v.split_at_mut_unchecked(next_write)
     }
-
-    v.split_at_mut(next_write)
 }
 
 impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
