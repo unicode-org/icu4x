@@ -123,14 +123,18 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
         let mut sorted_len = self.len();
         // Use Vec::extend as it has a specialized code for slice and trusted-len iterators.
         self.extend(iter);
-        // Count new elements that are sorted and non-duplicated.
-        // Starting from the end of the existing sorted run, if any.
-        sorted_len += self[sorted_len.saturating_sub(1)..]
-            .windows(2)
-            .take_while(|w| w[0].0 < w[1].0)
-            .count()
-            + (sorted_len == 0) as usize;
-
+        // `sorted_len` is the length of the sorted run before extension
+        // window slice `w` is guaranteed to have a length of 2.
+        #[allow(clippy::indexing_slicing)]
+        {
+            // Count new elements that are sorted and non-duplicated.
+            // Starting from the end of the existing sorted run, if any.
+            sorted_len += self[sorted_len.saturating_sub(1)..]
+                .windows(2)
+                .take_while(|w| w[0].0 < w[1].0)
+                .count()
+                + (sorted_len == 0) as usize;
+        }
         // If everything was in order, we're done
         if sorted_len >= self.len() {
             return;
@@ -138,6 +142,7 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 
         // Use stable sort to keep relative order of duplicates.
         self.sort_by(|a, b| a.0.cmp(&b.0));
+        // Deduplicate by keeping the last element of the run in the first slice.
         let (dedup, _merged_dup) = partition_dedup_by(self, |a, b| a.0 == b.0);
         sorted_len = dedup.len();
         self.truncate(sorted_len);
