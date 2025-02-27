@@ -207,6 +207,19 @@ final class DateTimeFormatter implements ffi.Finalizable {
     return DateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/enums/struct.DateAndTimeFieldSet.html#method.zone)
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatter withZoneGenericLong() {
+    final result = _icu4x_DateTimeFormatter_with_zone_generic_long_mv1(_ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   String formatIso(IsoDate date, Time time) {
     final write = _Write();
@@ -301,6 +314,11 @@ external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_et_mv1(ffi.Pointer<f
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_create_et_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_create_et_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatter_with_zone_generic_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_with_zone_generic_long_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatter_with_zone_generic_long_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_DateTimeFormatter_format_iso_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatter_format_iso_mv1')

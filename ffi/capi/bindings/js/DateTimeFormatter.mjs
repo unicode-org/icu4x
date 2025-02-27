@@ -7,6 +7,7 @@ import { DateTimeLength } from "./DateTimeLength.mjs"
 import { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
 import { IsoDate } from "./IsoDate.mjs"
 import { Locale } from "./Locale.mjs"
+import { NeoZonedDateTimeFormatter } from "./NeoZonedDateTimeFormatter.mjs"
 import { Time } from "./Time.mjs"
 import { TimePrecision } from "./TimePrecision.mjs"
 import { YearStyle } from "./YearStyle.mjs"
@@ -294,6 +295,24 @@ export class DateTimeFormatter {
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new DateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    withZoneGenericLong() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_DateTimeFormatter_with_zone_generic_long_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {

@@ -7,6 +7,7 @@ import type { DateTimeLength } from "./DateTimeLength"
 import type { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
 import type { IsoDate } from "./IsoDate"
 import type { Locale } from "./Locale"
+import type { NeoZonedDateTimeFormatter } from "./NeoZonedDateTimeFormatter"
 import type { Time } from "./Time"
 import type { TimePrecision } from "./TimePrecision"
 import type { YearStyle } from "./YearStyle"
@@ -48,6 +49,8 @@ export class DateTimeFormatter {
     static createEt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
     static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
+
+    withZoneGenericLong(): NeoZonedDateTimeFormatter;
 
     formatIso(date: IsoDate, time: Time): string;
 
