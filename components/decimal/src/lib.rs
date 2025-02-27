@@ -160,7 +160,7 @@ pub mod input {
 ///
 /// See the crate-level documentation for examples.
 #[doc = decimal_formatter_size!()]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DecimalFormatter {
     options: options::DecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV2>,

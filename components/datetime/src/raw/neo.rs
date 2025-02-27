@@ -40,7 +40,7 @@ impl RawPreferences {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
         options: RawOptions,
@@ -58,7 +58,7 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 ///
 /// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
 /// the same as their individual patterns with glue.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum OverlapPatternSelectionData {
     SkeletonDateTime {
         options: RawOptions,
@@ -67,7 +67,7 @@ pub(crate) enum OverlapPatternSelectionData {
     },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
         options: RawOptions,
@@ -86,7 +86,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
     ),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum ZonePatternSelectionData {
     SinglePatternItem(TimeZone, FieldLength, <PatternItem as AsULE>::ULE),
 }
@@ -115,7 +115,7 @@ impl ItemsAndOptions<'_> {
 
 // TODO: Use markers instead of an enum for DateTimeFormatter pattern storage.
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum DateTimeZonePatternSelectionData {
     Date(DatePatternSelectionData),
     Time(TimePatternSelectionData),

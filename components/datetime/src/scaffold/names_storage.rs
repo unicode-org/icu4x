@@ -54,7 +54,7 @@ pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
 where
     Variables: PartialEq + Copy + fmt::Debug,
 {
-    type Container: MaybePayload<M, Variables> + fmt::Debug;
+    type Container: MaybePayload<M, Variables> + fmt::Debug + Clone;
 }
 
 impl<M: DynamicDataMarker, Variables> NamesContainer<M, Variables> for ()
@@ -142,6 +142,18 @@ pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
 /// parameterized by `Variables`.
 pub struct DataPayloadWithVariables<M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, DataPayload<M>>,
+}
+
+impl<M: DynamicDataMarker, Variables> Clone for DataPayloadWithVariables<M, Variables>
+where
+    Variables: Clone,
+    DataPayload<M>: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone()
+        }
+    }
 }
 
 impl<M: DynamicDataMarker, Variables> UnstableSealed for DataPayloadWithVariables<M, Variables> {}
