@@ -214,4 +214,23 @@ mod test {
         let deserialized: LiteMap<(u32, String), String> = postcard::from_bytes(&postcard).unwrap();
         assert_eq!(map, deserialized);
     }
+
+    /// Test that a LiteMap<_, _, Vec> is deserialized with an exact capacity
+    /// if the deserializer provides a size hint information, like postcard here.
+    #[test]
+    fn test_deserialize_capacity() {
+        for len in 0..50 {
+            let mut map = (0..len).map(|i| (i, i.to_string())).collect::<Vec<_>>();
+            let postcard = postcard::to_stdvec(&map).unwrap();
+            let deserialized: LiteMap<u32, String> = postcard::from_bytes(&postcard).unwrap();
+            assert_eq!(deserialized.values.capacity(), len);
+            assert_eq!(deserialized.values.len(), len);
+            // again, but with a shuffled map
+            rand::seq::SliceRandom::shuffle(&mut map[..], &mut rand::thread_rng());
+            let postcard = postcard::to_stdvec(&map).unwrap();
+            let deserialized: LiteMap<u32, String> = postcard::from_bytes(&postcard).unwrap();
+            assert_eq!(deserialized.values.capacity(), len);
+            assert_eq!(deserialized.values.len(), len);
+        }
+    }
 }
