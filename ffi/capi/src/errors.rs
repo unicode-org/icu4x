@@ -95,7 +95,7 @@ pub mod ffi {
         Unknown = 0x00,
 
         UnsupportedLength = 0x8_03,
-        DuplicateField = 0x8_09,
+        ConflictingField = 0x8_09,
         TypeTooSpecific = 0x8_0A,
 
         DataMarkerNotFound = 0x01,
@@ -204,7 +204,7 @@ impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadErr
         match e {
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::ConflictingField(_),
-            ) => Self::DuplicateField,
+            ) => Self::ConflictingField,
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
             ) => Self::UnsupportedLength,
