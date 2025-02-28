@@ -127,12 +127,12 @@ pub struct ObservationalIslamicMarker;
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct SaudiIslamicMarker;
 
-/// Marker type for civil islamic calendar, for use with [`IslamicBasedMarker`]
+/// Marker type for civil-era tabular islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct CivilIslamicMarker;
 
-/// Marker type for observational islamic calendar, for use with [`IslamicBasedMarker`]
+/// Marker type for astronomical-era tabular islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct TabularIslamicMarker;
@@ -211,7 +211,7 @@ pub fn observational_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
 }
 
 // Saudi visibility criterion on eve of fixed date in Mecca.
-// The start of the new month only happens if both of these criterias are met: The moon is a waxing crescent at sunset of the previous day
+// The start of the new month only happens if both of these criteria are met: The moon is a waxing crescent at sunset of the previous day
 // and the moon sets after the sun on that same evening.
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957>
 fn saudi_criterion(date: RataDie) -> Option<bool> {

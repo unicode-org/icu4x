@@ -7,7 +7,7 @@
 use super::{
     grammar::{
         is_a_key_char, is_a_key_leading_char, is_annotation_close,
-        is_annotation_key_value_separator, is_annotation_open, is_critical_flag, is_sign,
+        is_annotation_key_value_separator, is_annotation_open, is_ascii_sign, is_critical_flag,
         is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator, is_utc_designator,
     },
     records::{Sign, TimeZoneAnnotation, TimeZoneRecord, UtcOffsetRecord, UtcOffsetRecordOrZ},
@@ -39,7 +39,7 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a>(
         .peek_n(current_peek)
         .ok_or(ParseError::abrupt_end("AmbiguousAnnotation"))?;
 
-    if is_tz_leading_char(leading_char) || is_sign(leading_char) {
+    if is_tz_leading_char(leading_char) || is_ascii_sign(leading_char) {
         // Ambigious start values when lowercase alpha that is shared between `TzLeadingChar` and `KeyLeadingChar`.
         if is_a_key_leading_char(leading_char) {
             let mut peek_pos = current_peek + 1;
@@ -96,7 +96,7 @@ pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZ
     let is_iana = cursor
         .check(is_tz_leading_char)
         .ok_or(ParseError::abrupt_end("TimeZoneAnnotation"))?;
-    let is_offset = cursor.check_or(false, is_sign);
+    let is_offset = cursor.check_or(false, is_ascii_sign);
 
     if is_iana {
         return parse_tz_iana_name(cursor);
@@ -170,9 +170,9 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UtcOffset
 pub(crate) fn parse_utc_offset_minute_precision(
     cursor: &mut Cursor,
 ) -> ParserResult<UtcOffsetRecord> {
-    let sign = if cursor.check_or(false, is_sign) {
+    let sign = if cursor.check_or(false, is_ascii_sign) {
         let sign = cursor.next_or(ParseError::ImplAssert)?;
-        Sign::from(sign == '+')
+        Sign::from(sign == b'+')
     } else {
         Sign::Positive
     };

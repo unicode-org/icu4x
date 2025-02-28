@@ -52,7 +52,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
@@ -63,11 +63,17 @@ pub struct IslamicObservational {
     data: Option<DataPayload<CalendarIslamicObservationalV1>>,
 }
 
-/// Civil / Arithmetical Islamic Calendar (Used for administrative purposes)
+/// Civil-Epoch Tabular/Arithmetic Hijri Calendar
+///
+/// This is a tabular/arithmetic Hijri calendar with leap years (1-based) 2, 5, 7, 10,
+/// 13, 16, 18, 21, 24, 26, and 29 in the 30-year cycle with civil/Friday epoch. That is,
+/// the AH era starts on Friday July 16, 622 Julian / July 19, 622 proleptic Gregorian.
+///
+/// For an astronomic/Thusday-epoch version, see [`IslamicTabular`][IslamicTabular].
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
@@ -81,7 +87,7 @@ pub struct IslamicCivil;
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
@@ -92,11 +98,18 @@ pub struct IslamicUmmAlQura {
     data: Option<DataPayload<CalendarIslamicUmmalquraV1>>,
 }
 
-/// A Tabular version of the Arithmetical Islamic Calendar
+/// Astronomical-Epoch Tabular/Arithmetic Hijri Calendar
+///
+/// This is a tabular/arithmetic Hijri calendar with leap years (1-based) 2, 5, 7, 10,
+/// 13, 16, 18, 21, 24, 26, and 29 in the 30-year cycle with astronomical/Thursday epoch.
+/// That is, the AH era starts on Thusday July 15, 622 Julian / July 18, 622 proleptic
+/// Gregorian.
+///
+/// For an civil/Friday-epoch version, see [`IslamicCivil`][IslamicCivil].
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
