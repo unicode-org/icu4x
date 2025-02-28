@@ -52,7 +52,7 @@ fn year_as_islamic(standard_era: tinystr::TinyStr16, year: i32) -> types::YearIn
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
@@ -67,7 +67,7 @@ pub struct IslamicObservational {
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
@@ -81,7 +81,7 @@ pub struct IslamicCivil;
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
@@ -96,7 +96,7 @@ pub struct IslamicUmmAlQura {
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"ah"`
+/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
 ///
 /// # Month codes
 ///
