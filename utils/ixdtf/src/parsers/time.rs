@@ -127,11 +127,14 @@ pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
 
 /// Parses `MinuteSecond` value.
 #[inline]
-pub(crate) fn parse_minute_second(cursor: &mut Cursor, is_second: bool) -> ParserResult<u8> {
-    let (valid_range, err) = if is_second {
+pub(crate) fn parse_minute_second(
+    cursor: &mut Cursor,
+    is_leap_second_valid: bool,
+) -> ParserResult<u8> {
+    let (valid_range, err) = if is_leap_second_valid {
         (0..=60, ParseError::TimeSecond)
     } else {
-        (0..=59, ParseError::TimeMinute)
+        (0..=59, ParseError::TimeMinuteSecond)
     };
     let first = cursor.next_digit()?.ok_or(err)?;
     let min_sec_value = first * 10 + cursor.next_digit()?.ok_or(err)?;
