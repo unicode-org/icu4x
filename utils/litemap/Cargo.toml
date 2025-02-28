@@ -28,6 +28,7 @@ serde = { workspace = true, optional = true, features = ["alloc"]}
 yoke = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
+rand = { workspace = true }
 bincode = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }
@@ -43,7 +44,7 @@ criterion = { workspace = true }
 default = ["alloc"]
 alloc = []
 databake = ["dep:databake"]
-serde = ["dep:serde"]
+serde = ["dep:serde", "alloc"]
 yoke = ["dep:yoke"]
 
 # Enables the `testing` module with tools for testing custom stores.
