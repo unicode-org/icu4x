@@ -5,7 +5,8 @@
 - Components
     - General
         - ...
-    - ...
+    - `icu_collections`
+        - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
 - Data model and providers
     - General
         - ...
