@@ -10,8 +10,8 @@ use crate::{
     assert_syntax,
     parsers::{
         grammar::{
-            is_annotation_open, is_decimal_separator, is_sign, is_time_designator,
-            is_time_separator, is_utc_designator,
+            is_annotation_open, is_decimal_separator, is_time_designator, is_time_separator,
+            is_utc_designator,
         },
         records::{Annotation, TimeRecord},
         timezone::parse_date_time_utc,
@@ -22,6 +22,7 @@ use crate::{
 
 use super::{
     annotations,
+    grammar::is_ascii_sign,
     records::{Fraction, IxdtfParseRecord},
 };
 
@@ -39,7 +40,7 @@ pub(crate) fn parse_annotated_time_record<'a>(
     // If Time was successfully parsed, assume from this point that this IS a
     // valid AnnotatedTimeRecord.
 
-    let offset = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
+    let offset = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch)) {
         Some(parse_date_time_utc(cursor)?)
     } else {
         None
