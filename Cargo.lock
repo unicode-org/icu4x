@@ -1959,7 +1959,6 @@ dependencies = [
  "criterion",
  "displaydoc",
  "serde-json-core",
- "utf8_iter",
 ]
 
 [[package]]
