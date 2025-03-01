@@ -135,7 +135,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 ///
 /// For more details, please read the [crate root docs][crate].
 #[doc = typed_neo_year_month_day_formatter_size!()]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     pub(crate) names: RawDateTimeNames<FSet>,
@@ -375,7 +375,7 @@ size_test!(
 ///
 /// For more details, please read the [crate root docs][crate].
 #[doc = neo_year_month_day_formatter_size!()]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     pub(crate) names: RawDateTimeNames<FSet>,

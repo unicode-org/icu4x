@@ -546,7 +546,7 @@ size_test!(
 ///     ]
 /// );
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
     prefs: DateTimeFormatterPreferences,
     inner: RawDateTimeNames<FSet>,
@@ -559,7 +559,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
 /// Currently this only supports loading of non-calendar-specific names, but
 /// additional functions may be added in the future. If you need this, see
 /// <https://github.com/unicode-org/icu4x/issues/6107>
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DateTimeNames<FSet: DateTimeNamesMarker> {
     inner: FixedCalendarDateTimeNames<(), FSet>,
     calendar: AnyCalendar,
@@ -602,13 +602,42 @@ impl<FSet: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<FSet> {
             .field("weekday_names", &self.weekday_names)
             .field("dayperiod_names", &self.dayperiod_names)
             .field("zone_essentials", &self.zone_essentials)
+            .field("locations_root", &self.locations_root)
             .field("locations", &self.locations)
+            .field("exemplars_root", &self.exemplars_root)
+            .field("exemplars", &self.exemplars)
             .field("mz_generic_long", &self.mz_generic_long)
             .field("mz_generic_short", &self.mz_generic_short)
+            .field("mz_standard_long", &self.mz_standard_long)
             .field("mz_specific_long", &self.mz_specific_long)
             .field("mz_specific_short", &self.mz_specific_short)
+            .field("mz_periods", &self.mz_periods)
             .field("decimal_formatter", &self.decimal_formatter)
             .finish()
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> Clone for RawDateTimeNames<FSet> {
+    fn clone(&self) -> Self {
+        Self {
+            year_names: self.year_names.clone(),
+            month_names: self.month_names.clone(),
+            weekday_names: self.weekday_names.clone(),
+            dayperiod_names: self.dayperiod_names.clone(),
+            zone_essentials: self.zone_essentials.clone(),
+            locations_root: self.locations_root.clone(),
+            locations: self.locations.clone(),
+            exemplars_root: self.exemplars_root.clone(),
+            exemplars: self.exemplars.clone(),
+            mz_generic_long: self.mz_generic_long.clone(),
+            mz_generic_short: self.mz_generic_short.clone(),
+            mz_standard_long: self.mz_standard_long.clone(),
+            mz_specific_long: self.mz_specific_long.clone(),
+            mz_specific_short: self.mz_specific_short.clone(),
+            mz_periods: self.mz_periods.clone(),
+            decimal_formatter: self.decimal_formatter.clone(),
+            _marker: PhantomData,
+        }
     }
 }
 
