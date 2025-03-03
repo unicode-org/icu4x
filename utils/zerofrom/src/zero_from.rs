@@ -24,12 +24,6 @@ use alloc::string::String;
 /// One can use the [`#[derive(ZeroFrom)]`](zerofrom_derive::ZeroFrom) custom derive to automatically
 /// implement this trait.
 ///
-/// # Reverse-encoding VarULE
-///
-/// In the zero-copy universe defined by this crate and `zerovec`, the trait `EncodeAsVarULE`
-/// maps a struct to its bytes representation ("serialization"), and [`ZeroFrom`] takes those
-/// bytes and creates a struct from them ("deserialization").
-///
 /// # Examples
 ///
 /// Implementing `ZeroFrom` on a custom data struct:
