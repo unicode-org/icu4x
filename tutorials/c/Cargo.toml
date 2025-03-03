@@ -9,4 +9,4 @@ name = "unused"
 path = "unused"
 
 [dependencies]
-icu_capi = "2.0.0-dev"
+icu_capi = "2.0.0-beta2"

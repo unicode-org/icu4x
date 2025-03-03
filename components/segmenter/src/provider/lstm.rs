@@ -355,12 +355,7 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    LstmForWordLineAutoV1,
-    "segmenter/lstm/wl_auto@1",
-    attributes_domain = "segmenter"
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -373,3 +368,8 @@ pub enum LstmData<'data> {
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
+
+icu_provider::data_struct!(
+    LstmData<'_>,
+    #[cfg(feature = "datagen")]
+);

@@ -52,7 +52,7 @@ pub struct ChineseBasedCache<'data> {
     pub data: ZeroVec<'data, PackedChineseBasedYearInfo>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     ChineseBasedCache<'_>,
     #[cfg(feature = "datagen")]
 );

@@ -29,9 +29,14 @@ use zerovec::*;
 
 // TODO(#3776): Improve the documentation of this datastruct.
 
+icu_provider::data_marker!(
+    /// TODO
+    TransliteratorRulesV1,
+    RuleBasedTransliterator<'static>
+);
+
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[icu_provider::data_struct(TransliteratorRulesV1 = "transliterator/rules@1")]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
@@ -48,6 +53,8 @@ pub struct RuleBasedTransliterator<'a> {
     /// The list of conversion rule groups this transliterator uses.
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE, Index32>, Index32>,
 }
+
+icu_provider::data_struct!(RuleBasedTransliterator<'_>, #[cfg(feature = "datagen")]);
 
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for RuleBasedTransliterator<'de> {

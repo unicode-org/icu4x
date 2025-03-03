@@ -72,7 +72,7 @@ impl WeekCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::{DayOfMonth, Weekday, WeekOfMonth};
+    /// use icu::calendar::types::{DayOfMonth, WeekOfMonth, Weekday};
     /// use icu::calendar::week::WeekCalculator;
     ///
     /// let week_calculator =

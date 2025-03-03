@@ -22,10 +22,7 @@ use crate::ParseError;
 /// use fixed_decimal::FixedInteger;
 /// use fixed_decimal::LimitError;
 ///
-/// assert_eq!(
-///     Decimal::from(FixedInteger::from(5)),
-///     Decimal::from(5)
-/// );
+/// assert_eq!(Decimal::from(FixedInteger::from(5)), Decimal::from(5));
 /// assert_eq!(
 ///     FixedInteger::try_from(Decimal::from(5)),
 ///     Ok(FixedInteger::from(5))

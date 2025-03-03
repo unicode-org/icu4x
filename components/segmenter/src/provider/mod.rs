@@ -56,6 +56,62 @@ const _: () = {
     impl_word_break_data_v2!(Baked);
 };
 
+icu_provider::data_marker!(
+    /// `LstmForWordLineAutoV1`
+    LstmForWordLineAutoV1,
+    LstmData<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+icu_provider::data_marker!(
+    /// `DictionaryForWordOnlyAutoV1`
+    DictionaryForWordOnlyAutoV1,
+    UCharDictionaryBreakData<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+icu_provider::data_marker!(
+    /// `DictionaryForWordLineExtendedV1`
+    DictionaryForWordLineExtendedV1,
+    UCharDictionaryBreakData<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "segmenter"
+);
+icu_provider::data_marker!(
+    /// `SentenceBreakDataOverrideV1`
+    SentenceBreakDataOverrideV1,
+    RuleBreakDataOverride<'static>,
+);
+icu_provider::data_marker!(
+    /// `WordBreakDataOverrideV1`
+    WordBreakDataOverrideV1,
+    RuleBreakDataOverride<'static>,
+);
+icu_provider::data_marker!(
+    /// `LineBreakDataV2`
+    LineBreakDataV2,
+    RuleBreakData<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `WordBreakDataV2`
+    WordBreakDataV2,
+    RuleBreakData<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `GraphemeClusterBreakDataV2`
+    GraphemeClusterBreakDataV2,
+    RuleBreakData<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `SentenceBreakDataV2`
+    SentenceBreakDataV2,
+    RuleBreakData<'static>,
+    is_singleton = true
+);
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
@@ -77,13 +133,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(LineBreakDataV2, "segmenter/line@2", singleton),
-    marker(WordBreakDataV2, "segmenter/word@2", singleton),
-    marker(GraphemeClusterBreakDataV2, "segmenter/grapheme@2", singleton),
-    marker(SentenceBreakDataV2, "segmenter/sentence@2", singleton)
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -118,6 +168,11 @@ pub struct RuleBreakData<'data> {
     pub complex_property: u8,
 }
 
+icu_provider::data_struct!(
+    RuleBreakData<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// char16trie data for dictionary break
 ///
 /// <div class="stab unstable">
@@ -125,19 +180,7 @@ pub struct RuleBreakData<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(
-        DictionaryForWordOnlyAutoV1,
-        "segmenter/dictionary/w_auto@1",
-        attributes_domain = "segmenter"
-    ),
-    marker(
-        DictionaryForWordLineExtendedV1,
-        "segmenter/dictionary/wl_ext@1",
-        attributes_domain = "segmenter"
-    )
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -147,6 +190,11 @@ pub struct UCharDictionaryBreakData<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
+icu_provider::data_struct!(
+    UCharDictionaryBreakData<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 pub(crate) struct UCharDictionaryBreakDataV1;
 
 impl DynamicDataMarker for UCharDictionaryBreakDataV1 {
@@ -154,11 +202,7 @@ impl DynamicDataMarker for UCharDictionaryBreakDataV1 {
 }
 
 /// codepoint trie data that the difference by specific locale
-#[icu_provider::data_struct(
-    marker(SentenceBreakDataOverrideV1, "segmenter/sentence/override@1",),
-    marker(WordBreakDataOverrideV1, "segmenter/word/override@1")
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),
@@ -170,6 +214,11 @@ pub struct RuleBreakDataOverride<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub property_table_override: CodePointTrie<'data, u8>,
 }
+
+icu_provider::data_struct!(
+    RuleBreakDataOverride<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]

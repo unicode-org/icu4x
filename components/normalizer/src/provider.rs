@@ -132,7 +132,7 @@ pub struct DecompositionData<'data> {
     pub passthrough_cap: u16,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     DecompositionData<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -159,7 +159,7 @@ pub struct DecompositionTables<'data> {
     pub scalars24: ZeroVec<'data, char>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     DecompositionTables<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -183,7 +183,7 @@ pub struct CanonicalCompositions<'data> {
     pub canonical_compositions: Char16Trie<'data>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CanonicalCompositions<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -210,7 +210,7 @@ pub struct NonRecursiveDecompositionSupplement<'data> {
     pub scalars24: ZeroVec<'data, char>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     NonRecursiveDecompositionSupplement<'_>,
     #[cfg(feature = "datagen")]
 );

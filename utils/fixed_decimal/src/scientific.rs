@@ -44,10 +44,10 @@ impl ScientificDecimal {
 /// assert_writeable_eq!(
 ///     ScientificDecimal::from(
 ///         {
-///         let mut dec = Decimal::from(1729u32);
-///         dec.multiply_pow10(-3);
-///         dec
-///     },
+///             let mut dec = Decimal::from(1729u32);
+///             dec.multiply_pow10(-3);
+///             dec
+///         },
 ///         FixedInteger::from(3)
 ///     ),
 ///     "1.729e3"

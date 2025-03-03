@@ -29,8 +29,8 @@
 //! // Medium length
 //! // Always display the era
 //!
-//! let static_field_set = fieldsets::YMD::medium()
-//!     .with_year_style(YearStyle::WithEra);
+//! let static_field_set =
+//!     fieldsets::YMD::medium().with_year_style(YearStyle::WithEra);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.date_fields = Some(DateFields::YMD);
@@ -38,10 +38,7 @@
 //! builder.year_style = Some(YearStyle::WithEra);
 //! let dynamic_field_set = builder.build_date().unwrap();
 //!
-//! assert_eq!(
-//!     dynamic_field_set,
-//!     DateFieldSet::YMD(static_field_set),
-//! );
+//! assert_eq!(dynamic_field_set, DateFieldSet::YMD(static_field_set),);
 //!
 //! // Standalone Month
 //! // Long length
@@ -62,18 +59,15 @@
 //! // Medium length, implicit in the builder
 //! // Display time to the minute
 //!
-//! let static_field_set = fieldsets::ET::medium()
-//!     .with_time_precision(TimePrecision::Minute);
+//! let static_field_set =
+//!     fieldsets::ET::medium().with_time_precision(TimePrecision::Minute);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.date_fields = Some(DateFields::E);
 //! builder.time_precision = Some(TimePrecision::Minute);
 //! let dynamic_field_set = builder.build_date_and_time().unwrap();
 //!
-//! assert_eq!(
-//!     dynamic_field_set,
-//!     DateAndTimeFieldSet::ET(static_field_set),
-//! );
+//! assert_eq!(dynamic_field_set, DateAndTimeFieldSet::ET(static_field_set),);
 //!
 //! // Time and Time Zone
 //! // Short length
@@ -88,7 +82,8 @@
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
-//! builder.time_precision = Some(TimePrecision::Subsecond(SubsecondDigits::S3));
+//! builder.time_precision =
+//!     Some(TimePrecision::Subsecond(SubsecondDigits::S3));
 //! builder.alignment = Some(Alignment::Column);
 //! builder.zone_style = Some(ZoneStyle::SpecificLong);
 //! let dynamic_field_set = builder.build_composite().unwrap();
@@ -246,7 +241,10 @@ mod _serde {
     ///
     /// let json_str = serde_json::to_string(&builder).unwrap();
     ///
-    /// assert_eq!(json_str, r#"{"length":"medium","dateFields":"YMD","yearStyle":"withEra"}"#);
+    /// assert_eq!(
+    ///     json_str,
+    ///     r#"{"length":"medium","dateFields":"YMD","yearStyle":"withEra"}"#
+    /// );
     ///
     /// let json_parsed = serde_json::from_str(&json_str).unwrap();
     ///

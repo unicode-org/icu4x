@@ -14,7 +14,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// Only one way to construct a combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, E, zone::Location};
+/// use icu::datetime::fieldsets::{zone::Location, Combo, E};
 ///
 /// let field_set = E::long().zone(Location);
 /// ```
@@ -22,10 +22,10 @@ use crate::{provider::neo::*, scaffold::*};
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
+/// use icu::datetime::fieldsets::{zone::Location, Combo, ET};
+/// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::datetime::input::ZonedDateTime;
 /// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
@@ -53,22 +53,27 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::{Combo, ET, zone::Location};
+/// use icu::datetime::fieldsets::{zone::Location, Combo, ET};
+/// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::datetime::input::ZonedDateTime;
 /// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = FixedCalendarDateTimeFormatter::<_, Combo<ET, Location>>::try_new(
-///     locale!("en-US").into(),
-///     ET::short().hm().zone(Location),
+/// let formatter =
+///     FixedCalendarDateTimeFormatter::<_, Combo<ET, Location>>::try_new(
+///         locale!("en-US").into(),
+///         ET::short().hm().zone(Location),
+///     )
+///     .unwrap();
+///
+/// let zdt = ZonedDateTime::try_location_only_from_str(
+///     "2024-10-18T15:44[America/Los_Angeles]",
+///     Gregorian,
+///     IanaParser::new(),
 /// )
 /// .unwrap();
-///
-/// let zdt = ZonedDateTime::try_location_only_from_str("2024-10-18T15:44[America/Los_Angeles]", Gregorian, IanaParser::new())
-///     .unwrap();
 ///
 /// assert_writeable_eq!(
 ///     formatter.format(&zdt),
@@ -80,19 +85,22 @@ use crate::{provider::neo::*, scaffold::*};
 /// with a static time zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{enums::DateFieldSet, Combo, zone::GenericShort, YMD};
+/// use icu::datetime::fieldsets::{
+///     enums::DateFieldSet, zone::GenericShort, Combo, YMD,
+/// };
+/// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::datetime::input::ZonedDateTime;
 /// use icu::time::zone::IanaParser;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<DateFieldSet, GenericShort>>::try_new(
-///     locale!("en-US").into(),
-///     DateFieldSet::YMD(YMD::long()).zone(GenericShort),
-/// )
-/// .unwrap();
+/// let formatter =
+///     DateTimeFormatter::<Combo<DateFieldSet, GenericShort>>::try_new(
+///         locale!("en-US").into(),
+///         DateFieldSet::YMD(YMD::long()).zone(GenericShort),
+///     )
+///     .unwrap();
 ///
 /// let zdt = ZonedDateTime::try_location_only_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",
@@ -101,21 +109,18 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// assert_writeable_eq!(
-///     formatter.format(&zdt),
-///     "October 18, 2024 PT"
-/// );
+/// assert_writeable_eq!(formatter.format(&zdt), "October 18, 2024 PT");
 /// ```
 ///
 /// Format with a time of day and long time zone:
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::{T, zone::SpecificLong};
+/// use icu::datetime::fieldsets::{zone::SpecificLong, T};
+/// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::datetime::input::ZonedDateTime;
-/// use icu::time::zone::{UtcOffsetCalculator, IanaParser};
+/// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(

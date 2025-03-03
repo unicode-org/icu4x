@@ -284,7 +284,7 @@ pub struct Aliases<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     Aliases<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -330,7 +330,7 @@ pub struct LikelySubtagsForLanguage<'data> {
     pub und: (Language, Script, Region),
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     LikelySubtagsForLanguage<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -374,7 +374,7 @@ pub struct LikelySubtagsForScriptRegion<'data> {
     pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     LikelySubtagsForScriptRegion<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -413,7 +413,7 @@ pub struct LikelySubtagsExtended<'data> {
     pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     LikelySubtagsExtended<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -431,7 +431,7 @@ pub struct Parents<'data> {
     pub parents: ZeroMap<'data, PotentialUtf8, (Language, Option<Script>, Option<Region>)>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     Parents<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -457,7 +457,7 @@ pub struct ScriptDirection<'data> {
     pub ltr: ZeroVec<'data, UnvalidatedScript>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     ScriptDirection<'_>,
     #[cfg(feature = "datagen")]
 );
@@ -480,7 +480,7 @@ pub struct ExemplarCharactersData<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointInversionListAndStringList<'data>,
 );
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     ExemplarCharactersData<'_>,
     #[cfg(feature = "datagen")]
 );

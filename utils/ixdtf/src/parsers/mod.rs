@@ -9,7 +9,6 @@ use crate::{ParseError, ParserResult};
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
 use records::IxdtfParseRecord;
-use utf8_iter::Utf8CharIndices;
 
 use self::records::Annotation;
 
@@ -365,38 +364,24 @@ impl<'a> Cursor<'a> {
     }
 
     /// Peek the value at next position (current + 1).
-    fn peek(&self) -> Option<char> {
+    fn peek(&self) -> Option<u8> {
         self.peek_n(1)
     }
 
     /// Returns current position in source as `char`.
-    fn current(&self) -> Option<char> {
+    fn current(&self) -> Option<u8> {
         self.peek_n(0)
     }
 
     /// Peeks the value at `n` as a `char`.
-    fn peek_n(&self, n: usize) -> Option<char> {
-        let (_, char) = self.peek_with_info(n)?;
-        Some(char)
-    }
-
-    /// Peeks the value at `n` and returns the char with its byte length.
-    fn peek_with_info(&self, n: usize) -> Option<(usize, char)> {
-        let mut chars =
-            Utf8CharIndices::new(self.source.get(self.pos..self.source.len()).unwrap_or(&[]));
-        for _ in 0..n {
-            let _ = chars.next();
-        }
-        let (_, peek) = chars.next()?;
-        let offset = chars.offset();
-
-        Some((offset, peek))
+    fn peek_n(&self, n: usize) -> Option<u8> {
+        self.source.get(self.pos + n).copied()
     }
 
     /// Runs the provided check on the current position.
     fn check<F>(&self, f: F) -> Option<bool>
     where
-        F: FnOnce(char) -> bool,
+        F: FnOnce(u8) -> bool,
     {
         self.current().map(f)
     }
@@ -404,34 +389,33 @@ impl<'a> Cursor<'a> {
     /// Runs the provided check on current position returns the default value if None.
     fn check_or<F>(&self, default: bool, f: F) -> bool
     where
-        F: FnOnce(char) -> bool,
+        F: FnOnce(u8) -> bool,
     {
         self.current().map_or(default, f)
     }
 
     /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> Option<char> {
-        self.peek_with_info(0).map(|(offset, result)| {
-            self.advance_n(offset);
-            result
-        })
+    fn next(&mut self) -> Option<u8> {
+        let result = self.current();
+        self.advance_n(1);
+        result
     }
 
-    /// Returns the next value as a digit.
+    /// Returns the next value as a digit
     ///
     /// # Errors
-    ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        // Note: Char digit with a radix of ten must be in the range of a u8
-        Ok(self
-            .next_or(ParseError::InvalidEnd)?
-            .to_digit(10)
-            .map(|d| d as u8))
+        let ascii_char = self.next_or(ParseError::InvalidEnd)?;
+        if ascii_char.is_ascii_digit() {
+            Ok(Some(ascii_char - 48))
+        } else {
+            Ok(None)
+        }
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParseError) -> ParserResult<char> {
+    fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
         self.next().ok_or(err)
     }
 

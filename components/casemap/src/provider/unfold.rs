@@ -29,7 +29,7 @@ pub struct CaseMapUnfold<'data> {
     pub map: ZeroMap<'data, PotentialUtf8, str>,
 }
 
-icu_provider::data_struct_new!(
+icu_provider::data_struct!(
     CaseMapUnfold<'_>,
     #[cfg(feature = "datagen")]
 );

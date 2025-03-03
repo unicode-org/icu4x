@@ -15,9 +15,9 @@ use icu_time::scaffold::IntoOption;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
@@ -94,9 +94,9 @@ impl IntoOption<Length> for Length {
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::options::Alignment;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -172,9 +172,9 @@ impl IntoOption<Alignment> for Alignment {
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::input::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::options::YearStyle;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -518,8 +518,8 @@ impl From<TimePrecisionSerde> for TimePrecision {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -528,9 +528,8 @@ impl From<TimePrecisionSerde> for TimePrecision {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///     locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::Subsecond(
-///         SubsecondDigits::S2,
-///     )),
+///     T::short()
+///         .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S2)),
 /// )
 /// .unwrap();
 ///

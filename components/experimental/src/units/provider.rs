@@ -27,6 +27,8 @@ pub use crate::provider::Baked;
 
 use super::ratio::IcuRatio;
 
+icu_provider::data_marker!(UnitsInfoV1, UnitsInfo<'static>, is_singleton = true);
+
 /// This type encapsulates all the constant data required for unit conversions.
 ///
 /// <div class="stab unstable">
@@ -34,8 +36,7 @@ use super::ratio::IcuRatio;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(UnitsInfoV1, "units/info@1", singleton))]
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -50,6 +51,8 @@ pub struct UnitsInfo<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub convert_infos: VarZeroVec<'data, ConversionInfoULE>,
 }
+
+icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
 
 /// Represents the conversion information for a unit.
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.

@@ -36,22 +36,22 @@ pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
 /// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
 #[macro_export]
 macro_rules! __data_struct {
-    (<$generic:ident: $bound:tt> $ty:path, $(#[$attr:meta])*) => {
+    (<$generic:ident: $bound:tt> $ty:path $(, $(#[$attr:meta])*)?) => {
         impl<$generic: $bound> $crate::ule::MaybeAsVarULE for $ty {
             type EncodedStruct = [()];
         }
-        $(#[$attr])*
+        $($(#[$attr])*)?
         impl<$generic: $bound> $crate::ule::MaybeEncodeAsVarULE for $ty {
             fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
                 None
             }
         }
     };
-    ($ty:path, $(#[$attr:meta])*) => {
+    ($ty:path $(, $(#[$attr:meta])*)?) => {
         impl $crate::ule::MaybeAsVarULE for $ty {
             type EncodedStruct = [()];
         }
-        $(#[$attr])*
+        $($(#[$attr])*)?
         impl $crate::ule::MaybeEncodeAsVarULE for $ty {
             fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
                 None

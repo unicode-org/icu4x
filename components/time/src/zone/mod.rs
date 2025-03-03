@@ -59,10 +59,10 @@
 //!
 //! ```
 //! use icu::calendar::Date;
-//! use icu::time::Time;
-//! use icu::time::TimeZone;
 //! use icu::time::zone::IanaParser;
 //! use icu::time::zone::TimeZoneVariant;
+//! use icu::time::Time;
+//! use icu::time::TimeZone;
 //! use tinystr::tinystr;
 //!
 //! // Parse the IANA ID

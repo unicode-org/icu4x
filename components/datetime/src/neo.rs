@@ -162,9 +162,9 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::datetime::input::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -409,8 +409,8 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -423,10 +423,7 @@ where
     ///
     /// let date = Date::try_new_iso(2024, 5, 8).unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&date),
-    ///     "30 Nisan 5784"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&date), "30 Nisan 5784");
     /// ```
     ///
     /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
@@ -579,8 +576,8 @@ where
     /// Mismatched calendars will return an error:
     ///
     /// ```
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
@@ -641,8 +638,8 @@ where
     /// Mismatched calendars convert and format automatically:
     ///
     /// ```
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
@@ -704,8 +701,8 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -719,10 +716,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&date),
-    ///     "12 Tishri 5785"
-    /// );
+    /// assert_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
     /// ```
     pub fn into_formatter(self, calendar: C) -> DateTimeFormatter<FSet>
     where
@@ -746,9 +740,9 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::{enums::DateFieldSet, YMD};
     /// use icu::datetime::input::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
@@ -760,19 +754,13 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// // Test that the specific formatter works:
     /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
-    /// assert_writeable_eq!(
-    ///     specific_formatter.format(&date),
-    ///     "20 déc. 2024"
-    /// );
+    /// assert_writeable_eq!(specific_formatter.format(&date), "20 déc. 2024");
     ///
     /// // Make a more general formatter:
     /// let general_formatter = specific_formatter.cast_into_fset::<DateFieldSet>();
     ///
     /// // Test that it still works:
-    /// assert_writeable_eq!(
-    ///     general_formatter.format(&date),
-    ///     "20 déc. 2024"
-    /// );
+    /// assert_writeable_eq!(general_formatter.format(&date), "20 déc. 2024");
     /// ```
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(
         self,
@@ -794,8 +782,8 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
@@ -817,8 +805,8 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::datetime::MismatchedCalendarError;
     /// use icu::locale::locale;
@@ -862,33 +850,25 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::{enums::DateFieldSet, YMD};
     /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::fieldsets::{YMD, enums::DateFieldSet};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let specific_formatter = DateTimeFormatter::try_new(
-    ///     locale!("fr").into(),
-    ///     YMD::medium(),
-    /// )
-    /// .unwrap();
+    /// let specific_formatter =
+    ///     DateTimeFormatter::try_new(locale!("fr").into(), YMD::medium())
+    ///         .unwrap();
     ///
     /// // Test that the specific formatter works:
     /// let date = Date::try_new_gregorian(2024, 12, 20).unwrap();
-    /// assert_writeable_eq!(
-    ///     specific_formatter.format(&date),
-    ///     "20 déc. 2024"
-    /// );
+    /// assert_writeable_eq!(specific_formatter.format(&date), "20 déc. 2024");
     ///
     /// // Make a more general formatter:
     /// let general_formatter = specific_formatter.cast_into_fset::<DateFieldSet>();
     ///
     /// // Test that it still works:
-    /// assert_writeable_eq!(
-    ///     general_formatter.format(&date),
-    ///     "20 déc. 2024"
-    /// );
+    /// assert_writeable_eq!(general_formatter.format(&date), "20 déc. 2024");
     /// ```
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
         DateTimeFormatter {
@@ -904,17 +884,14 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// ```
     /// use icu::calendar::AnyCalendarKind;
-    /// use icu::datetime::input::Date;
     /// use icu::datetime::fieldsets::YMD;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = DateTimeFormatter::try_new(
-    ///     locale!("th").into(),
-    ///     YMD::long(),
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     DateTimeFormatter::try_new(locale!("th").into(), YMD::long()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_iso(2024, 12, 16).unwrap()),
@@ -936,11 +913,14 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 /// A [`NoCalendarFormatter`] cannot be constructed with a fieldset that involves dates:
 ///
 /// ```
-/// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::fieldsets::Y;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 ///
-/// assert!(NoCalendarFormatter::try_new(locale!("und").into(), Y::medium()).is_err());
+/// assert!(
+///     NoCalendarFormatter::try_new(locale!("und").into(), Y::medium())
+///         .is_err()
+/// );
 /// ```
 ///
 /// Furthermore, it is a compile error in the format function:

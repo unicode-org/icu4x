@@ -25,19 +25,21 @@ where
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// #[icu_provider::data_struct(
-///     FooV1,
-///     BarV1 = "demo/bar@1",
-///     BazV1 = "demo/baz@1"
-/// )]
+/// struct FooV1;
+/// impl DynamicDataMarker for FooV1 {
+///     type DataStruct = Foo<'static>;
+/// }
+/// icu_provider::data_marker!(BarV1, Foo<'static>);
+/// icu_provider::data_marker!(BazV1, Foo<'static>);
+///
+/// #[derive(yoke::Yokeable)]
 /// pub struct Foo<'data> {
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// icu_provider::dynutil::impl_casting_upcast!(
-///     FooV1,
-///     [BarV1, BazV1,]
-/// );
+/// icu_provider::data_struct!(Foo<'_>);
+///
+/// icu_provider::dynutil::impl_casting_upcast!(FooV1, [BarV1, BazV1,]);
 /// ```
 ///
 /// [`DynamicDataMarker::DataStruct`]: crate::DynamicDataMarker::DataStruct

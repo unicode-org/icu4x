@@ -233,8 +233,8 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::DataLocale;
     /// use core::cmp::Ordering;
+    /// use icu_provider::DataLocale;
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "ca",

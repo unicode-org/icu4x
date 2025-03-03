@@ -20,7 +20,7 @@ As its most basic purpose, `Collator` offers locale-aware ordering:
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::{*, options::*};
+use icu::collator::{options::*, *};
 use icu::locale::locale;
 
 let mut options = CollatorOptions::default();
@@ -50,7 +50,7 @@ The degree of sensitivity in how to determine that strings are distinct.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::{*, options::*};
+use icu::collator::{options::*, *};
 
 // Primary Level
 
@@ -229,8 +229,8 @@ Whether to swap the ordering of uppercase and lowercase.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::{*, options::*};
 use icu::collator::preferences::*;
+use icu::collator::{options::*, *};
 
 // Use the locale's default.
 
@@ -265,8 +265,8 @@ numeric value.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::{*, options::*};
 use icu::collator::preferences::*;
+use icu::collator::{options::*, *};
 
 // Numerical sorting off
 

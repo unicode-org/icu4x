@@ -23,7 +23,7 @@ all-features = true
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
@@ -48,7 +48,7 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data", "auto"]
 serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake", "icu_provider/export"]
 lstm = ["dep:core_maths"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 compiled_data = ["dep:icu_segmenter_data"]
