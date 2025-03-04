@@ -41,26 +41,23 @@ fn main() {
     let formatter = DateTimeFormatter::try_new(
         locale!("en-GB-u-ca-japanese").into(),
         fieldsets::YMDT::medium().zone(fieldsets::zone::SpecificLong),
-    ).expect("data is present");
+    )
+    .expect("data is present");
 
     println!("{}", formatter.format(&from_chrono)); // 11 Sept 6 Reiwa, 08:37:20 Japan Standard Time
 }
 
 fn jiff_to_icu(jiff: &jiff::Zoned) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
-    let date = Date::try_new_iso(
-        i32::from(jiff.year()),
-        jiff.month().unsigned_abs(),
-        jiff.day().unsigned_abs(),
-    )
-    .expect("jiff returns valid fields");
+    let date = Date::try_new_iso(jiff.year() as i32, jiff.month() as u8, jiff.day() as u8)
+        .expect("jiff returns valid fields");
 
     let time = Time::try_new(
-        jiff.hour().unsigned_abs(),
-        jiff.minute().unsigned_abs(),
-        jiff.second().unsigned_abs(),
-        u32::from(jiff.millisecond().unsigned_abs()) * 1_000_000
-            + u32::from(jiff.microsecond().unsigned_abs()) * 1_000
-            + u32::from(jiff.nanosecond().unsigned_abs()),
+        jiff.hour() as u8,
+        jiff.minute() as u8,
+        jiff.second() as u8,
+        jiff.millisecond() as u32 * 1_000_000
+            + jiff.microsecond() as u32 * 1_000
+            + jiff.nanosecond() as u32,
     )
     .expect("jiff returns valid fields");
 
@@ -83,12 +80,8 @@ fn chrono_to_icu(
     chrono: &chrono::DateTime<chrono_tz::Tz>,
 ) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
     use chrono::Datelike;
-    let date = Date::try_new_iso(
-        i32::from(chrono.year()),
-        chrono.month() as u8,
-        chrono.day() as u8,
-    )
-    .expect("chrono returns valid fields");
+    let date = Date::try_new_iso(chrono.year(), chrono.month() as u8, chrono.day() as u8)
+        .expect("chrono returns valid fields");
 
     use chrono::Timelike;
     let time = Time::try_new(
