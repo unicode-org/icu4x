@@ -26,7 +26,9 @@ pub trait MaybeAsVarULE {
 
 /// Export-only trait associated with [`MaybeAsVarULE`]. See that trait
 /// for additional details.
-// #[cfg(feature = "export")] // TODO(#5230): Enable feature gating
+///
+/// ✨ *Enabled with the `export` Cargo feature.*
+#[cfg(feature = "export")]
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
     /// Returns the [`MaybeAsVarULE::EncodedStruct`] that represents this data struct,
     /// or `None` if the data struct does not support this representation.
@@ -96,6 +98,7 @@ where
 }
 
 #[cfg(feature = "alloc")]
+#[cfg(feature = "export")]
 impl<'a, K0, K1, V> MaybeEncodeAsVarULE for ZeroMap2d<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a>,
@@ -114,6 +117,7 @@ impl<T, const N: usize> MaybeAsVarULE for [T; N] {
     type EncodedStruct = [()];
 }
 
+#[cfg(feature = "export")]
 impl<T, const N: usize> MaybeEncodeAsVarULE for [T; N] {
     fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
         None

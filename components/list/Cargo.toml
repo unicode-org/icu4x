@@ -42,7 +42,7 @@ serde_json = { workspace = true }
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "icu_provider/alloc", "zerovec/serde"]
 serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax", "alloc"]
-datagen = ["serde", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax", "zerovec/databake", "alloc", "serde_human"]
+datagen = ["serde", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax", "zerovec/databake", "alloc", "serde_human", "icu_provider/export"]
 compiled_data = ["dep:icu_list_data"]
 alloc = ["zerovec/alloc", "icu_provider/alloc", "serde?/alloc"]
 
