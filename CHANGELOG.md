@@ -10,7 +10,8 @@
 - Data model and providers
     - General
         - ...
-    - ...
+    - `icu_provider`
+        - Put `MaybeEncodeAsVarULE` behind the `"export"` feature (unicode-org#6221)
 - Utils
     - General
         - ...
