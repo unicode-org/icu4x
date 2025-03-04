@@ -24,7 +24,6 @@ pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
         "zzzz" => ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong),
         "z" => ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort),
         "OOOO" => ZoneFieldSet::LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong),
-        "OO" => ZoneFieldSet::LocalizedOffsetFixed(fieldsets::zone::LocalizedOffsetFixed),
         "O" => ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
         "VVV" => ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity),
         // ISO currently untested

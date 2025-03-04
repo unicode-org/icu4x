@@ -13,7 +13,6 @@
       "VVVV": "Los Angeles Time",
 
       "O": "GMT-7",
-      "OO": "GMT-07:00",
       "OOOO": "GMT-07:00",
 
       "x": "-07",
@@ -46,7 +45,6 @@
       "VVVV": "UK Time",
 
       "O": "GMT+1",
-      "OO": "GMT+01:00",
       "OOOO": "GMT+01:00"
     }
   },
@@ -81,7 +79,6 @@
       "VVVV": "日本時間",
 
       "O": "GMT+9",
-      "OO": "GMT+09:00",
       "OOOO": "GMT+09:00"
     }
   },
@@ -99,8 +96,7 @@
       "VVVV": "Тролль",
 
       "O": "GMT",
-      "OO": "GMT+00:00",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "X": "Z"
     }
@@ -119,7 +115,6 @@
       "VVVV": "Непал",
 
       "O": "GMT+5.45",
-      "OO": "GMT+05.45",
       "OOOO": "GMT+05.45"
     }
   },
@@ -128,7 +123,6 @@
     "datetime": "2021-01-11T12:00:00.000+05:45[Asia/Kathmandu]",
     "expectations": {
       "O": "GMT +৫:৪৫",
-      "OO": "GMT +০৫:৪৫",
       "OOOO": "GMT +০৫:৪৫",
       "xxxx": "+0545"
     }
@@ -147,7 +141,6 @@
       "VVVV": "שעון ישראל",
 
       "O": "GMT\u200e+3\u200e",
-      "OO": "GMT\u200e+03:00\u200e",
       "OOOO": "GMT\u200e+03:00\u200e"
     }
   },
@@ -165,7 +158,6 @@
       "VVVV": "GMT-07:00",
 
       "O": "GMT-7",
-      "OO": "GMT-07:00",
       "OOOO": "GMT-07:00",
 
       "xxxx": "-0700",
@@ -186,7 +178,6 @@
       "VVVV": "GMT-07:00",
 
       "O": "GMT-7",
-      "OO": "GMT-07:00",
       "OOOO": "GMT-07:00",
 
       "xxxx": "-0700",
@@ -207,7 +198,6 @@
       "VVVV": "GMT+?",
 
       "O": "GMT+?",
-      "OO": "GMT+?",
       "OOOO": "GMT+?",
 
       "xxxx": "+?",
@@ -225,11 +215,10 @@
       "vvvv": "Coordinated Universal Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OO": "GMT+00:00",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "xxxx": "+0000",
       "XXXXX": "Z"
@@ -246,11 +235,10 @@
       "vvvv": "Greenwich Mean Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OO": "GMT+00:00",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "xxxx": "+0000",
       "XXXXX": "Z"

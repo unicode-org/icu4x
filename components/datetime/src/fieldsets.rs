@@ -1323,15 +1323,6 @@ pub mod zone {
         zone_essentials = yes,
     );
 
-    impl_zone_marker!(
-        LocalizedOffsetFixed,
-        description = "UTC offset, fixed-length",
-        length_override = Long,
-        sample = "GMT-05:00",
-        field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::Two),
-        zone_essentials = yes,
-    );
-
     // TODO: Add short/long UTC offset?
 
     impl_zone_marker!(

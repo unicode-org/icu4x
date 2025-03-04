@@ -1431,7 +1431,7 @@ impl<C, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_winter),
-    ///     "Your time zone is: GMT",
+    ///     "Your time zone is: GMT+00:00",
     /// );
     /// assert_try_writeable_eq!(
     ///     names
@@ -2817,8 +2817,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     )?;
                 }
 
-                // O, OO, OOOO
-                (FS::TimeZone(TimeZone::LocalizedOffset), One | Two | Four) => {
+                // O, OOOO
+                (FS::TimeZone(TimeZone::LocalizedOffset), One | Four) => {
                     self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
                     numeric_field = Some(field);
                 }

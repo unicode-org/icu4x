@@ -156,9 +156,6 @@ pub enum ZoneFieldSet {
     /// The short offset format, as in
     /// “GMT−8”.
     LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
-    /// The fixed-length offset format, as in
-    /// “GMT−00:00”.
-    LocalizedOffsetFixed(fieldsets::zone::LocalizedOffsetFixed),
     /// The long generic non-location format, as in
     /// “Pacific Time”.
     GenericLong(fieldsets::zone::GenericLong),
@@ -471,7 +468,6 @@ impl_attrs! {
         SpecificShort,
         LocalizedOffsetLong,
         LocalizedOffsetShort,
-        LocalizedOffsetFixed,
         GenericLong,
         GenericShort,
         Location,
