@@ -33,14 +33,12 @@ fn main() {
 
     println!("\n====== Work Log (en) example ============");
 
-    for _ in 0..1000000 {
-        for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
-            let date = DateTime {
-                date: Date::try_new_gregorian(year, month, day).expect("date should parse"),
-                time: Time::try_new(hour, minute, second, 0).expect("time should parse"),
-            };
-            let fdt = dtf.format(&date);
-            println!("{idx}) {}", fdt);
-        }
+    for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
+        let date = DateTime {
+            date: Date::try_new_gregorian(year, month, day).expect("date should parse"),
+            time: Time::try_new(hour, minute, second, 0).expect("time should parse"),
+        };
+        let fdt = dtf.format(&date);
+        println!("{idx}) {}", fdt);
     }
 }
