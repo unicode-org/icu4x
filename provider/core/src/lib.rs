@@ -150,6 +150,7 @@ pub mod ule {
     //! See [`MaybeAsVarULE`] for details.
 
     pub use super::varule_traits::MaybeAsVarULE;
+    #[cfg(feature = "export")]
     pub use super::varule_traits::MaybeEncodeAsVarULE;
 }
 
