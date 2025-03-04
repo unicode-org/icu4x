@@ -35,6 +35,7 @@ fn main() {
 
     for _ in 0..1000000 {
         for (idx, &(year, month, day, hour, minute, second)) in DATES_ISO.iter().enumerate() {
+            let dtf = dtf.clone();
             let date = DateTime {
                 date: Date::try_new_gregorian(year, month, day).expect("date should parse"),
                 time: Time::try_new(hour, minute, second, 0).expect("time should parse"),
