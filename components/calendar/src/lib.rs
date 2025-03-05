@@ -142,7 +142,7 @@ pub mod preferences {
     #[doc(inline)]
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
-    pub use icu_locale_core::preferences::extensions::unicode::keywords::IslamicCalendarAlgorithm;
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
 }
 
 #[cfg(test)]

@@ -294,11 +294,11 @@ impl_data_provider!(
 );
 impl_data_provider!(IndianDateSymbolsV1, symbols::convert_dates, "indian");
 impl_data_provider!(
-    IslamicDateLengthsV1,
+    HijriDateLengthsV1,
     |dates, _| DateLengths::from(dates),
     "islamicc"
 );
-impl_data_provider!(IslamicDateSymbolsV1, symbols::convert_dates, "islamicc");
+impl_data_provider!(HijriDateSymbolsV1, symbols::convert_dates, "islamicc");
 impl_data_provider!(
     JapaneseDateLengthsV1,
     |dates, _| DateLengths::from(dates),

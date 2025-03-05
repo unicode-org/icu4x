@@ -54,8 +54,8 @@ icu_provider::data_marker!(
     DateSymbols<'static>
 );
 icu_provider::data_marker!(
-    /// `IslamicDateSymbolsV1`
-    IslamicDateSymbolsV1,
+    /// `HijriDateSymbolsV1`
+    HijriDateSymbolsV1,
     DateSymbols<'static>
 );
 icu_provider::data_marker!(

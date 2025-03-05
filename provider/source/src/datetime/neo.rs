@@ -712,7 +712,7 @@ impl_symbols_datagen!(
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearNamesV1,
+    HijriYearNamesV1,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
@@ -787,7 +787,7 @@ impl_symbols_datagen!(
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthNamesV1,
+    HijriMonthNamesV1,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert

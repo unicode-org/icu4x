@@ -58,8 +58,8 @@ icu_provider::data_marker!(
     DateLengths<'static>
 );
 icu_provider::data_marker!(
-    /// `IslamicDateLengthsV1`
-    IslamicDateLengthsV1,
+    /// `HijriDateLengthsV1`
+    HijriDateLengthsV1,
     DateLengths<'static>
 );
 icu_provider::data_marker!(

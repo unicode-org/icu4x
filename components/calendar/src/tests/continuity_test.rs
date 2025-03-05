@@ -146,42 +146,42 @@ fn test_indian_continuity() {
 }
 
 #[test]
-fn test_islamic_civil_continuity() {
-    let cal = crate::cal::IslamicCivil::new();
+fn test_hijri_civil_continuity() {
+    let cal = crate::cal::HijriCivil::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_islamic_civil_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_hijri_civil_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_islamic_civil_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_hijri_civil_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
 #[test]
-fn test_islamic_observational_continuity() {
+fn test_hijri_observational_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::cal::IslamicObservational::new();
+    let cal = crate::cal::HijriObservational::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_observational_islamic_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_observational_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_observational_islamic_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_observational_hijri_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
 #[test]
-fn test_islamic_tabular_continuity() {
-    let cal = crate::cal::IslamicTabular::new();
+fn test_hijri_tabular_continuity() {
+    let cal = crate::cal::HijriTabular::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_islamic_tabular_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_hijri_tabular_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_islamic_tabular_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_hijri_tabular_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
 #[test]
-fn test_islamic_umm_al_qura_continuity() {
+fn test_hijri_umm_al_qura_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::cal::IslamicUmmAlQura::new();
+    let cal = crate::cal::HijriUmmAlQura::new();
     let cal = Ref(&cal);
     let date = Date::try_new_ummalqura_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());

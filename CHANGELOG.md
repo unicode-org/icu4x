@@ -5,6 +5,8 @@
 - Components
     - General
         - ...
+    - `icu_calendar`
+        - Rename `Islamic` calendars to `Hijri` (unicode-org#6214)
     - `icu_collections`
         - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
 - Data model and providers

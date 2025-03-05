@@ -82,8 +82,8 @@ icu_provider::data_marker!(
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `IslamicDateNeoSkeletonPatternsV1`
-    IslamicDateNeoSkeletonPatternsV1,
+    /// `HijriDateNeoSkeletonPatternsV1`
+    HijriDateNeoSkeletonPatternsV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(

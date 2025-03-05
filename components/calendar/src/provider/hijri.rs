@@ -12,7 +12,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::cal::islamic::IslamicYearInfo;
+use crate::cal::hijri::HijriYearInfo;
 use calendrical_calculations::islamic::IslamicBasedMarker;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
@@ -21,18 +21,18 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
 
 icu_provider::data_marker!(
-    /// Precomputed data for the Islamic obsevational calendar
-    CalendarIslamicObservationalV1,
-    "calendar/islamic/observational/v1",
-    IslamicCache<'static>,
+    /// Precomputed data for the Hijri obsevational calendar
+    CalendarHijriObservationalV1,
+    "calendar/hijri/observational/v1",
+    HijriCache<'static>,
     is_singleton = true,
 );
 
 icu_provider::data_marker!(
-    /// Precomputed data for the Islamic Umm-Al-Qura calendar
-    CalendarIslamicUmmalquraV1,
-    "calendar/islamic/ummalqura/v1",
-    IslamicCache<'static>,
+    /// Precomputed data for the Hijri Umm-Al-Qura calendar
+    CalendarHijriUmmalquraV1,
+    "calendar/hijri/ummalqura/v1",
+    HijriCache<'static>,
     is_singleton = true,
 );
 
@@ -41,37 +41,37 @@ icu_provider::data_marker!(
 /// operations.
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::islamic))]
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::hijri))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct IslamicCache<'data> {
+pub struct HijriCache<'data> {
     /// The extended year corresponding to the first data entry for this year
     pub first_extended_year: i32,
     /// A list of precomputed data for each year beginning with first_extended_year
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ZeroVec<'data, PackedIslamicYearInfo>,
+    pub data: ZeroVec<'data, PackedHijriYearInfo>,
 }
 
 icu_provider::data_struct!(
-    IslamicCache<'_>,
+    HijriCache<'_>,
     #[cfg(feature = "datagen")]
 );
 
-impl IslamicCache<'_> {
+impl HijriCache<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
     pub fn compute_for<IB: IslamicBasedMarker>(extended_years: core::ops::Range<i32>) -> Self {
         let data = extended_years
             .clone()
-            .map(|year| PackedIslamicYearInfo::compute::<IB>(year))
+            .map(|year| PackedHijriYearInfo::compute::<IB>(year))
             .collect();
-        IslamicCache {
+        HijriCache {
             first_extended_year: extended_years.start,
             data,
         }
     }
 
     /// Get the cached data for a given extended year
-    pub(crate) fn get_for_extended_year(&self, extended_year: i32) -> Option<IslamicYearInfo> {
+    pub(crate) fn get_for_extended_year(&self, extended_year: i32) -> Option<HijriYearInfo> {
         let delta = extended_year - self.first_extended_year;
         let delta = usize::try_from(delta).ok()?;
 
@@ -85,15 +85,15 @@ impl IslamicCache<'_> {
             return None;
         };
 
-        Some(IslamicYearInfo::new(prev_packed, this_packed, extended_year).0)
+        Some(HijriYearInfo::new(prev_packed, this_packed, extended_year).0)
     }
-    /// Get the cached data for the Islamic Year corresponding to a given day.
+    /// Get the cached data for the Hijri Year corresponding to a given day.
     ///
     /// Also returns the corresponding extended year.
     pub(crate) fn get_for_fixed<IB: IslamicBasedMarker>(
         &self,
         fixed: RataDie,
-    ) -> Option<(IslamicYearInfo, i32)> {
+    ) -> Option<(HijriYearInfo, i32)> {
         let extended_year = IB::approximate_islamic_from_fixed(fixed);
 
         let delta = extended_year - self.first_extended_year;
@@ -110,7 +110,7 @@ impl IslamicCache<'_> {
 
         if fixed < this_ny {
             let prev2_packed = self.data.get(delta - 2)?;
-            return Some(IslamicYearInfo::new(
+            return Some(HijriYearInfo::new(
                 prev2_packed,
                 prev_packed,
                 extended_year - 1,
@@ -120,22 +120,18 @@ impl IslamicCache<'_> {
         let next_ny = next_packed.ny::<IB>(extended_year + 1);
 
         if fixed >= next_ny {
-            Some(IslamicYearInfo::new(
+            Some(HijriYearInfo::new(
                 this_packed,
                 next_packed,
                 extended_year + 1,
             ))
         } else {
-            Some(IslamicYearInfo::new(
-                prev_packed,
-                this_packed,
-                extended_year,
-            ))
+            Some(HijriYearInfo::new(prev_packed, this_packed, extended_year))
         }
     }
 }
 
-/// The struct containing compiled Islamic YearInfo
+/// The struct containing compiled Hijri YearInfo
 ///
 /// Bit structure (little endian: note that shifts go in the opposite direction!)
 ///
@@ -160,18 +156,18 @@ impl IslamicCache<'_> {
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(C, packed)]
-pub struct PackedIslamicYearInfo(pub u8, pub u8);
+pub struct PackedHijriYearInfo(pub u8, pub u8);
 
-impl fmt::Debug for PackedIslamicYearInfo {
+impl fmt::Debug for PackedHijriYearInfo {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        fmt.debug_struct("PackedIslamicYearInfo")
+        fmt.debug_struct("PackedHijriYearInfo")
             .field("ny_offset", &self.ny_offset())
             .field("month_lengths", &self.month_lengths())
             .finish()
     }
 }
 
-impl PackedIslamicYearInfo {
+impl PackedHijriYearInfo {
     pub(crate) fn new(month_lengths: [bool; 12], ny_offset: i8) -> Self {
         debug_assert!(
             -8 < ny_offset && ny_offset < 8,
@@ -264,7 +260,7 @@ impl PackedIslamicYearInfo {
     }
 }
 
-impl AsULE for PackedIslamicYearInfo {
+impl AsULE for PackedHijriYearInfo {
     type ULE = Self;
     fn to_unaligned(self) -> Self {
         self
@@ -279,7 +275,7 @@ mod tests {
     use super::*;
 
     fn single_roundtrip(month_lengths: [bool; 12], ny_offset: i8) {
-        let packed = PackedIslamicYearInfo::new(month_lengths, ny_offset);
+        let packed = PackedHijriYearInfo::new(month_lengths, ny_offset);
         for i in 0..12 {
             assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize], "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
         }
@@ -294,7 +290,7 @@ mod tests {
         false, false, true, true, true, false, true, false, false, false, true, true,
     ];
     #[test]
-    fn test_islamic_packed_roundtrip() {
+    fn test_hijri_packed_roundtrip() {
         single_roundtrip(ALL_FALSE, 0);
         single_roundtrip(ALL_TRUE, 0);
         single_roundtrip(MIXED1, 0);

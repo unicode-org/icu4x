@@ -11,8 +11,8 @@ pub(crate) mod dangi;
 pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
+pub(crate) mod hijri;
 pub(crate) mod indian;
-pub(crate) mod islamic;
 pub(crate) mod iso;
 pub(crate) mod japanese;
 pub(crate) mod julian;
@@ -26,8 +26,8 @@ pub use dangi::Dangi;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
+pub use hijri::{HijriCivil, HijriObservational, HijriTabular, HijriUmmAlQura};
 pub use indian::Indian;
-pub use islamic::{IslamicCivil, IslamicObservational, IslamicTabular, IslamicUmmAlQura};
 pub use iso::Iso;
 pub use japanese::{Japanese, JapaneseExtended};
 pub use julian::Julian;
@@ -44,10 +44,10 @@ pub mod scaffold {
     pub use super::ethiopian::EthiopianDateInner;
     pub use super::gregorian::GregorianDateInner;
     pub use super::hebrew::HebrewDateInner;
-    pub use super::indian::Indian;
-    pub use super::islamic::{
-        IslamicCivilDateInner, IslamicDateInner, IslamicTabularDateInner, IslamicUmmAlQuraDateInner,
+    pub use super::hijri::{
+        HijriCivilDateInner, HijriDateInner, HijriTabularDateInner, HijriUmmAlQuraDateInner,
     };
+    pub use super::indian::Indian;
     pub use super::iso::Iso;
     pub use super::japanese::Japanese;
     pub use super::julian::JulianDateInner;

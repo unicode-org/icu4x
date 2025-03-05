@@ -7,9 +7,9 @@ mod patterns;
 
 use fixtures::TestOutputItem;
 use icu_calendar::cal::{
-    Buddhist, Chinese, Coptic, Dangi, Gregorian, Hebrew, Indian, IslamicCivil,
-    IslamicObservational, IslamicTabular, IslamicUmmAlQura, Iso, Persian, Roc,
-    {Ethiopian, EthiopianEraStyle}, {Japanese, JapaneseExtended},
+    Buddhist, Chinese, Coptic, Dangi, Gregorian, Hebrew, HijriCivil, HijriObservational,
+    HijriTabular, HijriUmmAlQura, Indian, Iso, Persian, Roc, {Ethiopian, EthiopianEraStyle},
+    {Japanese, JapaneseExtended},
 };
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
@@ -82,16 +82,15 @@ fn test_fixture(fixture_name: &str, file: &str) {
         let input_gregorian = DateTime::try_from_str(&fx.input.value, Gregorian).unwrap();
         let input_hebrew = DateTime::try_from_str(&fx.input.value, Hebrew).unwrap();
         let input_indian = DateTime::try_from_str(&fx.input.value, Indian).unwrap();
-        let input_islamic_civil = DateTime::try_from_str(&fx.input.value, IslamicCivil).unwrap();
-        let input_islamic_observational = DateTime::try_from_str(
+        let input_hijri_civil = DateTime::try_from_str(&fx.input.value, HijriCivil).unwrap();
+        let input_hijri_observational = DateTime::try_from_str(
             &fx.input.value,
-            IslamicObservational::new_always_calculating(),
+            HijriObservational::new_always_calculating(),
         )
         .unwrap();
-        let input_islamic_tabular =
-            DateTime::try_from_str(&fx.input.value, IslamicTabular).unwrap();
-        let input_islamic_umm_al_qura =
-            DateTime::try_from_str(&fx.input.value, IslamicUmmAlQura::new_always_calculating())
+        let input_hijri_tabular = DateTime::try_from_str(&fx.input.value, HijriTabular).unwrap();
+        let input_hijri_umm_al_qura =
+            DateTime::try_from_str(&fx.input.value, HijriUmmAlQura::new_always_calculating())
                 .unwrap();
         let input_japanese = DateTime::try_from_str(&fx.input.value, Japanese::new()).unwrap();
         let input_japanext =
@@ -177,33 +176,33 @@ fn test_fixture(fixture_name: &str, file: &str) {
                         skeleton,
                         &description,
                     ),
-                    AnyCalendarKind::IslamicCivil => assert_fixture_element(
+                    AnyCalendarKind::HijriCivil => assert_fixture_element(
                         &locale,
-                        &input_islamic_civil,
+                        &input_hijri_civil,
                         &input_iso,
                         &output_value,
                         skeleton,
                         &description,
                     ),
-                    AnyCalendarKind::IslamicObservational => assert_fixture_element(
+                    AnyCalendarKind::HijriObservational => assert_fixture_element(
                         &locale,
-                        &input_islamic_observational,
+                        &input_hijri_observational,
                         &input_iso,
                         &output_value,
                         skeleton,
                         &description,
                     ),
-                    AnyCalendarKind::IslamicTabular => assert_fixture_element(
+                    AnyCalendarKind::HijriTabular => assert_fixture_element(
                         &locale,
-                        &input_islamic_tabular,
+                        &input_hijri_tabular,
                         &input_iso,
                         &output_value,
                         skeleton,
                         &description,
                     ),
-                    AnyCalendarKind::IslamicUmmAlQura => assert_fixture_element(
+                    AnyCalendarKind::HijriUmmAlQura => assert_fixture_element(
                         &locale,
-                        &input_islamic_umm_al_qura,
+                        &input_hijri_umm_al_qura,
                         &input_iso,
                         &output_value,
                         skeleton,

@@ -413,7 +413,7 @@ impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1, "ethiopic");
 impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1, "gregory");
 impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, "hebrew");
 impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, "indian");
-impl_neo_skeleton_datagen!(IslamicDateNeoSkeletonPatternsV1, "islamic");
+impl_neo_skeleton_datagen!(HijriDateNeoSkeletonPatternsV1, "islamic");
 impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1, "japanese");
 impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1, "japanext");
 impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1, "persian");
