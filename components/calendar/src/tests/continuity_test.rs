@@ -200,26 +200,22 @@ fn test_iso_continuity() {
 #[test]
 fn test_japanese_continuity() {
     use crate::types::Era;
-    use tinystr::tinystr;
     let cal = crate::cal::Japanese::new();
     let cal = Ref(&cal);
-    let date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
+    let date = Date::try_new_japanese_with_calendar(Era::HEISEI, 20, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
+    let date = Date::try_new_japanese_with_calendar(Era::BCE, 500, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_japanese_extended_continuity() {
     use crate::types::Era;
-    use tinystr::tinystr;
     let cal = crate::cal::JapaneseExtended::new();
     let cal = Ref(&cal);
-    let date =
-        Date::try_new_japanese_extended_with_calendar(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
+    let date = Date::try_new_japanese_extended_with_calendar(Era::HEISEI, 20, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date =
-        Date::try_new_japanese_extended_with_calendar(Era(tinystr!(16, "bce")), 500, 1, 1, cal);
+    let date = Date::try_new_japanese_extended_with_calendar(Era::BCE, 500, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 

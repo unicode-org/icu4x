@@ -18,6 +18,7 @@
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
+use crate::types::Era;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
@@ -32,7 +33,9 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Era codes
 ///
-/// This calendar supports only one era code, which starts from the year of the Hijra, designated as "ah".
+/// This calendar supports only one era code, [`Era::AH`].
+///
+/// [`Era::PERSIAN`] is accepted as an alias.
 ///
 /// # Month codes
 ///
@@ -93,11 +96,10 @@ impl Calendar for Persian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "ah") && era.0 != tinystr!(16, "persian") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some(Era::AH | Era::PERSIAN) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
     }
@@ -208,7 +210,7 @@ impl Persian {
         types::YearInfo::new(
             year,
             types::EraYear {
-                standard_era: tinystr!(16, "persian").into(),
+                standard_era: Era::PERSIAN,
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
                 era_year: year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,

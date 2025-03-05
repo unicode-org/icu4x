@@ -20,10 +20,9 @@ pub mod hijri;
 pub use chinese_based::{CalendarChineseV1, CalendarDangiV1};
 pub use hijri::{CalendarHijriObservationalV1, CalendarHijriUmmalquraV1};
 
-use crate::types::Weekday;
+use crate::types::{Era, Weekday};
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
-use tinystr::TinyStr16;
 use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
@@ -133,7 +132,7 @@ pub struct EraStartDate {
 pub struct JapaneseEras<'data> {
     /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
+    pub dates_to_eras: ZeroVec<'data, (EraStartDate, Era)>,
 }
 
 icu_provider::data_struct!(

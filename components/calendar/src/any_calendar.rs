@@ -56,7 +56,7 @@ define_preferences!(
 ///
 /// // construct from era code, year, month code, day, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_date = Date::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
+/// let manual_date = Date::try_new_from_codes(Some(Era::HEISEI, 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
 ///                     .expect("Failed to construct Date manually");
 ///
 ///
@@ -67,7 +67,7 @@ define_preferences!(
 ///
 /// // Construct a date in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
+/// let japanese_date = Date::try_new_japanese_with_calendar(Era::HEISEI, 15, 3, 28,
 ///                                                         japanese_calendar).unwrap();
 /// // This is a Date<AnyCalendar>
 /// let any_japanese_date = japanese_date.to_any();

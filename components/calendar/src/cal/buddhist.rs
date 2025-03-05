@@ -20,6 +20,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
+use crate::types::Era;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
@@ -41,7 +42,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 ///
 /// # Era codes
 ///
-/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE.
+/// This calendar supports one era, [`Era::BE`], with 1 B.E. being 543 BCE.
 ///
 /// # Month codes
 ///
@@ -59,12 +60,10 @@ impl Calendar for Buddhist {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "be") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-        let year = year - BUDDHIST_ERA_OFFSET;
+        let year = match era {
+            Some(Era::BE) | None => year - BUDDHIST_ERA_OFFSET,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
@@ -172,7 +171,7 @@ fn iso_year_as_buddhist(year: i32) -> types::YearInfo {
     types::YearInfo::new(
         buddhist_year,
         types::EraYear {
-            standard_era: tinystr!(16, "buddhist").into(),
+            standard_era: Era::BUDDHIST,
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
             era_year: buddhist_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,

@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::{self, ca};
-use icu::calendar::types::MonthCode;
+use icu::calendar::types::{Era, MonthCode};
 use icu::datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use tinystr::{tinystr, TinyStr16, TinyStr4};
+use tinystr::{tinystr, TinyStr4};
 
 pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
     let eras = if let Some(ref eras) = other.eras {
@@ -32,7 +32,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let map = get_era_code_map(calendar);
     let mut out_eras = Eras::default();
 
-    for (cldr, code) in map {
+    for (cldr, Era(code)) in map {
         if let Some(name) = eras.names.get(cldr) {
             out_eras.names.insert(code.as_str().into(), name);
         }
@@ -102,12 +102,12 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
 /// See FormattableEra for a definition of what chronological order is in this context.
 ///
 /// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
-pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
+pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Era)> {
     use either::Either;
 
     let array: &[_] = match calendar {
-        "gregory" => &[("0", tinystr!(16, "bce")), ("1", tinystr!(16, "ce"))],
-        "buddhist" => &[("0", tinystr!(16, "be"))],
+        "gregory" => &[("0", Era::BCE), ("1", Era::CE)],
+        "buddhist" => &[("0", Era::BE)],
         "japanese" | "japanext" => {
             return Either::Right(
                 crate::calendar::japanese::get_era_code_map()
@@ -115,26 +115,17 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
                     .map(|(k, v)| (&**k, *v)),
             )
         }
-        "coptic" => &[
-            // Before Diocletian
-            ("0", tinystr!(16, "bd")),
-            // Anno Diocletian/After Diocletian
-            ("1", tinystr!(16, "ad")),
-        ],
+        "coptic" => &[("0", Era::BD), ("1", Era::AD)],
         "dangi" | "chinese" => &[],
-        "indian" => &[("0", tinystr!(16, "saka"))],
-        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "ah"))],
-        "persian" => &[("0", tinystr!(16, "ah"))],
-        "hebrew" => &[("0", tinystr!(16, "hebrew"))],
+        "indian" => &[("0", Era::SAKA)],
+        "islamic" | "islamicc" | "umalqura" | "tbla" | "persian" => &[("0", Era::AH)],
+        "hebrew" => &[("0", Era::HEBREW)],
         "ethiopic" => &[
-            ("2", tinystr!(16, "mundi")),
-            ("1", tinystr!(16, "pre-incar")),
-            ("0", tinystr!(16, "incar")),
+            ("2", Era::MUNDI),
+            ("1", Era::PRE_INCARNATION),
+            ("0", Era::INCARNATION),
         ],
-        "roc" => &[
-            ("0", tinystr!(16, "roc-inverse")),
-            ("1", tinystr!(16, "roc")),
-        ],
+        "roc" => &[("0", Era::ROC_INVERSE), ("1", Era::ROC)],
         _ => panic!("Era map unknown for {calendar}"),
     };
 

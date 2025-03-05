@@ -19,6 +19,7 @@
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
+use crate::types::Era;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
@@ -30,7 +31,9 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
+/// This calendar has a single era: [`Era::SAKA`], with Saka 0 being 78 CE. Dates before this era use negative years.
+///
+/// [`Era::INDIAN`] is supported as an alias.
 ///
 /// # Month codes
 ///
@@ -98,12 +101,10 @@ impl Calendar for Indian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-
+        let year = match era {
+            Some(Era::SAKA | Era::INDIAN) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
@@ -220,8 +221,8 @@ fn year_as_saka(year: i32) -> types::YearInfo {
     types::YearInfo::new(
         year,
         types::EraYear {
+            standard_era: Era::SAKA,
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-            standard_era: tinystr!(16, "saka").into(),
             era_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         },

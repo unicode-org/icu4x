@@ -26,12 +26,12 @@ use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
+use crate::types::Era;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
 ///
@@ -55,6 +55,8 @@ use tinystr::tinystr;
 /// of months with 24 solar terms into which the solar year is divided.
 ///
 /// # Year and Era codes
+///
+/// This Calendar supports a single era [`Era::CHINESE`].
 ///
 /// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
@@ -172,21 +174,16 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year_info = self.get_precomputed_data().load_or_compute_info(year);
-
-        let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code(month_code, year_info)
-        {
-            ordinal
-        } else {
-            return Err(DateError::UnknownMonthCode(month_code));
+        let year = match era {
+            Some(Era::CHINESE) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
         };
 
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "chinese") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year_info = self.get_precomputed_data().load_or_compute_info(year);
+
+        let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year_info) else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
 
         Inner::new_from_ordinals(year, month, day, year_info)
             .map(ChineseBasedDateInner)
@@ -361,10 +358,11 @@ impl Chinese {
 
 #[cfg(test)]
 mod test {
-
     use super::*;
     use crate::types::MonthCode;
     use calendrical_calculations::{iso::fixed_from_iso, rata_die::RataDie};
+    use tinystr::tinystr;
+
     /// Run a test twice, with two calendars
     fn do_twice(
         chinese_calculating: &Chinese,

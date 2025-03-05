@@ -5,13 +5,13 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::calendar::provider::*;
+use icu::calendar::types::Era;
 use icu::locale::langid;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::env;
 use std::sync::OnceLock;
-use tinystr::tinystr;
 use tinystr::TinyStr16;
 
 const JAPANEXT_FILE: &str = include_str!("../../data/japanese-golden/calendar/japanext@1/und.json");
@@ -69,7 +69,7 @@ impl SourceDataProvider {
                 let code = era_to_code(era_name_map.get(era_id).unwrap(), start_date.year)
                     .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
 
-                dates_to_eras.insert(start_date, code);
+                dates_to_eras.insert(start_date, Era(code));
             }
         }
 
@@ -184,8 +184,8 @@ impl crate::IterableDataProviderCached<CalendarJapaneseExtendedV1> for SourceDat
 }
 
 /// Computes the japanese era code map or loads from static cache
-pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
-    static MAP: OnceLock<BTreeMap<String, TinyStr16>> = OnceLock::new();
+pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, Era> {
+    static MAP: OnceLock<BTreeMap<String, Era>> = OnceLock::new();
 
     MAP.get_or_init(|| {
         let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
@@ -197,8 +197,8 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
             .map(|(i, (_, value))| (i.to_string(), value))
             .collect();
         // Splice in details about gregorian eras for pre-meiji dates
-        map.insert("-2".to_string(), tinystr!(16, "bce"));
-        map.insert("-1".to_string(), tinystr!(16, "ce"));
+        map.insert("-2".to_string(), Era::BCE);
+        map.insert("-1".to_string(), Era::CE);
         map
     })
 }
