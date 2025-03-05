@@ -17,6 +17,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
+use crate::types::Era;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -32,7 +33,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar supports one era, `"default"`
+/// This calendar supports one era, [`Era::DEFAULT`]
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -86,11 +87,10 @@ impl Calendar for Iso {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "default") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some(Era::DEFAULT) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
@@ -326,8 +326,8 @@ impl Iso {
         types::YearInfo::new(
             year,
             types::EraYear {
+                standard_era: Era::DEFAULT,
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
-                standard_era: tinystr!(16, "default").into(),
                 era_year: year,
                 ambiguity: types::YearAmbiguity::Unambiguous,
             },

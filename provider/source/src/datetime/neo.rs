@@ -6,6 +6,7 @@ use super::supported_cals;
 use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use icu::calendar::types::Era;
 use icu::datetime::provider::pattern;
 
 use icu::datetime::provider::neo::marker_attrs::GlueType;
@@ -319,7 +320,7 @@ fn eras_convert(
 
         let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
 
-        for (cldr, code) in map {
+        for (cldr, Era(code)) in map {
             if let Some(name) = eras.get(cldr) {
                 if let Some(modern_japanese_eras) = modern_japanese_eras {
                     if !modern_japanese_eras.contains(cldr) {

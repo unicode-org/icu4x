@@ -20,7 +20,7 @@
 //! assert_eq!(date_japanese.day_of_month().0, 2);
 //! assert_eq!(
 //!     date_japanese.year().standard_era().unwrap(),
-//!     Era(tinystr!(16, "showa"))
+//!     Era::SHOWA
 //! );
 //! ```
 
@@ -30,7 +30,6 @@ use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraS
 use crate::types::Era;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyStr16};
 
 /// The [Japanese Calendar] (with modern eras only)
 ///
@@ -47,8 +46,8 @@ use tinystr::{tinystr, TinyStr16};
 /// # Era codes
 ///
 /// This calendar currently supports seven era codes. It supports the five post-Meiji eras
-/// (`"meiji"`, `"taisho"`, `"showa"`, `"heisei"`, `"reiwa"`), as well as using the Gregorian
-/// `"bce"` and `"ce"` for dates before the Meiji era.
+/// ([`Era::MEIJI`], `["Era::AISHO`], [`Era::SHOWA`], `["Era::EISEI`], [`Era::REIWA`]), as well as using the Gregorian
+/// [`Era::BCE`] and [`Era::CE`] for dates before the Meiji era.
 ///
 /// Future eras will also be added to this type when they are decided.
 ///
@@ -76,10 +75,10 @@ pub struct Japanese {
 /// # Era codes
 ///
 /// This calendar supports a large number of era codes. It supports the five post-Meiji eras
-/// (`"meiji"`, `"taisho"`, `"showa"`, `"heisei"`, `"reiwa"`). Pre-Meiji eras are represented
-/// with their names converted to lowercase ascii and followed by their start year. E.g. the "Ten'ō"
-/// era (781 - 782 CE) has the code `"teno-781"`. The  Gregorian `"bce"` and `"ce"` eras
-/// are used for dates before the first known era era.
+/// ([`Era::MEIJI`], [`Era::TAISHO`], [`Era::SHOWA`], [`Era::HEISEI`], [`Era::REIWA`]). Pre-Meiji eras are represented
+/// with their names converted to lowercase ASCII and followed by their start year. E.g. the "Ten'ō"
+/// era (781 - 782 CE) has the code `"teno-781"`. The  Gregorian [`Era::BCE`] and [`Era::CE`] eras
+/// are used for dates before the first known era.
 ///
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseExtendedV1`]
@@ -92,7 +91,7 @@ pub struct JapaneseExtended(Japanese);
 pub struct JapaneseDateInner {
     inner: IsoDateInner,
     adjusted_year: i32,
-    era: TinyStr16,
+    era: Era,
 }
 
 impl Japanese {
@@ -134,7 +133,7 @@ impl Japanese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<JapaneseDateInner, DateError> {
-        let era = era.unwrap_or(types::Era(tinystr!(16, "japanese")));
+        let era = era.unwrap_or(types::Era::JAPANESE);
         let month = month_code.parsed();
         let month = if let Some((month, false)) = month {
             month
@@ -254,8 +253,8 @@ impl Calendar for Japanese {
         types::YearInfo::new(
             date.inner.0.year,
             types::EraYear {
-                formatting_era: types::FormattingEra::Code(date.era.into()),
-                standard_era: date.era.into(),
+                standard_era: date.era,
+                formatting_era: types::FormattingEra::Code(date.era),
                 era_year: date.adjusted_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             },
@@ -407,7 +406,7 @@ impl Date<Japanese> {
     /// // for easy sharing
     /// let japanese_calendar = Ref(&japanese_calendar);
     ///
-    /// let era = types::Era(tinystr!(16, "heisei"));
+    /// let era = types::Era::HEISEI;
     ///
     /// let date =
     ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
@@ -524,13 +523,13 @@ const REIWA_START: EraStartDate = EraStartDate {
     day: 1,
 };
 
-const FALLBACK_ERA: (EraStartDate, TinyStr16) = (REIWA_START, tinystr!(16, "reiwa"));
+const FALLBACK_ERA: (EraStartDate, Era) = (REIWA_START, Era::REIWA);
 
 impl Japanese {
     /// Given an ISO date, give year and era for that date in the Japanese calendar
     ///
     /// This will also use Gregorian eras for eras that are before the earliest era
-    fn adjusted_year_for(&self, date: IsoDateInner) -> (i32, TinyStr16) {
+    fn adjusted_year_for(&self, date: IsoDateInner) -> (i32, Era) {
         let date: EraStartDate = (&date).into();
         let (start, era) = self.japanese_era_for(date);
         // The year in which an era starts is Year 1, and it may be short
@@ -540,9 +539,9 @@ impl Japanese {
         // In such a case, we instead fall back to Gregorian era codes
         if date < start {
             if date.year <= 0 {
-                (1 - date.year, tinystr!(16, "bce"))
+                (1 - date.year, Era::BCE)
             } else {
-                (date.year, tinystr!(16, "ce"))
+                (date.year, Era::CE)
             }
         } else {
             (date.year - start.year + 1, era)
@@ -550,25 +549,28 @@ impl Japanese {
     }
 
     /// Given an date, obtain the era data (not counting spliced gregorian eras)
-    fn japanese_era_for(&self, date: EraStartDate) -> (EraStartDate, TinyStr16) {
+    fn japanese_era_for(&self, date: EraStartDate) -> (EraStartDate, Era) {
         let era_data = self.eras.get();
         // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
         // array and also hardcoded. The hardcoded version is not used if data indicates the
         // presence of newer eras.
         if date >= MEIJI_START
-            && era_data.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa"))
+            && era_data
+                .dates_to_eras
+                .last()
+                .is_some_and(|(_, last)| last == Era::REIWA)
         {
             // Fast path in case eras have not changed since this code was written
             return if date >= REIWA_START {
-                (REIWA_START, tinystr!(16, "reiwa"))
+                (REIWA_START, Era::REIWA)
             } else if date >= HEISEI_START {
-                (HEISEI_START, tinystr!(16, "heisei"))
+                (HEISEI_START, Era::HEISEI)
             } else if date >= SHOWA_START {
-                (SHOWA_START, tinystr!(16, "showa"))
+                (SHOWA_START, Era::SHOWA)
             } else if date >= TAISHO_START {
-                (TAISHO_START, tinystr!(16, "taisho"))
+                (TAISHO_START, Era::TAISHO)
             } else {
-                (MEIJI_START, tinystr!(16, "meiji"))
+                (MEIJI_START, Era::MEIJI)
             };
         }
         let data = &era_data.dates_to_eras;
@@ -586,30 +588,28 @@ impl Japanese {
     /// Returns (era_start, era_end)
     fn japanese_era_range_for(
         &self,
-        era: TinyStr16,
+        era: Era,
     ) -> Result<(EraStartDate, Option<EraStartDate>), DateError> {
         // Avoid linear search by trying well known eras
-        if era == tinystr!(16, "reiwa") {
+        if era == Era::REIWA {
             // Check if we're the last
-            if let Some(last) = self.eras.get().dates_to_eras.last() {
-                if last.1 == era {
-                    return Ok((REIWA_START, None));
-                }
+            if let Some((_, Era::REIWA)) = self.eras.get().dates_to_eras.last() {
+                return Ok((REIWA_START, None));
             }
-        } else if era == tinystr!(16, "heisei") {
+        } else if era == Era::HEISEI {
             return Ok((HEISEI_START, Some(REIWA_START)));
-        } else if era == tinystr!(16, "showa") {
+        } else if era == Era::SHOWA {
             return Ok((SHOWA_START, Some(HEISEI_START)));
-        } else if era == tinystr!(16, "taisho") {
+        } else if era == Era::TAISHO {
             return Ok((TAISHO_START, Some(SHOWA_START)));
-        } else if era == tinystr!(16, "meiji") {
+        } else if era == Era::MEIJI {
             return Ok((MEIJI_START, Some(TAISHO_START)));
         }
 
         let era_data = self.eras.get();
         let data = &era_data.dates_to_eras;
         // Try to avoid linear search by binary searching for the year suffix
-        if let Some(year) = era.split('-').nth(1) {
+        if let Some(year) = era.0.split('-').nth(1) {
             if let Ok(ref int) = year.parse::<i32>() {
                 if let Ok(index) = data.binary_search_by(|(d, _)| d.year.cmp(int)) {
                     #[allow(clippy::expect_used)] // see expect message
@@ -631,7 +631,7 @@ impl Japanese {
             return Ok((start, data.get(index + 1).map(|e| e.0)));
         }
 
-        Err(DateError::UnknownEra(Era(era)))
+        Err(DateError::UnknownEra(era))
     }
 
     fn new_japanese_date_inner(
@@ -642,31 +642,24 @@ impl Japanese {
         day: u8,
     ) -> Result<JapaneseDateInner, DateError> {
         let cal = Ref(self);
-        if era.0 == tinystr!(16, "bce") || era.0 == tinystr!(16, "japanese-inverse") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
+        if year <= 0 {
+            return Err(DateError::Range {
+                field: "year",
+                value: year,
+                min: 1,
+                max: i32::MAX,
+            });
+        }
+
+        if era == Era::BCE || era == Era::JAPANESE_INVERSE {
             return Ok(Date::try_new_iso(1 - year, month, day)?
                 .to_calendar(cal)
                 .inner);
-        } else if era.0 == tinystr!(16, "ce") || era.0 == tinystr!(16, "japanese") {
-            if year <= 0 {
-                return Err(DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: i32::MAX,
-                });
-            }
+        } else if era == Era::CE || era == Era::JAPANESE {
             return Ok(Date::try_new_iso(year, month, day)?.to_calendar(cal).inner);
         }
 
-        let (era_start, next_era_start) = self.japanese_era_range_for(era.0)?;
+        let (era_start, next_era_start) = self.japanese_era_range_for(era)?;
 
         let next_era_start = next_era_start.unwrap_or(EraStartDate {
             year: i32::MAX,
@@ -736,7 +729,7 @@ impl Japanese {
         Ok(JapaneseDateInner {
             inner: iso.inner,
             adjusted_year: year,
-            era: era.0,
+            era,
         })
     }
 }
@@ -745,6 +738,7 @@ impl Japanese {
 mod tests {
     use super::*;
     use crate::Ref;
+    use tinystr::tinystr;
 
     fn single_test_roundtrip(calendar: Ref<Japanese>, era: &str, year: i32, month: u8, day: u8) {
         let era = types::Era(era.parse().expect("era must parse"));

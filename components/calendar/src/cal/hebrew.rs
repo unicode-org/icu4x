@@ -18,7 +18,7 @@
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::types::MonthInfo;
+use crate::types::{Era, MonthInfo};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
@@ -33,7 +33,9 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"am"`
+/// This calendar supports a single era code, Anno Mundi, with code [`Era::AM`].
+///
+/// [`Era::HEBREW`] is accepted as an alias.
 ///
 /// # Month codes
 ///
@@ -130,11 +132,10 @@ impl Calendar for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "hebrew") && era.0 != tinystr!(16, "am") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some(Era::AM | Era::HEBREW) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
 
         let year_info = HebrewYearInfo::compute(year);
 
@@ -324,8 +325,8 @@ impl Hebrew {
         types::YearInfo::new(
             civil_year,
             types::EraYear {
+                standard_era: Era::HEBREW,
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-                standard_era: tinystr!(16, "hebrew").into(),
                 era_year: civil_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             },
@@ -438,9 +439,8 @@ mod tests {
             } else {
                 MonthCode::new_normal(m).unwrap()
             };
-            let hebrew_date =
-                Date::try_new_from_codes(Some(Era(tinystr!(16, "am"))), y, month_code, d, Hebrew)
-                    .expect("Date should parse");
+            let hebrew_date = Date::try_new_from_codes(Some(Era::AM), y, month_code, d, Hebrew)
+                .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
@@ -505,7 +505,7 @@ mod tests {
     fn test_weekdays() {
         // https://github.com/unicode-org/icu4x/issues/4893
         let cal = Hebrew::new();
-        let era = Era(tinystr!(16, "am"));
+        let era = Era::AM;
         let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(Some(era), 3760, month_code, 1).unwrap();
 

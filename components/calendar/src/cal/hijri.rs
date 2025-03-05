@@ -26,6 +26,7 @@ use crate::error::DateError;
 use crate::provider::hijri::{
     CalendarHijriObservationalV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
 };
+use crate::types::Era;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
@@ -36,12 +37,12 @@ use core::marker::PhantomData;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo {
+fn year_as_hijri(standard_era: Era, year: i32) -> types::YearInfo {
     types::YearInfo::new(
         year,
         types::EraYear {
+            standard_era,
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
-            standard_era: standard_era.into(),
             era_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         },
@@ -52,7 +53,9 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar supports the single era [`Era::AH`].
+///
+/// [`Era::ISLAMIC`] is supported as an alias.
 ///
 /// # Month codes
 ///
@@ -73,7 +76,9 @@ pub struct HijriObservational {
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar supports the single era [`Era::AH`].
+///
+/// [`Era::ISLAMIC`], [`Era::ISLAMICC`], and [`Era::ISLAMIC_CIVIL`] are supported as aliases.
 ///
 /// # Month codes
 ///
@@ -89,7 +94,9 @@ pub struct HijriCivil;
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar supports the single era [`Era::AH`].
+///
+/// [`Era::ISLAMIC`], and [`Era::ISLAMIC_UMALQURA`] are supported as aliases.
 ///
 /// # Month codes
 ///
@@ -111,7 +118,9 @@ pub struct HijriUmmAlQura {
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar supports the single era [`Era::AH`].
+///
+/// [`Era::ISLAMIC`], [`Era::ISLAMIC_TBLA`] are supported as aliases.
 ///
 /// # Month codes
 ///
@@ -437,14 +446,11 @@ impl Calendar for HijriObservational {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic") && era.0 != tinystr!(16, "ah") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
+        let year = match era {
+            Some(Era::ISLAMIC | Era::AH) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
+        let Some((month, false)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
         Ok(HijriDateInner(ArithmeticDate::new_from_ordinals_with_info(
@@ -509,7 +515,7 @@ impl Calendar for HijriObservational {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic"), date.0.year)
+        year_as_hijri(Era::ISLAMIC, date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -530,9 +536,9 @@ impl Calendar for HijriObservational {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic"), prev_year),
+            prev_year: year_as_hijri(Era::ISLAMIC, prev_year),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_hijri(tinystr!(16, "islamic"), next_year),
+            next_year: year_as_hijri(Era::ISLAMIC, next_year),
         }
     }
 
@@ -624,18 +630,11 @@ impl Calendar for HijriUmmAlQura {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic-umalqura")
-                && era.0 != tinystr!(16, "islamic")
-                && era.0 != tinystr!(16, "ah")
-            {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
+        let year = match era {
+            Some(Era::ISLAMIC | Era::ISLAMIC_UMALQURA | Era::AH) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
+        let Some((month, false)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
         Ok(HijriUmmAlQuraDateInner(
@@ -697,7 +696,7 @@ impl Calendar for HijriUmmAlQura {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic-umalqura"), date.0.year)
+        year_as_hijri(Era::ISLAMIC_UMALQURA, date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -718,9 +717,9 @@ impl Calendar for HijriUmmAlQura {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-umalqura"), prev_year),
+            prev_year: year_as_hijri(Era::ISLAMIC_UMALQURA, prev_year),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_hijri(tinystr!(16, "islamic-umalqura"), next_year),
+            next_year: year_as_hijri(Era::ISLAMIC_UMALQURA, next_year),
         }
     }
 
@@ -828,15 +827,10 @@ impl Calendar for HijriCivil {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic-civil")
-                && era.0 != tinystr!(16, "islamicc")
-                && era.0 != tinystr!(16, "islamic")
-                && era.0 != tinystr!(16, "ah")
-            {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some(Era::ISLAMIC | Era::ISLAMICC | Era::ISLAMIC_CIVIL | Era::AH) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriCivilDateInner)
     }
@@ -887,7 +881,7 @@ impl Calendar for HijriCivil {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic-civil"), date.0.year)
+        year_as_hijri(Era::ISLAMIC_CIVIL, date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -908,9 +902,9 @@ impl Calendar for HijriCivil {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-civil"), prev_year),
+            prev_year: year_as_hijri(Era::ISLAMIC_CIVIL, prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_hijri(tinystr!(16, "islamic-civil"), next_year),
+            next_year: year_as_hijri(Era::ISLAMIC_CIVIL, next_year),
         }
     }
 
@@ -1023,15 +1017,10 @@ impl Calendar for HijriTabular {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic-tbla")
-                && era.0 != tinystr!(16, "islamic")
-                && era.0 != tinystr!(16, "ah")
-            {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-
+        let year = match era {
+            Some(Era::ISLAMIC | Era::ISLAMIC_TBLA | Era::AH) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
+        };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriTabularDateInner)
     }
 
@@ -1081,7 +1070,7 @@ impl Calendar for HijriTabular {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic-tbla"), date.0.year)
+        year_as_hijri(Era::ISLAMIC_TBLA, date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -1102,9 +1091,9 @@ impl Calendar for HijriTabular {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-tbla"), prev_year),
+            prev_year: year_as_hijri(Era::ISLAMIC_TBLA, prev_year),
             days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_hijri(tinystr!(16, "islamic-tbla"), next_year),
+            next_year: year_as_hijri(Era::ISLAMIC_TBLA, next_year),
         }
     }
 
@@ -1166,6 +1155,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
 
 #[cfg(test)]
 mod test {
+    use tinystr::tinystr;
     use types::{Era, MonthCode};
 
     use super::*;
@@ -2054,7 +2044,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let cal = HijriUmmAlQura::new_always_calculating();
-        let era = Era(tinystr!(16, "islamic"));
+        let era = Era::ISLAMIC;
         let year = -6823;
         let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(Some(era), year, month_code, 1).unwrap();

@@ -6,7 +6,7 @@
 
 use core::fmt;
 use core::num::NonZeroU8;
-use tinystr::TinyAsciiStr;
+use tinystr::{tinystr, TinyAsciiStr};
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
@@ -19,9 +19,110 @@ use zerovec::ule::AsULE;
 /// Era codes are shared with Temporal, [see Temporal proposal][era-proposal].
 ///
 /// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Ord, PartialOrd, Hash, Eq)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
+#[cfg_attr(feature = "datagen", databake(path = icu_calendar::types))]
+#[repr(C, packed)]
 pub struct Era(pub TinyStr16);
+
+impl AsULE for Era {
+    type ULE = <TinyStr16 as AsULE>::ULE;
+
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(Self::ULE::from_unaligned(unaligned))
+    }
+
+    fn to_unaligned(self) -> Self::ULE {
+        Self::ULE::to_unaligned(self.0)
+    }
+}
+
+#[allow(missing_docs)]
+impl Era {
+    /// Singleton Buddhist era
+    pub const BE: Era = Era(tinystr!(16, "be"));
+    /// Anno Diocletian/After Diocletian (Coptic)
+    pub const AD: Era = Era(tinystr!(16, "ad"));
+    /// Before Diocletian (Coptic)
+    pub const BD: Era = Era(tinystr!(16, "bd"));
+    /// Singleton Chinese era
+    pub const CHINESE: Era = Era(tinystr!(16, "chinese"));
+    /// Singleton Dangi era
+    pub const DANGI: Era = Era(tinystr!(16, "dangi"));
+    /// Incarnation (Ethiopian)
+    pub const INCARNATION: Era = Era(tinystr!(16, "incar"));
+    /// Pre-Incarnation (Ethiopian)
+    pub const PRE_INCARNATION: Era = Era(tinystr!(16, "pre-incar"));
+    /// Anno Mundi (Coptic)
+    pub const MUNDI: Era = Era(tinystr!(16, "mundi"));
+    /// Anno Mundi (Hebrew)
+    pub const AM: Era = Era(tinystr!(16, "am"));
+    /// Before Common Era (Julian, Gregorian)
+    pub const BCE: Era = Era(tinystr!(16, "bce"));
+    /// Common Era (Julian, Gregorian)
+    pub const CE: Era = Era(tinystr!(16, "ce"));
+    /// Anno Hegirae (Hijri, Persian)
+    pub const AH: Era = Era(tinystr!(16, "ah"));
+    /// Saka (Indian)
+    pub const SAKA: Era = Era(tinystr!(16, "saka"));
+    /// ISO-8601 default era
+    pub const DEFAULT: Era = Era(tinystr!(16, "default"));
+    /// Pre-ROC
+    pub const ROC_INVERSE: Era = Era(tinystr!(16, "roc-inverse"));
+    /// ROC
+    pub const ROC: Era = Era(tinystr!(16, "roc"));
+
+    /// Alias for [`Self::AD`]
+    pub const COPTIC: Era = Era(tinystr!(16, "coptic"));
+    /// Alias for [`Self::BD`]
+    pub const COPTIC_INVERSE: Era = Era(tinystr!(16, "coptic-inverse"));
+    /// Alias for [`Self::MUNDI`]
+    pub const ETHIOAA: Era = Era(tinystr!(16, "ethioaa"));
+    /// Alias for [`Self::INCARNATION`]
+    pub const ETHIOPIC: Era = Era(tinystr!(16, "ethiopic"));
+    /// Alias for [`Self::PRE_INCARNATION`]
+    pub const ETHIOPIC_INVERSE: Era = Era(tinystr!(16, "ethiopic-inverse"));
+    /// Alias for [`Self::AM`]
+    pub const HEBREW: Era = Era(tinystr!(16, "hebrew"));
+    /// Alias for [`Self::AH`]
+    pub const ISLAMIC_CIVIL: Era = Era(tinystr!(16, "islamic-civil"));
+    /// Alias for [`Self::AH`]
+    pub const ISLAMIC: Era = Era(tinystr!(16, "islamic"));
+    /// Alias for [`Self::AH`]
+    pub const ISLAMICC: Era = Era(tinystr!(16, "islamicc"));
+    /// Alias for [`Self::AH`]
+    pub const ISLAMIC_TBLA: Era = Era(tinystr!(16, "islamic-tbla"));
+    /// Alias for [`Self::AH`]
+    pub const ISLAMIC_UMALQURA: Era = Era(tinystr!(16, "islamic-umalqura"));
+    /// Alias for [`Self::SAKA`]
+    pub const INDIAN: Era = Era(tinystr!(16, "indian"));
+    /// Alias for [`Self::BCE`]
+    pub const JULIAN_INVERSE: Era = Era(tinystr!(16, "julian-inverse"));
+    /// Alias for [`Self::CE`]
+    pub const JULIAN: Era = Era(tinystr!(16, "julian"));
+    /// Alias for [`Self::AH`]
+    pub const PERSIAN: Era = Era(tinystr!(16, "persian"));
+
+    /// Heisei (Japanese)
+    pub const HEISEI: Era = Era(tinystr!(16, "heisei"));
+    /// Meiji (Japanese)
+    pub const MEIJI: Era = Era(tinystr!(16, "meiji"));
+    /// Reiwa (Japanese)
+    pub const REIWA: Era = Era(tinystr!(16, "reiwa"));
+    /// Showa (Japanese)
+    pub const SHOWA: Era = Era(tinystr!(16, "showa"));
+    /// Taisho (Japanese)
+    pub const TAISHO: Era = Era(tinystr!(16, "taisho"));
+
+    // output only?!
+    pub const BUDDHIST: Era = Era(tinystr!(16, "buddhist"));
+    pub const GREGORIAN: Era = Era(tinystr!(16, "gregory"));
+    pub const GREGORIAN_INVERSE: Era = Era(tinystr!(16, "gregory-inverse"));
+    pub const JAPANESE_INVERSE: Era = Era(tinystr!(16, "japanese-inverse"));
+    pub const JAPANESE: Era = Era(tinystr!(16, "japanese"));
+}
 
 impl From<TinyStr16> for Era {
     fn from(o: TinyStr16) -> Self {
@@ -157,7 +258,7 @@ pub enum FormattingEra {
     /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
     /// bce < ce, and mundi < pre-incar < incar for Ethiopian.
     ///
-    /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
+    /// The TinyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
     /// be something sensible (or empty).
     Index(u8, TinyStr16),
     /// An era code, for calendars with a large set of era codes (Japanese)

@@ -26,12 +26,12 @@ use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
+use crate::types::Era;
 use crate::AsCalendar;
 use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 /// The [Traditional Korean (Dangi) Calendar](https://en.wikipedia.org/wiki/Korean_calendar)
 ///
@@ -66,7 +66,7 @@ use tinystr::tinystr;
 /// ```
 /// # Era codes
 ///
-/// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1. Typically
+/// This Calendar supports a single era [`Era::DANGI`] based on the year -2332 ISO (2333 BCE) as year 1. Typically
 /// years will be formatted using cyclic years and the related ISO year.
 ///
 /// # Month codes
@@ -163,21 +163,16 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year_info = self.get_precomputed_data().load_or_compute_info(year);
-
-        let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code(month_code, year_info)
-        {
-            ordinal
-        } else {
-            return Err(DateError::UnknownMonthCode(month_code));
+        let year = match era {
+            Some(Era::DANGI) | None => year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
         };
 
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "dangi") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year_info = self.get_precomputed_data().load_or_compute_info(year);
+
+        let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year_info) else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
 
         Inner::new_from_ordinals(year, month, day, year_info)
             .map(ChineseBasedDateInner)

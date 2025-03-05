@@ -16,6 +16,7 @@
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
 
+use crate::types::Era;
 use crate::{
     cal::iso::IsoDateInner, calendar_arithmetic::ArithmeticDate, error::DateError, types, Calendar,
     Date, Iso, RangeError,
@@ -38,8 +39,8 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// # Era codes
 ///
-/// This calendar supports two era codes: `"roc"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
-/// after), and `"roc-inverse"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
+/// This calendar supports two era codes: [`Era::ROC`], corresponding to years in the 民國 (minguo) era (CE year 1912 and
+/// after), and [`Era::ROC_INVERSE`], corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
 ///
 ///
 /// # Month codes
@@ -63,32 +64,19 @@ impl Calendar for Roc {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if let Some(era) = era {
-            if era.0 == tinystr!(16, "roc") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                year + ROC_ERA_OFFSET
-            } else if era.0 == tinystr!(16, "roc-inverse") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                1 - year + ROC_ERA_OFFSET
-            } else {
-                return Err(DateError::UnknownEra(era));
-            }
-        } else {
-            year
+        if year <= 0 {
+            return Err(DateError::Range {
+                field: "year",
+                value: year,
+                min: 1,
+                max: i32::MAX,
+            });
+        }
+
+        let year = match era {
+            Some(Era::ROC) | None => year,
+            Some(Era::ROC_INVERSE) => 1 - year,
+            Some(e) => return Err(DateError::UnknownEra(e)),
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
@@ -177,6 +165,7 @@ impl Date<Roc> {
     ///
     /// ```rust
     /// use icu::calendar::Date;
+    /// use icu::calendar::types::Era;
     /// use icu::calendar::cal::Gregorian;
     /// use tinystr::tinystr;
     ///
@@ -184,7 +173,7 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "roc"));
+    /// assert_eq!(date_roc.year().standard_era(), Some(Era::ROC));
     /// assert_eq!(date_roc.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
@@ -208,7 +197,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
         types::YearInfo::new(
             year_i32,
             types::EraYear {
-                standard_era: tinystr!(16, "roc").into(),
+                standard_era: Era::ROC,
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
                 era_year: year_i32.saturating_sub(ROC_ERA_OFFSET),
                 ambiguity: types::YearAmbiguity::CenturyRequired,
@@ -218,7 +207,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
         types::YearInfo::new(
             year_i32,
             types::EraYear {
-                standard_era: tinystr!(16, "roc-inverse").into(),
+                standard_era: Era::ROC_INVERSE,
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
                 era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
@@ -281,7 +270,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era::ROC,
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -291,7 +280,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era::ROC,
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -301,7 +290,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era::ROC,
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -311,7 +300,7 @@ mod test {
                 iso_month: 7,
                 iso_day: 13,
                 expected_year: 112,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era::ROC,
                 expected_month: 7,
                 expected_day: 13,
             },
@@ -335,7 +324,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era::ROC_INVERSE,
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -345,7 +334,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era::ROC_INVERSE,
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -355,7 +344,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era::ROC_INVERSE,
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -365,7 +354,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era::ROC_INVERSE,
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -375,7 +364,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1911,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era::ROC_INVERSE,
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -385,7 +374,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1912,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era::ROC_INVERSE,
                 expected_month: 12,
                 expected_day: 31,
             },
