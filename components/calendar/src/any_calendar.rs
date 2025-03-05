@@ -56,7 +56,7 @@ define_preferences!(
 ///
 /// // construct from era code, year, month code, day, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_date = Date::try_new_from_codes(Some(Era::HEISEI, 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
+/// let manual_date = Date::try_new_from_codes(Some(Era::HEISEI), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
 ///                     .expect("Failed to construct Date manually");
 ///
 ///
