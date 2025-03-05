@@ -265,7 +265,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
             sink.write_str(&essentials.offset_unknown)?;
             return Ok(Ok(()));
         };
-        Ok(if offset.is_zero() {
+        Ok(if offset.is_zero() && self.0 != FieldLength::Four {
             sink.write_str(&essentials.offset_zero)?;
             Ok(())
         } else {
