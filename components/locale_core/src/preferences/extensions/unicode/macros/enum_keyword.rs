@@ -173,7 +173,7 @@ macro_rules! __enum_keyword {
             }
 
             /// A helper function for displaying as a `&str`.
-            pub const fn as_str(&self) -> &str {
+            pub const fn as_str(&self) -> &'static str {
                 match self {
                     $(
                         // This is circumventing a limitation of the macro_rules - we need to have a conditional

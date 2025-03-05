@@ -31,8 +31,6 @@ import * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFo
 export * as GregorianZonedDateTimeFormatterDemo from "./GregorianZonedDateTimeFormatter.mjs";
 import * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
 export * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
-import * as AnyCalendarKindDemo from "./AnyCalendarKind.mjs";
-export * as AnyCalendarKindDemo from "./AnyCalendarKind.mjs";
 
 import RenderTerminiWordSegmenter from "./WordSegmenter.mjs";
 
@@ -1124,21 +1122,6 @@ let termini = Object.assign({
             {
                 name: "Zone:ZoneVariant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
-            }
-            
-        ]
-    },
-
-    "AnyCalendarKind.bcp47": {
-        func: AnyCalendarKindDemo.bcp47,
-        // For avoiding webpacking minifying issues:
-        funcName: "AnyCalendarKind.bcp47",
-        parameters: [
-            
-            {
-                name: "AnyCalendarKind",
-                type: "AnyCalendarKind",
                 typeUse: "enumerator"
             }
             

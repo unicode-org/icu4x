@@ -75,11 +75,7 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline static std::optional<icu4x::AnyCalendarKind> get_for_locale(const icu4x::Locale& locale);
-
-  inline static std::optional<icu4x::AnyCalendarKind> get_for_bcp47(std::string_view s);
-
-  inline std::string bcp47();
+  inline static std::optional<icu4x::AnyCalendarKind> create_for_locale(const icu4x::Locale& locale);
 
   inline icu4x::capi::AnyCalendarKind AsFFI() const;
   inline static icu4x::AnyCalendarKind FromFFI(icu4x::capi::AnyCalendarKind c_enum);

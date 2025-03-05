@@ -13,10 +13,8 @@ use crate::error::DateError;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
-use icu_locale_core::extensions::unicode::{key, value, Value};
 use icu_locale_core::preferences::define_preferences;
 use icu_locale_core::subtags::language;
-use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -704,9 +702,7 @@ impl AnyCalendar {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(prefs: AnyCalendarPreferences) -> Result<Self, DataError> {
-        // NOTE: This returns DataError because this operation should become data-driven
-        let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
-        Ok(Self::new_for_kind(kind))
+        Self::try_new_unstable(&crate::provider::Baked, prefs)
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -733,7 +729,21 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
-        let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
+        let kind = if let Some(kind) = AnyCalendarKind::from_prefs(prefs) {
+            kind
+        } else {
+            // This will eventually need fallback data from the provider
+            let lang = prefs.locale_preferences.language();
+            if lang == language!("th") {
+                AnyCalendarKind::Buddhist
+            } else if lang == language!("sa") {
+                AnyCalendarKind::HijriUmmAlQura
+            } else if lang == language!("af") || lang == language!("ir") {
+                AnyCalendarKind::Persian
+            } else {
+                AnyCalendarKind::Gregorian
+            }
+        };
         Self::try_new_for_kind_unstable(provider, kind)
     }
 
@@ -744,10 +754,7 @@ impl AnyCalendar {
             Self::Chinese(_) => AnyCalendarKind::Chinese,
             Self::Coptic(_) => AnyCalendarKind::Coptic,
             Self::Dangi(_) => AnyCalendarKind::Dangi,
-            #[allow(clippy::expect_used)] // Invariant known at compile time
-            Self::Ethiopian(ref e) => e
-                .any_calendar_kind()
-                .expect("Ethiopian calendar known to have an AnyCalendarKind"),
+            Self::Ethiopian(ref e) => IntoAnyCalendar::kind(e),
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
             Self::Hebrew(_) => AnyCalendarKind::Hebrew,
             Self::Indian(_) => AnyCalendarKind::Indian,
@@ -847,162 +854,6 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
-    /// Construct from a BCP-47 string
-    ///
-    /// Returns `None` if the calendar is unknown.
-    pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
-        Self::get_for_bcp47_bytes(x.as_bytes())
-    }
-    /// Construct from a BCP-47 byte string
-    ///
-    /// Returns `None` if the calendar is unknown.
-    pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
-        Some(match x {
-            b"buddhist" => AnyCalendarKind::Buddhist,
-            b"chinese" => AnyCalendarKind::Chinese,
-            b"coptic" => AnyCalendarKind::Coptic,
-            b"dangi" => AnyCalendarKind::Dangi,
-            b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
-            b"ethiopic" => AnyCalendarKind::Ethiopian,
-            b"gregory" => AnyCalendarKind::Gregorian,
-            b"hebrew" => AnyCalendarKind::Hebrew,
-            b"indian" => AnyCalendarKind::Indian,
-            b"islamic-civil" | b"islamicc" => AnyCalendarKind::HijriCivil,
-            b"islamic-tbla" => AnyCalendarKind::HijriTabular,
-            b"islamic-umalqura" => AnyCalendarKind::HijriUmmAlQura,
-            b"islamic" => AnyCalendarKind::HijriObservational,
-            b"iso" => AnyCalendarKind::Iso,
-            b"japanese" => AnyCalendarKind::Japanese,
-            b"japanext" => AnyCalendarKind::JapaneseExtended,
-            b"persian" => AnyCalendarKind::Persian,
-            b"roc" => AnyCalendarKind::Roc,
-            _ => {
-                // Log a warning when a calendar value is passed in but doesn't match any calendars
-                DataError::custom("bcp47_bytes did not match any calendars").with_debug_context(x);
-                return None;
-            }
-        })
-    }
-    /// Construct from a BCP-47 [`Value`]
-    ///
-    /// Returns `None` if the calendar is unknown.
-    pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        match x.as_subtags_slice() {
-            [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
-            [first] if first == "chinese" => Some(AnyCalendarKind::Chinese),
-            [first] if first == "coptic" => Some(AnyCalendarKind::Coptic),
-            [first] if first == "dangi" => Some(AnyCalendarKind::Dangi),
-            [first] if first == "ethioaa" => Some(AnyCalendarKind::EthiopianAmeteAlem),
-            [first] if first == "ethiopic" => Some(AnyCalendarKind::Ethiopian),
-            [first] if first == "gregory" => Some(AnyCalendarKind::Gregorian),
-            [first] if first == "hebrew" => Some(AnyCalendarKind::Hebrew),
-            [first] if first == "indian" => Some(AnyCalendarKind::Indian),
-            [first] if first == "islamic" => Some(AnyCalendarKind::HijriObservational),
-            [first] if first == "islamicc" => Some(AnyCalendarKind::HijriCivil),
-            [first, second] if first == "islamic" && second == "civil" => {
-                Some(AnyCalendarKind::HijriCivil)
-            }
-            [first, second] if first == "islamic" && second == "tbla" => {
-                Some(AnyCalendarKind::HijriTabular)
-            }
-            [first, second] if first == "islamic" && second == "umalqura" => {
-                Some(AnyCalendarKind::HijriUmmAlQura)
-            }
-            [first] if first == "iso" => Some(AnyCalendarKind::Iso),
-            [first] if first == "japanese" => Some(AnyCalendarKind::Japanese),
-            [first] if first == "japanext" => Some(AnyCalendarKind::JapaneseExtended),
-            [first] if first == "persian" => Some(AnyCalendarKind::Persian),
-            [first] if first == "roc" => Some(AnyCalendarKind::Roc),
-            _ => {
-                // Log a warning when a calendar value is passed in but doesn't match any calendars
-                DataError::custom("bcp47_value did not match any calendars")
-                    .with_display_context(x);
-                None
-            }
-        }
-    }
-
-    /// Convert to a BCP-47 string
-    pub fn as_bcp47_string(self) -> &'static str {
-        match self {
-            AnyCalendarKind::Buddhist => "buddhist",
-            AnyCalendarKind::Chinese => "chinese",
-            AnyCalendarKind::Coptic => "coptic",
-            AnyCalendarKind::Dangi => "dangi",
-            AnyCalendarKind::Ethiopian => "ethiopic",
-            AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
-            AnyCalendarKind::Gregorian => "gregory",
-            AnyCalendarKind::Hebrew => "hebrew",
-            AnyCalendarKind::Indian => "indian",
-            AnyCalendarKind::HijriCivil => "islamic-civil",
-            AnyCalendarKind::HijriObservational => "islamic",
-            AnyCalendarKind::HijriTabular => "islamic-tbla",
-            AnyCalendarKind::HijriUmmAlQura => "islamic-umalqura",
-            AnyCalendarKind::Iso => "iso",
-            AnyCalendarKind::Japanese => "japanese",
-            AnyCalendarKind::JapaneseExtended => "japanext",
-            AnyCalendarKind::Persian => "persian",
-            AnyCalendarKind::Roc => "roc",
-        }
-    }
-
-    /// Convert to a BCP-47 `Value`
-    #[allow(clippy::unwrap_used)] // these are known-good BCP47 unicode extension values
-    pub fn as_bcp47_value(self) -> Value {
-        match self {
-            AnyCalendarKind::Buddhist => value!("buddhist"),
-            AnyCalendarKind::Chinese => value!("chinese"),
-            AnyCalendarKind::Coptic => value!("coptic"),
-            AnyCalendarKind::Dangi => value!("dangi"),
-            AnyCalendarKind::Ethiopian => value!("ethiopic"),
-            AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
-            AnyCalendarKind::Gregorian => value!("gregory"),
-            AnyCalendarKind::Hebrew => value!("hebrew"),
-            AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::HijriCivil => Value::try_from_str("islamic-civil").unwrap(),
-            AnyCalendarKind::HijriObservational => value!("islamic"),
-            AnyCalendarKind::HijriTabular => Value::try_from_str("islamic-tbla").unwrap(),
-            AnyCalendarKind::HijriUmmAlQura => Value::try_from_str("islamic-umalqura").unwrap(),
-            AnyCalendarKind::Iso => value!("iso"),
-            AnyCalendarKind::Japanese => value!("japanese"),
-            AnyCalendarKind::JapaneseExtended => value!("japanext"),
-            AnyCalendarKind::Persian => value!("persian"),
-            AnyCalendarKind::Roc => value!("roc"),
-        }
-    }
-
-    fn get_for_preferences_calendar(pcal: CalendarAlgorithm) -> Option<Self> {
-        match pcal {
-            CalendarAlgorithm::Buddhist => Some(Self::Buddhist),
-            CalendarAlgorithm::Chinese => Some(Self::Chinese),
-            CalendarAlgorithm::Coptic => Some(Self::Coptic),
-            CalendarAlgorithm::Dangi => Some(Self::Dangi),
-            CalendarAlgorithm::Ethioaa => Some(Self::EthiopianAmeteAlem),
-            CalendarAlgorithm::Ethiopic => Some(Self::Ethiopian),
-            CalendarAlgorithm::Gregory => Some(Self::Gregorian),
-            CalendarAlgorithm::Hebrew => Some(Self::Hebrew),
-            CalendarAlgorithm::Indian => Some(Self::Indian),
-            CalendarAlgorithm::Hijri(None) => Some(Self::HijriObservational),
-            CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
-                Some(Self::HijriUmmAlQura)
-            }
-            CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
-                Some(Self::HijriTabular)
-            }
-            CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)) => Some(Self::HijriCivil),
-            // Rgsa is not supported
-            CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => None,
-            CalendarAlgorithm::Iso8601 => Some(Self::Iso),
-            CalendarAlgorithm::Japanese => Some(Self::Japanese),
-            CalendarAlgorithm::Persian => Some(Self::Persian),
-            CalendarAlgorithm::Roc => Some(Self::Roc),
-            _ => {
-                debug_assert!(false, "unknown calendar algorithm {pcal:?}");
-                None
-            }
-        }
-    }
-
     fn debug_name(self) -> &'static str {
         match self {
             AnyCalendarKind::Buddhist => Buddhist.debug_name(),
@@ -1026,42 +877,67 @@ impl AnyCalendarKind {
         }
     }
 
-    /// Extract the calendar component from a [`Locale`]
-    ///
-    /// Returns `None` if the calendar is not specified or unknown.
-    pub fn get_for_locale(l: &Locale) -> Option<Self> {
-        l.extensions
-            .unicode
-            .keywords
-            .get(&key!("ca"))
-            .and_then(Self::get_for_bcp47_value)
-    }
-
     /// Extract the calendar component from a [`AnyCalendarPreferences`]
     ///
     /// Returns `None` if the calendar is not specified or unknown.
-    fn get_for_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
-        prefs
-            .calendar_algorithm
-            .and_then(Self::get_for_preferences_calendar)
+    pub fn from_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
+        prefs.calendar_algorithm.and_then(|p| p.try_into().ok())
     }
+}
 
-    // Do not make public, this will eventually need fallback
-    // data from the provider
-    fn from_prefs_with_fallback(prefs: AnyCalendarPreferences) -> Self {
-        if let Some(kind) = Self::get_for_prefs(prefs) {
-            kind
-        } else {
-            let lang = prefs.locale_preferences.language();
-            if lang == language!("th") {
-                Self::Buddhist
-            } else if lang == language!("sa") {
-                Self::HijriUmmAlQura
-            } else if lang == language!("af") || lang == language!("ir") {
-                Self::Persian
-            } else {
-                Self::Gregorian
+impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
+    type Error = ();
+    fn try_from(v: CalendarAlgorithm) -> Result<Self, Self::Error> {
+        use CalendarAlgorithm::*;
+        match v {
+            Buddhist => Ok(AnyCalendarKind::Buddhist),
+            Chinese => Ok(AnyCalendarKind::Chinese),
+            Coptic => Ok(AnyCalendarKind::Coptic),
+            Dangi => Ok(AnyCalendarKind::Dangi),
+            Ethioaa => Ok(AnyCalendarKind::EthiopianAmeteAlem),
+            Ethiopic => Ok(AnyCalendarKind::Ethiopian),
+            Gregory => Ok(AnyCalendarKind::Gregorian),
+            Hebrew => Ok(AnyCalendarKind::Hebrew),
+            Indian => Ok(AnyCalendarKind::Indian),
+            Hijri(None) => Ok(AnyCalendarKind::HijriObservational),
+            Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => Ok(AnyCalendarKind::HijriUmmAlQura),
+            Hijri(Some(HijriCalendarAlgorithm::Tbla)) => Ok(AnyCalendarKind::HijriTabular),
+            Hijri(Some(HijriCalendarAlgorithm::Civil)) => Ok(AnyCalendarKind::HijriCivil),
+            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Err(()),
+            Iso8601 => Ok(AnyCalendarKind::Iso),
+            Japanese => Ok(AnyCalendarKind::Japanese),
+            Persian => Ok(AnyCalendarKind::Persian),
+            Roc => Ok(AnyCalendarKind::Roc),
+            _ => {
+                debug_assert!(false, "unknown calendar algorithm {v:?}");
+                Err(())
             }
+        }
+    }
+}
+
+impl From<AnyCalendarKind> for CalendarAlgorithm {
+    fn from(v: AnyCalendarKind) -> Self {
+        use AnyCalendarKind::*;
+        match v {
+            Buddhist => CalendarAlgorithm::Buddhist,
+            Chinese => CalendarAlgorithm::Chinese,
+            Coptic => CalendarAlgorithm::Coptic,
+            Dangi => CalendarAlgorithm::Dangi,
+            EthiopianAmeteAlem => CalendarAlgorithm::Ethioaa,
+            Ethiopian => CalendarAlgorithm::Ethiopic,
+            Gregorian => CalendarAlgorithm::Gregory,
+            Hebrew => CalendarAlgorithm::Hebrew,
+            Indian => CalendarAlgorithm::Indian,
+            HijriObservational => CalendarAlgorithm::Hijri(None),
+            HijriUmmAlQura => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)),
+            HijriTabular => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)),
+            HijriCivil => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
+            Iso => CalendarAlgorithm::Iso8601,
+            Japanese => CalendarAlgorithm::Japanese,
+            JapaneseExtended => CalendarAlgorithm::Japanese,
+            Persian => CalendarAlgorithm::Persian,
+            Roc => CalendarAlgorithm::Roc,
         }
     }
 }

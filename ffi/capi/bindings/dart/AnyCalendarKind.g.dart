@@ -66,52 +66,19 @@ enum AnyCalendarKind {
   /// Returns nothing if there is no calendar on the locale or if the locale's calendar
   /// is not known or supported.
   ///
-  /// See the [Rust documentation for `get_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale) for more information.
-  static AnyCalendarKind? getForLocale(Locale locale) {
-    final result = _icu4x_AnyCalendarKind_get_for_locale_mv1(locale._ffi);
+  /// See the [Rust documentation for `from_prefs`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.from_prefs) for more information.
+  static AnyCalendarKind? createForLocale(Locale locale) {
+    final result = _icu4x_AnyCalendarKind_create_for_locale_mv1(locale._ffi);
     if (!result.isOk) {
       return null;
     }
     return AnyCalendarKind.values[result.union.ok];
-  }
-
-  /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
-  ///
-  /// Returns nothing if the calendar is not known or supported.
-  ///
-  /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
-  static AnyCalendarKind? getForBcp47(String s) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_AnyCalendarKind_get_for_bcp47_mv1(s._utf8AllocIn(temp.arena));
-    if (!result.isOk) {
-      return null;
-    }
-    return AnyCalendarKind.values[result.union.ok];
-  }
-
-  /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
-  ///
-  /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
-  String get bcp47 {
-    final write = _Write();
-    _icu4x_AnyCalendarKind_bcp47_mv1(index, write._ffi);
-    return write.finalize();
   }
 }
 
-@_DiplomatFfiUse('icu4x_AnyCalendarKind_get_for_locale_mv1')
-@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_get_for_locale_mv1')
+@_DiplomatFfiUse('icu4x_AnyCalendarKind_create_for_locale_mv1')
+@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_create_for_locale_mv1')
 // ignore: non_constant_identifier_names
-external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
-
-@_DiplomatFfiUse('icu4x_AnyCalendarKind_get_for_bcp47_mv1')
-@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_get_for_bcp47_mv1')
-// ignore: non_constant_identifier_names
-external _ResultInt32Void _icu4x_AnyCalendarKind_get_for_bcp47_mv1(_SliceUtf8 s);
-
-@_DiplomatFfiUse('icu4x_AnyCalendarKind_bcp47_mv1')
-@ffi.Native<ffi.Void Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_bcp47_mv1')
-// ignore: non_constant_identifier_names
-external void _icu4x_AnyCalendarKind_bcp47_mv1(int self, ffi.Pointer<ffi.Opaque> write);
+external _ResultInt32Void _icu4x_AnyCalendarKind_create_for_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 // dart format on

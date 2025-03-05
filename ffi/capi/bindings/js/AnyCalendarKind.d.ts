@@ -37,11 +37,7 @@ export class AnyCalendarKind {
     static Persian : AnyCalendarKind;
     static Roc : AnyCalendarKind;
 
-    static getForLocale(locale: Locale): AnyCalendarKind | null;
-
-    static getForBcp47(s: string): AnyCalendarKind | null;
-
-    get bcp47(): string;
+    static createForLocale(locale: Locale): AnyCalendarKind | null;
 
     constructor(value: AnyCalendarKind | string );
 }
