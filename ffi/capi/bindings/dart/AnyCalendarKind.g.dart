@@ -43,17 +43,17 @@ enum AnyCalendarKind {
   /// The kind of a Hebrew calendar
   hebrew,
 
-  /// The kind of a Islamic civil calendar
-  islamicCivil,
+  /// The kind of a Hijri civil calendar
+  hijriCivil,
 
-  /// The kind of a Islamic observational calendar
-  islamicObservational,
+  /// The kind of a Hijri observational calendar
+  hijriObservational,
 
-  /// The kind of a Islamic tabular calendar
-  islamicTabular,
+  /// The kind of a Hijri tabular calendar
+  hijriTabular,
 
-  /// The kind of a Islamic Umm al-Qura calendar
-  islamicUmmAlQura,
+  /// The kind of a Hijri Umm al-Qura calendar
+  hijriUmmAlQura,
 
   /// The kind of a Persian calendar
   persian,
