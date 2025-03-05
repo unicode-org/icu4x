@@ -17,7 +17,7 @@ use zerovec::{maps::ZeroMapKV, ZeroMap2d};
 /// data struct is multiplied across a large number of data marker attributes.
 ///
 /// Both [`MaybeAsVarULE`] and [`MaybeEncodeAsVarULE`] should be implemented
-/// on all data structs. The [`data_struct!`] macro provides an impl.
+/// on all data structs. The [`data_struct!`](crate::data_struct) macro provides an impl.
 pub trait MaybeAsVarULE {
     /// The [`VarULE`] type for this data struct, or `[()]`
     /// if it cannot be represented as [`VarULE`].
@@ -36,8 +36,8 @@ pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
 }
 
 /// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
-#[macro_export]
-macro_rules! __data_struct {
+#[macro_export] // canonical location is crate root
+macro_rules! data_struct {
     (<$generic:ident: $bound:tt> $ty:path $(, $(#[$attr:meta])*)?) => {
         impl<$generic: $bound> $crate::ule::MaybeAsVarULE for $ty {
             type EncodedStruct = [()];
@@ -79,8 +79,6 @@ macro_rules! __data_struct {
         }
     };
 }
-#[doc(inline)]
-pub use __data_struct as data_struct;
 
 //=== Standard impls ===//
 
