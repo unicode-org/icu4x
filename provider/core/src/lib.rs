@@ -132,13 +132,14 @@ pub use response::{Cart, DataPayload, DataResponse, DataResponseMetadata};
 #[path = "marker.rs"]
 mod marker_full;
 
-pub use marker_full::{data_marker, DataMarker, DataMarkerInfo, DynamicDataMarker};
+pub use marker_full::{DataMarker, DataMarkerInfo, DynamicDataMarker};
 pub mod marker {
     //! Additional [`DataMarker`](super::DataMarker) helpers.
 
+    #[doc(inline)]
+    pub use super::marker_full::{data_marker_id, impl_data_provider_never_marker};
     pub use super::marker_full::{
-        data_marker_id, impl_data_provider_never_marker, DataMarkerExt, DataMarkerId,
-        DataMarkerIdHash, ErasedMarker, NeverMarker,
+        DataMarkerExt, DataMarkerId, DataMarkerIdHash, ErasedMarker, NeverMarker,
     };
 }
 
@@ -154,8 +155,6 @@ pub mod ule {
     pub use super::varule_traits::MaybeEncodeAsVarULE;
 }
 
-pub use varule_traits::data_struct;
-
 /// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
     #[doc(no_inline)]
@@ -163,16 +162,19 @@ pub mod prelude {
     pub use crate::buf::AsDeserializingBufferProvider;
     #[doc(no_inline)]
     pub use crate::buf::{BufferMarker, BufferProvider};
-    pub use crate::request::*;
     #[doc(no_inline)]
     pub use crate::{
-        data_marker, marker::DataMarkerExt, BoundDataProvider, DataError, DataErrorKind,
-        DataLocale, DataMarker, DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider,
-        DataRequest, DataRequestMetadata, DataResponse, DataResponseMetadata, DryDataProvider,
+        data_marker, data_struct, marker::DataMarkerExt, request::AttributeParseError,
+        request::DataIdentifierBorrowed, BoundDataProvider, DataError, DataErrorKind, DataLocale,
+        DataMarker, DataMarkerAttributes, DataMarkerInfo, DataPayload, DataProvider, DataRequest,
+        DataRequestMetadata, DataResponse, DataResponseMetadata, DryDataProvider,
         DynamicDataMarker, DynamicDataProvider, DynamicDryDataProvider, ResultDataError,
     };
     #[cfg(feature = "alloc")]
-    pub use crate::{IterableDataProvider, IterableDynamicDataProvider};
+    #[doc(no_inline)]
+    pub use crate::{
+        request::DataIdentifierCow, IterableDataProvider, IterableDynamicDataProvider,
+    };
 
     #[doc(no_inline)]
     pub use icu_locale_core;
