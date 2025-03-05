@@ -18,26 +18,26 @@
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //! ```
 
-use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::calendar_arithmetic::PrecomputedDataSource;
-use crate::chinese_based::{
+use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
+use crate::calendar_arithmetic::CalendarArithmetic;
+use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
 use crate::AsCalendar;
-use crate::{chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
+use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-/// The Dangi Calendar
+/// The [Traditional Korean (Dangi) Calendar](https://en.wikipedia.org/wiki/Korean_calendar)
 ///
 /// The Dangi Calendar is a lunisolar calendar used traditionally in North and South Korea.
 /// It is often used today to track important cultural events and holidays like Seollal
-/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see `Chinese`),
+/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`Chinese`](super::Chinese)),
 /// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
 /// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
 /// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
@@ -340,7 +340,7 @@ impl Dangi {
 mod test {
 
     use super::*;
-    use crate::chinese::Chinese;
+    use crate::cal::Chinese;
     use calendrical_calculations::rata_die::RataDie;
 
     /// Run a test twice, with two calendars

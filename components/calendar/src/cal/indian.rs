@@ -16,19 +16,17 @@
 //! assert_eq!(date_indian.day_of_month().0, 12);
 //! ```
 
+use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::iso::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
-/// The Indian National Calendar (aka the Saka calendar)
+/// The [Indian National (Śaka) Calendar](https://en.wikipedia.org/wiki/Indian_national_calendar)
 ///
-/// The [Indian National calendar] is a solar calendar used by the Indian government, with twelve months.
+/// The Indian National calendar is a solar calendar used by the Indian government, with twelve months.
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
-///
-/// [Indian National calendar]: https://en.wikipedia.org/wiki/Indian_national_calendar
 ///
 /// # Era codes
 ///

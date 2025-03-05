@@ -30,10 +30,10 @@ export class AnyCalendarKind {
     static Dangi : AnyCalendarKind;
     static Chinese : AnyCalendarKind;
     static Hebrew : AnyCalendarKind;
-    static IslamicCivil : AnyCalendarKind;
-    static IslamicObservational : AnyCalendarKind;
-    static IslamicTabular : AnyCalendarKind;
-    static IslamicUmmAlQura : AnyCalendarKind;
+    static HijriCivil : AnyCalendarKind;
+    static HijriObservational : AnyCalendarKind;
+    static HijriTabular : AnyCalendarKind;
+    static HijriUmmAlQura : AnyCalendarKind;
     static Persian : AnyCalendarKind;
     static Roc : AnyCalendarKind;
 

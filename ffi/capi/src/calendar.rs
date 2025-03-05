@@ -44,14 +44,14 @@ pub mod ffi {
         Chinese = 10,
         /// The kind of a Hebrew calendar
         Hebrew = 11,
-        /// The kind of a Islamic civil calendar
-        IslamicCivil = 12,
-        /// The kind of a Islamic observational calendar
-        IslamicObservational = 13,
-        /// The kind of a Islamic tabular calendar
-        IslamicTabular = 14,
-        /// The kind of a Islamic Umm al-Qura calendar
-        IslamicUmmAlQura = 15,
+        /// The kind of a Hijri civil calendar
+        HijriCivil = 12,
+        /// The kind of a Hijri observational calendar
+        HijriObservational = 13,
+        /// The kind of a Hijri tabular calendar
+        HijriTabular = 14,
+        /// The kind of a Hijri Umm al-Qura calendar
+        HijriUmmAlQura = 15,
         /// The kind of a Persian calendar
         Persian = 16,
         /// The kind of a Roc calendar

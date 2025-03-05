@@ -49,10 +49,10 @@ inline icu4x::AnyCalendarKind icu4x::AnyCalendarKind::FromFFI(icu4x::capi::AnyCa
     case icu4x::capi::AnyCalendarKind_Dangi:
     case icu4x::capi::AnyCalendarKind_Chinese:
     case icu4x::capi::AnyCalendarKind_Hebrew:
-    case icu4x::capi::AnyCalendarKind_IslamicCivil:
-    case icu4x::capi::AnyCalendarKind_IslamicObservational:
-    case icu4x::capi::AnyCalendarKind_IslamicTabular:
-    case icu4x::capi::AnyCalendarKind_IslamicUmmAlQura:
+    case icu4x::capi::AnyCalendarKind_HijriCivil:
+    case icu4x::capi::AnyCalendarKind_HijriObservational:
+    case icu4x::capi::AnyCalendarKind_HijriTabular:
+    case icu4x::capi::AnyCalendarKind_HijriUmmAlQura:
     case icu4x::capi::AnyCalendarKind_Persian:
     case icu4x::capi::AnyCalendarKind_Roc:
       return static_cast<icu4x::AnyCalendarKind::Value>(c_enum);

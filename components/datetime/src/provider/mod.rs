@@ -74,7 +74,7 @@ const _: () = {
     impl_gregorian_year_names_v1!(Baked);
     impl_hebrew_year_names_v1!(Baked);
     impl_indian_year_names_v1!(Baked);
-    impl_islamic_year_names_v1!(Baked);
+    impl_hijri_year_names_v1!(Baked);
     impl_japanese_year_names_v1!(Baked);
     impl_japanese_extended_year_names_v1!(Baked);
     impl_persian_year_names_v1!(Baked);
@@ -88,7 +88,7 @@ const _: () = {
     impl_gregorian_month_names_v1!(Baked);
     impl_hebrew_month_names_v1!(Baked);
     impl_indian_month_names_v1!(Baked);
-    impl_islamic_month_names_v1!(Baked);
+    impl_hijri_month_names_v1!(Baked);
     impl_japanese_month_names_v1!(Baked);
     impl_japanese_extended_month_names_v1!(Baked);
     impl_persian_month_names_v1!(Baked);
@@ -102,7 +102,7 @@ const _: () = {
     impl_gregorian_date_neo_skeleton_patterns_v1!(Baked);
     impl_hebrew_date_neo_skeleton_patterns_v1!(Baked);
     impl_indian_date_neo_skeleton_patterns_v1!(Baked);
-    impl_islamic_date_neo_skeleton_patterns_v1!(Baked);
+    impl_hijri_date_neo_skeleton_patterns_v1!(Baked);
     impl_japanese_date_neo_skeleton_patterns_v1!(Baked);
     impl_japanese_extended_date_neo_skeleton_patterns_v1!(Baked);
     impl_persian_date_neo_skeleton_patterns_v1!(Baked);
@@ -138,7 +138,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::GregorianYearNamesV1::INFO,
     neo::HebrewYearNamesV1::INFO,
     neo::IndianYearNamesV1::INFO,
-    neo::IslamicYearNamesV1::INFO,
+    neo::HijriYearNamesV1::INFO,
     neo::JapaneseYearNamesV1::INFO,
     neo::JapaneseExtendedYearNamesV1::INFO,
     neo::PersianYearNamesV1::INFO,
@@ -151,7 +151,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::GregorianMonthNamesV1::INFO,
     neo::HebrewMonthNamesV1::INFO,
     neo::IndianMonthNamesV1::INFO,
-    neo::IslamicMonthNamesV1::INFO,
+    neo::HijriMonthNamesV1::INFO,
     neo::JapaneseMonthNamesV1::INFO,
     neo::JapaneseExtendedMonthNamesV1::INFO,
     neo::PersianMonthNamesV1::INFO,
@@ -164,7 +164,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     GregorianDateNeoSkeletonPatternsV1::INFO,
     HebrewDateNeoSkeletonPatternsV1::INFO,
     IndianDateNeoSkeletonPatternsV1::INFO,
-    IslamicDateNeoSkeletonPatternsV1::INFO,
+    HijriDateNeoSkeletonPatternsV1::INFO,
     JapaneseDateNeoSkeletonPatternsV1::INFO,
     JapaneseExtendedDateNeoSkeletonPatternsV1::INFO,
     PersianDateNeoSkeletonPatternsV1::INFO,

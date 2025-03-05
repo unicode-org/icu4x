@@ -27,10 +27,10 @@ export class AnyCalendarKind {
         ["Dangi", 9],
         ["Chinese", 10],
         ["Hebrew", 11],
-        ["IslamicCivil", 12],
-        ["IslamicObservational", 13],
-        ["IslamicTabular", 14],
-        ["IslamicUmmAlQura", 15],
+        ["HijriCivil", 12],
+        ["HijriObservational", 13],
+        ["HijriTabular", 14],
+        ["HijriUmmAlQura", 15],
         ["Persian", 16],
         ["Roc", 17]
     ]);
@@ -108,10 +108,10 @@ export class AnyCalendarKind {
     static Dangi = AnyCalendarKind.#objectValues[9];
     static Chinese = AnyCalendarKind.#objectValues[10];
     static Hebrew = AnyCalendarKind.#objectValues[11];
-    static IslamicCivil = AnyCalendarKind.#objectValues[12];
-    static IslamicObservational = AnyCalendarKind.#objectValues[13];
-    static IslamicTabular = AnyCalendarKind.#objectValues[14];
-    static IslamicUmmAlQura = AnyCalendarKind.#objectValues[15];
+    static HijriCivil = AnyCalendarKind.#objectValues[12];
+    static HijriObservational = AnyCalendarKind.#objectValues[13];
+    static HijriTabular = AnyCalendarKind.#objectValues[14];
+    static HijriUmmAlQura = AnyCalendarKind.#objectValues[15];
     static Persian = AnyCalendarKind.#objectValues[16];
     static Roc = AnyCalendarKind.#objectValues[17];
 

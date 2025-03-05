@@ -1,10 +1,10 @@
 // @generated
-include!("calendar_islamic_ummalqura_v1.rs.data");
+include!("calendar_hijri_observational_v1.rs.data");
 include!("calendar_japanese_extended_v1.rs.data");
 include!("calendar_japanese_modern_v1.rs.data");
 include!("calendar_week_v1.rs.data");
 include!("calendar_dangi_v1.rs.data");
-include!("calendar_islamic_observational_v1.rs.data");
+include!("calendar_hijri_ummalqura_v1.rs.data");
 include!("calendar_chinese_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -35,12 +35,12 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
-        impl_calendar_islamic_ummalqura_v1!($provider);
+        impl_calendar_hijri_observational_v1!($provider);
         impl_calendar_japanese_extended_v1!($provider);
         impl_calendar_japanese_modern_v1!($provider);
         impl_calendar_week_v1!($provider);
         impl_calendar_dangi_v1!($provider);
-        impl_calendar_islamic_observational_v1!($provider);
+        impl_calendar_hijri_ummalqura_v1!($provider);
         impl_calendar_chinese_v1!($provider);
     };
 }
