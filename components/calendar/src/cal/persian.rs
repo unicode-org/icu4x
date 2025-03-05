@@ -23,14 +23,12 @@ use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 
-/// The Persian Calendar
+/// The [Persian Calendar](https://en.wikipedia.org/wiki/Solar_Hijri_calendar)
 ///
-/// The [Persian Calendar] is a solar calendar used officially by the countries of Iran and Afghanistan and many Persian-speaking regions.
-/// It has 12 months and other similarities to the Gregorian Calendar
+/// The Persian Calendar is a solar calendar used officially by the countries of Iran and Afghanistan and many Persian-speaking regions.
+/// It has 12 months and other similarities to the [`Gregorian`](super::Gregorian) Calendar.
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
-///
-/// [Persian Calendar]: https://en.wikipedia.org/wiki/Solar_Hijri_calendar
 ///
 /// # Era codes
 ///

@@ -48,7 +48,7 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
     )
 }
 
-/// Hijri Observational Calendar (Default)
+/// The [observational Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar)
 ///
 /// # Era codes
 ///
@@ -63,7 +63,7 @@ pub struct HijriObservational {
     data: Option<DataPayload<CalendarHijriObservationalV1>>,
 }
 
-/// Civil-Epoch Tabular/Arithmetic Hijri Calendar
+/// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (civil epoch)
 ///
 /// This is a tabular/arithmetic Hijri calendar with leap years (1-based) 2, 5, 7, 10,
 /// 13, 16, 18, 21, 24, 26, and 29 in the 30-year cycle with civil/Friday epoch. That is,
@@ -83,7 +83,9 @@ pub struct HijriObservational {
 #[allow(clippy::exhaustive_structs)] // unit struct
 pub struct HijriCivil;
 
-/// Umm al-Qura Hijri Calendar (Used in Saudi Arabia)
+/// The [Umm al-Qura Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar)
+///
+/// This calendar is the official calendar in Saudi Arabia.
 ///
 /// # Era codes
 ///
@@ -98,7 +100,7 @@ pub struct HijriUmmAlQura {
     data: Option<DataPayload<CalendarHijriUmmalquraV1>>,
 }
 
-/// Astronomical-Epoch Tabular/Arithmetic Hijri Calendar
+/// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (astronomical epoch)
 ///
 /// This is a tabular/arithmetic Hijri calendar with leap years (1-based) 2, 5, 7, 10,
 /// 13, 16, 18, 21, 24, 26, and 29 in the 30-year cycle with astronomical/Thursday epoch.

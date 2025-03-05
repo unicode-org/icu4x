@@ -33,9 +33,9 @@ use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-/// The Chinese Calendar
+/// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
 ///
-/// The [Chinese Calendar] is a lunisolar calendar used traditionally in China as well as in other
+/// The Chinese Calendar is a lunisolar calendar used traditionally in China as well as in other
 /// countries particularly in, but not limited to, East Asia. It is often used today to track important
 /// cultural events and holidays like the Chinese Lunar New Year.
 ///

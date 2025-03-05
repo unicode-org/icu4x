@@ -22,15 +22,13 @@ use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
-/// The [ISO Calendar]
+/// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
 ///
-/// The [ISO Calendar] is a standardized solar calendar with twelve months.
-/// It is identical to the Gregorian calendar, except it uses negative years for years before 1 CE,
-/// and may have differing formatting data for a given locale.
+/// The ISO-8601 Calendar is a standardized solar calendar with twelve months.
+/// It is identical to the [`Gregorian`](super::Gregorian) calendar, except it uses
+/// negative years for years before 1 CE, and may have differing formatting data for a given locale.
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
-///
-/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_8601#Dates
 ///
 /// # Era codes
 ///

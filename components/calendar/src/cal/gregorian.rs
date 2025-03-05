@@ -22,13 +22,11 @@ use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
-/// The Gregorian Calendar
+/// The [(proleptic) Gregorian Calendar](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar)
 ///
-/// The [Gregorian calendar] is a solar calendar used by most of the world, with twelve months.
+/// The Gregorian calendar is a solar calendar used by most of the world, with twelve months.
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
-///
-/// [Gregorian calendar]: https://en.wikipedia.org/wiki/Gregorian_calendar
 ///
 /// # Era codes
 ///

@@ -24,9 +24,9 @@ use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 
-/// The Civil Hebrew Calendar
+/// The [Hebrew Calendar](https://en.wikipedia.org/wiki/Hebrew_calendar)
 ///
-/// The [Hebrew calendar] is a lunisolar calendar used as the Jewish liturgical calendar
+/// The Hebrew calendar is a lunisolar calendar used as the Jewish liturgical calendar
 /// as well as an official calendar in Israel.
 ///
 /// This calendar is the _civil_ Hebrew calendar, with the year starting at in the month of Tishrei.
@@ -43,8 +43,6 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 /// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
 /// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
 /// objects it creates.
-///
-/// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
 #[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
 #[allow(clippy::exhaustive_structs)] // unit struct
 pub struct Hebrew;
