@@ -20,80 +20,80 @@ use zerovec::ule::NichedOption;
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 icu_provider::data_marker!(
-    /// `PropertyNameParseBidiClassV2`
-    PropertyNameParseBidiClassV2,
+    /// `PropertyNameParseBidiClassV1`
+    PropertyNameParseBidiClassV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseCanonicalCombiningClassV2`
-    PropertyNameParseCanonicalCombiningClassV2,
+    /// `PropertyNameParseCanonicalCombiningClassV1`
+    PropertyNameParseCanonicalCombiningClassV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseEastAsianWidthV2`
-    PropertyNameParseEastAsianWidthV2,
+    /// `PropertyNameParseEastAsianWidthV1`
+    PropertyNameParseEastAsianWidthV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseGeneralCategoryMaskV2`
-    PropertyNameParseGeneralCategoryMaskV2,
+    /// `PropertyNameParseGeneralCategoryMaskV1`
+    PropertyNameParseGeneralCategoryMaskV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseGeneralCategoryV2`
-    PropertyNameParseGeneralCategoryV2,
+    /// `PropertyNameParseGeneralCategoryV1`
+    PropertyNameParseGeneralCategoryV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseGraphemeClusterBreakV2`
-    PropertyNameParseGraphemeClusterBreakV2,
+    /// `PropertyNameParseGraphemeClusterBreakV1`
+    PropertyNameParseGraphemeClusterBreakV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseHangulSyllableTypeV2`
-    PropertyNameParseHangulSyllableTypeV2,
+    /// `PropertyNameParseHangulSyllableTypeV1`
+    PropertyNameParseHangulSyllableTypeV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseIndicSyllabicCategoryV2`
-    PropertyNameParseIndicSyllabicCategoryV2,
+    /// `PropertyNameParseIndicSyllabicCategoryV1`
+    PropertyNameParseIndicSyllabicCategoryV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseJoiningTypeV2`
-    PropertyNameParseJoiningTypeV2,
+    /// `PropertyNameParseJoiningTypeV1`
+    PropertyNameParseJoiningTypeV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseLineBreakV2`
-    PropertyNameParseLineBreakV2,
+    /// `PropertyNameParseLineBreakV1`
+    PropertyNameParseLineBreakV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseScriptV2`
-    PropertyNameParseScriptV2,
+    /// `PropertyNameParseScriptV1`
+    PropertyNameParseScriptV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseSentenceBreakV2`
-    PropertyNameParseSentenceBreakV2,
+    /// `PropertyNameParseSentenceBreakV1`
+    PropertyNameParseSentenceBreakV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyNameParseWordBreakV2`
-    PropertyNameParseWordBreakV2,
+    /// `PropertyNameParseWordBreakV1`
+    PropertyNameParseWordBreakV1,
     PropertyValueNameToEnumMap<'static>,
     is_singleton = true
 );

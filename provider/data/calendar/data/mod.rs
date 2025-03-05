@@ -2,7 +2,7 @@
 include!("calendar_islamic_ummalqura_v1.rs.data");
 include!("calendar_japanese_extended_v1.rs.data");
 include!("calendar_japanese_modern_v1.rs.data");
-include!("calendar_week_v2.rs.data");
+include!("calendar_week_v1.rs.data");
 include!("calendar_dangi_v1.rs.data");
 include!("calendar_islamic_observational_v1.rs.data");
 include!("calendar_chinese_v1.rs.data");
@@ -38,7 +38,7 @@ macro_rules! impl_data_provider {
         impl_calendar_islamic_ummalqura_v1!($provider);
         impl_calendar_japanese_extended_v1!($provider);
         impl_calendar_japanese_modern_v1!($provider);
-        impl_calendar_week_v2!($provider);
+        impl_calendar_week_v1!($provider);
         impl_calendar_dangi_v1!($provider);
         impl_calendar_islamic_observational_v1!($provider);
         impl_calendar_chinese_v1!($provider);

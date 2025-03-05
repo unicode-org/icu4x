@@ -798,7 +798,7 @@ macro_rules! impl_value_getter {
 
 impl_value_getter! {
     impl BidiClass {
-        PropertyNameParseBidiClassV2 / SINGLETON_PROPERTY_NAME_PARSE_BIDI_CLASS_V2;
+        PropertyNameParseBidiClassV1 / SINGLETON_PROPERTY_NAME_PARSE_BIDI_CLASS_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortBidiClassV1 / SINGLETON_PROPERTY_NAME_SHORT_BIDI_CLASS_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongBidiClassV1 / SINGLETON_PROPERTY_NAME_LONG_BIDI_CLASS_V1;
     }
@@ -806,7 +806,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl GeneralCategory {
-        PropertyNameParseGeneralCategoryV2 / SINGLETON_PROPERTY_NAME_PARSE_GENERAL_CATEGORY_V2;
+        PropertyNameParseGeneralCategoryV1 / SINGLETON_PROPERTY_NAME_PARSE_GENERAL_CATEGORY_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortGeneralCategoryV1 / SINGLETON_PROPERTY_NAME_SHORT_GENERAL_CATEGORY_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongGeneralCategoryV1 / SINGLETON_PROPERTY_NAME_LONG_GENERAL_CATEGORY_V1;
     }
@@ -814,13 +814,13 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl GeneralCategoryGroup {
-        PropertyNameParseGeneralCategoryMaskV2 / SINGLETON_PROPERTY_NAME_PARSE_GENERAL_CATEGORY_MASK_V2;
+        PropertyNameParseGeneralCategoryMaskV1 / SINGLETON_PROPERTY_NAME_PARSE_GENERAL_CATEGORY_MASK_V1;
     }
 }
 
 impl_value_getter! {
     impl Script {
-        PropertyNameParseScriptV2 / SINGLETON_PROPERTY_NAME_PARSE_SCRIPT_V2;
+        PropertyNameParseScriptV1 / SINGLETON_PROPERTY_NAME_PARSE_SCRIPT_V1;
         PropertyScriptToIcuScriptMap / PropertyNameShortScriptV1 / SINGLETON_PROPERTY_NAME_SHORT_SCRIPT_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongScriptV1 / SINGLETON_PROPERTY_NAME_LONG_SCRIPT_V1;
     }
@@ -828,7 +828,7 @@ impl_value_getter! {
 
 impl_value_getter! {
    impl HangulSyllableType {
-        PropertyNameParseHangulSyllableTypeV2 / SINGLETON_PROPERTY_NAME_PARSE_HANGUL_SYLLABLE_TYPE_V2;
+        PropertyNameParseHangulSyllableTypeV1 / SINGLETON_PROPERTY_NAME_PARSE_HANGUL_SYLLABLE_TYPE_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortHangulSyllableTypeV1 / SINGLETON_PROPERTY_NAME_SHORT_HANGUL_SYLLABLE_TYPE_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongHangulSyllableTypeV1 / SINGLETON_PROPERTY_NAME_LONG_HANGUL_SYLLABLE_TYPE_V1;
     }
@@ -836,7 +836,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl EastAsianWidth {
-        PropertyNameParseEastAsianWidthV2 / SINGLETON_PROPERTY_NAME_PARSE_EAST_ASIAN_WIDTH_V2;
+        PropertyNameParseEastAsianWidthV1 / SINGLETON_PROPERTY_NAME_PARSE_EAST_ASIAN_WIDTH_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortEastAsianWidthV1 / SINGLETON_PROPERTY_NAME_SHORT_EAST_ASIAN_WIDTH_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongEastAsianWidthV1 / SINGLETON_PROPERTY_NAME_LONG_EAST_ASIAN_WIDTH_V1;
     }
@@ -844,7 +844,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl LineBreak {
-        PropertyNameParseLineBreakV2 / SINGLETON_PROPERTY_NAME_PARSE_LINE_BREAK_V2;
+        PropertyNameParseLineBreakV1 / SINGLETON_PROPERTY_NAME_PARSE_LINE_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortLineBreakV1 / SINGLETON_PROPERTY_NAME_SHORT_LINE_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongLineBreakV1 / SINGLETON_PROPERTY_NAME_LONG_LINE_BREAK_V1;
     }
@@ -852,7 +852,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl GraphemeClusterBreak {
-        PropertyNameParseGraphemeClusterBreakV2 / SINGLETON_PROPERTY_NAME_PARSE_GRAPHEME_CLUSTER_BREAK_V2;
+        PropertyNameParseGraphemeClusterBreakV1 / SINGLETON_PROPERTY_NAME_PARSE_GRAPHEME_CLUSTER_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortGraphemeClusterBreakV1 / SINGLETON_PROPERTY_NAME_SHORT_GRAPHEME_CLUSTER_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongGraphemeClusterBreakV1 / SINGLETON_PROPERTY_NAME_LONG_GRAPHEME_CLUSTER_BREAK_V1;
     }
@@ -860,7 +860,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl WordBreak {
-        PropertyNameParseWordBreakV2 / SINGLETON_PROPERTY_NAME_PARSE_WORD_BREAK_V2;
+        PropertyNameParseWordBreakV1 / SINGLETON_PROPERTY_NAME_PARSE_WORD_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortWordBreakV1 / SINGLETON_PROPERTY_NAME_SHORT_WORD_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongWordBreakV1 / SINGLETON_PROPERTY_NAME_LONG_WORD_BREAK_V1;
     }
@@ -868,7 +868,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl SentenceBreak {
-        PropertyNameParseSentenceBreakV2 / SINGLETON_PROPERTY_NAME_PARSE_SENTENCE_BREAK_V2;
+        PropertyNameParseSentenceBreakV1 / SINGLETON_PROPERTY_NAME_PARSE_SENTENCE_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortSentenceBreakV1 / SINGLETON_PROPERTY_NAME_SHORT_SENTENCE_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongSentenceBreakV1 / SINGLETON_PROPERTY_NAME_LONG_SENTENCE_BREAK_V1;
     }
@@ -876,7 +876,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl CanonicalCombiningClass {
-        PropertyNameParseCanonicalCombiningClassV2 / SINGLETON_PROPERTY_NAME_PARSE_CANONICAL_COMBINING_CLASS_V2;
+        PropertyNameParseCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_PARSE_CANONICAL_COMBINING_CLASS_V1;
         PropertyEnumToValueNameSparseMap / PropertyNameShortCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_SHORT_CANONICAL_COMBINING_CLASS_V1;
         PropertyEnumToValueNameSparseMap / PropertyNameLongCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_LONG_CANONICAL_COMBINING_CLASS_V1;
     }
@@ -884,7 +884,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl IndicSyllabicCategory {
-        PropertyNameParseIndicSyllabicCategoryV2 / SINGLETON_PROPERTY_NAME_PARSE_INDIC_SYLLABIC_CATEGORY_V2;
+        PropertyNameParseIndicSyllabicCategoryV1 / SINGLETON_PROPERTY_NAME_PARSE_INDIC_SYLLABIC_CATEGORY_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortIndicSyllabicCategoryV1 / SINGLETON_PROPERTY_NAME_SHORT_INDIC_SYLLABIC_CATEGORY_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongIndicSyllabicCategoryV1 / SINGLETON_PROPERTY_NAME_LONG_INDIC_SYLLABIC_CATEGORY_V1;
     }
@@ -892,7 +892,7 @@ impl_value_getter! {
 
 impl_value_getter! {
     impl JoiningType {
-        PropertyNameParseJoiningTypeV2 / SINGLETON_PROPERTY_NAME_PARSE_JOINING_TYPE_V2;
+        PropertyNameParseJoiningTypeV1 / SINGLETON_PROPERTY_NAME_PARSE_JOINING_TYPE_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortJoiningTypeV1 / SINGLETON_PROPERTY_NAME_SHORT_JOINING_TYPE_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongJoiningTypeV1 / SINGLETON_PROPERTY_NAME_LONG_JOINING_TYPE_V1;
     }

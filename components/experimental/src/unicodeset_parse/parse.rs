@@ -490,12 +490,12 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
-        + DataProvider<PropertyNameParseCanonicalCombiningClassV2>
-        + DataProvider<PropertyNameParseGeneralCategoryMaskV2>
-        + DataProvider<PropertyNameParseGraphemeClusterBreakV2>
-        + DataProvider<PropertyNameParseScriptV2>
-        + DataProvider<PropertyNameParseSentenceBreakV2>
-        + DataProvider<PropertyNameParseWordBreakV2>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     fn new_internal(
@@ -1673,12 +1673,12 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
-        + DataProvider<PropertyNameParseCanonicalCombiningClassV2>
-        + DataProvider<PropertyNameParseGeneralCategoryMaskV2>
-        + DataProvider<PropertyNameParseGraphemeClusterBreakV2>
-        + DataProvider<PropertyNameParseScriptV2>
-        + DataProvider<PropertyNameParseSentenceBreakV2>
-        + DataProvider<PropertyNameParseWordBreakV2>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
@@ -1789,12 +1789,12 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
-        + DataProvider<PropertyNameParseCanonicalCombiningClassV2>
-        + DataProvider<PropertyNameParseGeneralCategoryMaskV2>
-        + DataProvider<PropertyNameParseGraphemeClusterBreakV2>
-        + DataProvider<PropertyNameParseScriptV2>
-        + DataProvider<PropertyNameParseSentenceBreakV2>
-        + DataProvider<PropertyNameParseWordBreakV2>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     let dummy = Default::default();

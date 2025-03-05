@@ -226,12 +226,12 @@ impl RuleCollection {
             + DataProvider<PropertyEnumScriptV1>
             + DataProvider<PropertyEnumSentenceBreakV1>
             + DataProvider<PropertyEnumWordBreakV1>
-            + DataProvider<PropertyNameParseCanonicalCombiningClassV2>
-            + DataProvider<PropertyNameParseGeneralCategoryMaskV2>
-            + DataProvider<PropertyNameParseGraphemeClusterBreakV2>
-            + DataProvider<PropertyNameParseScriptV2>
-            + DataProvider<PropertyNameParseSentenceBreakV2>
-            + DataProvider<PropertyNameParseWordBreakV2>
+            + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+            + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+            + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+            + DataProvider<PropertyNameParseScriptV1>
+            + DataProvider<PropertyNameParseSentenceBreakV1>
+            + DataProvider<PropertyNameParseWordBreakV1>
             + DataProvider<PropertyScriptWithExtensionsV1>,
         NP: ?Sized
             + DataProvider<NormalizerNfdDataV1>
@@ -321,12 +321,12 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
-        + DataProvider<PropertyNameParseCanonicalCombiningClassV2>
-        + DataProvider<PropertyNameParseGeneralCategoryMaskV2>
-        + DataProvider<PropertyNameParseGraphemeClusterBreakV2>
-        + DataProvider<PropertyNameParseScriptV2>
-        + DataProvider<PropertyNameParseSentenceBreakV2>
-        + DataProvider<PropertyNameParseWordBreakV2>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
     NP: ?Sized,
 {
@@ -481,12 +481,12 @@ where
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
-        + DataProvider<PropertyNameParseCanonicalCombiningClassV2>
-        + DataProvider<PropertyNameParseGeneralCategoryMaskV2>
-        + DataProvider<PropertyNameParseGraphemeClusterBreakV2>
-        + DataProvider<PropertyNameParseScriptV2>
-        + DataProvider<PropertyNameParseSentenceBreakV2>
-        + DataProvider<PropertyNameParseWordBreakV2>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
     NP: ?Sized,
 {

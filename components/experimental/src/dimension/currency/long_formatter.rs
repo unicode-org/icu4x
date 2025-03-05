@@ -104,7 +104,7 @@ impl LongCurrencyFormatter {
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1>
             + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {

@@ -14,7 +14,7 @@ use icu_calendar::{
     types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
     Date, Iso,
 };
-use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_time::scaffold::IntoOption;
 use icu_time::{
@@ -523,12 +523,12 @@ where
 /// for datetime formatting with a fixed calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarExternalDataMarkers:
-    DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1>
+    DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1>
 {
 }
 
 impl<T> AllFixedCalendarExternalDataMarkers for T where
-    T: ?Sized + DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1>
+    T: ?Sized + DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1>
 {
 }
 
@@ -542,7 +542,7 @@ pub trait AllAnyCalendarExternalDataMarkers:
     + DataProvider<CalendarIslamicUmmalquraV1>
     + DataProvider<CalendarJapaneseModernV1>
     + DataProvider<CalendarJapaneseExtendedV1>
-    + DataProvider<DecimalSymbolsV2>
+    + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
 {
 }
@@ -555,7 +555,7 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
         + DataProvider<CalendarIslamicUmmalquraV1>
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<CalendarJapaneseExtendedV1>
-        + DataProvider<DecimalSymbolsV2>
+        + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>
 {
 }

@@ -105,9 +105,9 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu::list::provider::ListOrV2::INFO,
-    icu::list::provider::ListUnitV2::INFO,
-    icu::list::provider::ListAndV2::INFO,
+    icu::list::provider::ListOrV1::INFO,
+    icu::list::provider::ListUnitV1::INFO,
+    icu::list::provider::ListAndV1::INFO,
 ];
 
 impl DataExporter for ZeroCopyCheckExporter {

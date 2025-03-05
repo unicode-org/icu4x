@@ -5,7 +5,7 @@ GregorianDateLengthsV1 \
 GregorianDateSymbolsV1 \
 TimeLengthsV1 \
 TimeSymbolsV1 \
-DecimalSymbolsV2Marker \
+DecimalSymbolsV1Marker \
 TimeZoneFormatsV1 \
 MetazoneSpecificNamesShortV1 \
 --locales en \

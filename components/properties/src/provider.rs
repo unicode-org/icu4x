@@ -23,13 +23,13 @@ pub use names::{
     PropertyNameLongGraphemeClusterBreakV1, PropertyNameLongHangulSyllableTypeV1,
     PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningTypeV1,
     PropertyNameLongLineBreakV1, PropertyNameLongScriptV1, PropertyNameLongSentenceBreakV1,
-    PropertyNameLongWordBreakV1, PropertyNameParseBidiClassV2,
-    PropertyNameParseCanonicalCombiningClassV2, PropertyNameParseEastAsianWidthV2,
-    PropertyNameParseGeneralCategoryMaskV2, PropertyNameParseGeneralCategoryV2,
-    PropertyNameParseGraphemeClusterBreakV2, PropertyNameParseHangulSyllableTypeV2,
-    PropertyNameParseIndicSyllabicCategoryV2, PropertyNameParseJoiningTypeV2,
-    PropertyNameParseLineBreakV2, PropertyNameParseScriptV2, PropertyNameParseSentenceBreakV2,
-    PropertyNameParseWordBreakV2, PropertyNameShortBidiClassV1,
+    PropertyNameLongWordBreakV1, PropertyNameParseBidiClassV1,
+    PropertyNameParseCanonicalCombiningClassV1, PropertyNameParseEastAsianWidthV1,
+    PropertyNameParseGeneralCategoryMaskV1, PropertyNameParseGeneralCategoryV1,
+    PropertyNameParseGraphemeClusterBreakV1, PropertyNameParseHangulSyllableTypeV1,
+    PropertyNameParseIndicSyllabicCategoryV1, PropertyNameParseJoiningTypeV1,
+    PropertyNameParseLineBreakV1, PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
+    PropertyNameParseWordBreakV1, PropertyNameShortBidiClassV1,
     PropertyNameShortCanonicalCombiningClassV1, PropertyNameShortEastAsianWidthV1,
     PropertyNameShortGeneralCategoryV1, PropertyNameShortGraphemeClusterBreakV1,
     PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicSyllabicCategoryV1,
@@ -159,19 +159,19 @@ const _: () = {
     impl_property_name_long_script_v1!(Baked);
     impl_property_name_long_sentence_break_v1!(Baked);
     impl_property_name_long_word_break_v1!(Baked);
-    impl_property_name_parse_bidi_class_v2!(Baked);
-    impl_property_name_parse_canonical_combining_class_v2!(Baked);
-    impl_property_name_parse_east_asian_width_v2!(Baked);
-    impl_property_name_parse_general_category_mask_v2!(Baked);
-    impl_property_name_parse_general_category_v2!(Baked);
-    impl_property_name_parse_grapheme_cluster_break_v2!(Baked);
-    impl_property_name_parse_hangul_syllable_type_v2!(Baked);
-    impl_property_name_parse_indic_syllabic_category_v2!(Baked);
-    impl_property_name_parse_joining_type_v2!(Baked);
-    impl_property_name_parse_line_break_v2!(Baked);
-    impl_property_name_parse_script_v2!(Baked);
-    impl_property_name_parse_sentence_break_v2!(Baked);
-    impl_property_name_parse_word_break_v2!(Baked);
+    impl_property_name_parse_bidi_class_v1!(Baked);
+    impl_property_name_parse_canonical_combining_class_v1!(Baked);
+    impl_property_name_parse_east_asian_width_v1!(Baked);
+    impl_property_name_parse_general_category_mask_v1!(Baked);
+    impl_property_name_parse_general_category_v1!(Baked);
+    impl_property_name_parse_grapheme_cluster_break_v1!(Baked);
+    impl_property_name_parse_hangul_syllable_type_v1!(Baked);
+    impl_property_name_parse_indic_syllabic_category_v1!(Baked);
+    impl_property_name_parse_joining_type_v1!(Baked);
+    impl_property_name_parse_line_break_v1!(Baked);
+    impl_property_name_parse_script_v1!(Baked);
+    impl_property_name_parse_sentence_break_v1!(Baked);
+    impl_property_name_parse_word_break_v1!(Baked);
     impl_property_name_short_bidi_class_v1!(Baked);
     impl_property_name_short_canonical_combining_class_v1!(Baked);
     impl_property_name_short_east_asian_width_v1!(Baked);
@@ -682,19 +682,19 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameLongScriptV1::INFO,
     PropertyNameLongSentenceBreakV1::INFO,
     PropertyNameLongWordBreakV1::INFO,
-    PropertyNameParseBidiClassV2::INFO,
-    PropertyNameParseCanonicalCombiningClassV2::INFO,
-    PropertyNameParseEastAsianWidthV2::INFO,
-    PropertyNameParseGeneralCategoryMaskV2::INFO,
-    PropertyNameParseGeneralCategoryV2::INFO,
-    PropertyNameParseGraphemeClusterBreakV2::INFO,
-    PropertyNameParseHangulSyllableTypeV2::INFO,
-    PropertyNameParseIndicSyllabicCategoryV2::INFO,
-    PropertyNameParseJoiningTypeV2::INFO,
-    PropertyNameParseLineBreakV2::INFO,
-    PropertyNameParseScriptV2::INFO,
-    PropertyNameParseSentenceBreakV2::INFO,
-    PropertyNameParseWordBreakV2::INFO,
+    PropertyNameParseBidiClassV1::INFO,
+    PropertyNameParseCanonicalCombiningClassV1::INFO,
+    PropertyNameParseEastAsianWidthV1::INFO,
+    PropertyNameParseGeneralCategoryMaskV1::INFO,
+    PropertyNameParseGeneralCategoryV1::INFO,
+    PropertyNameParseGraphemeClusterBreakV1::INFO,
+    PropertyNameParseHangulSyllableTypeV1::INFO,
+    PropertyNameParseIndicSyllabicCategoryV1::INFO,
+    PropertyNameParseJoiningTypeV1::INFO,
+    PropertyNameParseLineBreakV1::INFO,
+    PropertyNameParseScriptV1::INFO,
+    PropertyNameParseSentenceBreakV1::INFO,
+    PropertyNameParseWordBreakV1::INFO,
     PropertyNameShortBidiClassV1::INFO,
     PropertyNameShortCanonicalCombiningClassV1::INFO,
     PropertyNameShortEastAsianWidthV1::INFO,

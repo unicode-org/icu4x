@@ -23,21 +23,21 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatterns<'static>>>(
 
     let data = &resource.main.value.list_patterns;
 
-    let patterns = if M::INFO == ListAndV2::INFO {
+    let patterns = if M::INFO == ListAndV1::INFO {
         match req.id.marker_attributes.as_str() {
             ListFormatterPatterns::SHORT_STR => &data.standard_short,
             ListFormatterPatterns::NARROW_STR => &data.standard_narrow,
             ListFormatterPatterns::WIDE_STR => &data.standard,
             _ => return Err(DataErrorKind::IdentifierNotFound.with_req(M::INFO, req)),
         }
-    } else if M::INFO == ListOrV2::INFO {
+    } else if M::INFO == ListOrV1::INFO {
         match req.id.marker_attributes.as_str() {
             ListFormatterPatterns::SHORT_STR => &data.or_short,
             ListFormatterPatterns::NARROW_STR => &data.or_narrow,
             ListFormatterPatterns::WIDE_STR => &data.or,
             _ => return Err(DataErrorKind::IdentifierNotFound.with_req(M::INFO, req)),
         }
-    } else if M::INFO == ListUnitV2::INFO {
+    } else if M::INFO == ListUnitV1::INFO {
         match req.id.marker_attributes.as_str() {
             ListFormatterPatterns::SHORT_STR => &data.unit_short,
             ListFormatterPatterns::NARROW_STR => &data.unit_narrow,
@@ -58,7 +58,7 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatterns<'static>>>(
     )?;
 
     if req.id.locale.language == language!("es") {
-        if M::INFO == ListAndV2::INFO || M::INFO == ListUnitV2::INFO {
+        if M::INFO == ListAndV1::INFO || M::INFO == ListUnitV1::INFO {
             // Replace " y " with " e " before /i/ sounds.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
 
@@ -84,7 +84,7 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatterns<'static>>>(
                     pair.special_case = Some(i_sound_becomes_e.clone());
                 }
             }
-        } else if M::INFO == ListOrV2::INFO {
+        } else if M::INFO == ListOrV1::INFO {
             // Replace " o " with " u " before /o/ sound.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
 
@@ -188,6 +188,6 @@ macro_rules! implement {
     };
 }
 
-implement!(ListAndV2);
-implement!(ListOrV2);
-implement!(ListUnitV2);
+implement!(ListAndV1);
+implement!(ListOrV1);
+implement!(ListUnitV1);

@@ -373,15 +373,15 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<PropertyNameParseGeneralCategoryMaskV2> for SourceDataProvider {
+impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<PropertyNameParseGeneralCategoryMaskV2>, DataError> {
+    ) -> Result<DataResponse<PropertyNameParseGeneralCategoryMaskV1>, DataError> {
         use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
-        self.check_req::<PropertyNameParseGeneralCategoryMaskV2>(req)?;
+        self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
@@ -402,7 +402,7 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV2> for SourceDataProvider
     }
 }
 
-impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV2>
+impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
     for SourceDataProvider
 {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -414,7 +414,7 @@ impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV2>
 expand!(
     (
         PropertyEnumCanonicalCombiningClassV1,
-        PropertyNameParseCanonicalCombiningClassV2,
+        PropertyNameParseCanonicalCombiningClassV1,
         (
             sparse: PropertyNameShortCanonicalCombiningClassV1,
             PropertyNameLongCanonicalCombiningClassV1
@@ -423,7 +423,7 @@ expand!(
     ),
     (
         PropertyEnumGeneralCategoryV1,
-        PropertyNameParseGeneralCategoryV2,
+        PropertyNameParseGeneralCategoryV1,
         (
             linear: PropertyNameShortGeneralCategoryV1,
             PropertyNameLongGeneralCategoryV1
@@ -432,7 +432,7 @@ expand!(
     ),
     (
         PropertyEnumBidiClassV1,
-        PropertyNameParseBidiClassV2,
+        PropertyNameParseBidiClassV1,
         (
             linear: PropertyNameShortBidiClassV1,
             PropertyNameLongBidiClassV1
@@ -441,7 +441,7 @@ expand!(
     ),
     (
         PropertyEnumScriptV1,
-        PropertyNameParseScriptV2,
+        PropertyNameParseScriptV1,
         (
             linear4: PropertyNameShortScriptV1,
             PropertyNameLongScriptV1
@@ -450,7 +450,7 @@ expand!(
     ),
     (
         PropertyEnumHangulSyllableTypeV1,
-        PropertyNameParseHangulSyllableTypeV2,
+        PropertyNameParseHangulSyllableTypeV1,
         (
             linear: PropertyNameShortHangulSyllableTypeV1,
             PropertyNameLongHangulSyllableTypeV1
@@ -459,7 +459,7 @@ expand!(
     ),
     (
         PropertyEnumEastAsianWidthV1,
-        PropertyNameParseEastAsianWidthV2,
+        PropertyNameParseEastAsianWidthV1,
         (
             linear: PropertyNameShortEastAsianWidthV1,
             PropertyNameLongEastAsianWidthV1
@@ -468,7 +468,7 @@ expand!(
     ),
     (
         PropertyEnumIndicSyllabicCategoryV1,
-        PropertyNameParseIndicSyllabicCategoryV2,
+        PropertyNameParseIndicSyllabicCategoryV1,
         (
             linear: PropertyNameShortIndicSyllabicCategoryV1,
             PropertyNameLongIndicSyllabicCategoryV1
@@ -477,7 +477,7 @@ expand!(
     ),
     (
         PropertyEnumLineBreakV1,
-        PropertyNameParseLineBreakV2,
+        PropertyNameParseLineBreakV1,
         (
             linear: PropertyNameShortLineBreakV1,
             PropertyNameLongLineBreakV1
@@ -486,7 +486,7 @@ expand!(
     ),
     (
         PropertyEnumGraphemeClusterBreakV1,
-        PropertyNameParseGraphemeClusterBreakV2,
+        PropertyNameParseGraphemeClusterBreakV1,
         (
             linear: PropertyNameShortGraphemeClusterBreakV1,
             PropertyNameLongGraphemeClusterBreakV1
@@ -495,7 +495,7 @@ expand!(
     ),
     (
         PropertyEnumWordBreakV1,
-        PropertyNameParseWordBreakV2,
+        PropertyNameParseWordBreakV1,
         (
             linear: PropertyNameShortWordBreakV1,
             PropertyNameLongWordBreakV1
@@ -504,7 +504,7 @@ expand!(
     ),
     (
         PropertyEnumSentenceBreakV1,
-        PropertyNameParseSentenceBreakV2,
+        PropertyNameParseSentenceBreakV1,
         (
             linear: PropertyNameShortSentenceBreakV1,
             PropertyNameLongSentenceBreakV1
@@ -513,7 +513,7 @@ expand!(
     ),
     (
         PropertyEnumJoiningTypeV1,
-        PropertyNameParseJoiningTypeV2,
+        PropertyNameParseJoiningTypeV1,
         (
             linear: PropertyNameShortJoiningTypeV1,
             PropertyNameLongJoiningTypeV1
