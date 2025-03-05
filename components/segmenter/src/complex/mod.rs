@@ -22,8 +22,7 @@ type DictOrLstmBorrowed<'a> =
     Result<&'a DataPayload<UCharDictionaryBreakDataV1>, &'a core::convert::Infallible>;
 
 #[cfg(feature = "lstm")]
-type DictOrLstm =
-    Result<DataPayload<UCharDictionaryBreakDataV1>, DataPayload<SegmenterLstmAutoV1>>;
+type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1>, DataPayload<SegmenterLstmAutoV1>>;
 #[cfg(feature = "lstm")]
 type DictOrLstmBorrowed<'a> =
     Result<&'a DataPayload<UCharDictionaryBreakDataV1>, &'a DataPayload<SegmenterLstmAutoV1>>;
@@ -113,7 +112,9 @@ impl ComplexPayloads {
     #[cfg(feature = "lstm")]
     pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakGraphemeClusterV1> + DataProvider<SegmenterLstmAutoV1> + ?Sized,
+        D: DataProvider<SegmenterBreakGraphemeClusterV1>
+            + DataProvider<SegmenterLstmAutoV1>
+            + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.payload,
@@ -184,8 +185,7 @@ impl ComplexPayloads {
             th: try_load::<SegmenterDictionaryExtendedV1, D>(provider, TH_DICT)?
                 .map(DataPayload::cast)
                 .map(Ok),
-            ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?
-                .map(DataPayload::cast),
+            ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
         })
     }
 
@@ -242,8 +242,7 @@ impl ComplexPayloads {
             th: try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
                 .map(Err),
-            ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?
-                .map(DataPayload::cast),
+            ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
         })
     }
 

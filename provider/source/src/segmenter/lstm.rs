@@ -7,8 +7,8 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::locale::langid;
 use icu::segmenter::provider::{
-    LstmData, LstmDataFloat32, SegmenterLstmAutoV1, LstmMatrix1, LstmMatrix2, LstmMatrix3,
-    ModelType,
+    LstmData, LstmDataFloat32, LstmMatrix1, LstmMatrix2, LstmMatrix3, ModelType,
+    SegmenterLstmAutoV1,
 };
 use icu_provider::prelude::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};

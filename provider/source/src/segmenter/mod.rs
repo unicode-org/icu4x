@@ -863,7 +863,11 @@ implement!(SegmenterBreakLineV1, "segmenter/line.toml");
 implement!(SegmenterBreakGraphemeClusterV1, "segmenter/grapheme.toml");
 implement!(SegmenterBreakWordV1, "segmenter/word.toml");
 implement!(SegmenterBreakSentenceV1, "segmenter/sentence.toml");
-implement_override!(SegmenterBreakWordOverrideV1, "segmenter/word.toml", ["fi", "sv"]);
+implement_override!(
+    SegmenterBreakWordOverrideV1,
+    "segmenter/word.toml",
+    ["fi", "sv"]
+);
 implement_override!(
     SegmenterBreakSentenceOverrideV1,
     "segmenter/sentence.toml",

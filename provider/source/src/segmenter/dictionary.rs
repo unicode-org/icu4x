@@ -5,8 +5,8 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::locale::langid;
-use icu::segmenter::provider::SegmenterDictionaryExtendedV1;
 use icu::segmenter::provider::SegmenterDictionaryAutoV1;
+use icu::segmenter::provider::SegmenterDictionaryExtendedV1;
 use icu::segmenter::provider::UCharDictionaryBreakData;
 use icu_provider::prelude::*;
 use std::collections::HashSet;

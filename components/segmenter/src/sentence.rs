@@ -160,7 +160,9 @@ impl SentenceSegmenter {
         options: SentenceBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<SegmenterBreakSentenceV1> + DataProvider<SegmenterBreakSentenceOverrideV1> + ?Sized,
+        D: DataProvider<SegmenterBreakSentenceV1>
+            + DataProvider<SegmenterBreakSentenceOverrideV1>
+            + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
         let payload_locale_override = if let Some(locale) = options.content_locale {
