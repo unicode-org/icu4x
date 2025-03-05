@@ -55,7 +55,7 @@ impl Era {
     pub const INCARNATION: Era = Era(tinystr!(16, "incar"));
     /// Pre-Incarnation (Ethiopian)
     pub const PRE_INCARNATION: Era = Era(tinystr!(16, "pre-incar"));
-    /// Anno Mundi (Coptic)
+    /// Anno Mundi (Ethiopian)
     pub const MUNDI: Era = Era(tinystr!(16, "mundi"));
     /// Anno Mundi (Hebrew)
     pub const AM: Era = Era(tinystr!(16, "am"));

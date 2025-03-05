@@ -33,7 +33,7 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code [`Era::AM`].
+/// This calendar supports a single era, Anno Mundi, [`Era::AM`].
 ///
 /// [`Era::HEBREW`] is accepted as an alias.
 ///
