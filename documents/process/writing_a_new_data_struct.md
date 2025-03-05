@@ -29,7 +29,7 @@ With a mental model of the lifecycle of data in ICU4X, we can discuss where to f
 
 The data struct definitions should live in the crate that uses them. By convention, the top-level module `provider` should contain the struct definitions. For example:
 
-- `icu::decimal::provider::DecimalSymbolsV2`
+- `icu::decimal::provider::DecimalSymbolsV1`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
 - `icu::uniset::provider::PropertyCodePointSetV1`
 
@@ -83,7 +83,7 @@ After you are done, add your data marker to the component's `provider::KEYS` lis
 
 ## Example
 
-The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV2`.
+The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV1`.
 
 ### Data Struct
 
@@ -123,7 +123,7 @@ pub struct DecimalSymbols<'data> {
 }
 ```
 
-The above example is an abridged definition for `DecimalSymbolsV2`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
+The above example is an abridged definition for `DecimalSymbolsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
 
 ### CLDR JSON Deserialize
 

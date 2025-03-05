@@ -52,7 +52,7 @@ const _: () = {
     impl_calendar_islamic_ummalqura_v1!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
     impl_calendar_japanese_extended_v1!(Baked);
-    impl_calendar_week_v2!(Baked);
+    impl_calendar_week_v1!(Baked);
 };
 
 icu_provider::data_marker!(
@@ -71,8 +71,8 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// Week information
-    CalendarWeekV2,
-    "calendar/week/v2",
+    CalendarWeekV1,
+    "calendar/week/v1",
     WeekData,
     fallback_config = {
         let mut config = LocaleFallbackConfig::default();
@@ -90,7 +90,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     CalendarIslamicUmmalquraV1::INFO,
     CalendarJapaneseModernV1::INFO,
     CalendarJapaneseExtendedV1::INFO,
-    CalendarWeekV2::INFO,
+    CalendarWeekV1::INFO,
 ];
 
 /// The date at which an era started

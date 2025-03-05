@@ -5,7 +5,7 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::properties::props::Script;
-use icu::properties::provider::{ScriptWithExtensionsProperty, ScriptWithExtensionsPropertyV1};
+use icu::properties::provider::{PropertyScriptWithExtensionsV1, ScriptWithExtensionsProperty};
 use icu::properties::script::ScriptWithExt;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -13,12 +13,12 @@ use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 // implement data provider
-impl DataProvider<ScriptWithExtensionsPropertyV1> for SourceDataProvider {
+impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1>, DataError> {
-        self.check_req::<ScriptWithExtensionsPropertyV1>(req)?;
+    ) -> Result<DataResponse<PropertyScriptWithExtensionsV1>, DataError> {
+        self.check_req::<PropertyScriptWithExtensionsV1>(req)?;
         let scx_data = self
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
@@ -63,7 +63,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<PropertyScriptWithExtensionsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

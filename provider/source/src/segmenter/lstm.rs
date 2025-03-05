@@ -7,8 +7,8 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::locale::langid;
 use icu::segmenter::provider::{
-    LstmData, LstmDataFloat32, LstmForWordLineAutoV1, LstmMatrix1, LstmMatrix2, LstmMatrix3,
-    ModelType,
+    LstmData, LstmDataFloat32, LstmMatrix1, LstmMatrix2, LstmMatrix3, ModelType,
+    SegmenterLstmAutoV1,
 };
 use icu_provider::prelude::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
@@ -185,9 +185,9 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
-impl DataProvider<LstmForWordLineAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LstmForWordLineAutoV1>, DataError> {
-        self.check_req::<LstmForWordLineAutoV1>(req)?;
+impl DataProvider<SegmenterLstmAutoV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterLstmAutoV1>, DataError> {
+        self.check_req::<SegmenterLstmAutoV1>(req)?;
 
         let lstm_data = self
             .segmenter_lstm()?
@@ -206,7 +206,7 @@ impl DataProvider<LstmForWordLineAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<LstmForWordLineAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         const SUPPORTED: [&DataMarkerAttributes; 4] = [
             DataMarkerAttributes::from_str_or_panic("Burmese_codepoints_exclusive_model4_heavy"),
@@ -235,9 +235,9 @@ mod tests {
             SourceDataProvider: DataProvider<M>,
         {
             fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-                if LstmForWordLineAutoV1::INFO == M::INFO {
+                if SegmenterLstmAutoV1::INFO == M::INFO {
                     return Ok(DataResponse {
-                        payload: DataPayload::<LstmForWordLineAutoV1>::from_owned(
+                        payload: DataPayload::<SegmenterLstmAutoV1>::from_owned(
                             self.0
                                 .segmenter_lstm()
                                 .unwrap()
