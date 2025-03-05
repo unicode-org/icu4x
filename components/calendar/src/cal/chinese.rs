@@ -17,14 +17,14 @@
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
 
-use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::calendar_arithmetic::PrecomputedDataSource;
-use crate::chinese_based::{
+use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedDateInner,
     ChineseBasedPrecomputedData, ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
+use crate::cal::iso::Iso;
+use crate::calendar_arithmetic::CalendarArithmetic;
+use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
-use crate::iso::Iso;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};

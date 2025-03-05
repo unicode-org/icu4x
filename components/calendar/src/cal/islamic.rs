@@ -19,13 +19,13 @@
 //! assert_eq!(islamic_date.day_of_month().0, 11);
 //! ```
 
+use crate::cal::Iso;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::islamic::{
     CalendarIslamicObservationalV1, CalendarIslamicUmmalquraV1, IslamicCache, PackedIslamicYearInfo,
 };
-use crate::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{

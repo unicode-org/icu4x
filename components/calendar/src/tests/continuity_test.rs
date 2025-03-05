@@ -75,7 +75,7 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
-    let cal = crate::chinese::Chinese::new();
+    let cal = crate::cal::Chinese::new();
     let cal = Ref(&cal);
     let date = Date::try_new_chinese_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -95,7 +95,7 @@ fn test_coptic_continuity() {
 
 #[test]
 fn test_dangi_continuity() {
-    let cal = crate::dangi::Dangi::new();
+    let cal = crate::cal::Dangi::new();
     let cal = Ref(&cal);
     let date = Date::try_new_dangi_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -105,7 +105,7 @@ fn test_dangi_continuity() {
 
 #[test]
 fn test_ethiopian_continuity() {
-    use crate::ethiopian::EthiopianEraStyle::*;
+    use crate::cal::EthiopianEraStyle::*;
     let date = Date::try_new_ethiopian(AmeteMihret, -10, 1, 1);
     check_continuity(date.unwrap());
     let date = Date::try_new_ethiopian(AmeteMihret, -300, 1, 1);
@@ -114,7 +114,7 @@ fn test_ethiopian_continuity() {
 
 #[test]
 fn test_ethiopian_amete_alem_continuity() {
-    use crate::ethiopian::EthiopianEraStyle::*;
+    use crate::cal::EthiopianEraStyle::*;
     let date = Date::try_new_ethiopian(AmeteAlem, -10, 1, 1);
     check_continuity(date.unwrap());
     let date = Date::try_new_ethiopian(AmeteAlem, -300, 1, 1);
@@ -147,7 +147,7 @@ fn test_indian_continuity() {
 
 #[test]
 fn test_islamic_civil_continuity() {
-    let cal = crate::islamic::IslamicCivil::new();
+    let cal = crate::cal::IslamicCivil::new();
     let cal = Ref(&cal);
     let date = Date::try_new_islamic_civil_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -159,7 +159,7 @@ fn test_islamic_civil_continuity() {
 fn test_islamic_observational_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::islamic::IslamicObservational::new();
+    let cal = crate::cal::IslamicObservational::new();
     let cal = Ref(&cal);
     let date = Date::try_new_observational_islamic_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -169,7 +169,7 @@ fn test_islamic_observational_continuity() {
 
 #[test]
 fn test_islamic_tabular_continuity() {
-    let cal = crate::islamic::IslamicTabular::new();
+    let cal = crate::cal::IslamicTabular::new();
     let cal = Ref(&cal);
     let date = Date::try_new_islamic_tabular_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -181,7 +181,7 @@ fn test_islamic_tabular_continuity() {
 fn test_islamic_umm_al_qura_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::islamic::IslamicUmmAlQura::new();
+    let cal = crate::cal::IslamicUmmAlQura::new();
     let cal = Ref(&cal);
     let date = Date::try_new_ummalqura_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -201,7 +201,7 @@ fn test_iso_continuity() {
 fn test_japanese_continuity() {
     use crate::types::Era;
     use tinystr::tinystr;
-    let cal = crate::japanese::Japanese::new();
+    let cal = crate::cal::Japanese::new();
     let cal = Ref(&cal);
     let date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -213,7 +213,7 @@ fn test_japanese_continuity() {
 fn test_japanese_extended_continuity() {
     use crate::types::Era;
     use tinystr::tinystr;
-    let cal = crate::japanese::JapaneseExtended::new();
+    let cal = crate::cal::JapaneseExtended::new();
     let cal = Ref(&cal);
     let date =
         Date::try_new_japanese_extended_with_calendar(Era(tinystr!(16, "heisei")), 20, 1, 1, cal);

@@ -12,7 +12,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::islamic::IslamicYearInfo;
+use crate::cal::islamic::IslamicYearInfo;
 use calendrical_calculations::islamic::IslamicBasedMarker;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt;

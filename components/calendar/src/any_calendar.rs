@@ -4,20 +4,12 @@
 
 //! Module for working with multiple calendars at once
 
-use crate::buddhist::Buddhist;
-use crate::chinese::Chinese;
-use crate::coptic::Coptic;
-use crate::dangi::Dangi;
+use crate::cal::{
+    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew, Indian,
+    IslamicCivil, IslamicObservational, IslamicTabular, IslamicUmmAlQura, Iso, Japanese,
+    JapaneseExtended, Persian, Roc,
+};
 use crate::error::DateError;
-use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
-use crate::gregorian::Gregorian;
-use crate::hebrew::Hebrew;
-use crate::indian::Indian;
-use crate::islamic::{IslamicCivil, IslamicObservational, IslamicTabular, IslamicUmmAlQura};
-use crate::iso::Iso;
-use crate::japanese::{Japanese, JapaneseExtended};
-use crate::persian::Persian;
-use crate::roc::Roc;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use crate::preferences::{CalendarAlgorithm, IslamicCalendarAlgorithm};

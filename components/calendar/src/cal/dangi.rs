@@ -18,16 +18,16 @@
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //! ```
 
-use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::calendar_arithmetic::PrecomputedDataSource;
-use crate::chinese_based::{
+use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
+use crate::calendar_arithmetic::CalendarArithmetic;
+use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
 use crate::AsCalendar;
-use crate::{chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
+use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -340,7 +340,7 @@ impl Dangi {
 mod test {
 
     use super::*;
-    use crate::chinese::Chinese;
+    use crate::cal::Chinese;
     use calendrical_calculations::rata_die::RataDie;
 
     /// Run a test twice, with two calendars
