@@ -19,7 +19,7 @@ export class DateTimeFormatterLoadError {
     static Unknown : DateTimeFormatterLoadError;
     static UnsupportedLength : DateTimeFormatterLoadError;
     static ConflictingField : DateTimeFormatterLoadError;
-    static TypeTooSpecific : DateTimeFormatterLoadError;
+    static FormatterTooSpecific : DateTimeFormatterLoadError;
     static DataMarkerNotFound : DateTimeFormatterLoadError;
     static DataIdentifierNotFound : DateTimeFormatterLoadError;
     static DataInvalidRequest : DateTimeFormatterLoadError;
