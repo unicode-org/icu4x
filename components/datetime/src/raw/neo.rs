@@ -33,6 +33,7 @@ pub(crate) struct RawPreferences {
 }
 
 impl RawPreferences {
+    #[inline]
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
         Self {
             hour_cycle: prefs.hour_cycle.map(fields::Hour::from_hour_cycle),
@@ -43,7 +44,6 @@ impl RawPreferences {
 #[derive(Debug, Clone)]
 pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
-        options: RawOptions,
         payload: DataPayload<ErasedPackedPatterns>,
     },
     // TODO(#4478): add support for optional eras
@@ -61,8 +61,6 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 #[derive(Debug, Clone)]
 pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
-        options: RawOptions,
-        prefs: RawPreferences,
         payload: DataPayload<ErasedPackedPatterns>,
     },
 }
@@ -106,8 +104,10 @@ impl ItemsAndOptions<'_> {
 
 // TODO: Use markers instead of an enum for DateTimeFormatter pattern storage.
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub(crate) struct DateTimeZonePatternSelectionData {
+    options: RawOptions,
+    prefs: RawPreferences,
     date: Option<DatePatternSelectionData>,
     // The data for the overlap case is the same as for time, so we use the same intermediate
     // type. This means that we can't have overlap patterns with both a year and a time. This
@@ -130,7 +130,6 @@ impl DatePatternSelectionData {
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         attributes: &DataMarkerAttributes,
-        options: RawOptions,
     ) -> Result<Self, DataError> {
         let locale = provider
             .bound_marker()
@@ -141,14 +140,14 @@ impl DatePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self::SkeletonDate { options, payload })
+        Ok(Self::SkeletonDate { payload })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
-            DatePatternSelectionData::SkeletonDate { options, payload } => {
+            DatePatternSelectionData::SkeletonDate { payload } => {
                 payload
                     .get()
                     .get(options.length, PackedSkeletonVariant::Variant1)
@@ -159,9 +158,9 @@ impl DatePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput) -> DatePatternDataBorrowed {
+    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions) -> DatePatternDataBorrowed {
         match self {
-            DatePatternSelectionData::SkeletonDate { options, payload } => {
+            DatePatternSelectionData::SkeletonDate { payload } => {
                 let year_style = options.year_style.unwrap_or_default();
                 let variant = match (
                     year_style,
@@ -227,7 +226,6 @@ impl TimePatternSelectionData {
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         components: TimeFieldSet,
-        options: RawOptions,
     ) -> Result<Self, DataError> {
         let locale = provider
             .bound_marker()
@@ -263,8 +261,6 @@ impl TimePatternSelectionData {
             }
         };
         Ok(Self::SkeletonTime {
-            options,
-            prefs,
             payload,
         })
     }
@@ -285,7 +281,6 @@ impl TimePatternSelectionData {
         let locale = provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);
-        let prefs = RawPreferences::from_prefs(prefs);
         let payload = provider
             .load_bound(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
@@ -293,18 +288,16 @@ impl TimePatternSelectionData {
             })?
             .payload;
         Ok(Self::SkeletonTime {
-            options,
-            prefs,
             payload,
         })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
+    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
             TimePatternSelectionData::SkeletonTime {
-                options, payload, ..
+                payload, ..
             } => {
                 payload
                     .get()
@@ -316,11 +309,9 @@ impl TimePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
+    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions, prefs: &RawPreferences) -> TimePatternDataBorrowed {
         match self {
             TimePatternSelectionData::SkeletonTime {
-                options,
-                prefs,
                 payload,
             } => {
                 let time_precision = options.time_precision.unwrap_or_default();
@@ -402,11 +393,14 @@ impl DateTimeZonePatternSelectionData {
                     date_provider,
                     prefs,
                     field_set.id_str(),
-                    options,
                 )?;
                 Ok(Self {
+                    options,
+                    prefs: Default::default(), // not used: no time
                     date: Some(selection),
-                    ..Default::default()
+                    time: None,
+                    zone: None,
+                    glue: None,
                 })
             }
             CompositeFieldSet::CalendarPeriod(field_set) => {
@@ -415,11 +409,14 @@ impl DateTimeZonePatternSelectionData {
                     date_provider,
                     prefs,
                     field_set.id_str(),
-                    options,
                 )?;
                 Ok(Self {
+                    options,
+                    prefs: Default::default(), // not used: no time
                     date: Some(selection),
-                    ..Default::default()
+                    time: None,
+                    zone: None,
+                    glue: None,
                 })
             }
             CompositeFieldSet::Time(field_set) => {
@@ -428,18 +425,31 @@ impl DateTimeZonePatternSelectionData {
                     time_provider,
                     prefs,
                     field_set,
-                    options,
                 )?;
+                let prefs = RawPreferences::from_prefs(prefs);
                 Ok(Self {
+                    options,
+                    prefs,
+                    date: None,
                     time: Some(selection),
-                    ..Default::default()
+                    zone: None,
+                    glue: None,
                 })
             }
             CompositeFieldSet::Zone(field_set) => {
                 let selection = ZonePatternSelectionData::new_with_skeleton(field_set);
                 Ok(Self {
+                    options: RawOptions {
+                        length: Length::Medium, // not used
+                        year_style: None,
+                        alignment: None,
+                        time_precision: None,
+                    },
+                    prefs: Default::default(), // not used: no time
+                    date: None,
+                    time: None,
                     zone: Some(selection),
-                    ..Default::default()
+                    glue: None,
                 })
             }
             CompositeFieldSet::DateTime(field_set) => {
@@ -447,8 +457,9 @@ impl DateTimeZonePatternSelectionData {
                 // TODO(#5387): load the patterns for custom hour cycles here
                 if let (Some(attributes), None) = (field_set.id_str(), prefs.hour_cycle) {
                     // Try loading an overlap pattern.
+                    // Note: Overlap patterns are loaded from the date skeleton pattern provider
+                    // and then stored as a TimePatternSelectionData.
                     if let Some(overlap) = TimePatternSelectionData::try_new_overlap_with_skeleton(
-                        // Note: overlap patterns are stored in the date provider
                         date_provider,
                         prefs,
                         attributes,
@@ -456,9 +467,14 @@ impl DateTimeZonePatternSelectionData {
                     )
                     .allow_identifier_not_found()?
                     {
+                        let prefs = RawPreferences::from_prefs(prefs);
                         return Ok(Self {
+                            options,
+                            prefs,
+                            date: None,
                             time: Some(overlap),
-                            ..Default::default()
+                            zone: None,
+                            glue: None,
                         });
                     }
                 }
@@ -466,20 +482,21 @@ impl DateTimeZonePatternSelectionData {
                     date_provider,
                     prefs,
                     field_set.to_date_field_set().id_str(),
-                    options,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     prefs,
                     field_set.to_time_field_set(),
-                    options,
                 )?;
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTime)?;
+                let prefs = RawPreferences::from_prefs(prefs);
                 Ok(Self {
+                    options,
+                    prefs,
                     date: Some(date),
                     time: Some(time),
+                    zone: None,
                     glue: Some(glue),
-                    ..Default::default()
                 })
             }
             CompositeFieldSet::DateZone(combo) => {
@@ -488,15 +505,16 @@ impl DateTimeZonePatternSelectionData {
                     date_provider,
                     prefs,
                     combo.dt().id_str(),
-                    options,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateZone)?;
                 Ok(Self {
+                    options,
+                    prefs: Default::default(), // not used: no time
                     date: Some(date),
+                    time: None,
                     zone: Some(zone),
                     glue: Some(glue),
-                    ..Default::default()
                 })
             }
             CompositeFieldSet::TimeZone(combo) => {
@@ -505,15 +523,17 @@ impl DateTimeZonePatternSelectionData {
                     time_provider,
                     prefs,
                     combo.dt(),
-                    options,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::TimeZone)?;
+                let prefs = RawPreferences::from_prefs(prefs);
                 Ok(Self {
+                    options,
+                    prefs,
+                    date: None,
                     time: Some(time),
                     zone: Some(zone),
                     glue: Some(glue),
-                    ..Default::default()
                 })
             }
             CompositeFieldSet::DateTimeZone(combo) => {
@@ -522,22 +542,22 @@ impl DateTimeZonePatternSelectionData {
                     date_provider,
                     prefs,
                     combo.dt().to_date_field_set().id_str(),
-                    options,
                 )?;
                 let time = TimePatternSelectionData::try_new_with_skeleton(
                     time_provider,
                     prefs,
                     combo.dt().to_time_field_set(),
-                    options,
                 )?;
                 let zone = ZonePatternSelectionData::new_with_skeleton(combo.z());
                 let glue = Self::load_glue(glue_provider, prefs, options, GlueType::DateTimeZone)?;
+                let prefs = RawPreferences::from_prefs(prefs);
                 Ok(Self {
+                    options,
+                    prefs,
                     date: Some(date),
                     time: Some(time),
                     zone: Some(zone),
                     glue: Some(glue),
-                    ..Default::default()
                 })
             }
         }
@@ -580,10 +600,10 @@ impl DateTimeZonePatternSelectionData {
         } = self;
         let date_items = date
             .into_iter()
-            .flat_map(|x| x.pattern_items_for_data_loading());
+            .flat_map(|x| x.pattern_items_for_data_loading(&self.options));
         let time_items = time
             .into_iter()
-            .flat_map(|x| x.pattern_items_for_data_loading());
+            .flat_map(|x| x.pattern_items_for_data_loading(&self.options));
         let zone_items = zone
             .into_iter()
             .flat_map(|x| x.pattern_items_for_data_loading());
@@ -593,8 +613,8 @@ impl DateTimeZonePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> DateTimeZonePatternDataBorrowed {
         DateTimeZonePatternDataBorrowed {
-            date: self.date.as_ref().map(|date| date.select(input)),
-            time: self.time.as_ref().map(|time| time.select(input)),
+            date: self.date.as_ref().map(|date| date.select(input, &self.options)),
+            time: self.time.as_ref().map(|time| time.select(input, &self.options, &self.prefs)),
             zone: self.zone.as_ref().map(|zone| zone.select(input)),
             glue: self.glue.as_ref().map(|glue| glue.get()),
         }
