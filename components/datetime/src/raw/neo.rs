@@ -42,10 +42,8 @@ impl RawPreferences {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) enum DatePatternSelectionData {
-    SkeletonDate {
-        payload: DataPayload<ErasedPackedPatterns>,
-    },
+pub(crate) struct DatePatternSelectionData {
+    payload: DataPayload<ErasedPackedPatterns>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -58,10 +56,8 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 /// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
 /// the same as their individual patterns with glue.
 #[derive(Debug, Clone)]
-pub(crate) enum TimePatternSelectionData {
-    SkeletonTime {
-        payload: DataPayload<ErasedPackedPatterns>,
-    },
+pub(crate) struct TimePatternSelectionData {
+    payload: DataPayload<ErasedPackedPatterns>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -139,14 +135,14 @@ impl DatePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self::SkeletonDate { payload })
+        Ok(Self { payload })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
-            DatePatternSelectionData::SkeletonDate { payload } => {
+            DatePatternSelectionData { payload } => {
                 payload
                     .get()
                     .get(options.length, PackedSkeletonVariant::Variant1)
@@ -159,7 +155,7 @@ impl DatePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions) -> DatePatternDataBorrowed {
         match self {
-            DatePatternSelectionData::SkeletonDate { payload } => {
+            DatePatternSelectionData { payload } => {
                 let year_style = options.year_style.unwrap_or_default();
                 let variant = match (
                     year_style,
@@ -259,7 +255,7 @@ impl TimePatternSelectionData {
                     .payload
             }
         };
-        Ok(Self::SkeletonTime {
+        Ok(Self {
             payload,
         })
     }
@@ -286,7 +282,7 @@ impl TimePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self::SkeletonTime {
+        Ok(Self {
             payload,
         })
     }
@@ -295,7 +291,7 @@ impl TimePatternSelectionData {
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> impl Iterator<Item = PatternItem> + '_ {
         let items: &ZeroSlice<PatternItem> = match self {
-            TimePatternSelectionData::SkeletonTime {
+            TimePatternSelectionData {
                 payload, ..
             } => {
                 payload
@@ -310,7 +306,7 @@ impl TimePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions, prefs: &RawPreferences) -> TimePatternDataBorrowed {
         match self {
-            TimePatternSelectionData::SkeletonTime {
+            TimePatternSelectionData {
                 payload,
             } => {
                 let time_precision = options.time_precision.unwrap_or_default();
