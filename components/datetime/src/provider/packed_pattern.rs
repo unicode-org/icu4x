@@ -120,9 +120,15 @@ icu_provider::data_marker!(
 /// This supports a set of "standard" patterns plus up to two "variants".
 /// The variants are currently used by year formatting:
 ///
-/// - Standard: Year, which could be partial precision (2-digit Gregorain)
+/// - Standard: Year, which could be partial precision (2-digit Gregorian)
 /// - Variant 0: Full Year, which is always full precision
 /// - Variant 1: Year With Era
+/// 
+/// And by time formatting:
+/// 
+/// - Standard: Hour only
+/// - Variant 0: Hour and minute
+/// - Variant 1: Hour, minute, and second
 ///
 /// Variants should be used when the pattern could depend on the value being
 /// formatted. For example, with [`YearStyle::Auto`], any of these three
@@ -457,9 +463,13 @@ impl PackedPatternsBuilder<'_> {
     }
 }
 
+/// Which pattern to select. For details, see [`PackedPatterns`].
 pub(crate) enum PackedSkeletonVariant {
+    /// Default-precision year OR hours only
     Standard,
+    /// Full-precision year OR hours and minutes
     Variant0,
+    /// Year with era OR hours, minutes, and seconds
     Variant1,
 }
 
