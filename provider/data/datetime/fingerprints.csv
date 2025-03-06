@@ -7861,68 +7861,68 @@ ethiopian/month/names/v1, zh/3s, -> yue-Hans/3
 ethiopian/month/names/v1, zh/5, 145B, 115B, 6ad8ef345977125c
 ethiopian/month/names/v1, zh/5s, -> zh/5
 ethiopian/year/names/v1, <lookup>, 344B, 61 identifiers
-ethiopian/year/names/v1, <total>, 2502B, 1452B, 35 unique payloads
-ethiopian/year/names/v1, ast/3, 52B, 22B, 8d1430a860de2816
-ethiopian/year/names/v1, ast/4, 46B, 16B, 44cefcf458f894e3
-ethiopian/year/names/v1, ast/5, 93B, 63B, 7b814d6dc6b4e09a
-ethiopian/year/names/v1, bn/3, 68B, 38B, e8f8061c1dec4e7c
+ethiopian/year/names/v1, <total>, 2207B, 1157B, 35 unique payloads
+ethiopian/year/names/v1, ast/3, 46B, 16B, 815fea36743bed3f
+ethiopian/year/names/v1, ast/4, 40B, 10B, 6ce0c7ba289f548d
+ethiopian/year/names/v1, ast/5, 87B, 57B, 2b2537f68cb1a494
+ethiopian/year/names/v1, bn/3, 62B, 32B, c1f45ba25e4fb254
 ethiopian/year/names/v1, bn/4, -> bn/3
 ethiopian/year/names/v1, bn/5, -> bn/3
-ethiopian/year/names/v1, da/3, 60B, 30B, 9229c4efcbac1d1b
-ethiopian/year/names/v1, da/4, 52B, 22B, 7add1f8998c59707
-ethiopian/year/names/v1, da/5, 70B, 40B, 2f7cc03834b83fd5
-ethiopian/year/names/v1, ff-Adlm/3, 70B, 40B, 38e7d22963f6aa97
+ethiopian/year/names/v1, da/3, 54B, 24B, 78ac57049bebf2b5
+ethiopian/year/names/v1, da/4, 46B, 16B, 765ce21b2cf220ee
+ethiopian/year/names/v1, da/5, 64B, 34B, e669e1c6484d0168
+ethiopian/year/names/v1, ff-Adlm/3, 52B, 22B, bbb0e1c0191e93b2
 ethiopian/year/names/v1, ff-Adlm/4, -> ff-Adlm/3
-ethiopian/year/names/v1, ff-Adlm/5, 152B, 122B, 375ba5793d52ae6
-ethiopian/year/names/v1, fr/3, 58B, 28B, 69ba46988b47d81a
+ethiopian/year/names/v1, ff-Adlm/5, 134B, 104B, 444e120d3aea6e67
+ethiopian/year/names/v1, fr/3, 52B, 22B, a3d76167979c9d40
 ethiopian/year/names/v1, fr/4, -> fr/3
-ethiopian/year/names/v1, fr/5, 85B, 55B, f90965c8feb81011
-ethiopian/year/names/v1, gu/3, 62B, 32B, c4863c4623c64ad1
+ethiopian/year/names/v1, fr/5, 79B, 49B, 335d2e33477365bb
+ethiopian/year/names/v1, gu/3, 56B, 26B, a7437d07eee0f50
 ethiopian/year/names/v1, gu/4, -> gu/3
 ethiopian/year/names/v1, gu/5, -> gu/3
-ethiopian/year/names/v1, he/5, 62B, 32B, 6630e0eb30e5423
-ethiopian/year/names/v1, is/3, 60B, 30B, 14904acc0f1d209e
+ethiopian/year/names/v1, he/5, 56B, 26B, 6ca93838b29bec5e
+ethiopian/year/names/v1, is/3, 54B, 24B, 2655ab6c9dc430aa
 ethiopian/year/names/v1, is/4, -> is/3
 ethiopian/year/names/v1, is/5, -> is/3
-ethiopian/year/names/v1, lv/3, 67B, 37B, 6eb63864ef23d43c
+ethiopian/year/names/v1, lv/3, 61B, 31B, 4d37ac53b64041f4
 ethiopian/year/names/v1, lv/4, -> lv/3
-ethiopian/year/names/v1, lv/5, 97B, 67B, d8d97adcbcc22f9e
-ethiopian/year/names/v1, mk/3, 56B, 26B, eebb9b1e5cfe2f05
+ethiopian/year/names/v1, lv/5, 91B, 61B, c6020491444675a7
+ethiopian/year/names/v1, mk/3, 50B, 20B, 2d4ea3cdf089e5e
 ethiopian/year/names/v1, mk/4, -> mk/3
 ethiopian/year/names/v1, mk/5, -> mk/3
-ethiopian/year/names/v1, ml/3, 92B, 62B, 87833e1ad86a9a5
+ethiopian/year/names/v1, ml/3, 86B, 56B, 46c99a2a25c73bae
 ethiopian/year/names/v1, ml/4, -> ml/3
 ethiopian/year/names/v1, ml/5, -> ml/3
-ethiopian/year/names/v1, mr/3, 62B, 32B, dbb4e3faa9c2376c
+ethiopian/year/names/v1, mr/3, 56B, 26B, 318c03cefbe58b55
 ethiopian/year/names/v1, mr/4, -> mr/3
 ethiopian/year/names/v1, mr/5, -> mr/3
-ethiopian/year/names/v1, nl/3, 53B, 23B, 2f0e14201c911869
+ethiopian/year/names/v1, nl/3, 46B, 16B, 7884dea4b0fcd35c
 ethiopian/year/names/v1, nl/4, -> nl/3
-ethiopian/year/names/v1, nl/5, 68B, 38B, fea22ab2b4bcdc63
-ethiopian/year/names/v1, no/3, 59B, 29B, ff3021626c44676c
-ethiopian/year/names/v1, no/4, 47B, 17B, c13c9e7348dc10f7
-ethiopian/year/names/v1, no/5, 74B, 44B, 98a6a5083ec22e76
-ethiopian/year/names/v1, pa/3, 62B, 32B, 280d14e177c2bb03
+ethiopian/year/names/v1, nl/5, 56B, 26B, 3871a02a6164a047
+ethiopian/year/names/v1, no/3, 50B, 20B, 223b4b250f4b8f7
+ethiopian/year/names/v1, no/4, 42B, 12B, b8a59347f1236cb
+ethiopian/year/names/v1, no/5, 60B, 30B, 4520426342d7e88d
+ethiopian/year/names/v1, pa/3, 56B, 26B, f19dad4461f56dfe
 ethiopian/year/names/v1, pa/4, -> pa/3
 ethiopian/year/names/v1, pa/5, -> pa/3
-ethiopian/year/names/v1, ro/3, 59B, 29B, c154dcf7566e1f3c
+ethiopian/year/names/v1, ro/3, 53B, 23B, 3ad0938fe3a3ca50
 ethiopian/year/names/v1, ro/4, -> ro/3
-ethiopian/year/names/v1, ro/5, 80B, 50B, 78333e2d16efad64
-ethiopian/year/names/v1, ru/3, 76B, 46B, 43318c4772b54750
+ethiopian/year/names/v1, ro/5, 74B, 44B, 410167c87a24e0fd
+ethiopian/year/names/v1, ru/3, 70B, 40B, 15618436baa28d6b
 ethiopian/year/names/v1, ru/4, -> ru/3
-ethiopian/year/names/v1, ru/5, 118B, 88B, 47c4b6344a6259a4
-ethiopian/year/names/v1, sc/3, 54B, 24B, 30f6b575814787aa
+ethiopian/year/names/v1, ru/5, 112B, 82B, 711532ca63276406
+ethiopian/year/names/v1, sc/3, 48B, 18B, a197e6bd5805dede
 ethiopian/year/names/v1, sc/4, -> sc/3
-ethiopian/year/names/v1, sc/5, 112B, 82B, 9accb462aff3dadf
-ethiopian/year/names/v1, und/3, 50B, 20B, d585cf1b04a2de74
+ethiopian/year/names/v1, sc/5, 94B, 64B, 76877492408bb59e
+ethiopian/year/names/v1, und/3, 44B, 14B, 54de65f502923d62
 ethiopian/year/names/v1, und/4, -> und/3
 ethiopian/year/names/v1, und/5, -> und/3
-ethiopian/year/names/v1, ur/3, 56B, 26B, 8109ad872d6d2aa8
+ethiopian/year/names/v1, ur/3, 50B, 20B, 403eea531ddafd6d
 ethiopian/year/names/v1, ur/4, -> ur/3
 ethiopian/year/names/v1, ur/5, -> ur/3
-ethiopian/year/names/v1, zh/3, 57B, 27B, b23cac31bf891e55
+ethiopian/year/names/v1, zh/3, 51B, 21B, 47ebb7f28176fc24
 ethiopian/year/names/v1, zh/4, -> zh/3
-ethiopian/year/names/v1, zh/5, 113B, 83B, acbfb620b6be2c5b
+ethiopian/year/names/v1, zh/5, 75B, 45B, 35e7d0dc7370fc20
 exemplar/cities/root/v1, <lookup>, 383B, 74 identifiers
 exemplar/cities/root/v1, <total>, 167425B, 165967B, 33 unique payloads
 exemplar/cities/root/v1, am, 4736B, 4692B, 997d0bef21e05488
