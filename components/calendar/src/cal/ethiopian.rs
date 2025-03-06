@@ -134,7 +134,7 @@ impl Calendar for Ethiopian {
                         max: i32::MAX,
                     });
                 }
-                year
+                year + AMETE_ALEM_OFFSET
             }
             (EthiopianEraStyle::AmeteMihret, Some(MUNDI | ETHIOAA)) => {
                 if year > AMETE_ALEM_OFFSET {
@@ -145,7 +145,7 @@ impl Calendar for Ethiopian {
                         max: AMETE_ALEM_OFFSET,
                     });
                 }
-                year - AMETE_ALEM_OFFSET
+                year
             }
             (EthiopianEraStyle::AmeteAlem, Some(MUNDI | ETHIOAA) | None) => year,
             (_, Some(era)) => {
@@ -253,7 +253,8 @@ impl Ethiopian {
     }
 
     fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> RataDie {
-        calendrical_calculations::ethiopian::fixed_from_ethiopian(date.year, date.month, date.day)
+        // calendrical calculations expects years in the Incarnation era
+        calendrical_calculations::ethiopian::fixed_from_ethiopian(date.year  - AMETE_ALEM_OFFSET, date.month, date.day)
     }
 
     fn ethiopian_from_fixed(date: RataDie) -> EthiopianDateInner {
@@ -267,7 +268,8 @@ impl Ethiopian {
                 }
                 Ok(ymd) => ymd,
             };
-        EthiopianDateInner(ArithmeticDate::new_unchecked(year, month, day))
+        // calendrical calculations returns years in the Incarnation era
+        EthiopianDateInner(ArithmeticDate::new_unchecked(year  + AMETE_ALEM_OFFSET, month, day))
     }
 
     fn days_in_year_direct(year: i32) -> u16 {
@@ -284,21 +286,25 @@ impl Ethiopian {
                 types::EraYear {
                     standard_era: tinystr!(16, "ethioaa").into(),
                     formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
-                    era_year: if amete_alem {
-                        year
-                    } else {
-                        year - AMETE_ALEM_OFFSET
-                    },
+                    era_year: year,
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         } else {
             types::YearInfo::new(
-                year,
+                if amete_alem {
+                    year
+                } else {
+                    year - AMETE_ALEM_OFFSET
+                },
                 types::EraYear {
                     standard_era: tinystr!(16, "ethiopic").into(),
                     formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
-                    era_year: year,
+                    era_year: if amete_alem {
+                        year
+                    } else {
+                        year - AMETE_ALEM_OFFSET
+                    },
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
