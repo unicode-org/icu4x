@@ -15,6 +15,7 @@ use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;
+use icu_provider::DataPayloadOr;
 use marker_attrs::GlueType;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
@@ -43,7 +44,7 @@ impl RawPreferences {
 
 #[derive(Debug, Clone)]
 pub(crate) struct DatePatternSelectionData {
-    payload: DataPayload<ErasedPackedPatterns>,
+    payload: DataPayloadOr<ErasedPackedPatterns, ()>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -57,7 +58,7 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 /// the same as their individual patterns with glue.
 #[derive(Debug, Clone)]
 pub(crate) struct TimePatternSelectionData {
-    payload: DataPayload<ErasedPackedPatterns>,
+    payload: DataPayloadOr<ErasedPackedPatterns, ()>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -103,11 +104,11 @@ impl ItemsAndOptions<'_> {
 pub(crate) struct DateTimeZonePatternSelectionData {
     options: RawOptions,
     prefs: RawPreferences,
-    date: Option<DatePatternSelectionData>,
+    date: DatePatternSelectionData,
     // The data for the overlap case is the same as for time, so we use the same intermediate
     // type. This means that we can't have overlap patterns with both a year and a time. This
     // assumption might need to be revisited.
-    time: Option<TimePatternSelectionData>,
+    time: TimePatternSelectionData,
     zone: Option<ZonePatternSelectionData>,
     glue: Option<DataPayload<GluePatternV1>>,
 }
@@ -121,6 +122,10 @@ pub(crate) struct DateTimeZonePatternDataBorrowed<'a> {
 }
 
 impl DatePatternSelectionData {
+    pub(crate) fn none() -> Self {
+        Self { payload: DataPayloadOr::none() }
+    }
+
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         prefs: DateTimeFormatterPreferences,
@@ -135,51 +140,41 @@ impl DatePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self { payload })
+        Ok(Self { payload: DataPayloadOr::from_payload(payload) })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> impl Iterator<Item = PatternItem> + '_ {
-        let items: &ZeroSlice<PatternItem> = match self {
-            DatePatternSelectionData { payload } => {
-                payload
-                    .get()
-                    .get(options.length, PackedSkeletonVariant::Variant1)
-                    .items
-            }
-        };
-        items.iter()
+    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
+        let payload = self.payload.get_option()?;
+        Some(payload.get(options.length, PackedSkeletonVariant::Variant1).items.iter())
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions) -> DatePatternDataBorrowed {
-        match self {
-            DatePatternSelectionData { payload } => {
-                let year_style = options.year_style.unwrap_or_default();
-                let variant = match (
-                    year_style,
-                    input
-                        .year
-                        .map(|y| y.year_ambiguity())
-                        .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
-                ) {
-                    (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
-                        PackedSkeletonVariant::Variant1
-                    }
-                    (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
-                        PackedSkeletonVariant::Variant0
-                    }
-                    (YearStyle::Auto, YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired) => {
-                        PackedSkeletonVariant::Standard
-                    }
-                };
-                DatePatternDataBorrowed::Resolved(
-                    payload.get().get(options.length, variant),
-                    options.alignment,
-                )
+    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions) -> Option<DatePatternDataBorrowed> {
+        let payload = self.payload.get_option()?;
+        let year_style = options.year_style.unwrap_or_default();
+        let variant = match (
+            year_style,
+            input
+                .year
+                .map(|y| y.year_ambiguity())
+                .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
+        ) {
+            (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
+                PackedSkeletonVariant::Variant1
             }
-        }
+            (YearStyle::Full, _) | (_, YearAmbiguity::CenturyRequired) => {
+                PackedSkeletonVariant::Variant0
+            }
+            (YearStyle::Auto, YearAmbiguity::Unambiguous | YearAmbiguity::EraRequired) => {
+                PackedSkeletonVariant::Standard
+            }
+        };
+        Some(DatePatternDataBorrowed::Resolved(
+            payload.get(options.length, variant),
+            options.alignment,
+        ))
     }
 }
 
@@ -217,6 +212,10 @@ impl<'a> DatePatternDataBorrowed<'a> {
 }
 
 impl TimePatternSelectionData {
+    pub(crate) fn none() -> Self {
+        Self { payload: DataPayloadOr::none() }
+    }
+
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         prefs: DateTimeFormatterPreferences,
@@ -255,9 +254,7 @@ impl TimePatternSelectionData {
                     .payload
             }
         };
-        Ok(Self {
-            payload,
-        })
+        Ok(Self { payload: DataPayloadOr::from_payload(payload) })
     }
 
     pub(crate) fn try_new_overlap_with_skeleton(
@@ -282,43 +279,27 @@ impl TimePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self {
-            payload,
-        })
+        Ok(Self { payload: DataPayloadOr::from_payload(payload) })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> impl Iterator<Item = PatternItem> + '_ {
-        let items: &ZeroSlice<PatternItem> = match self {
-            TimePatternSelectionData {
-                payload, ..
-            } => {
-                payload
-                    .get()
-                    .get(options.length, PackedSkeletonVariant::Variant1)
-                    .items
-            }
-        };
-        items.iter()
+    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
+        let payload = self.payload.get_option()?;
+        Some(payload.get(options.length, PackedSkeletonVariant::Variant1).items.iter())
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions, prefs: &RawPreferences) -> TimePatternDataBorrowed {
-        match self {
-            TimePatternSelectionData {
-                payload,
-            } => {
-                let time_precision = options.time_precision.unwrap_or_default();
-                let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
-                TimePatternDataBorrowed::Resolved(
-                    payload.get().get(options.length, variant),
-                    options.alignment,
-                    prefs.hour_cycle,
-                    subsecond_digits,
-                )
-            }
-        }
+    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions, prefs: &RawPreferences) -> Option<TimePatternDataBorrowed> {
+        let payload = self.payload.get_option()?;
+        let time_precision = options.time_precision.unwrap_or_default();
+        let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
+        Some(TimePatternDataBorrowed::Resolved(
+            payload.get(options.length, variant),
+            options.alignment,
+            prefs.hour_cycle,
+            subsecond_digits,
+        ))
     }
 }
 
@@ -392,8 +373,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
-                    date: Some(selection),
-                    time: None,
+                    date: selection,
+                    time: TimePatternSelectionData::none(),
                     zone: None,
                     glue: None,
                 })
@@ -408,8 +389,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
-                    date: Some(selection),
-                    time: None,
+                    date: selection,
+                    time: TimePatternSelectionData::none(),
                     zone: None,
                     glue: None,
                 })
@@ -425,8 +406,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
-                    date: None,
-                    time: Some(selection),
+                    date: DatePatternSelectionData::none(),
+                    time: selection,
                     zone: None,
                     glue: None,
                 })
@@ -441,8 +422,8 @@ impl DateTimeZonePatternSelectionData {
                         time_precision: None,
                     },
                     prefs: Default::default(), // not used: no time
-                    date: None,
-                    time: None,
+                    date: DatePatternSelectionData::none(),
+                    time: TimePatternSelectionData::none(),
                     zone: Some(selection),
                     glue: None,
                 })
@@ -466,8 +447,8 @@ impl DateTimeZonePatternSelectionData {
                         return Ok(Self {
                             options,
                             prefs,
-                            date: None,
-                            time: Some(overlap),
+                            date: DatePatternSelectionData::none(),
+                            time: overlap,
                             zone: None,
                             glue: None,
                         });
@@ -488,8 +469,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
-                    date: Some(date),
-                    time: Some(time),
+                    date: date,
+                    time: time,
                     zone: None,
                     glue: Some(glue),
                 })
@@ -506,8 +487,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
-                    date: Some(date),
-                    time: None,
+                    date: date,
+                    time: TimePatternSelectionData::none(),
                     zone: Some(zone),
                     glue: Some(glue),
                 })
@@ -525,8 +506,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
-                    date: None,
-                    time: Some(time),
+                    date: DatePatternSelectionData::none(),
+                    time: time,
                     zone: Some(zone),
                     glue: Some(glue),
                 })
@@ -549,8 +530,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
-                    date: Some(date),
-                    time: Some(time),
+                    date: date,
+                    time: time,
                     zone: Some(zone),
                     glue: Some(glue),
                 })
@@ -593,12 +574,8 @@ impl DateTimeZonePatternSelectionData {
         let Self {
             date, time, zone, ..
         } = self;
-        let date_items = date
-            .into_iter()
-            .flat_map(|x| x.pattern_items_for_data_loading(&self.options));
-        let time_items = time
-            .into_iter()
-            .flat_map(|x| x.pattern_items_for_data_loading(&self.options));
+        let date_items = date.pattern_items_for_data_loading(&self.options).into_iter().flatten();
+        let time_items = time.pattern_items_for_data_loading(&self.options).into_iter().flatten();
         let zone_items = zone
             .into_iter()
             .flat_map(|x| x.pattern_items_for_data_loading());
@@ -608,8 +585,8 @@ impl DateTimeZonePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> DateTimeZonePatternDataBorrowed {
         DateTimeZonePatternDataBorrowed {
-            date: self.date.as_ref().map(|date| date.select(input, &self.options)),
-            time: self.time.as_ref().map(|time| time.select(input, &self.options, &self.prefs)),
+            date: self.date.select(input, &self.options),
+            time: self.time.select(input, &self.options, &self.prefs),
             zone: self.zone.as_ref().map(|zone| zone.select(input)),
             glue: self.glue.as_ref().map(|glue| glue.get()),
         }
