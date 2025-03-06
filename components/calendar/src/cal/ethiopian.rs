@@ -19,6 +19,7 @@
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
+use crate::types::Era;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -31,11 +32,10 @@ const AMETE_ALEM_OFFSET: i32 = 5500;
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 #[non_exhaustive]
 pub enum EthiopianEraStyle {
-    /// Use an era scheme of pre- and post- Incarnation eras,
-    /// anchored at the date of the Incarnation of Jesus in this calendar
+    /// Use the Anno Mundi era, anchored at the date of Creation, followed by the
+    /// Incarnation era, anchored at the date of the Incarnation of Jesus
     AmeteMihret,
-    /// Use an era scheme of the Anno Mundi era, anchored at the date of Creation
-    /// in this calendar
+    /// Use the single Anno Mundi era, anchored at the date of Creation
     AmeteAlem,
 }
 
@@ -53,9 +53,8 @@ pub enum EthiopianEraStyle {
 ///
 /// # Era codes
 ///
-/// This calendar supports three era codes, based on what mode it is in. In the Amete Mihret scheme it has
-/// the `"incar"` and `"pre-incar"` eras, 1 Incarnation is 9 CE. In the Amete Alem scheme, it instead has a single era,
-/// `"mundi`, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
+/// This calendar always uses the `"mundi` era, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
+/// In the Amete Mihret scheme it uses the additional `"incar"` era, 1 Incarnation is 9 CE.
 ///
 /// # Month codes
 ///
@@ -120,8 +119,13 @@ impl Calendar for Ethiopian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if let Some(era) = era {
-            if era.0 == tinystr!(16, "incar") || era.0 == tinystr!(16, "ethiopic") {
+        const INCAR: Era = Era(tinystr!(16, "incar"));
+        const ETHIOPIC: Era = Era(tinystr!(16, "ethiopic"));
+        const MUNDI: Era = Era(tinystr!(16, "mundi"));
+        const ETHIOAA: Era = Era(tinystr!(16, "ethioaa"));
+
+        let year = match (self.era_style(), era) {
+            (EthiopianEraStyle::AmeteMihret, Some(INCAR | ETHIOPIC) | None) => {
                 if year <= 0 {
                     return Err(DateError::Range {
                         field: "year",
@@ -131,25 +135,22 @@ impl Calendar for Ethiopian {
                     });
                 }
                 year
-            } else if era.0 == tinystr!(16, "pre-incar")
-                || era.0 == tinystr!(16, "ethiopic-inverse")
-            {
-                if year <= 0 {
+            }
+            (EthiopianEraStyle::AmeteMihret, Some(MUNDI | ETHIOAA)) => {
+                if year > AMETE_ALEM_OFFSET {
                     return Err(DateError::Range {
                         field: "year",
                         value: year,
-                        min: 1,
-                        max: i32::MAX,
+                        min: i32::MIN,
+                        max: AMETE_ALEM_OFFSET,
                     });
                 }
-                1 - year
-            } else if era.0 == tinystr!(16, "mundi") || era.0 == tinystr!(16, "ethioaa") {
                 year - AMETE_ALEM_OFFSET
-            } else {
+            }
+            (EthiopianEraStyle::AmeteAlem, Some(MUNDI | ETHIOAA) | None) => year,
+            (_, Some(era)) => {
                 return Err(DateError::UnknownEra(era));
             }
-        } else {
-            year
         };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
     }
@@ -277,23 +278,17 @@ impl Ethiopian {
         }
     }
     fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::YearInfo {
-        if amete_alem {
+        if amete_alem || year <= 0 {
             types::YearInfo::new(
                 year,
                 types::EraYear {
                     standard_era: tinystr!(16, "ethioaa").into(),
                     formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
-                    era_year: year + AMETE_ALEM_OFFSET,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
-        } else if year > 0 {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ethiopic").into(),
-                    formatting_era: types::FormattingEra::Index(2, tinystr!(16, "Incarnation")),
-                    era_year: year,
+                    era_year: if amete_alem {
+                        year
+                    } else {
+                        year - AMETE_ALEM_OFFSET
+                    },
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
@@ -301,10 +296,10 @@ impl Ethiopian {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "ethiopic-inverse").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Pre-Incarnation")),
-                    era_year: 1 - year,
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+                    standard_era: tinystr!(16, "ethiopic").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
+                    era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
             )
         }
@@ -313,10 +308,6 @@ impl Ethiopian {
 
 impl Date<Ethiopian> {
     /// Construct new Ethiopian Date.
-    ///
-    /// For the Amete Mihret era style, negative years work with
-    /// year 0 as 1 pre-Incarnation, year -1 as 2 pre-Incarnation,
-    /// and so on.
     ///
     /// ```rust
     /// use icu::calendar::cal::EthiopianEraStyle;

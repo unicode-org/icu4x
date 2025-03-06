@@ -1917,7 +1917,7 @@ mod tests {
         single_test_roundtrip(ethiopian, "incar", 2000, "M03", 1);
         single_test_roundtrip(ethiopian, "incar", 2000, "M13", 1);
         // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopian, "pre-incar", 100, "M03", 1);
+        // single_test_roundtrip(ethiopian, "mundi", 5400, "M03", 1);
         single_test_error(
             ethiopian,
             "incar",
@@ -1933,15 +1933,15 @@ mod tests {
         );
         single_test_error(
             ethiopian,
-            "pre-incar",
-            0,
+            "mundi",
+            5600,
             "M03",
             1,
             DateError::Range {
                 field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
+                value: 5600,
+                min: i32::MIN,
+                max: 5500,
             },
         );
         single_test_error(
