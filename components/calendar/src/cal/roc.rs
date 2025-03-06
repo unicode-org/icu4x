@@ -74,8 +74,8 @@ impl Calendar for Roc {
         }
 
         let year = match era {
-            Some(Era::ROC) | None => year,
-            Some(Era::ROC_INVERSE) => 1 - year,
+            Some(Era::ROC) | None => year + ROC_ERA_OFFSET,
+            Some(Era::ROC_INVERSE) => 1 + ROC_ERA_OFFSET - year,
             Some(e) => return Err(DateError::UnknownEra(e)),
         };
 
