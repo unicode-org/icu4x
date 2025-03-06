@@ -145,13 +145,13 @@ impl DatePatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
+    pub(crate) fn pattern_items_for_data_loading(&self, options: RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
         let payload = self.payload.get_option()?;
         Some(payload.get(options.length, PackedSkeletonVariant::Variant1).items.iter())
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions) -> Option<DatePatternDataBorrowed> {
+    pub(crate) fn select(&self, input: &ExtractedInput, options: RawOptions) -> Option<DatePatternDataBorrowed> {
         let payload = self.payload.get_option()?;
         let year_style = options.year_style.unwrap_or_default();
         let variant = match (
@@ -284,13 +284,13 @@ impl TimePatternSelectionData {
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self, options: &RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
+    pub(crate) fn pattern_items_for_data_loading(&self, options: RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
         let payload = self.payload.get_option()?;
         Some(payload.get(options.length, PackedSkeletonVariant::Variant1).items.iter())
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput, options: &RawOptions, prefs: &RawPreferences) -> Option<TimePatternDataBorrowed> {
+    pub(crate) fn select(&self, input: &ExtractedInput, options: RawOptions, prefs: RawPreferences) -> Option<TimePatternDataBorrowed> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
         let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
@@ -469,8 +469,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
-                    date: date,
-                    time: time,
+                    date,
+                    time,
                     zone: None,
                     glue: Some(glue),
                 })
@@ -487,7 +487,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
-                    date: date,
+                    date,
                     time: TimePatternSelectionData::none(),
                     zone: Some(zone),
                     glue: Some(glue),
@@ -507,7 +507,7 @@ impl DateTimeZonePatternSelectionData {
                     options,
                     prefs,
                     date: DatePatternSelectionData::none(),
-                    time: time,
+                    time,
                     zone: Some(zone),
                     glue: Some(glue),
                 })
@@ -530,8 +530,8 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
-                    date: date,
-                    time: time,
+                    date,
+                    time,
                     zone: Some(zone),
                     glue: Some(glue),
                 })
@@ -574,10 +574,10 @@ impl DateTimeZonePatternSelectionData {
         let Self {
             date, time, zone, ..
         } = self;
-        let date_items = date.pattern_items_for_data_loading(&self.options).into_iter().flatten();
-        let time_items = time.pattern_items_for_data_loading(&self.options).into_iter().flatten();
+        let date_items = date.pattern_items_for_data_loading(self.options).into_iter().flatten();
+        let time_items = time.pattern_items_for_data_loading(self.options).into_iter().flatten();
         let zone_items = zone
-            .into_iter()
+            .iter()
             .flat_map(|x| x.pattern_items_for_data_loading());
         date_items.chain(time_items).chain(zone_items)
     }
@@ -585,8 +585,8 @@ impl DateTimeZonePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> DateTimeZonePatternDataBorrowed {
         DateTimeZonePatternDataBorrowed {
-            date: self.date.select(input, &self.options),
-            time: self.time.select(input, &self.options, &self.prefs),
+            date: self.date.select(input, self.options),
+            time: self.time.select(input, self.options, self.prefs),
             zone: self.zone.as_ref().map(|zone| zone.select(input)),
             glue: self.glue.as_ref().map(|glue| glue.get()),
         }
