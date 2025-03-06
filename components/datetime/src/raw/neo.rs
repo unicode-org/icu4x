@@ -46,7 +46,6 @@ pub(crate) enum DatePatternSelectionData {
     SkeletonDate {
         payload: DataPayload<ErasedPackedPatterns>,
     },
-    // TODO(#4478): add support for optional eras
 }
 
 #[derive(Debug, Copy, Clone)]
