@@ -106,8 +106,11 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
     use either::Either;
 
     let array: &[_] = match calendar {
-        "gregory" => &[("0", tinystr!(16, "bce")), ("1", tinystr!(16, "ce"))],
-        "buddhist" => &[("0", tinystr!(16, "be"))],
+        "gregory" => &[
+            ("0", tinystr!(16, "gregory-inverse")),
+            ("1", tinystr!(16, "gregory")),
+        ],
+        "buddhist" => &[("0", tinystr!(16, "buddhist"))],
         "japanese" | "japanext" => {
             return Either::Right(
                 crate::calendar::japanese::get_era_code_map()
@@ -116,17 +119,21 @@ pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, Ti
             )
         }
         "coptic" => &[
-            // Before Diocletian
-            ("0", tinystr!(16, "bd")),
-            // Anno Diocletian/After Diocletian
-            ("1", tinystr!(16, "ad")),
+            ("0", tinystr!(16, "coptic-inverse")),
+            ("1", tinystr!(16, "coptic")),
         ],
         "dangi" | "chinese" => &[],
-        "indian" => &[("0", tinystr!(16, "saka"))],
-        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "ah"))],
-        "persian" => &[("0", tinystr!(16, "ah"))],
+        "indian" => &[("0", tinystr!(16, "indian"))],
+        "islamic" => &[("0", tinystr!(16, "islamic"))],
+        "islamicc" => &[("0", tinystr!(16, "islamic-civil"))],
+        "umalqura" => &[("0", tinystr!(16, "islamic-umalqura"))],
+        "tbla" => &[("0", tinystr!(16, "islamic-tbla"))],
+        "persian" => &[("0", tinystr!(16, "persian"))],
         "hebrew" => &[("0", tinystr!(16, "hebrew"))],
-        "ethiopic" => &[("0", tinystr!(16, "mundi")), ("1", tinystr!(16, "incar"))],
+        "ethiopic" => &[
+            ("0", tinystr!(16, "ethioaa")),
+            ("1", tinystr!(16, "ethiopic")),
+        ],
         "roc" => &[
             ("0", tinystr!(16, "roc-inverse")),
             ("1", tinystr!(16, "roc")),

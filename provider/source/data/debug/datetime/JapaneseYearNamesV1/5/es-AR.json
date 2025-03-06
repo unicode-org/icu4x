@@ -1,8 +1,8 @@
 {
   "VariableEras": [
     [
-      "bce",
-      "ce",
+      "gregory",
+      "gregory-inverse",
       "heisei",
       "meiji",
       "reiwa",
@@ -10,8 +10,8 @@
       "taisho"
     ],
     [
-      "después de Cristo",
       "antes de Cristo",
+      "después de Cristo",
       "Heisei",
       "Meiji",
       "Reiwa",

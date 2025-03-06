@@ -32,7 +32,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar supports one era, `"default"`
+/// This calendar uses a single era: `default`
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -81,16 +81,15 @@ impl Calendar for Iso {
     /// Construct a date from era/month codes and fields
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "default") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some("default") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }

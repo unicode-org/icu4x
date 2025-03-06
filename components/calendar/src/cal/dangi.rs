@@ -31,7 +31,6 @@ use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date, Is
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 /// The [Traditional Korean (Dangi) Calendar](https://en.wikipedia.org/wiki/Korean_calendar)
 ///
@@ -66,7 +65,7 @@ use tinystr::tinystr;
 /// ```
 /// # Era codes
 ///
-/// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1. Typically
+/// This Calendar uses a single era code `dangi` based on the year -2332 ISO (2333 BCE) as year 1. Typically
 /// years will be formatted using cyclic years and the related ISO year.
 ///
 /// # Month codes
@@ -158,25 +157,19 @@ impl Calendar for Dangi {
 
     fn date_from_codes(
         &self,
-        era: Option<crate::types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year_info = self.get_precomputed_data().load_or_compute_info(year);
 
-        let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code(month_code, year_info)
-        {
-            ordinal
-        } else {
+        let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year_info) else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
-
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "dangi") {
-                return Err(DateError::UnknownEra(era));
-            }
+        match era {
+            Some("dangi") | None => {}
+            _ => return Err(DateError::UnknownEra),
         }
 
         Inner::new_from_ordinals(year, month, day, year_info)

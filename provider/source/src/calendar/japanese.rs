@@ -197,8 +197,8 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
             .map(|(i, (_, value))| (i.to_string(), value))
             .collect();
         // Splice in details about gregorian eras for pre-meiji dates
-        map.insert("-2".to_string(), tinystr!(16, "bce"));
-        map.insert("-1".to_string(), tinystr!(16, "ce"));
+        map.insert("-2".to_string(), tinystr!(16, "gregory-inverse"));
+        map.insert("-1".to_string(), tinystr!(16, "gregory"));
         map
     })
 }

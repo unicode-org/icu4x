@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::error::DateError;
+use crate::error::{year_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use tinystr::tinystr;
 
@@ -30,7 +30,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar supports two era codes: `"bce"`, and `"ce"`, corresponding to the BCE and CE eras
+/// This calendar uses two era codes: `gregory-inverse` (aliases `bce`, `bc`), and `gregory` (aliases `ce`, `ad`), corresponding to the BCE and CE eras.
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
@@ -43,37 +43,15 @@ impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if let Some(era) = era {
-            if era.0 == tinystr!(16, "ce") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                year
-            } else if era.0 == tinystr!(16, "bce") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                1 - year
-            } else {
-                return Err(DateError::UnknownEra(era));
-            }
-        } else {
-            year
+        let year = match era {
+            Some("gregory-inverse" | "bce" | "bc") | None => 1 - year_check(year, 1..)?,
+            Some("gregory" | "ad" | "ce") => year_check(year, 1..)?,
+            Some(_) => return Err(DateError::UnknownEra),
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)
