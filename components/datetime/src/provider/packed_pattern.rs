@@ -123,9 +123,9 @@ icu_provider::data_marker!(
 /// - Standard: Year, which could be partial precision (2-digit Gregorian)
 /// - Variant 0: Full Year, which is always full precision
 /// - Variant 1: Year With Era
-/// 
+///
 /// And by time formatting:
-/// 
+///
 /// - Standard: Hour only
 /// - Variant 0: Hour and minute
 /// - Variant 1: Hour, minute, and second

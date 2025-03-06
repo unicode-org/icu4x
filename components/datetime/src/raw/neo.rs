@@ -123,7 +123,9 @@ pub(crate) struct DateTimeZonePatternDataBorrowed<'a> {
 
 impl DatePatternSelectionData {
     pub(crate) fn none() -> Self {
-        Self { payload: DataPayloadOr::none() }
+        Self {
+            payload: DataPayloadOr::none(),
+        }
     }
 
     pub(crate) fn try_new_with_skeleton(
@@ -140,18 +142,32 @@ impl DatePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self { payload: DataPayloadOr::from_payload(payload) })
+        Ok(Self {
+            payload: DataPayloadOr::from_payload(payload),
+        })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self, options: RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
+    pub(crate) fn pattern_items_for_data_loading(
+        &self,
+        options: RawOptions,
+    ) -> Option<impl Iterator<Item = PatternItem> + '_> {
         let payload = self.payload.get_option()?;
-        Some(payload.get(options.length, PackedSkeletonVariant::Variant1).items.iter())
+        Some(
+            payload
+                .get(options.length, PackedSkeletonVariant::Variant1)
+                .items
+                .iter(),
+        )
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput, options: RawOptions) -> Option<DatePatternDataBorrowed> {
+    pub(crate) fn select(
+        &self,
+        input: &ExtractedInput,
+        options: RawOptions,
+    ) -> Option<DatePatternDataBorrowed> {
         let payload = self.payload.get_option()?;
         let year_style = options.year_style.unwrap_or_default();
         let variant = match (
@@ -213,7 +229,9 @@ impl<'a> DatePatternDataBorrowed<'a> {
 
 impl TimePatternSelectionData {
     pub(crate) fn none() -> Self {
-        Self { payload: DataPayloadOr::none() }
+        Self {
+            payload: DataPayloadOr::none(),
+        }
     }
 
     pub(crate) fn try_new_with_skeleton(
@@ -254,7 +272,9 @@ impl TimePatternSelectionData {
                     .payload
             }
         };
-        Ok(Self { payload: DataPayloadOr::from_payload(payload) })
+        Ok(Self {
+            payload: DataPayloadOr::from_payload(payload),
+        })
     }
 
     pub(crate) fn try_new_overlap_with_skeleton(
@@ -279,18 +299,33 @@ impl TimePatternSelectionData {
                 ..Default::default()
             })?
             .payload;
-        Ok(Self { payload: DataPayloadOr::from_payload(payload) })
+        Ok(Self {
+            payload: DataPayloadOr::from_payload(payload),
+        })
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self, options: RawOptions) -> Option<impl Iterator<Item = PatternItem> + '_> {
+    pub(crate) fn pattern_items_for_data_loading(
+        &self,
+        options: RawOptions,
+    ) -> Option<impl Iterator<Item = PatternItem> + '_> {
         let payload = self.payload.get_option()?;
-        Some(payload.get(options.length, PackedSkeletonVariant::Variant1).items.iter())
+        Some(
+            payload
+                .get(options.length, PackedSkeletonVariant::Variant1)
+                .items
+                .iter(),
+        )
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput, options: RawOptions, prefs: RawPreferences) -> Option<TimePatternDataBorrowed> {
+    pub(crate) fn select(
+        &self,
+        input: &ExtractedInput,
+        options: RawOptions,
+        prefs: RawPreferences,
+    ) -> Option<TimePatternDataBorrowed> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
         let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
@@ -574,11 +609,15 @@ impl DateTimeZonePatternSelectionData {
         let Self {
             date, time, zone, ..
         } = self;
-        let date_items = date.pattern_items_for_data_loading(self.options).into_iter().flatten();
-        let time_items = time.pattern_items_for_data_loading(self.options).into_iter().flatten();
-        let zone_items = zone
-            .iter()
-            .flat_map(|x| x.pattern_items_for_data_loading());
+        let date_items = date
+            .pattern_items_for_data_loading(self.options)
+            .into_iter()
+            .flatten();
+        let time_items = time
+            .pattern_items_for_data_loading(self.options)
+            .into_iter()
+            .flatten();
+        let zone_items = zone.iter().flat_map(|x| x.pattern_items_for_data_loading());
         date_items.chain(time_items).chain(zone_items)
     }
 
