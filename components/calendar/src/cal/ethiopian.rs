@@ -254,7 +254,11 @@ impl Ethiopian {
 
     fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> RataDie {
         // calendrical calculations expects years in the Incarnation era
-        calendrical_calculations::ethiopian::fixed_from_ethiopian(date.year  - AMETE_ALEM_OFFSET, date.month, date.day)
+        calendrical_calculations::ethiopian::fixed_from_ethiopian(
+            date.year - AMETE_ALEM_OFFSET,
+            date.month,
+            date.day,
+        )
     }
 
     fn ethiopian_from_fixed(date: RataDie) -> EthiopianDateInner {
@@ -269,7 +273,11 @@ impl Ethiopian {
                 Ok(ymd) => ymd,
             };
         // calendrical calculations returns years in the Incarnation era
-        EthiopianDateInner(ArithmeticDate::new_unchecked(year  + AMETE_ALEM_OFFSET, month, day))
+        EthiopianDateInner(ArithmeticDate::new_unchecked(
+            year + AMETE_ALEM_OFFSET,
+            month,
+            day,
+        ))
     }
 
     fn days_in_year_direct(year: i32) -> u16 {
