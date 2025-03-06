@@ -470,16 +470,6 @@ impl DataMarkerInfo {
         }
     }
 
-    /// TODO
-    #[cfg_attr(not(feature = "export"), allow(unused_variables))]
-    pub const fn with_attributes_domain(self, attributes_domain: &'static str) -> Self {
-        Self {
-            #[cfg(feature = "export")]
-            attributes_domain,
-            ..self
-        }
-    }
-
     /// Returns [`Ok`] if this data marker matches the argument, or the appropriate error.
     ///
     /// Convenience method for data providers that support a single [`DataMarkerInfo`].
