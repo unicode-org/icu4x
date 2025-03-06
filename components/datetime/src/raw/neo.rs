@@ -54,19 +54,10 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
     Resolved(runtime::PatternBorrowed<'a>, Option<Alignment>),
 }
 
-/// An "overlap" pattern: one that has fields from at least 2 of date, time, and zone.
+/// This enum represents both time patterns and overlap patterns between non-year dates and times.
 ///
 /// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
 /// the same as their individual patterns with glue.
-#[derive(Debug, Clone)]
-pub(crate) enum OverlapPatternSelectionData {
-    SkeletonDateTime {
-        options: RawOptions,
-        prefs: RawPreferences,
-        payload: DataPayload<ErasedPackedPatterns>,
-    },
-}
-
 #[derive(Debug, Clone)]
 pub(crate) enum TimePatternSelectionData {
     SkeletonTime {
@@ -118,17 +109,17 @@ impl ItemsAndOptions<'_> {
 #[derive(Debug, Clone, Default)]
 pub(crate) struct DateTimeZonePatternSelectionData {
     date: Option<DatePatternSelectionData>,
+    // The data for the overlap case is the same as for time, so we use the same intermediate
+    // type. This means that we can't have overlap patterns with both a year and a time. This
+    // assumption might need to be revisited.
     time: Option<TimePatternSelectionData>,
     zone: Option<ZonePatternSelectionData>,
-    overlap: Option<OverlapPatternSelectionData>,
     glue: Option<DataPayload<GluePatternV1>>,
 }
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct DateTimeZonePatternDataBorrowed<'a> {
     date: Option<DatePatternDataBorrowed<'a>>,
-    // Minor hack: the borrowed runtime data for the overlap case is the same as for time,
-    // so use the same intermediate type. This assumption might need to be revisited.
     time: Option<TimePatternDataBorrowed<'a>>,
     zone: Option<ZonePatternDataBorrowed<'a>>,
     glue: Option<&'a GluePattern<'a>>,
@@ -231,74 +222,6 @@ impl<'a> DatePatternDataBorrowed<'a> {
     }
 }
 
-impl OverlapPatternSelectionData {
-    pub(crate) fn try_new_with_skeleton(
-        provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        prefs: DateTimeFormatterPreferences,
-        attributes: &DataMarkerAttributes,
-        options: RawOptions,
-    ) -> Result<Self, DataError> {
-        let locale = provider
-            .bound_marker()
-            .make_locale(prefs.locale_preferences);
-        let prefs = RawPreferences::from_prefs(prefs);
-        let payload = provider
-            .load_bound(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
-                ..Default::default()
-            })?
-            .payload;
-        Ok(Self::SkeletonDateTime {
-            options,
-            prefs,
-            payload,
-        })
-    }
-
-    /// Borrows a pattern containing all of the fields that need to be loaded.
-    #[inline]
-    pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        let items: &ZeroSlice<PatternItem> = match self {
-            OverlapPatternSelectionData::SkeletonDateTime {
-                options, payload, ..
-            } => {
-                payload
-                    .get()
-                    .get(options.length, PackedSkeletonVariant::Variant1)
-                    .items
-            }
-        };
-        items.iter()
-    }
-
-    /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput) -> TimePatternDataBorrowed {
-        match self {
-            OverlapPatternSelectionData::SkeletonDateTime {
-                options,
-                prefs,
-                payload,
-            } => {
-                // Currently, none of the overlap patterns have a year field,
-                // so we can use the variant to select the time precision.
-                //
-                // We do not currently support overlap patterns with both a
-                // year and a time because that would involve 3*3 = 9 variants
-                // instead of 3 variants.
-                debug_assert!(options.year_style.is_none());
-                let time_precision = options.time_precision.unwrap_or_default();
-                let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
-                TimePatternDataBorrowed::Resolved(
-                    payload.get().get(options.length, variant),
-                    options.alignment,
-                    prefs.hour_cycle,
-                    subsecond_digits,
-                )
-            }
-        }
-    }
-}
-
 impl TimePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
@@ -346,6 +269,36 @@ impl TimePatternSelectionData {
         })
     }
 
+    pub(crate) fn try_new_overlap_with_skeleton(
+        provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        attributes: &DataMarkerAttributes,
+        options: RawOptions,
+    ) -> Result<Self, DataError> {
+        // Currently, none of the overlap patterns have a year field,
+        // so we can use the variant to select the time precision.
+        //
+        // We do not currently support overlap patterns with both a
+        // year and a time because that would involve 3*3 = 9 variants
+        // instead of 3 variants.
+        debug_assert!(options.year_style.is_none());
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let prefs = RawPreferences::from_prefs(prefs);
+        let payload = provider
+            .load_bound(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
+                ..Default::default()
+            })?
+            .payload;
+        Ok(Self::SkeletonTime {
+            options,
+            prefs,
+            payload,
+        })
+    }
+
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
@@ -355,7 +308,7 @@ impl TimePatternSelectionData {
             } => {
                 payload
                     .get()
-                    .get(options.length, PackedSkeletonVariant::Standard)
+                    .get(options.length, PackedSkeletonVariant::Variant1)
                     .items
             }
         };
@@ -494,7 +447,7 @@ impl DateTimeZonePatternSelectionData {
                 // TODO(#5387): load the patterns for custom hour cycles here
                 if let (Some(attributes), None) = (field_set.id_str(), prefs.hour_cycle) {
                     // Try loading an overlap pattern.
-                    if let Some(overlap) = OverlapPatternSelectionData::try_new_with_skeleton(
+                    if let Some(overlap) = TimePatternSelectionData::try_new_overlap_with_skeleton(
                         // Note: overlap patterns are stored in the date provider
                         date_provider,
                         prefs,
@@ -504,7 +457,7 @@ impl DateTimeZonePatternSelectionData {
                     .allow_identifier_not_found()?
                     {
                         return Ok(Self {
-                            overlap: Some(overlap),
+                            time: Some(overlap),
                             ..Default::default()
                         });
                     }
@@ -623,11 +576,7 @@ impl DateTimeZonePatternSelectionData {
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
         let Self {
-            date,
-            time,
-            zone,
-            overlap,
-            ..
+            date, time, zone, ..
         } = self;
         let date_items = date
             .into_iter()
@@ -638,24 +587,14 @@ impl DateTimeZonePatternSelectionData {
         let zone_items = zone
             .into_iter()
             .flat_map(|x| x.pattern_items_for_data_loading());
-        let overlap_items = overlap
-            .into_iter()
-            .flat_map(|x| x.pattern_items_for_data_loading());
-        date_items
-            .chain(time_items)
-            .chain(zone_items)
-            .chain(overlap_items)
+        date_items.chain(time_items).chain(zone_items)
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, input: &ExtractedInput) -> DateTimeZonePatternDataBorrowed {
         DateTimeZonePatternDataBorrowed {
             date: self.date.as_ref().map(|date| date.select(input)),
-            time: self
-                .time
-                .as_ref()
-                .map(|time| time.select(input))
-                .or_else(|| self.overlap.as_ref().map(|overlap| overlap.select(input))),
+            time: self.time.as_ref().map(|time| time.select(input)),
             zone: self.zone.as_ref().map(|zone| zone.select(input)),
             glue: self.glue.as_ref().map(|glue| glue.get()),
         }
