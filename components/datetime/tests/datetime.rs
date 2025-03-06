@@ -110,7 +110,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
             if let Some(hour_cycle) = fx.input.options.hour_cycle {
                 apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
             }
-            if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
+            if let Some(kind) = AnyCalendarKind::from_prefs((&locale).into()) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,

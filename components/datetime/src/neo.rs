@@ -899,7 +899,6 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// );
     ///
     /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
-    /// assert_eq!(formatter.calendar().kind().as_bcp47_string(), "buddhist");
     /// ```
     pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
         icu_calendar::Ref(&self.calendar)

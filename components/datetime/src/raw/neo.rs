@@ -53,9 +53,9 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 }
 
 /// This enum represents both time patterns and overlap patterns between non-year dates and times.
-///
-/// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
-/// the same as their individual patterns with glue.
+//
+// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
+// the same as their individual patterns with glue.
 #[derive(Debug, Clone)]
 pub(crate) struct TimePatternSelectionData {
     payload: DataPayloadOr<ErasedPackedPatterns, ()>,
