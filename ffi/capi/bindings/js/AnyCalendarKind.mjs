@@ -115,10 +115,10 @@ export class AnyCalendarKind {
     static Persian = AnyCalendarKind.#objectValues[16];
     static Roc = AnyCalendarKind.#objectValues[17];
 
-    static getForLocale(locale) {
+    static createForLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_AnyCalendarKind_get_for_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_AnyCalendarKind_create_for_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -129,42 +129,6 @@ export class AnyCalendarKind {
         
         finally {
             diplomatReceive.free();
-        }
-    }
-
-    static getForBcp47(s) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
-        
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_AnyCalendarKind_get_for_bcp47_mv1(diplomatReceive.buffer, ...sSlice.splat());
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                return null;
-            }
-            return new AnyCalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-        }
-        
-        finally {
-            functionCleanupArena.free();
-        
-            diplomatReceive.free();
-        }
-    }
-
-    get bcp47() {
-        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_AnyCalendarKind_bcp47_mv1(this.ffiValue, write.buffer);
-    
-        try {
-            return write.readString8();
-        }
-        
-        finally {
-            write.free();
         }
     }
 

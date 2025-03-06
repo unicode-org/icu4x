@@ -5,6 +5,7 @@
 use core::str::FromStr;
 
 use crate::{AnyCalendarKind, AsCalendar, Calendar, Date, Iso, RangeError};
+use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
 use ixdtf::ParseError as IxdtfError;
@@ -99,8 +100,12 @@ impl<A: AsCalendar> Date<A> {
         let iso = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
 
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
-            let parsed_calendar = crate::AnyCalendarKind::get_for_bcp47_bytes(ixdtf_calendar)
-                .ok_or(ParseError::UnknownCalendar)?;
+            let parsed_calendar =
+                icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
+                    .ok()
+                    .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
+                    .and_then(|c| c.try_into().ok())
+                    .ok_or(ParseError::UnknownCalendar)?;
             let expected_calendar = calendar
                 .as_calendar()
                 .any_calendar_kind()
