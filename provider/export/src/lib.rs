@@ -186,7 +186,10 @@ impl ExportDriver {
         .with_additional_collations([])
     }
 
-    /// TODO
+    /// Adds a filter on a [`DataMarkerAttributes`].
+    ///
+    /// These are keyed by a `domain`, which is [`DataMarkerInfo::attributes_domain`] and
+    /// can thus apply to multiple data markers at once.
     pub fn with_marker_attributes_filter(
         mut self,
         domain: &str,
