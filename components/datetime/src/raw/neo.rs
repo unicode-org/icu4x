@@ -375,13 +375,9 @@ impl ZonePatternSelectionData {
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        let Self::SinglePatternItem(field_set, _) = self;
-        let (symbol, length) = field_set.to_field();
-        [PatternItem::Field(Field {
-            symbol: FieldSymbol::TimeZone(symbol),
-            length: length,
-        })]
-        .into_iter()
+        let Self::SinglePatternItem(_, pattern_item) = self;
+        let pattern_item = PatternItem::from_unaligned(*pattern_item);
+        [pattern_item].into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
