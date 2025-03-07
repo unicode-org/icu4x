@@ -210,7 +210,7 @@ macro_rules! impl_marker_with_options {
         impl $type {
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
-                    length: yes_or!(self.length, $(Length::$length_override)?),
+                    length: yes_or!(Some(self.length), $(Some(Length::$length_override))?),
                     date_fields: yes_or!(None, $($date_fields)?),
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),

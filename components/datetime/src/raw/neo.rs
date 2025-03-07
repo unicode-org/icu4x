@@ -23,11 +23,21 @@ use zerovec::ZeroSlice;
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawOptions {
-    pub(crate) length: Length,
+    pub(crate) length: Option<Length>,
     pub(crate) date_fields: Option<builder::DateFields>,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
+}
+
+impl RawOptions {
+    #[inline]
+    pub(crate) fn length(self) -> Length {
+        self.length.unwrap_or_else(|| {
+            debug_assert!(false, "length not set in a formatter that needs it");
+            Default::default()
+        })
+    }
 }
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -158,7 +168,7 @@ impl DatePatternSelectionData {
         let payload = self.payload.get_option()?;
         Some(
             payload
-                .get(options.length, PackedSkeletonVariant::Variant1)
+                .get(options.length(), PackedSkeletonVariant::Variant1)
                 .items
                 .iter(),
         )
@@ -190,7 +200,7 @@ impl DatePatternSelectionData {
             }
         };
         Some(DatePatternDataBorrowed::Resolved(
-            payload.get(options.length, variant),
+            payload.get(options.length(), variant),
             options.alignment,
         ))
     }
@@ -315,7 +325,7 @@ impl TimePatternSelectionData {
         let payload = self.payload.get_option()?;
         Some(
             payload
-                .get(options.length, PackedSkeletonVariant::Variant1)
+                .get(options.length(), PackedSkeletonVariant::Variant1)
                 .items
                 .iter(),
         )
@@ -332,7 +342,7 @@ impl TimePatternSelectionData {
         let time_precision = options.time_precision.unwrap_or_default();
         let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
         Some(TimePatternDataBorrowed::Resolved(
-            payload.get(options.length, variant),
+            payload.get(options.length(), variant),
             options.alignment,
             prefs.hour_cycle,
             subsecond_digits,
@@ -453,7 +463,7 @@ impl DateTimeZonePatternSelectionData {
                 let selection = ZonePatternSelectionData::new_with_skeleton(field_set);
                 Ok(Self {
                     options: RawOptions {
-                        length: Length::Medium, // not used
+                        length: None,
                         date_fields: None,
                         year_style: None,
                         alignment: None,
@@ -592,7 +602,7 @@ impl DateTimeZonePatternSelectionData {
                     marker_attrs::pattern_marker_attr_for_glue(
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
-                        match options.length {
+                        match options.length() {
                             Length::Long => marker_attrs::PatternLength::Long,
                             Length::Medium => marker_attrs::PatternLength::Medium,
                             Length::Short => marker_attrs::PatternLength::Short,
