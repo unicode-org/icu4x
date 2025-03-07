@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fieldsets::builder;
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::format::ExtractedInput;
 use crate::options::*;
@@ -23,6 +24,7 @@ use zerovec::ZeroSlice;
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawOptions {
     pub(crate) length: Length,
+    pub(crate) date_fields: Option<builder::DateFields>,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
@@ -452,6 +454,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options: RawOptions {
                         length: Length::Medium, // not used
+                        date_fields: None,
                         year_style: None,
                         alignment: None,
                         time_precision: None,
