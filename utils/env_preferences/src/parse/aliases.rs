@@ -2,15 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locale::subtags::{language, region, Language, Region};
-
 /// Find a BCP-47 language/region from a list of POSIX locale aliases.
 ///
 /// Some of these conversions are approximate and not exact (e.g. "C"->"und").
 /// This is based on GNU libc's `intl/locale.alias` file, with some manual processing
 /// to remove duplicates. The original file is available at:
 /// https://sourceware.org/git/?p=glibc.git;a=blob;f=intl/locale.alias;hb=HEAD
-pub fn get_bcp47_subtags_from_posix_alias(alias: &str) -> Option<(Language, Option<Region>)> {
+#[cfg(any(doc, feature = "parse_posix", target_os = "linux"))]
+pub fn find_posix_alias(
+    alias: &str,
+) -> Option<(
+    icu_locale::subtags::Language,
+    Option<icu_locale::subtags::Region>,
+)> {
+    use icu_locale::subtags::{language, region, Language};
+
     match alias {
         "C" | "POSIX" => Some((Language::UND, None)),
         "bokmal" => Some((language!("nb"), Some(region!("NO")))),
@@ -50,6 +56,17 @@ pub fn get_bcp47_subtags_from_posix_alias(alias: &str) -> Option<(Language, Opti
         "swedish" => Some((language!("sv"), Some(region!("SE")))),
         "thai" => Some((language!("th"), Some(region!("TH")))),
         "turkish" => Some((language!("tr"), Some(region!("TR")))),
+        _ => None,
+    }
+}
+
+#[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
+pub fn find_windows_alias(lcid: &str) -> Option<icu_locale::Locale> {
+    use icu_locale::locale;
+
+    match lcid {
+        "es-ES_tradnl" => Some(locale!("es-ES-u-co-trad")),
+        "zh-yue-HK" => Some(locale!("yue-HK")),
         _ => None,
     }
 }

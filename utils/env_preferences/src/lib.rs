@@ -17,6 +17,7 @@
 //! & [`TimeZone`](https://crates.io/crates/icu_time)
 
 mod error;
+pub mod parse;
 
 pub use error::{LocaleError, RetrievalError};
 
@@ -32,17 +33,24 @@ compile_error!(
 );
 
 #[cfg(target_os = "macos")]
-pub use apple::{self as system, AppleLocale as SystemLocale};
+use apple as system;
 #[cfg(target_os = "linux")]
-pub use posix::{self as system, PosixLocale as SystemLocale};
+use posix as system;
 #[cfg(target_os = "windows")]
-pub use windows::{self as system, WindowsLocale as SystemLocale};
+use windows as system;
+
+#[cfg(target_os = "macos")]
+use parse::apple::AppleLocale as SystemLocale;
+#[cfg(target_os = "linux")]
+use parse::posix::PosixLocale as SystemLocale;
+#[cfg(target_os = "windows")]
+use parse::windows::WindowsLocale as SystemLocale;
 
 #[cfg(not(target_os = "linux"))]
 // There are no parsing errors on most platforms, so just alias to the broader [`LocaleError`] enum
-use error::LocaleError as SystemLocaleError;
+use error::RetrievalError as SystemLocaleError;
 #[cfg(target_os = "linux")]
-use posix::PosixParseError as SystemLocaleError;
+use parse::posix::PosixParseError as SystemLocaleError;
 
 pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
     system::get_raw_locales()

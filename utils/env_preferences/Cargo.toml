@@ -32,8 +32,13 @@ features = [
     "Globalization",
     "Globalization_DateTimeFormatting",
     "Win32",
-    "Win32_Globalization"
+    "Win32_Globalization",
 ]
 
 [dev-dependencies]
 icu_locale = { workspace = true }
+
+[features]
+parse_apple = []
+parse_posix = []
+parse_windows = []

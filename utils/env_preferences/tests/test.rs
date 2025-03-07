@@ -2,18 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod parse;
+
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
-    use env_preferences::{get_locales, get_system_calendars, LocaleCategory, RetrievalError};
+    use env_preferences::posix::{get_raw_locale_categories, get_system_calendars, LocaleCategory};
+    use env_preferences::RetrievalError;
     use icu_locale::Locale;
     use libc::setlocale;
 
     // Testing fetching of locale, as `get_locales` fetches the locales for category
     // `LC_ALL`. For this category this should return non empty
     #[test]
-    fn test_get_locales() {
-        let locale_res = get_locales().unwrap();
+    fn test_get_raw_locale_categories() {
+        let locale_res = get_raw_locale_categories().unwrap();
         assert!(
             !locale_res.is_empty(),
             "Empty hashmap for locales retrieved"
@@ -25,7 +28,8 @@ mod linux_tests {
 
     #[test]
     fn test_converting_locales() {
-        let locale_res: std::collections::HashMap<LocaleCategory, String> = get_locales().unwrap();
+        let locale_res: std::collections::HashMap<LocaleCategory, String> =
+            get_raw_locale_categories().unwrap();
         for locale in locale_res.into_values() {
             let parts: Vec<&str> = locale.split('.').collect();
 
@@ -68,12 +72,12 @@ mod linux_tests {
 #[cfg(target_os = "macos")]
 #[cfg(test)]
 mod macos_test {
-    use env_preferences::{get_locales, get_system_calendars, get_system_time_zone};
+    use env_preferences::apple::{get_raw_locales, get_system_calendars, get_system_time_zone};
     use icu_locale::Locale;
 
     #[test]
-    fn test_get_locales() {
-        let locales_res = get_locales();
+    fn test_get_raw_locales() {
+        let locales_res = get_raw_locales();
         match locales_res {
             Ok(locales) => {
                 for locale in locales {
@@ -89,7 +93,7 @@ mod macos_test {
 
     #[test]
     fn test_converting_locales() {
-        let locales = get_locales().unwrap();
+        let locales = get_raw_locales().unwrap();
         for locale in locales {
             let _loc: Locale = locale.parse().unwrap();
         }
@@ -119,12 +123,12 @@ mod macos_test {
 #[cfg(target_os = "windows")]
 #[cfg(test)]
 mod windows_test {
-    use env_preferences::{get_locales, get_system_calendars, get_system_time_zone};
+    use env_preferences::windows::{get_raw_locales, get_system_calendars, get_system_time_zone};
     use icu_locale::Locale;
 
     #[test]
-    fn test_get_locales() {
-        let locales = get_locales().unwrap();
+    fn test_get_raw_locales() {
+        let locales = get_raw_locales().unwrap();
         for locale in locales {
             assert!(!locale.is_empty(), "Empty locale retrieved");
             assert!(locale.is_ascii(), "Invalid form of locale retrieved");
@@ -133,7 +137,7 @@ mod windows_test {
 
     #[test]
     fn test_converting_locales() {
-        let locales = get_locales().unwrap();
+        let locales = get_raw_locales().unwrap();
         for locale in locales {
             let _converted_locale: Locale = locale.parse().unwrap();
         }

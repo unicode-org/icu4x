@@ -8,7 +8,7 @@ use icu_locale::extensions::Extensions;
 use icu_locale::subtags::{language, script, variant, Language, Region, Variants};
 use icu_locale::{LanguageIdentifier, Locale, ParseError};
 
-use super::aliases::get_bcp47_subtags_from_posix_alias;
+use super::aliases::find_posix_alias;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum PosixParseError {
@@ -173,7 +173,7 @@ impl<'src> PosixLocale<'src> {
     /// (unknown modifiers will be silently ignored).
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
         // Check if the language matches a known alias (e.g. "nynorsk"->("nn", "NO"))
-        let (mut language, region) = match get_bcp47_subtags_from_posix_alias(self.language) {
+        let (mut language, region) = match find_posix_alias(self.language) {
             Some((language, region)) => (language, region),
             None => {
                 let language = Language::try_from_str(self.language)?;

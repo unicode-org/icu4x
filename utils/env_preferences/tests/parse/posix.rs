@@ -1,4 +1,8 @@
-use crate::posix::parse::PosixLocale;
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use env_preferences::parse::posix::PosixLocale;
 use icu_locale::Locale;
 
 fn expect_success(src: &str, expected: &str) {
@@ -51,7 +55,7 @@ fn modifier() {
 
 mod error {
     mod parse {
-        use crate::posix::parse::{PosixLocale, PosixParseError};
+        use env_preferences::parse::posix::{PosixLocale, PosixParseError};
 
         fn expect_error(src: &str, expected: PosixParseError) {
             let result = PosixLocale::try_from_str(src);
@@ -265,7 +269,7 @@ mod error {
     }
 
     mod conversion {
-        use crate::posix::parse::PosixLocale;
+        use env_preferences::parse::posix::PosixLocale;
         use icu_locale::ParseError;
 
         fn expect_error(src: &str, expected: ParseError) {
