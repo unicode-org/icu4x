@@ -107,12 +107,9 @@ impl SourceDataProvider {
                 .as_ref()
                 .expect("gregorian must have eras");
 
-            eras.names
-                .extend(greg_eras.names.iter().map(|(k, v)| (k.clone(), v.clone())));
-            eras.abbr
-                .extend(greg_eras.names.iter().map(|(k, v)| (k.clone(), v.clone())));
-            eras.narrow
-                .extend(greg_eras.names.iter().map(|(k, v)| (k.clone(), v.clone())));
+            eras.names.extend(greg_eras.names.clone());
+            eras.abbr.extend(greg_eras.names.clone());
+            eras.narrow.extend(greg_eras.names.clone());
         }
 
         Ok(data)
