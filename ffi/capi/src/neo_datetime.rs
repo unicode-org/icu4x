@@ -65,8 +65,6 @@ pub mod ffi {
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet,
         >,
-        icu_datetime::DateTimeFormatterPreferences,
-        icu_datetime::fieldsets::enums::DateAndTimeFieldSet,
     );
 
     impl DateTimeFormatter {
@@ -96,8 +94,6 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::DT(options),
             )))
         }
 
@@ -130,8 +126,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::DT(options),
             )))
         }
 
@@ -161,8 +155,6 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::MDT(options),
             )))
         }
 
@@ -194,8 +186,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::MDT(options),
             )))
         }
 
@@ -229,8 +219,6 @@ pub mod ffi {
                 .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::YMDT(options),
             )))
         }
 
@@ -265,8 +253,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::YMDT(options),
             )))
         }
 
@@ -296,8 +282,6 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::DET(options),
             )))
         }
 
@@ -329,8 +313,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::DET(options),
             )))
         }
 
@@ -360,8 +342,6 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::MDET(options),
             )))
         }
 
@@ -393,8 +373,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::MDET(options),
             )))
         }
 
@@ -431,8 +409,6 @@ pub mod ffi {
                 .with_year_style(map_or_default(year_style));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::YMDET(options),
             )))
         }
 
@@ -471,8 +447,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::YMDET(options),
             )))
         }
 
@@ -502,8 +476,6 @@ pub mod ffi {
                 .with_time_precision(map_or_default(time_precision));
             Ok(Box::new(DateTimeFormatter(
                 icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::ET(options),
             )))
         }
 
@@ -535,8 +507,6 @@ pub mod ffi {
                     options,
                 )?
                 .cast_into_fset(),
-                prefs,
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet::ET(options),
             )))
         }
 
@@ -555,14 +525,26 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
         pub fn with_zone_generic_long(
             &self,
+            locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
             use icu_datetime::fieldsets::zone::GenericLong as Zone;
             let mut names =
-                icu_datetime::pattern::DateTimeNames::from_formatter(self.1, self.0.clone())
+                icu_datetime::pattern::DateTimeNames::from_formatter(prefs, self.0.clone())
                     .cast_into_fset::<icu_datetime::fieldsets::Combo<_, Zone>>();
             names.as_mut().include_time_zone_generic_long_names()?;
+            let field_set = self
+                .0
+                .to_field_set_builder()
+                .build_date_and_time()
+                .map_err(|e| {
+                    debug_assert!(false, "should be infallible, but got: {e:?}");
+                    DateTimeFormatterLoadError::Unknown
+                })?
+                .zone(Zone);
             let formatter = names
-                .try_into_formatter(self.2.zone(Zone))
+                .try_into_formatter(field_set)
+                // This can fail if the locale doesn't match and the fields conflict
                 .map_err(|(e, _)| e)?
                 .cast_into_fset();
             Ok(Box::new(NeoZonedDateTimeFormatter(formatter)))
