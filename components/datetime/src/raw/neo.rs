@@ -7,7 +7,7 @@ use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::format::ExtractedInput;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
-use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
+use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
@@ -85,7 +85,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 
 #[derive(Debug, Clone)]
 pub(crate) enum ZonePatternSelectionData {
-    SinglePatternItem(TimeZone, FieldLength, <PatternItem as AsULE>::ULE),
+    SinglePatternItem(ZoneFieldSet, <PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -369,23 +369,24 @@ impl ZonePatternSelectionData {
             symbol: FieldSymbol::TimeZone(symbol),
             length,
         });
-        Self::SinglePatternItem(symbol, length, pattern_item.to_unaligned())
+        Self::SinglePatternItem(field_set, pattern_item.to_unaligned())
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        let Self::SinglePatternItem(symbol, length, _) = self;
+        let Self::SinglePatternItem(field_set, _) = self;
+        let (symbol, length) = field_set.to_field();
         [PatternItem::Field(Field {
-            symbol: FieldSymbol::TimeZone(*symbol),
-            length: *length,
+            symbol: FieldSymbol::TimeZone(symbol),
+            length: length,
         })]
         .into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _input: &ExtractedInput) -> ZonePatternDataBorrowed {
-        let Self::SinglePatternItem(_, _, pattern_item) = self;
+        let Self::SinglePatternItem(_, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
 }
@@ -641,6 +642,22 @@ impl DateTimeZonePatternSelectionData {
             time: self.time.select(input, self.options, self.prefs),
             zone: self.zone.as_ref().map(|zone| zone.select(input)),
             glue: self.glue.as_ref().map(|glue| glue.get()),
+        }
+    }
+
+    /// Converts one of these into a corresponding [`builder::FieldSetBuilder`]
+    pub(crate) fn to_builder(&self) -> builder::FieldSetBuilder {
+        let zone_style = self.zone.as_ref().map(|zone| {
+            let ZonePatternSelectionData::SinglePatternItem(field_set, _) = zone;
+            field_set.to_zone_style()
+        });
+        builder::FieldSetBuilder {
+            length: self.options.length,
+            date_fields: self.options.date_fields,
+            time_precision: self.options.time_precision,
+            zone_style,
+            alignment: self.options.alignment,
+            year_style: self.options.year_style,
         }
     }
 }

@@ -6,6 +6,7 @@
 
 use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
+use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::ExtractedInput;
@@ -902,6 +903,10 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
         icu_calendar::Ref(&self.calendar)
+    }
+
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        self.selection.to_builder()
     }
 }
 
