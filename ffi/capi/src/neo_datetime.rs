@@ -532,7 +532,9 @@ pub mod ffi {
             let mut names =
                 icu_datetime::pattern::DateTimeNames::from_formatter(prefs, self.0.clone())
                     .cast_into_fset::<icu_datetime::fieldsets::Combo<_, Zone>>();
+            names.as_mut().include_time_zone_essentials()?;
             names.as_mut().include_time_zone_generic_long_names()?;
+            names.as_mut().include_time_zone_location_names()?;
             let field_set = self
                 .0
                 .to_field_set_builder()
