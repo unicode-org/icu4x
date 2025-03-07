@@ -103,7 +103,7 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
 /// See FormattableEra for a definition of what chronological order is in this context.
 ///
 /// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
-// TODO: This map should be validated against calendarData.json
+// TODO: This should be replaced by loading calendarData.json
 pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, TinyStr16)>> {
     static MAP: OnceLock<BTreeMap<&'static str, Vec<(usize, TinyStr16)>>> = OnceLock::new();
 
@@ -169,6 +169,7 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
                 "ethiopic",
                 vec![(0, tinystr!(16, "ethioaa")), (1, tinystr!(16, "ethiopic"))],
             ),
+            ("ethioaa", vec![(0, tinystr!(16, "ethioaa"))]),
             (
                 "roc",
                 vec![(0, tinystr!(16, "roc-inverse")), (1, tinystr!(16, "roc"))],
@@ -177,6 +178,362 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
         .into_iter()
         .collect()
     })
+}
+
+// this test is trivial now, but in the future it should test the data in CLDR
+#[test]
+pub fn ethiopic_and_ethioaa_are_compatible() {
+    let ethiopic = &get_era_code_map()["ethiopic"];
+    let ethioaa = &get_era_code_map()["ethioaa"];
+    assert_eq!(ethioaa.iter().zip(ethiopic).find(|(e, a)| e != a), None);
+}
+
+// this test is trivial now, but in the future it should test the data in CLDR
+#[test]
+pub fn japanese_and_japanext_are_compatible() {
+    let japanese = &get_era_code_map()["japanese"];
+    let japanext = &get_era_code_map()["japanext"];
+    assert_eq!(
+        japanext
+            .iter()
+            .take(2)
+            .zip(japanese.iter().take(2))
+            .find(|(e, a)| e != a),
+        None
+    );
+    assert_eq!(
+        japanext
+            .iter()
+            .skip(2)
+            .rev()
+            .zip(japanese.iter().skip(2).rev())
+            .find(|(e, a)| e != a),
+        None
+    );
+}
+
+#[test]
+pub fn test_era_code_map_consistency() {
+    let provider = crate::SourceDataProvider::new_testing();
+
+    let cldr_data = &provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse::<cldr_serde::japanese::Resource>("supplemental/calendarData.json")
+        .unwrap()
+        .supplemental
+        .calendar_data;
+
+    let hardcoded_data = get_era_code_map();
+
+    for (calendar, data) in cldr_data {
+        let calendar = match calendar.as_str() {
+            "generic" => continue,
+            "islamic-rgsa" => continue,
+            "gregorian" => "gregory",
+            "ethiopic-amete-alem" => "ethioaa",
+            "japanese" => "japanext",
+            c => c,
+        };
+
+        let hardcoded_era_codes = hardcoded_data[calendar]
+            .iter()
+            .map(|(i, name)| (*i, name.as_str()))
+            .collect::<BTreeMap<_, _>>();
+
+        let cldr_era_codes = data
+            .eras
+            .iter()
+            .map(|(a, b)| (a.parse::<usize>().unwrap(), b.code.as_deref()))
+            .map(|(k, v)| (if calendar == "japanext" { k + 2 } else { k }, v))
+            .chain(data.inherit_eras.as_ref().into_iter().flat_map(|i| {
+                cldr_data[&i.calendar]
+                    .eras
+                    .iter()
+                    .map(|(a, b)| (a.parse::<usize>().unwrap(), b.code.as_deref()))
+            }))
+            .collect::<BTreeMap<_, _>>();
+
+        // Compare, allowing ICU to have values where CLDR does not (pre-Meiji)
+        assert!(
+            hardcoded_era_codes
+                .iter()
+                .zip(&cldr_era_codes)
+                .all(|((hk, hv), (ck, cv))| hk == ck && cv.map(|v| v == *hv).unwrap_or(true)),
+            "{calendar}: {hardcoded_era_codes:?} != {cldr_era_codes:?}"
+        );
+    }
+}
+
+#[test]
+fn test_calendar_eras() {
+    use icu::calendar::preferences::CalendarAlgorithm;
+    use icu::calendar::provider::EraStartDate;
+    use icu::calendar::Iso;
+    use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
+    use icu::locale::extensions::unicode::Value;
+
+    let provider = crate::SourceDataProvider::new_testing();
+
+    let mut cldr_data = provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse::<cldr_serde::japanese::Resource>("supplemental/calendarData.json")
+        .unwrap()
+        .supplemental
+        .calendar_data
+        .clone();
+
+    cldr_data
+        .get_mut("ethiopic")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .end = None;
+
+    cldr_data
+        .get_mut("ethiopic")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: -5492,
+        month: 7,
+        day: 19,
+    });
+
+    cldr_data
+        .get_mut("ethiopic-amete-alem")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .end = None;
+    cldr_data
+        .get_mut("ethiopic-amete-alem")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: -5492,
+        month: 7,
+        day: 19,
+    });
+
+    cldr_data
+        .get_mut("chinese")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: -2636,
+        month: 1,
+        day: 1,
+    });
+
+    cldr_data
+        .get_mut("dangi")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: -2331,
+        month: 1,
+        day: 1,
+    });
+
+    cldr_data
+        .get_mut("hebrew")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: -3760,
+        month: 9,
+        day: 7,
+    });
+
+    cldr_data
+        .get_mut("islamic-civil")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: 622,
+        month: 7,
+        day: 19,
+    });
+
+    cldr_data
+        .get_mut("islamic")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: 622,
+        month: 7,
+        day: 19,
+    });
+
+    cldr_data
+        .get_mut("islamic-tbla")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: 622,
+        month: 7,
+        day: 18,
+    });
+
+    cldr_data
+        .get_mut("islamic-umalqura")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: 622,
+        month: 7,
+        day: 18,
+    });
+
+    cldr_data
+        .get_mut("persian")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: 622,
+        month: 3,
+        day: 21,
+    });
+
+    cldr_data
+        .get_mut("indian")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start = Some(EraStartDate {
+        year: 79,
+        month: 3,
+        day: 22,
+    });
+
+    cldr_data
+        .get_mut("japanese")
+        .unwrap()
+        .eras
+        .iter_mut()
+        .for_each(|(_, era)| {
+            if let Some(start) = era.start.as_mut() {
+                if start.month == 2 && start.day > 28 {
+                    start.day = if calendrical_calculations::iso::is_leap_year(start.year) {
+                        29
+                    } else {
+                        28
+                    };
+                }
+            }
+        });
+
+    for (calendar, data) in cldr_data {
+        let kind = match calendar.as_str() {
+            "generic" => continue,
+            "islamic-rgsa" => continue,
+            "gregorian" => AnyCalendarKind::Gregorian,
+            "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
+            "japanese" => AnyCalendarKind::JapaneseExtended,
+            c => icu::calendar::AnyCalendarKind::try_from(
+                CalendarAlgorithm::try_from(&Value::try_from_str(c).unwrap()).unwrap(),
+            )
+            .unwrap(),
+        };
+
+        let cal = AnyCalendar::try_new_for_kind_unstable(&provider, kind).unwrap();
+        let cal = icu::calendar::Ref(&cal);
+
+        for (idx, era) in data.eras.values().cloned().enumerate() {
+            let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
+                (Some(start), None) => {
+                    let start = Date::try_new_iso(start.year, start.month, start.day).unwrap();
+                    (start, Iso::from_fixed(Iso::to_fixed(start) - 1))
+                }
+                (None, Some(end)) => {
+                    let end = Date::try_new_iso(end.year, end.month, end.day).unwrap();
+                    (end, Iso::from_fixed(Iso::to_fixed(end) + 1))
+                }
+                _ => unreachable!(),
+            };
+
+            let in_era = in_era_iso.to_calendar(cal);
+            let not_in_era = not_in_era_iso.to_calendar(cal);
+
+            // Check that code and aliases produce identical results
+            for era in era
+                .aliases
+                .as_deref()
+                .into_iter()
+                .flat_map(|s| s.split(' '))
+                .chain(era.code.as_deref())
+            {
+                assert_eq!(
+                    Date::try_new_from_codes(
+                        Some(era),
+                        in_era.year().era_year_or_extended(),
+                        in_era.month().standard_code,
+                        in_era.day_of_month().0,
+                        cal,
+                    ),
+                    Ok(in_era)
+                );
+            }
+
+            // Unless this is the first era and it's not an inverse era, check that the
+            // not_in_era date is in a different era
+            if idx > 0 || era.end.is_some() {
+                assert_ne!(
+                    not_in_era.year().standard_era(),
+                    in_era.year().standard_era()
+                );
+            }
+
+            // The remaining tests don't work for cyclic calendars
+            if calendar == "dangi" || calendar == "chinese" {
+                continue;
+            }
+
+            // Check that the correct era code is returned
+            if let Some(code) = era.code.as_deref() {
+                assert_eq!(in_era.year().standard_era().unwrap().0, code);
+            }
+
+            // Check that the start/end date uses year 1, and minimal/maximal month/day
+            assert_eq!(in_era.year().era_year_or_extended(), 1);
+            if calendar == "japanese" {
+                // Japanese is the only calendar that doesn't have its own months
+            } else if era.start.is_some() {
+                assert_eq!(in_era.month().ordinal, 1);
+                assert_eq!(in_era.day_of_month().0, 1);
+            } else {
+                assert_eq!(in_era.month().ordinal, in_era.months_in_year());
+                assert_eq!(in_era.day_of_month().0, in_era.days_in_month());
+            }
+        }
+    }
 }
 
 macro_rules! symbols_from {

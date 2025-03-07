@@ -219,7 +219,7 @@ fn year_as_saka(year: i32) -> types::YearInfo {
         year,
         types::EraYear {
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-            standard_era: tinystr!(16, "saka").into(),
+            standard_era: tinystr!(16, "indian").into(),
             era_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         },

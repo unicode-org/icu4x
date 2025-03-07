@@ -13,7 +13,7 @@ use std::env;
 use tinystr::TinyStr16;
 
 pub(crate) const JAPANEXT_FILE: &str =
-    include_str!("../../data/japanese-golden/calendar/japanext@1/und.json");
+    include_str!("../../data/japanese-golden/calendar/CalendarJapaneseExtendedV1.json");
 
 impl SourceDataProvider {
     fn load_japanese_eras(
@@ -45,8 +45,7 @@ impl SourceDataProvider {
             .core()
             .read_and_parse::<cldr_serde::japanese::Resource>("supplemental/calendarData.json")?
             .supplemental
-            .calendar_data
-            .japanese
+            .calendar_data["japanese"]
             .eras;
 
         let mut dates_to_eras = BTreeMap::new();
@@ -57,12 +56,16 @@ impl SourceDataProvider {
                 continue;
             }
 
-            if era_id == "-1" || era_id == "-2" {
-                // These eras are handled in code
-                continue;
-            }
+            let mut start_date = date.start.unwrap();
 
-            let start_date = date.start.unwrap();
+            // Invalid days in CLDR, multiple Feb 29 in non-leap years, even a Feb 30
+            if start_date.month == 2 && start_date.day > 28 {
+                start_date.day = if calendrical_calculations::iso::is_leap_year(start_date.year) {
+                    29
+                } else {
+                    28
+                };
+            }
 
             if start_date.year >= 1868 || japanext {
                 let code = era_to_code(era_name_map.get(era_id).unwrap(), start_date.year)
@@ -89,7 +92,7 @@ impl SourceDataProvider {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
                     changed in an incompatible way, or there is a new Japanese era. Run \
-                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers JapaneseExtendedErasV1 --format fs --syntax json \
+                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers CalendarJapaneseExtendedV1 --format fs --syntax json \
                     --out provider/source/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
                     check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
                     in icu_provider_source will need to be updated to handle the data changes."

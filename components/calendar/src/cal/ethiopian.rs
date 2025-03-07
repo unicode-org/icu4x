@@ -13,7 +13,7 @@
 //!
 //! assert_eq!(date_ethiopian.year().era_year_or_extended(), 1962);
 //! assert_eq!(date_ethiopian.month().ordinal, 4);
-//! assert_eq!(date_ethiopian.day_of_month().0, 24);
+//! assert_eq!(date_ethiopian.day_of_month().0, 22);
 //! ```
 
 use crate::cal::iso::Iso;
@@ -335,7 +335,23 @@ mod test {
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
         assert_eq!(date_ethiopian.year().extended_year, 2015);
         assert_eq!(date_ethiopian.month().ordinal, 13);
-        assert_eq!(date_ethiopian.day_of_month().0, 6);
+        assert_eq!(date_ethiopian.day_of_month().0, 4);
+    }
+
+    #[test]
+    fn test_epoch() {
+        let iso_date = Date::try_new_iso(8, 8, 29).unwrap();
+        let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
+
+        assert_eq!(date_ethiopian.year().standard_era().unwrap().0, "ethiopic");
+        assert_eq!(date_ethiopian.year().extended_year, 1);
+        assert_eq!(date_ethiopian.month().ordinal, 1);
+        assert_eq!(date_ethiopian.day_of_month().0, 1);
+
+        let iso_date = Date::try_new_iso(8, 8, 28).unwrap();
+        let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
+
+        assert_eq!(date_ethiopian.year().standard_era().unwrap().0, "ethioaa");
     }
 
     #[test]
@@ -345,7 +361,7 @@ mod test {
 
         assert_eq!(date_ethiopian.year().extended_year, 1962);
         assert_eq!(date_ethiopian.month().ordinal, 4);
-        assert_eq!(date_ethiopian.day_of_month().0, 24);
+        assert_eq!(date_ethiopian.day_of_month().0, 22);
 
         assert_eq!(
             date_ethiopian.to_iso(),
@@ -363,7 +379,7 @@ mod test {
 
         assert_eq!(date_ethiopian.year().extended_year, 7462);
         assert_eq!(date_ethiopian.month().ordinal, 4);
-        assert_eq!(date_ethiopian.day_of_month().0, 24);
+        assert_eq!(date_ethiopian.day_of_month().0, 22);
 
         assert_eq!(
             date_ethiopian.to_iso(),
