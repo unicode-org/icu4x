@@ -6,6 +6,7 @@
 
 use crate::error::DateTimeFormatterLoadError;
 use crate::external_loaders::*;
+use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::ExtractedInput;
@@ -771,6 +772,60 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
             _calendar: PhantomData,
         }
     }
+
+    /// Gets a [`FieldSetBuilder`] corresponding to the fields and options configured in this
+    /// formatter. The builder can be used to recreate the formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::input::*;
+    /// use icu::datetime::options::*;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a simple YMDT formatter:
+    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     YMDT::long().hm().with_alignment(Alignment::Column)
+    /// )
+    /// .unwrap();
+    ///
+    /// // Get the builder corresponding to it:
+    /// let builder = formatter.to_field_set_builder();
+    ///
+    /// // Check that the builder is what we expect:
+    /// let mut equivalent_builder = FieldSetBuilder::default();
+    /// equivalent_builder.length = Some(Length::Long);
+    /// equivalent_builder.date_fields = Some(DateFields::YMD);
+    /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
+    /// equivalent_builder.alignment = Some(Alignment::Column);
+    /// assert_eq!(
+    ///     builder,
+    ///     equivalent_builder,
+    /// );
+    ///
+    /// // Check that it creates a formatter with equivalent behavior:
+    /// let built_formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     builder.build_composite_datetime().unwrap(),
+    /// )
+    /// .unwrap();
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_gregorian(2025, 3, 6).unwrap(),
+    ///     time: Time::try_new(16, 41, 0, 0).unwrap(),
+    /// };
+    /// assert_eq!(
+    ///     formatter.format(&datetime).to_string(),
+    ///     built_formatter.format(&datetime).to_string(),
+    /// );
+    /// ```
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        self.selection.to_builder()
+    }
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
@@ -902,6 +957,60 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// ```
     pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
         icu_calendar::Ref(&self.calendar)
+    }
+
+    /// Gets a [`FieldSetBuilder`] corresponding to the fields and options configured in this
+    /// formatter. The builder can be used to recreate the formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::input::*;
+    /// use icu::datetime::options::*;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a simple YMDT formatter:
+    /// let formatter = DateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     YMDT::long().hm().with_alignment(Alignment::Column)
+    /// )
+    /// .unwrap();
+    ///
+    /// // Get the builder corresponding to it:
+    /// let builder = formatter.to_field_set_builder();
+    ///
+    /// // Check that the builder is what we expect:
+    /// let mut equivalent_builder = FieldSetBuilder::default();
+    /// equivalent_builder.length = Some(Length::Long);
+    /// equivalent_builder.date_fields = Some(DateFields::YMD);
+    /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
+    /// equivalent_builder.alignment = Some(Alignment::Column);
+    /// assert_eq!(
+    ///     builder,
+    ///     equivalent_builder,
+    /// );
+    ///
+    /// // Check that it creates a formatter with equivalent behavior:
+    /// let built_formatter = DateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     builder.build_composite_datetime().unwrap(),
+    /// )
+    /// .unwrap();
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_iso(2025, 3, 6).unwrap(),
+    ///     time: Time::try_new(16, 41, 0, 0).unwrap(),
+    /// };
+    /// assert_eq!(
+    ///     formatter.format(&datetime).to_string(),
+    ///     built_formatter.format(&datetime).to_string(),
+    /// );
+    /// ```
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        self.selection.to_builder()
     }
 }
 

@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fieldsets::builder;
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
 use crate::format::ExtractedInput;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
-use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
+use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
@@ -22,10 +23,21 @@ use zerovec::ZeroSlice;
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawOptions {
-    pub(crate) length: Length,
+    pub(crate) length: Option<Length>,
+    pub(crate) date_fields: Option<builder::DateFields>,
     pub(crate) alignment: Option<Alignment>,
     pub(crate) year_style: Option<YearStyle>,
     pub(crate) time_precision: Option<TimePrecision>,
+}
+
+impl RawOptions {
+    #[inline]
+    pub(crate) fn length(self) -> Length {
+        self.length.unwrap_or_else(|| {
+            debug_assert!(false, "length not set in a formatter that needs it");
+            Default::default()
+        })
+    }
 }
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -73,7 +85,7 @@ pub(crate) enum TimePatternDataBorrowed<'a> {
 
 #[derive(Debug, Clone)]
 pub(crate) enum ZonePatternSelectionData {
-    SinglePatternItem(TimeZone, FieldLength, <PatternItem as AsULE>::ULE),
+    SinglePatternItem(ZoneFieldSet, <PatternItem as AsULE>::ULE),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -156,7 +168,7 @@ impl DatePatternSelectionData {
         let payload = self.payload.get_option()?;
         Some(
             payload
-                .get(options.length, PackedSkeletonVariant::Variant1)
+                .get(options.length(), PackedSkeletonVariant::Variant1)
                 .items
                 .iter(),
         )
@@ -188,7 +200,7 @@ impl DatePatternSelectionData {
             }
         };
         Some(DatePatternDataBorrowed::Resolved(
-            payload.get(options.length, variant),
+            payload.get(options.length(), variant),
             options.alignment,
         ))
     }
@@ -313,7 +325,7 @@ impl TimePatternSelectionData {
         let payload = self.payload.get_option()?;
         Some(
             payload
-                .get(options.length, PackedSkeletonVariant::Variant1)
+                .get(options.length(), PackedSkeletonVariant::Variant1)
                 .items
                 .iter(),
         )
@@ -330,7 +342,7 @@ impl TimePatternSelectionData {
         let time_precision = options.time_precision.unwrap_or_default();
         let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
         Some(TimePatternDataBorrowed::Resolved(
-            payload.get(options.length, variant),
+            payload.get(options.length(), variant),
             options.alignment,
             prefs.hour_cycle,
             subsecond_digits,
@@ -357,23 +369,20 @@ impl ZonePatternSelectionData {
             symbol: FieldSymbol::TimeZone(symbol),
             length,
         });
-        Self::SinglePatternItem(symbol, length, pattern_item.to_unaligned())
+        Self::SinglePatternItem(field_set, pattern_item.to_unaligned())
     }
 
     /// Borrows a pattern containing all of the fields that need to be loaded.
     #[inline]
     pub(crate) fn pattern_items_for_data_loading(&self) -> impl Iterator<Item = PatternItem> + '_ {
-        let Self::SinglePatternItem(symbol, length, _) = self;
-        [PatternItem::Field(Field {
-            symbol: FieldSymbol::TimeZone(*symbol),
-            length: *length,
-        })]
-        .into_iter()
+        let Self::SinglePatternItem(_, pattern_item) = self;
+        let pattern_item = PatternItem::from_unaligned(*pattern_item);
+        [pattern_item].into_iter()
     }
 
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(&self, _input: &ExtractedInput) -> ZonePatternDataBorrowed {
-        let Self::SinglePatternItem(_, _, pattern_item) = self;
+        let Self::SinglePatternItem(_, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
 }
@@ -451,7 +460,8 @@ impl DateTimeZonePatternSelectionData {
                 let selection = ZonePatternSelectionData::new_with_skeleton(field_set);
                 Ok(Self {
                     options: RawOptions {
-                        length: Length::Medium, // not used
+                        length: None,
+                        date_fields: None,
                         year_style: None,
                         alignment: None,
                         time_precision: None,
@@ -589,7 +599,7 @@ impl DateTimeZonePatternSelectionData {
                     marker_attrs::pattern_marker_attr_for_glue(
                         // According to UTS 35, use the date length here: use the glue
                         // pattern "whose type matches the type of the date pattern"
-                        match options.length {
+                        match options.length() {
                             Length::Long => marker_attrs::PatternLength::Long,
                             Length::Medium => marker_attrs::PatternLength::Medium,
                             Length::Short => marker_attrs::PatternLength::Short,
@@ -628,6 +638,22 @@ impl DateTimeZonePatternSelectionData {
             time: self.time.select(input, self.options, self.prefs),
             zone: self.zone.as_ref().map(|zone| zone.select(input)),
             glue: self.glue.as_ref().map(|glue| glue.get()),
+        }
+    }
+
+    /// Converts one of these into a corresponding [`builder::FieldSetBuilder`]
+    pub(crate) fn to_builder(&self) -> builder::FieldSetBuilder {
+        let zone_style = self.zone.as_ref().map(|zone| {
+            let ZonePatternSelectionData::SinglePatternItem(field_set, _) = zone;
+            field_set.to_zone_style()
+        });
+        builder::FieldSetBuilder {
+            length: self.options.length,
+            date_fields: self.options.date_fields,
+            time_precision: self.options.time_precision,
+            zone_style,
+            alignment: self.options.alignment,
+            year_style: self.options.year_style,
         }
     }
 }
