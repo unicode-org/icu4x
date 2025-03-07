@@ -302,10 +302,10 @@ export class DateTimeFormatter {
         }
     }
 
-    withZoneGenericLong() {
+    withZoneGenericLong(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DateTimeFormatter_with_zone_generic_long_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_DateTimeFormatter_with_zone_generic_long_mv1(diplomatReceive.buffer, this.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

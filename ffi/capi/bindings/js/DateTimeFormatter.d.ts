@@ -50,7 +50,7 @@ export class DateTimeFormatter {
 
     static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
-    withZoneGenericLong(): NeoZonedDateTimeFormatter;
+    withZoneGenericLong(locale: Locale): NeoZonedDateTimeFormatter;
 
     formatIso(date: IsoDate, time: Time): string;
 
