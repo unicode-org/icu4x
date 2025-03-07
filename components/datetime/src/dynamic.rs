@@ -66,7 +66,7 @@
 //! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
 //! ```
 
-use crate::fieldsets::Combo;
+use crate::fieldsets::{builder, Combo};
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
 use crate::{fieldsets, provider};
@@ -383,6 +383,13 @@ macro_rules! impl_attrs {
                 match self {
                     $(
                         Self::$variant(variant) => variant.to_field(),
+                    )+
+                }
+            }
+            pub(crate) fn to_zone_style(self) -> builder::ZoneStyle {
+                match self {
+                    $(
+                        Self::$variant(_) => builder::ZoneStyle::$variant,
                     )+
                 }
             }

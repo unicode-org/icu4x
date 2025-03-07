@@ -87,7 +87,7 @@ pub(crate) struct ExternalLoaderUnstable<'a, P: ?Sized>(pub &'a P);
 impl<P> DecimalFormatterLoader for ExternalLoaderUnstable<'_, P>
 where
     P: ?Sized
-        + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+        + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
         + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
 {
     #[inline]
@@ -106,8 +106,8 @@ where
         + DataProvider<icu_calendar::provider::CalendarJapaneseExtendedV1>
         + DataProvider<icu_calendar::provider::CalendarChineseV1>
         + DataProvider<icu_calendar::provider::CalendarDangiV1>
-        + DataProvider<icu_calendar::provider::CalendarIslamicObservationalV1>
-        + DataProvider<icu_calendar::provider::CalendarIslamicUmmalquraV1>
+        + DataProvider<icu_calendar::provider::CalendarHijriObservationalV1>
+        + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>
         + ?Sized,
 {
     #[inline]

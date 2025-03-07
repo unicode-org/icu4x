@@ -134,7 +134,7 @@ impl UnitsFormatter {
     where
         D: ?Sized
             + DataProvider<super::super::provider::units::UnitsDisplayNameV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {

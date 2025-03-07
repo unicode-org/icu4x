@@ -2,11 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::calendar::japanese::JAPANEXT_FILE;
 use crate::cldr_serde::{self, ca};
+use icu::calendar::provider::JapaneseEras;
 use icu::calendar::types::MonthCode;
 use icu::datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use std::sync::OnceLock;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
 pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
@@ -29,17 +32,16 @@ pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbols<'stati
 }
 
 fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
-    let map = get_era_code_map(calendar);
     let mut out_eras = Eras::default();
 
-    for (cldr, code) in map {
-        if let Some(name) = eras.names.get(cldr) {
+    for &(cldr, code) in &get_era_code_map()[calendar] {
+        if let Some(name) = eras.names.get(&cldr.to_string()) {
             out_eras.names.insert(code.as_str().into(), name);
         }
-        if let Some(abbr) = eras.abbr.get(cldr) {
+        if let Some(abbr) = eras.abbr.get(&cldr.to_string()) {
             out_eras.abbr.insert(code.as_str().into(), abbr);
         }
-        if let Some(narrow) = eras.narrow.get(cldr) {
+        if let Some(narrow) = eras.narrow.get(&cldr.to_string()) {
             out_eras.narrow.insert(code.as_str().into(), narrow);
         }
     }
@@ -84,9 +86,8 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     ];
     match calendar {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
-        | "islamic" | "islamicc" | "umalqura" | "tbla" | "chinese" | "dangi" => {
-            &SOLAR_MONTH_CODES[0..12]
-        }
+        | "islamic" | "islamic-civil" | "islamic-umalqura" | "islamic-tbla" | "chinese"
+        | "dangi" => &SOLAR_MONTH_CODES[0..12],
         "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
         "hebrew" => HEBREW_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
@@ -102,43 +103,80 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
 /// See FormattableEra for a definition of what chronological order is in this context.
 ///
 /// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
-pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
-    use either::Either;
+// TODO: This map should be validated against calendarData.json
+pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, TinyStr16)>> {
+    static MAP: OnceLock<BTreeMap<&'static str, Vec<(usize, TinyStr16)>>> = OnceLock::new();
 
-    let array: &[_] = match calendar {
-        "gregory" => &[("0", tinystr!(16, "bce")), ("1", tinystr!(16, "ce"))],
-        "buddhist" => &[("0", tinystr!(16, "be"))],
-        "japanese" | "japanext" => {
-            return Either::Right(
-                crate::calendar::japanese::get_era_code_map()
-                    .iter()
-                    .map(|(k, v)| (&**k, *v)),
-            )
-        }
-        "coptic" => &[
-            // Before Diocletian
-            ("0", tinystr!(16, "bd")),
-            // Anno Diocletian/After Diocletian
-            ("1", tinystr!(16, "ad")),
-        ],
-        "dangi" | "chinese" => &[],
-        "indian" => &[("0", tinystr!(16, "saka"))],
-        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "ah"))],
-        "persian" => &[("0", tinystr!(16, "ah"))],
-        "hebrew" => &[("0", tinystr!(16, "hebrew"))],
-        "ethiopic" => &[
-            ("2", tinystr!(16, "mundi")),
-            ("1", tinystr!(16, "pre-incar")),
-            ("0", tinystr!(16, "incar")),
-        ],
-        "roc" => &[
-            ("0", tinystr!(16, "roc-inverse")),
-            ("1", tinystr!(16, "roc")),
-        ],
-        _ => panic!("Era map unknown for {calendar}"),
-    };
+    MAP.get_or_init(|| {
+        let japanese = &serde_json::from_str::<JapaneseEras>(JAPANEXT_FILE)
+            .expect("Failed to parse the precached golden. This is a bug.")
+            .dates_to_eras;
 
-    Either::Left(array.iter().copied())
+        let gregory = vec![
+            (0, tinystr!(16, "gregory-inverse")),
+            (1, tinystr!(16, "gregory")),
+        ];
+
+        [
+            ("gregory", gregory.clone()),
+            ("buddhist", vec![(0, tinystr!(16, "buddhist"))]),
+            (
+                "japanese",
+                gregory
+                    .clone()
+                    .into_iter()
+                    .chain(japanese.iter().enumerate().filter_map(|(i, (start, era))| {
+                        if start.year < 1868 {
+                            return None;
+                        }
+                        Some((i + 2, era))
+                    }))
+                    .collect(),
+            ),
+            (
+                "japanext",
+                gregory
+                    .clone()
+                    .into_iter()
+                    .chain(
+                        japanese
+                            .iter()
+                            .enumerate()
+                            .map(|(i, (_, era))| (i + 2, era)),
+                    )
+                    .collect(),
+            ),
+            (
+                "coptic",
+                vec![
+                    (0, tinystr!(16, "coptic-inverse")),
+                    (1, tinystr!(16, "coptic")),
+                ],
+            ),
+            ("dangi", vec![(0, tinystr!(16, "dangi"))]),
+            ("chinese", vec![(0, tinystr!(16, "chinese"))]),
+            ("indian", vec![(0, tinystr!(16, "indian"))]),
+            ("islamic", vec![(0, tinystr!(16, "islamic"))]),
+            ("islamic-civil", vec![(0, tinystr!(16, "islamic-civil"))]),
+            (
+                "islamic-umalqura",
+                vec![(0, tinystr!(16, "islamic-umalqura"))],
+            ),
+            ("islamic-tbla", vec![(0, tinystr!(16, "islamic-tbla"))]),
+            ("persian", vec![(0, tinystr!(16, "persian"))]),
+            ("hebrew", vec![(0, tinystr!(16, "hebrew"))]),
+            (
+                "ethiopic",
+                vec![(0, tinystr!(16, "ethioaa")), (1, tinystr!(16, "ethiopic"))],
+            ),
+            (
+                "roc",
+                vec![(0, tinystr!(16, "roc-inverse")), (1, tinystr!(16, "roc"))],
+            ),
+        ]
+        .into_iter()
+        .collect()
+    })
 }
 
 macro_rules! symbols_from {

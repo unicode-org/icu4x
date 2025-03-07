@@ -5,11 +5,19 @@
 - Components
     - General
         - ...
-    - ...
+    - `icu_calendar`
+        - Rename `Islamic` calendars to `Hijri` (unicode-org#6214)
+    - `icu_collections`
+        - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
 - Data model and providers
+    - `icu_experimental`
+      - `dimension`
+        - `units`
+          - Update unit conversion to accept unit constant denominator (unicode-org#6199)
     - General
         - ...
-    - ...
+    - `icu_provider`
+        - Put `MaybeEncodeAsVarULE` behind the `"export"` feature (unicode-org#6221)
 - Utils
     - General
         - ...

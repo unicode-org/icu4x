@@ -196,10 +196,8 @@ pub mod ffi {
             day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
-            let era = if era_code.is_empty() {
-                Some(icu_calendar::types::Era(
-                    TinyAsciiStr::try_from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?,
-                ))
+            let era = if !era_code.is_empty() {
+                Some(core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?)
             } else {
                 None
             };

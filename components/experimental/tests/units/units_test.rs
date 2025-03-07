@@ -41,13 +41,6 @@ fn test_cldr_unit_tests() {
     let parser = converter_factory.parser();
 
     for test in tests {
-        // TODO: Handle units conversion with a constant denominator
-        if test.input_unit.eq("liter-per-100-kilometer")
-            || test.input_unit.eq("kilowatt-hour-per-100-kilometer")
-        {
-            continue;
-        }
-
         let input_unit = parser
             .try_from_str(&test.input_unit)
             .expect("Failed to parse input unit");

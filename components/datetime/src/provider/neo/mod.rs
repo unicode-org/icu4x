@@ -360,8 +360,8 @@ icu_provider::data_marker!(
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `IslamicYearNamesV1`
-    IslamicYearNamesV1,
+    /// `HijriYearNamesV1`
+    HijriYearNamesV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
@@ -452,8 +452,8 @@ icu_provider::data_marker!(
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `IslamicMonthNamesV1`
-    IslamicMonthNamesV1,
+    /// `HijriMonthNamesV1`
+    HijriMonthNamesV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"

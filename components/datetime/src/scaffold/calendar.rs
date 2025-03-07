@@ -12,8 +12,8 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::cal::Chinese;
 use icu_calendar::cal::Roc;
 use icu_calendar::cal::{
-    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, Indian, IslamicCivil,
-    IslamicObservational, IslamicTabular, IslamicUmmAlQura, Japanese, JapaneseExtended, Persian,
+    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriCivil, HijriObservational,
+    HijriTabular, HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
 };
 use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
 use icu_provider::marker::NeverMarker;
@@ -110,35 +110,35 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = IndianDateNeoSkeletonPatternsV1;
 }
 
-impl private::Sealed for IslamicCivil {}
-impl CldrCalendar for IslamicCivil {
+impl private::Sealed for HijriCivil {}
+impl CldrCalendar for HijriCivil {
     // this value is not actually a valid identifier for this calendar,
     // however since we are overriding is_identifier_allowed_for_calendar we are using
     // this solely for its effects on skeleton data loading
-    type YearNamesV1 = IslamicYearNamesV1;
-    type MonthNamesV1 = IslamicMonthNamesV1;
-    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
+    type YearNamesV1 = HijriYearNamesV1;
+    type MonthNamesV1 = HijriMonthNamesV1;
+    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
 }
 
-impl private::Sealed for IslamicObservational {}
-impl CldrCalendar for IslamicObservational {
-    type YearNamesV1 = IslamicYearNamesV1;
-    type MonthNamesV1 = IslamicMonthNamesV1;
-    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
+impl private::Sealed for HijriObservational {}
+impl CldrCalendar for HijriObservational {
+    type YearNamesV1 = HijriYearNamesV1;
+    type MonthNamesV1 = HijriMonthNamesV1;
+    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
 }
 
-impl private::Sealed for IslamicTabular {}
-impl CldrCalendar for IslamicTabular {
-    type YearNamesV1 = IslamicYearNamesV1;
-    type MonthNamesV1 = IslamicMonthNamesV1;
-    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
+impl private::Sealed for HijriTabular {}
+impl CldrCalendar for HijriTabular {
+    type YearNamesV1 = HijriYearNamesV1;
+    type MonthNamesV1 = HijriMonthNamesV1;
+    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
 }
 
-impl private::Sealed for IslamicUmmAlQura {}
-impl CldrCalendar for IslamicUmmAlQura {
-    type YearNamesV1 = IslamicYearNamesV1;
-    type MonthNamesV1 = IslamicMonthNamesV1;
-    type SkeletaV1 = IslamicDateNeoSkeletonPatternsV1;
+impl private::Sealed for HijriUmmAlQura {}
+impl CldrCalendar for HijriUmmAlQura {
+    type YearNamesV1 = HijriYearNamesV1;
+    type MonthNamesV1 = HijriMonthNamesV1;
+    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
 }
 
 impl private::Sealed for Japanese {}
@@ -178,10 +178,10 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl UnstableSealed for IslamicCivil {}
-impl UnstableSealed for IslamicObservational {}
-impl UnstableSealed for IslamicTabular {}
-impl UnstableSealed for IslamicUmmAlQura {}
+impl UnstableSealed for HijriCivil {}
+impl UnstableSealed for HijriObservational {}
+impl UnstableSealed for HijriTabular {}
+impl UnstableSealed for HijriUmmAlQura {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
@@ -220,14 +220,14 @@ where
     type Hebrew: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Indian`] calendar
     type Indian: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`IslamicCivil`] calendar
-    type IslamicCivil: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`IslamicObservational`] calendar
-    type IslamicObservational: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`IslamicTabular`] calendar
-    type IslamicTabular: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`IslamicUmmAlQura`] calendar
-    type IslamicUmmAlQura: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`HijriCivil`] calendar
+    type HijriCivil: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`HijriObservational`] calendar
+    type HijriObservational: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`HijriTabular`] calendar
+    type HijriTabular: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for an [`HijriUmmAlQura`] calendar
+    type HijriUmmAlQura: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Japanese`] calendar
     type Japanese: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`JapaneseExtended`] calendar
@@ -265,10 +265,10 @@ where
     type Gregorian = NeverMarker<M::DataStruct>;
     type Hebrew = NeverMarker<M::DataStruct>;
     type Indian = NeverMarker<M::DataStruct>;
-    type IslamicCivil = NeverMarker<M::DataStruct>;
-    type IslamicObservational = NeverMarker<M::DataStruct>;
-    type IslamicTabular = NeverMarker<M::DataStruct>;
-    type IslamicUmmAlQura = NeverMarker<M::DataStruct>;
+    type HijriCivil = NeverMarker<M::DataStruct>;
+    type HijriObservational = NeverMarker<M::DataStruct>;
+    type HijriTabular = NeverMarker<M::DataStruct>;
+    type HijriUmmAlQura = NeverMarker<M::DataStruct>;
     type Japanese = NeverMarker<M::DataStruct>;
     type JapaneseExtended = NeverMarker<M::DataStruct>;
     type Persian = NeverMarker<M::DataStruct>;
@@ -305,10 +305,10 @@ where
         + DataProvider<H::Gregorian>
         + DataProvider<H::Hebrew>
         + DataProvider<H::Indian>
-        + DataProvider<H::IslamicCivil>
-        + DataProvider<H::IslamicObservational>
-        + DataProvider<H::IslamicTabular>
-        + DataProvider<H::IslamicUmmAlQura>
+        + DataProvider<H::HijriCivil>
+        + DataProvider<H::HijriObservational>
+        + DataProvider<H::HijriTabular>
+        + DataProvider<H::HijriUmmAlQura>
         + DataProvider<H::Japanese>
         + DataProvider<H::JapaneseExtended>
         + DataProvider<H::Persian>
@@ -327,10 +327,10 @@ where
             Gregorian => H::Gregorian::bind(p).load_bound(req),
             Hebrew => H::Hebrew::bind(p).load_bound(req),
             Indian => H::Indian::bind(p).load_bound(req),
-            IslamicCivil => H::IslamicCivil::bind(p).load_bound(req),
-            IslamicObservational => H::IslamicObservational::bind(p).load_bound(req),
-            IslamicTabular => H::IslamicTabular::bind(p).load_bound(req),
-            IslamicUmmAlQura => H::IslamicUmmAlQura::bind(p).load_bound(req),
+            HijriCivil => H::HijriCivil::bind(p).load_bound(req),
+            HijriObservational => H::HijriObservational::bind(p).load_bound(req),
+            HijriTabular => H::HijriTabular::bind(p).load_bound(req),
+            HijriUmmAlQura => H::HijriUmmAlQura::bind(p).load_bound(req),
             Japanese => H::Japanese::bind(p).load_bound(req),
             JapaneseExtended => H::JapaneseExtended::bind(p).load_bound(req),
             Persian => H::Persian::bind(p).load_bound(req),
@@ -353,10 +353,10 @@ where
             Gregorian => H::Gregorian::INFO,
             Hebrew => H::Hebrew::INFO,
             Indian => H::Indian::INFO,
-            IslamicCivil => H::IslamicCivil::INFO,
-            IslamicObservational => H::IslamicObservational::INFO,
-            IslamicTabular => H::IslamicTabular::INFO,
-            IslamicUmmAlQura => H::IslamicUmmAlQura::INFO,
+            HijriCivil => H::HijriCivil::INFO,
+            HijriObservational => H::HijriObservational::INFO,
+            HijriTabular => H::HijriTabular::INFO,
+            HijriUmmAlQura => H::HijriUmmAlQura::INFO,
             Japanese => H::Japanese::INFO,
             JapaneseExtended => H::JapaneseExtended::INFO,
             Persian => H::Persian::INFO,
@@ -398,10 +398,10 @@ impl_load_any_calendar!([
     Gregorian,
     Hebrew,
     Indian,
-    IslamicCivil,
-    IslamicObservational,
-    IslamicTabular,
-    IslamicUmmAlQura,
+    HijriCivil,
+    HijriObservational,
+    HijriTabular,
+    HijriUmmAlQura,
     Japanese,
     JapaneseExtended,
     Persian,

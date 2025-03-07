@@ -25,7 +25,7 @@ use icu_calendar::types::MonthCode;
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
-use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_decimal::DecimalFormatter;
 use icu_provider::prelude::*;
 
@@ -710,7 +710,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1> + ?Sized,
+        P: DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1> + ?Sized,
     {
         let mut names = Self {
             prefs,
@@ -2024,7 +2024,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     #[inline]
     pub fn load_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1> + ?Sized,
+        P: DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1> + ?Sized,
     {
         self.inner
             .load_decimal_formatter(&ExternalLoaderUnstable(provider), self.prefs)?;
@@ -2105,7 +2105,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             + DataProvider<tz::MzSpecificLongV1>
             + DataProvider<tz::MzSpecificShortV1>
             + DataProvider<tz::MzPeriodV1>
-            + DataProvider<DecimalSymbolsV2>
+            + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + ?Sized,
     {

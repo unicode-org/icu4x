@@ -16,9 +16,9 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 pub mod chinese_based;
-pub mod islamic;
+pub mod hijri;
 pub use chinese_based::{CalendarChineseV1, CalendarDangiV1};
-pub use islamic::{CalendarIslamicObservationalV1, CalendarIslamicUmmalquraV1};
+pub use hijri::{CalendarHijriObservationalV1, CalendarHijriUmmalquraV1};
 
 use crate::types::Weekday;
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
@@ -48,11 +48,11 @@ const _: () = {
     make_provider!(Baked);
     impl_calendar_chinese_v1!(Baked);
     impl_calendar_dangi_v1!(Baked);
-    impl_calendar_islamic_observational_v1!(Baked);
-    impl_calendar_islamic_ummalqura_v1!(Baked);
+    impl_calendar_hijri_observational_v1!(Baked);
+    impl_calendar_hijri_ummalqura_v1!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
     impl_calendar_japanese_extended_v1!(Baked);
-    impl_calendar_week_v2!(Baked);
+    impl_calendar_week_v1!(Baked);
 };
 
 icu_provider::data_marker!(
@@ -71,8 +71,8 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// Week information
-    CalendarWeekV2,
-    "calendar/week/v2",
+    CalendarWeekV1,
+    "calendar/week/v1",
     WeekData,
     fallback_config = {
         let mut config = LocaleFallbackConfig::default();
@@ -86,11 +86,11 @@ icu_provider::data_marker!(
 pub const MARKERS: &[DataMarkerInfo] = &[
     CalendarChineseV1::INFO,
     CalendarDangiV1::INFO,
-    CalendarIslamicObservationalV1::INFO,
-    CalendarIslamicUmmalquraV1::INFO,
+    CalendarHijriObservationalV1::INFO,
+    CalendarHijriUmmalquraV1::INFO,
     CalendarJapaneseModernV1::INFO,
     CalendarJapaneseExtendedV1::INFO,
-    CalendarWeekV2::INFO,
+    CalendarWeekV1::INFO,
 ];
 
 /// The date at which an era started
@@ -119,7 +119,7 @@ pub struct EraStartDate {
 }
 
 /// A data structure containing the necessary era data for constructing a
-/// [`Japanese`](crate::japanese::Japanese) calendar object
+/// [`Japanese`](crate::cal::Japanese) calendar object
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,

@@ -859,13 +859,17 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
         .clone()
 }
 
-implement!(LineBreakDataV2, "segmenter/line.toml");
-implement!(GraphemeClusterBreakDataV2, "segmenter/grapheme.toml");
-implement!(WordBreakDataV2, "segmenter/word.toml");
-implement!(SentenceBreakDataV2, "segmenter/sentence.toml");
-implement_override!(WordBreakDataOverrideV1, "segmenter/word.toml", ["fi", "sv"]);
+implement!(SegmenterBreakLineV1, "segmenter/line.toml");
+implement!(SegmenterBreakGraphemeClusterV1, "segmenter/grapheme.toml");
+implement!(SegmenterBreakWordV1, "segmenter/word.toml");
+implement!(SegmenterBreakSentenceV1, "segmenter/sentence.toml");
 implement_override!(
-    SentenceBreakDataOverrideV1,
+    SegmenterBreakWordOverrideV1,
+    "segmenter/word.toml",
+    ["fi", "sv"]
+);
+implement_override!(
+    SegmenterBreakSentenceOverrideV1,
     "segmenter/sentence.toml",
     ["el"]
 );
@@ -877,7 +881,7 @@ mod tests {
     #[test]
     fn load_grapheme_cluster_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<GraphemeClusterBreakDataV2> = provider
+        let response: DataResponse<SegmenterBreakGraphemeClusterV1> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         assert_eq!(
@@ -890,7 +894,7 @@ mod tests {
     #[test]
     fn load_line_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<LineBreakDataV2> = provider
+        let response: DataResponse<SegmenterBreakLineV1> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         let data = response.payload.get();
@@ -920,7 +924,7 @@ mod tests {
     #[should_panic]
     fn missing_locale_data() {
         let provider = SourceDataProvider::new_testing();
-        let response: DataResponse<SentenceBreakDataOverrideV1> = provider
+        let response: DataResponse<SegmenterBreakSentenceOverrideV1> = provider
             .load(Default::default())
             .expect("Loading should succeed!");
         response.payload.get();

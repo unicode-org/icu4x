@@ -198,7 +198,7 @@ The following example illustrates how to overwrite the decimal separators for a 
 ```rust
 use core::any::Any;
 use icu::decimal::DecimalFormatter;
-use icu::decimal::provider::{DecimalSymbolsV2, DecimalSymbolStrsBuilder};
+use icu::decimal::provider::{DecimalSymbolsV1, DecimalSymbolStrsBuilder};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
 use icu::locale::locale;
@@ -217,7 +217,7 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let mut res = self.0.load(req)?;
         if req.id.locale.region == Some(region!("CH")) {
-            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV2>() {
+            if let Ok(mut decimal_payload) = res.payload.dynamic_cast_mut::<DecimalSymbolsV1>() {
                 decimal_payload.with_mut(|data| {
                     let mut builder = DecimalSymbolStrsBuilder::from(&*data.strings);
                     // Change grouping separator for all Swiss locales to '🐮'

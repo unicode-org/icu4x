@@ -77,7 +77,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`DecimalFormatter`] from preconstructed locale data.
-        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV2, Struct)]
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_with_manual_data(
             plus_sign_prefix: &DiplomatStr,
@@ -109,7 +109,7 @@ pub mod ffi {
             }
 
             use icu_decimal::provider::{
-                DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols, DecimalSymbolsV2,
+                DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols, DecimalSymbolsV1,
                 GroupingSizes,
             };
             let mut new_digits = ['\0'; 10];
@@ -142,11 +142,11 @@ pub mod ffi {
             options.grouping_strategy = grouping_strategy.map(Into::into);
 
             struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
-            impl DataProvider<DecimalSymbolsV2> for Provider {
+            impl DataProvider<DecimalSymbolsV1> for Provider {
                 fn load(
                     &self,
                     _req: icu_provider::DataRequest,
-                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV2>, icu_provider::DataError>
+                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV1>, icu_provider::DataError>
                 {
                     Ok(DataResponse {
                         metadata: Default::default(),

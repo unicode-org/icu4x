@@ -117,6 +117,8 @@ dt_unit!(
 );
 
 /// A representation of a time in hours, minutes, seconds, and nanoseconds
+///
+/// This type supports the range [00:00:00.000000000, 23:59:60.999999999].
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
