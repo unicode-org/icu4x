@@ -2624,7 +2624,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 || cs1 != cs3 {
+        if cs1 != cs2 || cs1 != cs3 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzGenericLongV1::INFO, req),
@@ -2664,7 +2664,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 {
+        if cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzGenericShortV1::INFO, req),
@@ -2711,7 +2711,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 || cs1 != cs3 {
+        if cs1 != cs2 || cs1 != cs3 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificLongV1::INFO, req),
@@ -2751,7 +2751,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 {
+        if cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificShortV1::INFO, req),
