@@ -369,10 +369,7 @@ fn calendar_months(cal: &Value) -> (usize, bool) {
         || *cal == value!("indian")
         || *cal == value!("persian")
         || *cal == value!("roc")
-        || *cal == value!("islamic")
-        || *cal == value!("islamicc")
-        || *cal == value!("umalqura")
-        || *cal == value!("tbla")
+        || cal.get_subtag(0).unwrap().as_str() == "islamic"
     {
         (12, false)
     } else {

@@ -86,9 +86,8 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     ];
     match calendar {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
-        | "islamic" | "islamicc" | "umalqura" | "tbla" | "chinese" | "dangi" => {
-            &SOLAR_MONTH_CODES[0..12]
-        }
+        | "islamic" | "islamic-civil" | "islamic-umalqura" | "islamic-tbla" | "chinese"
+        | "dangi" => &SOLAR_MONTH_CODES[0..12],
         "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
         "hebrew" => HEBREW_MONTH_CODES,
         _ => panic!("Month map unknown for {calendar}"),
@@ -158,9 +157,12 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
             ("chinese", vec![(0, tinystr!(16, "chinese"))]),
             ("indian", vec![(0, tinystr!(16, "indian"))]),
             ("islamic", vec![(0, tinystr!(16, "islamic"))]),
-            ("islamicc", vec![(0, tinystr!(16, "islamic-civil"))]),
-            ("umalqura", vec![(0, tinystr!(16, "islamic-umalqura"))]),
-            ("tbla", vec![(0, tinystr!(16, "islamic-tbla"))]),
+            ("islamic-civil", vec![(0, tinystr!(16, "islamic-civil"))]),
+            (
+                "islamic-umalqura",
+                vec![(0, tinystr!(16, "islamic-umalqura"))],
+            ),
+            ("islamic-tbla", vec![(0, tinystr!(16, "islamic-tbla"))]),
             ("persian", vec![(0, tinystr!(16, "persian"))]),
             ("hebrew", vec![(0, tinystr!(16, "hebrew"))]),
             (

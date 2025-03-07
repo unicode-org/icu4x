@@ -38,13 +38,13 @@ fn supported_cals() -> &'static HashMap<icu::locale::extensions::unicode::Value,
             (value!("hebrew"), "hebrew"),
             (value!("indian"), "indian"),
             (value!("islamic"), "islamic"),
-            (value!("islamicc"), "islamic"),
+            ("islamic-civil".parse().unwrap(), "islamic"),
             (value!("japanese"), "japanese"),
             (value!("japanext"), "japanese"),
             (value!("persian"), "persian"),
             (value!("roc"), "roc"),
-            (value!("tbla"), "islamic"),
-            (value!("umalqura"), "islamic"),
+            ("islamic-tbla".parse().unwrap(), "islamic"),
+            ("islamic-umalqura".parse().unwrap(), "islamic"),
         ]
         .into_iter()
         .collect()
@@ -120,13 +120,15 @@ impl SourceDataProvider {
 }
 
 macro_rules! impl_data_provider {
-    ($marker:ident, $expr:expr, $calendar:expr) => {
+    ($marker:ident, $expr:expr, $calendar:literal) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
-                let data =
-                    self.get_datetime_resources(&req.id.locale, Either::Left(&value!($calendar)))?;
+                let data = self.get_datetime_resources(
+                    &req.id.locale,
+                    Either::Left(&$calendar.parse().unwrap()),
+                )?;
 
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
@@ -141,7 +143,7 @@ macro_rules! impl_data_provider {
                 let mut r = HashSet::new();
 
                 let cldr_cal = supported_cals()
-                    .get(&value!($calendar))
+                    .get(&$calendar.parse().unwrap())
                     .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
                 r.extend(
                     self.cldr()?
@@ -218,9 +220,9 @@ impl_data_provider!(IndianDateSymbolsV1, symbols::convert_dates, "indian");
 impl_data_provider!(
     HijriDateLengthsV1,
     |dates, _| DateLengths::from(dates),
-    "islamicc"
+    "islamic-civil"
 );
-impl_data_provider!(HijriDateSymbolsV1, symbols::convert_dates, "islamicc");
+impl_data_provider!(HijriDateSymbolsV1, symbols::convert_dates, "islamic-civil");
 impl_data_provider!(
     JapaneseDateLengthsV1,
     |dates, _| DateLengths::from(dates),
