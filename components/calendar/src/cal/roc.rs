@@ -16,6 +16,7 @@
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
 
+use crate::error::year_check;
 use crate::{
     cal::iso::IsoDateInner, calendar_arithmetic::ArithmeticDate, error::DateError, types, Calendar,
     Date, Iso, RangeError,
@@ -38,8 +39,8 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// # Era codes
 ///
-/// This calendar supports two era codes: `"roc"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
-/// after), and `"roc-inverse"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
+/// This calendar uses two era codes: `roc` (alias `minguo`), corresponding to years in the 民國 (minguo) era (CE year 1912 and
+/// after), and `roc-inverse` (alias `before-roc`), corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
 ///
 ///
 /// # Month codes
@@ -58,37 +59,15 @@ impl Calendar for Roc {
 
     fn date_from_codes(
         &self,
-        era: Option<crate::types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if let Some(era) = era {
-            if era.0 == tinystr!(16, "roc") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                year + ROC_ERA_OFFSET
-            } else if era.0 == tinystr!(16, "roc-inverse") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                1 - year + ROC_ERA_OFFSET
-            } else {
-                return Err(DateError::UnknownEra(era));
-            }
-        } else {
-            year
+        let year = match era {
+            Some("roc" | "minguo") | None => ROC_ERA_OFFSET + year_check(year, 1..)?,
+            Some("roc-inverse" | "before-roc") => ROC_ERA_OFFSET + 1 - year_check(year, 1..)?,
+            Some(_) => return Err(DateError::UnknownEra),
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day)

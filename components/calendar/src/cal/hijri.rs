@@ -52,7 +52,7 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar uses a single era code, `islamic` (alias `ah`), Anno Hegirae.
 ///
 /// # Month codes
 ///
@@ -73,7 +73,7 @@ pub struct HijriObservational {
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar uses a single era code, `islamic-civil` (aliases `ah`, `islamicc`), Anno Hegirae.
 ///
 /// # Month codes
 ///
@@ -89,7 +89,7 @@ pub struct HijriCivil;
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar uses a single era code, `islamic-umalqura` (alias `ah`), Anno Hegirae.
 ///
 /// # Month codes
 ///
@@ -111,7 +111,7 @@ pub struct HijriUmmAlQura {
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Hegirae, with code `"ah"`
+/// This calendar uses a single era code, `islamic-tbla` (alias `ah`), Anno Hegirae.
 ///
 /// # Month codes
 ///
@@ -432,19 +432,16 @@ impl Calendar for HijriObservational {
     type DateInner = HijriDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic") && era.0 != tinystr!(16, "ah") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
+        let year = match era {
+            Some("islamic" | "ah") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
+        let Some((month, false)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
         Ok(HijriDateInner(ArithmeticDate::new_from_ordinals_with_info(
@@ -619,23 +616,16 @@ impl Calendar for HijriUmmAlQura {
     type DateInner = HijriUmmAlQuraDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic-umalqura")
-                && era.0 != tinystr!(16, "islamic")
-                && era.0 != tinystr!(16, "ah")
-            {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
+        let year = match era {
+            Some("islamic-umalqura" | "ah") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
+        let Some((month, false)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
         Ok(HijriUmmAlQuraDateInner(
@@ -823,20 +813,15 @@ impl Calendar for HijriCivil {
 
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic-civil")
-                && era.0 != tinystr!(16, "islamicc")
-                && era.0 != tinystr!(16, "islamic")
-                && era.0 != tinystr!(16, "ah")
-            {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some("islamic-civil" | "islamicc" | "ah") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriCivilDateInner)
     }
@@ -1018,20 +1003,15 @@ impl Calendar for HijriTabular {
 
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "islamic-tbla")
-                && era.0 != tinystr!(16, "islamic")
-                && era.0 != tinystr!(16, "ah")
-            {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
-
+        let year = match era {
+            Some("islamic-tbla" | "ah") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriTabularDateInner)
     }
 
@@ -1166,7 +1146,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
 
 #[cfg(test)]
 mod test {
-    use types::{Era, MonthCode};
+    use types::MonthCode;
 
     use super::*;
     use crate::Ref;
@@ -2054,7 +2034,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let cal = HijriUmmAlQura::new_always_calculating();
-        let era = Era(tinystr!(16, "islamic"));
+        let era = "islamic-umalqura";
         let year = -6823;
         let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(Some(era), year, month_code, 1).unwrap();

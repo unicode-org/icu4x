@@ -18,8 +18,7 @@
 
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::DateError;
-use crate::types::Era;
+use crate::error::{year_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -53,8 +52,9 @@ pub enum EthiopianEraStyle {
 ///
 /// # Era codes
 ///
-/// This calendar always uses the `"mundi` era, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
-/// In the Amete Mihret scheme it uses the additional `"incar"` era, 1 Incarnation is 9 CE.
+/// This calendar always uses the `ethioaa` era (aliases `mundi`, `ethiopic-amete-alem`), where 1 Anno Mundi is 5493 BCE.
+/// Dates before that use negative year numbers.
+/// In the Amete Mihret scheme it uses the additional `ethiopic` era (alias `incar`), 1 Incarnation is 9 CE.
 ///
 /// # Month codes
 ///
@@ -114,42 +114,24 @@ impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        const INCAR: Era = Era(tinystr!(16, "incar"));
-        const ETHIOPIC: Era = Era(tinystr!(16, "ethiopic"));
-        const MUNDI: Era = Era(tinystr!(16, "mundi"));
-        const ETHIOAA: Era = Era(tinystr!(16, "ethioaa"));
-
         let year = match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, Some(INCAR | ETHIOPIC) | None) => {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                year + INCARNATION_OFFSET
+            (EthiopianEraStyle::AmeteMihret, Some("incar" | "ethiopic") | None) => {
+                year_check(year, 1..)? + INCARNATION_OFFSET
             }
-            (EthiopianEraStyle::AmeteMihret, Some(MUNDI | ETHIOAA)) => {
-                if year > INCARNATION_OFFSET {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: i32::MIN,
-                        max: INCARNATION_OFFSET,
-                    });
-                }
-                year
+            (EthiopianEraStyle::AmeteMihret, Some("mundi" | "ethioaa" | "ethiopic-amete-alem")) => {
+                year_check(year, ..=INCARNATION_OFFSET)?
             }
-            (EthiopianEraStyle::AmeteAlem, Some(MUNDI | ETHIOAA) | None) => year,
-            (_, Some(era)) => {
-                return Err(DateError::UnknownEra(era));
+            (
+                EthiopianEraStyle::AmeteAlem,
+                Some("mundi" | "ethioaa" | "ethiopic-amete-alem") | None,
+            ) => year,
+            (_, Some(_)) => {
+                return Err(DateError::UnknownEra);
             }
         };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)

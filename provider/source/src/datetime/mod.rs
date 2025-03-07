@@ -13,6 +13,7 @@ use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::sync::OnceLock;
+use symbols::get_era_code_map;
 
 mod neo;
 mod neo_skeleton;
@@ -37,13 +38,13 @@ fn supported_cals() -> &'static HashMap<icu::locale::extensions::unicode::Value,
             (value!("hebrew"), "hebrew"),
             (value!("indian"), "indian"),
             (value!("islamic"), "islamic"),
-            (value!("islamicc"), "islamic"),
+            ("islamic-civil".parse().unwrap(), "islamic"),
             (value!("japanese"), "japanese"),
             (value!("japanext"), "japanese"),
             (value!("persian"), "persian"),
             (value!("roc"), "roc"),
-            (value!("tbla"), "islamic"),
-            (value!("umalqura"), "islamic"),
+            ("islamic-tbla".parse().unwrap(), "islamic"),
+            ("islamic-umalqura".parse().unwrap(), "islamic"),
         ]
         .into_iter()
         .collect()
@@ -78,119 +79,37 @@ impl SourceDataProvider {
             .expect("CLDR file contains the expected calendar")
             .clone();
 
-        // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
-        // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
-        // ethiopian.
-        if cldr_cal == "ethiopic" {
-            let ethioaa: &cldr_serde::ca::Resource = self
-                .cldr()?
-                .dates("ethiopic")
-                .read_and_parse(locale, "ca-ethiopic-amete-alem.json")?;
-
-            let ethioaa_data = ethioaa
-                .main
-                .value
-                .dates
-                .calendars
-                .get("ethiopic-amete-alem")
-                .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
-                .clone();
-
-            let ethioaa_eras = ethioaa_data.eras.as_ref().expect("ethioaa must have eras");
-            let mundi_name = ethioaa_eras
-                .names
-                .get("0")
-                .expect("ethiopic-amete-alem calendar must have 0 era");
-            let mundi_abbr = ethioaa_eras
-                .abbr
-                .get("0")
-                .expect("ethiopic-amete-alem calendar must have 0 era");
-            let mundi_narrow = ethioaa_eras
-                .narrow
-                .get("0")
-                .expect("ethiopic-amete-alem calendar must have 0 era");
-
-            let eras = data.eras.as_mut().expect("ethiopic must have eras");
-            eras.names.insert("2".to_string(), mundi_name.clone());
-            eras.abbr.insert("2".to_string(), mundi_abbr.clone());
-            eras.narrow.insert("2".to_string(), mundi_narrow.clone());
-        }
-
         if cldr_cal == "japanese" {
             let eras = data.eras.as_mut().expect("japanese must have eras");
             // Filter out non-modern eras
             if !is_japanext {
-                let modern_japanese_eras = self.cldr()?.modern_japanese_eras()?;
+                let modern_japanese_eras = get_era_code_map()["japanese"]
+                    .iter()
+                    .map(|&(s, _)| s.to_string())
+                    .collect::<std::collections::BTreeSet<_>>();
                 eras.names.retain(|e, _| modern_japanese_eras.contains(e));
                 eras.abbr.retain(|e, _| modern_japanese_eras.contains(e));
                 eras.narrow.retain(|e, _| modern_japanese_eras.contains(e));
             }
 
             // Splice in gregorian data for pre-meiji
-            let greg_resource: &cldr_serde::ca::Resource = self
+            let greg_eras = self
                 .cldr()?
                 .dates("gregorian")
-                .read_and_parse(locale, "ca-gregorian.json")?;
-
-            let greg = greg_resource
+                .read_and_parse::<cldr_serde::ca::Resource>(locale, "ca-gregorian.json")?
                 .main
                 .value
                 .dates
                 .calendars
                 .get("gregorian")
                 .expect("CLDR file contains a gregorian calendar")
-                .clone();
+                .eras
+                .as_ref()
+                .expect("gregorian must have eras");
 
-            let greg_eras = greg.eras.as_ref().expect("gregorian must have eras");
-
-            eras.names.insert(
-                "-2".into(),
-                greg_eras
-                    .names
-                    .get("0")
-                    .expect("Gregorian calendar must have data for BC")
-                    .into(),
-            );
-            eras.names.insert(
-                "-1".into(),
-                greg_eras
-                    .names
-                    .get("1")
-                    .expect("Gregorian calendar must have data for AD")
-                    .into(),
-            );
-            eras.abbr.insert(
-                "-2".into(),
-                greg_eras
-                    .abbr
-                    .get("0")
-                    .expect("Gregorian calendar must have data for BC")
-                    .into(),
-            );
-            eras.abbr.insert(
-                "-1".into(),
-                greg_eras
-                    .abbr
-                    .get("1")
-                    .expect("Gregorian calendar must have data for AD")
-                    .into(),
-            );
-            eras.narrow.insert(
-                "-2".into(),
-                greg_eras
-                    .narrow
-                    .get("0")
-                    .expect("Gregorian calendar must have data for BC")
-                    .into(),
-            );
-            eras.narrow.insert(
-                "-1".into(),
-                greg_eras
-                    .narrow
-                    .get("1")
-                    .expect("Gregorian calendar must have data for AD")
-                    .into(),
-            );
+            eras.names.extend(greg_eras.names.clone());
+            eras.abbr.extend(greg_eras.names.clone());
+            eras.narrow.extend(greg_eras.names.clone());
         }
 
         Ok(data)
@@ -198,13 +117,15 @@ impl SourceDataProvider {
 }
 
 macro_rules! impl_data_provider {
-    ($marker:ident, $expr:expr, $calendar:expr) => {
+    ($marker:ident, $expr:expr, $calendar:literal) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
 
-                let data =
-                    self.get_datetime_resources(&req.id.locale, Either::Left(&value!($calendar)))?;
+                let data = self.get_datetime_resources(
+                    &req.id.locale,
+                    Either::Left(&$calendar.parse().unwrap()),
+                )?;
 
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
@@ -219,7 +140,7 @@ macro_rules! impl_data_provider {
                 let mut r = HashSet::new();
 
                 let cldr_cal = supported_cals()
-                    .get(&value!($calendar))
+                    .get(&$calendar.parse().unwrap())
                     .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
                 r.extend(
                     self.cldr()?
@@ -296,9 +217,9 @@ impl_data_provider!(IndianDateSymbolsV1, symbols::convert_dates, "indian");
 impl_data_provider!(
     HijriDateLengthsV1,
     |dates, _| DateLengths::from(dates),
-    "islamicc"
+    "islamic-civil"
 );
-impl_data_provider!(HijriDateSymbolsV1, symbols::convert_dates, "islamicc");
+impl_data_provider!(HijriDateSymbolsV1, symbols::convert_dates, "islamic-civil");
 impl_data_provider!(
     JapaneseDateLengthsV1,
     |dates, _| DateLengths::from(dates),

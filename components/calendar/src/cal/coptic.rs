@@ -18,7 +18,7 @@
 
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::DateError;
+use crate::error::{year_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -35,7 +35,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar supports two era codes: `"bd"`, and `"ad"`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
+/// This calendar uses two era codes: `coptic-inverse`, and `coptic`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
 /// eras. 1 A.M. is equivalent to 284 C.E.
 ///
 /// # Month codes
@@ -96,37 +96,15 @@ impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = if let Some(era) = era {
-            if era.0 == tinystr!(16, "ad") || era.0 == tinystr!(16, "coptic") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                year
-            } else if era.0 == tinystr!(16, "bd") || era.0 == tinystr!(16, "coptic-inverse") {
-                if year <= 0 {
-                    return Err(DateError::Range {
-                        field: "year",
-                        value: year,
-                        min: 1,
-                        max: i32::MAX,
-                    });
-                }
-                1 - year
-            } else {
-                return Err(DateError::UnknownEra(era));
-            }
-        } else {
-            year
+        let year = match era {
+            Some("coptic") | None => year_check(year, 1..)?,
+            Some("coptic-inverse") => 1 - year_check(year, 1..)?,
+            Some(_) => return Err(DateError::UnknownEra),
         };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
