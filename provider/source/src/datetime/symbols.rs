@@ -12,14 +12,21 @@ use std::collections::BTreeMap;
 use std::sync::OnceLock;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
-pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
+use super::DatagenCalendar;
+
+pub(crate) fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: DatagenCalendar,
+) -> DateSymbols<'static> {
     let eras = if let Some(ref eras) = other.eras {
         convert_eras(eras, calendar)
     } else {
         Default::default()
     };
     DateSymbols {
-        months: other.months.get(&(get_month_code_map(calendar), calendar)),
+        months: other
+            .months
+            .get(&(get_month_code_map(calendar), calendar.cldr_name())),
         weekdays: other.days.get(&()),
         eras,
     }
@@ -31,10 +38,10 @@ pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbols<'stati
     }
 }
 
-fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
+fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: DatagenCalendar) -> Eras<'static> {
     let mut out_eras = Eras::default();
 
-    for &(cldr, code) in &get_era_code_map()[calendar] {
+    for &(cldr, code) in &get_era_code_map()[&calendar] {
         if let Some(name) = eras.names.get(&cldr.to_string()) {
             out_eras.names.insert(code.as_str().into(), name);
         }
@@ -48,7 +55,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     out_eras
 }
 /// Returns a month code map and whether the map has leap months
-pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+pub(crate) fn get_month_code_map(calendar: DatagenCalendar) -> &'static [TinyStr4] {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066
     static SOLAR_MONTH_CODES: &[TinyStr4] = &[
@@ -85,12 +92,24 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         // M06L is handled separately in MonthSymbols code
     ];
     match calendar {
-        "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
-        | "islamic" | "islamic-civil" | "islamic-umalqura" | "islamic-tbla" | "chinese"
-        | "dangi" => &SOLAR_MONTH_CODES[0..12],
-        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
-        "hebrew" => HEBREW_MONTH_CODES,
-        _ => panic!("Month map unknown for {calendar}"),
+        DatagenCalendar::Buddhist
+        | DatagenCalendar::Chinese
+        | DatagenCalendar::Dangi
+        | DatagenCalendar::Gregorian
+        | DatagenCalendar::Indian
+        | DatagenCalendar::Islamic
+        | DatagenCalendar::IslamicCivil
+        | DatagenCalendar::IslamicRgsa
+        | DatagenCalendar::IslamicTabular
+        | DatagenCalendar::IslamicUmmAlQura
+        | DatagenCalendar::JapaneseExtended
+        | DatagenCalendar::JapaneseModern
+        | DatagenCalendar::Persian
+        | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
+        DatagenCalendar::Coptic
+        | DatagenCalendar::Ethiopic
+        | DatagenCalendar::EthiopicAmeteAlem => SOLAR_MONTH_CODES,
+        DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
     }
 }
 
@@ -104,8 +123,8 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
 ///
 /// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
 // TODO: This should be replaced by loading calendarData.json
-pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, TinyStr16)>> {
-    static MAP: OnceLock<BTreeMap<&'static str, Vec<(usize, TinyStr16)>>> = OnceLock::new();
+pub(crate) fn get_era_code_map() -> &'static BTreeMap<DatagenCalendar, Vec<(usize, TinyStr16)>> {
+    static MAP: OnceLock<BTreeMap<DatagenCalendar, Vec<(usize, TinyStr16)>>> = OnceLock::new();
 
     MAP.get_or_init(|| {
         let japanese = &serde_json::from_str::<JapaneseEras>(JAPANEXT_FILE)
@@ -118,10 +137,13 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
         ];
 
         [
-            ("gregory", gregory.clone()),
-            ("buddhist", vec![(0, tinystr!(16, "buddhist"))]),
+            (DatagenCalendar::Gregorian, gregory.clone()),
             (
-                "japanese",
+                DatagenCalendar::Buddhist,
+                vec![(0, tinystr!(16, "buddhist"))],
+            ),
+            (
+                DatagenCalendar::JapaneseModern,
                 gregory
                     .clone()
                     .into_iter()
@@ -134,7 +156,7 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
                     .collect(),
             ),
             (
-                "japanext",
+                DatagenCalendar::JapaneseExtended,
                 gregory
                     .clone()
                     .into_iter()
@@ -147,31 +169,44 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
                     .collect(),
             ),
             (
-                "coptic",
+                DatagenCalendar::Coptic,
                 vec![
                     (0, tinystr!(16, "coptic-inverse")),
                     (1, tinystr!(16, "coptic")),
                 ],
             ),
-            ("dangi", vec![(0, tinystr!(16, "dangi"))]),
-            ("chinese", vec![(0, tinystr!(16, "chinese"))]),
-            ("indian", vec![(0, tinystr!(16, "indian"))]),
-            ("islamic", vec![(0, tinystr!(16, "islamic"))]),
-            ("islamic-civil", vec![(0, tinystr!(16, "islamic-civil"))]),
+            (DatagenCalendar::Dangi, vec![(0, tinystr!(16, "dangi"))]),
+            (DatagenCalendar::Chinese, vec![(0, tinystr!(16, "chinese"))]),
+            (DatagenCalendar::Indian, vec![(0, tinystr!(16, "indian"))]),
+            (DatagenCalendar::Islamic, vec![(0, tinystr!(16, "islamic"))]),
             (
-                "islamic-umalqura",
+                DatagenCalendar::IslamicCivil,
+                vec![(0, tinystr!(16, "islamic-civil"))],
+            ),
+            (
+                DatagenCalendar::IslamicUmmAlQura,
                 vec![(0, tinystr!(16, "islamic-umalqura"))],
             ),
-            ("islamic-tbla", vec![(0, tinystr!(16, "islamic-tbla"))]),
-            ("persian", vec![(0, tinystr!(16, "persian"))]),
-            ("hebrew", vec![(0, tinystr!(16, "hebrew"))]),
             (
-                "ethiopic",
+                DatagenCalendar::IslamicTabular,
+                vec![(0, tinystr!(16, "islamic-tbla"))],
+            ),
+            (
+                DatagenCalendar::IslamicRgsa,
+                vec![(0, tinystr!(16, "islamic-rgsa"))],
+            ),
+            (DatagenCalendar::Persian, vec![(0, tinystr!(16, "persian"))]),
+            (DatagenCalendar::Hebrew, vec![(0, tinystr!(16, "hebrew"))]),
+            (
+                DatagenCalendar::Ethiopic,
                 vec![(0, tinystr!(16, "ethioaa")), (1, tinystr!(16, "ethiopic"))],
             ),
-            ("ethioaa", vec![(0, tinystr!(16, "ethioaa"))]),
             (
-                "roc",
+                DatagenCalendar::EthiopicAmeteAlem,
+                vec![(0, tinystr!(16, "ethioaa"))],
+            ),
+            (
+                DatagenCalendar::Roc,
                 vec![(0, tinystr!(16, "roc-inverse")), (1, tinystr!(16, "roc"))],
             ),
         ]
@@ -183,16 +218,16 @@ pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, 
 // this test is trivial now, but in the future it should test the data in CLDR
 #[test]
 pub fn ethiopic_and_ethioaa_are_compatible() {
-    let ethiopic = &get_era_code_map()["ethiopic"];
-    let ethioaa = &get_era_code_map()["ethioaa"];
+    let ethiopic = &get_era_code_map()[&DatagenCalendar::Ethiopic];
+    let ethioaa = &get_era_code_map()[&DatagenCalendar::EthiopicAmeteAlem];
     assert_eq!(ethioaa.iter().zip(ethiopic).find(|(e, a)| e != a), None);
 }
 
 // this test is trivial now, but in the future it should test the data in CLDR
 #[test]
 pub fn japanese_and_japanext_are_compatible() {
-    let japanese = &get_era_code_map()["japanese"];
-    let japanext = &get_era_code_map()["japanext"];
+    let japanese = &get_era_code_map()[&DatagenCalendar::JapaneseModern];
+    let japanext = &get_era_code_map()[&DatagenCalendar::JapaneseExtended];
     assert_eq!(
         japanext
             .iter()
@@ -227,32 +262,41 @@ pub fn test_era_code_map_consistency() {
 
     let hardcoded_data = get_era_code_map();
 
-    for (calendar, data) in cldr_data {
-        let calendar = match calendar.as_str() {
-            "generic" => continue,
-            "islamic-rgsa" => continue,
-            "gregorian" => "gregory",
-            "ethiopic-amete-alem" => "ethioaa",
-            "japanese" => "japanext",
-            c => c,
-        };
-
-        let hardcoded_era_codes = hardcoded_data[calendar]
+    for (calendar, data) in hardcoded_data {
+        if calendar == &DatagenCalendar::JapaneseModern {
+            continue;
+        }
+        let hardcoded_era_codes = data
             .iter()
             .map(|(i, name)| (*i, name.as_str()))
             .collect::<BTreeMap<_, _>>();
 
-        let cldr_era_codes = data
+        let cldr_era_codes = cldr_data[calendar.cldr_name()]
             .eras
             .iter()
             .map(|(a, b)| (a.parse::<usize>().unwrap(), b.code.as_deref()))
-            .map(|(k, v)| (if calendar == "japanext" { k + 2 } else { k }, v))
-            .chain(data.inherit_eras.as_ref().into_iter().flat_map(|i| {
-                cldr_data[&i.calendar]
-                    .eras
-                    .iter()
-                    .map(|(a, b)| (a.parse::<usize>().unwrap(), b.code.as_deref()))
-            }))
+            .map(|(k, v)| {
+                (
+                    if calendar == &DatagenCalendar::JapaneseExtended {
+                        k + 2
+                    } else {
+                        k
+                    },
+                    v,
+                )
+            })
+            .chain(
+                cldr_data[calendar.cldr_name()]
+                    .inherit_eras
+                    .as_ref()
+                    .into_iter()
+                    .flat_map(|i| {
+                        cldr_data[&i.calendar]
+                            .eras
+                            .iter()
+                            .map(|(a, b)| (a.parse::<usize>().unwrap(), b.code.as_deref()))
+                    }),
+            )
             .collect::<BTreeMap<_, _>>();
 
         // Compare, allowing ICU to have values where CLDR does not (pre-Meiji)
@@ -261,7 +305,7 @@ pub fn test_era_code_map_consistency() {
                 .iter()
                 .zip(&cldr_era_codes)
                 .all(|((hk, hv), (ck, cv))| hk == ck && cv.map(|v| v == *hv).unwrap_or(true)),
-            "{calendar}: {hardcoded_era_codes:?} != {cldr_era_codes:?}"
+            "{calendar:?}: {hardcoded_era_codes:?} != {cldr_era_codes:?}"
         );
     }
 }
