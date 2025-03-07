@@ -12,9 +12,9 @@ use std::collections::HashSet;
 use std::convert::TryFrom;
 use zerovec::VarZeroCow;
 
-impl DataProvider<DecimalSymbolsV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV2>, DataError> {
-        self.check_req::<DecimalSymbolsV2>(req)?;
+impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
+        self.check_req::<DecimalSymbolsV1>(req)?;
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -42,7 +42,7 @@ impl DataProvider<DecimalSymbolsV2> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<DecimalSymbolsV2> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
@@ -109,7 +109,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let ar_decimal: DataResponse<DecimalSymbolsV2> = provider
+    let ar_decimal: DataResponse<DecimalSymbolsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()

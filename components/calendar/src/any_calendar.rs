@@ -4,27 +4,17 @@
 
 //! Module for working with multiple calendars at once
 
-use crate::buddhist::Buddhist;
-use crate::chinese::Chinese;
-use crate::coptic::Coptic;
-use crate::dangi::Dangi;
+use crate::cal::{
+    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew, HijriCivil,
+    HijriObservational, HijriTabular, HijriUmmAlQura, Indian, Iso, Japanese, JapaneseExtended,
+    Persian, Roc,
+};
 use crate::error::DateError;
-use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
-use crate::gregorian::Gregorian;
-use crate::hebrew::Hebrew;
-use crate::indian::Indian;
-use crate::islamic::{IslamicCivil, IslamicObservational, IslamicTabular, IslamicUmmAlQura};
-use crate::iso::Iso;
-use crate::japanese::{Japanese, JapaneseExtended};
-use crate::persian::Persian;
-use crate::roc::Roc;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
-use crate::preferences::{CalendarAlgorithm, IslamicCalendarAlgorithm};
-use icu_locale_core::extensions::unicode::{key, value, Value};
+use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_locale_core::preferences::define_preferences;
 use icu_locale_core::subtags::language;
-use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -64,7 +54,7 @@ define_preferences!(
 ///
 /// // construct from era code, year, month code, day, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_date = Date::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
+/// let manual_date = Date::try_new_from_codes(Some("heisei"), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
 ///                     .expect("Failed to construct Date manually");
 ///
 ///
@@ -75,7 +65,7 @@ define_preferences!(
 ///
 /// // Construct a date in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
+/// let japanese_date = Date::try_new_japanese_with_calendar("heisei", 15, 3, 28,
 ///                                                         japanese_calendar).unwrap();
 /// // This is a Date<AnyCalendar>
 /// let any_japanese_date = japanese_date.to_any();
@@ -99,14 +89,14 @@ pub enum AnyCalendar {
     Hebrew(Hebrew),
     /// An [`Indian`] calendar
     Indian(Indian),
-    /// An [`IslamicCivil`] calendar
-    IslamicCivil(IslamicCivil),
-    /// An [`IslamicObservational`] calendar
-    IslamicObservational(IslamicObservational),
-    /// An [`IslamicTabular`] calendar
-    IslamicTabular(IslamicTabular),
-    /// An [`IslamicUmmAlQura`] calendar
-    IslamicUmmAlQura(IslamicUmmAlQura),
+    /// An [`HijriCivil`] calendar
+    HijriCivil(HijriCivil),
+    /// An [`HijriObservational`] calendar
+    HijriObservational(HijriObservational),
+    /// An [`HijriTabular`] calendar
+    HijriTabular(HijriTabular),
+    /// An [`HijriUmmAlQura`] calendar
+    HijriUmmAlQura(HijriUmmAlQura),
     /// An [`Iso`] calendar
     Iso(Iso),
     /// A [`Japanese`] calendar
@@ -140,14 +130,14 @@ pub enum AnyDateInner {
     Hebrew(<Hebrew as Calendar>::DateInner),
     /// A date for an [`Indian`] calendar
     Indian(<Indian as Calendar>::DateInner),
-    /// A date for an [`IslamicCivil`] calendar
-    IslamicCivil(<IslamicCivil as Calendar>::DateInner),
-    /// A date for an [`IslamicObservational`] calendar
-    IslamicObservational(<IslamicObservational as Calendar>::DateInner),
-    /// A date for an [`IslamicTabular`] calendar
-    IslamicTabular(<IslamicTabular as Calendar>::DateInner),
-    /// A date for an [`IslamicUmmAlQura`] calendar
-    IslamicUmmAlQura(<IslamicUmmAlQura as Calendar>::DateInner),
+    /// A date for an [`HijriCivil`] calendar
+    HijriCivil(<HijriCivil as Calendar>::DateInner),
+    /// A date for an [`HijriObservational`] calendar
+    HijriObservational(<HijriObservational as Calendar>::DateInner),
+    /// A date for an [`HijriTabular`] calendar
+    HijriTabular(<HijriTabular as Calendar>::DateInner),
+    /// A date for an [`HijriUmmAlQura`] calendar
+    HijriUmmAlQura(<HijriUmmAlQura as Calendar>::DateInner),
     /// A date for an [`Iso`] calendar
     Iso(<Iso as Calendar>::DateInner),
     /// A date for a [`Japanese`] calendar
@@ -171,21 +161,20 @@ macro_rules! match_cal_and_date {
             (&Self::Gregorian(ref $cal_matched), &AnyDateInner::Gregorian(ref $date_matched)) => $e,
             (&Self::Hebrew(ref $cal_matched), &AnyDateInner::Hebrew(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
+            (&Self::HijriCivil(ref $cal_matched), &AnyDateInner::HijriCivil(ref $date_matched)) => {
+                $e
+            }
             (
-                &Self::IslamicCivil(ref $cal_matched),
-                &AnyDateInner::IslamicCivil(ref $date_matched),
+                &Self::HijriObservational(ref $cal_matched),
+                &AnyDateInner::HijriObservational(ref $date_matched),
             ) => $e,
             (
-                &Self::IslamicObservational(ref $cal_matched),
-                &AnyDateInner::IslamicObservational(ref $date_matched),
+                &Self::HijriTabular(ref $cal_matched),
+                &AnyDateInner::HijriTabular(ref $date_matched),
             ) => $e,
             (
-                &Self::IslamicTabular(ref $cal_matched),
-                &AnyDateInner::IslamicTabular(ref $date_matched),
-            ) => $e,
-            (
-                &Self::IslamicUmmAlQura(ref $cal_matched),
-                &AnyDateInner::IslamicUmmAlQura(ref $date_matched),
+                &Self::HijriUmmAlQura(ref $cal_matched),
+                &AnyDateInner::HijriUmmAlQura(ref $date_matched),
             ) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
             (&Self::Japanese(ref $cal_matched), &AnyDateInner::Japanese(ref $date_matched)) => $e,
@@ -208,7 +197,7 @@ impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -238,17 +227,17 @@ impl Calendar for AnyCalendar {
             Self::Indian(ref c) => {
                 AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::IslamicCivil(ref c) => {
-                AnyDateInner::IslamicCivil(c.date_from_codes(era, year, month_code, day)?)
+            Self::HijriCivil(ref c) => {
+                AnyDateInner::HijriCivil(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::IslamicObservational(ref c) => {
-                AnyDateInner::IslamicObservational(c.date_from_codes(era, year, month_code, day)?)
+            Self::HijriObservational(ref c) => {
+                AnyDateInner::HijriObservational(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::IslamicTabular(ref c) => {
-                AnyDateInner::IslamicTabular(c.date_from_codes(era, year, month_code, day)?)
+            Self::HijriTabular(ref c) => {
+                AnyDateInner::HijriTabular(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::IslamicUmmAlQura(ref c) => {
-                AnyDateInner::IslamicUmmAlQura(c.date_from_codes(era, year, month_code, day)?)
+            Self::HijriUmmAlQura(ref c) => {
+                AnyDateInner::HijriUmmAlQura(c.date_from_codes(era, year, month_code, day)?)
             }
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_codes(era, year, month_code, day)?),
             Self::Japanese(ref c) => {
@@ -274,12 +263,12 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
             Self::Hebrew(ref c) => AnyDateInner::Hebrew(c.date_from_iso(iso)),
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
-            Self::IslamicCivil(ref c) => AnyDateInner::IslamicCivil(c.date_from_iso(iso)),
-            Self::IslamicObservational(ref c) => {
-                AnyDateInner::IslamicObservational(c.date_from_iso(iso))
+            Self::HijriCivil(ref c) => AnyDateInner::HijriCivil(c.date_from_iso(iso)),
+            Self::HijriObservational(ref c) => {
+                AnyDateInner::HijriObservational(c.date_from_iso(iso))
             }
-            Self::IslamicTabular(ref c) => AnyDateInner::IslamicTabular(c.date_from_iso(iso)),
-            Self::IslamicUmmAlQura(ref c) => AnyDateInner::IslamicUmmAlQura(c.date_from_iso(iso)),
+            Self::HijriTabular(ref c) => AnyDateInner::HijriTabular(c.date_from_iso(iso)),
+            Self::HijriUmmAlQura(ref c) => AnyDateInner::HijriUmmAlQura(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
             Self::Japanese(ref c) => AnyDateInner::Japanese(c.date_from_iso(iso)),
             Self::JapaneseExtended(ref c) => AnyDateInner::JapaneseExtended(c.date_from_iso(iso)),
@@ -330,16 +319,16 @@ impl Calendar for AnyCalendar {
             (Self::Indian(c), &mut AnyDateInner::Indian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (Self::IslamicCivil(c), &mut AnyDateInner::IslamicCivil(ref mut d)) => {
+            (Self::HijriCivil(c), &mut AnyDateInner::HijriCivil(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (Self::IslamicObservational(c), &mut AnyDateInner::IslamicObservational(ref mut d)) => {
+            (Self::HijriObservational(c), &mut AnyDateInner::HijriObservational(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (Self::IslamicTabular(c), &mut AnyDateInner::IslamicTabular(ref mut d)) => {
+            (Self::HijriTabular(c), &mut AnyDateInner::HijriTabular(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (Self::IslamicUmmAlQura(c), &mut AnyDateInner::IslamicUmmAlQura(ref mut d)) => {
+            (Self::HijriUmmAlQura(c), &mut AnyDateInner::HijriUmmAlQura(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::Iso(c), &mut AnyDateInner::Iso(ref mut d)) => {
@@ -441,34 +430,34 @@ impl Calendar for AnyCalendar {
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                Self::IslamicCivil(c1),
-                Self::IslamicCivil(c2),
-                AnyDateInner::IslamicCivil(d1),
-                AnyDateInner::IslamicCivil(d2),
+                Self::HijriCivil(c1),
+                Self::HijriCivil(c2),
+                AnyDateInner::HijriCivil(d1),
+                AnyDateInner::HijriCivil(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                Self::IslamicObservational(c1),
-                Self::IslamicObservational(c2),
-                AnyDateInner::IslamicObservational(d1),
-                AnyDateInner::IslamicObservational(d2),
+                Self::HijriObservational(c1),
+                Self::HijriObservational(c2),
+                AnyDateInner::HijriObservational(d1),
+                AnyDateInner::HijriObservational(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                Self::IslamicTabular(c1),
-                Self::IslamicTabular(c2),
-                AnyDateInner::IslamicTabular(d1),
-                AnyDateInner::IslamicTabular(d2),
+                Self::HijriTabular(c1),
+                Self::HijriTabular(c2),
+                AnyDateInner::HijriTabular(d1),
+                AnyDateInner::HijriTabular(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                Self::IslamicUmmAlQura(c1),
-                Self::IslamicUmmAlQura(c2),
-                AnyDateInner::IslamicUmmAlQura(d1),
-                AnyDateInner::IslamicUmmAlQura(d2),
+                Self::HijriUmmAlQura(c1),
+                Self::HijriUmmAlQura(c2),
+                AnyDateInner::HijriUmmAlQura(d1),
+                AnyDateInner::HijriUmmAlQura(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -550,10 +539,10 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(_) => "AnyCalendar (Gregorian)",
             Self::Hebrew(_) => "AnyCalendar (Hebrew)",
             Self::Indian(_) => "AnyCalendar (Indian)",
-            Self::IslamicCivil(_) => "AnyCalendar (Islamic, civil)",
-            Self::IslamicObservational(_) => "AnyCalendar (Islamic, observational)",
-            Self::IslamicTabular(_) => "AnyCalendar (Islamic, tabular)",
-            Self::IslamicUmmAlQura(_) => "AnyCalendar (Islamic, Umm al-Qura)",
+            Self::HijriCivil(_) => "AnyCalendar (Hijri, civil)",
+            Self::HijriObservational(_) => "AnyCalendar (Hijri, observational)",
+            Self::HijriTabular(_) => "AnyCalendar (Hijri, tabular)",
+            Self::HijriUmmAlQura(_) => "AnyCalendar (Hijri, Umm al-Qura)",
             Self::Iso(_) => "AnyCalendar (Iso)",
             Self::Japanese(_) => "AnyCalendar (Japanese)",
             Self::JapaneseExtended(_) => "AnyCalendar (Japanese, historical era data)",
@@ -592,14 +581,12 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
-            AnyCalendarKind::IslamicObservational => {
-                AnyCalendar::IslamicObservational(IslamicObservational::new())
+            AnyCalendarKind::HijriCivil => AnyCalendar::HijriCivil(HijriCivil),
+            AnyCalendarKind::HijriObservational => {
+                AnyCalendar::HijriObservational(HijriObservational::new())
             }
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => {
-                AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura::new())
-            }
+            AnyCalendarKind::HijriTabular => AnyCalendar::HijriTabular(HijriTabular),
+            AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::new()),
             AnyCalendarKind::JapaneseExtended => {
@@ -637,14 +624,14 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
-            AnyCalendarKind::IslamicObservational => AnyCalendar::IslamicObservational(
-                IslamicObservational::try_new_with_buffer_provider(provider)?,
+            AnyCalendarKind::HijriCivil => AnyCalendar::HijriCivil(HijriCivil),
+            AnyCalendarKind::HijriObservational => AnyCalendar::HijriObservational(
+                HijriObservational::try_new_with_buffer_provider(provider)?,
             ),
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => AnyCalendar::IslamicUmmAlQura(
-                IslamicUmmAlQura::try_new_with_buffer_provider(provider)?,
-            ),
+            AnyCalendarKind::HijriTabular => AnyCalendar::HijriTabular(HijriTabular),
+            AnyCalendarKind::HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::try_new_with_buffer_provider(provider)?)
+            }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
@@ -667,8 +654,8 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarIslamicObservationalV1>
-            + DataProvider<crate::provider::CalendarIslamicUmmalquraV1>
+            + DataProvider<crate::provider::CalendarHijriObservationalV1>
+            + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
         Ok(match kind {
@@ -685,13 +672,13 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::IslamicCivil => AnyCalendar::IslamicCivil(IslamicCivil),
-            AnyCalendarKind::IslamicObservational => {
-                AnyCalendar::IslamicObservational(IslamicObservational::try_new_unstable(provider)?)
+            AnyCalendarKind::HijriCivil => AnyCalendar::HijriCivil(HijriCivil),
+            AnyCalendarKind::HijriObservational => {
+                AnyCalendar::HijriObservational(HijriObservational::try_new_unstable(provider)?)
             }
-            AnyCalendarKind::IslamicTabular => AnyCalendar::IslamicTabular(IslamicTabular),
-            AnyCalendarKind::IslamicUmmAlQura => {
-                AnyCalendar::IslamicUmmAlQura(IslamicUmmAlQura::try_new_unstable(provider)?)
+            AnyCalendarKind::HijriTabular => AnyCalendar::HijriTabular(HijriTabular),
+            AnyCalendarKind::HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::try_new_unstable(provider)?)
             }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
@@ -715,9 +702,7 @@ impl AnyCalendar {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(prefs: AnyCalendarPreferences) -> Result<Self, DataError> {
-        // NOTE: This returns DataError because this operation should become data-driven
-        let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
-        Ok(Self::new_for_kind(kind))
+        Self::try_new_unstable(&crate::provider::Baked, prefs)
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -740,11 +725,25 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarIslamicObservationalV1>
-            + DataProvider<crate::provider::CalendarIslamicUmmalquraV1>
+            + DataProvider<crate::provider::CalendarHijriObservationalV1>
+            + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
-        let kind = AnyCalendarKind::from_prefs_with_fallback(prefs);
+        let kind = if let Some(kind) = AnyCalendarKind::from_prefs(prefs) {
+            kind
+        } else {
+            // This will eventually need fallback data from the provider
+            let lang = prefs.locale_preferences.language();
+            if lang == language!("th") {
+                AnyCalendarKind::Buddhist
+            } else if lang == language!("sa") {
+                AnyCalendarKind::HijriUmmAlQura
+            } else if lang == language!("af") || lang == language!("ir") {
+                AnyCalendarKind::Persian
+            } else {
+                AnyCalendarKind::Gregorian
+            }
+        };
         Self::try_new_for_kind_unstable(provider, kind)
     }
 
@@ -755,17 +754,14 @@ impl AnyCalendar {
             Self::Chinese(_) => AnyCalendarKind::Chinese,
             Self::Coptic(_) => AnyCalendarKind::Coptic,
             Self::Dangi(_) => AnyCalendarKind::Dangi,
-            #[allow(clippy::expect_used)] // Invariant known at compile time
-            Self::Ethiopian(ref e) => e
-                .any_calendar_kind()
-                .expect("Ethiopian calendar known to have an AnyCalendarKind"),
+            Self::Ethiopian(ref e) => IntoAnyCalendar::kind(e),
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
             Self::Hebrew(_) => AnyCalendarKind::Hebrew,
             Self::Indian(_) => AnyCalendarKind::Indian,
-            Self::IslamicCivil(_) => AnyCalendarKind::IslamicCivil,
-            Self::IslamicObservational(_) => AnyCalendarKind::IslamicObservational,
-            Self::IslamicTabular(_) => AnyCalendarKind::IslamicTabular,
-            Self::IslamicUmmAlQura(_) => AnyCalendarKind::IslamicUmmAlQura,
+            Self::HijriCivil(_) => AnyCalendarKind::HijriCivil,
+            Self::HijriObservational(_) => AnyCalendarKind::HijriObservational,
+            Self::HijriTabular(_) => AnyCalendarKind::HijriTabular,
+            Self::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
             Self::Iso(_) => AnyCalendarKind::Iso,
             Self::Japanese(_) => AnyCalendarKind::Japanese,
             Self::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
@@ -802,10 +798,10 @@ impl AnyDateInner {
             AnyDateInner::Gregorian(_) => AnyCalendarKind::Gregorian,
             AnyDateInner::Hebrew(_) => AnyCalendarKind::Hebrew,
             AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
-            AnyDateInner::IslamicCivil(_) => AnyCalendarKind::IslamicCivil,
-            AnyDateInner::IslamicObservational(_) => AnyCalendarKind::IslamicObservational,
-            AnyDateInner::IslamicTabular(_) => AnyCalendarKind::IslamicTabular,
-            AnyDateInner::IslamicUmmAlQura(_) => AnyCalendarKind::IslamicUmmAlQura,
+            AnyDateInner::HijriCivil(_) => AnyCalendarKind::HijriCivil,
+            AnyDateInner::HijriObservational(_) => AnyCalendarKind::HijriObservational,
+            AnyDateInner::HijriTabular(_) => AnyCalendarKind::HijriTabular,
+            AnyDateInner::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
             AnyDateInner::Iso(_) => AnyCalendarKind::Iso,
             AnyDateInner::Japanese(_) => AnyCalendarKind::Japanese,
             AnyDateInner::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
@@ -837,14 +833,14 @@ pub enum AnyCalendarKind {
     Hebrew,
     /// The kind of a [`Indian`] calendar
     Indian,
-    /// The kind of an [`IslamicCivil`] calendar
-    IslamicCivil,
-    /// The kind of an [`IslamicObservational`] calendar
-    IslamicObservational,
-    /// The kind of an [`IslamicTabular`] calendar
-    IslamicTabular,
-    /// The kind of an [`IslamicUmmAlQura`] calendar
-    IslamicUmmAlQura,
+    /// The kind of an [`HijriCivil`] calendar
+    HijriCivil,
+    /// The kind of an [`HijriObservational`] calendar
+    HijriObservational,
+    /// The kind of an [`HijriTabular`] calendar
+    HijriTabular,
+    /// The kind of an [`HijriUmmAlQura`] calendar
+    HijriUmmAlQura,
     /// The kind of an [`Iso`] calendar
     Iso,
     /// The kind of a [`Japanese`] calendar
@@ -858,164 +854,6 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
-    /// Construct from a BCP-47 string
-    ///
-    /// Returns `None` if the calendar is unknown.
-    pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
-        Self::get_for_bcp47_bytes(x.as_bytes())
-    }
-    /// Construct from a BCP-47 byte string
-    ///
-    /// Returns `None` if the calendar is unknown.
-    pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
-        Some(match x {
-            b"buddhist" => AnyCalendarKind::Buddhist,
-            b"chinese" => AnyCalendarKind::Chinese,
-            b"coptic" => AnyCalendarKind::Coptic,
-            b"dangi" => AnyCalendarKind::Dangi,
-            b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
-            b"ethiopic" => AnyCalendarKind::Ethiopian,
-            b"gregory" => AnyCalendarKind::Gregorian,
-            b"hebrew" => AnyCalendarKind::Hebrew,
-            b"indian" => AnyCalendarKind::Indian,
-            b"islamic-civil" | b"islamicc" => AnyCalendarKind::IslamicCivil,
-            b"islamic-tbla" => AnyCalendarKind::IslamicTabular,
-            b"islamic-umalqura" => AnyCalendarKind::IslamicUmmAlQura,
-            b"islamic" => AnyCalendarKind::IslamicObservational,
-            b"iso" => AnyCalendarKind::Iso,
-            b"japanese" => AnyCalendarKind::Japanese,
-            b"japanext" => AnyCalendarKind::JapaneseExtended,
-            b"persian" => AnyCalendarKind::Persian,
-            b"roc" => AnyCalendarKind::Roc,
-            _ => {
-                // Log a warning when a calendar value is passed in but doesn't match any calendars
-                DataError::custom("bcp47_bytes did not match any calendars").with_debug_context(x);
-                return None;
-            }
-        })
-    }
-    /// Construct from a BCP-47 [`Value`]
-    ///
-    /// Returns `None` if the calendar is unknown.
-    pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        match x.as_subtags_slice() {
-            [first] if first == "buddhist" => Some(AnyCalendarKind::Buddhist),
-            [first] if first == "chinese" => Some(AnyCalendarKind::Chinese),
-            [first] if first == "coptic" => Some(AnyCalendarKind::Coptic),
-            [first] if first == "dangi" => Some(AnyCalendarKind::Dangi),
-            [first] if first == "ethioaa" => Some(AnyCalendarKind::EthiopianAmeteAlem),
-            [first] if first == "ethiopic" => Some(AnyCalendarKind::Ethiopian),
-            [first] if first == "gregory" => Some(AnyCalendarKind::Gregorian),
-            [first] if first == "hebrew" => Some(AnyCalendarKind::Hebrew),
-            [first] if first == "indian" => Some(AnyCalendarKind::Indian),
-            [first] if first == "islamic" => Some(AnyCalendarKind::IslamicObservational),
-            [first] if first == "islamicc" => Some(AnyCalendarKind::IslamicCivil),
-            [first, second] if first == "islamic" && second == "civil" => {
-                Some(AnyCalendarKind::IslamicCivil)
-            }
-            [first, second] if first == "islamic" && second == "tbla" => {
-                Some(AnyCalendarKind::IslamicTabular)
-            }
-            [first, second] if first == "islamic" && second == "umalqura" => {
-                Some(AnyCalendarKind::IslamicUmmAlQura)
-            }
-            [first] if first == "iso" => Some(AnyCalendarKind::Iso),
-            [first] if first == "japanese" => Some(AnyCalendarKind::Japanese),
-            [first] if first == "japanext" => Some(AnyCalendarKind::JapaneseExtended),
-            [first] if first == "persian" => Some(AnyCalendarKind::Persian),
-            [first] if first == "roc" => Some(AnyCalendarKind::Roc),
-            _ => {
-                // Log a warning when a calendar value is passed in but doesn't match any calendars
-                DataError::custom("bcp47_value did not match any calendars")
-                    .with_display_context(x);
-                None
-            }
-        }
-    }
-
-    /// Convert to a BCP-47 string
-    pub fn as_bcp47_string(self) -> &'static str {
-        match self {
-            AnyCalendarKind::Buddhist => "buddhist",
-            AnyCalendarKind::Chinese => "chinese",
-            AnyCalendarKind::Coptic => "coptic",
-            AnyCalendarKind::Dangi => "dangi",
-            AnyCalendarKind::Ethiopian => "ethiopic",
-            AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
-            AnyCalendarKind::Gregorian => "gregory",
-            AnyCalendarKind::Hebrew => "hebrew",
-            AnyCalendarKind::Indian => "indian",
-            AnyCalendarKind::IslamicCivil => "islamic-civil",
-            AnyCalendarKind::IslamicObservational => "islamic",
-            AnyCalendarKind::IslamicTabular => "islamic-tbla",
-            AnyCalendarKind::IslamicUmmAlQura => "islamic-umalqura",
-            AnyCalendarKind::Iso => "iso",
-            AnyCalendarKind::Japanese => "japanese",
-            AnyCalendarKind::JapaneseExtended => "japanext",
-            AnyCalendarKind::Persian => "persian",
-            AnyCalendarKind::Roc => "roc",
-        }
-    }
-
-    /// Convert to a BCP-47 `Value`
-    #[allow(clippy::unwrap_used)] // these are known-good BCP47 unicode extension values
-    pub fn as_bcp47_value(self) -> Value {
-        match self {
-            AnyCalendarKind::Buddhist => value!("buddhist"),
-            AnyCalendarKind::Chinese => value!("chinese"),
-            AnyCalendarKind::Coptic => value!("coptic"),
-            AnyCalendarKind::Dangi => value!("dangi"),
-            AnyCalendarKind::Ethiopian => value!("ethiopic"),
-            AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
-            AnyCalendarKind::Gregorian => value!("gregory"),
-            AnyCalendarKind::Hebrew => value!("hebrew"),
-            AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::IslamicCivil => Value::try_from_str("islamic-civil").unwrap(),
-            AnyCalendarKind::IslamicObservational => value!("islamic"),
-            AnyCalendarKind::IslamicTabular => Value::try_from_str("islamic-tbla").unwrap(),
-            AnyCalendarKind::IslamicUmmAlQura => Value::try_from_str("islamic-umalqura").unwrap(),
-            AnyCalendarKind::Iso => value!("iso"),
-            AnyCalendarKind::Japanese => value!("japanese"),
-            AnyCalendarKind::JapaneseExtended => value!("japanext"),
-            AnyCalendarKind::Persian => value!("persian"),
-            AnyCalendarKind::Roc => value!("roc"),
-        }
-    }
-
-    fn get_for_preferences_calendar(pcal: CalendarAlgorithm) -> Option<Self> {
-        match pcal {
-            CalendarAlgorithm::Buddhist => Some(Self::Buddhist),
-            CalendarAlgorithm::Chinese => Some(Self::Chinese),
-            CalendarAlgorithm::Coptic => Some(Self::Coptic),
-            CalendarAlgorithm::Dangi => Some(Self::Dangi),
-            CalendarAlgorithm::Ethioaa => Some(Self::EthiopianAmeteAlem),
-            CalendarAlgorithm::Ethiopic => Some(Self::Ethiopian),
-            CalendarAlgorithm::Gregory => Some(Self::Gregorian),
-            CalendarAlgorithm::Hebrew => Some(Self::Hebrew),
-            CalendarAlgorithm::Indian => Some(Self::Indian),
-            CalendarAlgorithm::Islamic(None) => Some(Self::IslamicObservational),
-            CalendarAlgorithm::Islamic(Some(islamic)) => match islamic {
-                IslamicCalendarAlgorithm::Umalqura => Some(Self::IslamicUmmAlQura),
-                IslamicCalendarAlgorithm::Tbla => Some(Self::IslamicTabular),
-                IslamicCalendarAlgorithm::Civil => Some(Self::IslamicCivil),
-                // Rgsa is not supported
-                IslamicCalendarAlgorithm::Rgsa => None,
-                _ => {
-                    debug_assert!(false, "unknown calendar algorithm {pcal:?}");
-                    None
-                }
-            },
-            CalendarAlgorithm::Iso8601 => Some(Self::Iso),
-            CalendarAlgorithm::Japanese => Some(Self::Japanese),
-            CalendarAlgorithm::Persian => Some(Self::Persian),
-            CalendarAlgorithm::Roc => Some(Self::Roc),
-            _ => {
-                debug_assert!(false, "unknown calendar algorithm {pcal:?}");
-                None
-            }
-        }
-    }
-
     fn debug_name(self) -> &'static str {
         match self {
             AnyCalendarKind::Buddhist => Buddhist.debug_name(),
@@ -1027,10 +865,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
             AnyCalendarKind::Hebrew => Hebrew.debug_name(),
             AnyCalendarKind::Indian => Indian.debug_name(),
-            AnyCalendarKind::IslamicCivil => IslamicCivil.debug_name(),
-            AnyCalendarKind::IslamicObservational => IslamicObservational::DEBUG_NAME,
-            AnyCalendarKind::IslamicTabular => IslamicTabular.debug_name(),
-            AnyCalendarKind::IslamicUmmAlQura => IslamicUmmAlQura::DEBUG_NAME,
+            AnyCalendarKind::HijriCivil => HijriCivil.debug_name(),
+            AnyCalendarKind::HijriObservational => HijriObservational::DEBUG_NAME,
+            AnyCalendarKind::HijriTabular => HijriTabular.debug_name(),
+            AnyCalendarKind::HijriUmmAlQura => HijriUmmAlQura::DEBUG_NAME,
             AnyCalendarKind::Iso => Iso.debug_name(),
             AnyCalendarKind::Japanese => Japanese::DEBUG_NAME,
             AnyCalendarKind::JapaneseExtended => JapaneseExtended::DEBUG_NAME,
@@ -1039,42 +877,67 @@ impl AnyCalendarKind {
         }
     }
 
-    /// Extract the calendar component from a [`Locale`]
-    ///
-    /// Returns `None` if the calendar is not specified or unknown.
-    pub fn get_for_locale(l: &Locale) -> Option<Self> {
-        l.extensions
-            .unicode
-            .keywords
-            .get(&key!("ca"))
-            .and_then(Self::get_for_bcp47_value)
-    }
-
     /// Extract the calendar component from a [`AnyCalendarPreferences`]
     ///
     /// Returns `None` if the calendar is not specified or unknown.
-    fn get_for_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
-        prefs
-            .calendar_algorithm
-            .and_then(Self::get_for_preferences_calendar)
+    pub fn from_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
+        prefs.calendar_algorithm.and_then(|p| p.try_into().ok())
     }
+}
 
-    // Do not make public, this will eventually need fallback
-    // data from the provider
-    fn from_prefs_with_fallback(prefs: AnyCalendarPreferences) -> Self {
-        if let Some(kind) = Self::get_for_prefs(prefs) {
-            kind
-        } else {
-            let lang = prefs.locale_preferences.language();
-            if lang == language!("th") {
-                Self::Buddhist
-            } else if lang == language!("sa") {
-                Self::IslamicUmmAlQura
-            } else if lang == language!("af") || lang == language!("ir") {
-                Self::Persian
-            } else {
-                Self::Gregorian
+impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
+    type Error = ();
+    fn try_from(v: CalendarAlgorithm) -> Result<Self, Self::Error> {
+        use CalendarAlgorithm::*;
+        match v {
+            Buddhist => Ok(AnyCalendarKind::Buddhist),
+            Chinese => Ok(AnyCalendarKind::Chinese),
+            Coptic => Ok(AnyCalendarKind::Coptic),
+            Dangi => Ok(AnyCalendarKind::Dangi),
+            Ethioaa => Ok(AnyCalendarKind::EthiopianAmeteAlem),
+            Ethiopic => Ok(AnyCalendarKind::Ethiopian),
+            Gregory => Ok(AnyCalendarKind::Gregorian),
+            Hebrew => Ok(AnyCalendarKind::Hebrew),
+            Indian => Ok(AnyCalendarKind::Indian),
+            Hijri(None) => Ok(AnyCalendarKind::HijriObservational),
+            Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => Ok(AnyCalendarKind::HijriUmmAlQura),
+            Hijri(Some(HijriCalendarAlgorithm::Tbla)) => Ok(AnyCalendarKind::HijriTabular),
+            Hijri(Some(HijriCalendarAlgorithm::Civil)) => Ok(AnyCalendarKind::HijriCivil),
+            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Err(()),
+            Iso8601 => Ok(AnyCalendarKind::Iso),
+            Japanese => Ok(AnyCalendarKind::Japanese),
+            Persian => Ok(AnyCalendarKind::Persian),
+            Roc => Ok(AnyCalendarKind::Roc),
+            _ => {
+                debug_assert!(false, "unknown calendar algorithm {v:?}");
+                Err(())
             }
+        }
+    }
+}
+
+impl From<AnyCalendarKind> for CalendarAlgorithm {
+    fn from(v: AnyCalendarKind) -> Self {
+        use AnyCalendarKind::*;
+        match v {
+            Buddhist => CalendarAlgorithm::Buddhist,
+            Chinese => CalendarAlgorithm::Chinese,
+            Coptic => CalendarAlgorithm::Coptic,
+            Dangi => CalendarAlgorithm::Dangi,
+            EthiopianAmeteAlem => CalendarAlgorithm::Ethioaa,
+            Ethiopian => CalendarAlgorithm::Ethiopic,
+            Gregorian => CalendarAlgorithm::Gregory,
+            Hebrew => CalendarAlgorithm::Hebrew,
+            Indian => CalendarAlgorithm::Indian,
+            HijriObservational => CalendarAlgorithm::Hijri(None),
+            HijriUmmAlQura => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)),
+            HijriTabular => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)),
+            HijriCivil => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
+            Iso => CalendarAlgorithm::Iso8601,
+            Japanese => CalendarAlgorithm::Japanese,
+            JapaneseExtended => CalendarAlgorithm::Japanese,
+            Persian => CalendarAlgorithm::Persian,
+            Roc => CalendarAlgorithm::Roc,
         }
     }
 }
@@ -1436,18 +1299,18 @@ impl From<Indian> for AnyCalendar {
     }
 }
 
-impl IntoAnyCalendar for IslamicCivil {
+impl IntoAnyCalendar for HijriCivil {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicCivil(self)
+        AnyCalendar::HijriCivil(self)
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::IslamicCivil
+        AnyCalendarKind::HijriCivil
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::IslamicCivil(cal) = any {
+        if let AnyCalendar::HijriCivil(cal) = any {
             Ok(cal)
         } else {
             Err(any)
@@ -1455,7 +1318,7 @@ impl IntoAnyCalendar for IslamicCivil {
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::IslamicCivil(cal) = any {
+        if let AnyCalendar::HijriCivil(cal) = any {
             Some(cal)
         } else {
             None
@@ -1463,28 +1326,28 @@ impl IntoAnyCalendar for IslamicCivil {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::IslamicCivil(*d)
+        AnyDateInner::HijriCivil(*d)
     }
 }
 
-impl From<IslamicCivil> for AnyCalendar {
-    fn from(value: IslamicCivil) -> AnyCalendar {
+impl From<HijriCivil> for AnyCalendar {
+    fn from(value: HijriCivil) -> AnyCalendar {
         value.to_any()
     }
 }
 
-impl IntoAnyCalendar for IslamicObservational {
+impl IntoAnyCalendar for HijriObservational {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicObservational(self)
+        AnyCalendar::HijriObservational(self)
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::IslamicObservational
+        AnyCalendarKind::HijriObservational
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::IslamicObservational(cal) = any {
+        if let AnyCalendar::HijriObservational(cal) = any {
             Ok(cal)
         } else {
             Err(any)
@@ -1492,7 +1355,7 @@ impl IntoAnyCalendar for IslamicObservational {
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::IslamicObservational(cal) = any {
+        if let AnyCalendar::HijriObservational(cal) = any {
             Some(cal)
         } else {
             None
@@ -1500,28 +1363,28 @@ impl IntoAnyCalendar for IslamicObservational {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::IslamicObservational(*d)
+        AnyDateInner::HijriObservational(*d)
     }
 }
 
-impl From<IslamicObservational> for AnyCalendar {
-    fn from(value: IslamicObservational) -> AnyCalendar {
+impl From<HijriObservational> for AnyCalendar {
+    fn from(value: HijriObservational) -> AnyCalendar {
         value.to_any()
     }
 }
 
-impl IntoAnyCalendar for IslamicTabular {
+impl IntoAnyCalendar for HijriTabular {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicTabular(self)
+        AnyCalendar::HijriTabular(self)
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::IslamicTabular
+        AnyCalendarKind::HijriTabular
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::IslamicTabular(cal) = any {
+        if let AnyCalendar::HijriTabular(cal) = any {
             Ok(cal)
         } else {
             Err(any)
@@ -1529,7 +1392,7 @@ impl IntoAnyCalendar for IslamicTabular {
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::IslamicTabular(cal) = any {
+        if let AnyCalendar::HijriTabular(cal) = any {
             Some(cal)
         } else {
             None
@@ -1537,28 +1400,28 @@ impl IntoAnyCalendar for IslamicTabular {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::IslamicTabular(*d)
+        AnyDateInner::HijriTabular(*d)
     }
 }
 
-impl From<IslamicTabular> for AnyCalendar {
-    fn from(value: IslamicTabular) -> AnyCalendar {
+impl From<HijriTabular> for AnyCalendar {
+    fn from(value: HijriTabular) -> AnyCalendar {
         value.to_any()
     }
 }
 
-impl IntoAnyCalendar for IslamicUmmAlQura {
+impl IntoAnyCalendar for HijriUmmAlQura {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::IslamicUmmAlQura(self)
+        AnyCalendar::HijriUmmAlQura(self)
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::IslamicUmmAlQura
+        AnyCalendarKind::HijriUmmAlQura
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::IslamicUmmAlQura(cal) = any {
+        if let AnyCalendar::HijriUmmAlQura(cal) = any {
             Ok(cal)
         } else {
             Err(any)
@@ -1566,7 +1429,7 @@ impl IntoAnyCalendar for IslamicUmmAlQura {
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::IslamicUmmAlQura(cal) = any {
+        if let AnyCalendar::HijriUmmAlQura(cal) = any {
             Some(cal)
         } else {
             None
@@ -1574,12 +1437,12 @@ impl IntoAnyCalendar for IslamicUmmAlQura {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::IslamicUmmAlQura(*d)
+        AnyDateInner::HijriUmmAlQura(*d)
     }
 }
 
-impl From<IslamicUmmAlQura> for AnyCalendar {
-    fn from(value: IslamicUmmAlQura) -> AnyCalendar {
+impl From<HijriUmmAlQura> for AnyCalendar {
+    fn from(value: HijriUmmAlQura) -> AnyCalendar {
         value.to_any()
     }
 }
@@ -1784,7 +1647,6 @@ mod tests {
         month_code: &str,
         day: u8,
     ) {
-        let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
         let date =
@@ -1824,7 +1686,6 @@ mod tests {
         day: u8,
         error: DateError,
     ) {
-        let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
         let date = Date::try_new_from_codes(Some(era), year, month, day, calendar);
@@ -1846,13 +1707,12 @@ mod tests {
         let gregorian = AnyCalendar::new_for_kind(AnyCalendarKind::Gregorian);
         let hebrew = AnyCalendar::new_for_kind(AnyCalendarKind::Hebrew);
         let indian = AnyCalendar::new_for_kind(AnyCalendarKind::Indian);
-        let islamic_civil: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::IslamicCivil);
-        let islamic_observational: AnyCalendar =
-            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicObservational);
-        let islamic_tabular: AnyCalendar =
-            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicTabular);
-        let islamic_umm_al_qura: AnyCalendar =
-            AnyCalendar::new_for_kind(AnyCalendarKind::IslamicUmmAlQura);
+        let hijri_civil: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::HijriCivil);
+        let hijri_observational: AnyCalendar =
+            AnyCalendar::new_for_kind(AnyCalendarKind::HijriObservational);
+        let hijri_tabular: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::HijriTabular);
+        let hijri_umm_al_qura: AnyCalendar =
+            AnyCalendar::new_for_kind(AnyCalendarKind::HijriUmmAlQura);
         let japanese = AnyCalendar::new_for_kind(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new_for_kind(AnyCalendarKind::JapaneseExtended);
         let persian = AnyCalendar::new_for_kind(AnyCalendarKind::Persian);
@@ -1866,10 +1726,10 @@ mod tests {
         let gregorian = Ref(&gregorian);
         let hebrew = Ref(&hebrew);
         let indian = Ref(&indian);
-        let islamic_civil = Ref(&islamic_civil);
-        let islamic_observational = Ref(&islamic_observational);
-        let islamic_tabular = Ref(&islamic_tabular);
-        let islamic_umm_al_qura = Ref(&islamic_umm_al_qura);
+        let hijri_civil = Ref(&hijri_civil);
+        let hijri_observational = Ref(&hijri_observational);
+        let hijri_tabular = Ref(&hijri_tabular);
+        let hijri_umm_al_qura = Ref(&hijri_umm_al_qura);
         let japanese = Ref(&japanese);
         let japanext = Ref(&japanext);
         let persian = Ref(&persian);
@@ -1887,14 +1747,14 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(coptic, "ad", 100, "M03", 1);
-        single_test_roundtrip(coptic, "ad", 2000, "M03", 1);
+        single_test_roundtrip(coptic, "coptic", 100, "M03", 1);
+        single_test_roundtrip(coptic, "coptic", 2000, "M03", 1);
         // fails ISO roundtrip
         // single_test_roundtrip(coptic, "bd", 100, "M03", 1);
-        single_test_roundtrip(coptic, "ad", 100, "M13", 1);
+        single_test_roundtrip(coptic, "coptic", 100, "M13", 1);
         single_test_error(
             coptic,
-            "ad",
+            "coptic",
             100,
             "M14",
             1,
@@ -1902,7 +1762,7 @@ mod tests {
         );
         single_test_error(
             coptic,
-            "ad",
+            "coptic",
             0,
             "M03",
             1,
@@ -1915,7 +1775,7 @@ mod tests {
         );
         single_test_error(
             coptic,
-            "bd",
+            "coptic-inverse",
             0,
             "M03",
             1,
@@ -1931,7 +1791,7 @@ mod tests {
         single_test_roundtrip(ethiopian, "incar", 2000, "M03", 1);
         single_test_roundtrip(ethiopian, "incar", 2000, "M13", 1);
         // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopian, "pre-incar", 100, "M03", 1);
+        // single_test_roundtrip(ethiopian, "mundi", 5400, "M03", 1);
         single_test_error(
             ethiopian,
             "incar",
@@ -1947,15 +1807,15 @@ mod tests {
         );
         single_test_error(
             ethiopian,
-            "pre-incar",
-            0,
+            "mundi",
+            5600,
             "M03",
             1,
             DateError::Range {
                 field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
+                value: 5600,
+                min: i32::MIN,
+                max: 5500,
             },
         );
         single_test_error(
@@ -2139,12 +1999,12 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(persian, "ah", 477, "M03", 1);
-        single_test_roundtrip(persian, "ah", 2083, "M07", 21);
-        single_test_roundtrip(persian, "ah", 1600, "M12", 20);
+        single_test_roundtrip(persian, "ap", 477, "M03", 1);
+        single_test_roundtrip(persian, "ap", 2083, "M07", 21);
+        single_test_roundtrip(persian, "ap", 1600, "M12", 20);
         single_test_error(
             persian,
-            "ah",
+            "ap",
             100,
             "M9",
             1,
@@ -2167,11 +2027,11 @@ mod tests {
         single_test_roundtrip(roc, "roc-inverse", 15, "M01", 10);
         single_test_roundtrip(roc, "roc", 100, "M10", 30);
 
-        single_test_roundtrip(islamic_observational, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_observational, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_observational, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_observational, "ah", 477, "M03", 1);
+        single_test_roundtrip(hijri_observational, "ah", 2083, "M07", 21);
+        single_test_roundtrip(hijri_observational, "ah", 1600, "M12", 20);
         single_test_error(
-            islamic_observational,
+            hijri_observational,
             "ah",
             100,
             "M9",
@@ -2179,11 +2039,11 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(islamic_civil, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_civil, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_civil, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_civil, "ah", 477, "M03", 1);
+        single_test_roundtrip(hijri_civil, "ah", 2083, "M07", 21);
+        single_test_roundtrip(hijri_civil, "ah", 1600, "M12", 20);
         single_test_error(
-            islamic_civil,
+            hijri_civil,
             "ah",
             100,
             "M9",
@@ -2191,11 +2051,11 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(islamic_umm_al_qura, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_umm_al_qura, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_umm_al_qura, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_umm_al_qura, "ah", 477, "M03", 1);
+        single_test_roundtrip(hijri_umm_al_qura, "ah", 2083, "M07", 21);
+        single_test_roundtrip(hijri_umm_al_qura, "ah", 1600, "M12", 20);
         single_test_error(
-            islamic_umm_al_qura,
+            hijri_umm_al_qura,
             "ah",
             100,
             "M9",
@@ -2203,11 +2063,11 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(islamic_tabular, "ah", 477, "M03", 1);
-        single_test_roundtrip(islamic_tabular, "ah", 2083, "M07", 21);
-        single_test_roundtrip(islamic_tabular, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_tabular, "ah", 477, "M03", 1);
+        single_test_roundtrip(hijri_tabular, "ah", 2083, "M07", 21);
+        single_test_roundtrip(hijri_tabular, "ah", 1600, "M12", 20);
         single_test_error(
-            islamic_tabular,
+            hijri_tabular,
             "ah",
             100,
             "M9",

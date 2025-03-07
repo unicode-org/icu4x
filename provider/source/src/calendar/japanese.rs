@@ -10,11 +10,10 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::env;
-use std::sync::OnceLock;
-use tinystr::tinystr;
 use tinystr::TinyStr16;
 
-const JAPANEXT_FILE: &str = include_str!("../../data/japanese-golden/calendar/japanext@1/und.json");
+pub(crate) const JAPANEXT_FILE: &str =
+    include_str!("../../data/japanese-golden/calendar/japanext@1/und.json");
 
 impl SourceDataProvider {
     fn load_japanese_eras(
@@ -181,24 +180,4 @@ impl crate::IterableDataProviderCached<CalendarJapaneseExtendedV1> for SourceDat
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
-}
-
-/// Computes the japanese era code map or loads from static cache
-pub(crate) fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
-    static MAP: OnceLock<BTreeMap<String, TinyStr16>> = OnceLock::new();
-
-    MAP.get_or_init(|| {
-        let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
-            .expect("Failed to parse the precached golden. This is a bug.");
-        let mut map: BTreeMap<_, _> = snapshot
-            .dates_to_eras
-            .iter()
-            .enumerate()
-            .map(|(i, (_, value))| (i.to_string(), value))
-            .collect();
-        // Splice in details about gregorian eras for pre-meiji dates
-        map.insert("-2".to_string(), tinystr!(16, "bce"));
-        map.insert("-1".to_string(), tinystr!(16, "ce"));
-        map
-    })
 }

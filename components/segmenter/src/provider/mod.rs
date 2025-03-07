@@ -44,70 +44,79 @@ const _: () = {
         pub use icu_segmenter_data::icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_dictionary_for_word_only_auto_v1!(Baked);
-    impl_dictionary_for_word_line_extended_v1!(Baked);
-    impl_grapheme_cluster_break_data_v2!(Baked);
-    impl_line_break_data_v2!(Baked);
+    impl_segmenter_break_sentence_v1!(Baked);
+    impl_segmenter_dictionary_auto_v1!(Baked);
+    impl_segmenter_break_grapheme_cluster_v1!(Baked);
+    impl_segmenter_dictionary_extended_v1!(Baked);
+    impl_segmenter_break_line_v1!(Baked);
     #[cfg(feature = "lstm")]
-    impl_lstm_for_word_line_auto_v1!(Baked);
-    impl_sentence_break_data_override_v1!(Baked);
-    impl_sentence_break_data_v2!(Baked);
-    impl_word_break_data_override_v1!(Baked);
-    impl_word_break_data_v2!(Baked);
+    impl_segmenter_lstm_auto_v1!(Baked);
+    impl_segmenter_break_word_v1!(Baked);
+    impl_segmenter_break_word_override_v1!(Baked);
+    impl_segmenter_break_sentence_override_v1!(Baked);
 };
 
 icu_provider::data_marker!(
-    /// `LstmForWordLineAutoV1`
-    LstmForWordLineAutoV1,
+    /// `SegmenterLstmWordLineAutoV1`
+    SegmenterLstmAutoV1,
+    "segmenter/lstm/auto/v1",
     LstmData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
 icu_provider::data_marker!(
-    /// `DictionaryForWordOnlyAutoV1`
-    DictionaryForWordOnlyAutoV1,
+    /// `SegmenterDictionaryWordAutoV1`
+    SegmenterDictionaryAutoV1,
+    "segmenter/dictionary/auto/v1",
     UCharDictionaryBreakData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
 icu_provider::data_marker!(
-    /// `DictionaryForWordLineExtendedV1`
-    DictionaryForWordLineExtendedV1,
+    /// `SegmenterDictionaryExtendedV1`
+    SegmenterDictionaryExtendedV1,
+    "segmenter/dictionary/extended/v1",
     UCharDictionaryBreakData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "segmenter"
 );
 icu_provider::data_marker!(
-    /// `SentenceBreakDataOverrideV1`
-    SentenceBreakDataOverrideV1,
+    /// `SegmenterBreakSentenceOverrideV1`
+    SegmenterBreakSentenceOverrideV1,
+    "segmenter/break/sentence/override/v1",
     RuleBreakDataOverride<'static>,
 );
 icu_provider::data_marker!(
-    /// `WordBreakDataOverrideV1`
-    WordBreakDataOverrideV1,
+    /// `SegmenterBreakWordOverrideV1`
+    SegmenterBreakWordOverrideV1,
+    "segmenter/break/word/override/v1",
     RuleBreakDataOverride<'static>,
 );
 icu_provider::data_marker!(
-    /// `LineBreakDataV2`
-    LineBreakDataV2,
+    /// `SegmenterBreakLineV1`
+    SegmenterBreakLineV1,
+    "segmenter/break/line/v1",
     RuleBreakData<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `WordBreakDataV2`
-    WordBreakDataV2,
+    /// `SegmenterBreakWordV1`
+    SegmenterBreakWordV1,
+    "segmenter/break/word/v1",
     RuleBreakData<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `GraphemeClusterBreakDataV2`
-    GraphemeClusterBreakDataV2,
+    /// `SegmenterBreakGraphemeClusterV1`
+    SegmenterBreakGraphemeClusterV1,
+    "segmenter/break/grapheme/cluster/v1",
     RuleBreakData<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `SentenceBreakDataV2`
-    SentenceBreakDataV2,
+    /// `SegmenterBreakSentenceV1`
+    SegmenterBreakSentenceV1,
+    "segmenter/break/sentence/v1",
     RuleBreakData<'static>,
     is_singleton = true
 );
@@ -115,15 +124,15 @@ icu_provider::data_marker!(
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    DictionaryForWordLineExtendedV1::INFO,
-    DictionaryForWordOnlyAutoV1::INFO,
-    GraphemeClusterBreakDataV2::INFO,
-    LineBreakDataV2::INFO,
-    LstmForWordLineAutoV1::INFO,
-    SentenceBreakDataOverrideV1::INFO,
-    SentenceBreakDataV2::INFO,
-    WordBreakDataOverrideV1::INFO,
-    WordBreakDataV2::INFO,
+    SegmenterBreakGraphemeClusterV1::INFO,
+    SegmenterBreakLineV1::INFO,
+    SegmenterBreakSentenceOverrideV1::INFO,
+    SegmenterBreakSentenceV1::INFO,
+    SegmenterBreakWordOverrideV1::INFO,
+    SegmenterBreakWordV1::INFO,
+    SegmenterDictionaryAutoV1::INFO,
+    SegmenterDictionaryExtendedV1::INFO,
+    SegmenterLstmAutoV1::INFO,
 ];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.

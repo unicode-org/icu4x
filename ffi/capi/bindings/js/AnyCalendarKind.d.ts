@@ -30,18 +30,14 @@ export class AnyCalendarKind {
     static Dangi : AnyCalendarKind;
     static Chinese : AnyCalendarKind;
     static Hebrew : AnyCalendarKind;
-    static IslamicCivil : AnyCalendarKind;
-    static IslamicObservational : AnyCalendarKind;
-    static IslamicTabular : AnyCalendarKind;
-    static IslamicUmmAlQura : AnyCalendarKind;
+    static HijriCivil : AnyCalendarKind;
+    static HijriObservational : AnyCalendarKind;
+    static HijriTabular : AnyCalendarKind;
+    static HijriUmmAlQura : AnyCalendarKind;
     static Persian : AnyCalendarKind;
     static Roc : AnyCalendarKind;
 
-    static getForLocale(locale: Locale): AnyCalendarKind | null;
-
-    static getForBcp47(s: string): AnyCalendarKind | null;
-
-    get bcp47(): string;
+    static createForLocale(locale: Locale): AnyCalendarKind | null;
 
     constructor(value: AnyCalendarKind | string );
 }

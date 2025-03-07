@@ -139,7 +139,7 @@ pub enum Strength {
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
     /// ```
-    /// TODO: Thai example.
+    // TODO: Thai example.
     Quaternary = 3,
 
     /// Compare the NFD form by code point order as the quinary

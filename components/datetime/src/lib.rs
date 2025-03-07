@@ -14,7 +14,7 @@
 //! 2. Options: [`icu::datetime::options`](options)
 //!
 //! ICU4X supports formatting in over one dozen _calendar systems_, including Gregorian, Buddhist,
-//! Islamic, and more. The calendar system is usually derived from the locale, but it can also be
+//! Hijri, and more. The calendar system is usually derived from the locale, but it can also be
 //! specified explicitly.
 //!
 //! The main formatter in this crate is [`DateTimeFormatter`], which supports all field sets,

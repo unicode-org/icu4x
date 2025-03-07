@@ -24,7 +24,7 @@
 //!     DeduplicationStrategy::None.into(),
 //!     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 //! )
-//! .with_markers([icu::list::provider::ListAndV2::INFO])
+//! .with_markers([icu::list::provider::ListAndV1::INFO])
 //! .export(
 //!     &provider,
 //!     BlobExporter::new_with_sink(Box::new(
@@ -113,7 +113,7 @@ use std::sync::Arc;
 ///     DeduplicationStrategy::None.into(),
 ///     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 /// )
-/// .with_markers([icu::list::provider::ListAndV2::INFO])
+/// .with_markers([icu::list::provider::ListAndV1::INFO])
 /// .export(
 ///     &provider,
 ///     BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -186,7 +186,10 @@ impl ExportDriver {
         .with_additional_collations([])
     }
 
-    /// TODO
+    /// Adds a filter on a [`DataMarkerAttributes`].
+    ///
+    /// These are keyed by a `domain`, which is [`DataMarkerInfo::attributes_domain`] and
+    /// can thus apply to multiple data markers at once.
     pub fn with_marker_attributes_filter(
         mut self,
         domain: &str,

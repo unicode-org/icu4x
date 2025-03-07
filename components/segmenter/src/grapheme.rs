@@ -128,7 +128,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// ```
 #[derive(Debug)]
 pub struct GraphemeClusterSegmenter {
-    payload: DataPayload<GraphemeClusterBreakDataV2>,
+    payload: DataPayload<SegmenterBreakGraphemeClusterV1>,
 }
 
 impl GraphemeClusterSegmenter {
@@ -142,7 +142,7 @@ impl GraphemeClusterSegmenter {
     pub fn new() -> Self {
         Self {
             payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2,
+                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
             ),
         }
     }
@@ -158,7 +158,7 @@ impl GraphemeClusterSegmenter {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GraphemeClusterBreakDataV2> + ?Sized,
+        D: DataProvider<SegmenterBreakGraphemeClusterV1> + ?Sized,
     {
         let payload = provider.load(Default::default())?.payload;
         Ok(Self { payload })

@@ -260,8 +260,8 @@ impl_data_provider_adapter!(
     month_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
-    IslamicDateSymbolsV1,
-    IslamicMonthNamesV1,
+    HijriDateSymbolsV1,
+    HijriMonthNamesV1,
     month_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
@@ -326,7 +326,7 @@ impl_data_provider_adapter!(
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
-    IslamicDateSymbolsV1,
+    HijriDateSymbolsV1,
     WeekdayNamesV1,
     weekday_symbols_map_project_cloned
 );

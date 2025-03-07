@@ -347,7 +347,7 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataResponse<LstmForWordLineAutoV1> = crate::provider::Baked
+        let lstm: DataResponse<SegmenterLstmAutoV1> = crate::provider::Baked
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic(
@@ -359,7 +359,7 @@ mod tests {
             .unwrap();
         let lstm = LstmSegmenter::new(
             lstm.payload.get(),
-            crate::provider::Baked::SINGLETON_GRAPHEME_CLUSTER_BREAK_DATA_V2,
+            crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
         );
 
         // Importing the test data

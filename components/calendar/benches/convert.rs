@@ -72,25 +72,25 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
-        icu::calendar::cal::IslamicObservational::new_always_calculating(),
+        icu::calendar::cal::HijriObservational::new_always_calculating(),
     );
 
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
-        icu::calendar::cal::IslamicCivil::new(),
+        icu::calendar::cal::HijriCivil::new(),
     );
 
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
-        icu::calendar::cal::IslamicUmmAlQura::new_always_calculating(),
+        icu::calendar::cal::HijriUmmAlQura::new_always_calculating(),
     );
 
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",
-        icu::calendar::cal::IslamicTabular::new(),
+        icu::calendar::cal::HijriTabular::new(),
     );
 
     group.finish();

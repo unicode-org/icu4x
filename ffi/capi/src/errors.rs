@@ -164,7 +164,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
             icu_calendar::DateError::Range { .. } => Self::OutOfRange,
-            icu_calendar::DateError::UnknownEra(..) => Self::UnknownEra,
+            icu_calendar::DateError::UnknownEra => Self::UnknownEra,
             icu_calendar::DateError::UnknownMonthCode(..) => Self::UnknownMonthCode,
             _ => Self::Unknown,
         }

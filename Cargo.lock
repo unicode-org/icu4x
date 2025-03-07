@@ -336,6 +336,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chrono"
+version = "0.4.40"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a7964611d71df112cb1730f2ee67324fcf4d0fc6606acbbe9bfe06df124637c"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "chrono-tz"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c6ac4f2c0bf0f44e9161aec9675e1050aa4a530663c4a9e37e108fa948bca9f"
+dependencies = [
+ "chrono",
+ "chrono-tz-build",
+ "phf",
+]
+
+[[package]]
+name = "chrono-tz-build"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e94fea34d77a245229e7746bd2beb786cd2a896f306ff491fb8cecb3074b10a7"
+dependencies = [
+ "parse-zoneinfo",
+ "phf_codegen",
+]
+
+[[package]]
 name = "ciborium"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -968,6 +998,8 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 name = "icu"
 version = "2.0.0-beta2"
 dependencies = [
+ "chrono",
+ "chrono-tz",
  "icu_calendar",
  "icu_casemap",
  "icu_collator",
@@ -1967,12 +1999,11 @@ version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3590fea8e9e22d449600c9bbd481a8163bef223e4ff938e5f55899f8cf1adb93"
 dependencies = [
- "jiff-tzdb-platform",
+ "jiff-tzdb",
  "log",
  "portable-atomic",
  "portable-atomic-util",
  "serde",
- "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -1980,15 +2011,6 @@ name = "jiff-tzdb"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf2cec2f5d266af45a071ece48b1fb89f3b00b2421ac3a5fe10285a6caaa60d3"
-
-[[package]]
-name = "jiff-tzdb-platform"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a63c62e404e7b92979d2792352d885a7f8f83fd1d0d31eea582d77b2ceca697e"
-dependencies = [
- "jiff-tzdb",
-]
 
 [[package]]
 name = "js-sys"
@@ -2366,6 +2388,44 @@ name = "percent-encoding"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
+
+[[package]]
+name = "phf"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
+dependencies = [
+ "phf_shared",
+]
+
+[[package]]
+name = "phf_codegen"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aef8048c789fa5e851558d709946d6d79a8ff88c0440c587967f8e94bfb1216a"
+dependencies = [
+ "phf_generator",
+ "phf_shared",
+]
+
+[[package]]
+name = "phf_generator"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
+dependencies = [
+ "phf_shared",
+ "rand",
+]
+
+[[package]]
+name = "phf_shared"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
+dependencies = [
+ "siphasher",
+]
 
 [[package]]
 name = "plotters"
@@ -2921,6 +2981,12 @@ dependencies = [
  "time",
  "windows-sys 0.48.0",
 ]
+
+[[package]]
+name = "siphasher"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56199f7ddabf13fe5074ce809e7d3f42b42ae711800501b5b16ea82ad029c39d"
 
 [[package]]
 name = "smallvec"

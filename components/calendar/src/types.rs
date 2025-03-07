@@ -155,7 +155,7 @@ pub enum FormattingEra {
     ///
     /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
     /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
-    /// bce < ce, and mundi < pre-incar < incar for Ethiopian.
+    /// bce < ce, and mundi < incar for Ethiopian.
     ///
     /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
     /// be something sensible (or empty).
