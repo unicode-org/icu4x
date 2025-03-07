@@ -8,7 +8,6 @@ use crate::SourceDataProvider;
 use icu::datetime::provider::calendar::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
-use symbols::get_era_code_map;
 
 mod neo;
 mod neo_skeleton;
@@ -21,7 +20,7 @@ pub(crate) mod week_data;
 /// which are all CLDR calendars (even the ones we don't support in ICU right now),
 /// with the Japanese calendar split.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-enum DatagenCalendar {
+pub(crate) enum DatagenCalendar {
     Buddhist,
     Chinese,
     Coptic,
@@ -43,7 +42,7 @@ enum DatagenCalendar {
 }
 
 impl DatagenCalendar {
-    fn cldr_name(self) -> &'static str {
+    pub(crate) fn cldr_name(self) -> &'static str {
         use DatagenCalendar::*;
         match self {
             Buddhist => "buddhist",
@@ -96,7 +95,7 @@ impl SourceDataProvider {
             let eras = data.eras.as_mut().expect("japanese must have eras");
             // Filter out non-modern eras
             if calendar == Some(DatagenCalendar::JapaneseModern) {
-                let modern_japanese_eras = get_era_code_map()[&DatagenCalendar::JapaneseModern]
+                let modern_japanese_eras = self.all_eras()?[&DatagenCalendar::JapaneseModern]
                     .iter()
                     .map(|&(s, _)| s.to_string())
                     .collect::<std::collections::BTreeSet<_>>();
@@ -137,10 +136,12 @@ macro_rules! impl_data_provider {
 
                 let data = self.get_datetime_resources(&req.id.locale, Some($calendar))?;
 
+                let eras = &self.all_eras()?[&$calendar];
+
                 #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(($expr)(&data, $calendar)),
+                    payload: DataPayload::from_owned(($expr)(&data, $calendar, eras)),
                 })
             }
         }
@@ -175,7 +176,7 @@ macro_rules! impl_data_provider {
 
 impl_data_provider!(
     BuddhistDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Buddhist
 );
 impl_data_provider!(
@@ -185,7 +186,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     ChineseDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Chinese
 );
 impl_data_provider!(
@@ -195,7 +196,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     CopticDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Coptic
 );
 impl_data_provider!(
@@ -205,7 +206,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     DangiDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Dangi
 );
 impl_data_provider!(
@@ -215,7 +216,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     EthiopianDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Ethiopic
 );
 impl_data_provider!(
@@ -225,7 +226,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     GregorianDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Gregorian
 );
 impl_data_provider!(
@@ -235,7 +236,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     HebrewDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Hebrew
 );
 impl_data_provider!(
@@ -245,7 +246,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     IndianDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Indian
 );
 impl_data_provider!(
@@ -255,7 +256,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     HijriDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::IslamicCivil
 );
 impl_data_provider!(
@@ -265,7 +266,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     JapaneseDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::JapaneseModern
 );
 impl_data_provider!(
@@ -275,7 +276,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     JapaneseExtendedDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::JapaneseExtended
 );
 impl_data_provider!(
@@ -285,7 +286,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     PersianDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Persian
 );
 impl_data_provider!(
@@ -295,7 +296,7 @@ impl_data_provider!(
 );
 impl_data_provider!(
     RocDateLengthsV1,
-    |dates, _| DateLengths::from(dates),
+    |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Roc
 );
 impl_data_provider!(
@@ -306,12 +307,12 @@ impl_data_provider!(
 
 impl_data_provider!(
     TimeLengthsV1,
-    |dates, _| TimeLengths::from(dates),
+    |dates, _, _| TimeLengths::from(dates),
     DatagenCalendar::Gregorian
 );
 impl_data_provider!(
     TimeSymbolsV1,
-    |dates, _| { symbols::convert_times(dates) },
+    |dates, _, _| { symbols::convert_times(dates) },
     DatagenCalendar::Gregorian
 );
 
@@ -391,11 +392,15 @@ mod test {
         use icu::calendar::types::MonthCode;
         use tinystr::tinystr;
 
-        let data = SourceDataProvider::new_testing()
+        let provider = SourceDataProvider::new_testing();
+
+        let data = provider
             .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
             .unwrap();
 
-        let cs_dates = symbols::convert_dates(&data, DatagenCalendar::Gregorian);
+        let all_eras = &provider.all_eras().unwrap()[&DatagenCalendar::Gregorian];
+
+        let cs_dates = symbols::convert_dates(&data, DatagenCalendar::Gregorian, all_eras);
 
         assert_eq!(
             "srpna",
@@ -412,11 +417,15 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let data = SourceDataProvider::new_testing()
+        let provider = SourceDataProvider::new_testing();
+
+        let data = provider
             .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
             .unwrap();
 
-        let cs_dates = symbols::convert_dates(&data, DatagenCalendar::Gregorian);
+        let all_eras = &provider.all_eras().unwrap()[&DatagenCalendar::Gregorian];
+
+        let cs_dates = symbols::convert_dates(&data, DatagenCalendar::Gregorian, all_eras);
 
         // Czech months are not unaliased because `wide` differs.
         assert!(cs_dates.months.stand_alone.is_some());

@@ -4,6 +4,7 @@
 
 use super::DatagenCalendar;
 use crate::cldr_serde::ca;
+use crate::cldr_serde::eras::EraData;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::pattern;
@@ -15,7 +16,6 @@ use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
-use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 use zerovec::VarZeroCow;
 
@@ -124,6 +124,7 @@ impl SourceDataProvider {
             &SourceDataProvider,
             &DataLocale,
             &ca::Dates,
+            &[(usize, EraData)],
             DatagenCalendar,
             Context,
             Length,
@@ -132,6 +133,7 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
+        let all_eras = &self.all_eras()?[&calendar];
         self.load_neo_key(req, calendar, |id, data| {
             let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
@@ -140,7 +142,7 @@ impl SourceDataProvider {
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(self, id.locale, data, calendar, context, length)
+            conversion(self, id.locale, data, all_eras, calendar, context, length)
         })
     }
 
@@ -188,6 +190,7 @@ fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
+    _all_eras: &[(usize, EraData)],
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -213,6 +216,7 @@ fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
+    _all_eras: &[(usize, EraData)],
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -239,13 +243,12 @@ fn dayperiods_convert(
 fn eras_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
+    all_eras: &[(usize, EraData)],
     eras: &ca::Eras,
     calendar: DatagenCalendar,
     length: Length,
 ) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
-    // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
-    let map = &super::symbols::get_era_code_map()[&calendar];
 
     if matches!(
         calendar,
@@ -266,27 +269,29 @@ fn eras_convert(
             .expect("gregorian must have eras")
             .load(length);
 
-        let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
+        let mut out_eras = BTreeMap::new();
 
-        for &(cldr, code) in map {
+        for &(cldr, ref data) in all_eras {
             if cldr == 0 {
                 out_eras.insert(
-                    code,
+                    data.code.as_deref().unwrap(),
                     greg_eras
                         .get("0")
-                        .expect("gregorian calendar must have 0 era"),
+                        .expect("gregorian calendar must have 0 era")
+                        .as_str(),
                 );
             } else if cldr == 1 {
                 out_eras.insert(
-                    code,
+                    data.code.as_deref().unwrap(),
                     greg_eras
                         .get("1")
-                        .expect("gregorian calendar must have 1 era"),
+                        .expect("gregorian calendar must have 1 era")
+                        .as_str(),
                 );
             } else {
                 // https://unicode-org.atlassian.net/browse/CLDR-18388 for why we need to do -2
                 if let Some(name) = eras.get(&(cldr - 2).to_string()) {
-                    out_eras.insert(code, &**name);
+                    out_eras.insert(data.code.as_deref().unwrap(), name);
                 } else {
                     panic!("Unknown japanese era number {cldr}");
                 }
@@ -302,7 +307,7 @@ fn eras_convert(
         Ok(YearNames::VariableEras(cow))
     } else {
         let mut out_eras: Vec<&str> = Vec::new();
-        for &(cldr, _code) in map.iter() {
+        for &(cldr, _) in all_eras.iter() {
             if let Some(name) = eras.get(&cldr.to_string()) {
                 out_eras.push(&**name)
             } else {
@@ -317,6 +322,7 @@ fn years_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
+    all_eras: &[(usize, EraData)],
     calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -328,7 +334,7 @@ fn years_convert(
     );
 
     if let Some(ref eras) = data.eras {
-        eras_convert(datagen, locale, eras, calendar, length)
+        eras_convert(datagen, locale, all_eras, eras, calendar, length)
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
@@ -377,6 +383,7 @@ fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
+    _all_eras: &[(usize, EraData)],
     calendar: DatagenCalendar,
     context: Context,
     length: Length,
