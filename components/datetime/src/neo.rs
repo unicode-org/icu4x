@@ -429,7 +429,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked<'a, InputFSet, I>(&'a self, datetime: &I) -> FormattedDateTimeTry<'a>
+    pub fn format_unchecked<'a, InputFSet, I>(&'a self, input: &I) -> FormattedDateTimeTry<'a>
     where
         I: ?Sized + AllInputMarkers<InputFSet>,
         InputFSet: DateTimeMarkers,
@@ -439,7 +439,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     {
         let datetime =
             ExtractedInput::extract_from_neo_input::<InputFSet::D, InputFSet::T, InputFSet::Z, I>(
-                &datetime,
+                input,
             );
         FormattedDateTimeTry {
             pattern: self.selection.select(&datetime),
@@ -839,7 +839,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked<'a, InputFSet, I>(&'a self, datetime: &I) -> FormattedDateTimeTry<'a>
+    pub fn format_unchecked<'a, InputFSet, I>(&'a self, input: &I) -> FormattedDateTimeTry<'a>
     where
         I: ?Sized + AllInputMarkers<InputFSet>,
         InputFSet: DateTimeMarkers,
@@ -849,7 +849,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     {
         let datetime =
             ExtractedInput::extract_from_neo_input::<InputFSet::D, InputFSet::T, InputFSet::Z, I>(
-                &datetime,
+                input,
             );
         FormattedDateTimeTry {
             pattern: self.selection.select(&datetime),
