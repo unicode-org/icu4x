@@ -238,20 +238,20 @@ where
 {
 }
 
-pub trait AllTakeInputMarkers<R: DateTimeMarkers>:
-    TakeField<<R::D as DateInputMarkers>::YearInput>
-    + TakeField<<R::D as DateInputMarkers>::MonthInput>
-    + TakeField<<R::D as DateInputMarkers>::DayOfMonthInput>
-    + TakeField<<R::D as DateInputMarkers>::DayOfWeekInput>
-    + TakeField<<R::D as DateInputMarkers>::DayOfYearInput>
-    + TakeField<<R::T as TimeMarkers>::HourInput>
-    + TakeField<<R::T as TimeMarkers>::MinuteInput>
-    + TakeField<<R::T as TimeMarkers>::SecondInput>
-    + TakeField<<R::T as TimeMarkers>::NanosecondInput>
-    + TakeField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-    + TakeField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-    + TakeField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-    + TakeField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
+pub trait AllGetDynamicInputMarkers<R: DateTimeMarkers>:
+    GetField<Option<<R::D as DateInputMarkers>::YearInput>>
+    + GetField<Option<<R::D as DateInputMarkers>::MonthInput>>
+    + GetField<Option<<R::D as DateInputMarkers>::DayOfMonthInput>>
+    + GetField<Option<<R::D as DateInputMarkers>::DayOfWeekInput>>
+    + GetField<Option<<R::D as DateInputMarkers>::DayOfYearInput>>
+    + GetField<Option<<R::T as TimeMarkers>::HourInput>>
+    + GetField<Option<<R::T as TimeMarkers>::MinuteInput>>
+    + GetField<Option<<R::T as TimeMarkers>::SecondInput>>
+    + GetField<Option<<R::T as TimeMarkers>::NanosecondInput>>
+    + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneIdInput>>
+    + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>>
+    + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneVariantInput>>
+    + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -259,25 +259,25 @@ where
 {
 }
 
-impl<T, R> AllTakeInputMarkers<R> for T
+impl<T, R> AllGetDynamicInputMarkers<R> for T
 where
     R: DateTimeMarkers,
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
     R::Z: ZoneMarkers,
-    T: TakeField<<R::D as DateInputMarkers>::YearInput>
-        + TakeField<<R::D as DateInputMarkers>::MonthInput>
-        + TakeField<<R::D as DateInputMarkers>::DayOfMonthInput>
-        + TakeField<<R::D as DateInputMarkers>::DayOfWeekInput>
-        + TakeField<<R::D as DateInputMarkers>::DayOfYearInput>
-        + TakeField<<R::T as TimeMarkers>::HourInput>
-        + TakeField<<R::T as TimeMarkers>::MinuteInput>
-        + TakeField<<R::T as TimeMarkers>::SecondInput>
-        + TakeField<<R::T as TimeMarkers>::NanosecondInput>
-        + TakeField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
-        + TakeField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-        + TakeField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-        + TakeField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
+    T: GetField<Option<<R::D as DateInputMarkers>::YearInput>>
+        + GetField<Option<<R::D as DateInputMarkers>::MonthInput>>
+        + GetField<Option<<R::D as DateInputMarkers>::DayOfMonthInput>>
+        + GetField<Option<<R::D as DateInputMarkers>::DayOfWeekInput>>
+        + GetField<Option<<R::D as DateInputMarkers>::DayOfYearInput>>
+        + GetField<Option<<R::T as TimeMarkers>::HourInput>>
+        + GetField<Option<<R::T as TimeMarkers>::MinuteInput>>
+        + GetField<Option<<R::T as TimeMarkers>::SecondInput>>
+        + GetField<Option<<R::T as TimeMarkers>::NanosecondInput>>
+        + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneIdInput>>
+        + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>>
+        + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneVariantInput>>
+        + GetField<Option<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,>
 {
 }
 

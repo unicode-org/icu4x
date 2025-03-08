@@ -691,9 +691,9 @@ where
         }
     }
 
-    pub fn format_dynamic<'a, I>(&'a self, datetime: &mut I) -> Result<FormattedDateTime<'a>, MissingInputFieldError>
+    pub fn format_dynamic<'a, I>(&'a self, datetime: &I) -> Result<FormattedDateTime<'a>, MissingInputFieldError>
     where
-        I: ?Sized + AllTakeInputMarkers<FSet>
+        I: ?Sized + AllGetDynamicInputMarkers<FSet>
     {
         let datetime = ExtractedInput::take_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime)?;
         Ok(FormattedDateTime {
