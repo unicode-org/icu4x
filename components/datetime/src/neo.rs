@@ -366,6 +366,84 @@ where
     }
 }
 
+impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<C, FSet> {
+    /// Formats a datetime without enforcing either the field set or the calendar.
+    ///
+    /// This function is useful when the caller knows something about the field set that the
+    /// type system is unaware of. For example, if the formatter is represented with a
+    /// [dynamic field set](crate::fieldsets::enums), the caller may be able to provide a
+    /// narrower type for formatting.
+    ///
+    /// ❗ The caller must ensure that:
+    ///
+    /// 1. The calendar of the input matches the calendar of the formatter
+    /// 2. The fields of the input are a superset of the fields of the formatter
+    ///
+    /// Returns a [`FormattedDateTimeTry`] to surface errors when they occur,
+    /// but not every invariant will result in an error. Use with caution!
+    ///
+    /// # Examples
+    ///
+    /// In the following example, we know that the formatter's field set is [`YMD`], but the
+    /// type system thinks we are a [`CompositeFieldSet`], which requires a [`ZonedDateTime`]
+    /// as input. However, since [`Date`] contains all the fields required by [`YMD`], we can
+    /// successfully pass it into [`format_unchecked`].
+    ///
+    /// ```
+    /// use icu::calendar::cal::Buddhist;
+    /// use icu::datetime::fieldsets::{T, YMD};
+    /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+    /// use icu::datetime::input::{Date, Time};
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::DateTimeWriteError;
+    /// use icu::datetime::DateTimeInputUnchecked;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<Buddhist, _>::try_new(
+    ///     locale!("th").into(),
+    ///     YMD::long(),
+    /// )
+    /// .unwrap()
+    /// .cast_into_fset::<CompositeFieldSet>();
+    ///
+    /// // Create a date and convert it to the correct calendar:
+    /// let date = Date::try_new_iso(2025, 3, 7).unwrap().to_calendar(Buddhist);
+    ///
+    /// // Extract the fields and use it with format_unchecked:
+    /// let mut input = DateTimeInputUnchecked::default();
+    /// input.year = Some(date.year());
+    /// input.month = Some(date.month());
+    /// input.day_of_month = Some(date.day_of_month());
+    /// let result = formatter.format_unchecked(input);
+    ///
+    /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
+    ///
+    /// // If we don't give all needed fields, we will get an error!
+    /// let mut input = DateTimeInputUnchecked::default();
+    /// input.year = Some(date.year());
+    /// input.month = Some(date.month());
+    /// let result = formatter.format_unchecked(input);
+    /// assert_try_writeable_eq!(
+    ///     result,
+    ///     "{d} มีนาคม 2568",
+    ///     Err(DateTimeWriteError::MissingInputField("day_of_month"))
+    /// );
+    /// ```
+    ///
+    /// [`Date`]: crate::input::Date
+    /// [`ZonedDateTime`]: crate::input::ZonedDateTime
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`format_unchecked`]: Self::format_unchecked
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeTry {
+        FormattedDateTimeTry {
+            pattern: self.selection.select(&datetime),
+            input: datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
+}
+
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
