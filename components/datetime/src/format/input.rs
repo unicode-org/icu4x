@@ -17,21 +17,23 @@ use icu_time::{zone::UtcOffset, Time, TimeZone};
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct DateTimeInputUnchecked {
-    pub(crate) year: Option<YearInfo>,
-    pub(crate) month: Option<MonthInfo>,
-    pub(crate) day_of_month: Option<DayOfMonth>,
-    pub(crate) iso_weekday: Option<Weekday>,
-    pub(crate) day_of_year: Option<DayOfYearInfo>,
-    pub(crate) hour: Option<Hour>,
-    pub(crate) minute: Option<Minute>,
-    pub(crate) second: Option<Second>,
-    pub(crate) subsecond: Option<Nanosecond>,
-    pub(crate) time_zone_id: Option<TimeZone>,
-    pub(crate) offset: Option<UtcOffset>,
-    pub(crate) zone_variant: Option<TimeZoneVariant>,
-    pub(crate) local_time: Option<(Date<Iso>, Time)>,
+/// An input bag with all possible datetime input fields.
+#[derive(Debug, Copy, Clone, Default)]
+#[non_exhaustive]
+pub struct DateTimeInputUnchecked {
+    pub year: Option<YearInfo>,
+    pub month: Option<MonthInfo>,
+    pub day_of_month: Option<DayOfMonth>,
+    pub iso_weekday: Option<Weekday>,
+    pub day_of_year: Option<DayOfYearInfo>,
+    pub hour: Option<Hour>,
+    pub minute: Option<Minute>,
+    pub second: Option<Second>,
+    pub subsecond: Option<Nanosecond>,
+    pub time_zone_id: Option<TimeZone>,
+    pub offset: Option<UtcOffset>,
+    pub zone_variant: Option<TimeZoneVariant>,
+    pub local_time: Option<(Date<Iso>, Time)>,
 }
 
 impl DateTimeInputUnchecked {

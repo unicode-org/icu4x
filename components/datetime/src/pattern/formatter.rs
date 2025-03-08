@@ -210,7 +210,9 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
+            input: DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(
+                datetime,
+            ),
             names: self.inner.names,
         }
     }

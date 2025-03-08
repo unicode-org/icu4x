@@ -108,6 +108,7 @@ pub(crate) mod size_test_macro;
 
 pub use error::{DateTimeFormatterLoadError, DateTimeWriteError, MismatchedCalendarError};
 
+pub use format::DateTimeInputUnchecked;
 pub use neo::DateTimeFormatter;
 pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
