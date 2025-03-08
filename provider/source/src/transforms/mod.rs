@@ -66,7 +66,7 @@ impl CldrCache {
                                             .with_display_context(bcp47_aliases)
                                     })?
                             } else {
-                                invent_bcp47(&format!("{transform}-rev"))
+                                invent_bcp47(transform)
                             };
 
                         provider.register_source(
