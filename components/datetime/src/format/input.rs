@@ -5,6 +5,7 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
+use crate::fieldsets::enums::DateFieldSet;
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
 use icu_calendar::types::DayOfYearInfo;
 use icu_calendar::Iso;
@@ -16,6 +17,9 @@ use icu_time::{zone::UtcOffset, Time, TimeZone};
 
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
+
+#[cfg(doc)]
+use crate::input::*;
 
 /// An input bag with all possible datetime input fields.
 ///
@@ -57,6 +61,32 @@ pub struct DateTimeInputUnchecked {
 }
 
 impl DateTimeInputUnchecked {
+    /// Sets all date fields from an input.
+    ///
+    /// Example inputs: [`Date`], [`DateTime`]
+    pub fn set_date_fields<I>(&mut self, input: &I)
+    where
+        I: ?Sized
+            + GetField<<DateFieldSet as DateInputMarkers>::YearInput>
+            + GetField<<DateFieldSet as DateInputMarkers>::MonthInput>
+            + GetField<<DateFieldSet as DateInputMarkers>::DayOfMonthInput>
+            + GetField<<DateFieldSet as DateInputMarkers>::DayOfWeekInput>
+            + GetField<<DateFieldSet as DateInputMarkers>::DayOfYearInput>,
+    {
+        let fields = (
+            GetField::<<DateFieldSet as DateInputMarkers>::YearInput>::get_field(input),
+            GetField::<<DateFieldSet as DateInputMarkers>::MonthInput>::get_field(input),
+            GetField::<<DateFieldSet as DateInputMarkers>::DayOfMonthInput>::get_field(input),
+            GetField::<<DateFieldSet as DateInputMarkers>::DayOfWeekInput>::get_field(input),
+            GetField::<<DateFieldSet as DateInputMarkers>::DayOfYearInput>::get_field(input),
+        );
+        self.year = fields.0.into_option();
+        self.month = fields.1.into_option();
+        self.day_of_month = fields.2.into_option();
+        self.iso_weekday = fields.3.into_option();
+        self.day_of_year = fields.4.into_option();
+    }
+
     /// Construct given neo date input instances.
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
     where
