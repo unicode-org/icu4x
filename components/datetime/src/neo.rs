@@ -764,10 +764,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(
-        &self,
-        datetime: DateTimeInputUnchecked,
-    ) -> FormattedDateTimeTry {
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeTry {
         FormattedDateTimeTry {
             pattern: self.selection.select(&datetime),
             input: datetime,

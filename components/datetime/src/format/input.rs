@@ -18,7 +18,7 @@ use icu_time::{zone::UtcOffset, Time, TimeZone};
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 
 /// An input bag with all possible datetime input fields.
-/// 
+///
 /// Each input field may or may not be required, depending on the field set
 /// and the options.
 #[derive(Debug, Copy, Clone, Default)]
