@@ -14,7 +14,9 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::datetime::DateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::DateTimeFormatter::to_field_set_builder#FnInStruct
+icu::datetime::DateTimeInputUnchecked#Struct
 icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder#FnInStruct
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::into_enums#FnInStruct
