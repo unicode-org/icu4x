@@ -112,6 +112,7 @@ pub use neo::DateTimeFormatter;
 pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
+pub use neo::FormattedDateTimeTry;
 pub use neo::NoCalendarFormatter;
 pub use options::Length;
 
