@@ -135,3 +135,10 @@ pub enum DateTimeWriteError {
 }
 
 impl core::error::Error for DateTimeWriteError {}
+
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
+#[displaydoc("Incomplete input, missing value for {0:?}")]
+pub struct MissingInputFieldError(pub &'static str);
+
+impl core::error::Error for MissingInputFieldError {}

@@ -29,7 +29,8 @@ pub use fieldset_traits::AllAnyCalendarPatternDataMarkers;
 pub use fieldset_traits::AllFixedCalendarExternalDataMarkers;
 pub use fieldset_traits::AllFixedCalendarFormattingDataMarkers;
 pub use fieldset_traits::AllFixedCalendarPatternDataMarkers;
-pub use fieldset_traits::AllInputMarkers;
+pub use fieldset_traits::AllGetInputMarkers;
+pub use fieldset_traits::AllTakeInputMarkers;
 pub use fieldset_traits::DateDataMarkers;
 pub use fieldset_traits::DateInputMarkers;
 pub use fieldset_traits::DateTimeMarkers;
@@ -38,6 +39,7 @@ pub use fieldset_traits::TypedDateDataMarkers;
 pub use fieldset_traits::ZoneMarkers;
 
 pub use get_field::GetField;
+pub use get_field::TakeField;
 
 pub use names_storage::DataPayloadWithVariables;
 pub use names_storage::DataPayloadWithVariablesBorrowed;

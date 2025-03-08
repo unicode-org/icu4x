@@ -195,7 +195,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
 // This trait is implicitly sealed due to sealed supertraits
-pub trait AllInputMarkers<R: DateTimeMarkers>:
+pub trait AllGetInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
@@ -216,7 +216,7 @@ where
 {
 }
 
-impl<T, R> AllInputMarkers<R> for T
+impl<T, R> AllGetInputMarkers<R> for T
 where
     R: DateTimeMarkers,
     R::D: DateInputMarkers,
@@ -235,6 +235,49 @@ where
         + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
+{
+}
+
+pub trait AllTakeInputMarkers<R: DateTimeMarkers>:
+    TakeField<<R::D as DateInputMarkers>::YearInput>
+    + TakeField<<R::D as DateInputMarkers>::MonthInput>
+    + TakeField<<R::D as DateInputMarkers>::DayOfMonthInput>
+    + TakeField<<R::D as DateInputMarkers>::DayOfWeekInput>
+    + TakeField<<R::D as DateInputMarkers>::DayOfYearInput>
+    + TakeField<<R::T as TimeMarkers>::HourInput>
+    + TakeField<<R::T as TimeMarkers>::MinuteInput>
+    + TakeField<<R::T as TimeMarkers>::SecondInput>
+    + TakeField<<R::T as TimeMarkers>::NanosecondInput>
+    + TakeField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
+    + TakeField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+    + TakeField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+    + TakeField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
+where
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+{
+}
+
+impl<T, R> AllTakeInputMarkers<R> for T
+where
+    R: DateTimeMarkers,
+    R::D: DateInputMarkers,
+    R::T: TimeMarkers,
+    R::Z: ZoneMarkers,
+    T: TakeField<<R::D as DateInputMarkers>::YearInput>
+        + TakeField<<R::D as DateInputMarkers>::MonthInput>
+        + TakeField<<R::D as DateInputMarkers>::DayOfMonthInput>
+        + TakeField<<R::D as DateInputMarkers>::DayOfWeekInput>
+        + TakeField<<R::D as DateInputMarkers>::DayOfYearInput>
+        + TakeField<<R::T as TimeMarkers>::HourInput>
+        + TakeField<<R::T as TimeMarkers>::MinuteInput>
+        + TakeField<<R::T as TimeMarkers>::SecondInput>
+        + TakeField<<R::T as TimeMarkers>::NanosecondInput>
+        + TakeField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
+        + TakeField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
+        + TakeField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
+        + TakeField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
 {
 }
 

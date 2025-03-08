@@ -36,6 +36,10 @@ where
     }
 }
 
+pub trait TakeField<T>: UnstableSealed {
+    fn take_field(&mut self) -> Option<T>;
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> UnstableSealed for Date<A> {}
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<YearInfo> for Date<A> {

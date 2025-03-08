@@ -4,7 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::error::DateTimeFormatterLoadError;
+use crate::error::{DateTimeFormatterLoadError, MissingInputFieldError};
 use crate::external_loaders::*;
 use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
@@ -15,7 +15,7 @@ use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
-    AllInputMarkers, ConvertCalendar, DateDataMarkers, DateInputMarkers, DateTimeMarkers, GetField,
+    AllGetInputMarkers, ConvertCalendar, DateDataMarkers, DateInputMarkers, DateTimeMarkers, GetField,
     InFixedCalendar, InSameCalendar, TimeMarkers, TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::size_test_macro::size_test;
@@ -349,12 +349,12 @@ where
     ///     )
     ///     .unwrap();
     ///
-    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// // error[E0277]: the trait bound `Time: AllGetInputMarkers<fieldsets::YMD>` is not satisfied
     /// formatter.format(&Time::midnight());
     /// ```
     pub fn format<I>(&self, input: &I) -> FormattedDateTime
     where
-        I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
+        I: ?Sized + InFixedCalendar<C> + AllGetInputMarkers<FSet>,
     {
         let input = ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
         FormattedDateTime {
@@ -611,7 +611,7 @@ where
     /// )
     /// .unwrap();
     ///
-    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// // error[E0277]: the trait bound `Time: AllGetInputMarkers<fieldsets::YMD>` is not satisfied
     /// formatter.format_same_calendar(&Time::midnight());
     /// ```
     pub fn format_same_calendar<I>(
@@ -619,7 +619,7 @@ where
         datetime: &I,
     ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
     where
-        I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
+        I: ?Sized + InSameCalendar + AllGetInputMarkers<FSet>,
     {
         datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime =
@@ -671,13 +671,13 @@ where
     /// )
     /// .unwrap();
     ///
-    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+    /// // error[E0277]: the trait bound `Time: AllGetInputMarkers<fieldsets::YMD>` is not satisfied
     /// formatter.format(&Time::midnight());
     /// ```
     pub fn format<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
         I: ?Sized + ConvertCalendar,
-        I::Converted<'a>: Sized + AllInputMarkers<FSet>,
+        I::Converted<'a>: Sized + AllGetInputMarkers<FSet>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
         let datetime =
@@ -689,6 +689,18 @@ where
             input: datetime,
             names: self.names.as_borrowed(),
         }
+    }
+
+    pub fn format_dynamic<'a, I>(&'a self, datetime: &mut I) -> Result<FormattedDateTime<'a>, MissingInputFieldError>
+    where
+        I: ?Sized + AllTakeInputMarkers<FSet>
+    {
+        let datetime = ExtractedInput::take_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime)?;
+        Ok(FormattedDateTime {
+            pattern: self.selection.select(&datetime),
+            input: datetime,
+            names: self.names.as_borrowed(),
+        })
     }
 }
 

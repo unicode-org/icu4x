@@ -8,7 +8,7 @@ use crate::format::datetime::try_write_pattern_items;
 use crate::format::ExtractedInput;
 use crate::scaffold::*;
 use crate::scaffold::{
-    AllInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
+    AllGetInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
 use crate::DateTimeWriteError;
@@ -206,7 +206,7 @@ where
     /// ```
     pub fn format<I>(&self, datetime: &I) -> FormattedDateTimePattern<'a>
     where
-        I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
+        I: ?Sized + InFixedCalendar<C> + AllGetInputMarkers<FSet>,
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
