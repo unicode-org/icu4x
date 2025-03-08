@@ -37,7 +37,7 @@ pub(crate) struct ExtractedInput {
 
 impl ExtractedInput {
     /// Construct given neo date input instances.
-    pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
+    pub(crate) fn extract_from_static_input<D, T, Z, I>(input: &I) -> Self
     where
         D: DateInputMarkers,
         T: TimeMarkers,
@@ -74,7 +74,7 @@ impl ExtractedInput {
         }
     }
 
-    pub(crate) fn take_from_neo_input<D, T, Z, I>(input: &I) -> Result<Self, MissingInputFieldError>
+    pub(crate) fn extract_from_dynamic_input<D, T, Z, I>(input: &I) -> Result<Self, MissingInputFieldError>
     where
         D: DateInputMarkers,
         T: TimeMarkers,

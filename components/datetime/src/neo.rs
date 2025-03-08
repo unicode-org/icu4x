@@ -356,7 +356,7 @@ where
     where
         I: ?Sized + InFixedCalendar<C> + AllGetInputMarkers<FSet>,
     {
-        let input = ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
+        let input = ExtractedInput::extract_from_static_input::<FSet::D, FSet::T, FSet::Z, I>(input);
         FormattedDateTime {
             pattern: self.selection.select(&input),
             input,
@@ -623,7 +623,7 @@ where
     {
         datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime =
-            ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
+            ExtractedInput::extract_from_static_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
         Ok(FormattedDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,
@@ -681,7 +681,7 @@ where
     {
         let datetime = datetime.to_calendar(&self.calendar);
         let datetime =
-            ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I::Converted<'a>>(
+            ExtractedInput::extract_from_static_input::<FSet::D, FSet::T, FSet::Z, I::Converted<'a>>(
                 &datetime,
             );
         FormattedDateTime {
@@ -695,7 +695,7 @@ where
     where
         I: ?Sized + AllGetDynamicInputMarkers<FSet>
     {
-        let datetime = ExtractedInput::take_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime)?;
+        let datetime = ExtractedInput::extract_from_dynamic_input::<FSet::D, FSet::T, FSet::Z, I>(datetime)?;
         Ok(FormattedDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,

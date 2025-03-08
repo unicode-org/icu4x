@@ -277,13 +277,6 @@ where
 
 impl UnstableSealed for UtcOffset {}
 
-impl GetField<Option<UtcOffset>> for UtcOffset {
-    #[inline]
-    fn get_field(&self) -> Option<UtcOffset> {
-        Some(*self)
-    }
-}
-
 impl<O: TimeZoneModel> UnstableSealed for TimeZoneInfo<O> {}
 
 impl<O> GetField<TimeZone> for TimeZoneInfo<O>
@@ -354,4 +347,11 @@ impl GetField<()> for UtcOffset {
 impl<O: TimeZoneModel> GetField<()> for TimeZoneInfo<O> {
     #[inline]
     fn get_field(&self) {}
+}
+
+impl<T, U> GetField<Option<U>> for T where T: GetField<U> {
+    #[inline]
+    fn get_field(&self) -> Option<U> {
+        Some(GetField::<U>::get_field(self))
+    }
 }
