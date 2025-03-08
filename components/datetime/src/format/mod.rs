@@ -5,4 +5,4 @@
 pub(crate) mod datetime;
 mod input;
 pub(crate) mod time_zone;
-pub(crate) use input::ExtractedInput;
+pub(crate) use input::DateTimeInputUnchecked;

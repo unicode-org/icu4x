@@ -6,7 +6,7 @@
 
 use crate::pattern::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
-use crate::{format::ExtractedInput, provider::fields::FieldLength};
+use crate::{format::DateTimeInputUnchecked, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::Decimal;
 use icu_calendar::{Date, Iso};
@@ -64,7 +64,7 @@ pub(super) trait FormatTimeZone {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error>;
@@ -74,7 +74,7 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -111,7 +111,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -167,7 +167,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -251,7 +251,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         formatter: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -340,7 +340,7 @@ impl FormatTimeZone for GenericLocationFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _decimal_formatter: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -383,7 +383,7 @@ impl FormatTimeZone for SpecificLocationFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _decimal_formatter: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -431,7 +431,7 @@ impl FormatTimeZone for ExemplarCityFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -478,7 +478,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -645,7 +645,7 @@ impl FormatTimeZone for Iso8601Format {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
@@ -713,7 +713,7 @@ impl FormatTimeZone for Bcp47IdFormat {
     fn format<W: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut W,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {

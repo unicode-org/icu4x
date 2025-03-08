@@ -18,7 +18,7 @@ use icu_time::{zone::UtcOffset, Time, TimeZone};
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 
 #[derive(Debug, Copy, Clone)]
-pub(crate) struct ExtractedInput {
+pub(crate) struct DateTimeInputUnchecked {
     pub(crate) year: Option<YearInfo>,
     pub(crate) month: Option<MonthInfo>,
     pub(crate) day_of_month: Option<DayOfMonth>,
@@ -34,7 +34,7 @@ pub(crate) struct ExtractedInput {
     pub(crate) local_time: Option<(Date<Iso>, Time)>,
 }
 
-impl ExtractedInput {
+impl DateTimeInputUnchecked {
     /// Construct given neo date input instances.
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
     where

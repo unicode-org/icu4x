@@ -9,7 +9,7 @@ use crate::external_loaders::*;
 use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
-use crate::format::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
 use crate::pattern::*;
 use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
@@ -356,7 +356,7 @@ where
     where
         I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
     {
-        let input = ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
+        let input = DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
         FormattedDateTime {
             pattern: self.selection.select(&input),
             input,
@@ -623,7 +623,7 @@ where
     {
         datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime =
-            ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
+            DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
         Ok(FormattedDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,
@@ -681,7 +681,7 @@ where
     {
         let datetime = datetime.to_calendar(&self.calendar);
         let datetime =
-            ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I::Converted<'a>>(
+            DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I::Converted<'a>>(
                 &datetime,
             );
         FormattedDateTime {
@@ -1052,7 +1052,7 @@ pub type NoCalendarFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 #[derive(Debug)]
 pub struct FormattedDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
-    input: ExtractedInput,
+    input: DateTimeInputUnchecked,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
