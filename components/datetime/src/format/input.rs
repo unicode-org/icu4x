@@ -18,21 +18,41 @@ use icu_time::{zone::UtcOffset, Time, TimeZone};
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 
 /// An input bag with all possible datetime input fields.
+/// 
+/// Each input field may or may not be required, depending on the field set
+/// and the options.
 #[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
 pub struct DateTimeInputUnchecked {
+    /// The year, required for field sets with years (`Y`).
     pub year: Option<YearInfo>,
+    /// The month, required for field sets with months (`M`)
     pub month: Option<MonthInfo>,
+    /// The day-of-month, required for field sets with days (`D`).
     pub day_of_month: Option<DayOfMonth>,
+    /// The weekday, required for field sets with weekdays (`E`).
     pub iso_weekday: Option<Weekday>,
+    /// The day-of-year, required for field sets with weeks.
     pub day_of_year: Option<DayOfYearInfo>,
+    /// The hour, required for field sets with times (`T`).
     pub hour: Option<Hour>,
+    /// The minute, required for field sets with times (`T`).
     pub minute: Option<Minute>,
+    /// The second, required for field sets with times (`T`).
     pub second: Option<Second>,
+    /// The subsecond, required for field sets with times (`T`).
     pub subsecond: Option<Nanosecond>,
+    /// The time zone ID, required for field sets with
+    /// certain time zone styles.
     pub time_zone_id: Option<TimeZone>,
+    /// The time zone UTC offset, required for field sets with
+    /// certain time zone styles.
     pub offset: Option<UtcOffset>,
+    /// The time zone variant, required for field sets with
+    /// certain time zone styles.
     pub zone_variant: Option<TimeZoneVariant>,
+    /// The local ISO time, required for field sets with
+    /// certain time zone styles.
     pub local_time: Option<(Date<Iso>, Time)>,
 }
 
