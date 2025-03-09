@@ -482,7 +482,6 @@ impl Transliterator {
                 CaseMapper::try_new_unstable(casemapper_provider)
                     .map(InternalTransliterator::Upper),
             ),
-            "any-title" => Some(Err(DataError::custom("any-title not implemented"))),
             "any-null" => Some(Ok(InternalTransliterator::Null)),
             "any-remove" => Some(Ok(InternalTransliterator::Remove)),
             "any-hex/unicode" => Some(Ok(InternalTransliterator::Hex(

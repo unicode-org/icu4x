@@ -39,11 +39,6 @@ impl CldrCache {
                         continue;
                     };
 
-                    if transform == "Thai-Latin" {
-                        // References an unknown transliterator (Any-BreakInternal)
-                        continue;
-                    }
-
                     let metadata = self
                         .serde_cache
                         .read_and_parse_json::<transforms::Resource>(&format!(
@@ -53,6 +48,11 @@ impl CldrCache {
                         "cldr-transforms/transforms/{}",
                         metadata.rules_file
                     ))?;
+
+                    // Unimplemented built-in transliterators
+                    if source.contains("Any-BreakInternal") || source.contains("Any-Title") {
+                        continue;
+                    }
 
                     if matches!(
                         metadata.direction,
