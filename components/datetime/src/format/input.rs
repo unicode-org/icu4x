@@ -8,7 +8,7 @@
 use crate::fieldsets::enums::DateFieldSet;
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
 use icu_calendar::types::DayOfYearInfo;
-use icu_calendar::Iso;
+use icu_calendar::{AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
@@ -60,31 +60,21 @@ pub struct DateTimeInputUnchecked {
     pub local_time: Option<(Date<Iso>, Time)>,
 }
 
+macro_rules! set_field {
+    ($receiver:expr, $assoc_type:ident, $input:expr) => {
+        $receiver = GetField::<<DateFieldSet as DateInputMarkers>::$assoc_type>::get_field($input)
+            .into_option()
+    };
+}
+
 impl DateTimeInputUnchecked {
-    /// Sets all date fields from an input.
-    ///
-    /// Example inputs: [`Date`], [`DateTime`]
-    pub fn set_date_fields<I>(&mut self, input: &I)
-    where
-        I: ?Sized
-            + GetField<<DateFieldSet as DateInputMarkers>::YearInput>
-            + GetField<<DateFieldSet as DateInputMarkers>::MonthInput>
-            + GetField<<DateFieldSet as DateInputMarkers>::DayOfMonthInput>
-            + GetField<<DateFieldSet as DateInputMarkers>::DayOfWeekInput>
-            + GetField<<DateFieldSet as DateInputMarkers>::DayOfYearInput>,
-    {
-        let fields = (
-            GetField::<<DateFieldSet as DateInputMarkers>::YearInput>::get_field(input),
-            GetField::<<DateFieldSet as DateInputMarkers>::MonthInput>::get_field(input),
-            GetField::<<DateFieldSet as DateInputMarkers>::DayOfMonthInput>::get_field(input),
-            GetField::<<DateFieldSet as DateInputMarkers>::DayOfWeekInput>::get_field(input),
-            GetField::<<DateFieldSet as DateInputMarkers>::DayOfYearInput>::get_field(input),
-        );
-        self.year = fields.0.into_option();
-        self.month = fields.1.into_option();
-        self.day_of_month = fields.2.into_option();
-        self.iso_weekday = fields.3.into_option();
-        self.day_of_year = fields.4.into_option();
+    /// Sets all fields from a [`Date`] input.
+    pub fn set_date_fields<C: Calendar, A: AsCalendar<Calendar = C>>(&mut self, input: Date<A>) {
+        set_field!(self.year, YearInput, &input);
+        set_field!(self.month, MonthInput, &input);
+        set_field!(self.day_of_month, DayOfMonthInput, &input);
+        set_field!(self.iso_weekday, DayOfWeekInput, &input);
+        set_field!(self.day_of_year, DayOfYearInput, &input);
     }
 
     /// Construct given neo date input instances.
