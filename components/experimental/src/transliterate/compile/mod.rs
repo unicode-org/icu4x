@@ -9,6 +9,7 @@ use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::cell::RefCell;
+use icu_casemap::provider::CaseMapV1;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{
@@ -91,7 +92,7 @@ impl Direction {
 ///     true,
 /// );
 ///
-/// let t = Transliterator::try_new_unstable(&collection.as_provider(), &collection.as_provider(), &"de-t-de-d0-ascii".parse().unwrap()).unwrap();
+/// let t = Transliterator::try_new_unstable(&collection.as_provider(), &collection.as_provider(), &collection.as_provider(), &"de-t-de-d0-ascii".parse().unwrap()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
@@ -150,12 +151,17 @@ impl RuleCollection {
     #[cfg(feature = "compiled_data")]
     pub fn as_provider(
         &self,
-    ) -> RuleCollectionProvider<'_, icu_properties::provider::Baked, icu_normalizer::provider::Baked>
-    {
+    ) -> RuleCollectionProvider<
+        '_,
+        icu_properties::provider::Baked,
+        icu_normalizer::provider::Baked,
+        icu_casemap::provider::Baked,
+    > {
         RuleCollectionProvider {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
             normalizer_provider: &icu_normalizer::provider::Baked,
+            casemap_provider: &icu_casemap::provider::Baked,
             xid_start: CodePointSetData::new::<XidStart>().static_to_owned(),
             xid_continue: CodePointSetData::new::<XidContinue>().static_to_owned(),
             pat_ws: CodePointSetData::new::<PatternWhiteSpace>().static_to_owned(),
@@ -163,11 +169,12 @@ impl RuleCollection {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::as_provider)]
-    pub fn as_provider_unstable<'a, PP, NP>(
+    pub fn as_provider_unstable<'a, PP, NP, NC>(
         &'a self,
         properties_provider: &'a PP,
         normalizer_provider: &'a NP,
-    ) -> Result<RuleCollectionProvider<'a, PP, NP>, DataError>
+        casemap_provider: &'a NC,
+    ) -> Result<RuleCollectionProvider<'a, PP, NP, NC>, DataError>
     where
         PP: ?Sized
             + DataProvider<PropertyBinaryAlphabeticV1>
@@ -239,11 +246,13 @@ impl RuleCollection {
             + DataProvider<NormalizerNfdTablesV1>
             + DataProvider<NormalizerNfkdTablesV1>
             + DataProvider<NormalizerNfcV1>,
+        NC: ?Sized + DataProvider<CaseMapV1>,
     {
         Ok(RuleCollectionProvider {
             collection: self,
             properties_provider,
             normalizer_provider,
+            casemap_provider,
             xid_start: CodePointSetData::try_new_unstable::<XidStart>(properties_provider)?,
             xid_continue: CodePointSetData::try_new_unstable::<XidContinue>(properties_provider)?,
             pat_ws: CodePointSetData::try_new_unstable::<PatternWhiteSpace>(properties_provider)?,
@@ -253,16 +262,17 @@ impl RuleCollection {
 
 /// A provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
 #[derive(Debug)]
-pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
+pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized, NC: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
+    casemap_provider: &'a NC,
     xid_start: CodePointSetData,
     xid_continue: CodePointSetData,
     pat_ws: CodePointSetData,
 }
 
-impl<PP, NP> DataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP, NC> DataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP, NC>
 where
     PP: ?Sized
         + DataProvider<PropertyBinaryAlphabeticV1>
@@ -329,6 +339,7 @@ where
         + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
     NP: ?Sized,
+    NC: ?Sized,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
         let mut exclusive_data = self.collection.data.borrow_mut();
@@ -404,7 +415,7 @@ where
 macro_rules! redirect {
     ($($marker:ty),*) => {
         $(
-            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP> {
+            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>, NC: ?Sized> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP, NC> {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.normalizer_provider.load(req)
                 }
@@ -421,8 +432,17 @@ redirect!(
     NormalizerNfcV1
 );
 
+impl<PP: ?Sized, NP: ?Sized, NC: ?Sized + DataProvider<CaseMapV1>> DataProvider<CaseMapV1>
+    for RuleCollectionProvider<'_, PP, NP, NC>
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
+        self.casemap_provider.load(req)
+    }
+}
+
 #[cfg(feature = "datagen")]
-impl<PP, NP> IterableDataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP>
+impl<PP, NP, NC> IterableDataProvider<TransliteratorRulesV1>
+    for RuleCollectionProvider<'_, PP, NP, NC>
 where
     PP: ?Sized
         + DataProvider<PropertyBinaryAlphabeticV1>
@@ -489,6 +509,7 @@ where
         + DataProvider<PropertyNameParseWordBreakV1>
         + DataProvider<PropertyScriptWithExtensionsV1>,
     NP: ?Sized,
+    NC: ?Sized,
 {
     fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
         let exclusive_data = self.collection.data.borrow();
