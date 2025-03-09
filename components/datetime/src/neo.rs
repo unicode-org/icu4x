@@ -412,21 +412,17 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     ///
     /// // Extract the fields and use it with format_unchecked:
     /// let mut input = DateTimeInputUnchecked::default();
-    /// input.year = Some(date.year());
-    /// input.month = Some(date.month());
-    /// input.day_of_month = Some(date.day_of_month());
+    /// input.set_date_fields(date);
     /// let result = formatter.format_unchecked(input);
     ///
     /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
     ///
     /// // If we don't give all needed fields, we will get an error!
     /// let mut input = DateTimeInputUnchecked::default();
-    /// input.year = Some(date.year());
-    /// input.month = Some(date.month());
     /// let result = formatter.format_unchecked(input);
     /// assert_try_writeable_eq!(
     ///     result,
-    ///     "{d} มีนาคม 2568",
+    ///     "{d} {M} {G} {y}",
     ///     Err(DateTimeWriteError::MissingInputField("day_of_month"))
     /// );
     /// ```
@@ -819,21 +815,17 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     ///
     /// // Extract the fields and use it with format_unchecked:
     /// let mut input = DateTimeInputUnchecked::default();
-    /// input.year = Some(date.year());
-    /// input.month = Some(date.month());
-    /// input.day_of_month = Some(date.day_of_month());
+    /// input.set_date_fields(date);
     /// let result = formatter.format_unchecked(input);
     ///
     /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
     ///
     /// // If we don't give all needed fields, we will get an error!
     /// let mut input = DateTimeInputUnchecked::default();
-    /// input.year = Some(date.year());
-    /// input.month = Some(date.month());
     /// let result = formatter.format_unchecked(input);
     /// assert_try_writeable_eq!(
     ///     result,
-    ///     "{d} มีนาคม 2568",
+    ///     "{d} {M} {G} {y}",
     ///     Err(DateTimeWriteError::MissingInputField("day_of_month"))
     /// );
     /// ```
