@@ -5,11 +5,13 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use crate::fieldsets::enums::DateFieldSet;
-use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
+use crate::fieldsets::enums::*;
+use crate::scaffold::*;
 use icu_calendar::types::DayOfYearInfo;
 use icu_calendar::{AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
+use icu_time::zone::models;
+use icu_time::TimeZoneInfo;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
 use icu_calendar::Date;
@@ -29,52 +31,99 @@ use crate::input::*;
 #[non_exhaustive]
 pub struct DateTimeInputUnchecked {
     /// The year, required for field sets with years (`Y`).
-    pub year: Option<YearInfo>,
+    pub(crate) year: Option<YearInfo>,
     /// The month, required for field sets with months (`M`)
-    pub month: Option<MonthInfo>,
+    pub(crate) month: Option<MonthInfo>,
     /// The day-of-month, required for field sets with days (`D`).
-    pub day_of_month: Option<DayOfMonth>,
+    pub(crate) day_of_month: Option<DayOfMonth>,
     /// The weekday, required for field sets with weekdays (`E`).
-    pub iso_weekday: Option<Weekday>,
+    pub(crate) iso_weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
-    pub day_of_year: Option<DayOfYearInfo>,
+    pub(crate) day_of_year: Option<DayOfYearInfo>,
     /// The hour, required for field sets with times (`T`).
-    pub hour: Option<Hour>,
+    pub(crate) hour: Option<Hour>,
     /// The minute, required for field sets with times (`T`).
-    pub minute: Option<Minute>,
+    pub(crate) minute: Option<Minute>,
     /// The second, required for field sets with times (`T`).
-    pub second: Option<Second>,
+    pub(crate) second: Option<Second>,
     /// The subsecond, required for field sets with times (`T`).
-    pub subsecond: Option<Nanosecond>,
+    pub(crate) subsecond: Option<Nanosecond>,
     /// The time zone ID, required for field sets with
     /// certain time zone styles.
-    pub time_zone_id: Option<TimeZone>,
+    pub(crate) time_zone_id: Option<TimeZone>,
     /// The time zone UTC offset, required for field sets with
     /// certain time zone styles.
-    pub offset: Option<UtcOffset>,
+    pub(crate) offset: Option<UtcOffset>,
     /// The time zone variant, required for field sets with
     /// certain time zone styles.
-    pub zone_variant: Option<TimeZoneVariant>,
+    pub(crate) zone_variant: Option<TimeZoneVariant>,
     /// The local ISO time, required for field sets with
     /// certain time zone styles.
-    pub local_time: Option<(Date<Iso>, Time)>,
+    pub(crate) local_time: Option<(Date<Iso>, Time)>,
 }
 
 macro_rules! set_field {
-    ($receiver:expr, $assoc_type:ident, $input:expr) => {
-        $receiver = GetField::<<DateFieldSet as DateInputMarkers>::$assoc_type>::get_field($input)
-            .into_option()
+    ($type:ident as $trait:ident, $receiver:expr, $assoc_type:ident, $input:expr) => {
+        $receiver = GetField::<<$type as $trait>::$assoc_type>::get_field($input).into_option()
+    };
+    (@date, $receiver:expr, $assoc_type:ident, $input:expr) => {
+        set_field!(
+            DateFieldSet as DateInputMarkers,
+            $receiver,
+            $assoc_type,
+            $input
+        )
+    };
+    (@time, $receiver:expr, $assoc_type:ident, $input:expr) => {
+        set_field!(TimeFieldSet as TimeMarkers, $receiver, $assoc_type, $input)
+    };
+    (@zone, $receiver:expr, $assoc_type:ident, $input:expr) => {
+        set_field!(ZoneFieldSet as ZoneMarkers, $receiver, $assoc_type, $input)
     };
 }
 
 impl DateTimeInputUnchecked {
     /// Sets all fields from a [`Date`] input.
     pub fn set_date_fields<C: Calendar, A: AsCalendar<Calendar = C>>(&mut self, input: Date<A>) {
-        set_field!(self.year, YearInput, &input);
-        set_field!(self.month, MonthInput, &input);
-        set_field!(self.day_of_month, DayOfMonthInput, &input);
-        set_field!(self.iso_weekday, DayOfWeekInput, &input);
-        set_field!(self.day_of_year, DayOfYearInput, &input);
+        set_field!(@date, self.year, YearInput, &input);
+        set_field!(@date, self.month, MonthInput, &input);
+        set_field!(@date, self.day_of_month, DayOfMonthInput, &input);
+        set_field!(@date, self.iso_weekday, DayOfWeekInput, &input);
+        set_field!(@date, self.day_of_year, DayOfYearInput, &input);
+    }
+
+    /// Sets all fields from a [`Time`] input.
+    pub fn set_time_fields(&mut self, input: Time) {
+        set_field!(@time, self.hour, HourInput, &input);
+        set_field!(@time, self.minute, MinuteInput, &input);
+        set_field!(@time, self.second, SecondInput, &input);
+        set_field!(@time, self.subsecond, NanosecondInput, &input);
+    }
+
+    /// Sets all fields from a [`UtcOffset`] input.
+    pub fn set_zone_fields_utc_offset(&mut self, input: UtcOffset) {
+        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<Base>`] input.
+    pub fn set_zone_fields_base(&mut self, input: TimeZoneInfo<models::Base>) {
+        set_field!(@zone, self.time_zone_id, TimeZoneIdInput, &input);
+        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<AtTime>`] input.
+    pub fn set_zone_fields_at_time(&mut self, input: TimeZoneInfo<models::AtTime>) {
+        set_field!(@zone, self.time_zone_id, TimeZoneIdInput, &input);
+        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
+        set_field!(@zone, self.local_time, TimeZoneLocalTimeInput, &input);
+    }
+
+    /// Sets all fields from a [`TimeZoneInfo<Full>`] input.
+    pub fn set_zone_fields_full(&mut self, input: TimeZoneInfo<models::Full>) {
+        set_field!(@zone, self.time_zone_id, TimeZoneIdInput, &input);
+        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
+        set_field!(@zone, self.zone_variant, TimeZoneVariantInput, &input);
+        set_field!(@zone, self.local_time, TimeZoneLocalTimeInput, &input);
     }
 
     /// Construct given neo date input instances.
