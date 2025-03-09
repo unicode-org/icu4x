@@ -10,8 +10,6 @@ use crate::scaffold::*;
 use icu_calendar::types::DayOfYearInfo;
 use icu_calendar::{AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
-use icu_time::zone::models;
-use icu_time::TimeZoneInfo;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
 use icu_calendar::Date;
@@ -100,30 +98,24 @@ impl DateTimeInputUnchecked {
         set_field!(@time, self.subsecond, NanosecondInput, &input);
     }
 
-    /// Sets all fields from a [`UtcOffset`] input.
-    pub fn set_zone_fields_utc_offset(&mut self, input: UtcOffset) {
-        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
+    /// Sets the time zone UTC offset.
+    pub fn set_time_zone_utc_offset(&mut self, offset: UtcOffset) {
+        self.offset = Some(offset);
     }
 
-    /// Sets all fields from a [`TimeZoneInfo<Base>`] input.
-    pub fn set_zone_fields_base(&mut self, input: TimeZoneInfo<models::Base>) {
-        set_field!(@zone, self.time_zone_id, TimeZoneIdInput, &input);
-        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
+    /// Sets the time zone ID.
+    pub fn set_time_zone_id(&mut self, id: TimeZone) {
+        self.time_zone_id = Some(id);
     }
 
-    /// Sets all fields from a [`TimeZoneInfo<AtTime>`] input.
-    pub fn set_zone_fields_at_time(&mut self, input: TimeZoneInfo<models::AtTime>) {
-        set_field!(@zone, self.time_zone_id, TimeZoneIdInput, &input);
-        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
-        set_field!(@zone, self.local_time, TimeZoneLocalTimeInput, &input);
+    /// Sets the local time for time zone name resolution.
+    pub fn set_time_zone_local_time(&mut self, local_time: (Date<Iso>, Time)) {
+        self.local_time = Some(local_time);
     }
 
-    /// Sets all fields from a [`TimeZoneInfo<Full>`] input.
-    pub fn set_zone_fields_full(&mut self, input: TimeZoneInfo<models::Full>) {
-        set_field!(@zone, self.time_zone_id, TimeZoneIdInput, &input);
-        set_field!(@zone, self.offset, TimeZoneOffsetInput, &input);
-        set_field!(@zone, self.zone_variant, TimeZoneVariantInput, &input);
-        set_field!(@zone, self.local_time, TimeZoneLocalTimeInput, &input);
+    /// Sets the time zone variant.
+    pub fn set_time_zone_variant(&mut self, zone_variant: TimeZoneVariant) {
+        self.zone_variant = Some(zone_variant);
     }
 
     /// Construct given neo date input instances.
