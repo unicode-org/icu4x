@@ -72,32 +72,47 @@ impl CldrCache {
                         provider.register_source(
                             &bcp47_alias,
                             source.clone(),
-                            [metadata.alias.as_deref().unwrap_or(
-                                match metadata.variant.as_deref() {
-                                    None => format!("{}-{}", metadata.source, metadata.target),
-                                    Some(v) => {
-                                        format!("{}-{}/{v}", metadata.source, metadata.target)
-                                    }
-                                }
-                                .as_str(),
-                            )]
-                            .into_iter()
-                            .chain(
-                                metadata
-                                    .alias_bcp47
-                                    .as_deref()
-                                    .unwrap_or_default()
-                                    .split(' ')
-                                    .skip(1),
-                            )
-                            .chain(
-                                metadata
-                                    .alias
-                                    .as_deref()
-                                    .unwrap_or_default()
-                                    .split(' ')
-                                    .skip(1),
-                            ),
+                            metadata
+                                .alias
+                                .as_deref()
+                                .into_iter()
+                                .chain(
+                                    (|| {
+                                        Some(match metadata.variant.as_deref() {
+                                            None => {
+                                                format!(
+                                                    "{}-{}",
+                                                    metadata.source.as_deref()?,
+                                                    metadata.target.as_deref()?
+                                                )
+                                            }
+                                            Some(v) => {
+                                                format!(
+                                                    "{}-{}/{v}",
+                                                    metadata.source.as_deref()?,
+                                                    metadata.target.as_deref()?
+                                                )
+                                            }
+                                        })
+                                    })()
+                                    .as_deref(),
+                                )
+                                .chain(
+                                    metadata
+                                        .alias_bcp47
+                                        .as_deref()
+                                        .unwrap_or_default()
+                                        .split(' ')
+                                        .skip(1),
+                                )
+                                .chain(
+                                    metadata
+                                        .alias
+                                        .as_deref()
+                                        .unwrap_or_default()
+                                        .split(' ')
+                                        .skip(1),
+                                ),
                             false,
                             metadata.visibility == transforms::Visibility::External,
                         );
@@ -120,24 +135,39 @@ impl CldrCache {
                         provider.register_source(
                             &bcp47_alias,
                             source,
-                            [metadata.backward_alias.as_deref().unwrap_or(
-                                match metadata.variant.as_deref() {
-                                    None => format!("{}-{}", metadata.target, metadata.source),
-                                    Some(v) => {
-                                        format!("{}-{}/{v}", metadata.target, metadata.source)
-                                    }
-                                }
-                                .as_str(),
-                            )]
-                            .into_iter()
-                            .chain(
-                                metadata
-                                    .backward_alias_bcp47
-                                    .as_deref()
-                                    .unwrap_or_default()
-                                    .split(' ')
-                                    .skip(1),
-                            ),
+                            metadata
+                                .backward_alias
+                                .as_deref()
+                                .into_iter()
+                                .chain(
+                                    (|| {
+                                        Some(match metadata.variant.as_deref() {
+                                            None => {
+                                                format!(
+                                                    "{}-{}",
+                                                    metadata.target.as_deref()?,
+                                                    metadata.source.as_deref()?
+                                                )
+                                            }
+                                            Some(v) => {
+                                                format!(
+                                                    "{}-{}/{v}",
+                                                    metadata.target.as_deref()?,
+                                                    metadata.source.as_deref()?
+                                                )
+                                            }
+                                        })
+                                    })()
+                                    .as_deref(),
+                                )
+                                .chain(
+                                    metadata
+                                        .backward_alias_bcp47
+                                        .as_deref()
+                                        .unwrap_or_default()
+                                        .split(' ')
+                                        .skip(1),
+                                ),
                             true,
                             metadata.visibility == transforms::Visibility::External,
                         );
