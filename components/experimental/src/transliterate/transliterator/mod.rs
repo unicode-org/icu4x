@@ -1547,4 +1547,12 @@ mod tests {
         let output = "U+0000U+00E4U+0061U+10FFFFU+2764U+0021";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
+
+    #[test]
+    fn test_katakana_hiragana() {
+        let t = Transliterator::try_new(&"und-Hira-t-und-kana".parse().unwrap()).unwrap();
+        let input = "ウィキペディアへようこそ";
+        let output = "うぃきぺでぃあへようこそ";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
 }
