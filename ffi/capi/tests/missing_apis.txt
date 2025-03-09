@@ -17,6 +17,12 @@
 icu::datetime::DateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::DateTimeFormatter::to_field_set_builder#FnInStruct
 icu::datetime::DateTimeInputUnchecked#Struct
+icu::datetime::DateTimeInputUnchecked::set_date_fields#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_fields#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_id#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_local_time#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_utc_offset#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_variant#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder#FnInStruct
 icu::datetime::FormattedDateTimeTry#Struct
