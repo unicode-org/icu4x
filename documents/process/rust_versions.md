@@ -30,7 +30,7 @@ When the nightly cronjob CI fails, ICU4X developers must fix it and ensure it do
 
 ### Pinned Rust nightly policy
 
-ICU4X pins a Rust Nightly in CI for multiple purposes:
+ICU4X pins Rust Nightlies in CI for multiple purposes:
 
  - `diplomat-coverage/src/main.rs`: Running the diplomat-coverage task, which uses unstable Rustdoc JSON output, requiring synchronization between the Rust version and the `rustdoc_types` dependency.
  - `PINNED_CI_NIGHTLY`: Running various FFI CI jobs that need _some_ Rust nightly to use build-std or other nightly features, without becoming beholden to arbitrary
