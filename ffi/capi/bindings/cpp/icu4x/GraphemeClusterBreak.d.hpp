@@ -73,9 +73,11 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline uint8_t to_integer();
+  inline static icu4x::GraphemeClusterBreak for_char(char32_t ch);
 
-  inline static std::optional<icu4x::GraphemeClusterBreak> from_integer(uint8_t other);
+  inline uint8_t to_integer_value();
+
+  inline static std::optional<icu4x::GraphemeClusterBreak> from_integer_value(uint8_t other);
 
   inline icu4x::capi::GraphemeClusterBreak AsFFI() const;
   inline static icu4x::GraphemeClusterBreak FromFFI(icu4x::capi::GraphemeClusterBreak c_enum);

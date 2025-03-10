@@ -100,6 +100,11 @@ pub struct CaseMap<'data> {
     pub exceptions: CaseMapExceptions<'data>,
 }
 
+icu_provider::data_struct!(
+    CaseMap<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for CaseMap<'de> {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {

@@ -149,13 +149,47 @@ enum LineBreak {
   /// See the [Rust documentation for `Virama`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Virama) for more information.
   virama;
 
-  int toInteger() {
-    final result = _icu4x_LineBreak_to_integer_mv1(index);
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  static LineBreak forChar(Rune ch) {
+    final result = _icu4x_LineBreak_for_char_mv1(ch);
+    return LineBreak.values[result];
+  }
+
+  /// Get the "long" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  String? longName() {
+    final result = _icu4x_LineBreak_long_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
+  /// Get the "short" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  String? shortName() {
+    final result = _icu4x_LineBreak_short_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
+  /// Convert to an integer value usable with ICU4C and CodePointMapData
+  ///
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html#method.to_icu4c_value) for more information.
+  int toIntegerValue() {
+    final result = _icu4x_LineBreak_to_integer_value_mv1(index);
     return result;
   }
 
-  static LineBreak? fromInteger(int other) {
-    final result = _icu4x_LineBreak_from_integer_mv1(other);
+  /// Convert from an integer value from ICU4C or CodePointMapData
+  ///
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html#method.from_icu4c_value) for more information.
+  static LineBreak? fromIntegerValue(int other) {
+    final result = _icu4x_LineBreak_from_integer_value_mv1(other);
     if (!result.isOk) {
       return null;
     }
@@ -163,14 +197,29 @@ enum LineBreak {
   }
 }
 
-@_DiplomatFfiUse('icu4x_LineBreak_to_integer_mv1')
-@ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_to_integer_mv1')
+@_DiplomatFfiUse('icu4x_LineBreak_for_char_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_LineBreak_for_char_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_LineBreak_to_integer_mv1(int self);
+external int _icu4x_LineBreak_for_char_mv1(Rune ch);
 
-@_DiplomatFfiUse('icu4x_LineBreak_from_integer_mv1')
-@ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_LineBreak_from_integer_mv1')
+@_DiplomatFfiUse('icu4x_LineBreak_long_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_long_name_mv1')
 // ignore: non_constant_identifier_names
-external _ResultInt32Void _icu4x_LineBreak_from_integer_mv1(int other);
+external _ResultSliceUtf8Void _icu4x_LineBreak_long_name_mv1(int self);
+
+@_DiplomatFfiUse('icu4x_LineBreak_short_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_short_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_LineBreak_short_name_mv1(int self);
+
+@_DiplomatFfiUse('icu4x_LineBreak_to_integer_value_mv1')
+@ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_LineBreak_to_integer_value_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_LineBreak_to_integer_value_mv1(int self);
+
+@_DiplomatFfiUse('icu4x_LineBreak_from_integer_value_mv1')
+@ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_LineBreak_from_integer_value_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_LineBreak_from_integer_value_mv1(int other);
 
 // dart format on

@@ -19,6 +19,7 @@
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
+use icu::calendar::{Date, Iso};
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
@@ -81,6 +82,7 @@ pub struct SourceDataProvider {
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,
+    pub(crate) timezone_horizon: Date<Iso>,
     #[allow(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
@@ -105,10 +107,10 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0-ALPHA1";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0-BETA1";
 
     /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-12-16/76.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-77-rc";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -151,6 +153,7 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             trie_type: Default::default(),
+            timezone_horizon: Date::try_new_iso(2015, 1, 1).unwrap(),
             collation_han_database: Default::default(),
             requests_cache: Default::default(),
         }
@@ -342,6 +345,20 @@ impl SourceDataProvider {
     pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
             collation_han_database,
+            ..self
+        }
+    }
+
+    /// Set the timezone horizon.
+    ///
+    /// Timezone names that have not been in use since before this date are not included,
+    /// formatting will fall back to formats like "Germany Time" or "GMT+1".
+    ///
+    /// Defaults to 2015-01-01, which is a reasonable time frame where people remember
+    /// time zone changes.
+    pub fn with_timezone_horizon(self, timezone_horizon: Date<Iso>) -> Self {
+        Self {
+            timezone_horizon,
             ..self
         }
     }

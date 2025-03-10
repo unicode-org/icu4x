@@ -5,7 +5,7 @@
 [package]
 name = "zerovec"
 description = "Zero-copy vector backed by a byte array"
-version = "0.11.1-dev"
+version = "0.11.1"
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
 
@@ -59,6 +59,8 @@ yoke = ["dep:yoke"]
 serde = ["dep:serde", "alloc"]
 databake = ["dep:databake"]
 alloc = []
+# No longer does anything
+std = []
 
 [package.metadata.cargo-all-features]
 # We have tons of features here, limit the amount of tests we run

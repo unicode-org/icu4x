@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatStr;
 
-    use crate::timezone::ffi::TimeZoneInfo;
+    use crate::timezone::ffi::TimeZone;
     #[cfg(feature = "buffer_provider")]
     use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
 
@@ -51,13 +51,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn parse(&self, value: &DiplomatStr) -> Box<TimeZoneInfo> {
-            Box::new(TimeZoneInfo {
-                time_zone_id: self.0.as_borrowed().parse_from_utf8(value),
-                local_time: None,
-                offset: None,
-                zone_variant: None,
-            })
+        pub fn parse(&self, value: &DiplomatStr) -> Box<TimeZone> {
+            Box::new(TimeZone(self.0.as_borrowed().parse_from_utf8(value)))
         }
 
         #[diplomat::rust_link(icu::time::zone::iana::IanaParserBorrowed::iter, FnInStruct)]
@@ -73,13 +68,8 @@ pub mod ffi {
     impl<'a> TimeZoneIterator<'a> {
         #[diplomat::attr(auto, iterator)]
         #[diplomat::rust_link(icu::time::zone::iana::TimeZoneIter::next, FnInStruct)]
-        pub fn next(&mut self) -> Option<Box<TimeZoneInfo>> {
-            Some(Box::new(TimeZoneInfo {
-                time_zone_id: self.0.next()?,
-                offset: None,
-                local_time: None,
-                zone_variant: None,
-            }))
+        pub fn next(&mut self) -> Option<Box<TimeZone>> {
+            Some(Box::new(TimeZone(self.0.next()?)))
         }
     }
 
@@ -107,6 +97,11 @@ pub mod ffi {
     impl IanaParserExtended {
         /// Create a new [`IanaParserExtended`] using compiled data
         #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtended::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::zone::iana::IanaParserExtended::try_new_with_parser,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<IanaParserExtended> {
@@ -138,12 +133,7 @@ pub mod ffi {
         pub fn parse<'a>(&'a self, value: &DiplomatStr) -> TimeZoneAndCanonicalAndNormalized<'a> {
             let (time_zone_id, canonical, normalized) = self.0.as_borrowed().parse_from_utf8(value);
             TimeZoneAndCanonicalAndNormalized {
-                time_zone: Box::new(TimeZoneInfo {
-                    time_zone_id,
-                    local_time: None,
-                    offset: None,
-                    zone_variant: None,
-                }),
+                time_zone: Box::new(TimeZone(time_zone_id)),
                 canonical: canonical.into(),
                 normalized: normalized.into(),
             }
@@ -167,7 +157,7 @@ pub mod ffi {
 
     #[diplomat::out]
     pub struct TimeZoneAndCanonical<'a> {
-        time_zone: Box<TimeZoneInfo>,
+        time_zone: Box<TimeZone>,
         canonical: DiplomatUtf8StrSlice<'a>,
     }
 
@@ -181,12 +171,7 @@ pub mod ffi {
         pub fn next(&mut self) -> Option<TimeZoneAndCanonical<'a>> {
             let (time_zone_id, canonical) = self.0.next()?;
             Some(TimeZoneAndCanonical {
-                time_zone: Box::new(TimeZoneInfo {
-                    time_zone_id,
-                    local_time: None,
-                    offset: None,
-                    zone_variant: None,
-                }),
+                time_zone: Box::new(TimeZone(time_zone_id)),
                 canonical: canonical.into(),
             })
         }
@@ -194,7 +179,7 @@ pub mod ffi {
 
     #[diplomat::out]
     pub struct TimeZoneAndCanonicalAndNormalized<'a> {
-        time_zone: Box<TimeZoneInfo>,
+        time_zone: Box<TimeZone>,
         canonical: DiplomatUtf8StrSlice<'a>,
         normalized: DiplomatUtf8StrSlice<'a>,
     }
@@ -214,12 +199,7 @@ pub mod ffi {
         pub fn next(&mut self) -> Option<TimeZoneAndCanonicalAndNormalized<'a>> {
             let (time_zone_id, canonical, normalized) = self.0.next()?;
             Some(TimeZoneAndCanonicalAndNormalized {
-                time_zone: Box::new(TimeZoneInfo {
-                    time_zone_id,
-                    local_time: None,
-                    offset: None,
-                    zone_variant: None,
-                }),
+                time_zone: Box::new(TimeZone(time_zone_id)),
                 canonical: canonical.into(),
                 normalized: normalized.into(),
             })

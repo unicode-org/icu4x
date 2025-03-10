@@ -6,7 +6,7 @@
 
 use crate::pattern::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
-use crate::{input::ExtractedInput, provider::fields::FieldLength};
+use crate::{format::ExtractedInput, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::Decimal;
 use icu_calendar::{Date, Iso};
@@ -265,7 +265,7 @@ impl FormatTimeZone for LocalizedOffsetFormat {
             sink.write_str(&essentials.offset_unknown)?;
             return Ok(Ok(()));
         };
-        Ok(if offset.is_zero() {
+        Ok(if offset.is_zero() && self.0 != FieldLength::Four {
             sink.write_str(&essentials.offset_zero)?;
             Ok(())
         } else {

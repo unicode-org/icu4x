@@ -20,6 +20,7 @@ include.workspace = true
 icu_provider = { workspace = true }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["alloc"] }
+zerovec = { workspace = true }
 
 crlify = { workspace = true, optional = true }
 databake = { workspace = true, optional = true}

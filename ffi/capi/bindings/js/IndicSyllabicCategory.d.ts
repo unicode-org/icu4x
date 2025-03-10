@@ -53,9 +53,11 @@ export class IndicSyllabicCategory {
     static VowelIndependent : IndicSyllabicCategory;
     static ReorderingKiller : IndicSyllabicCategory;
 
-    toInteger(): number;
+    static forChar(ch: codepoint): IndicSyllabicCategory;
 
-    static fromInteger(other: number): IndicSyllabicCategory | null;
+    toIntegerValue(): number;
+
+    static fromIntegerValue(other: number): IndicSyllabicCategory | null;
 
     constructor(value: IndicSyllabicCategory | string );
 }

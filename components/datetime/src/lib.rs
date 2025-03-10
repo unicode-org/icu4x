@@ -14,7 +14,7 @@
 //! 2. Options: [`icu::datetime::options`](options)
 //!
 //! ICU4X supports formatting in over one dozen _calendar systems_, including Gregorian, Buddhist,
-//! Islamic, and more. The calendar system is usually derived from the locale, but it can also be
+//! Hijri, and more. The calendar system is usually derived from the locale, but it can also be
 //! specified explicitly.
 //!
 //! The main formatter in this crate is [`DateTimeFormatter`], which supports all field sets,
@@ -22,7 +22,7 @@
 //! resource-constrained environments.
 //!
 //! The formatters accept input types from the [`calendar`](icu_calendar) and
-//! [`timezone`](icu_time) crates:
+//! [`timezone`](icu_time) crates (Also reexported from the [`input`] module of this crate):
 //!
 //! 1. [`Date`](icu_calendar::Date)
 //! 2. [`DateTime`](icu_time::DateTime)
@@ -49,11 +49,11 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
+//! use icu::datetime::input::Date;
+//! use icu::datetime::input::{DateTime, Time};
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::{locale, Locale};
-//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
@@ -64,7 +64,10 @@
 //! let dtf = DateTimeFormatter::try_new(locale.into(), field_set).unwrap();
 //!
 //! // Format something:
-//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 9, 35, 0).unwrap() };
+//! let datetime = DateTime {
+//!     date: Date::try_new_iso(2025, 1, 15).unwrap(),
+//!     time: Time::try_new(16, 9, 35, 0).unwrap(),
+//! };
 //! let formatted_date = dtf.format(&datetime);
 //!
 //! assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
@@ -94,7 +97,6 @@ mod error;
 mod external_loaders;
 pub mod fieldsets;
 mod format;
-pub mod input;
 mod neo;
 pub mod options;
 pub mod parts;
@@ -124,4 +126,29 @@ pub mod preferences {
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
     pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
+
+/// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
+pub mod input {
+    /// **This is a reexport of a type in [`icu_calendar`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_calendar::Date;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::zone::UtcOffset;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::DateTime;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::Time;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZone;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::TimeZoneInfo;
+    /// **This is a reexport of a type in [`icu_time`]**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_time::ZonedDateTime;
 }

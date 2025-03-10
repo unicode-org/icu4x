@@ -13,6 +13,72 @@ use potential_utf::PotentialUtf8;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
+icu_provider::data_marker!(
+    /// `BuddhistDateSymbolsV1`
+    BuddhistDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `ChineseDateSymbolsV1`
+    ChineseDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `CopticDateSymbolsV1`
+    CopticDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `DangiDateSymbolsV1`
+    DangiDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `EthiopianDateSymbolsV1`
+    EthiopianDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `GregorianDateSymbolsV1`
+    GregorianDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `HebrewDateSymbolsV1`
+    HebrewDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `IndianDateSymbolsV1`
+    IndianDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `HijriDateSymbolsV1`
+    HijriDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `JapaneseDateSymbolsV1`
+    JapaneseDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `JapaneseExtendedDateSymbolsV1`
+    JapaneseExtendedDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `PersianDateSymbolsV1`
+    PersianDateSymbolsV1,
+    DateSymbols<'static>
+);
+icu_provider::data_marker!(
+    /// `RocDateSymbolsV1`
+    RocDateSymbolsV1,
+    DateSymbols<'static>
+);
+
 size_test!(DateSymbols, date_symbols_v1_size, 3792);
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
@@ -25,22 +91,7 @@ size_test!(DateSymbols, date_symbols_v1_size, 3792);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(BuddhistDateSymbolsV1, "datetime/buddhist/datesymbols@1"),
-    marker(ChineseDateSymbolsV1, "datetime/chinese/datesymbols@1"),
-    marker(CopticDateSymbolsV1, "datetime/coptic/datesymbols@1"),
-    marker(DangiDateSymbolsV1, "datetime/dangi/datesymbols@1"),
-    marker(EthiopianDateSymbolsV1, "datetime/ethiopic/datesymbols@1"),
-    marker(GregorianDateSymbolsV1, "datetime/gregory/datesymbols@1"),
-    marker(HebrewDateSymbolsV1, "datetime/hebrew/datesymbols@1"),
-    marker(IndianDateSymbolsV1, "datetime/indian/datesymbols@1"),
-    marker(IslamicDateSymbolsV1, "datetime/islamic/datesymbols@1"),
-    marker(JapaneseDateSymbolsV1, "datetime/japanese/datesymbols@1"),
-    marker(JapaneseExtendedDateSymbolsV1, "datetime/japanext/datesymbols@1"),
-    marker(PersianDateSymbolsV1, "datetime/persian/datesymbols@1"),
-    marker(RocDateSymbolsV1, "datetime/roc/datesymbols@1")
-)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -57,6 +108,17 @@ pub struct DateSymbols<'data> {
     pub eras: Eras<'data>,
 }
 
+icu_provider::data_struct!(
+    DateSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+icu_provider::data_marker!(
+    /// `TimeSymbolsV1`
+    TimeSymbolsV1,
+    TimeSymbols<'static>
+);
+
 size_test!(TimeSymbols, time_symbols_v1_size, 768);
 
 /// Symbol data for the day periods needed to format a time.
@@ -69,8 +131,7 @@ size_test!(TimeSymbols, time_symbols_v1_size, 768);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(TimeSymbolsV1, "datetime/timesymbols@1",))]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -80,6 +141,11 @@ pub struct TimeSymbols<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub day_periods: day_periods::Contexts<'data>,
 }
+
+icu_provider::data_struct!(
+    TimeSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// String data for the name, abbreviation, and narrow form of a date's era.
 ///

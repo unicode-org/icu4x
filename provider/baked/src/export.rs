@@ -565,20 +565,21 @@ impl DataExporter for BakedExporter {
                     .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_default()));
 
             let mut baked_values = deduplicated_values
-                .into_iter()
+                .iter()
                 .map(|(payload, ids)| {
+                    // TODO(#5230): Update these size calculations for EncodedStruct storage
                     stats.structs_count += 1;
                     stats.identifiers_count += ids.len();
                     stats.structs_total_size += payload.baked_size();
-
-                    (payload.tokenize(&self.dependencies), ids)
+                    (payload, ids)
                 })
                 .collect::<Vec<_>>();
 
             // Stability
             baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
 
-            let (data, lookup_struct_size) = crate::zerotrie::bake(&marker_bake, baked_values);
+            let (data, lookup_struct_size) =
+                crate::zerotrie::bake(&marker_bake, &baked_values, &self.dependencies);
 
             stats.lookup_struct_size = lookup_struct_size;
 
@@ -778,11 +779,11 @@ impl DataExporter for BakedExporter {
     }
 }
 
-/// TODO
+/// Metadata of a bake export
 pub struct BakedExporterCloseMetadata {
-    /// TODO
+    /// Per-marker size heuristics
     pub statistics: BTreeMap<DataMarkerInfo, Statistics>,
-    /// TODO
+    /// List of crates required to compile the output
     pub required_crates: BTreeSet<&'static str>,
 }
 

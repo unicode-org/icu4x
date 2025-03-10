@@ -41,7 +41,78 @@ pub struct PackedPatternsBuilder<'a> {
 
 size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 
-/// Main data struct for packed datetime patterns.
+icu_provider::data_marker!(
+    /// `BuddhistDateNeoSkeletonPatternsV1`
+    BuddhistDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `ChineseDateNeoSkeletonPatternsV1`
+    ChineseDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `CopticDateNeoSkeletonPatternsV1`
+    CopticDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `DangiDateNeoSkeletonPatternsV1`
+    DangiDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `EthiopianDateNeoSkeletonPatternsV1`
+    EthiopianDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `GregorianDateNeoSkeletonPatternsV1`
+    GregorianDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `HebrewDateNeoSkeletonPatternsV1`
+    HebrewDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `IndianDateNeoSkeletonPatternsV1`
+    IndianDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `HijriDateNeoSkeletonPatternsV1`
+    HijriDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `JapaneseDateNeoSkeletonPatternsV1`
+    JapaneseDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `JapaneseExtendedDateNeoSkeletonPatternsV1`
+    JapaneseExtendedDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `PersianDateNeoSkeletonPatternsV1`
+    PersianDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `RocDateNeoSkeletonPatternsV1`
+    RocDateNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+icu_provider::data_marker!(
+    /// `TimeNeoSkeletonPatternsV1`
+    TimeNeoSkeletonPatternsV1,
+    PackedPatterns<'static>
+);
+
+// Main data struct for packed datetime patterns.
 #[doc = packed_skeleton_data_size!()]
 ///
 /// ## Variants
@@ -49,9 +120,15 @@ size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 /// This supports a set of "standard" patterns plus up to two "variants".
 /// The variants are currently used by year formatting:
 ///
-/// - Standard: Year, which could be partial precision (2-digit Gregorain)
+/// - Standard: Year, which could be partial precision (2-digit Gregorian)
 /// - Variant 0: Full Year, which is always full precision
 /// - Variant 1: Year With Era
+///
+/// And by time formatting:
+///
+/// - Standard: Hour only
+/// - Variant 0: Hour and minute
+/// - Variant 1: Hour, minute, and second
 ///
 /// Variants should be used when the pattern could depend on the value being
 /// formatted. For example, with [`YearStyle::Auto`], any of these three
@@ -110,25 +187,7 @@ size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 /// postcard and other size-optimized serialization formats.
 ///
 /// [`YearStyle::Auto`]: crate::options::YearStyle::Auto
-#[icu_provider::data_struct(
-    // Date patterns
-    marker(BuddhistDateNeoSkeletonPatternsV1, "datetime/patterns/buddhist/skeleton@1"),
-    marker(ChineseDateNeoSkeletonPatternsV1, "datetime/patterns/chinese/skeleton@1"),
-    marker(CopticDateNeoSkeletonPatternsV1, "datetime/patterns/coptic/skeleton@1"),
-    marker(DangiDateNeoSkeletonPatternsV1, "datetime/patterns/dangi/skeleton@1"),
-    marker(EthiopianDateNeoSkeletonPatternsV1, "datetime/patterns/ethiopic/skeleton@1"),
-    marker(GregorianDateNeoSkeletonPatternsV1, "datetime/patterns/gregory/skeleton@1"),
-    marker(HebrewDateNeoSkeletonPatternsV1, "datetime/patterns/hebrew/skeleton@1"),
-    marker(IndianDateNeoSkeletonPatternsV1, "datetime/patterns/indian/skeleton@1"),
-    marker(IslamicDateNeoSkeletonPatternsV1, "datetime/patterns/islamic/skeleton@1"),
-    marker(JapaneseDateNeoSkeletonPatternsV1, "datetime/patterns/japanese/skeleton@1"),
-    marker(JapaneseExtendedDateNeoSkeletonPatternsV1, "datetime/patterns/japanext/skeleton@1"),
-    marker(PersianDateNeoSkeletonPatternsV1, "datetime/patterns/persian/skeleton@1"),
-    marker(RocDateNeoSkeletonPatternsV1, "datetime/patterns/roc/skeleton@1"),
-    // Time patterns
-    marker(TimeNeoSkeletonPatternsV1, "datetime/patterns/time_skeleton@1")
-)]
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider))]
 pub struct PackedPatterns<'data> {
@@ -139,6 +198,11 @@ pub struct PackedPatterns<'data> {
     /// depending on the header.
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
+
+icu_provider::data_struct!(
+    PackedPatterns<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 mod constants {
     /// Value when standard long, medium, and short are all the same
@@ -399,9 +463,13 @@ impl PackedPatternsBuilder<'_> {
     }
 }
 
+/// Which pattern to select. For details, see [`PackedPatterns`].
 pub(crate) enum PackedSkeletonVariant {
+    /// Default-precision year OR hours only
     Standard,
+    /// Full-precision year OR hours and minutes
     Variant0,
+    /// Year with era OR hours, minutes, and seconds
     Variant1,
 }
 

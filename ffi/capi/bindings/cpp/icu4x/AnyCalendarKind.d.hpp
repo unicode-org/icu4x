@@ -32,10 +32,10 @@ namespace capi {
       AnyCalendarKind_Dangi = 9,
       AnyCalendarKind_Chinese = 10,
       AnyCalendarKind_Hebrew = 11,
-      AnyCalendarKind_IslamicCivil = 12,
-      AnyCalendarKind_IslamicObservational = 13,
-      AnyCalendarKind_IslamicTabular = 14,
-      AnyCalendarKind_IslamicUmmAlQura = 15,
+      AnyCalendarKind_HijriCivil = 12,
+      AnyCalendarKind_HijriObservational = 13,
+      AnyCalendarKind_HijriTabular = 14,
+      AnyCalendarKind_HijriUmmAlQura = 15,
       AnyCalendarKind_Persian = 16,
       AnyCalendarKind_Roc = 17,
     };
@@ -60,10 +60,10 @@ public:
     Dangi = 9,
     Chinese = 10,
     Hebrew = 11,
-    IslamicCivil = 12,
-    IslamicObservational = 13,
-    IslamicTabular = 14,
-    IslamicUmmAlQura = 15,
+    HijriCivil = 12,
+    HijriObservational = 13,
+    HijriTabular = 14,
+    HijriUmmAlQura = 15,
     Persian = 16,
     Roc = 17,
   };
@@ -75,11 +75,7 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline static std::optional<icu4x::AnyCalendarKind> get_for_locale(const icu4x::Locale& locale);
-
-  inline static std::optional<icu4x::AnyCalendarKind> get_for_bcp47(std::string_view s);
-
-  inline std::string bcp47();
+  inline static std::optional<icu4x::AnyCalendarKind> create_for_locale(const icu4x::Locale& locale);
 
   inline icu4x::capi::AnyCalendarKind AsFFI() const;
   inline static icu4x::AnyCalendarKind FromFFI(icu4x::capi::AnyCalendarKind c_enum);

@@ -83,7 +83,6 @@ jobs:
           --exclude icu_benchmark_macros
           --exclude icu_ffi_coverage
           --exclude md-tests
-          --exclude icu_provider_macros
           --exclude databake-derive
           --exclude yoke-derive
           --exclude zerofrom-derive

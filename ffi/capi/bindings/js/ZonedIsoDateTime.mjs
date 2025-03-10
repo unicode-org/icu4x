@@ -117,14 +117,14 @@ export class ZonedIsoDateTime {
         return new ZonedIsoDateTime(structObj, internalConstructor);
     }
 
-    static tryFromStr(v, ianaParser, offsetCalculator) {
+    static fromString(v, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_ZonedIsoDateTime_try_from_str_mv1(diplomatReceive.buffer, ...vSlice.splat(), ianaParser.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_ZonedIsoDateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), ianaParser.ffiValue, offsetCalculator.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

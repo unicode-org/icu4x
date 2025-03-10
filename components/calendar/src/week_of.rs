@@ -47,9 +47,9 @@ impl WeekCalculator {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::CalendarWeekV2> + ?Sized,
+        P: DataProvider<crate::provider::CalendarWeekV1> + ?Sized,
     {
-        let locale = CalendarWeekV2::make_locale(prefs.locale_preferences);
+        let locale = CalendarWeekV1::make_locale(prefs.locale_preferences);
         provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
@@ -72,7 +72,7 @@ impl WeekCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::{DayOfMonth, Weekday, WeekOfMonth};
+    /// use icu::calendar::types::{DayOfMonth, WeekOfMonth, Weekday};
     /// use icu::calendar::week::WeekCalculator;
     ///
     /// let week_calculator =

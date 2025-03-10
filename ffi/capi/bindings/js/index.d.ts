@@ -16,6 +16,8 @@ export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
 export { LocaleFallbackConfig } from "./LocaleFallbackConfig"
 
+export { BidiMirroringGlyph } from "./BidiMirroringGlyph"
+
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 
 export { LineBreakOptions } from "./LineBreakOptions"
@@ -37,6 +39,8 @@ export { Decomposed } from "./Decomposed"
 export { PluralCategories } from "./PluralCategories"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
+
+export { UtcOffsets } from "./UtcOffsets"
 
 export { WeekOf } from "./WeekOf"
 
@@ -186,6 +190,8 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
+export { TimeZone } from "./TimeZone"
+
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { MeasureUnit } from "./MeasureUnit"
@@ -196,9 +202,13 @@ export { UnitsConverter } from "./UnitsConverter"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
+export { UtcOffset } from "./UtcOffset"
+
 export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
 
 export { WeekCalculator } from "./WeekCalculator"
+
+export { WindowsParser } from "./WindowsParser"
 
 export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
 
@@ -276,6 +286,8 @@ export { YearStyle } from "./YearStyle"
 
 export { PluralCategory } from "./PluralCategory"
 
+export { BidiPairedBracketType } from "./BidiPairedBracketType"
+
 export { BidiClass } from "./BidiClass"
 
 export { CanonicalCombiningClass } from "./CanonicalCombiningClass"
@@ -305,5 +317,7 @@ export { LineBreakStrictness } from "./LineBreakStrictness"
 export { LineBreakWordOption } from "./LineBreakWordOption"
 
 export { SegmenterWordType } from "./SegmenterWordType"
+
+export { TimeZoneVariant } from "./TimeZoneVariant"
 
 export { WeekRelativeUnit } from "./WeekRelativeUnit"

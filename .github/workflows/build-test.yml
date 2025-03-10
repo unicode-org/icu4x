@@ -302,11 +302,6 @@ jobs:
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
-
     # Cargo-make boilerplate
     - name: Install cargo-make
       uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11

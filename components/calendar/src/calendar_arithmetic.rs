@@ -417,7 +417,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Iso;
+    use crate::cal::Iso;
 
     #[test]
     fn test_ord() {

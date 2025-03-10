@@ -98,11 +98,17 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline uint8_t to_integer();
+  inline static icu4x::GeneralCategory for_char(char32_t ch);
+
+  inline std::optional<std::string_view> long_name();
+
+  inline std::optional<std::string_view> short_name();
+
+  inline uint8_t to_integer_value();
 
   inline icu4x::GeneralCategoryGroup to_group();
 
-  inline static std::optional<icu4x::GeneralCategory> from_integer(uint8_t other);
+  inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 
   inline icu4x::capi::GeneralCategory AsFFI() const;
   inline static icu4x::GeneralCategory FromFFI(icu4x::capi::GeneralCategory c_enum);

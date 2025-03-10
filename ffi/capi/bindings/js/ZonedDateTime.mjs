@@ -118,14 +118,86 @@ export class ZonedDateTime {
         return new ZonedDateTime(structObj, internalConstructor);
     }
 
-    static tryFromStr(v, calendar, ianaParser, offsetCalculator) {
+    static fromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_ZonedDateTime_try_from_str_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue, offsetCalculator.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
+    static locationOnlyFromString(v, calendar, ianaParser) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+        
+        const result = wasm.icu4x_ZonedDateTime_location_only_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
+    static offsetOnlyFromString(v, calendar) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+        
+        const result = wasm.icu4x_ZonedDateTime_offset_only_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            diplomatReceive.free();
+        }
+    }
+
+    static looseFromString(v, calendar, ianaParser) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+        
+        const result = wasm.icu4x_ZonedDateTime_loose_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

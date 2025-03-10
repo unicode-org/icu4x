@@ -33,7 +33,7 @@ pub enum Strength {
     /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
-    /// use icu::collator::{*, options::*};
+    /// use icu::collator::{options::*, *};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
@@ -47,7 +47,7 @@ pub enum Strength {
     /// to the ECMA-402 sensitivity "accent".
     ///
     /// ```
-    /// use icu::collator::{*, options::*};
+    /// use icu::collator::{options::*, *};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Secondary);
@@ -139,7 +139,7 @@ pub enum Strength {
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
     /// ```
-    /// TODO: Thai example.
+    // TODO: Thai example.
     Quaternary = 3,
 
     /// Compare the NFD form by code point order as the quinary

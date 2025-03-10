@@ -303,6 +303,229 @@ pub mod marker_attrs {
     }
 }
 
+icu_provider::data_marker!(
+    /// `BuddhistYearNamesV1`
+    BuddhistYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `ChineseYearNamesV1`
+    ChineseYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `CopticYearNamesV1`
+    CopticYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `DangiYearNamesV1`
+    DangiYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `EthiopianYearNamesV1`
+    EthiopianYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `GregorianYearNamesV1`
+    GregorianYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `HebrewYearNamesV1`
+    HebrewYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `IndianYearNamesV1`
+    IndianYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `HijriYearNamesV1`
+    HijriYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `JapaneseYearNamesV1`
+    JapaneseYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `JapaneseExtendedYearNamesV1`
+    JapaneseExtendedYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `PersianYearNamesV1`
+    PersianYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+icu_provider::data_marker!(
+    /// `RocYearNamesV1`
+    RocYearNamesV1,
+    YearNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_year_length"
+);
+
+icu_provider::data_marker!(
+    /// `BuddhistMonthNamesV1`
+    BuddhistMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `ChineseMonthNamesV1`
+    ChineseMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `CopticMonthNamesV1`
+    CopticMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `DangiMonthNamesV1`
+    DangiMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `EthiopianMonthNamesV1`
+    EthiopianMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `GregorianMonthNamesV1`
+    GregorianMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `HebrewMonthNamesV1`
+    HebrewMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `IndianMonthNamesV1`
+    IndianMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `HijriMonthNamesV1`
+    HijriMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `JapaneseMonthNamesV1`
+    JapaneseMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `JapaneseExtendedMonthNamesV1`
+    JapaneseExtendedMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `PersianMonthNamesV1`
+    PersianMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+icu_provider::data_marker!(
+    /// `RocMonthNamesV1`
+    RocMonthNamesV1,
+    MonthNames<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "datetime_month_length"
+);
+
+icu_provider::data_marker!(
+    /// `WeekdayNamesV1`
+    WeekdayNamesV1,
+    LinearNames<'static>,
+);
+icu_provider::data_marker!(
+    /// `DayPeriodNamesV1`
+    DayPeriodNamesV1,
+    LinearNames<'static>,
+);
+// We're not producing or using day names yet, but this is where they would go
+icu_provider::data_marker!(
+    /// `ChineseDayNamesV1`
+    ChineseDayNamesV1,
+    LinearNames<'static>,
+);
+icu_provider::data_marker!(
+    /// `DangiDayNamesV1`
+    DangiDayNamesV1,
+    LinearNames<'static>,
+);
+// for calendars that don't use day names
+icu_provider::data_marker!(
+    /// `PlaceholderDayNamesV1`
+    PlaceholderDayNamesV1,
+    LinearNames<'static>,
+);
+
+icu_provider::data_marker!(
+    /// `GluePatternV1`
+    GluePatternV1,
+    GluePattern<'static>
+);
+icu_provider::data_marker!(
+    /// `DateTimeSkeletonPatternsV1`
+    DateTimeSkeletonPatternsV1,
+    DateTimeSkeletons<'static>,
+);
+
 size_test!(YearNames, year_names_v1_size, 32);
 
 /// Names used for representing the year.
@@ -324,74 +547,7 @@ size_test!(YearNames, year_names_v1_size, 32);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(
-        BuddhistYearNamesV1,
-        "datetime/names/buddhist/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        ChineseYearNamesV1,
-        "datetime/names/chinese/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        CopticYearNamesV1,
-        "datetime/names/coptic/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        DangiYearNamesV1,
-        "datetime/names/dangi/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        EthiopianYearNamesV1,
-        "datetime/names/ethiopic/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        GregorianYearNamesV1,
-        "datetime/names/gregory/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        HebrewYearNamesV1,
-        "datetime/names/hebrew/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        IndianYearNamesV1,
-        "datetime/names/indian/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        IslamicYearNamesV1,
-        "datetime/names/islamic/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        JapaneseYearNamesV1,
-        "datetime/names/japanese/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        JapaneseExtendedYearNamesV1,
-        "datetime/names/japanext/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        PersianYearNamesV1,
-        "datetime/names/persian/years@1",
-        attributes_domain = "datetime_year_length"
-    ),
-    marker(
-        RocYearNamesV1,
-        "datetime/names/roc/years@1",
-        attributes_domain = "datetime_year_length"
-    )
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -409,6 +565,11 @@ pub enum YearNames<'data> {
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
+
+icu_provider::data_struct!(
+    YearNames<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 type YearNamesMap<'data> =
     VarZeroCow<'data, Tuple2VarULE<VarZeroSlice<PotentialUtf8>, VarZeroSlice<str>>>;
@@ -434,74 +595,7 @@ size_test!(MonthNames, month_names_v1_size, 32);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(
-        BuddhistMonthNamesV1,
-        "datetime/names/buddhist/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        ChineseMonthNamesV1,
-        "datetime/names/chinese/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        CopticMonthNamesV1,
-        "datetime/names/coptic/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        DangiMonthNamesV1,
-        "datetime/names/dangi/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        EthiopianMonthNamesV1,
-        "datetime/names/ethiopic/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        GregorianMonthNamesV1,
-        "datetime/names/gregory/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        HebrewMonthNamesV1,
-        "datetime/names/hebrew/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        IndianMonthNamesV1,
-        "datetime/names/indian/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        IslamicMonthNamesV1,
-        "datetime/names/islamic/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        JapaneseMonthNamesV1,
-        "datetime/names/japanese/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        JapaneseExtendedMonthNamesV1,
-        "datetime/names/japanext/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        PersianMonthNamesV1,
-        "datetime/names/persian/months@1",
-        attributes_domain = "datetime_month_length"
-    ),
-    marker(
-        RocMonthNamesV1,
-        "datetime/names/roc/months@1",
-        attributes_domain = "datetime_month_length"
-    )
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -535,6 +629,11 @@ pub enum MonthNames<'data> {
     ),
 }
 
+icu_provider::data_struct!(
+    MonthNames<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 size_test!(LinearNames, linear_names_v1_size, 24);
 
 /// Names that can be stored as a simple linear array.
@@ -552,17 +651,7 @@ size_test!(LinearNames, linear_names_v1_size, 24);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(WeekdayNamesV1, "datetime/names/weekdays@1"),
-    marker(DayPeriodNamesV1, "datetime/names/dayperiods@1"),
-
-    // We're not producing or using day names yet, but this is where they would go
-    marker(ChineseDayNamesV1, "datetime/names/chinese/days@1"),
-    marker(DangiDayNamesV1, "datetime/names/dangi/days@1"),
-    // for calendars that don't use day names
-    marker(PlaceholderDayNamesV1, "datetime/names/placeholder/days@1"),
-)]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -573,6 +662,11 @@ pub struct LinearNames<'data> {
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub names: VarZeroVec<'data, str>,
 }
+
+icu_provider::data_struct!(
+    LinearNames<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 impl LinearNames<'_> {
     /// Gets the 'am' name assuming this struct contains day period data.
@@ -611,8 +705,7 @@ size_test!(GluePattern, glue_pattern_v1_size, 24);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(GluePatternV1, "datetime/patterns/glue@1"))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -623,11 +716,12 @@ pub struct GluePattern<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-#[icu_provider::data_struct(marker(
-    DateTimeSkeletonPatternsV1,
-    "datetime/patterns/datetime_skeleton@1"
-))]
-#[derive(Debug, PartialEq, Clone)]
+icu_provider::data_struct!(
+    GluePattern<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -641,6 +735,11 @@ pub struct DateTimeSkeletons<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroMap<'data, str, PatternULE>,
 }
+
+icu_provider::data_struct!(
+    DateTimeSkeletons<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// Calendar-agnostic year name data marker
 #[derive(Debug)]

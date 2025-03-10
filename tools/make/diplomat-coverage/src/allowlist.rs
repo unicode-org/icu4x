@@ -134,12 +134,12 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_hebrew",
         "icu::calendar::Date::try_new_hebrew_with_calendar",
         "icu::calendar::Date::try_new_indian",
-        "icu::calendar::Date::try_new_islamic_civil_with_calendar",
-        "icu::calendar::Date::try_new_islamic_tabular_with_calendar",
+        "icu::calendar::Date::try_new_hijri_civil_with_calendar",
+        "icu::calendar::Date::try_new_hijri_tabular_with_calendar",
         "icu::calendar::Date::try_new_japanese_with_calendar",
         "icu::calendar::Date::try_new_japanese_extended_with_calendar",
         "icu::calendar::Date::try_new_julian",
-        "icu::calendar::Date::try_new_observational_islamic_with_calendar",
+        "icu::calendar::Date::try_new_observational_hijri_with_calendar",
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
         "icu::calendar::Date::try_new_ummalqura_with_calendar",
@@ -321,17 +321,14 @@ lazy_static::lazy_static! {
         "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
-        "icu::datetime::input::Date",
-        "icu::datetime::input::DateTime",
-        "icu::datetime::input::Time",
-        "icu::datetime::input::TimeZone",
-        "icu::datetime::input::TimeZoneInfo",
-        "icu::datetime::input::UtcOffset",
-        "icu::datetime::input::ZonedDateTime",
         "icu::time::zone::IanaParser",
         "icu::time::zone::WindowsParser",
         "icu::time::zone::TimeZoneInfo",
         "icu::time::zone::TimeZone",
+
+        // Reexported input modules
+        "icu::datetime::input",
+        "icu::decimal::input",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -346,6 +343,9 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
         "icu::calendar::Date::wrap_calendar_in_ref",
+
+        // Generic type, primarily exists for use by ICU4X data struct internals.
+        "icu::plurals::PluralElements",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike

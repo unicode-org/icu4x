@@ -16,6 +16,8 @@ part 'Bidi.g.dart';
 part 'BidiClass.g.dart';
 part 'BidiDirection.g.dart';
 part 'BidiInfo.g.dart';
+part 'BidiMirroringGlyph.g.dart';
+part 'BidiPairedBracketType.g.dart';
 part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
@@ -136,6 +138,7 @@ part 'SentenceBreakIteratorUtf8.g.dart';
 part 'SentenceSegmenter.g.dart';
 part 'Time.g.dart';
 part 'TimePrecision.g.dart';
+part 'TimeZone.g.dart';
 part 'TimeZoneAndCanonical.g.dart';
 part 'TimeZoneAndCanonicalAndNormalized.g.dart';
 part 'TimeZoneAndCanonicalAndNormalizedIterator.g.dart';
@@ -143,18 +146,22 @@ part 'TimeZoneAndCanonicalIterator.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TimeZoneIterator.g.dart';
+part 'TimeZoneVariant.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UnitsConverter.g.dart';
 part 'UnitsConverterFactory.g.dart';
+part 'UtcOffset.g.dart';
 part 'UtcOffsetCalculator.g.dart';
+part 'UtcOffsets.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
 part 'Weekday.g.dart';
 part 'WeekendContainsDay.g.dart';
+part 'WindowsParser.g.dart';
 part 'WordBreak.g.dart';
 part 'WordBreakIteratorLatin1.g.dart';
 part 'WordBreakIteratorUtf16.g.dart';
@@ -237,32 +244,6 @@ class _FinalizedArena {
   }
 }
 
-final class _ResultBoolVoidUnion extends ffi.Union {
-  @ffi.Bool()
-  external bool ok;
-
-}
-
-final class _ResultBoolVoid extends ffi.Struct {
-  external _ResultBoolVoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultBoolVoid.ok(bool val) {
-    final struct = ffi.Struct.create<_ResultBoolVoid>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultBoolVoid.err() {
-    final struct = ffi.Struct.create<_ResultBoolVoid>();
-    struct.isOk = false;
-    return struct;
-  }
-}
 
 final class _ResultDateTimeFfiInt32Union extends ffi.Union {
   external _DateTimeFfi ok;
@@ -315,33 +296,6 @@ final class _ResultInt32Void extends ffi.Struct {
   // ignore: unused_element
   factory _ResultInt32Void.err() {
     final struct = ffi.Struct.create<_ResultInt32Void>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
-final class _ResultInt8VoidUnion extends ffi.Union {
-  @ffi.Int8()
-  external int ok;
-
-}
-
-final class _ResultInt8Void extends ffi.Struct {
-  external _ResultInt8VoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultInt8Void.ok(int val) {
-    final struct = ffi.Struct.create<_ResultInt8Void>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultInt8Void.err() {
-    final struct = ffi.Struct.create<_ResultInt8Void>();
     struct.isOk = false;
     return struct;
   }
@@ -457,6 +411,58 @@ final class _ResultOpaqueInt32 extends ffi.Struct {
   }
 }
 
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion extends ffi.Union {
+  external ffi.Pointer<ffi.Opaque> ok;
+
+}
+
+final class _ResultOpaqueTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
+  external _ResultOpaqueTimeZoneInvalidOffsetErrorFfiUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultOpaqueTimeZoneInvalidOffsetErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultSliceUtf8VoidUnion extends ffi.Union {
+  external _SliceUtf8 ok;
+
+}
+
+final class _ResultSliceUtf8Void extends ffi.Struct {
+  external _ResultSliceUtf8VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultSliceUtf8Void.ok(_SliceUtf8 val) {
+    final struct = ffi.Struct.create<_ResultSliceUtf8Void>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultSliceUtf8Void.err() {
+    final struct = ffi.Struct.create<_ResultSliceUtf8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
 final class _ResultTimeZoneAndCanonicalAndNormalizedFfiVoidUnion extends ffi.Union {
   external _TimeZoneAndCanonicalAndNormalizedFfi ok;
 
@@ -538,7 +544,7 @@ final class _ResultUint16Void extends ffi.Struct {
 
 final class _ResultUint32VoidUnion extends ffi.Union {
   @ffi.Uint32()
-  external int ok;
+  external Rune ok;
 
 }
 
@@ -549,7 +555,7 @@ final class _ResultUint32Void extends ffi.Struct {
   external bool isOk;
 
   // ignore: unused_element
-  factory _ResultUint32Void.ok(int val) {
+  factory _ResultUint32Void.ok(Rune val) {
     final struct = ffi.Struct.create<_ResultUint32Void>();
     struct.isOk = true;
     struct.union.ok = val;
@@ -585,6 +591,32 @@ final class _ResultUint8Void extends ffi.Struct {
   // ignore: unused_element
   factory _ResultUint8Void.err() {
     final struct = ffi.Struct.create<_ResultUint8Void>();
+    struct.isOk = false;
+    return struct;
+  }
+}
+
+final class _ResultUtcOffsetsFfiVoidUnion extends ffi.Union {
+  external _UtcOffsetsFfi ok;
+
+}
+
+final class _ResultUtcOffsetsFfiVoid extends ffi.Struct {
+  external _ResultUtcOffsetsFfiVoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+
+  // ignore: unused_element
+  factory _ResultUtcOffsetsFfiVoid.ok(_UtcOffsetsFfi val) {
+    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+    struct.isOk = true;
+    struct.union.ok = val;
+    return struct;
+  }
+  // ignore: unused_element
+  factory _ResultUtcOffsetsFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
     struct.isOk = false;
     return struct;
   }
@@ -639,26 +671,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
     final struct = ffi.Struct.create<_ResultVoidInt32>();
     struct.isOk = false;
     struct.union.err = val;
-    return struct;
-  }
-}
-
-final class _ResultVoidTimeZoneInvalidOffsetErrorFfi extends ffi.Struct {
-  
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultVoidTimeZoneInvalidOffsetErrorFfi.ok() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidOffsetErrorFfi>();
-    struct.isOk = true;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultVoidTimeZoneInvalidOffsetErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultVoidTimeZoneInvalidOffsetErrorFfi>();
-    struct.isOk = false;
     return struct;
   }
 }
@@ -767,9 +779,9 @@ final class _SliceRune extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   // ignore: unused_element
-  core.List<Rune> _toDart(core.List<Object> lifetimeEdges) {
+  core.List<Rune> _toDart(core.List<Object> lifetimeEdges, {bool isStatic = false}) {
     final r = _data.asTypedList(_length);
-    if (lifetimeEdges.isEmpty) {
+    if (lifetimeEdges.isEmpty && !isStatic) {
       _rustFree.attach(r, (pointer: _data.cast(), bytes: _length, align: 1));
     } else {
       _nopFree.attach(r, lifetimeEdges); // Keep lifetime edges alive
@@ -814,9 +826,9 @@ final class _SliceSliceUtf16 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   // ignore: unused_element
-  core.List<core.String> _toDart(core.List<Object> lifetimeEdges) {
+  core.List<core.String> _toDart(core.List<Object> lifetimeEdges, {bool isStatic = false}) {
     final r = core.Iterable.generate(_length).map((i) => _data[i]._toDart(lifetimeEdges)).toList(growable: false);
-    if (lifetimeEdges.isEmpty) {
+    if (lifetimeEdges.isEmpty && !isStatic) {
       // unsupported
     } else {
       // Lifetime edges will be cleaned up
@@ -864,9 +876,9 @@ final class _SliceUint8 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   // ignore: unused_element
-  core.List<int> _toDart(core.List<Object> lifetimeEdges) {
+  core.List<int> _toDart(core.List<Object> lifetimeEdges, {bool isStatic = false}) {
     final r = _data.asTypedList(_length);
-    if (lifetimeEdges.isEmpty) {
+    if (lifetimeEdges.isEmpty && !isStatic) {
       _rustFree.attach(r, (pointer: _data.cast(), bytes: _length, align: 1));
     } else {
       _nopFree.attach(r, lifetimeEdges); // Keep lifetime edges alive
@@ -914,9 +926,9 @@ final class _SliceUsize extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   // ignore: unused_element
-  core.List<int> _toDart(core.List<Object> lifetimeEdges) {
+  core.List<int> _toDart(core.List<Object> lifetimeEdges, {bool isStatic = false}) {
     final r = core.Iterable.generate(_length).map((i) => _data[i]).toList(growable: false);
-    if (lifetimeEdges.isEmpty) {
+    if (lifetimeEdges.isEmpty && !isStatic) {
       _diplomat_free(_data.cast(), _length * ffi.sizeOf<ffi.Size>(), ffi.sizeOf<ffi.Size>());
     } else {
       // Lifetime edges will be cleaned up
@@ -964,9 +976,9 @@ final class _SliceUtf16 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   // ignore: unused_element
-  String _toDart(core.List<Object> lifetimeEdges) {
+  String _toDart(core.List<Object> lifetimeEdges, {bool isStatic = false}) {
     final r = core.String.fromCharCodes(_data.asTypedList(_length));
-    if (lifetimeEdges.isEmpty) {
+    if (lifetimeEdges.isEmpty && !isStatic) {
       _diplomat_free(_data.cast(), _length * 2, 2);
     } else {
       // Lifetime edges will be cleaned up
@@ -1011,9 +1023,9 @@ final class _SliceUtf8 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 
   // ignore: unused_element
-  String _toDart(core.List<Object> lifetimeEdges) {
+  String _toDart(core.List<Object> lifetimeEdges, {bool isStatic = false}) {
     final r = Utf8Decoder().convert(_data.asTypedList(_length));
-    if (lifetimeEdges.isEmpty) {
+    if (lifetimeEdges.isEmpty && !isStatic) {
       _diplomat_free(_data.cast(), _length, 1);
     } else {
       // Lifetime edges will be cleaned up

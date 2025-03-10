@@ -28,8 +28,8 @@ icu_decimal = { workspace = true }
 icu_locale_core = { workspace = true }
 icu_pattern = { workspace = true, features = ["zerovec", "alloc"] }
 icu_plurals = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
-icu_time = { workspace = true }
+icu_provider = { workspace = true }
+icu_time = { workspace = true, features = ["alloc"] }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
@@ -50,7 +50,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_calendar = { path = "../calendar", features = ["ixdtf"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
-icu_time = { path = "../time", features = ["ixdtf"] }
+icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 litemap = { path = "../../utils/litemap" }
 
 serde = { workspace = true, features = ["derive"] }
@@ -85,11 +85,13 @@ datagen = [
     "icu_pattern/databake",
     "icu_plurals/datagen",
     "icu_time/datagen",
+    "icu_provider/export",
     "serde",
 ]
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data"]
+ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

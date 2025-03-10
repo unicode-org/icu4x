@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO
+//! Tools for parsing IANA timezone IDs.
 
 use icu_provider::prelude::*;
 use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
@@ -55,8 +55,8 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu::time::TimeZone;
 /// use icu::time::zone::IanaParser;
+/// use icu::time::TimeZone;
 /// use tinystr::tinystr;
 ///
 /// let parser = IanaParser::new();
@@ -82,10 +82,7 @@ use crate::{
 /// // The IANA zone "Australia/Boing_Boing" does not exist
 /// // (maybe not *yet*), so it produces the special unknown
 /// // timezone in order for this operation to be infallible:
-/// assert_eq!(
-///     parser.parse("Australia/Boing_Boing"),
-///     TimeZone::unknown()
-/// );
+/// assert_eq!(parser.parse("Australia/Boing_Boing"), TimeZone::unknown());
 /// ```
 #[derive(Debug, Clone)]
 pub struct IanaParser {
@@ -201,8 +198,8 @@ impl<'a> IanaParserBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_time::TimeZone;
     /// use icu_time::zone::iana::IanaParser;
+    /// use icu_time::TimeZone;
     ///
     /// let parser = IanaParser::new();
     ///
@@ -211,10 +208,7 @@ impl<'a> IanaParserBorrowed<'a> {
     /// assert_eq!(*result, "inccu");
     ///
     /// // Unknown IANA time zone ID:
-    /// assert_eq!(
-    ///     parser.parse("America/San_Francisco"),
-    ///     TimeZone::unknown()
-    /// );
+    /// assert_eq!(parser.parse("America/San_Francisco"), TimeZone::unknown());
     /// ```
     pub fn parse(&self, iana_id: &str) -> TimeZone {
         self.parse_from_utf8(iana_id.as_bytes())
@@ -444,8 +438,8 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_time::TimeZone;
     /// use icu_time::zone::iana::IanaParserExtended;
+    /// use icu_time::TimeZone;
     ///
     /// let parser = IanaParserExtended::new();
     ///

@@ -13,15 +13,7 @@ use zerovec::ule::*;
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
 ///
-/// Structs implementing this trait are normally generated with the [`data_struct`] macro.
-///
-/// By convention, the non-standard `Marker` suffix is used by types implementing DynamicDataMarker.
-///
-/// In addition to a marker type implementing DynamicDataMarker, the following impls must also be present
-/// for the data struct:
-///
-/// - `impl<'a> Yokeable<'a>` (required)
-/// - `impl ZeroFrom<Self>`
+/// Data markers normally generated with the [`data_marker`](crate::data_marker) macro.
 ///
 /// Also see [`DataMarker`].
 ///
@@ -478,16 +470,6 @@ impl DataMarkerInfo {
         }
     }
 
-    /// TODO
-    #[cfg_attr(not(feature = "export"), allow(unused_variables))]
-    pub const fn with_attributes_domain(self, attributes_domain: &'static str) -> Self {
-        Self {
-            #[cfg(feature = "export")]
-            attributes_domain,
-            ..self
-        }
-    }
-
     /// Returns [`Ok`] if this data marker matches the argument, or the appropriate error.
     ///
     /// Convenience method for data providers that support a single [`DataMarkerInfo`].
@@ -495,12 +477,18 @@ impl DataMarkerInfo {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     ///
-    /// icu_provider::data_marker!(DummyV1, <HelloWorldV1 as DynamicDataMarker>::DataStruct);
+    /// icu_provider::data_marker!(
+    ///     DummyV1,
+    ///     <HelloWorldV1 as DynamicDataMarker>::DataStruct
+    /// );
     ///
-    /// assert!(matches!(HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO), Ok(())));
+    /// assert!(matches!(
+    ///     HelloWorldV1::INFO.match_marker(HelloWorldV1::INFO),
+    ///     Ok(())
+    /// ));
     /// assert!(matches!(
     ///     HelloWorldV1::INFO.match_marker(DummyV1::INFO),
     ///     Err(DataError {
@@ -510,7 +498,13 @@ impl DataMarkerInfo {
     /// ));
     ///
     /// // The error context contains the argument:
-    /// assert_eq!(HelloWorldV1::INFO.match_marker(DummyV1::INFO).unwrap_err().marker, Some(DummyV1::INFO.id));
+    /// assert_eq!(
+    ///     HelloWorldV1::INFO
+    ///         .match_marker(DummyV1::INFO)
+    ///         .unwrap_err()
+    ///         .marker,
+    ///     Some(DummyV1::INFO.id)
+    /// );
     /// ```
     pub fn match_marker(self, marker: Self) -> Result<(), DataError> {
         if self == marker {
@@ -558,14 +552,13 @@ pub use __data_marker_id as data_marker_id;
 ///
 /// The identifier needs to end with a `V` followed by one or more digits (the version number).
 ///
-/// Invalid identifiers are compile-time errors (as [`data_marker!`](crate::marker::data_marker) uses `const`).
+/// Invalid identifiers are compile-time errors (as [`data_marker!`](crate::data_marker) uses `const`).
 ///
 /// ```compile_fail,E0080
 /// icu_provider::data_marker!(Dummy, &'static str);
 /// ```
-#[macro_export]
-#[doc(hidden)] // macro
-macro_rules! __data_marker {
+#[macro_export] // canonical location is crate root
+macro_rules! data_marker {
     ($(#[$doc:meta])* $name:ident, $($debug:literal,)? $struct:ty $(, $(#[$meta:meta])* $info_field:ident = $info_val:expr)* $(,)?) => {
         $(#[$doc])*
         pub struct $name;
@@ -603,8 +596,6 @@ macro_rules! __data_marker {
         }
     }
 }
-#[doc(inline)]
-pub use __data_marker as data_marker;
 
 impl fmt::Debug for DataMarkerInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

@@ -51,7 +51,7 @@ use core::{any, fmt, mem, slice};
 /// Safety checklist for `ULE`:
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The type must have an alignment of 1 byte.
+/// 2. The type must have an alignment of 1 byte, or it is a ZST that is safe to construct.
 /// 3. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
 /// 4. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice

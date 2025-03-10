@@ -57,7 +57,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
 /// For other crates, please get approval from @unicode-org/icu4x-owners
 pub const BASIC_BUILD_DEPS: &[&str] = &[
     "displaydoc",
-    "icu_provider_macros",
     "proc-macro2",
     "quote",
     "syn",
@@ -204,6 +203,8 @@ pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "crc32fast",
     "flate2",
     "miniz_oxide",
+    "ordered-float",
+    "serde-value",
     "zip",
 ];
 

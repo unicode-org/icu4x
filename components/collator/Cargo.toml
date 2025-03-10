@@ -27,7 +27,7 @@ icu_properties = { workspace = true }
 icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
 utf16_iter = { workspace = true }
-smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] }
+smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] } # alloc
 zerovec = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }

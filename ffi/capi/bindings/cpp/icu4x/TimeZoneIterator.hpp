@@ -11,14 +11,14 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "TimeZoneInfo.hpp"
+#include "TimeZone.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
     
-    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneIterator_next_mv1(icu4x::capi::TimeZoneIterator* self);
+    icu4x::capi::TimeZone* icu4x_TimeZoneIterator_next_mv1(icu4x::capi::TimeZoneIterator* self);
     
     
     void icu4x_TimeZoneIterator_destroy_mv1(TimeZoneIterator* self);
@@ -27,9 +27,9 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneIterator::next() {
+inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZoneIterator::next() {
   auto result = icu4x::capi::icu4x_TimeZoneIterator_next_mv1(this->AsFFI());
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+  return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
 inline const icu4x::capi::TimeZoneIterator* icu4x::TimeZoneIterator::AsFFI() const {

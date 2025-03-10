@@ -467,11 +467,8 @@ mod test {
     // JSON string. It also exercises most of the data provider code paths.
 
     /// A data struct serialization-compatible with HelloWorld used for testing mismatched types
-    #[derive(
-        Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom,
-    )]
+    #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, yoke::Yokeable)]
     pub struct HelloAlt {
-        #[zerofrom(clone)]
         message: String,
     }
 

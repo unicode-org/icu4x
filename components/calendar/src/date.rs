@@ -117,7 +117,7 @@ impl<A: AsCalendar> Date<A> {
     /// The year is `extended_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -244,8 +244,8 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::types::Weekday;
     /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::types::Weekday;
     /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso(2022, 8, 10).unwrap(); // second Wednesday

@@ -7,10 +7,12 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "IanaParser.d.h"
 #include "IsoDate.d.h"
 #include "IsoDateTime.d.h"
 #include "Time.d.h"
+#include "TimeZone.d.h"
+#include "TimeZoneVariant.d.h"
+#include "UtcOffset.d.h"
 #include "UtcOffsetCalculator.d.h"
 
 #include "TimeZoneInfo.d.h"
@@ -20,70 +22,24 @@
 
 
 
-TimeZoneInfo* icu4x_TimeZoneInfo_unknown_mv1(void);
-
 TimeZoneInfo* icu4x_TimeZoneInfo_utc_mv1(void);
 
-TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(DiplomatStringView bcp47_id, int32_t offset_seconds, bool dst);
+TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(const TimeZone* time_zone_id, const UtcOffset* offset, TimeZoneVariant_option zone_variant);
 
-typedef struct icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result;
-icu4x_TimeZoneInfo_try_set_offset_seconds_mv1_result icu4x_TimeZoneInfo_try_set_offset_seconds_mv1(TimeZoneInfo* self, int32_t offset_seconds);
+TimeZone* icu4x_TimeZoneInfo_time_zone_id_mv1(const TimeZoneInfo* self);
 
-void icu4x_TimeZoneInfo_set_offset_eighths_of_hour_mv1(TimeZoneInfo* self, int8_t offset_eighths_of_hour);
+TimeZoneInfo* icu4x_TimeZoneInfo_at_time_mv1(const TimeZoneInfo* self, const IsoDate* date, const Time* time);
 
-typedef struct icu4x_TimeZoneInfo_try_set_offset_str_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_try_set_offset_str_mv1_result;
-icu4x_TimeZoneInfo_try_set_offset_str_mv1_result icu4x_TimeZoneInfo_try_set_offset_str_mv1(TimeZoneInfo* self, DiplomatStringView offset);
+typedef struct icu4x_TimeZoneInfo_local_time_mv1_result {union {IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_local_time_mv1_result;
+icu4x_TimeZoneInfo_local_time_mv1_result icu4x_TimeZoneInfo_local_time_mv1(const TimeZoneInfo* self);
 
-typedef struct icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1_result {union {int8_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1_result;
-icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1_result icu4x_TimeZoneInfo_offset_eighths_of_hour_mv1(const TimeZoneInfo* self);
-
-void icu4x_TimeZoneInfo_clear_offset_mv1(TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_offset_seconds_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_seconds_mv1_result;
-icu4x_TimeZoneInfo_offset_seconds_mv1_result icu4x_TimeZoneInfo_offset_seconds_mv1(const TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result;
-icu4x_TimeZoneInfo_is_offset_non_negative_mv1_result icu4x_TimeZoneInfo_is_offset_non_negative_mv1(const TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_is_offset_zero_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_offset_zero_mv1_result;
-icu4x_TimeZoneInfo_is_offset_zero_mv1_result icu4x_TimeZoneInfo_is_offset_zero_mv1(const TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_offset_hours_part_mv1_result {union {int32_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_hours_part_mv1_result;
-icu4x_TimeZoneInfo_offset_hours_part_mv1_result icu4x_TimeZoneInfo_offset_hours_part_mv1(const TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_offset_minutes_part_mv1_result {union {uint32_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_minutes_part_mv1_result;
-icu4x_TimeZoneInfo_offset_minutes_part_mv1_result icu4x_TimeZoneInfo_offset_minutes_part_mv1(const TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_offset_seconds_part_mv1_result {union {uint32_t ok; }; bool is_ok;} icu4x_TimeZoneInfo_offset_seconds_part_mv1_result;
-icu4x_TimeZoneInfo_offset_seconds_part_mv1_result icu4x_TimeZoneInfo_offset_seconds_part_mv1(const TimeZoneInfo* self);
-
-void icu4x_TimeZoneInfo_set_time_zone_id_mv1(TimeZoneInfo* self, DiplomatStringView id);
-
-void icu4x_TimeZoneInfo_set_iana_time_zone_id_mv1(TimeZoneInfo* self, const IanaParser* parser, DiplomatStringView id);
-
-void icu4x_TimeZoneInfo_time_zone_id_mv1(const TimeZoneInfo* self, DiplomatWrite* write);
+TimeZoneInfo* icu4x_TimeZoneInfo_with_zone_variant_mv1(const TimeZoneInfo* self, TimeZoneVariant time_zone_variant);
 
 typedef struct icu4x_TimeZoneInfo_infer_zone_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_infer_zone_variant_mv1_result;
 icu4x_TimeZoneInfo_infer_zone_variant_mv1_result icu4x_TimeZoneInfo_infer_zone_variant_mv1(TimeZoneInfo* self, const UtcOffsetCalculator* offset_calculator);
 
-void icu4x_TimeZoneInfo_clear_zone_variant_mv1(TimeZoneInfo* self);
-
-void icu4x_TimeZoneInfo_set_standard_time_mv1(TimeZoneInfo* self);
-
-void icu4x_TimeZoneInfo_set_daylight_time_mv1(TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_is_standard_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_standard_time_mv1_result;
-icu4x_TimeZoneInfo_is_standard_time_mv1_result icu4x_TimeZoneInfo_is_standard_time_mv1(const TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_is_daylight_time_mv1_result {union {bool ok; }; bool is_ok;} icu4x_TimeZoneInfo_is_daylight_time_mv1_result;
-icu4x_TimeZoneInfo_is_daylight_time_mv1_result icu4x_TimeZoneInfo_is_daylight_time_mv1(const TimeZoneInfo* self);
-
-void icu4x_TimeZoneInfo_set_local_time_mv1(TimeZoneInfo* self, const IsoDate* date, const Time* time);
-
-void icu4x_TimeZoneInfo_clear_local_time_mv1(TimeZoneInfo* self);
-
-typedef struct icu4x_TimeZoneInfo_get_local_time_mv1_result {union {IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_get_local_time_mv1_result;
-icu4x_TimeZoneInfo_get_local_time_mv1_result icu4x_TimeZoneInfo_get_local_time_mv1(const TimeZoneInfo* self);
+typedef struct icu4x_TimeZoneInfo_zone_variant_mv1_result {union {TimeZoneVariant ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_variant_mv1_result;
+icu4x_TimeZoneInfo_zone_variant_mv1_result icu4x_TimeZoneInfo_zone_variant_mv1(const TimeZoneInfo* self);
 
 
 void icu4x_TimeZoneInfo_destroy_mv1(TimeZoneInfo* self);

@@ -197,15 +197,10 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/civil",
         &fxs,
-        icu::calendar::cal::IslamicCivil::new(),
+        icu::calendar::cal::HijriCivil::new(),
         |y, m, d| {
-            Date::try_new_islamic_civil_with_calendar(
-                y,
-                m,
-                d,
-                icu::calendar::cal::IslamicCivil::new(),
-            )
-            .unwrap()
+            Date::try_new_hijri_civil_with_calendar(y, m, d, icu::calendar::cal::HijriCivil::new())
+                .unwrap()
         },
     );
 
@@ -213,13 +208,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/tabular",
         &fxs,
-        icu::calendar::cal::IslamicTabular::new(),
+        icu::calendar::cal::HijriTabular::new(),
         |y, m, d| {
-            Date::try_new_islamic_tabular_with_calendar(
+            Date::try_new_hijri_tabular_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::IslamicTabular::new(),
+                icu::calendar::cal::HijriTabular::new(),
             )
             .unwrap()
         },
@@ -229,13 +224,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::cal::IslamicUmmAlQura::new_always_calculating(),
+        icu::calendar::cal::HijriUmmAlQura::new_always_calculating(),
         |y, m, d| {
             Date::try_new_ummalqura_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::IslamicUmmAlQura::new_always_calculating(),
+                icu::calendar::cal::HijriUmmAlQura::new_always_calculating(),
             )
             .unwrap()
         },
@@ -245,13 +240,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::cal::IslamicObservational::new_always_calculating(),
+        icu::calendar::cal::HijriObservational::new_always_calculating(),
         |y, m, d| {
-            Date::try_new_observational_islamic_with_calendar(
+            Date::try_new_observational_hijri_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::IslamicObservational::new_always_calculating(),
+                icu::calendar::cal::HijriObservational::new_always_calculating(),
             )
             .unwrap()
         },

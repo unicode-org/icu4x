@@ -78,9 +78,18 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 ///
 /// let parser = IanaParser::new();
 /// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
-/// assert_eq!(parser.parse("Europe/Berlin"), TimeZone(tinystr!(8, "deber")));
-/// assert_eq!(parser.parse("Europe/Belfast"), TimeZone(tinystr!(8, "gblon")));
-/// assert_eq!(parser.parse("Europe/London"), TimeZone(tinystr!(8, "gblon")));
+/// assert_eq!(
+///     parser.parse("Europe/Berlin"),
+///     TimeZone(tinystr!(8, "deber"))
+/// );
+/// assert_eq!(
+///     parser.parse("Europe/Belfast"),
+///     TimeZone(tinystr!(8, "gblon"))
+/// );
+/// assert_eq!(
+///     parser.parse("Europe/London"),
+///     TimeZone(tinystr!(8, "gblon"))
+/// );
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
@@ -131,7 +140,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
 ///
 /// This should not generally be constructed by client code. Instead, use
-/// * [`TimeZoneInfo::with_rearguard_isdst`](crate::TimeZoneInfo::with_rearguard_isdst)
+/// * [`TimeZoneVariant::from_rearguard_isdst`]
 /// * [`TimeZoneInfo::infer_zone_variant`](crate::TimeZoneInfo::infer_zone_variant)
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(TimeZoneVariantULE)]
@@ -202,6 +211,7 @@ impl serde::Serialize for MinutesSinceEpoch {
     where
         S: serde::Serializer,
     {
+        #[cfg(feature = "alloc")]
         if serializer.is_human_readable() {
             let minute = self.0 % 60;
             let hour = self.0 / 60 % 24;
@@ -210,12 +220,11 @@ impl serde::Serialize for MinutesSinceEpoch {
             let year = date.year().extended_year;
             let month = date.month().month_number();
             let day = date.day_of_month().0;
-            serializer.serialize_str(&alloc::format!(
+            return serializer.serialize_str(&alloc::format!(
                 "{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}"
-            ))
-        } else {
-            serializer.serialize_i32(self.0)
+            ));
         }
+        serializer.serialize_i32(self.0)
     }
 }
 
@@ -225,8 +234,9 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
     where
         D: serde::Deserializer<'de>,
     {
-        use serde::de::Error;
+        #[cfg(feature = "alloc")]
         if deserializer.is_human_readable() {
+            use serde::de::Error;
             let e0 = D::Error::custom("invalid");
             let e1 = |_| D::Error::custom("invalid");
             let e2 = |_| D::Error::custom("invalid");
@@ -241,13 +251,12 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
-            Ok(Self::from((
+            return Ok(Self::from((
                 Date::try_new_iso(year, month, day).map_err(e2)?,
                 Time::try_new(hour, minute, 0, 0).map_err(e3)?,
-            )))
-        } else {
-            i32::deserialize(deserializer).map(Self)
+            )));
         }
+        i32::deserialize(deserializer).map(Self)
     }
 }
 

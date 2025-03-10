@@ -293,7 +293,7 @@ impl<'a> ScriptExtensionsSet<'a> {
 /// ```
 #[derive(Debug)]
 pub struct ScriptWithExtensions {
-    data: DataPayload<ScriptWithExtensionsPropertyV1>,
+    data: DataPayload<PropertyScriptWithExtensionsV1>,
 }
 
 /// A borrowed wrapper around script extension data, returned by
@@ -327,7 +327,7 @@ impl ScriptWithExtensions {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1> + ?Sized),
+        provider: &(impl DataProvider<PropertyScriptWithExtensionsV1> + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(ScriptWithExtensions::from_data(
             provider.load(Default::default())?.payload,
@@ -348,7 +348,7 @@ impl ScriptWithExtensions {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_script_with_extensions_unstable()`] instead
-    pub(crate) fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1>) -> Self {
+    pub(crate) fn from_data(data: DataPayload<PropertyScriptWithExtensionsV1>) -> Self {
         Self { data }
     }
 }
@@ -576,6 +576,13 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     swe.get_script_extensions_ranges(Script::Syriac);
     ///
     /// let exp_ranges = [
+    ///     0x0303..=0x0304, // COMBINING TILDE..COMBINING MACRON
+    ///     0x0307..=0x0308, // COMBINING DOT ABOVE..COMBINING DIAERESIS
+    ///     0x030A..=0x030A, // COMBINING RING ABOVE
+    ///     0x0320..=0x0320, // COMBINING MINUS SIGN BELOW
+    ///     0x0323..=0x0325, // COMBINING DOT BELOW..COMBINING RING BELOW
+    ///     0x032D..=0x032E, // COMBINING CIRCUMFLEX ACCENT BELOW..COMBINING BREVE BELOW
+    ///     0x0330..=0x0330, // COMBINING TILDE BELOW
     ///     0x060C..=0x060C, // ARABIC COMMA
     ///     0x061B..=0x061C, // ARABIC SEMICOLON, ARABIC LETTER MARK
     ///     0x061F..=0x061F, // ARABIC QUESTION MARK
@@ -586,8 +593,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     0x070F..=0x074A, // Syriac block
     ///     0x074D..=0x074F, // Syriac block ends at U+074F
     ///     0x0860..=0x086A, // Syriac Supplement block is U+0860..=U+086F
-    ///     0x1DF8..=0x1DF8, // U+1DF8 COMBINING DOT ABOVE LEFT
-    ///     0x1DFA..=0x1DFA, // U+1DFA COMBINING DOT BELOW LEFT
+    ///     0x1DF8..=0x1DF8, // COMBINING DOT ABOVE LEFT
+    ///     0x1DFA..=0x1DFA, // COMBINING DOT BELOW LEFT
     /// ];
     ///
     /// assert_eq!(
@@ -665,7 +672,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_SCRIPT_WITH_EXTENSIONS_PROPERTY_V1,
+            data: crate::provider::Baked::SINGLETON_PROPERTY_SCRIPT_WITH_EXTENSIONS_V1,
         }
     }
 
@@ -677,5 +684,30 @@ impl ScriptWithExtensionsBorrowed<'static> {
         ScriptWithExtensions {
             data: DataPayload::from_static_ref(self.data),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    /// Regression test for https://github.com/unicode-org/icu4x/issues/6041
+    fn test_scx_regression_6041() {
+        let scripts = ScriptWithExtensions::new()
+            .get_script_extensions_val('\u{2bc}')
+            .iter()
+            .collect::<Vec<_>>();
+        assert_eq!(
+            scripts,
+            [
+                Script::Bengali,
+                Script::Cyrillic,
+                Script::Devanagari,
+                Script::Latin,
+                Script::Thai,
+                Script::Lisu,
+                Script::Toto
+            ]
+        );
     }
 }

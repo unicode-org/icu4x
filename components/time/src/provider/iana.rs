@@ -81,6 +81,11 @@ pub struct IanaToBcp47Map<'data> {
     pub bcp47_ids: ZeroVec<'data, TimeZone>,
 }
 
+icu_provider::data_struct!(
+    IanaToBcp47Map<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
 ///
 /// The BCP-47 time zone ID maps to the default IANA time zone ID according to the CLDR data.
@@ -105,3 +110,8 @@ pub struct IanaNames<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub normalized_iana_ids: VarZeroVec<'data, str>,
 }
+
+icu_provider::data_struct!(
+    IanaNames<'_>,
+    #[cfg(feature = "datagen")]
+);

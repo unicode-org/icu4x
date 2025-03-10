@@ -75,21 +75,21 @@ impl ListFormatter {
         try_new_and,
         try_new_and_with_buffer_provider,
         try_new_and_unstable,
-        ListAndV2,
+        ListAndV1,
         "and"
     );
     constructor!(
         try_new_or,
         try_new_or_with_buffer_provider,
         try_new_or_unstable,
-        ListOrV2,
+        ListOrV1,
         "or"
     );
     constructor!(
         try_new_unit,
         try_new_unit_with_buffer_provider,
         try_new_unit_unstable,
-        ListUnitV2,
+        ListUnitV1,
         "unit"
     );
 
@@ -102,8 +102,8 @@ impl ListFormatter {
     /// # Example
     ///
     /// ```
-    /// use icu::list::{parts, ListFormatter};
     /// use icu::list::options::*;
+    /// use icu::list::{parts, ListFormatter};
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and(
@@ -139,6 +139,7 @@ impl ListFormatter {
 
     /// Returns a [`String`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting.
+    #[cfg(feature = "alloc")]
     pub fn format_to_string<W: Writeable, I: Iterator<Item = W> + Clone>(
         &self,
         values: I,

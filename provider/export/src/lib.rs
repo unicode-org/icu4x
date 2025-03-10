@@ -24,7 +24,7 @@
 //!     DeduplicationStrategy::None.into(),
 //!     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 //! )
-//! .with_markers([icu::list::provider::ListAndV2::INFO])
+//! .with_markers([icu::list::provider::ListAndV1::INFO])
 //! .export(
 //!     &provider,
 //!     BlobExporter::new_with_sink(Box::new(
@@ -113,7 +113,7 @@ use std::sync::Arc;
 ///     DeduplicationStrategy::None.into(),
 ///     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
 /// )
-/// .with_markers([icu::list::provider::ListAndV2::INFO])
+/// .with_markers([icu::list::provider::ListAndV1::INFO])
 /// .export(
 ///     &provider,
 ///     BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
@@ -186,7 +186,10 @@ impl ExportDriver {
         .with_additional_collations([])
     }
 
-    /// TODO
+    /// Adds a filter on a [`DataMarkerAttributes`].
+    ///
+    /// These are keyed by a `domain`, which is [`DataMarkerInfo::attributes_domain`] and
+    /// can thus apply to multiple data markers at once.
     pub fn with_marker_attributes_filter(
         mut self,
         domain: &str,
@@ -209,8 +212,7 @@ impl ExportDriver {
 
     /// This option is only relevant if using `icu::collator`.
     ///
-    /// By default, the collations `big5han`, `gb2312`, and those starting with `search`
-    /// are excluded. This method can be used to reennable them.
+    /// By default, collations starting with `search` are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
     pub fn with_additional_collations(
@@ -221,11 +223,8 @@ impl ExportDriver {
         self.with_marker_attributes_filter("collator", move |attrs| {
             attrs.is_empty()
                 || set.contains(attrs.as_str())
-                || if attrs.as_str().starts_with("search") {
-                    set.contains("search*")
-                } else {
-                    !["big5han", "gb2312"].contains(&attrs.as_str())
-                }
+                || !attrs.as_str().starts_with("search")
+                || set.contains("search*")
         })
     }
 

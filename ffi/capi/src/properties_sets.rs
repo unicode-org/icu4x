@@ -31,6 +31,9 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
 
+    #[cfg(feature = "compiled_data")]
+    use diplomat_runtime::DiplomatChar;
+
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
@@ -113,6 +116,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Ascii_Hex_Digit` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn ascii_hex_digit_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<AsciiHexDigit>().contains32(ch)
+        }
         /// Create a set for the `Ascii_Hex_Digit` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::AsciiHexDigit, Struct)]
         #[diplomat::attr(auto, named_constructor = "ascii_hex_digit")]
@@ -137,6 +146,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Alnum` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn alnum_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Alnum>().contains32(ch)
+        }
         /// Create a set for the `Alnum` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Alnum, Struct)]
         #[diplomat::attr(auto, named_constructor = "alnum")]
@@ -161,6 +176,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Alphabetic` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn alphabetic_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Alphabetic>().contains32(ch)
+        }
         /// Create a set for the `Alphabetic` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Alphabetic, Struct)]
         #[diplomat::attr(auto, named_constructor = "alphabetic")]
@@ -185,6 +206,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Bidi_Control` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn bidi_control_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<BidiControl>().contains32(ch)
+        }
         /// Create a set for the `Bidi_Control` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::BidiControl, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_control")]
@@ -209,6 +236,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Bidi_Mirrored` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn bidi_mirrored_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<BidiMirrored>().contains32(ch)
+        }
         /// Create a set for the `Bidi_Mirrored` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::BidiMirrored, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_mirrored")]
@@ -233,6 +266,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Blank` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn blank_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Blank>().contains32(ch)
+        }
         /// Create a set for the `Blank` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Blank, Struct)]
         #[diplomat::attr(auto, named_constructor = "blank")]
@@ -257,6 +296,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Cased` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn cased_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Cased>().contains32(ch)
+        }
         /// Create a set for the `Cased` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Cased, Struct)]
         #[diplomat::attr(auto, named_constructor = "cased")]
@@ -281,6 +326,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Case_Ignorable` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn case_ignorable_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<CaseIgnorable>().contains32(ch)
+        }
         /// Create a set for the `Case_Ignorable` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::CaseIgnorable, Struct)]
         #[diplomat::attr(auto, named_constructor = "case_ignorable")]
@@ -305,6 +356,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Full_Composition_Exclusion` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn full_composition_exclusion_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<FullCompositionExclusion>().contains32(ch)
+        }
         /// Create a set for the `Full_Composition_Exclusion` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::FullCompositionExclusion, Struct)]
         #[diplomat::attr(auto, named_constructor = "full_composition_exclusion")]
@@ -330,6 +387,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Changes_When_Casefolded` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn changes_when_casefolded_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ChangesWhenCasefolded>().contains32(ch)
+        }
         /// Create a set for the `Changes_When_Casefolded` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenCasefolded, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_casefolded")]
@@ -354,6 +417,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Changes_When_Casemapped` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn changes_when_casemapped_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ChangesWhenCasemapped>().contains32(ch)
+        }
         /// Create a set for the `Changes_When_Casemapped` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenCasemapped, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_casemapped")]
@@ -378,6 +447,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Changes_When_Nfkc_Casefolded` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn changes_when_nfkc_casefolded_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ChangesWhenNfkcCasefolded>().contains32(ch)
+        }
         /// Create a set for the `Changes_When_Nfkc_Casefolded` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenNfkcCasefolded, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_nfkc_casefolded")]
@@ -403,6 +478,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Changes_When_Lowercased` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn changes_when_lowercased_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ChangesWhenLowercased>().contains32(ch)
+        }
         /// Create a set for the `Changes_When_Lowercased` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenLowercased, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_lowercased")]
@@ -427,6 +508,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Changes_When_Titlecased` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn changes_when_titlecased_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ChangesWhenTitlecased>().contains32(ch)
+        }
         /// Create a set for the `Changes_When_Titlecased` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenTitlecased, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_titlecased")]
@@ -451,6 +538,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Changes_When_Uppercased` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn changes_when_uppercased_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ChangesWhenUppercased>().contains32(ch)
+        }
         /// Create a set for the `Changes_When_Uppercased` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ChangesWhenUppercased, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_uppercased")]
@@ -475,6 +568,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Dash` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn dash_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Dash>().contains32(ch)
+        }
         /// Create a set for the `Dash` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Dash, Struct)]
         #[diplomat::attr(auto, named_constructor = "dash")]
@@ -499,6 +598,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Deprecated` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn deprecated_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Deprecated>().contains32(ch)
+        }
         /// Create a set for the `Deprecated` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Deprecated, Struct)]
         #[diplomat::attr(auto, named_constructor = "deprecated")]
@@ -523,6 +628,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Default_Ignorable_Code_Point` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn default_ignorable_code_point_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<DefaultIgnorableCodePoint>().contains32(ch)
+        }
         /// Create a set for the `Default_Ignorable_Code_Point` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::DefaultIgnorableCodePoint, Struct)]
         #[diplomat::attr(auto, named_constructor = "default_ignorable_code_point")]
@@ -548,6 +659,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Diacritic` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn diacritic_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Diacritic>().contains32(ch)
+        }
         /// Create a set for the `Diacritic` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Diacritic, Struct)]
         #[diplomat::attr(auto, named_constructor = "diacritic")]
@@ -572,6 +689,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Emoji_Modifier_Base` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn emoji_modifier_base_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<EmojiModifierBase>().contains32(ch)
+        }
         /// Create a set for the `Emoji_Modifier_Base` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::EmojiModifierBase, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_modifier_base")]
@@ -596,6 +719,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Emoji_Component` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn emoji_component_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<EmojiComponent>().contains32(ch)
+        }
         /// Create a set for the `Emoji_Component` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::EmojiComponent, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_component")]
@@ -620,6 +749,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Emoji_Modifier` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn emoji_modifier_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<EmojiModifier>().contains32(ch)
+        }
         /// Create a set for the `Emoji_Modifier` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::EmojiModifier, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_modifier")]
@@ -644,6 +779,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Emoji` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn emoji_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Emoji>().contains32(ch)
+        }
         /// Create a set for the `Emoji` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Emoji, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji")]
@@ -668,6 +809,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Emoji_Presentation` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn emoji_presentation_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<EmojiPresentation>().contains32(ch)
+        }
         /// Create a set for the `Emoji_Presentation` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::EmojiPresentation, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_presentation")]
@@ -692,6 +839,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Extender` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn extender_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Extender>().contains32(ch)
+        }
         /// Create a set for the `Extender` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Extender, Struct)]
         #[diplomat::attr(auto, named_constructor = "extender")]
@@ -716,6 +869,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Extended_Pictographic` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn extended_pictographic_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<ExtendedPictographic>().contains32(ch)
+        }
         /// Create a set for the `Extended_Pictographic` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::ExtendedPictographic, Struct)]
         #[diplomat::attr(auto, named_constructor = "extended_pictographic")]
@@ -740,6 +899,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Graph` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn graph_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Graph>().contains32(ch)
+        }
         /// Create a set for the `Graph` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Graph, Struct)]
         #[diplomat::attr(auto, named_constructor = "graph")]
@@ -764,6 +929,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Grapheme_Base` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn grapheme_base_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<GraphemeBase>().contains32(ch)
+        }
         /// Create a set for the `Grapheme_Base` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::GraphemeBase, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_base")]
@@ -788,6 +959,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Grapheme_Extend` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn grapheme_extend_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<GraphemeExtend>().contains32(ch)
+        }
         /// Create a set for the `Grapheme_Extend` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::GraphemeExtend, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_extend")]
@@ -812,6 +989,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Grapheme_Link` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn grapheme_link_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<GraphemeLink>().contains32(ch)
+        }
         /// Create a set for the `Grapheme_Link` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::GraphemeLink, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_link")]
@@ -836,6 +1019,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Hex_Digit` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn hex_digit_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<HexDigit>().contains32(ch)
+        }
         /// Create a set for the `Hex_Digit` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::HexDigit, Struct)]
         #[diplomat::attr(auto, named_constructor = "hex_digit")]
@@ -860,6 +1049,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Hyphen` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn hyphen_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Hyphen>().contains32(ch)
+        }
         /// Create a set for the `Hyphen` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Hyphen, Struct)]
         #[diplomat::attr(auto, named_constructor = "hyphen")]
@@ -884,6 +1079,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Id_Continue` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn id_continue_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdContinue>().contains32(ch)
+        }
         /// Create a set for the `Id_Continue` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::IdContinue, Struct)]
         #[diplomat::attr(auto, named_constructor = "id_continue")]
@@ -908,6 +1109,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Ideographic` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn ideographic_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Ideographic>().contains32(ch)
+        }
         /// Create a set for the `Ideographic` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Ideographic, Struct)]
         #[diplomat::attr(auto, named_constructor = "ideographic")]
@@ -932,6 +1139,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Id_Start` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn id_start_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdStart>().contains32(ch)
+        }
         /// Create a set for the `Id_Start` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::IdStart, Struct)]
         #[diplomat::attr(auto, named_constructor = "id_start")]
@@ -956,6 +1169,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Ids_Binary_Operator` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn ids_binary_operator_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdsBinaryOperator>().contains32(ch)
+        }
         /// Create a set for the `Ids_Binary_Operator` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::IdsBinaryOperator, Struct)]
         #[diplomat::attr(auto, named_constructor = "ids_binary_operator")]
@@ -980,6 +1199,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Ids_Trinary_Operator` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn ids_trinary_operator_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<IdsTrinaryOperator>().contains32(ch)
+        }
         /// Create a set for the `Ids_Trinary_Operator` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::IdsTrinaryOperator, Struct)]
         #[diplomat::attr(auto, named_constructor = "ids_trinary_operator")]
@@ -1004,6 +1229,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Join_Control` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn join_control_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<JoinControl>().contains32(ch)
+        }
         /// Create a set for the `Join_Control` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::JoinControl, Struct)]
         #[diplomat::attr(auto, named_constructor = "join_control")]
@@ -1028,6 +1259,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Logical_Order_Exception` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn logical_order_exception_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<LogicalOrderException>().contains32(ch)
+        }
         /// Create a set for the `Logical_Order_Exception` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::LogicalOrderException, Struct)]
         #[diplomat::attr(auto, named_constructor = "logical_order_exception")]
@@ -1052,6 +1289,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Lowercase` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn lowercase_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Lowercase>().contains32(ch)
+        }
         /// Create a set for the `Lowercase` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Lowercase, Struct)]
         #[diplomat::attr(auto, named_constructor = "lowercase")]
@@ -1076,6 +1319,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Math` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn math_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Math>().contains32(ch)
+        }
         /// Create a set for the `Math` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Math, Struct)]
         #[diplomat::attr(auto, named_constructor = "math")]
@@ -1100,6 +1349,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Noncharacter_Code_Point` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn noncharacter_code_point_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<NoncharacterCodePoint>().contains32(ch)
+        }
         /// Create a set for the `Noncharacter_Code_Point` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::NoncharacterCodePoint, Struct)]
         #[diplomat::attr(auto, named_constructor = "noncharacter_code_point")]
@@ -1124,6 +1379,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Nfc_Inert` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn nfc_inert_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<NfcInert>().contains32(ch)
+        }
         /// Create a set for the `Nfc_Inert` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::NfcInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfc_inert")]
@@ -1148,6 +1409,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Nfd_Inert` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn nfd_inert_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<NfdInert>().contains32(ch)
+        }
         /// Create a set for the `Nfd_Inert` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::NfdInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfd_inert")]
@@ -1172,6 +1439,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Nfkc_Inert` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn nfkc_inert_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<NfkcInert>().contains32(ch)
+        }
         /// Create a set for the `Nfkc_Inert` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::NfkcInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfkc_inert")]
@@ -1196,6 +1469,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Nfkd_Inert` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn nfkd_inert_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<NfkdInert>().contains32(ch)
+        }
         /// Create a set for the `Nfkd_Inert` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::NfkdInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfkd_inert")]
@@ -1220,6 +1499,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Pattern_Syntax` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn pattern_syntax_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<PatternSyntax>().contains32(ch)
+        }
         /// Create a set for the `Pattern_Syntax` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::PatternSyntax, Struct)]
         #[diplomat::attr(auto, named_constructor = "pattern_syntax")]
@@ -1244,6 +1529,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Pattern_White_Space` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn pattern_white_space_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<PatternWhiteSpace>().contains32(ch)
+        }
         /// Create a set for the `Pattern_White_Space` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::PatternWhiteSpace, Struct)]
         #[diplomat::attr(auto, named_constructor = "pattern_white_space")]
@@ -1268,6 +1559,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Prepended_Concatenation_Mark` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn prepended_concatenation_mark_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<PrependedConcatenationMark>().contains32(ch)
+        }
         /// Create a set for the `Prepended_Concatenation_Mark` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::PrependedConcatenationMark, Struct)]
         #[diplomat::attr(auto, named_constructor = "prepended_concatenation_mark")]
@@ -1293,6 +1590,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Print` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn print_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Print>().contains32(ch)
+        }
         /// Create a set for the `Print` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Print, Struct)]
         #[diplomat::attr(auto, named_constructor = "print")]
@@ -1317,6 +1620,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Quotation_Mark` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn quotation_mark_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<QuotationMark>().contains32(ch)
+        }
         /// Create a set for the `Quotation_Mark` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::QuotationMark, Struct)]
         #[diplomat::attr(auto, named_constructor = "quotation_mark")]
@@ -1341,6 +1650,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Radical` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn radical_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Radical>().contains32(ch)
+        }
         /// Create a set for the `Radical` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Radical, Struct)]
         #[diplomat::attr(auto, named_constructor = "radical")]
@@ -1365,6 +1680,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Regional_Indicator` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn regional_indicator_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<RegionalIndicator>().contains32(ch)
+        }
         /// Create a set for the `Regional_Indicator` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::RegionalIndicator, Struct)]
         #[diplomat::attr(auto, named_constructor = "regional_indicator")]
@@ -1389,6 +1710,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Soft_Dotted` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn soft_dotted_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<SoftDotted>().contains32(ch)
+        }
         /// Create a set for the `Soft_Dotted` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::SoftDotted, Struct)]
         #[diplomat::attr(auto, named_constructor = "soft_dotted")]
@@ -1413,6 +1740,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Segment_Starter` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn segment_starter_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<SegmentStarter>().contains32(ch)
+        }
         /// Create a set for the `Segment_Starter` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::SegmentStarter, Struct)]
         #[diplomat::attr(auto, named_constructor = "segment_starter")]
@@ -1437,6 +1770,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Case_Sensitive` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn case_sensitive_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<CaseSensitive>().contains32(ch)
+        }
         /// Create a set for the `Case_Sensitive` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::CaseSensitive, Struct)]
         #[diplomat::attr(auto, named_constructor = "case_sensitive")]
@@ -1461,6 +1800,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Sentence_Terminal` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn sentence_terminal_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<SentenceTerminal>().contains32(ch)
+        }
         /// Create a set for the `Sentence_Terminal` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::SentenceTerminal, Struct)]
         #[diplomat::attr(auto, named_constructor = "sentence_terminal")]
@@ -1485,6 +1830,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Terminal_Punctuation` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn terminal_punctuation_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<TerminalPunctuation>().contains32(ch)
+        }
         /// Create a set for the `Terminal_Punctuation` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::TerminalPunctuation, Struct)]
         #[diplomat::attr(auto, named_constructor = "terminal_punctuation")]
@@ -1509,6 +1860,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Unified_Ideograph` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn unified_ideograph_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<UnifiedIdeograph>().contains32(ch)
+        }
         /// Create a set for the `Unified_Ideograph` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::UnifiedIdeograph, Struct)]
         #[diplomat::attr(auto, named_constructor = "unified_ideograph")]
@@ -1533,6 +1890,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Uppercase` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn uppercase_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Uppercase>().contains32(ch)
+        }
         /// Create a set for the `Uppercase` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Uppercase, Struct)]
         #[diplomat::attr(auto, named_constructor = "uppercase")]
@@ -1557,6 +1920,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Variation_Selector` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn variation_selector_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<VariationSelector>().contains32(ch)
+        }
         /// Create a set for the `Variation_Selector` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::VariationSelector, Struct)]
         #[diplomat::attr(auto, named_constructor = "variation_selector")]
@@ -1581,6 +1950,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `White_Space` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn white_space_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<WhiteSpace>().contains32(ch)
+        }
         /// Create a set for the `White_Space` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::WhiteSpace, Struct)]
         #[diplomat::attr(auto, named_constructor = "white_space")]
@@ -1605,6 +1980,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Xdigit` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn xdigit_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<Xdigit>().contains32(ch)
+        }
         /// Create a set for the `Xdigit` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Xdigit, Struct)]
         #[diplomat::attr(auto, named_constructor = "xdigit")]
@@ -1629,6 +2010,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Xid_Continue` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn xid_continue_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<XidContinue>().contains32(ch)
+        }
         /// Create a set for the `Xid_Continue` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::XidContinue, Struct)]
         #[diplomat::attr(auto, named_constructor = "xid_continue")]
@@ -1653,6 +2040,12 @@ pub mod ffi {
             )))
         }
 
+        /// Get the `Xid_Start` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::BinaryProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn xid_start_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::CodePointSetData::new::<XidStart>().contains32(ch)
+        }
         /// Create a set for the `Xid_Start` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::XidStart, Struct)]
         #[diplomat::attr(auto, named_constructor = "xid_start")]

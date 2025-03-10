@@ -76,8 +76,52 @@ export class EastAsianWidth {
     static Narrow = EastAsianWidth.#objectValues[4];
     static Wide = EastAsianWidth.#objectValues[5];
 
-    toInteger() {
-        const result = wasm.icu4x_EastAsianWidth_to_integer_mv1(this.ffiValue);
+    static forChar(ch) {
+        const result = wasm.icu4x_EastAsianWidth_for_char_mv1(ch);
+    
+        try {
+            return new EastAsianWidth(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    longName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+        
+        const result = wasm.icu4x_EastAsianWidth_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    shortName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+        
+        const result = wasm.icu4x_EastAsianWidth_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    toIntegerValue() {
+        const result = wasm.icu4x_EastAsianWidth_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -86,10 +130,10 @@ export class EastAsianWidth {
         finally {}
     }
 
-    static fromInteger(other) {
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_EastAsianWidth_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_EastAsianWidth_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

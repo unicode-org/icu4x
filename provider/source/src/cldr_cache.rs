@@ -181,31 +181,6 @@ impl CldrCache {
             .map_err(|&e| e)
     }
 
-    /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
-    ///
-    /// These will be in CLDR era index form; these are usually numbers
-    pub(crate) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
-        self.modern_japanese_eras
-            .get_or_init(|| {
-                let era_dates: &super::cldr_serde::japanese::Resource = self
-                    .core()
-                    .read_and_parse("supplemental/calendarData.json")?;
-                let mut set = BTreeSet::<String>::new();
-                for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                    let Some(start_date) = date.start.as_ref() else {
-                        continue;
-                    };
-
-                    if start_date.year >= 1868 {
-                        set.insert(era_index.into());
-                    }
-                }
-                Ok(set)
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
     fn add_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {

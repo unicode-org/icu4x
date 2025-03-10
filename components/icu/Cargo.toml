@@ -25,14 +25,14 @@ icu_casemap = { workspace = true }
 icu_collator = { workspace = true }
 icu_collections = { workspace = true }
 icu_datetime = { workspace = true }
-icu_decimal = { workspace = true }
-icu_list = { workspace = true }
+icu_decimal = { workspace = true, features = ["alloc"]  }
+icu_list = { workspace = true, features = ["alloc"] }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
 icu_properties = { workspace = true, features = ["alloc"] }
 icu_segmenter = { workspace = true }
-icu_time = { workspace = true }
+icu_time = { workspace = true, features = ["alloc"] }
 icu_experimental = { workspace = true, optional = true }
 icu_pattern = { workspace = true, optional = true }
 
@@ -48,7 +48,9 @@ icu_datetime = { path = "../../components/datetime", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 writeable = { path = "../../utils/writeable" }
-jiff = "0.2"
+jiff = { version = "0.2", default-features = false, features = ["tzdb-bundle-always", "std"] }
+chrono = { version = "0.4", default-features = false }
+chrono-tz = { version = "0.10", default-features = false }
 
 [features]
 default = [
@@ -137,4 +139,4 @@ name = "tui"
 required-features = ["serde"]
 
 [[example]]
-name = "jiff"
+name = "chrono_jiff"

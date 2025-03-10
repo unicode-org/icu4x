@@ -12,9 +12,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::cal::chinese_based::ChineseBasedYearInfo;
+use crate::cal::Iso;
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::chinese_based::ChineseBasedYearInfo;
-use crate::Iso;
 use calendrical_calculations::chinese_based::ChineseBased;
 use calendrical_calculations::rata_die::RataDie;
 use core::num::NonZeroU8;
@@ -52,11 +52,16 @@ pub struct ChineseBasedCache<'data> {
     pub data: ZeroVec<'data, PackedChineseBasedYearInfo>,
 }
 
+icu_provider::data_struct!(
+    ChineseBasedCache<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 impl ChineseBasedCache<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
     pub fn compute_for<CB: ChineseBased>(extended_years: core::ops::Range<i32>) -> Self {
-        let data = crate::chinese_based::compute_many_packed::<CB>(extended_years.clone());
+        let data = crate::cal::chinese_based::compute_many_packed::<CB>(extended_years.clone());
         ChineseBasedCache {
             first_extended_year: extended_years.start,
             data: data.into(),

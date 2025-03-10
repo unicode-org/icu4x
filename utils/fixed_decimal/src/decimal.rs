@@ -688,8 +688,7 @@ impl UnsignedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedDecimal;
     ///
-    /// let dec = UnsignedDecimal::from(12340000u32)
-    ///     .multiplied_pow10(-2);
+    /// let dec = UnsignedDecimal::from(12340000u32).multiplied_pow10(-2);
     /// assert_eq!("123400.00", dec.to_string());
     /// assert_eq!("123400", dec.trimmed_end_if_integer().to_string());
     ///
@@ -713,8 +712,7 @@ impl UnsignedDecimal {
     /// ```
     /// use fixed_decimal::UnsignedDecimal;
     ///
-    /// let mut dec = UnsignedDecimal::from(12340000u32)
-    ///     .multiplied_pow10(-2);
+    /// let mut dec = UnsignedDecimal::from(12340000u32).multiplied_pow10(-2);
     /// assert_eq!("123400.00", dec.to_string());
     ///
     /// dec.trim_end_if_integer();
@@ -1183,7 +1181,9 @@ impl UnsignedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{UnsignedDecimal, RoundingIncrement, UnsignedRoundingMode};
+    /// use fixed_decimal::{
+    ///     RoundingIncrement, UnsignedDecimal, UnsignedRoundingMode,
+    /// };
     /// # use std::str::FromStr;
     ///
     /// let mut dec = UnsignedDecimal::from_str("5.455").unwrap();
@@ -1228,7 +1228,9 @@ impl UnsignedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::{UnsignedDecimal, RoundingIncrement, UnsignedRoundingMode};
+    /// use fixed_decimal::{
+    ///     RoundingIncrement, UnsignedDecimal, UnsignedRoundingMode,
+    /// };
     /// # use std::str::FromStr;
     ///
     /// let mut dec = UnsignedDecimal::from_str("5.455").unwrap();
@@ -1894,8 +1896,8 @@ impl UnsignedDecimal {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::UnsignedDecimal;
     /// use fixed_decimal::ParseError;
+    /// use fixed_decimal::UnsignedDecimal;
     ///
     /// let decimal = UnsignedDecimal::try_from_utf8(b"1234567890");
     /// assert_eq!(decimal, Ok(UnsignedDecimal::from(1234567890u32)));
@@ -2118,7 +2120,7 @@ impl UnsignedDecimal {
     ///   Negative numbers are not supported.
     ///
     /// ```rust
-    /// use fixed_decimal::{UnsignedDecimal, FloatPrecision};
+    /// use fixed_decimal::{FloatPrecision, UnsignedDecimal};
     /// use writeable::assert_writeable_eq;
     ///
     /// let decimal =

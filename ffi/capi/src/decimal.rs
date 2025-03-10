@@ -77,7 +77,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`DecimalFormatter`] from preconstructed locale data.
-        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV2, Struct)]
+        #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_with_manual_data(
             plus_sign_prefix: &DiplomatStr,
@@ -92,23 +92,24 @@ pub mod ffi {
             digits: &[DiplomatChar],
             grouping_strategy: Option<DecimalGroupingStrategy>,
         ) -> Result<Box<DecimalFormatter>, DataError> {
-            use alloc::borrow::Cow;
             use core::cell::RefCell;
             use icu_provider::prelude::*;
             use zerovec::VarZeroCow;
 
-            fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> Cow<'_, str> {
-                if s.is_empty() {
-                    Cow::default()
-                } else if let Ok(s) = core::str::from_utf8(s) {
-                    Cow::Borrowed(s)
+            fn str_to_cow(s: &'_ diplomat_runtime::DiplomatStr) -> VarZeroCow<'_, str> {
+                if let Ok(s) = core::str::from_utf8(s) {
+                    VarZeroCow::new_borrowed(s)
                 } else {
-                    Cow::Owned(alloc::string::String::from_utf8_lossy(s).into_owned())
+                    VarZeroCow::new_owned(
+                        alloc::string::String::from_utf8_lossy(s)
+                            .into_owned()
+                            .into_boxed_str(),
+                    )
                 }
             }
 
             use icu_decimal::provider::{
-                DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols, DecimalSymbolsV2,
+                DecimalDigitsV1, DecimalSymbolStrsBuilder, DecimalSymbols, DecimalSymbolsV1,
                 GroupingSizes,
             };
             let mut new_digits = ['\0'; 10];
@@ -141,11 +142,11 @@ pub mod ffi {
             options.grouping_strategy = grouping_strategy.map(Into::into);
 
             struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
-            impl DataProvider<DecimalSymbolsV2> for Provider {
+            impl DataProvider<DecimalSymbolsV1> for Provider {
                 fn load(
                     &self,
                     _req: icu_provider::DataRequest,
-                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV2>, icu_provider::DataError>
+                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV1>, icu_provider::DataError>
                 {
                     Ok(DataResponse {
                         metadata: Default::default(),

@@ -8,8 +8,8 @@ use crate::{
     assert_syntax,
     parsers::{
         grammar::{
-            is_day_designator, is_duration_designator, is_hour_designator, is_minute_designator,
-            is_month_designator, is_second_designator, is_sign, is_time_designator,
+            is_ascii_sign, is_day_designator, is_duration_designator, is_hour_designator,
+            is_minute_designator, is_month_designator, is_second_designator, is_time_designator,
             is_week_designator, is_year_designator,
         },
         records::{DateDurationRecord, DurationParseRecord, Fraction, TimeDurationRecord},
@@ -21,10 +21,10 @@ use crate::{
 
 pub(crate) fn parse_duration(cursor: &mut Cursor) -> ParserResult<DurationParseRecord> {
     let sign = if cursor
-        .check(is_sign)
+        .check(is_ascii_sign)
         .ok_or_else(|| ParseError::abrupt_end("DurationStart"))?
     {
-        cursor.next_or(ParseError::ImplAssert)? == '+'
+        cursor.next_or(ParseError::ImplAssert)? == b'+'
     } else {
         true
     };

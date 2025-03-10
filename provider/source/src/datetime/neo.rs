@@ -253,86 +253,48 @@ fn eras_convert(
 ) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
-    let calendar_str = calendar.to_string();
-    let map = super::symbols::get_era_code_map(&calendar_str);
-
-    // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
-    // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
-    // ethiopian.
-    let extra_ethiopic = if *calendar == value!("ethiopic") {
-        let ethioaa: &ca::Resource = datagen
-            .cldr()?
-            .dates("ethiopic")
-            .read_and_parse(locale, "ca-ethiopic-amete-alem.json")?;
-
-        let ethioaa_data = ethioaa
-            .main
-            .value
-            .dates
-            .calendars
-            .get("ethiopic-amete-alem")
-            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar");
-
-        Some(
-            ethioaa_data
-                .eras
-                .as_ref()
-                .expect("ethiopic-amete-alem must have eras")
-                .load(length)
-                .get("0")
-                .expect("ethiopic-amete-alem calendar must have 0 era"),
-        )
-    } else {
-        None
-    };
+    let map = &super::symbols::get_era_code_map()[calendar.to_string().as_str()];
 
     if *calendar == value!("japanese") || *calendar == value!("japanext") {
-        let greg: &ca::Resource = datagen
+        let greg_eras = datagen
             .cldr()?
             .dates("gregorian")
-            .read_and_parse(locale, "ca-gregorian.json")?;
-
-        let greg_data = greg
+            .read_and_parse::<ca::Resource>(locale, "ca-gregorian.json")?
             .main
             .value
             .dates
             .calendars
             .get("gregorian")
-            .expect("CLDR gregorian.json contains the expected calendar");
-
-        let greg_eras = greg_data
+            .expect("CLDR gregorian.json contains the expected calendar")
             .eras
             .as_ref()
             .expect("gregorian must have eras")
             .load(length);
-        let ce = greg_eras
-            .get("0")
-            .expect("gregorian calendar must have 0 era");
-        let bce = greg_eras
-            .get("1")
-            .expect("gregorian calendar must have 1 era");
-        let modern_japanese_eras = if *calendar == value!("japanese") {
-            Some(datagen.cldr()?.modern_japanese_eras()?)
-        } else {
-            None
-        };
 
         let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
 
-        for (cldr, code) in map {
-            if let Some(name) = eras.get(cldr) {
-                if let Some(modern_japanese_eras) = modern_japanese_eras {
-                    if !modern_japanese_eras.contains(cldr) {
-                        continue;
-                    }
-                }
-                out_eras.insert(code, &**name);
-            } else if cldr == "-1" {
-                out_eras.insert(code, ce);
-            } else if cldr == "-2" {
-                out_eras.insert(code, bce);
+        for &(cldr, code) in map {
+            if cldr == 0 {
+                out_eras.insert(
+                    code,
+                    greg_eras
+                        .get("0")
+                        .expect("gregorian calendar must have 0 era"),
+                );
+            } else if cldr == 1 {
+                out_eras.insert(
+                    code,
+                    greg_eras
+                        .get("1")
+                        .expect("gregorian calendar must have 1 era"),
+                );
             } else {
-                panic!("Unknown japanese era number {cldr}");
+                // https://unicode-org.atlassian.net/browse/CLDR-18388 for why we need to do -2
+                if let Some(name) = eras.get(&(cldr - 2).to_string()) {
+                    out_eras.insert(code, &**name);
+                } else {
+                    panic!("Unknown japanese era number {cldr}");
+                }
             }
         }
         let keys: Vec<&PotentialUtf8> = out_eras
@@ -345,17 +307,11 @@ fn eras_convert(
         Ok(YearNames::VariableEras(cow))
     } else {
         let mut out_eras: Vec<&str> = Vec::new();
-        for (index, (cldr, _code)) in map.enumerate() {
-            if let Some(name) = eras.get(cldr) {
+        for &(cldr, _code) in map.iter() {
+            if let Some(name) = eras.get(&cldr.to_string()) {
                 out_eras.push(&**name)
-            } else if let Some(extra_ethiopic) = extra_ethiopic {
-                if cldr == "2" {
-                    out_eras.push(extra_ethiopic);
-                } else {
-                    panic!("Unknown ethiopic era number {cldr}");
-                }
             } else {
-                panic!("Did not find era data for era index {index} (CLDR: #{cldr}) for {calendar} and {locale}");
+                panic!("Did not find era data for era index {cldr} for {calendar} and {locale}");
             }
         }
 
@@ -413,10 +369,7 @@ fn calendar_months(cal: &Value) -> (usize, bool) {
         || *cal == value!("indian")
         || *cal == value!("persian")
         || *cal == value!("roc")
-        || *cal == value!("islamic")
-        || *cal == value!("islamicc")
-        || *cal == value!("umalqura")
-        || *cal == value!("tbla")
+        || cal.get_subtag(0).unwrap().as_str() == "islamic"
     {
         (12, false)
     } else {
@@ -712,7 +665,7 @@ impl_symbols_datagen!(
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearNamesV1,
+    HijriYearNamesV1,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
@@ -787,7 +740,7 @@ impl_symbols_datagen!(
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthNamesV1,
+    HijriMonthNamesV1,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert

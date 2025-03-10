@@ -235,7 +235,7 @@ enum TrieType {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-// Mirrors crate::CollationHanDatabase
+// Mirrors icu_provider_export::CollationHanDatabase
 enum CollationHanDatabase {
     Unihan,
     Implicit,
@@ -243,8 +243,6 @@ enum CollationHanDatabase {
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum CollationTable {
-    Gb2312,
-    Big5han,
     Search,
     Searchji,
     #[value(alias = "search*")] // for backwards compatability
@@ -254,8 +252,6 @@ enum CollationTable {
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
-            Self::Gb2312 => "gb2312",
-            Self::Big5han => "big5han",
             Self::Search => "search",
             Self::Searchji => "searchji",
             Self::SearchAll => "search*",
@@ -263,17 +259,7 @@ impl CollationTable {
     }
 }
 
-// Mirrors crate::FallbackMode
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum Fallback {
-    Auto,
-    Hybrid,
-    Runtime,
-    RuntimeManual,
-    Preresolved,
-}
-
-// Mirrors crate::DeduplicationStrategy
+// Mirrors icu_provider_export::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Deduplication {
     Maximal,
@@ -649,8 +635,8 @@ macro_rules! cb {
 
         #[test]
         fn test_lookup() {
-            assert_eq!(marker_lookup().get("ListAndV2"), Some(&Some(icu::list::provider::ListAndV2::INFO)));
-            assert_eq!(marker_lookup().get("icu::list::provider::ListAndV2"), Some(&Some(icu::list::provider::ListAndV2::INFO)));
+            assert_eq!(marker_lookup().get("ListAndV1"), Some(&Some(icu::list::provider::ListAndV1::INFO)));
+            assert_eq!(marker_lookup().get("icu::list::provider::ListAndV1"), Some(&Some(icu::list::provider::ListAndV1::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 

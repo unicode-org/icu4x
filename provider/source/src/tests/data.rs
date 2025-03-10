@@ -566,8 +566,6 @@ impl SourceDataProvider {
                         ("collation/implicithan/root_emoji_meta.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/root_emoji_meta.toml").as_slice()),
                         ("collation/implicithan/root_eor_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/root_eor_data.toml").as_slice()),
                         ("collation/implicithan/root_eor_meta.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/root_eor_meta.toml").as_slice()),
-                        ("collation/implicithan/zh_big5han_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_big5han_data.toml").as_slice()),
-                        ("collation/implicithan/zh_gb2312han_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_gb2312han_data.toml").as_slice()),
                         ("collation/implicithan/zh_pinyin_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_pinyin_data.toml").as_slice()),
                         ("collation/implicithan/zh_stroke_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_stroke_data.toml").as_slice()),
                         ("collation/implicithan/zh_unihan_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_unihan_data.toml").as_slice()),
