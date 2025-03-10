@@ -5,9 +5,9 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
+use crate::scaffold::*;
 use icu_calendar::types::DayOfYearInfo;
-use icu_calendar::Iso;
+use icu_calendar::{AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
@@ -17,24 +17,86 @@ use icu_time::{zone::UtcOffset, Time, TimeZone};
 // TODO(#2630) fix up imports to directly import from icu_calendar
 pub(crate) use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct ExtractedInput {
+#[cfg(doc)]
+use crate::input::*;
+
+/// An input bag with all possible datetime input fields.
+///
+/// Each input field may or may not be required, depending on the field set
+/// and the options.
+#[derive(Debug, Copy, Clone, Default)]
+#[non_exhaustive]
+pub struct DateTimeInputUnchecked {
+    /// The year, required for field sets with years (`Y`).
     pub(crate) year: Option<YearInfo>,
+    /// The month, required for field sets with months (`M`)
     pub(crate) month: Option<MonthInfo>,
+    /// The day-of-month, required for field sets with days (`D`).
     pub(crate) day_of_month: Option<DayOfMonth>,
+    /// The weekday, required for field sets with weekdays (`E`).
     pub(crate) iso_weekday: Option<Weekday>,
+    /// The day-of-year, required for field sets with weeks.
     pub(crate) day_of_year: Option<DayOfYearInfo>,
+    /// The hour, required for field sets with times (`T`).
     pub(crate) hour: Option<Hour>,
+    /// The minute, required for field sets with times (`T`).
     pub(crate) minute: Option<Minute>,
+    /// The second, required for field sets with times (`T`).
     pub(crate) second: Option<Second>,
+    /// The subsecond, required for field sets with times (`T`).
     pub(crate) subsecond: Option<Nanosecond>,
+    /// The time zone ID, required for field sets with
+    /// certain time zone styles.
     pub(crate) time_zone_id: Option<TimeZone>,
+    /// The time zone UTC offset, required for field sets with
+    /// certain time zone styles.
     pub(crate) offset: Option<UtcOffset>,
+    /// The time zone variant, required for field sets with
+    /// certain time zone styles.
     pub(crate) zone_variant: Option<TimeZoneVariant>,
+    /// The local ISO time, required for field sets with
+    /// certain time zone styles.
     pub(crate) local_time: Option<(Date<Iso>, Time)>,
 }
 
-impl ExtractedInput {
+impl DateTimeInputUnchecked {
+    /// Sets all fields from a [`Date`] input.
+    pub fn set_date_fields<C: Calendar, A: AsCalendar<Calendar = C>>(&mut self, input: Date<A>) {
+        self.year = Some(input.year());
+        self.month = Some(input.month());
+        self.day_of_month = Some(input.day_of_month());
+        self.iso_weekday = Some(input.day_of_week());
+        self.day_of_year = Some(input.day_of_year_info());
+    }
+
+    /// Sets all fields from a [`Time`] input.
+    pub fn set_time_fields(&mut self, input: Time) {
+        self.hour = Some(input.hour);
+        self.minute = Some(input.minute);
+        self.second = Some(input.second);
+        self.subsecond = Some(input.subsecond);
+    }
+
+    /// Sets the time zone UTC offset.
+    pub fn set_time_zone_utc_offset(&mut self, offset: UtcOffset) {
+        self.offset = Some(offset);
+    }
+
+    /// Sets the time zone ID.
+    pub fn set_time_zone_id(&mut self, id: TimeZone) {
+        self.time_zone_id = Some(id);
+    }
+
+    /// Sets the local time for time zone name resolution.
+    pub fn set_time_zone_local_time(&mut self, local_time: (Date<Iso>, Time)) {
+        self.local_time = Some(local_time);
+    }
+
+    /// Sets the time zone variant.
+    pub fn set_time_zone_variant(&mut self, zone_variant: TimeZoneVariant) {
+        self.zone_variant = Some(zone_variant);
+    }
+
     /// Construct given neo date input instances.
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
     where

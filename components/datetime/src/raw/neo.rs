@@ -4,7 +4,7 @@
 
 use crate::fieldsets::builder;
 use crate::fieldsets::enums::{CompositeFieldSet, TimeFieldSet, ZoneFieldSet};
-use crate::format::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
 use crate::options::*;
 use crate::pattern::DateTimePattern;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
@@ -177,7 +177,7 @@ impl DatePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(
         &self,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         options: RawOptions,
     ) -> Option<DatePatternDataBorrowed> {
         let payload = self.payload.get_option()?;
@@ -206,7 +206,7 @@ impl DatePatternSelectionData {
     }
 }
 
-impl ExtractedInput {
+impl DateTimeInputUnchecked {
     fn resolve_time_precision(
         &self,
         time_precision: TimePrecision,
@@ -334,7 +334,7 @@ impl TimePatternSelectionData {
     /// Borrows a resolved pattern based on the given datetime
     pub(crate) fn select(
         &self,
-        input: &ExtractedInput,
+        input: &DateTimeInputUnchecked,
         options: RawOptions,
         prefs: RawPreferences,
     ) -> Option<TimePatternDataBorrowed> {
@@ -381,7 +381,7 @@ impl ZonePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, _input: &ExtractedInput) -> ZonePatternDataBorrowed {
+    pub(crate) fn select(&self, _input: &DateTimeInputUnchecked) -> ZonePatternDataBorrowed {
         let Self::SinglePatternItem(_, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
@@ -632,7 +632,7 @@ impl DateTimeZonePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &ExtractedInput) -> DateTimeZonePatternDataBorrowed {
+    pub(crate) fn select(&self, input: &DateTimeInputUnchecked) -> DateTimeZonePatternDataBorrowed {
         DateTimeZonePatternDataBorrowed {
             date: self.date.select(input, self.options),
             time: self.time.select(input, self.options, self.prefs),

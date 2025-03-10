@@ -14,8 +14,20 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::datetime::DateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::DateTimeFormatter::to_field_set_builder#FnInStruct
+icu::datetime::DateTimeInputUnchecked#Struct
+icu::datetime::DateTimeInputUnchecked::set_date_fields#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_fields#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_id#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_local_time#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_utc_offset#FnInStruct
+icu::datetime::DateTimeInputUnchecked::set_time_zone_variant#FnInStruct
+icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder#FnInStruct
+icu::datetime::FormattedDateTimeUnchecked#Struct
+icu::datetime::FormattedDateTimeUnchecked::pattern#FnInStruct
+icu::datetime::FormattedDateTimeUnchecked::try_write_to_parts#FnInStruct
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D#Struct
