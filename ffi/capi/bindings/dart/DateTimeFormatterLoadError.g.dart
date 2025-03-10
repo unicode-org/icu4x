@@ -9,7 +9,7 @@ enum DateTimeFormatterLoadError {
 
   unsupportedLength,
 
-  duplicateField,
+  conflictingField,
 
   typeTooSpecific,
 
@@ -35,7 +35,7 @@ enum DateTimeFormatterLoadError {
         return 0;
       case unsupportedLength:
         return 2051;
-      case duplicateField:
+      case conflictingField:
         return 2057;
       case typeTooSpecific:
         return 2058;

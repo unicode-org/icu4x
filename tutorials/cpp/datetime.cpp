@@ -92,10 +92,6 @@ int main() {
     }
     std::cout << std::endl;
 
-    if (saw_unexpected_output) {
-        return 1;
-    }
-
     std::unique_ptr<NoCalendarFormatter> tf = NoCalendarFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
     out = tf->format(*time.get());
     std::cout << "Formatted value is " << out << std::endl;
@@ -120,11 +116,6 @@ int main() {
         return 1;
     }
 
-    locale = Locale::from_string("en-u-ca-japanese").ok().value();
-    std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*locale.get()).ok().value();
-    std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2020, 10, 5, *cal.get()).ok().value();
-    std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
-
     std::unique_ptr<IanaParser> parser = IanaParser::create();
 
     std::unique_ptr<TimeZone> time_zone = parser->parse("america/chicago");
@@ -138,6 +129,20 @@ int main() {
     std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
     
     time_zone_info->infer_zone_variant(*UtcOffsetCalculator::create().get());
+
+    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_generic_long = fmt_mdt->with_zone_generic_long(*locale.get()).ok().value();
+    out = fmt_mdt_generic_long->format_iso(*date.get(), *time.get(), *time_zone_info.get());
+    std::cout << "Fieldset ETZ Generic Long: " << out;
+    if (out != "11 jul, 13:06 hora central") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    locale = Locale::from_string("en-u-ca-japanese").ok().value();
+    std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*locale.get()).ok().value();
+    std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2020, 10, 5, *cal.get()).ok().value();
+    std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
     
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
     out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
@@ -152,6 +157,10 @@ int main() {
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
         std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
+    if (saw_unexpected_output) {
         return 1;
     }
 

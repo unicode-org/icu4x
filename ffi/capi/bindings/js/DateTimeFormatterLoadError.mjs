@@ -14,7 +14,7 @@ export class DateTimeFormatterLoadError {
     static #values = new Map([
         ["Unknown", 0],
         ["UnsupportedLength", 2051],
-        ["DuplicateField", 2057],
+        ["ConflictingField", 2057],
         ["TypeTooSpecific", 2058],
         ["DataMarkerNotFound", 1],
         ["DataIdentifierNotFound", 2],
@@ -87,7 +87,7 @@ export class DateTimeFormatterLoadError {
 
     static Unknown = DateTimeFormatterLoadError.#objectValues[0];
     static UnsupportedLength = DateTimeFormatterLoadError.#objectValues[2051];
-    static DuplicateField = DateTimeFormatterLoadError.#objectValues[2057];
+    static ConflictingField = DateTimeFormatterLoadError.#objectValues[2057];
     static TypeTooSpecific = DateTimeFormatterLoadError.#objectValues[2058];
     static DataMarkerNotFound = DateTimeFormatterLoadError.#objectValues[1];
     static DataIdentifierNotFound = DateTimeFormatterLoadError.#objectValues[2];

@@ -10,13 +10,13 @@ use icu_datetime::options::SubsecondDigits;
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Gregorian;
-    use icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet;
     use writeable::Writeable;
 
     use crate::{
         date::ffi::{Date, IsoDate},
         errors::ffi::DateTimeMismatchedCalendarError,
         time::ffi::Time,
+        timezone::ffi::TimeZoneInfo,
     };
 
     #[cfg(feature = "buffer_provider")]
@@ -61,7 +61,11 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct DateTimeFormatter(pub icu_datetime::DateTimeFormatter<CompositeDateTimeFieldSet>);
+    pub struct DateTimeFormatter(
+        pub  icu_datetime::DateTimeFormatter<
+            icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet,
+        >,
+    );
 
     impl DateTimeFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dt")]
@@ -506,6 +510,48 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
+        pub fn with_zone_generic_long(
+            &self,
+            locale: &Locale,
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            use icu_datetime::fieldsets::zone::GenericLong as Zone;
+            let mut names =
+                icu_datetime::pattern::DateTimeNames::from_formatter(prefs, self.0.clone())
+                    .cast_into_fset::<icu_datetime::fieldsets::Combo<_, Zone>>();
+            names.as_mut().include_time_zone_essentials()?;
+            names.as_mut().include_time_zone_generic_long_names()?;
+            names.as_mut().include_time_zone_location_names()?;
+            let field_set = self
+                .0
+                .to_field_set_builder()
+                .build_date_and_time()
+                .map_err(|e| {
+                    debug_assert!(false, "should be infallible, but got: {e:?}");
+                    DateTimeFormatterLoadError::Unknown
+                })?
+                .zone(Zone);
+            let formatter = names
+                .try_into_formatter(field_set)
+                // This can fail if the locale doesn't match and the fields conflict
+                .map_err(|(e, _)| e)?
+                .cast_into_fset();
+            Ok(Box::new(NeoZonedDateTimeFormatter(formatter)))
+        }
+
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -541,9 +587,58 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::NeoZonedDateTimeFormatter, Typedef)]
+    #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
+    pub struct NeoZonedDateTimeFormatter(
+        pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::CompositeFieldSet>,
+    );
+
+    impl NeoZonedDateTimeFormatter {
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            time: &Time,
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
+            let at_time = zone.local_time.unwrap_or((date.0, time.0));
+            // TODO: What do we do if the zone variant is not set?
+            let zone = zone
+                .time_zone_id
+                .with_offset(zone.offset)
+                .at_time(at_time)
+                .with_zone_variant(zone.zone_variant.expect("TODO"));
+            let value = icu_time::ZonedDateTime {
+                date: date.0,
+                time: time.0,
+                zone,
+            };
+            let _infallible = self.0.format(&value).write_to(write);
+        }
+
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_same_calendar(
+            &self,
+            _date: &Date,
+            _time: &Time,
+            _write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeMismatchedCalendarError> {
+            todo!()
+        }
+    }
+
+    #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
     pub struct DateTimeFormatterGregorian(
-        pub icu_datetime::FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>,
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
+            Gregorian,
+            icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet,
+        >,
     );
 
     impl DateTimeFormatterGregorian {

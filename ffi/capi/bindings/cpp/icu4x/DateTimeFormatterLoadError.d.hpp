@@ -16,7 +16,7 @@ namespace capi {
     enum DateTimeFormatterLoadError {
       DateTimeFormatterLoadError_Unknown = 0,
       DateTimeFormatterLoadError_UnsupportedLength = 2051,
-      DateTimeFormatterLoadError_DuplicateField = 2057,
+      DateTimeFormatterLoadError_ConflictingField = 2057,
       DateTimeFormatterLoadError_TypeTooSpecific = 2058,
       DateTimeFormatterLoadError_DataMarkerNotFound = 1,
       DateTimeFormatterLoadError_DataIdentifierNotFound = 2,
@@ -38,7 +38,7 @@ public:
   enum Value {
     Unknown = 0,
     UnsupportedLength = 2051,
-    DuplicateField = 2057,
+    ConflictingField = 2057,
     TypeTooSpecific = 2058,
     DataMarkerNotFound = 1,
     DataIdentifierNotFound = 2,

@@ -95,7 +95,7 @@ pub mod ffi {
         Unknown = 0x00,
 
         UnsupportedLength = 0x8_03,
-        DuplicateField = 0x8_09,
+        ConflictingField = 0x8_09,
         TypeTooSpecific = 0x8_0A,
 
         DataMarkerNotFound = 0x01,
@@ -204,7 +204,7 @@ impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadErr
         match e {
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::ConflictingField(_),
-            ) => Self::DuplicateField,
+            ) => Self::ConflictingField,
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
             ) => Self::UnsupportedLength,
@@ -236,6 +236,21 @@ impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
             icu_provider::DataErrorKind::Io(..) => Self::DataIo,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::pattern::PatternLoadError> for ffi::DateTimeFormatterLoadError {
+    fn from(value: icu_datetime::pattern::PatternLoadError) -> Self {
+        match value {
+            icu_datetime::pattern::PatternLoadError::ConflictingField(_) => Self::ConflictingField,
+            icu_datetime::pattern::PatternLoadError::UnsupportedLength(_) => {
+                Self::UnsupportedLength
+            }
+            icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
+            icu_datetime::pattern::PatternLoadError::Data(data_error, _) => data_error.into(),
             _ => Self::Unknown,
         }
     }
