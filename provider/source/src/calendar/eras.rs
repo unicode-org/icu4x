@@ -7,6 +7,7 @@ use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::SourceDataProvider;
 use icu::calendar::provider::*;
+use icu::calendar::Date;
 use icu::locale::locale;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -137,6 +138,17 @@ impl SourceDataProvider {
 fn process_era_dates_map(
     mut data: BTreeMap<String, cldr_serde::eras::CalendarData>,
 ) -> BTreeMap<String, cldr_serde::eras::CalendarData> {
+    fn replace_julian_by_iso(d: &mut EraStartDate) {
+        let date = Date::try_new_julian(d.year, d.month, d.day)
+            .unwrap()
+            .to_iso();
+        *d = EraStartDate {
+            year: date.year().extended_year,
+            month: date.month().ordinal,
+            day: date.day_of_month().0,
+        };
+    }
+
     data.get_mut("ethiopic")
         .unwrap()
         .eras
@@ -152,25 +164,24 @@ fn process_era_dates_map(
         .start = Some(EraStartDate {
         year: -5492,
         month: 7,
-        day: 19,
+        day: 17,
     });
 
+    data.get_mut("ethiopic")
+        .unwrap()
+        .eras
+        .get_mut("1")
+        .unwrap()
+        .start
+        .as_mut()
+        .into_iter()
+        .for_each(replace_julian_by_iso);
+
+    let ethiopic_0 = data["ethiopic"].eras["0"].clone();
     data.get_mut("ethiopic-amete-alem")
         .unwrap()
         .eras
-        .get_mut("0")
-        .unwrap()
-        .end = None;
-    data.get_mut("ethiopic-amete-alem")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: -5492,
-        month: 7,
-        day: 19,
-    });
+        .insert("0".into(), ethiopic_0);
 
     data.get_mut("chinese")
         .unwrap()
@@ -210,11 +221,10 @@ fn process_era_dates_map(
         .eras
         .get_mut("0")
         .unwrap()
-        .start = Some(EraStartDate {
-        year: 622,
-        month: 7,
-        day: 19,
-    });
+        .start
+        .as_mut()
+        .into_iter()
+        .for_each(replace_julian_by_iso);
 
     data.get_mut("islamic")
         .unwrap()
@@ -232,22 +242,20 @@ fn process_era_dates_map(
         .eras
         .get_mut("0")
         .unwrap()
-        .start = Some(EraStartDate {
-        year: 622,
-        month: 7,
-        day: 18,
-    });
+        .start
+        .as_mut()
+        .into_iter()
+        .for_each(replace_julian_by_iso);
 
     data.get_mut("islamic-umalqura")
         .unwrap()
         .eras
         .get_mut("0")
         .unwrap()
-        .start = Some(EraStartDate {
-        year: 622,
-        month: 7,
-        day: 18,
-    });
+        .start
+        .as_mut()
+        .into_iter()
+        .for_each(replace_julian_by_iso);
 
     data.get_mut("persian")
         .unwrap()
