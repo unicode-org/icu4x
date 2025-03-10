@@ -4,7 +4,7 @@
 
 use icu::calendar::provider::EraStartDate;
 use serde::{de::Error, Deserialize, Deserializer};
-use std::{borrow::Cow, collections::HashMap};
+use std::{borrow::Cow, collections::BTreeMap};
 
 // cldr-core/supplemental/calendarData.json
 #[derive(PartialEq, Debug, Deserialize)]
@@ -15,23 +15,33 @@ pub(crate) struct Resource {
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "calendarData")]
-    pub(crate) calendar_data: CalendarDatas,
+    pub(crate) calendar_data: BTreeMap<String, CalendarData>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub(crate) struct CalendarDatas {
-    pub(crate) japanese: CalendarData,
-}
-
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub(crate) struct CalendarData {
-    pub(crate) eras: HashMap<String, EraStart>,
+    #[serde(default)]
+    pub(crate) eras: BTreeMap<String, EraData>,
+    #[serde(rename = "inheritEras")]
+    pub(crate) inherit_eras: Option<InheritEras>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub(crate) struct EraStart {
-    #[serde(rename = "_start", deserialize_with = "parse_era_start_date")]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
+pub(crate) struct InheritEras {
+    #[serde(rename = "_calendar")]
+    pub(crate) calendar: String,
+}
+
+#[derive(PartialEq, Debug, Deserialize, Clone)]
+pub(crate) struct EraData {
+    #[serde(rename = "_start", default, deserialize_with = "parse_era_start_date")]
     pub(crate) start: Option<EraStartDate>,
+    #[serde(rename = "_end", default, deserialize_with = "parse_era_start_date")]
+    pub(crate) end: Option<EraStartDate>,
+    #[serde(rename = "_code")]
+    pub(crate) code: Option<String>,
+    #[serde(rename = "_aliases")]
+    pub(crate) aliases: Option<String>,
 }
 
 fn parse_era_start_date<'de, D: Deserializer<'de>>(

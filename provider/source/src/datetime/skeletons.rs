@@ -79,7 +79,6 @@ impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
 mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
-    use either::Either;
     use icu::datetime::provider::fields::components;
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
@@ -92,13 +91,14 @@ mod test {
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use litemap::LiteMap;
 
+    use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
 
     fn get_data_payload() -> (DateLengths<'static>, DateSkeletonPatterns<'static>) {
         let locale = locale!("en").into();
 
         let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&locale, Either::Right("gregorian"))
+            .get_datetime_resources(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
         let patterns = DateLengths::from(&data);
         let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);

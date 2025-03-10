@@ -17,8 +17,8 @@ pub(crate) mod date_fields;
 pub(crate) mod directionality;
 #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
 pub(crate) mod displaynames;
+pub(crate) mod eras;
 pub(crate) mod exemplar_chars;
-pub(crate) mod japanese;
 pub(crate) mod likely_subtags;
 pub(crate) mod list_patterns;
 pub(crate) mod locale_resource;
