@@ -25,8 +25,9 @@ use std::io;
 /// A simple serializer trait that works on whole objects.
 ///
 /// This trait is not meant to be implemented by clients.
-pub trait AbstractSerializer: core::fmt::Debug {
+pub trait AbstractSerializer: core::fmt::Debug + seal::Sealed {
     /// Serializes an object to a sink.
+    #[doc(hidden)]
     fn serialize(
         &self,
         obj: &DataPayload<ExportMarker>,
@@ -34,10 +35,16 @@ pub trait AbstractSerializer: core::fmt::Debug {
     ) -> Result<(), DataError>;
 
     /// Gets the buffer format currently being serialized.
+    #[doc(hidden)]
     fn get_buffer_format(&self) -> BufferFormat;
 
     /// This can be set to get correct CRLF on Windows.
+    #[doc(hidden)]
     fn is_text_format(&self) -> bool {
         false
     }
+}
+
+pub(crate) mod seal {
+    pub trait Sealed {}
 }

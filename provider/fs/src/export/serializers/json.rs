@@ -53,6 +53,8 @@ pub struct Options {
     pub style: StyleOption,
 }
 
+impl super::seal::Sealed for Serializer {}
+
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
