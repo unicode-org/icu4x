@@ -379,7 +379,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// 1. The calendar of the input matches the calendar of the formatter
     /// 2. The fields of the input are a superset of the fields of the formatter
     ///
-    /// Returns a [`FormattedDateTimeTry`] to surface errors when they occur,
+    /// Returns a [`FormattedDateTimeUnchecked`] to surface errors when they occur,
     /// but not every invariant will result in an error. Use with caution!
     ///
     /// # Examples
@@ -431,8 +431,8 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeTry {
-        FormattedDateTimeTry {
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+        FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
             names: self.names.as_borrowed(),
@@ -783,7 +783,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// 1. The calendar of the input matches the calendar of the formatter
     /// 2. The fields of the input are a superset of the fields of the formatter
     ///
-    /// Returns a [`FormattedDateTimeTry`] to surface errors when they occur,
+    /// Returns a [`FormattedDateTimeUnchecked`] to surface errors when they occur,
     /// but not every invariant will result in an error. Use with caution!
     ///
     /// # Examples
@@ -834,8 +834,8 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeTry {
-        FormattedDateTimeTry {
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+        FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
             names: self.names.as_borrowed(),
@@ -1255,13 +1255,13 @@ impl FormattedDateTime<'_> {
 ///
 /// Not intended to be stored: convert to a string first.
 #[derive(Debug)]
-pub struct FormattedDateTimeTry<'a> {
+pub struct FormattedDateTimeUnchecked<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
     input: DateTimeInputUnchecked,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
-impl TryWriteable for FormattedDateTimeTry<'_> {
+impl TryWriteable for FormattedDateTimeUnchecked<'_> {
     type Error = DateTimeWriteError;
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
@@ -1280,7 +1280,7 @@ impl TryWriteable for FormattedDateTimeTry<'_> {
     // TODO(#489): Implement writeable_length_hint
 }
 
-impl FormattedDateTimeTry<'_> {
+impl FormattedDateTimeUnchecked<'_> {
     /// Gets the pattern used in this formatted value.
     ///
     /// From the pattern, one can check the properties of the included components, such as

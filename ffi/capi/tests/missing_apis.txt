@@ -25,9 +25,9 @@ icu::datetime::DateTimeInputUnchecked::set_time_zone_utc_offset#FnInStruct
 icu::datetime::DateTimeInputUnchecked::set_time_zone_variant#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder#FnInStruct
-icu::datetime::FormattedDateTimeTry#Struct
-icu::datetime::FormattedDateTimeTry::pattern#FnInStruct
-icu::datetime::FormattedDateTimeTry::try_write_to_parts#FnInStruct
+icu::datetime::FormattedDateTimeUnchecked#Struct
+icu::datetime::FormattedDateTimeUnchecked::pattern#FnInStruct
+icu::datetime::FormattedDateTimeUnchecked::try_write_to_parts#FnInStruct
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D#Struct
