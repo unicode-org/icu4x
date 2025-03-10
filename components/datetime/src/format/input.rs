@@ -6,6 +6,7 @@
 //! formatting operations.
 
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
+use crate::MissingInputFieldError;
 use icu_calendar::types::DayOfYearInfo;
 use icu_calendar::Iso;
 use icu_time::scaffold::IntoOption;
@@ -36,7 +37,7 @@ pub(crate) struct ExtractedInput {
 
 impl ExtractedInput {
     /// Construct given neo date input instances.
-    pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
+    pub(crate) fn extract_from_static_input<D, T, Z, I>(input: &I) -> Self
     where
         D: DateInputMarkers,
         T: TimeMarkers,
@@ -71,5 +72,42 @@ impl ExtractedInput {
             zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
             local_time: GetField::<Z::TimeZoneLocalTimeInput>::get_field(input).into_option(),
         }
+    }
+
+    pub(crate) fn extract_from_dynamic_input<D, T, Z, I>(input: &I) -> Result<Self, MissingInputFieldError>
+    where
+        D: DateInputMarkers,
+        T: TimeMarkers,
+        Z: ZoneMarkers,
+        I: ?Sized
+            + GetField<Option<D::YearInput>>
+            + GetField<Option<D::MonthInput>>
+            + GetField<Option<D::DayOfMonthInput>>
+            + GetField<Option<D::DayOfWeekInput>>
+            + GetField<Option<D::DayOfYearInput>>
+            + GetField<Option<T::HourInput>>
+            + GetField<Option<T::MinuteInput>>
+            + GetField<Option<T::SecondInput>>
+            + GetField<Option<T::NanosecondInput>>
+            + GetField<Option<Z::TimeZoneIdInput>>
+            + GetField<Option<Z::TimeZoneOffsetInput>>
+            + GetField<Option<Z::TimeZoneVariantInput>>
+            + GetField<Option<Z::TimeZoneLocalTimeInput>>
+    {
+        Ok(Self {
+            year: GetField::<Option<D::YearInput>>::get_field(input).ok_or(MissingInputFieldError("year"))?.into_option(),
+            month: GetField::<Option<D::MonthInput>>::get_field(input).ok_or(MissingInputFieldError("month"))?.into_option(),
+            day_of_month: GetField::<Option<D::DayOfMonthInput>>::get_field(input).ok_or(MissingInputFieldError("day_of_month"))?.into_option(),
+            iso_weekday: GetField::<Option<D::DayOfWeekInput>>::get_field(input).ok_or(MissingInputFieldError("iso_weekday"))?.into_option(),
+            day_of_year: GetField::<Option<D::DayOfYearInput>>::get_field(input).ok_or(MissingInputFieldError("day_of_year"))?.into_option(),
+            hour: GetField::<Option<T::HourInput>>::get_field(input).ok_or(MissingInputFieldError("hour"))?.into_option(),
+            minute: GetField::<Option<T::MinuteInput>>::get_field(input).ok_or(MissingInputFieldError("minute"))?.into_option(),
+            second: GetField::<Option<T::SecondInput>>::get_field(input).ok_or(MissingInputFieldError("second"))?.into_option(),
+            subsecond: GetField::<Option<T::NanosecondInput>>::get_field(input).ok_or(MissingInputFieldError("subsecond"))?.into_option(),
+            time_zone_id: GetField::<Option<Z::TimeZoneIdInput>>::get_field(input).ok_or(MissingInputFieldError("time_zone_id"))?.into_option(),
+            offset: GetField::<Option<Z::TimeZoneOffsetInput>>::get_field(input).ok_or(MissingInputFieldError("offset"))?.into_option(),
+            zone_variant: GetField::<Option<Z::TimeZoneVariantInput>>::get_field(input).ok_or(MissingInputFieldError("zone_variant"))?.into_option(),
+            local_time: GetField::<Option<Z::TimeZoneLocalTimeInput>>::get_field(input).ok_or(MissingInputFieldError("local_time"))?.into_option(),
+        })
     }
 }

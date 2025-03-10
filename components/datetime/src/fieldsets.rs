@@ -1517,7 +1517,7 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<Location>` is not satisfied
+        /// // error[E0277]: the trait bound `UtcOffset: AllGetInputMarkers<Location>` is not satisfied
         /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
         /// formatter.format(&utc_offset);
         /// ```
@@ -1552,7 +1552,7 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// // error[E0277]: the trait bound `UtcOffset: AllInputMarkers<ExemplarCity>` is not satisfied
+        /// // error[E0277]: the trait bound `UtcOffset: AllGetInputMarkers<ExemplarCity>` is not satisfied
         /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
         /// formatter.format(&utc_offset);
         /// ```
