@@ -39,12 +39,12 @@ ICU4X pins Rust Nightlies in CI for multiple purposes:
 
  ICU4X also runs its entire CI against the latest nightly once a day, reporting errors to Slack. These errors help us catch upstream breakages early, but ICU4X does not have any particular SLO against these being fixed. We guarantee we build on the latest stable as detailed in the first section of this page.
 
- The first two nightlies here can be updated whenever necessary to whatever nightly works. It not necessary to keep the nightly versions the same, though it is ideal to try.
+ The first two nightlies here can be updated whenever necessary to whatever nightly works. It not necessary to keep the nightly versions the same, though it is ideal to try. The choice of these nightlies does not have much of a direct impact on users.
 
 
- We have a stricter policy around updating `LLVM_COMPATIBLE_NIGHTLY`. We recommend usage of ICU4X with `-Clinker-plugin-lto` for size-constrained clients who have the option available, so `LLVM_COMPATIBLE_NIGHTLY` must be updated to nightlies that work with "widely available LLVM" versions. This may further constrain our MSRV policy above in case `LLVM_COMPATIBLE_NIGHTLY` cannot be pinned to something that works with an otherwise-allowed MSRV.
+For users who wish to use ICU4X with `-Clinker-plugin-lto`, we have some guarantees about the nightly they can use it with (`LLVM_COMPATIBLE_NIGHTLY`, found in the makefiles under `tutorials/c-tiny`). We recommend usage of ICU4X with `-Clinker-plugin-lto`, on `LLVM_COMPATIBLE_NIGHTLY`, for size-constrained clients who have the option available. To ensure this option is readily available to ICU4X clients, we guarantee that `LLVM_COMPATIBLE_NIGHTLY` must work with "widely available LLVM" versions. This may further constrain our MSRV policy above in case `LLVM_COMPATIBLE_NIGHTLY` cannot be pinned to something that works with an otherwise-allowed MSRV.
 
-An `LLVM_COMPATIBLE_NIGHTLY` is said to "work with" an LLVM version when the size test benchmarks (makefiles in `tutorials/c-tiny/`) run without erroring due to mismatched LLVM metadata. Note that Rust uses LLVM trunk, so it may happen that a Rust nightly is not compatible with _any_ released LLVM version. Some experimentation is often required to find a nightly/LLVM pair that works.
+One can test that a candidate `LLVM_COMPATIBLE_NIGHTLY` "works with" an LLVM version when the size test benchmarks (makefiles in `tutorials/c-tiny/`) run without erroring due to mismatched LLVM metadata. Note that Rust uses LLVM trunk, so it may happen that a Rust nightly is not compatible with _any_ released LLVM version. Some experimentation is often required to find a nightly/LLVM pair that works.
 
 
 "widely available LLVM" here means that:
