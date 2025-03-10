@@ -1326,6 +1326,7 @@ dependencies = [
  "either",
  "fixed_decimal",
  "icu",
+ "icu_casemap",
  "icu_collections 2.0.0-beta2",
  "icu_decimal",
  "icu_experimental_data",

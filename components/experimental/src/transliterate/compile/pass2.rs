@@ -402,7 +402,6 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 | "any-remove"
                 | "any-lower"
                 | "any-upper"
-                | "any-title"
                 | "any-hex/unicode"
                 | "any-hex/rust"
                 | "any-hex/xml"
