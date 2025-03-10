@@ -223,7 +223,7 @@ dependencies = [
 name = "bies"
 version = "0.2.3"
 dependencies = [
- "itertools 0.10.5",
+ "itertools 0.14.0",
  "partial-min-max",
  "rand",
  "rand_distr",
@@ -1810,7 +1810,7 @@ dependencies = [
  "icu_provider_export",
  "icu_provider_registry",
  "icu_segmenter",
- "itertools 0.10.5",
+ "itertools 0.14.0",
  "litemap 0.7.5",
  "log",
  "ndarray",
@@ -1849,7 +1849,7 @@ dependencies = [
  "icu_properties 2.0.0-beta2",
  "icu_provider 2.0.0-beta2",
  "icu_segmenter_data",
- "itertools 0.10.5",
+ "itertools 0.14.0",
  "potential_utf",
  "serde",
  "serde_json",
@@ -2134,7 +2134,7 @@ dependencies = [
  "icu_provider_export",
  "icu_provider_fs",
  "icu_provider_source",
- "itertools 0.10.5",
+ "itertools 0.14.0",
  "litemap 0.7.5",
  "lru",
  "serde",
