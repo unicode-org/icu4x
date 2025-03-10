@@ -5,7 +5,6 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use crate::fieldsets::enums::*;
 use crate::scaffold::*;
 use icu_calendar::types::DayOfYearInfo;
 use icu_calendar::{AsCalendar, Calendar, Iso};
@@ -60,42 +59,22 @@ pub struct DateTimeInputUnchecked {
     pub(crate) local_time: Option<(Date<Iso>, Time)>,
 }
 
-macro_rules! set_field {
-    ($type:ident as $trait:ident, $receiver:expr, $assoc_type:ident, $input:expr) => {
-        $receiver = GetField::<<$type as $trait>::$assoc_type>::get_field($input).into_option()
-    };
-    (@date, $receiver:expr, $assoc_type:ident, $input:expr) => {
-        set_field!(
-            DateFieldSet as DateInputMarkers,
-            $receiver,
-            $assoc_type,
-            $input
-        )
-    };
-    (@time, $receiver:expr, $assoc_type:ident, $input:expr) => {
-        set_field!(TimeFieldSet as TimeMarkers, $receiver, $assoc_type, $input)
-    };
-    (@zone, $receiver:expr, $assoc_type:ident, $input:expr) => {
-        set_field!(ZoneFieldSet as ZoneMarkers, $receiver, $assoc_type, $input)
-    };
-}
-
 impl DateTimeInputUnchecked {
     /// Sets all fields from a [`Date`] input.
     pub fn set_date_fields<C: Calendar, A: AsCalendar<Calendar = C>>(&mut self, input: Date<A>) {
-        set_field!(@date, self.year, YearInput, &input);
-        set_field!(@date, self.month, MonthInput, &input);
-        set_field!(@date, self.day_of_month, DayOfMonthInput, &input);
-        set_field!(@date, self.iso_weekday, DayOfWeekInput, &input);
-        set_field!(@date, self.day_of_year, DayOfYearInput, &input);
+        self.year = Some(input.year());
+        self.month = Some(input.month());
+        self.day_of_month = Some(input.day_of_month());
+        self.iso_weekday = Some(input.day_of_week());
+        self.day_of_year = Some(input.day_of_year_info());
     }
 
     /// Sets all fields from a [`Time`] input.
     pub fn set_time_fields(&mut self, input: Time) {
-        set_field!(@time, self.hour, HourInput, &input);
-        set_field!(@time, self.minute, MinuteInput, &input);
-        set_field!(@time, self.second, SecondInput, &input);
-        set_field!(@time, self.subsecond, NanosecondInput, &input);
+        self.hour = Some(input.hour);
+        self.minute = Some(input.minute);
+        self.second = Some(input.second);
+        self.subsecond = Some(input.subsecond);
     }
 
     /// Sets the time zone UTC offset.
