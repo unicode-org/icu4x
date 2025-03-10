@@ -18,6 +18,8 @@
         - ...
     - `icu_provider`
         - Put `MaybeEncodeAsVarULE` behind the `"export"` feature (unicode-org#6221)
+    - `icu_provider_fs`
+        - `AbstractSerializer` is now a sealed trait (unicode-org#6263)
 - Utils
     - General
         - ...

@@ -39,6 +39,8 @@ pub struct Serializer;
 #[derive(Clone, Debug, PartialEq, Default)]
 pub struct Options;
 
+impl super::seal::Sealed for Serializer {}
+
 impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
