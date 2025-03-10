@@ -451,6 +451,7 @@ pub fn japanese_and_japanext_are_compatible() {
 #[test]
 fn test_calendar_eras() {
     use icu::calendar::preferences::CalendarAlgorithm;
+    use icu::calendar::types::FormattingEra;
     use icu::calendar::Iso;
     use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
     use icu::locale::extensions::unicode::Value;
@@ -523,6 +524,10 @@ fn test_calendar_eras() {
             // The remaining tests don't work for cyclic calendars
             if calendar == DatagenCalendar::Dangi || calendar == DatagenCalendar::Chinese {
                 continue;
+            }
+
+            if let Some(FormattingEra::Index(i, _)) = in_era.year().formatting_era() {
+                assert_eq!(i as usize, idx);
             }
 
             // Check that the correct era code is returned
