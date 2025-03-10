@@ -6,7 +6,8 @@ use crate::*;
 use core::fmt;
 
 macro_rules! impl_write_num {
-    ($u:ty, $i:ty, $test:ident) => {
+    // random_call exists since usize doesn't have a rand impl. Should always be `random` or empty
+    ($u:ty, $i:ty, $test:ident $(,$random_call:ident)?) => {
         impl $crate::Writeable for $u {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 const MAX_LEN: usize = <$u>::MAX.ilog10() as usize + 1;
@@ -71,22 +72,25 @@ macro_rules! impl_write_num {
             assert_writeable_eq!(&<$i>::MAX, <$i>::MAX.to_string());
             assert_writeable_eq!(&<$i>::MIN, <$i>::MIN.to_string());
 
-            use rand::{rngs::SmallRng, Rng, SeedableRng};
-            let mut rng = SmallRng::seed_from_u64(4); // chosen by fair dice roll.
-                                                      // guaranteed to be random.
-            for _ in 0..1000 {
-                let rand = rng.gen::<$u>();
-                assert_writeable_eq!(rand, rand.to_string());
-            }
+            $(
+
+                use rand::{rngs::SmallRng, Rng, SeedableRng};
+                let mut rng = SmallRng::seed_from_u64(4); // chosen by fair dice roll.
+                                                          // guaranteed to be random.
+                for _ in 0..1000 {
+                    let rand = rng.$random_call::<$u>();
+                    assert_writeable_eq!(rand, rand.to_string());
+                }
+            )?
         }
     };
 }
 
-impl_write_num!(u8, i8, test_u8);
-impl_write_num!(u16, i16, test_u16);
-impl_write_num!(u32, i32, test_u32);
-impl_write_num!(u64, i64, test_u64);
-impl_write_num!(u128, i128, test_u128);
+impl_write_num!(u8, i8, test_u8, random);
+impl_write_num!(u16, i16, test_u16, random);
+impl_write_num!(u32, i32, test_u32, random);
+impl_write_num!(u64, i64, test_u64, random);
+impl_write_num!(u128, i128, test_u128, random);
 impl_write_num!(usize, isize, test_usize);
 
 impl Writeable for str {

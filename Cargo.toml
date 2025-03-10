@@ -252,7 +252,7 @@ postcard = { version = "1.0.3", default-features = false }
 regex-automata = { version = "0.4.7", default-features = false }
 ryu = { version = "1.0.5", default-features = false }
 serde = { version = "1.0.110", default-features = false }
-serde-json-core = { version = "0.4.0", default-features = false }
+serde-json-core = { version = "0.6.0", default-features = false }
 smallvec = { version = "1.10.0", default-features = false }
 stable_deref_trait = { version = "1.2.0", default-features = false }
 twox-hash = { version = "2.0.0", default-features = false, features = ["xxhash64"] }
@@ -262,46 +262,46 @@ utf8_iter = { version = "1.0.2", default-features = false }
 write16 = { version = "1.0.0", default-features = false }
 
 ## External Deps Group 2: Heavy Dev and Datagen deps. No default features.
-zip = { version = "0.6.0", default-features = false }
+zip = { version = "2", default-features = false }
 tar = { version = "0.4.43", default-features = false }
 flate2 = { version = "1.0.35", default-features = false }
 serde-aux = { version = "4.0.0", default-features = false }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
 arraystring = "0.3.0"
-atoi = "1.0.0"
-bincode = "1.3.1"
+atoi = "2.0.0"
+bincode = "1.3.1" # Can be updated to 2.0 after MSRV 1.85
 clap = "4.2.0"
 combine = "4.3.1"
 criterion = "0.5.0"
 detone = "1.0.0"
 elsa = "1.10.0"
-erased-serde = "0.3.11"
+erased-serde = "0.4.0"
 eyre = "0.6.0"
-getrandom = "0.2"
+getrandom = "0.3"
 heck = "0.5"
 iai = "0.1.1"
-indexmap = "1.0.0"
+indexmap = "2.0.0"
 itertools = "0.14.0"
-ndarray = "0.15.0"
+ndarray = "0.16.0"
 nom = "7.0.0"
 parse-zoneinfo = "0.3.1"
 proc-macro2 = "1.0.61"
 quote = "1.0.28"
-rand = "0.8"
-rand_distr = "0.4"
-rand_pcg = "0.3"
+rand = "0.9"
+rand_distr = "0.5"
+rand_pcg = "0.9"
 rayon = "1.3.0"
 rkyv = "0.7"
 rmp-serde = "1.2.0"
 serde_json = "1.0.45"
-simple_logger = "4.0.0"
+simple_logger = "5.0.0"
 syn = "2.0.21"
 synstructure = "0.13.0"
-toml = "0.5.8"
-ureq = "2.3.0"
+toml = "0.8.0"
+ureq = "3.0.0"
 walkdir = "2.3.2"
-wasmi = "0.31.2"
+wasmi = "0.40.0"
 wat = "1"
 
 # Size optimized builds
