@@ -481,18 +481,6 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
-        #[diplomat::rust_link(
-            icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
-            FnInStruct,
-            compact
-        )]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DET::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn with_zone_generic_short(
             &self,
@@ -513,18 +501,6 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
-        #[diplomat::rust_link(
-            icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
-            FnInStruct,
-            compact
-        )]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DT::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DET::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn with_zone_generic_long(
             &self,
@@ -579,7 +555,19 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::NeoZonedDateTimeFormatter, Typedef)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    #[diplomat::rust_link(
+        icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(icu::datetime::fieldsets::DT::zone, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::MDT::zone, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::zone, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::DET::zone, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
     #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
     pub struct NeoZonedDateTimeFormatter(
         pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::CompositeFieldSet>,
