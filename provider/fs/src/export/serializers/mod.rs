@@ -27,7 +27,7 @@ use std::io;
 /// This trait is not meant to be implemented by clients.
 pub trait AbstractSerializer: core::fmt::Debug + seal::Sealed {
     /// Serializes an object to a sink.
-    #[doc(hidden)]
+    #[doc(hidden)] // sealed trait
     fn serialize(
         &self,
         obj: &DataPayload<ExportMarker>,
@@ -35,11 +35,11 @@ pub trait AbstractSerializer: core::fmt::Debug + seal::Sealed {
     ) -> Result<(), DataError>;
 
     /// Gets the buffer format currently being serialized.
-    #[doc(hidden)]
+    #[doc(hidden)] // sealed trait
     fn get_buffer_format(&self) -> BufferFormat;
 
     /// This can be set to get correct CRLF on Windows.
-    #[doc(hidden)]
+    #[doc(hidden)] // sealed trait
     fn is_text_format(&self) -> bool {
         false
     }
