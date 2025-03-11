@@ -604,8 +604,9 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
+            let date = date.0.to_calendar(self.0.calendar());
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
-            input.set_date_fields(date.0);
+            input.set_date_fields(date);
             input.set_time_fields(time.0);
             input.set_time_zone_id(zone.time_zone_id);
             if let Some(offset) = zone.offset {
