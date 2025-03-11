@@ -500,12 +500,12 @@ fn invalid_time() {
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
-    // Attempts to parse UTC offset: -12, leaving -08 on end as junk.
+    // Attempts to parse UTC offset: -12, failing to parse "-0" as a minute.
     let bad_value = "T19-12-08";
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParseError::InvalidEnd),
+        Err(ParseError::TimeMinuteSecond),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -1043,6 +1043,41 @@ fn test_zulu_offset() {
             tz: None,
             calendar: None,
         })
+    );
+}
+
+#[test]
+fn invalid_offset() {
+    let offset_leap_second = "2024-08-24T14:00:00-05:00:60";
+    let err = IxdtfParser::from_str(offset_leap_second).parse();
+    assert_eq!(
+        err,
+        Err(ParseError::TimeMinuteSecond),
+        "Should fail to parse leap second value."
+    );
+
+    let offset_leap_second = "2024-08-24T14:00:00-050060";
+    let err = IxdtfParser::from_str(offset_leap_second).parse();
+    assert_eq!(
+        err,
+        Err(ParseError::TimeMinuteSecond),
+        "Should fail to parse leap second value."
+    );
+
+    let offset_leap_second = "2024-08-24T14:00:00-05:0060";
+    let err = IxdtfParser::from_str(offset_leap_second).parse();
+    assert_eq!(
+        err,
+        Err(ParseError::UtcTimeSeparator),
+        "Should fail to parse unbalanced time separator"
+    );
+
+    let offset_leap_second = "2024-08-24T14:00:00-05:00[-05:00:60]";
+    let err = IxdtfParser::from_str(offset_leap_second).parse();
+    assert_eq!(
+        err,
+        Err(ParseError::AnnotationClose),
+        "Should enforce UtcMinutePrecision for annotations"
     );
 }
 

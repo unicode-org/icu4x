@@ -101,7 +101,7 @@ pub(crate) fn parse_time_zone<'a>(cursor: &mut Cursor<'a>) -> ParserResult<TimeZ
     if is_iana {
         return parse_tz_iana_name(cursor);
     } else if is_offset {
-        let (offset, _) = parse_utc_offset_minute_precision(cursor)?;
+        let offset = parse_utc_offset_minute_precision(cursor)?;
         return Ok(TimeZoneRecord::Offset(offset));
     }
 
@@ -143,22 +143,23 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UtcOffset
 
     let separated = cursor.peek_n(3).is_some_and(is_time_separator);
 
-    let (mut utc_to_minute, parsed_minute) = parse_utc_offset_minute_precision(cursor)?;
+    let mut utc_to_minute = parse_utc_offset_minute_precision(cursor)?;
 
-    if cursor.check_or(false, is_time_separator) && !separated {
+    // If `UtcOffsetWithSubMinuteComponents`, continue parsing.
+    if cursor.check_or(true, is_annotation_open) {
+        return Ok(UtcOffsetRecordOrZ::Offset(utc_to_minute));
+    }
+
+    if separated && !cursor.check_or(false, is_time_separator) {
         return Err(ParseError::UtcTimeSeparator);
     }
     cursor.advance_if(cursor.check_or(false, is_time_separator));
 
-    // Return early on only hour offset parse, None, or AnnotationOpen.
-    if !cursor.check_or(true, is_annotation_open) && parsed_minute {
-        // If `UtcOffsetWithSubMinuteComponents`, continue parsing.
-        utc_to_minute.second = parse_minute_second(cursor, true)?;
+    utc_to_minute.second = parse_minute_second(cursor, false)?;
 
-        let fraction = parse_fraction(cursor)?;
+    let fraction = parse_fraction(cursor)?;
 
-        utc_to_minute.fraction = fraction;
-    }
+    utc_to_minute.fraction = fraction;
 
     Ok(UtcOffsetRecordOrZ::Offset(utc_to_minute))
 }
@@ -168,7 +169,7 @@ pub(crate) fn parse_date_time_utc(cursor: &mut Cursor) -> ParserResult<UtcOffset
 /// Returns the offset and whether the utc parsing includes a minute.
 pub(crate) fn parse_utc_offset_minute_precision(
     cursor: &mut Cursor,
-) -> ParserResult<(UtcOffsetRecord, bool)> {
+) -> ParserResult<UtcOffsetRecord> {
     let sign = if cursor.check_or(false, is_ascii_sign) {
         let sign = cursor.next_or(ParseError::ImplAssert)?;
         Sign::from(sign == b'+')
@@ -179,30 +180,24 @@ pub(crate) fn parse_utc_offset_minute_precision(
 
     // If at the end of the utc, then return.
     if !cursor.check_or(false, |ch| ch.is_ascii_digit() || is_time_separator(ch)) {
-        return Ok((
-            UtcOffsetRecord {
-                sign,
-                hour,
-                minute: 0,
-                second: 0,
-                fraction: None,
-            },
-            false,
-        ));
+        return Ok(UtcOffsetRecord {
+            sign,
+            hour,
+            minute: 0,
+            second: 0,
+            fraction: None,
+        });
     }
     // Advance cursor beyond any TimeSeparator
     cursor.advance_if(cursor.check_or(false, is_time_separator));
 
     let minute = parse_minute_second(cursor, false)?;
 
-    Ok((
-        UtcOffsetRecord {
-            sign,
-            hour,
-            minute,
-            second: 0,
-            fraction: None,
-        },
-        true,
-    ))
+    Ok(UtcOffsetRecord {
+        sign,
+        hour,
+        minute,
+        second: 0,
+        fraction: None,
+    })
 }
