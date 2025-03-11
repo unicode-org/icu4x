@@ -129,6 +129,17 @@ void main() {
     );
 
     expect(
+      DateTimeFormatter.ymdet(locale)
+          .withZoneGenericLong(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
+      'Mi., 14. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
+    );
+
+    expect(
       DateTimeFormatterGregorian.ymdet(
         locale,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
