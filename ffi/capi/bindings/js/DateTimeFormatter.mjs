@@ -302,6 +302,24 @@ export class DateTimeFormatter {
         }
     }
 
+    withZoneGenericShort(locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_DateTimeFormatter_with_zone_generic_short_mv1(diplomatReceive.buffer, this.ffiValue, locale.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+            }
+            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
     withZoneGenericLong(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

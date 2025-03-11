@@ -479,6 +479,50 @@ pub mod ffi {
             )))
         }
 
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
+        #[diplomat::rust_link(
+            icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
+            FnInStruct,
+            compact
+        )]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DT::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDT::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDT::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DET::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
+        #[cfg(feature = "compiled_data")]
+        pub fn with_zone_generic_short(
+            &self,
+            locale: &Locale,
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            use icu_datetime::fieldsets::zone::GenericShort as Zone;
+            let mut names =
+                icu_datetime::pattern::DateTimeNames::from_formatter(prefs, self.0.clone())
+                    .cast_into_fset::<icu_datetime::fieldsets::Combo<_, Zone>>();
+            // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
+            names.as_mut().include_time_zone_essentials()?;
+            names.as_mut().include_time_zone_generic_short_names()?;
+            names.as_mut().include_time_zone_location_names()?;
+            let field_set = self
+                .0
+                .to_field_set_builder()
+                .build_date_and_time()
+                .map_err(|e| {
+                    debug_assert!(false, "should be infallible, but got: {e:?}");
+                    DateTimeFormatterLoadError::Unknown
+                })?
+                .zone(Zone);
+            let formatter = names
+                .try_into_formatter(field_set)
+                // This can fail if the locale doesn't match and the fields conflict
+                .map_err(|(e, _)| e)?
+                .cast_into_fset();
+            Ok(Box::new(NeoZonedDateTimeFormatter(formatter)))
+        }
+
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
         #[diplomat::rust_link(
             icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
@@ -502,6 +546,7 @@ pub mod ffi {
             let mut names =
                 icu_datetime::pattern::DateTimeNames::from_formatter(prefs, self.0.clone())
                     .cast_into_fset::<icu_datetime::fieldsets::Combo<_, Zone>>();
+            // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
             names.as_mut().include_time_zone_essentials()?;
             names.as_mut().include_time_zone_generic_long_names()?;
             names.as_mut().include_time_zone_location_names()?;

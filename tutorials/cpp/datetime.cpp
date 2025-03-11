@@ -130,6 +130,16 @@ int main() {
     
     time_zone_info->infer_zone_variant(*UtcOffsetCalculator::create().get());
 
+    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_generic_short = fmt_mdt->with_zone_generic_short(*locale.get()).ok().value();
+    out = fmt_mdt_generic_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset ETZ Generic Short: " << out;
+    if (out != "11 jul, 13:06 hora de Chicago") {
+        // note: this falls back to Generic Location
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
     std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_generic_long = fmt_mdt->with_zone_generic_long(*locale.get()).ok().value();
     out = fmt_mdt_generic_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset ETZ Generic Long: " << out;

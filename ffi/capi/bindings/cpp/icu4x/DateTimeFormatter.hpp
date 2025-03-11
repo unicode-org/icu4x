@@ -71,6 +71,9 @@ namespace capi {
     typedef struct icu4x_DateTimeFormatter_create_et_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_with_provider_mv1_result;
     icu4x_DateTimeFormatter_create_et_with_provider_mv1_result icu4x_DateTimeFormatter_create_et_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
     
+    typedef struct icu4x_DateTimeFormatter_with_zone_generic_short_mv1_result {union {icu4x::capi::NeoZonedDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_with_zone_generic_short_mv1_result;
+    icu4x_DateTimeFormatter_with_zone_generic_short_mv1_result icu4x_DateTimeFormatter_with_zone_generic_short_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::Locale* locale);
+    
     typedef struct icu4x_DateTimeFormatter_with_zone_generic_long_mv1_result {union {icu4x::capi::NeoZonedDateTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_with_zone_generic_long_mv1_result;
     icu4x_DateTimeFormatter_with_zone_generic_long_mv1_result icu4x_DateTimeFormatter_with_zone_generic_long_mv1(const icu4x::capi::DateTimeFormatter* self, const icu4x::capi::Locale* locale);
     
@@ -207,6 +210,12 @@ inline diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTi
     time_precision.has_value() ? (icu4x::capi::TimePrecision_option{ { time_precision.value().AsFFI() }, true }) : (icu4x::capi::TimePrecision_option{ {}, false }),
     alignment.has_value() ? (icu4x::capi::DateTimeAlignment_option{ { alignment.value().AsFFI() }, true }) : (icu4x::capi::DateTimeAlignment_option{ {}, false }));
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateTimeFormatter>>(std::unique_ptr<icu4x::DateTimeFormatter>(icu4x::DateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::with_zone_generic_short(const icu4x::Locale& locale) const {
+  auto result = icu4x::capi::icu4x_DateTimeFormatter_with_zone_generic_short_mv1(this->AsFFI(),
+    locale.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>>(std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>(icu4x::NeoZonedDateTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::DateTimeFormatter::with_zone_generic_long(const icu4x::Locale& locale) const {

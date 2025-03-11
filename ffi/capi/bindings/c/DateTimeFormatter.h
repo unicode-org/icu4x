@@ -69,6 +69,9 @@ icu4x_DateTimeFormatter_create_et_mv1_result icu4x_DateTimeFormatter_create_et_m
 typedef struct icu4x_DateTimeFormatter_create_et_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_with_provider_mv1_result;
 icu4x_DateTimeFormatter_create_et_with_provider_mv1_result icu4x_DateTimeFormatter_create_et_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength_option length, TimePrecision_option time_precision, DateTimeAlignment_option alignment);
 
+typedef struct icu4x_DateTimeFormatter_with_zone_generic_short_mv1_result {union {NeoZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_with_zone_generic_short_mv1_result;
+icu4x_DateTimeFormatter_with_zone_generic_short_mv1_result icu4x_DateTimeFormatter_with_zone_generic_short_mv1(const DateTimeFormatter* self, const Locale* locale);
+
 typedef struct icu4x_DateTimeFormatter_with_zone_generic_long_mv1_result {union {NeoZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_with_zone_generic_long_mv1_result;
 icu4x_DateTimeFormatter_with_zone_generic_long_mv1_result icu4x_DateTimeFormatter_with_zone_generic_long_mv1(const DateTimeFormatter* self, const Locale* locale);
 
