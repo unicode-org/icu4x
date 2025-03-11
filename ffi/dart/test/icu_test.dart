@@ -140,6 +140,17 @@ void main() {
     );
 
     expect(
+      () => DateTimeFormatter.ymdet(locale)
+          .withZoneGenericLong(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            TimeZoneInfo.utc(),
+          ),
+      throwsA(DateTimeWriteError.missingInputField),
+    );
+
+    expect(
       DateTimeFormatterGregorian.ymdet(
         locale,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
