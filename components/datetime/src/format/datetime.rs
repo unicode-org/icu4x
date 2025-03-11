@@ -4,7 +4,7 @@
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
 use crate::error::{DateTimeWriteError, ErrorField};
-use crate::format::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
@@ -66,7 +66,7 @@ where
 pub(crate) fn try_write_pattern_items<W>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
-    input: &ExtractedInput,
+    input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
     decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
@@ -101,7 +101,7 @@ where
 fn try_write_field<W>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
-    input: &ExtractedInput,
+    input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
     decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
@@ -537,7 +537,7 @@ fn write_value_missing(
 
 fn perform_timezone_fallback(
     w: &mut (impl writeable::PartsWrite + ?Sized),
-    input: &ExtractedInput,
+    input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
     fdf: Option<&DecimalFormatter>,
     field: fields::Field,

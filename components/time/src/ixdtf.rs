@@ -772,7 +772,7 @@ mod test {
     #[test]
     fn max_possible_ixdtf_utc_offset() {
         assert_eq!(
-            ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19+23:59:60.999999999", Iso)
+            ZonedDateTime::try_offset_only_from_str("2024-08-08T12:08:19+23:59:59.999999999", Iso)
                 .unwrap_err(),
             ParseError::InvalidOffsetError
         );
