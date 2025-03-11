@@ -851,18 +851,6 @@ pub mod ffi {
                 .transpose()?;
             Ok(())
         }
-
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_same_calendar(
-            &self,
-            _date: &Date,
-            _time: &Time,
-            _write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeMismatchedCalendarError> {
-            todo!()
-        }
     }
 
     #[diplomat::opaque]
