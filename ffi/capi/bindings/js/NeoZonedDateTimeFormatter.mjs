@@ -9,7 +9,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `NeoZonedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NeoZonedDateTimeFormatter.html) for more information.
+/** See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
 */
 const NeoZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_NeoZonedDateTimeFormatter_destroy_mv1(ptr);

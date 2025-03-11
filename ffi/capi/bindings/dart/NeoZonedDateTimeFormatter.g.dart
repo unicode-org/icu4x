@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `NeoZonedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NeoZonedDateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
 final class NeoZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 

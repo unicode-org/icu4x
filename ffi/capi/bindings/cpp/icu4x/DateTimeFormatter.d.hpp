@@ -74,7 +74,27 @@ public:
 
   inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_generic_short(const icu4x::Locale& locale) const;
 
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_generic_short_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) const;
+
   inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_generic_long(const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_generic_long_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_specific_short(const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_specific_short_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_specific_long(const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_specific_long_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_localized_offset_short(const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_localized_offset_short_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_localized_offset_long(const icu4x::Locale& locale) const;
+
+  inline diplomat::result<std::unique_ptr<icu4x::NeoZonedDateTimeFormatter>, icu4x::DateTimeFormatterLoadError> with_zone_localized_offset_long_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) const;
 
   inline std::string format_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
