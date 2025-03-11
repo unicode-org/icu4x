@@ -20,6 +20,7 @@ class Time;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 struct DateTimeMismatchedCalendarError;
+class DateTimeWriteError;
 }
 
 
@@ -33,7 +34,7 @@ namespace icu4x {
 class NeoZonedDateTimeFormatter {
 public:
 
-  inline std::string format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
+  inline diplomat::result<std::string, icu4x::DateTimeWriteError> format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
 
   inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> format_same_calendar(const icu4x::Date& _date, const icu4x::Time& _time) const;
 

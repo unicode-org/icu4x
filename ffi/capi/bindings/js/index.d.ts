@@ -256,9 +256,9 @@ export { CalendarParseError } from "./CalendarParseError"
 
 export { DataError } from "./DataError"
 
-export { DateTimeFormatError } from "./DateTimeFormatError"
-
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
+
+export { DateTimeWriteError } from "./DateTimeWriteError"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 

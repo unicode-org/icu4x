@@ -24,9 +24,14 @@ final class NeoZonedDateTimeFormatter implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_NeoZonedDateTimeFormatter_destroy_mv1));
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [DateTimeWriteError] on failure.
   String formatIso(IsoDate date, Time time, TimeZoneInfo zone) {
     final write = _Write();
-    _icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(_ffi, date._ffi, time._ffi, zone._ffi, write._ffi);
+    final result = _icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(_ffi, date._ffi, time._ffi, zone._ffi, write._ffi);
+    if (!result.isOk) {
+      throw DateTimeWriteError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
     return write.finalize();
   }
 
@@ -49,9 +54,9 @@ final class NeoZonedDateTimeFormatter implements ffi.Finalizable {
 external void _icu4x_NeoZonedDateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('icu4x_NeoZonedDateTimeFormatter_format_iso_mv1')
-@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_NeoZonedDateTimeFormatter_format_iso_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_NeoZonedDateTimeFormatter_format_iso_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
 
 @_DiplomatFfiUse('icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1')
 @ffi.Native<_ResultVoidDateTimeMismatchedCalendarErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1')

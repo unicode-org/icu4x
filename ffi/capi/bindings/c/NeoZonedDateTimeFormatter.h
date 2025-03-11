@@ -9,6 +9,7 @@
 
 #include "Date.d.h"
 #include "DateTimeMismatchedCalendarError.d.h"
+#include "DateTimeWriteError.d.h"
 #include "IsoDate.d.h"
 #include "Time.d.h"
 #include "TimeZoneInfo.d.h"
@@ -20,7 +21,8 @@
 
 
 
-void icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(const NeoZonedDateTimeFormatter* self, const IsoDate* date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
+typedef struct icu4x_NeoZonedDateTimeFormatter_format_iso_mv1_result {union { DateTimeWriteError err;}; bool is_ok;} icu4x_NeoZonedDateTimeFormatter_format_iso_mv1_result;
+icu4x_NeoZonedDateTimeFormatter_format_iso_mv1_result icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(const NeoZonedDateTimeFormatter* self, const IsoDate* date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
 
 typedef struct icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1_result {union { DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1_result;
 icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1_result icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1(const NeoZonedDateTimeFormatter* self, const Date* _date, const Time* _time, DiplomatWrite* write);

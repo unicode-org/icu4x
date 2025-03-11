@@ -4,22 +4,22 @@
 part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
-enum DateTimeFormatError {
+enum DateTimeWriteError {
   unknown,
-
-  missingInputField,
-
-  zoneInfoMissingFields,
-
-  invalidEra,
 
   invalidMonthCode,
 
+  invalidEra,
+
   invalidCyclicYear,
+
+  decimalFormatterNotLoaded,
 
   namesNotLoaded,
 
-  decimalFormatterNotLoaded,
+  missingInputField,
+
+  unsupportedLength,
 
   unsupportedField;
 
@@ -27,22 +27,22 @@ enum DateTimeFormatError {
     switch (this) {
       case unknown:
         return 0;
-      case missingInputField:
-        return 1;
-      case zoneInfoMissingFields:
+      case invalidMonthCode:
         return 2;
       case invalidEra:
         return 3;
-      case invalidMonthCode:
-        return 4;
       case invalidCyclicYear:
+        return 4;
+      case decimalFormatterNotLoaded:
         return 5;
       case namesNotLoaded:
-        return 16;
-      case decimalFormatterNotLoaded:
-        return 17;
+        return 6;
+      case missingInputField:
+        return 7;
+      case unsupportedLength:
+        return 8;
       case unsupportedField:
-        return 18;
+        return 9;
     }
   }
 }

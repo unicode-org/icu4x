@@ -13,6 +13,7 @@
 #include "../diplomat_runtime.hpp"
 #include "Date.hpp"
 #include "DateTimeMismatchedCalendarError.hpp"
+#include "DateTimeWriteError.hpp"
 #include "IsoDate.hpp"
 #include "Time.hpp"
 #include "TimeZoneInfo.hpp"
@@ -22,7 +23,8 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    void icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(const icu4x::capi::NeoZonedDateTimeFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, diplomat::capi::DiplomatWrite* write);
+    typedef struct icu4x_NeoZonedDateTimeFormatter_format_iso_mv1_result {union { icu4x::capi::DateTimeWriteError err;}; bool is_ok;} icu4x_NeoZonedDateTimeFormatter_format_iso_mv1_result;
+    icu4x_NeoZonedDateTimeFormatter_format_iso_mv1_result icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(const icu4x::capi::NeoZonedDateTimeFormatter* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, diplomat::capi::DiplomatWrite* write);
     
     typedef struct icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1_result {union { icu4x::capi::DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1_result;
     icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1_result icu4x_NeoZonedDateTimeFormatter_format_same_calendar_mv1(const icu4x::capi::NeoZonedDateTimeFormatter* self, const icu4x::capi::Date* _date, const icu4x::capi::Time* _time, diplomat::capi::DiplomatWrite* write);
@@ -34,15 +36,15 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline std::string icu4x::NeoZonedDateTimeFormatter::format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
+inline diplomat::result<std::string, icu4x::DateTimeWriteError> icu4x::NeoZonedDateTimeFormatter::format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(this->AsFFI(),
+  auto result = icu4x::capi::icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(this->AsFFI(),
     date.AsFFI(),
     time.AsFFI(),
     zone.AsFFI(),
     &write);
-  return output;
+  return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeWriteError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeWriteError>(diplomat::Err<icu4x::DateTimeWriteError>(icu4x::DateTimeWriteError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> icu4x::NeoZonedDateTimeFormatter::format_same_calendar(const icu4x::Date& _date, const icu4x::Time& _time) const {

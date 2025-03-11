@@ -63,12 +63,12 @@ final class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   ///
-  /// Throws [DateTimeFormatError] on failure.
+  /// Throws [DateTimeWriteError] on failure.
   String formatIso(IsoDate date, Time time, TimeZoneInfo zone) {
     final write = _Write();
     final result = _icu4x_GregorianZonedDateTimeFormatter_format_iso_mv1(_ffi, date._ffi, time._ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
-      throw DateTimeFormatError.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeWriteError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return write.finalize();
   }

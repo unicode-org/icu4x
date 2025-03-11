@@ -254,9 +254,9 @@ export { CalendarParseError } from "./CalendarParseError.mjs"
 
 export { DataError } from "./DataError.mjs"
 
-export { DateTimeFormatError } from "./DateTimeFormatError.mjs"
-
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
+
+export { DateTimeWriteError } from "./DateTimeWriteError.mjs"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError.mjs"
 
