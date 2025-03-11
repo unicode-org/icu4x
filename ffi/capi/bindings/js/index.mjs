@@ -4,6 +4,8 @@ export { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 
 export { CollatorOptions } from "./CollatorOptions.mjs"
 
+export { WeekOfYear } from "./WeekOfYear.mjs"
+
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
@@ -19,8 +21,6 @@ export { BidiMirroringGlyph } from "./BidiMirroringGlyph.mjs"
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 
 export { LineBreakOptions } from "./LineBreakOptions.mjs"
-
-export { WeekendContainsDay } from "./WeekendContainsDay.mjs"
 
 export { CollatorResolvedOptions } from "./CollatorResolvedOptions.mjs"
 
@@ -39,8 +39,6 @@ export { PluralCategories } from "./PluralCategories.mjs"
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult.mjs"
 
 export { VariantOffsets } from "./VariantOffsets.mjs"
-
-export { WeekOf } from "./WeekOf.mjs"
 
 export { ZonedDateTime } from "./ZonedDateTime.mjs"
 
@@ -208,7 +206,9 @@ export { UtcOffset } from "./UtcOffset.mjs"
 
 export { VariantOffsetsCalculator } from "./VariantOffsetsCalculator.mjs"
 
-export { WeekCalculator } from "./WeekCalculator.mjs"
+export { WeekInformation } from "./WeekInformation.mjs"
+
+export { WeekdaySetIterator } from "./WeekdaySetIterator.mjs"
 
 export { WindowsParser } from "./WindowsParser.mjs"
 
@@ -319,5 +319,3 @@ export { LineBreakWordOption } from "./LineBreakWordOption.mjs"
 export { SegmenterWordType } from "./SegmenterWordType.mjs"
 
 export { TimeZoneVariant } from "./TimeZoneVariant.mjs"
-
-export { WeekRelativeUnit } from "./WeekRelativeUnit.mjs"

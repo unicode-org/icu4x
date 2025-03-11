@@ -196,16 +196,8 @@ impl Calendar for Iso {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_iso(prev_year),
-            days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: Self::year_as_iso(next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {
@@ -331,15 +323,6 @@ impl Iso {
                 ambiguity: types::YearAmbiguity::Unambiguous,
             },
         )
-    }
-}
-
-impl IsoDateInner {
-    pub(crate) fn jan_1(year: i32) -> Self {
-        Self(ArithmeticDate::new_unchecked(year, 1, 1))
-    }
-    pub(crate) fn dec_31(year: i32) -> Self {
-        Self(ArithmeticDate::new_unchecked(year, 12, 1))
     }
 }
 
@@ -537,29 +520,11 @@ mod test {
     #[test]
     fn test_day_of_year() {
         // June 23, 2021 was day 174
-        assert_eq!(
-            Date::try_new_iso(2021, 6, 23)
-                .unwrap()
-                .day_of_year_info()
-                .day_of_year,
-            174,
-        );
+        assert_eq!(Date::try_new_iso(2021, 6, 23).unwrap().day_of_year().0, 174,);
         // June 23, 2020 was day 175
-        assert_eq!(
-            Date::try_new_iso(2020, 6, 23)
-                .unwrap()
-                .day_of_year_info()
-                .day_of_year,
-            175,
-        );
+        assert_eq!(Date::try_new_iso(2020, 6, 23).unwrap().day_of_year().0, 175,);
         // Feb 2, 1983 was a Wednesday
-        assert_eq!(
-            Date::try_new_iso(1983, 2, 2)
-                .unwrap()
-                .day_of_year_info()
-                .day_of_year,
-            33,
-        );
+        assert_eq!(Date::try_new_iso(1983, 2, 2).unwrap().day_of_year().0, 33,);
     }
 
     fn simple_subtract(a: &Date<Iso>, b: &Date<Iso>) -> DateDuration<Iso> {

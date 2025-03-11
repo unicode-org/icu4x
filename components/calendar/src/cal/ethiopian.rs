@@ -194,16 +194,8 @@ impl Calendar for Ethiopian {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_ethiopian(prev_year, self.0),
-            days_in_prev_year: Ethiopian::days_in_year_direct(prev_year),
-            next_year: Self::year_as_ethiopian(next_year, self.0),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {
@@ -262,13 +254,6 @@ impl Ethiopian {
         ))
     }
 
-    fn days_in_year_direct(year: i32) -> u16 {
-        if Ethiopian::is_leap_year(year, ()) {
-            366
-        } else {
-            365
-        }
-    }
     fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::YearInfo {
         if amete_alem || year <= INCARNATION_OFFSET {
             types::YearInfo::new(

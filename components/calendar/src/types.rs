@@ -353,37 +353,25 @@ impl MonthInfo {
     }
 }
 
-/// A struct containing various details about the position of the day within a year. It is returned
-/// by [`Calendar::day_of_year_info()`](crate::Calendar::day_of_year_info).
+/// The current day of the year, 1-based.
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct DayOfYearInfo {
-    /// The current day of the year, 1-based.
-    pub day_of_year: u16,
-    /// The number of days in a year.
-    pub days_in_year: u16,
-    /// The previous year.
-    pub prev_year: YearInfo,
-    /// The number of days in the previous year.
-    pub days_in_prev_year: u16,
-    /// The next year.
-    pub next_year: YearInfo,
-}
+#[allow(clippy::exhaustive_structs)] // this is a newtype
+pub struct DayOfYear(pub u16);
 
-/// A day number in a month. Usually 1-based.
+/// A 1-based day number in a month.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DayOfMonth(pub u8);
 
-/// A week number in a month. Usually 1-based.
+/// A week number in a year
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfMonth(pub u8);
-
-/// A week number in a year. Usually 1-based.
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfYear(pub u8);
+pub struct WeekOfYear {
+    /// The 1-based ISO week number
+    pub week_number: u8,
+    /// The ISO year
+    pub iso_year: i32,
+}
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]

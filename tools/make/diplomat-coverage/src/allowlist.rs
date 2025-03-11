@@ -151,7 +151,6 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::formattable_year",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
-        "icu::calendar::types::DayOfYearInfo",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
         "icu::calendar::types::CyclicYear",
@@ -174,6 +173,7 @@ lazy_static::lazy_static! {
         "icu::locale::preferences::extensions::unicode::errors::PreferencesParseError",
         "icu::calendar::AnyCalendarPreferences",
         "icu::calendar::any_calendar::AnyCalendarPreferences",
+        "icu::calendar::week::WeekPreferences",
         "icu::datetime::DateTimeFormatterPreferences",
         "icu::decimal::DecimalFormatterPreferences",
         "icu::list::ListFormatterPreferences",
@@ -371,6 +371,7 @@ lazy_static::lazy_static! {
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types::DayOfMonth",
         "icu::calendar::types::DayOfWeekInMonth",
+        "icu::calendar::types::DayOfYear",
         "icu::calendar::types::Era",
         "icu::calendar::types::Weekday",
         "icu::calendar::types::MonthCode",

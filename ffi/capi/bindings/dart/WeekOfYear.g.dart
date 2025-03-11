@@ -3,17 +3,18 @@
 
 part of 'lib.g.dart';
 
-final class _WeekOfFfi extends ffi.Struct {
+final class _WeekOfYearFfi extends ffi.Struct {
   @ffi.Uint8()
-  external int week;
+  external int weekNumber;
   @ffi.Int32()
-  external int unit;
+  external int isoYear;
 }
 
-/// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
-final class WeekOf {
-  final int week;
-  final WeekRelativeUnit unit;
+final class WeekOfYear {
+  int weekNumber;
+  int isoYear;
+
+  WeekOfYear({required this.weekNumber, required this.isoYear});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -21,28 +22,28 @@ final class WeekOf {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  WeekOf._fromFfi(_WeekOfFfi ffi) :
-    week = ffi.week,
-    unit = WeekRelativeUnit.values[ffi.unit];
+  WeekOfYear._fromFfi(_WeekOfYearFfi ffi) :
+    weekNumber = ffi.weekNumber,
+    isoYear = ffi.isoYear;
 
   // ignore: unused_element
-  _WeekOfFfi _toFfi(ffi.Allocator temp) {
-    final struct = ffi.Struct.create<_WeekOfFfi>();
-    struct.week = week;
-    struct.unit = unit.index;
+  _WeekOfYearFfi _toFfi(ffi.Allocator temp) {
+    final struct = ffi.Struct.create<_WeekOfYearFfi>();
+    struct.weekNumber = weekNumber;
+    struct.isoYear = isoYear;
     return struct;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is WeekOf &&
-      other.week == week &&
-      other.unit == unit;
+      other is WeekOfYear &&
+      other.weekNumber == weekNumber &&
+      other.isoYear == isoYear;
 
   @override
   int get hashCode => Object.hashAll([
-        week,
-        unit,
+        weekNumber,
+        isoYear,
       ]);
 }
 

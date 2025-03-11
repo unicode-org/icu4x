@@ -68,7 +68,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the 1-indexed day in the year for this date
   ///
-  /// See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+  /// See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
   int get dayOfYear {
     final result = _icu4x_IsoDate_day_of_year_mv1(_ffi);
     return result;
@@ -90,23 +90,12 @@ final class IsoDate implements ffi.Finalizable {
     return Weekday.values.firstWhere((v) => v._ffi == result);
   }
 
-  /// Returns the week number in this month, 1-indexed, based on what
-  /// is considered the first day of the week (often a locale preference).
-  ///
-  /// `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
-  ///
-  /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-  int weekOfMonth(Weekday firstWeekday) {
-    final result = _icu4x_IsoDate_week_of_month_mv1(_ffi, firstWeekday._ffi);
-    return result;
-  }
-
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  WeekOf weekOfYear(WeekCalculator calculator) {
-    final result = _icu4x_IsoDate_week_of_year_mv1(_ffi, calculator._ffi);
-    return WeekOf._fromFfi(result);
+  WeekOfYear weekOfYear() {
+    final result = _icu4x_IsoDate_week_of_year_mv1(_ffi);
+    return WeekOfYear._fromFfi(result);
   }
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -202,15 +191,10 @@ external int _icu4x_IsoDate_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_IsoDate_week_of_month_mv1')
-@ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_month_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_IsoDate_week_of_month_mv1(ffi.Pointer<ffi.Opaque> self, int firstWeekday);
-
 @_DiplomatFfiUse('icu4x_IsoDate_week_of_year_mv1')
-@ffi.Native<_WeekOfFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_year_mv1')
+@ffi.Native<_WeekOfYearFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_year_mv1')
 // ignore: non_constant_identifier_names
-external _WeekOfFfi _icu4x_IsoDate_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> calculator);
+external _WeekOfYearFfi _icu4x_IsoDate_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_IsoDate_month_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_month_mv1')
