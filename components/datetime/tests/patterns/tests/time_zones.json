@@ -96,7 +96,7 @@
       "VVVV": "Тролль",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "X": "Z"
     }
@@ -235,10 +235,10 @@
       "vvvv": "Coordinated Universal Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "xxxx": "+0000",
       "XXXXX": "Z"
@@ -255,10 +255,10 @@
       "vvvv": "Greenwich Mean Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "xxxx": "+0000",
       "XXXXX": "Z"

@@ -156,10 +156,13 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "databake-derive",
     "elsa",
     "erased-serde",
+    "equivalent",
     "filetime",
+    "hashbrown",
     "icu_codepointtrie_builder",
     "icu_provider_adapters",
     "icu_provider_registry",
+    "indexmap",
     "itertools",
     "itoa",
     "libc",
@@ -173,10 +176,17 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "ryu",
     "serde-aux",
     "serde_json",
+    "serde_spanned",
     "static_assertions",
     "tar",
+    "toml_edit",
+    "toml_datetime",
+    "thiserror",
+    "thiserror-impl",
+    "typeid",
     "toml",
     "twox-hash",
+    "winnow",
 ];
 
 /// Dependencies needed by datagen (not counting `log` and `rayon` deps)
@@ -187,6 +197,7 @@ pub const EXTRA_EXPORT_DEPS: &[&str] = &[
     "databake-derive",
     "erased-serde",
     "postcard",
+    "typeid",
 ];
 
 /// Dependencies needed by the `log` crate
@@ -199,13 +210,19 @@ pub const EXTRA_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
 /// This should rarely change, and if it does consider toggling features until it doesn't
 pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "adler2",
+    "bumpalo",
     "byteorder",
     "crc32fast",
     "flate2",
+    "lockfree-object-pool",
     "miniz_oxide",
+    "once_cell",
     "ordered-float",
+    "serde-spanned",
     "serde-value",
+    "simd-adler32",
     "zip",
+    "zopfli",
 ];
 
 /// Dependencies needed by the `rayon` crate

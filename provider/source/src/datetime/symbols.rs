@@ -2,26 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar::japanese::JAPANEXT_FILE;
+use crate::cldr_serde::eras::EraData;
 use crate::cldr_serde::{self, ca};
-use icu::calendar::provider::JapaneseEras;
 use icu::calendar::types::MonthCode;
 use icu::datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::sync::OnceLock;
-use tinystr::{tinystr, TinyStr16, TinyStr4};
+use tinystr::{tinystr, TinyStr4};
 
-pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
-    let eras = if let Some(ref eras) = other.eras {
-        convert_eras(eras, calendar)
-    } else {
-        Default::default()
-    };
+use super::DatagenCalendar;
+
+pub(crate) fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: DatagenCalendar,
+    all_eras: &[(usize, EraData)],
+) -> DateSymbols<'static> {
     DateSymbols {
-        months: other.months.get(&(get_month_code_map(calendar), calendar)),
+        months: other
+            .months
+            .get(&(get_month_code_map(calendar), calendar.cldr_name())),
         weekdays: other.days.get(&()),
-        eras,
+        eras: other
+            .eras
+            .as_ref()
+            .map(|in_eras| convert_eras(in_eras, all_eras))
+            .unwrap_or_default(),
     }
 }
 
@@ -31,24 +36,30 @@ pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbols<'stati
     }
 }
 
-fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
+fn convert_eras(in_eras: &cldr_serde::ca::Eras, all_eras: &[(usize, EraData)]) -> Eras<'static> {
     let mut out_eras = Eras::default();
 
-    for &(cldr, code) in &get_era_code_map()[calendar] {
-        if let Some(name) = eras.names.get(&cldr.to_string()) {
-            out_eras.names.insert(code.as_str().into(), name);
+    for (index, era) in all_eras {
+        if let Some(name) = in_eras.names.get(&index.to_string()) {
+            out_eras
+                .names
+                .insert(era.code.as_deref().unwrap().into(), name);
         }
-        if let Some(abbr) = eras.abbr.get(&cldr.to_string()) {
-            out_eras.abbr.insert(code.as_str().into(), abbr);
+        if let Some(abbr) = in_eras.abbr.get(&index.to_string()) {
+            out_eras
+                .abbr
+                .insert(era.code.as_deref().unwrap().into(), abbr);
         }
-        if let Some(narrow) = eras.narrow.get(&cldr.to_string()) {
-            out_eras.narrow.insert(code.as_str().into(), narrow);
+        if let Some(narrow) = in_eras.narrow.get(&index.to_string()) {
+            out_eras
+                .narrow
+                .insert(era.code.as_deref().unwrap().into(), narrow);
         }
     }
     out_eras
 }
 /// Returns a month code map and whether the map has leap months
-pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+pub(crate) fn get_month_code_map(calendar: DatagenCalendar) -> &'static [TinyStr4] {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066
     static SOLAR_MONTH_CODES: &[TinyStr4] = &[
@@ -85,98 +96,25 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         // M06L is handled separately in MonthSymbols code
     ];
     match calendar {
-        "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
-        | "islamic" | "islamic-civil" | "islamic-umalqura" | "islamic-tbla" | "chinese"
-        | "dangi" => &SOLAR_MONTH_CODES[0..12],
-        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
-        "hebrew" => HEBREW_MONTH_CODES,
-        _ => panic!("Month map unknown for {calendar}"),
+        DatagenCalendar::Buddhist
+        | DatagenCalendar::Chinese
+        | DatagenCalendar::Dangi
+        | DatagenCalendar::Gregorian
+        | DatagenCalendar::Indian
+        | DatagenCalendar::Islamic
+        | DatagenCalendar::IslamicCivil
+        | DatagenCalendar::IslamicRgsa
+        | DatagenCalendar::IslamicTabular
+        | DatagenCalendar::IslamicUmmAlQura
+        | DatagenCalendar::JapaneseExtended
+        | DatagenCalendar::JapaneseModern
+        | DatagenCalendar::Persian
+        | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
+        DatagenCalendar::Coptic
+        | DatagenCalendar::Ethiopic
+        | DatagenCalendar::EthiopicAmeteAlem => SOLAR_MONTH_CODES,
+        DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
     }
-}
-
-/// Produces a map from the CLDR era index, to the era code and the ICU4X era index.
-///
-/// Eras are returned in chronological order; which is what ICU4X uses for indexing eras.
-/// Therefore the first era returned by this function is FormattableEra::Index(0), etc, for
-/// calendars which use FormattableEra.
-///
-/// See FormattableEra for a definition of what chronological order is in this context.
-///
-/// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
-// TODO: This map should be validated against calendarData.json
-pub(crate) fn get_era_code_map() -> &'static BTreeMap<&'static str, Vec<(usize, TinyStr16)>> {
-    static MAP: OnceLock<BTreeMap<&'static str, Vec<(usize, TinyStr16)>>> = OnceLock::new();
-
-    MAP.get_or_init(|| {
-        let japanese = &serde_json::from_str::<JapaneseEras>(JAPANEXT_FILE)
-            .expect("Failed to parse the precached golden. This is a bug.")
-            .dates_to_eras;
-
-        let gregory = vec![
-            (0, tinystr!(16, "gregory-inverse")),
-            (1, tinystr!(16, "gregory")),
-        ];
-
-        [
-            ("gregory", gregory.clone()),
-            ("buddhist", vec![(0, tinystr!(16, "buddhist"))]),
-            (
-                "japanese",
-                gregory
-                    .clone()
-                    .into_iter()
-                    .chain(japanese.iter().enumerate().filter_map(|(i, (start, era))| {
-                        if start.year < 1868 {
-                            return None;
-                        }
-                        Some((i + 2, era))
-                    }))
-                    .collect(),
-            ),
-            (
-                "japanext",
-                gregory
-                    .clone()
-                    .into_iter()
-                    .chain(
-                        japanese
-                            .iter()
-                            .enumerate()
-                            .map(|(i, (_, era))| (i + 2, era)),
-                    )
-                    .collect(),
-            ),
-            (
-                "coptic",
-                vec![
-                    (0, tinystr!(16, "coptic-inverse")),
-                    (1, tinystr!(16, "coptic")),
-                ],
-            ),
-            ("dangi", vec![(0, tinystr!(16, "dangi"))]),
-            ("chinese", vec![(0, tinystr!(16, "chinese"))]),
-            ("indian", vec![(0, tinystr!(16, "indian"))]),
-            ("islamic", vec![(0, tinystr!(16, "islamic"))]),
-            ("islamic-civil", vec![(0, tinystr!(16, "islamic-civil"))]),
-            (
-                "islamic-umalqura",
-                vec![(0, tinystr!(16, "islamic-umalqura"))],
-            ),
-            ("islamic-tbla", vec![(0, tinystr!(16, "islamic-tbla"))]),
-            ("persian", vec![(0, tinystr!(16, "persian"))]),
-            ("hebrew", vec![(0, tinystr!(16, "hebrew"))]),
-            (
-                "ethiopic",
-                vec![(0, tinystr!(16, "ethioaa")), (1, tinystr!(16, "ethiopic"))],
-            ),
-            (
-                "roc",
-                vec![(0, tinystr!(16, "roc-inverse")), (1, tinystr!(16, "roc"))],
-            ),
-        ]
-        .into_iter()
-        .collect()
-    })
 }
 
 macro_rules! symbols_from {

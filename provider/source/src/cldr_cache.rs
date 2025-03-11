@@ -4,6 +4,8 @@
 
 #![allow(dead_code)] // features
 
+use crate::cldr_serde::eras::EraData;
+use crate::datetime::DatagenCalendar;
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
@@ -12,7 +14,7 @@ use icu::locale::provider::{
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -24,7 +26,9 @@ pub(crate) struct CldrCache {
     pub(crate) serde_cache: SerdeCache,
     dir_suffix: OnceLock<Result<&'static str, DataError>>,
     extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
-    modern_japanese_eras: OnceLock<Result<BTreeSet<String>, DataError>>,
+    #[allow(clippy::type_complexity)]
+    pub(crate) calendar_eras:
+        OnceLock<Result<BTreeMap<DatagenCalendar, Vec<(usize, EraData)>>, DataError>>,
     #[cfg(feature = "experimental")]
     // used by transforms/mod.rs
     pub(crate) transforms: OnceLock<
@@ -39,7 +43,7 @@ impl CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
-            modern_japanese_eras: Default::default(),
+            calendar_eras: Default::default(),
             #[cfg(feature = "experimental")]
             transforms: Default::default(),
             tz_caches: Default::default(),
