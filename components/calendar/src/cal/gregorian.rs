@@ -116,7 +116,7 @@ impl Calendar for Gregorian {
 
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-       date.0.0.day_of_year()
+        date.0 .0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {

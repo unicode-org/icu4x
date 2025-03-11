@@ -520,29 +520,11 @@ mod test {
     #[test]
     fn test_day_of_year() {
         // June 23, 2021 was day 174
-        assert_eq!(
-            Date::try_new_iso(2021, 6, 23)
-                .unwrap()
-                .day_of_year()
-                .0,
-            174,
-        );
+        assert_eq!(Date::try_new_iso(2021, 6, 23).unwrap().day_of_year().0, 174,);
         // June 23, 2020 was day 175
-        assert_eq!(
-            Date::try_new_iso(2020, 6, 23)
-                .unwrap()
-                .day_of_year()
-                .0,
-            175,
-        );
+        assert_eq!(Date::try_new_iso(2020, 6, 23).unwrap().day_of_year().0, 175,);
         // Feb 2, 1983 was a Wednesday
-        assert_eq!(
-            Date::try_new_iso(1983, 2, 2)
-                .unwrap()
-                .day_of_year()
-                .0,
-            33,
-        );
+        assert_eq!(Date::try_new_iso(1983, 2, 2).unwrap().day_of_year().0, 33,);
     }
 
     fn simple_subtract(a: &Date<Iso>, b: &Date<Iso>) -> DateDuration<Iso> {

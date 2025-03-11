@@ -239,7 +239,7 @@ impl Calendar for Dangi {
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> crate::types::DayOfYear {
-        date.0.0.day_of_year()
+        date.0 .0.day_of_year()
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> crate::types::Weekday {
