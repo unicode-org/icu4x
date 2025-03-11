@@ -240,6 +240,12 @@ export { Weekday } from "./Weekday.mjs"
 
 export { DateTimeLength } from "./DateTimeLength.mjs"
 
+export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
+
+export { TimePrecision } from "./TimePrecision.mjs"
+
+export { YearStyle } from "./YearStyle.mjs"
+
 export { DecimalGroupingStrategy } from "./DecimalGroupingStrategy.mjs"
 
 export { DisplayNamesFallback } from "./DisplayNamesFallback.mjs"
@@ -277,12 +283,6 @@ export { ListLength } from "./ListLength.mjs"
 export { TransformResult } from "./TransformResult.mjs"
 
 export { LocaleDirection } from "./LocaleDirection.mjs"
-
-export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
-
-export { TimePrecision } from "./TimePrecision.mjs"
-
-export { YearStyle } from "./YearStyle.mjs"
 
 export { PluralCategory } from "./PluralCategory.mjs"
 

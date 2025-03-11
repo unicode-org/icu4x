@@ -242,6 +242,12 @@ export { Weekday } from "./Weekday"
 
 export { DateTimeLength } from "./DateTimeLength"
 
+export { DateTimeAlignment } from "./DateTimeAlignment"
+
+export { TimePrecision } from "./TimePrecision"
+
+export { YearStyle } from "./YearStyle"
+
 export { DecimalGroupingStrategy } from "./DecimalGroupingStrategy"
 
 export { DisplayNamesFallback } from "./DisplayNamesFallback"
@@ -279,12 +285,6 @@ export { ListLength } from "./ListLength"
 export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
-
-export { DateTimeAlignment } from "./DateTimeAlignment"
-
-export { TimePrecision } from "./TimePrecision"
-
-export { YearStyle } from "./YearStyle"
 
 export { PluralCategory } from "./PluralCategory"
 
