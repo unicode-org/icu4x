@@ -12,19 +12,18 @@ pub mod ffi {
 
     use crate::{
         date::ffi::{Date, IsoDate},
-        datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
         errors::ffi::{DateTimeMismatchedCalendarError, DateTimeWriteError},
         time::ffi::Time,
         timezone::ffi::TimeZoneInfo,
     };
 
-    #[cfg(feature = "compiled_data")]
-    use crate::errors::ffi::DateTimeFormatterLoadError;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
         datetime_formatter::ffi::DateTimeLength,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
+        errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
         neo_datetime::impls::{formatter_with_zone, map_or_default},
     };
@@ -497,16 +496,18 @@ pub mod ffi {
                     names.as_mut().include_time_zone_location_names()?;
                     Ok(())
                 },
+                |names, field_set| names.try_into_formatter(field_set),
             )
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn with_zone_generic_short_and_provider(
             &self,
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let provider = provider.get()?;
             formatter_with_zone(
                 &self.0,
                 locale,
@@ -514,13 +515,16 @@ pub mod ffi {
                 |names| {
                     // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.get()?.as_deserializing();
+                    let provider = provider.as_deserializing();
                     names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
                         .load_time_zone_generic_short_names(&provider)?;
                     names.as_mut().load_time_zone_location_names(&provider)?;
                     Ok(())
+                },
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(provider, field_set)
                 },
             )
         }
@@ -542,16 +546,18 @@ pub mod ffi {
                     names.as_mut().include_time_zone_location_names()?;
                     Ok(())
                 },
+                |names, field_set| names.try_into_formatter(field_set),
             )
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn with_zone_generic_long_and_provider(
             &self,
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let provider = provider.get()?;
             formatter_with_zone(
                 &self.0,
                 locale,
@@ -559,13 +565,16 @@ pub mod ffi {
                 |names| {
                     // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.get()?.as_deserializing();
+                    let provider = provider.as_deserializing();
                     names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
                         .load_time_zone_generic_long_names(&provider)?;
                     names.as_mut().load_time_zone_location_names(&provider)?;
                     Ok(())
+                },
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(provider, field_set)
                 },
             )
         }
@@ -586,16 +595,18 @@ pub mod ffi {
                     names.as_mut().include_time_zone_specific_short_names()?;
                     Ok(())
                 },
+                |names, field_set| names.try_into_formatter(field_set),
             )
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn with_zone_specific_short_and_provider(
             &self,
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let provider = provider.get()?;
             formatter_with_zone(
                 &self.0,
                 locale,
@@ -603,12 +614,15 @@ pub mod ffi {
                 |names| {
                     // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.get()?.as_deserializing();
+                    let provider = provider.as_deserializing();
                     names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
                         .load_time_zone_specific_short_names(&provider)?;
                     Ok(())
+                },
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(provider, field_set)
                 },
             )
         }
@@ -630,16 +644,18 @@ pub mod ffi {
                     names.as_mut().include_time_zone_location_names()?;
                     Ok(())
                 },
+                |names, field_set| names.try_into_formatter(field_set),
             )
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn with_zone_specific_long_and_provider(
             &self,
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let provider = provider.get()?;
             formatter_with_zone(
                 &self.0,
                 locale,
@@ -647,13 +663,16 @@ pub mod ffi {
                 |names| {
                     // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.get()?.as_deserializing();
+                    let provider = provider.as_deserializing();
                     names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
                         .load_time_zone_specific_long_names(&provider)?;
                     names.as_mut().load_time_zone_location_names(&provider)?;
                     Ok(())
+                },
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(provider, field_set)
                 },
             )
         }
@@ -673,16 +692,18 @@ pub mod ffi {
                     names.as_mut().include_time_zone_essentials()?;
                     Ok(())
                 },
+                |names, field_set| names.try_into_formatter(field_set),
             )
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn with_zone_localized_offset_short_and_provider(
             &self,
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let provider = provider.get()?;
             formatter_with_zone(
                 &self.0,
                 locale,
@@ -690,9 +711,12 @@ pub mod ffi {
                 |names| {
                     // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.get()?.as_deserializing();
+                    let provider = provider.as_deserializing();
                     names.as_mut().load_time_zone_essentials(&provider)?;
                     Ok(())
+                },
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(provider, field_set)
                 },
             )
         }
@@ -712,16 +736,18 @@ pub mod ffi {
                     names.as_mut().include_time_zone_essentials()?;
                     Ok(())
                 },
+                |names, field_set| names.try_into_formatter(field_set),
             )
         }
 
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn with_zone_localized_offset_long_and_provider(
             &self,
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            let provider = provider.get()?;
             formatter_with_zone(
                 &self.0,
                 locale,
@@ -729,9 +755,12 @@ pub mod ffi {
                 |names| {
                     // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.get()?.as_deserializing();
+                    let provider = provider.as_deserializing();
                     names.as_mut().load_time_zone_essentials(&provider)?;
                     Ok(())
+                },
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(provider, field_set)
                 },
             )
         }
@@ -1314,11 +1343,13 @@ pub mod ffi {
 }
 
 mod impls {
-    use icu_datetime::fieldsets::enums::*;
-    use icu_datetime::fieldsets::Combo;
-    use icu_datetime::pattern::*;
-    use icu_datetime::scaffold::*;
-    use icu_datetime::DateTimeFormatter;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use alloc::boxed::Box;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_datetime::{
+        fieldsets::enums::*, fieldsets::Combo, pattern::*, scaffold::*, DateTimeFormatter,
+        DateTimeFormatterLoadError,
+    };
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     pub(super) fn map_or_default<Input, Output>(input: Option<Input>) -> Output
@@ -1328,13 +1359,24 @@ mod impls {
         input.map(Output::from).unwrap_or_default()
     }
 
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     pub(super) fn formatter_with_zone<Zone>(
         formatter: &DateTimeFormatter<CompositeDateTimeFieldSet>,
         locale: &crate::locale_core::ffi::Locale,
         zone: Zone,
         load: impl FnOnce(
             &mut DateTimeNames<icu_datetime::fieldsets::Combo<DateAndTimeFieldSet, Zone>>,
-        ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+        ) -> Result<(), icu_datetime::pattern::PatternLoadError>,
+        to_formatter: impl FnOnce(
+            DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
+            Combo<DateAndTimeFieldSet, Zone>,
+        ) -> Result<
+            DateTimeFormatter<Combo<DateAndTimeFieldSet, Zone>>,
+            (
+                DateTimeFormatterLoadError,
+                DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
+            ),
+        >,
     ) -> Result<
         Box<super::ffi::NeoZonedDateTimeFormatter>,
         crate::errors::ffi::DateTimeFormatterLoadError,
@@ -1343,7 +1385,6 @@ mod impls {
         Zone: DateTimeMarkers + ZoneMarkers,
         <Zone as DateTimeMarkers>::Z: ZoneMarkers,
         Combo<DateAndTimeFieldSet, Zone>: DateTimeNamesFrom<CompositeDateTimeFieldSet>,
-        Combo<DateAndTimeFieldSet, Zone>: GetField<CompositeFieldSet>,
         CompositeFieldSet: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
     {
         let prefs = (&locale.0).into();
@@ -1358,8 +1399,7 @@ mod impls {
                 crate::errors::ffi::DateTimeFormatterLoadError::Unknown
             })?
             .zone(zone);
-        let formatter = names
-            .try_into_formatter(field_set)
+        let formatter = to_formatter(names, field_set)
             // This can fail if the locale doesn't match and the fields conflict
             .map_err(|(e, _)| e)?
             .cast_into_fset();
