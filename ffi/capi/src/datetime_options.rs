@@ -1,0 +1,62 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
+pub mod ffi {
+    #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
+    pub enum DateTimeAlignment {
+        Auto,
+        Column,
+    }
+
+    #[diplomat::enum_convert(icu_datetime::options::YearStyle, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::YearStyle, Enum)]
+    pub enum YearStyle {
+        Auto,
+        Full,
+        WithEra,
+    }
+
+    #[diplomat::rust_link(icu::datetime::TimePrecision, Enum)]
+    pub enum TimePrecision {
+        Hour,
+        Minute,
+        MinuteOptional,
+        Second,
+        Subsecond1,
+        Subsecond2,
+        Subsecond3,
+        Subsecond4,
+        Subsecond5,
+        Subsecond6,
+        Subsecond7,
+        Subsecond8,
+        Subsecond9,
+    }
+}
+
+impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
+    fn from(time_precision: ffi::TimePrecision) -> Self {
+        use icu_datetime::options::TimePrecision;
+        use icu_datetime::options::SubsecondDigits;
+        match time_precision {
+            ffi::TimePrecision::Hour => TimePrecision::Hour,
+            ffi::TimePrecision::Minute => TimePrecision::Minute,
+            ffi::TimePrecision::MinuteOptional => TimePrecision::MinuteOptional,
+            ffi::TimePrecision::Second => TimePrecision::Second,
+            ffi::TimePrecision::Subsecond1 => TimePrecision::Subsecond(SubsecondDigits::S1),
+            ffi::TimePrecision::Subsecond2 => TimePrecision::Subsecond(SubsecondDigits::S2),
+            ffi::TimePrecision::Subsecond3 => TimePrecision::Subsecond(SubsecondDigits::S3),
+            ffi::TimePrecision::Subsecond4 => TimePrecision::Subsecond(SubsecondDigits::S4),
+            ffi::TimePrecision::Subsecond5 => TimePrecision::Subsecond(SubsecondDigits::S5),
+            ffi::TimePrecision::Subsecond6 => TimePrecision::Subsecond(SubsecondDigits::S6),
+            ffi::TimePrecision::Subsecond7 => TimePrecision::Subsecond(SubsecondDigits::S7),
+            ffi::TimePrecision::Subsecond8 => TimePrecision::Subsecond(SubsecondDigits::S8),
+            ffi::TimePrecision::Subsecond9 => TimePrecision::Subsecond(SubsecondDigits::S9),
+        }
+    }
+}
