@@ -10,11 +10,11 @@ use icu_datetime::options::SubsecondDigits;
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Gregorian;
-    use writeable::Writeable;
+    use writeable::{Writeable, TryWriteable};
 
     use crate::{
         date::ffi::{Date, IsoDate},
-        errors::ffi::DateTimeMismatchedCalendarError,
+        errors::ffi::{DateTimeMismatchedCalendarError, DateTimeWriteError},
         time::ffi::Time,
         timezone::ffi::TimeZoneInfo,
     };
@@ -603,20 +603,22 @@ pub mod ffi {
             time: &Time,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
-            let at_time = zone.local_time.unwrap_or((date.0, time.0));
-            // TODO: What do we do if the zone variant is not set?
-            let zone = zone
-                .time_zone_id
-                .with_offset(zone.offset)
-                .at_time(at_time)
-                .with_zone_variant(zone.zone_variant.expect("TODO"));
-            let value = icu_time::ZonedDateTime {
-                date: date.0,
-                time: time.0,
-                zone,
-            };
-            let _infallible = self.0.format(&value).write_to(write);
+        ) -> Result<(), DateTimeWriteError> {
+            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            input.set_date_fields(date.0);
+            input.set_time_fields(time.0);
+            input.set_time_zone_id(zone.time_zone_id);
+            if let Some(offset) = zone.offset {
+                input.set_time_zone_utc_offset(offset);
+            }
+            if let Some(local_time) = zone.local_time {
+                input.set_time_zone_local_time(local_time);
+            }
+            if let Some(zone_variant) = zone.zone_variant {
+                input.set_time_zone_variant(zone_variant);
+            }
+            let _infallible = self.0.format_unchecked(input).try_write_to(write).ok().transpose()?;
+            Ok(())
         }
 
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]

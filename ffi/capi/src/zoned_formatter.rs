@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
     use crate::{
         date::ffi::{Date, IsoDate},
-        errors::ffi::DateTimeFormatError,
+        errors::ffi::DateTimeWriteError,
         time::ffi::Time,
         timezone::ffi::TimeZoneInfo,
     };
@@ -92,7 +92,7 @@ pub mod ffi {
             time: &Time,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
+        ) -> Result<(), DateTimeWriteError> {
             let zdt = icu_time::ZonedDateTime {
                 date: icu_calendar::Date::new_from_iso(date.0, icu_calendar::Gregorian),
                 time: time.0,
@@ -102,7 +102,7 @@ pub mod ffi {
                     .at_time((date.0, time.0))
                     .with_zone_variant(
                         zone.zone_variant
-                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
+                            .ok_or(DateTimeWriteError::MissingInputField)?,
                     ),
             };
             let _infallible = self.0.format(&zdt).write_to(write);
@@ -171,7 +171,7 @@ pub mod ffi {
             time: &Time,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
+        ) -> Result<(), DateTimeWriteError> {
             let zdt = icu_time::ZonedDateTime {
                 date: date.0.wrap_calendar_in_ref(),
                 time: time.0,
@@ -181,7 +181,7 @@ pub mod ffi {
                     .at_time((date.0.to_iso(), time.0))
                     .with_zone_variant(
                         zone.zone_variant
-                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
+                            .ok_or(DateTimeWriteError::MissingInputField)?,
                     ),
             };
             let _infallible = self.0.format(&zdt).write_to(write);
@@ -197,7 +197,7 @@ pub mod ffi {
             time: &Time,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
+        ) -> Result<(), DateTimeWriteError> {
             let zdt = icu_time::ZonedDateTime {
                 date: date.0,
                 time: time.0,
@@ -207,7 +207,7 @@ pub mod ffi {
                     .at_time((date.0, time.0))
                     .with_zone_variant(
                         zone.zone_variant
-                            .ok_or(DateTimeFormatError::ZoneInfoMissingFields)?,
+                            .ok_or(DateTimeWriteError::MissingInputField)?,
                     ),
             };
             let _infallible = self.0.format(&zdt).write_to(write);

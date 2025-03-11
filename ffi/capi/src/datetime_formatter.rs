@@ -21,7 +21,6 @@ pub mod ffi {
     use crate::{
         calendar::ffi::Calendar,
         date::ffi::{Date, IsoDate},
-        errors::ffi::DateTimeFormatError,
         time::ffi::Time,
     };
 
@@ -198,9 +197,8 @@ pub mod ffi {
             &self,
             value: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
+        ) {
             let _infallible = self.0.format(&value.0).write_to(write);
-            Ok(())
         }
 
         /// Formats a [`IsoDate`] to a string.
@@ -212,10 +210,9 @@ pub mod ffi {
             &self,
             value: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
-        ) -> Result<(), DateTimeFormatError> {
+        ) {
             let any = value.0.to_any();
             let _infallible = self.0.format(&any).write_to(write);
-            Ok(())
         }
 
         /// Returns the calendar system used in this formatter.
