@@ -26,7 +26,7 @@
 //! )
 //! .unwrap();
 //!
-//! let dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new(), &VariantOffsetsCalculator::new()).unwrap();
+//! let dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(

@@ -41,7 +41,7 @@ pub mod ffi {
                     v,
                     Iso,
                     iana_parser.0.as_borrowed(),
-                    &offset_calculator.0,
+                    offset_calculator.0.as_borrowed(),
                 )?;
             Ok(ZonedIsoDateTime {
                 date: Box::new(IsoDate(date)),
@@ -76,7 +76,7 @@ pub mod ffi {
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),
-                    &offset_calculator.0,
+                    offset_calculator.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
                 date: Box::new(Date(date)),

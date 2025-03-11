@@ -167,14 +167,14 @@ where
     ///     "2024-01-01T00:00:00+00:00[Europe/London]",
     ///     Gregorian,
     ///     IanaParser::new(),
-    ///     &VariantOffsetsCalculator::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
     /// let mut london_summer = ZonedDateTime::try_from_str(
     ///     "2024-07-01T00:00:00+01:00[Europe/London]",
     ///     Gregorian,
     ///     IanaParser::new(),
-    ///     &VariantOffsetsCalculator::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
     ///

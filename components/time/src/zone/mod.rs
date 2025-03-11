@@ -93,6 +93,7 @@ pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
 pub use offset::VariantOffsets;
 pub use offset::VariantOffsetsCalculator;
+pub use offset::VariantOffsetsCalculatorBorrowed;
 
 #[doc(no_inline)]
 pub use iana::IanaParser;
@@ -277,7 +278,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// to [`TimeZone::unknown()`].
     pub fn infer_zone_variant(
         self,
-        calculator: &VariantOffsetsCalculator,
+        calculator: VariantOffsetsCalculatorBorrowed,
     ) -> TimeZoneInfo<models::Full> {
         let Some(offset) = self.offset else {
             return TimeZone::unknown()

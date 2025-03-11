@@ -18,6 +18,7 @@ pub mod ffi {
     };
 
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator, Struct)]
+    #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculatorBorrowed, Struct, hidden)]
     #[diplomat::opaque]
     pub struct VariantOffsetsCalculator(pub icu_time::zone::VariantOffsetsCalculator);
 
@@ -133,11 +134,16 @@ pub mod ffi {
     impl VariantOffsetsCalculator {
         /// Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
         #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<VariantOffsetsCalculator> {
             Box::new(VariantOffsetsCalculator(
-                icu_time::zone::VariantOffsetsCalculator::new(),
+                icu_time::zone::VariantOffsetsCalculator::new().static_to_owned(),
             ))
         }
         /// Construct a new [`VariantOffsetsCalculator`] instance using a particular data source.
@@ -155,7 +161,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::time::zone::VariantOffsetsCalculator::compute_offsets_from_time_zone,
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone,
             FnInStruct
         )]
         pub fn compute_offsets_from_time_zone(
@@ -168,6 +174,7 @@ pub mod ffi {
                 standard, daylight, ..
             } = self
                 .0
+                .as_borrowed()
                 .compute_offsets_from_time_zone(time_zone.0, (local_date.0, local_time.0))?;
 
             Some(VariantOffsets {

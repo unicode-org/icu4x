@@ -44,7 +44,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
     return VariantOffsetsCalculator._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.compute_offsets_from_time_zone) for more information.
+  /// See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
   VariantOffsets? computeOffsetsFromTimeZone(TimeZone timeZone, IsoDate localDate, Time localTime) {
     final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(_ffi, timeZone._ffi, localDate._ffi, localTime._ffi);
     if (!result.isOk) {

@@ -133,7 +133,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///     "2024-10-18T15:44-0700[America/Los_Angeles]",
 ///     Gregorian,
 ///     IanaParser::new(),
-///     &VariantOffsetsCalculator::new(),
+///     VariantOffsetsCalculator::new(),
 /// )
 /// .unwrap();
 ///

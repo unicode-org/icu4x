@@ -152,7 +152,7 @@ pub mod ffi {
                 .time_zone_id
                 .with_offset(self.offset)
                 .at_time(self.local_time?)
-                .infer_zone_variant(&offset_calculator.0);
+                .infer_zone_variant(offset_calculator.0.as_borrowed());
 
             self.time_zone_id = info.time_zone_id();
             self.zone_variant = Some(info.zone_variant());

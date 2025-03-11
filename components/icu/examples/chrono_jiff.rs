@@ -30,7 +30,7 @@ fn main() {
         "2024-09-11T08:37:20.123456789+09:00[Asia/Tokyo]",
         Iso,
         IanaParser::new(),
-        &VariantOffsetsCalculator::new(),
+        VariantOffsetsCalculator::new(),
     )
     .expect("valid string");
 

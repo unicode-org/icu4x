@@ -4,7 +4,8 @@
 
 use crate::{
     zone::{
-        iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset, VariantOffsetsCalculator,
+        iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset,
+        VariantOffsetsCalculatorBorrowed,
     },
     DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
@@ -322,7 +323,7 @@ impl<'a> Intermediate<'a> {
     fn full(
         self,
         iana_parser: IanaParserBorrowed<'_>,
-        offset_calculator: &VariantOffsetsCalculator,
+        offset_calculator: VariantOffsetsCalculatorBorrowed,
     ) -> Result<TimeZoneInfo<models::Full>, ParseError> {
         let Some(offset) = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
@@ -455,7 +456,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///     "2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]",
     ///     Hebrew,
     ///     IanaParser::new(),
-    ///     &VariantOffsetsCalculator::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
     ///
@@ -558,7 +559,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// use icu_time::{TimeZoneInfo, ZonedDateTime, TimeZone, ParseError, zone::{UtcOffset, TimeZoneVariant, IanaParser, VariantOffsetsCalculator}};
     /// use tinystr::tinystr;
     ///
-    /// let consistent_tz_from_both = ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Iso, IanaParser::new(), &VariantOffsetsCalculator::new()).unwrap();
+    /// let consistent_tz_from_both = ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Iso, IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
     ///
     ///
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id(), TimeZone(tinystr!(8, "uschi")));
@@ -570,7 +571,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// // time zone or the offset are wrong.
     /// // The only valid way to display this zoned datetime is "GMT-5", so we drop the time zone.
     /// assert_eq!(
-    ///     ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso, IanaParser::new(), &VariantOffsetsCalculator::new())
+    ///     ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso, IanaParser::new(), VariantOffsetsCalculator::new())
     ///     .unwrap().zone.time_zone_id(),
     ///     TimeZone::unknown()
     /// );
@@ -578,7 +579,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August, but we have a
     /// // name for Los Angeles at -8 (Pacific Standard Time), so this parses successfully.
     /// assert!(
-    ///     ZonedDateTime::try_from_str("2024-08-08T12:08:19-08:00[America/Los_Angeles]", Iso, IanaParser::new(), &VariantOffsetsCalculator::new()).is_ok()
+    ///     ZonedDateTime::try_from_str("2024-08-08T12:08:19-08:00[America/Los_Angeles]", Iso, IanaParser::new(), VariantOffsetsCalculator::new()).is_ok()
     /// );
     /// ```
     ///
@@ -618,7 +619,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
         ixdtf_str: &str,
         calendar: A,
         iana_parser: IanaParserBorrowed,
-        offset_calculator: &VariantOffsetsCalculator,
+        offset_calculator: VariantOffsetsCalculatorBorrowed,
     ) -> Result<Self, ParseError> {
         Self::try_from_utf8(
             ixdtf_str.as_bytes(),
@@ -635,7 +636,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
         ixdtf_str: &[u8],
         calendar: A,
         iana_parser: IanaParserBorrowed,
-        offset_calculator: &VariantOffsetsCalculator,
+        offset_calculator: VariantOffsetsCalculatorBorrowed,
     ) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
         let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
