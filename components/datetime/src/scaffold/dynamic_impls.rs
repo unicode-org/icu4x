@@ -6,7 +6,7 @@ use super::*;
 use crate::fieldsets::enums::*;
 use crate::provider::{neo::*, time_zones::tz, *};
 use icu_calendar::{
-    types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
+    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
     Date, Iso,
 };
 use icu_provider::marker::NeverMarker;

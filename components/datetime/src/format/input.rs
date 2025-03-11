@@ -6,7 +6,7 @@
 //! formatting operations.
 
 use crate::scaffold::{DateInputMarkers, GetField, TimeMarkers, ZoneMarkers};
-use icu_calendar::types::DayOfYearInfo;
+use icu_calendar::types::DayOfYear;
 use icu_calendar::Iso;
 use icu_time::scaffold::IntoOption;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
@@ -23,7 +23,7 @@ pub(crate) struct ExtractedInput {
     pub(crate) month: Option<MonthInfo>,
     pub(crate) day_of_month: Option<DayOfMonth>,
     pub(crate) iso_weekday: Option<Weekday>,
-    pub(crate) day_of_year: Option<DayOfYearInfo>,
+    pub(crate) day_of_year: Option<DayOfYear>,
     pub(crate) hour: Option<Hour>,
     pub(crate) minute: Option<Minute>,
     pub(crate) second: Option<Second>,

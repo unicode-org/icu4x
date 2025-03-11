@@ -236,8 +236,8 @@ impl<A: AsCalendar> Date<A> {
 
     /// The calendar-specific day-of-month represented by `self`
     #[inline]
-    pub fn day_of_year_info(&self) -> types::DayOfYearInfo {
-        self.calendar.as_calendar().day_of_year_info(&self.inner)
+    pub fn day_of_year(&self) -> types::DayOfYear {
+        self.calendar.as_calendar().day_of_year(&self.inner)
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any
@@ -310,12 +310,11 @@ impl Date<Iso> {
     /// );
     /// ```
     pub fn week_of_year(&self) -> WeekOfYear {
-        let day_of_year_info = self.day_of_year_info();
         let week_of = WeekCalculator::ISO
             .week_of(
-                day_of_year_info.days_in_prev_year,
-                day_of_year_info.days_in_year,
-                day_of_year_info.day_of_year,
+                Iso::days_in_year_direct(self.inner.0.year.saturating_sub(1)),
+                self.days_in_year(),
+                self.day_of_year().0,
                 self.day_of_week(),
             )
             .unwrap_or_else(|_| {
@@ -330,9 +329,9 @@ impl Date<Iso> {
         WeekOfYear {
             week_number: week_of.week,
             iso_year: match week_of.unit {
-                RelativeUnit::Current => self.year().extended_year,
-                RelativeUnit::Next => self.year().extended_year + 1,
-                RelativeUnit::Previous => self.year().extended_year - 1,
+                RelativeUnit::Current => self.inner.0.year,
+                RelativeUnit::Next => self.inner.0.year.saturating_add(1),
+                RelativeUnit::Previous => self.inner.0.year.saturating_sub(1),
             },
         }
     }

@@ -129,7 +129,7 @@ impl Calendar for Indian {
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let day_of_year_indian = date.0.day_of_year(); // 1-indexed
+        let day_of_year_indian = date.0.day_of_year().0; // 1-indexed
         let days_in_year = date.0.days_in_year();
 
         let mut year = date.0.year + YEAR_OFFSET;
@@ -192,17 +192,8 @@ impl Calendar for Indian {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = year_as_saka(date.0.year - 1);
-        let next_year = year_as_saka(date.0.year + 1);
-
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year,
-            days_in_prev_year: Indian::days_in_year_direct(date.0.year - 1),
-            next_year,
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {
@@ -230,14 +221,6 @@ impl Indian {
     /// Construct a new Indian Calendar
     pub fn new() -> Self {
         Self
-    }
-
-    fn days_in_year_direct(year: i32) -> u16 {
-        if Indian::is_leap_year(year, ()) {
-            366
-        } else {
-            365
-        }
     }
 }
 
