@@ -87,7 +87,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the 1-indexed day in the year for this date
   ///
-  /// See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+  /// See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
   int get dayOfYear {
     final result = _icu4x_Date_day_of_year_mv1(_ffi);
     return result;
