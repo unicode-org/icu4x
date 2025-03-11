@@ -22,10 +22,9 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
-        datetime_formatter::ffi::DateTimeLength, errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale, neo_datetime::map_or_default,
-    };
+    use crate::{datetime_formatter::ffi::DateTimeLength, neo_datetime::map_or_default};
+    #[cfg(feature = "compiled_data")]
+    use crate::{errors::ffi::DateTimeFormatterLoadError, locale_core::ffi::Locale};
 
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
@@ -523,6 +522,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
+        #[cfg(feature = "compiled_data")]
         pub fn with_zone_generic_long(
             &self,
             locale: &Locale,
