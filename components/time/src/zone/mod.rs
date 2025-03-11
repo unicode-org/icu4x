@@ -91,8 +91,8 @@ pub mod windows;
 pub use crate::provider::{TimeZone, TimeZoneVariant};
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
-pub use offset::UtcOffsetCalculator;
-pub use offset::UtcOffsets;
+pub use offset::VariantOffsets;
+pub use offset::VariantOffsetsCalculator;
 
 #[doc(no_inline)]
 pub use iana::IanaParser;
@@ -269,7 +269,7 @@ impl TimeZoneInfo<models::AtTime> {
         }
     }
 
-    /// Sets the zone variant by calculating it using a [`UtcOffsetCalculator`].
+    /// Sets the zone variant by calculating it using a [`VariantOffsetsCalculator`].
     ///
     /// If `offset()` is `None`, or if it doesn't match either of the
     /// timezone's standard or daylight offset around `local_time()`,
@@ -277,7 +277,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// to [`TimeZone::unknown()`].
     pub fn infer_zone_variant(
         self,
-        calculator: &UtcOffsetCalculator,
+        calculator: &VariantOffsetsCalculator,
     ) -> TimeZoneInfo<models::Full> {
         let Some(offset) = self.offset else {
             return TimeZone::unknown()

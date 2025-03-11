@@ -17,7 +17,7 @@
 #include "IanaParser.hpp"
 #include "Time.hpp"
 #include "TimeZoneInfo.hpp"
-#include "UtcOffsetCalculator.hpp"
+#include "VariantOffsetsCalculator.hpp"
 
 
 namespace icu4x {
@@ -25,7 +25,7 @@ namespace capi {
     extern "C" {
     
     typedef struct icu4x_ZonedDateTime_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_from_string_mv1_result;
-    icu4x_ZonedDateTime_from_string_mv1_result icu4x_ZonedDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::UtcOffsetCalculator* offset_calculator);
+    icu4x_ZonedDateTime_from_string_mv1_result icu4x_ZonedDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::VariantOffsetsCalculator* offset_calculator);
     
     typedef struct icu4x_ZonedDateTime_location_only_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_ZonedDateTime_location_only_from_string_mv1_result;
     icu4x_ZonedDateTime_location_only_from_string_mv1_result icu4x_ZonedDateTime_location_only_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser);
@@ -41,7 +41,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<icu4x::ZonedDateTime, icu4x::CalendarParseError> icu4x::ZonedDateTime::from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser, const icu4x::UtcOffsetCalculator& offset_calculator) {
+inline diplomat::result<icu4x::ZonedDateTime, icu4x::CalendarParseError> icu4x::ZonedDateTime::from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator) {
   auto result = icu4x::capi::icu4x_ZonedDateTime_from_string_mv1({v.data(), v.size()},
     calendar.AsFFI(),
     iana_parser.AsFFI(),

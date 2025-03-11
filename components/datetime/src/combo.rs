@@ -120,7 +120,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
-/// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
+/// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -133,7 +133,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///     "2024-10-18T15:44-0700[America/Los_Angeles]",
 ///     Gregorian,
 ///     IanaParser::new(),
-///     &UtcOffsetCalculator::new(),
+///     &VariantOffsetsCalculator::new(),
 /// )
 /// .unwrap();
 ///

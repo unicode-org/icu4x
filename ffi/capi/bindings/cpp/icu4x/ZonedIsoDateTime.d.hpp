@@ -19,8 +19,8 @@ namespace capi { struct Time; }
 class Time;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
-namespace capi { struct UtcOffsetCalculator; }
-class UtcOffsetCalculator;
+namespace capi { struct VariantOffsetsCalculator; }
+class VariantOffsetsCalculator;
 struct ZonedIsoDateTime;
 class CalendarParseError;
 }
@@ -45,7 +45,7 @@ struct ZonedIsoDateTime {
   std::unique_ptr<icu4x::Time> time;
   std::unique_ptr<icu4x::TimeZoneInfo> zone;
 
-  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::UtcOffsetCalculator& offset_calculator);
+  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   inline icu4x::capi::ZonedIsoDateTime AsFFI() const;
   inline static icu4x::ZonedIsoDateTime FromFFI(icu4x::capi::ZonedIsoDateTime c_struct);

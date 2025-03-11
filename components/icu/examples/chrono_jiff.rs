@@ -7,7 +7,7 @@ use icu::{
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
     time::{
-        zone::{models::Full, IanaParser, TimeZoneVariant, UtcOffset, UtcOffsetCalculator},
+        zone::{models::Full, IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator},
         Time, TimeZoneInfo, ZonedDateTime,
     },
 };
@@ -30,7 +30,7 @@ fn main() {
         "2024-09-11T08:37:20.123456789+09:00[Asia/Tokyo]",
         Iso,
         IanaParser::new(),
-        &UtcOffsetCalculator::new(),
+        &VariantOffsetsCalculator::new(),
     )
     .expect("valid string");
 

@@ -71,7 +71,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// See the [Rust documentation for `infer_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_zone_variant) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
-  bool inferZoneVariant(UtcOffsetCalculator offsetCalculator) {
+  bool inferZoneVariant(VariantOffsetsCalculator offsetCalculator) {
     final result = _icu4x_TimeZoneInfo_infer_zone_variant_mv1(_ffi, offsetCalculator._ffi);
     return result.isOk;
   }

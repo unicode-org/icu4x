@@ -139,7 +139,7 @@ pub mod timezone;
 #[cfg(feature = "experimental")]
 pub mod units_converter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
-pub mod utc_offset;
+pub mod variant_offset;
 #[cfg(feature = "calendar")]
 pub mod week;
 #[cfg(any(feature = "datetime", feature = "timezone"))]

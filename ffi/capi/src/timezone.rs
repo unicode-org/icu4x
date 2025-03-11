@@ -14,7 +14,7 @@ pub mod ffi {
         date::ffi::IsoDate,
         datetime::ffi::IsoDateTime,
         time::ffi::Time,
-        utc_offset::ffi::{UtcOffset, UtcOffsetCalculator},
+        variant_offset::ffi::{UtcOffset, VariantOffsetsCalculator},
     };
 
     #[diplomat::opaque]
@@ -146,7 +146,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         pub fn infer_zone_variant(
             &mut self,
-            offset_calculator: &UtcOffsetCalculator,
+            offset_calculator: &VariantOffsetsCalculator,
         ) -> Option<()> {
             let info = self
                 .time_zone_id

@@ -42,7 +42,7 @@ final class ZonedIsoDateTime {
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
   ///
   /// Throws [CalendarParseError] on failure.
-  factory ZonedIsoDateTime.fromString(String v, IanaParser ianaParser, UtcOffsetCalculator offsetCalculator) {
+  factory ZonedIsoDateTime.fromString(String v, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedIsoDateTime_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi, offsetCalculator._ffi);
     if (!result.isOk) {

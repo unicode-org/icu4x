@@ -40,7 +40,7 @@ export { PluralCategories } from "./PluralCategories"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
 
-export { UtcOffsets } from "./UtcOffsets"
+export { VariantOffsets } from "./VariantOffsets"
 
 export { WeekOf } from "./WeekOf"
 
@@ -204,7 +204,7 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { UtcOffset } from "./UtcOffset"
 
-export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
+export { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 
 export { WeekCalculator } from "./WeekCalculator"
 
