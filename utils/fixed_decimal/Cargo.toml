@@ -29,7 +29,7 @@ writeable = { workspace = true }
 ryu = { workspace = true, features = ["small"], optional = true }
 
 [dev-dependencies]
-getrandom = { workspace = true, features = ["js"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = { workspace = true }
 rand_distr = { workspace = true }

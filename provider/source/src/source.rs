@@ -80,8 +80,11 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            toml::from_slice(bytes)
-                .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
+            toml::from_str(
+                std::str::from_utf8(bytes)
+                    .map_err(|e| DataError::custom("TOML UTF8").with_display_context(&e))?,
+            )
+            .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
         })
     }
 
@@ -176,9 +179,9 @@ impl AbstractFs {
                 log::info!("Downloading {resource}");
                 std::fs::create_dir_all(root.parent().unwrap())?;
                 let mut retry = 5;
-                let mut response: Box<dyn Read + Send + Sync + 'static> = loop {
+                let mut response = loop {
                     match ureq::get(resource).call() {
-                        Ok(r) => break r.into_reader(),
+                        Ok(r) => break r.into_body().into_reader(),
                         Err(e) if retry > 0 => {
                             log::warn!("Download error {e:?}, retrying...");
                             std::thread::sleep(std::time::Duration::from_secs(2));
