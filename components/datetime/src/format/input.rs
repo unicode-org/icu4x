@@ -66,7 +66,7 @@ impl DateTimeInputUnchecked {
         self.month = Some(input.month());
         self.day_of_month = Some(input.day_of_month());
         self.iso_weekday = Some(input.day_of_week());
-        self.day_of_year = Some(input.day_of_year_info());
+        self.day_of_year = Some(input.day_of_year());
     }
 
     /// Sets all fields from a [`Time`] input.
