@@ -10,7 +10,7 @@ use icu_datetime::options::SubsecondDigits;
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Gregorian;
-    use writeable::{Writeable, TryWriteable};
+    use writeable::{TryWriteable, Writeable};
 
     use crate::{
         date::ffi::{Date, IsoDate},
@@ -618,7 +618,12 @@ pub mod ffi {
             if let Some(zone_variant) = zone.zone_variant {
                 input.set_time_zone_variant(zone_variant);
             }
-            let _infallible = self.0.format_unchecked(input).try_write_to(write).ok().transpose()?;
+            let _infallible = self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write)
+                .ok()
+                .transpose()?;
             Ok(())
         }
 

@@ -193,11 +193,7 @@ pub mod ffi {
         /// Formats a [`Date`] to a string.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-        pub fn format(
-            &self,
-            value: &Date,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        pub fn format(&self, value: &Date, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);
         }
 
@@ -206,11 +202,7 @@ pub mod ffi {
         /// Will convert to this formatter's calendar first
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
-        pub fn format_iso(
-            &self,
-            value: &IsoDate,
-            write: &mut diplomat_runtime::DiplomatWrite,
-        ) {
+        pub fn format_iso(&self, value: &IsoDate, write: &mut diplomat_runtime::DiplomatWrite) {
             let any = value.0.to_any();
             let _infallible = self.0.format(&any).write_to(write);
         }
