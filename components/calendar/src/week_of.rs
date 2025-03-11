@@ -735,3 +735,39 @@ fn test_weekdays_iter() {
         multiple_non_contiguous_days.collect::<Vec<_>>()
     );
 }
+
+#[test]
+fn test_iso_weeks() {
+    use crate::week::WeekOf;
+    use crate::Date;
+
+    let week_calculator = WeekCalculator {
+        min_week_days: 4,
+        ..Default::default()
+    };
+
+    #[allow(clippy::zero_prefixed_literal)]
+    for ((y, m, d), (unit, week)) in [
+        // 2010 starts on a Thursday, so 2009 has 53 ISO weeks
+        ((2009, 12, 30), (RelativeUnit::Current, 53)),
+        ((2009, 12, 31), (RelativeUnit::Current, 53)),
+        ((2010, 01, 01), (RelativeUnit::Previous, 53)),
+        ((2010, 01, 02), (RelativeUnit::Previous, 53)),
+        ((2010, 01, 03), (RelativeUnit::Previous, 53)),
+        ((2010, 01, 04), (RelativeUnit::Current, 1)),
+        ((2010, 01, 05), (RelativeUnit::Current, 1)),
+        // 2030 starts on a Monday
+        ((2029, 12, 29), (RelativeUnit::Current, 52)),
+        ((2029, 12, 30), (RelativeUnit::Current, 52)),
+        ((2029, 12, 31), (RelativeUnit::Next, 1)),
+        ((2030, 01, 01), (RelativeUnit::Current, 1)),
+        ((2030, 01, 02), (RelativeUnit::Current, 1)),
+        ((2030, 01, 03), (RelativeUnit::Current, 1)),
+        ((2030, 01, 04), (RelativeUnit::Current, 1)),
+    ] {
+        assert_eq!(
+            Date::try_new_iso(y, m, d).week_of_year(&week_calculator),
+            WeekOf { week, unit }
+        );
+    }
+}
