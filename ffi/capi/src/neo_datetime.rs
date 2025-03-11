@@ -658,6 +658,84 @@ pub mod ffi {
             )
         }
 
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn with_zone_localized_offset_short(
+            &self,
+            locale: &Locale,
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            formatter_with_zone(
+                &self.0,
+                locale,
+                icu_datetime::fieldsets::zone::LocalizedOffsetShort,
+                |names| {
+                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
+                    names.as_mut().include_time_zone_essentials()?;
+                    Ok(())
+                },
+            )
+        }
+
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn with_zone_localized_offset_short_and_provider(
+            &self,
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            formatter_with_zone(
+                &self.0,
+                locale,
+                icu_datetime::fieldsets::zone::LocalizedOffsetShort,
+                |names| {
+                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
+                    use icu_provider::buf::AsDeserializingBufferProvider;
+                    let provider = provider.get()?.as_deserializing();
+                    names.as_mut().load_time_zone_essentials(&provider)?;
+                    Ok(())
+                },
+            )
+        }
+
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn with_zone_localized_offset_long(
+            &self,
+            locale: &Locale,
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            formatter_with_zone(
+                &self.0,
+                locale,
+                icu_datetime::fieldsets::zone::LocalizedOffsetLong,
+                |names| {
+                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
+                    names.as_mut().include_time_zone_essentials()?;
+                    Ok(())
+                },
+            )
+        }
+
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
+        #[cfg(feature = "compiled_data")]
+        pub fn with_zone_localized_offset_long_and_provider(
+            &self,
+            provider: &DataProvider,
+            locale: &Locale,
+        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+            formatter_with_zone(
+                &self.0,
+                locale,
+                icu_datetime::fieldsets::zone::LocalizedOffsetLong,
+                |names| {
+                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
+                    use icu_provider::buf::AsDeserializingBufferProvider;
+                    let provider = provider.get()?.as_deserializing();
+                    names.as_mut().load_time_zone_essentials(&provider)?;
+                    Ok(())
+                },
+            )
+        }
+
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
