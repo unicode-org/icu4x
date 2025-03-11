@@ -41,8 +41,8 @@ pub mod ffi {
 
 impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
     fn from(time_precision: ffi::TimePrecision) -> Self {
-        use icu_datetime::options::TimePrecision;
         use icu_datetime::options::SubsecondDigits;
+        use icu_datetime::options::TimePrecision;
         match time_precision {
             ffi::TimePrecision::Hour => TimePrecision::Hour,
             ffi::TimePrecision::Minute => TimePrecision::Minute,
