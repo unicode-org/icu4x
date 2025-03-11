@@ -3,20 +3,20 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Locale } from "./Locale.mjs"
 import { Weekday } from "./Weekday.mjs"
-import { WeekendContainsDay } from "./WeekendContainsDay.mjs"
+import { WeekdaySetIterator } from "./WeekdaySetIterator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
 *
-*See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
+*See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html) for more information.
 */
-const WeekCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_WeekCalculator_destroy_mv1(ptr);
+const WeekInformation_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_WeekInformation_destroy_mv1(ptr);
 });
 
-export class WeekCalculator {
+export class WeekInformation {
     
     // Internal ptr reference:
     #ptr = null;
@@ -27,7 +27,7 @@ export class WeekCalculator {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("WeekCalculator is an Opaque type. You cannot call its constructor.");
+            console.error("WeekInformation is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -36,7 +36,7 @@ export class WeekCalculator {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            WeekCalculator_box_destroy_registry.register(this, this.#ptr);
+            WeekInformation_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -48,14 +48,14 @@ export class WeekCalculator {
     #defaultConstructor(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WeekCalculator_create_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_WeekInformation_create_mv1(diplomatReceive.buffer, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new WeekCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new WeekInformation(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -66,14 +66,14 @@ export class WeekCalculator {
     static createWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_WeekCalculator_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WeekInformation_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new WeekCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new WeekInformation(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -81,18 +81,8 @@ export class WeekCalculator {
         }
     }
 
-    static fromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {
-        const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
-    
-        try {
-            return new WeekCalculator(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
     get firstWeekday() {
-        const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
+        const result = wasm.icu4x_WeekInformation_first_weekday_mv1(this.ffiValue);
     
         try {
             return new Weekday(diplomatRuntime.internalConstructor, result);
@@ -101,8 +91,8 @@ export class WeekCalculator {
         finally {}
     }
 
-    get minWeekDays() {
-        const result = wasm.icu4x_WeekCalculator_min_week_days_mv1(this.ffiValue);
+    isWeekend(day) {
+        const result = wasm.icu4x_WeekInformation_is_weekend_mv1(this.ffiValue, day.ffiValue);
     
         try {
             return result;
@@ -112,17 +102,13 @@ export class WeekCalculator {
     }
 
     get weekend() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 7, 1, false);
-        
-        const result = wasm.icu4x_WeekCalculator_weekend_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_WeekInformation_weekend_mv1(this.ffiValue);
     
         try {
-            return WeekendContainsDay._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return new WeekdaySetIterator(diplomatRuntime.internalConstructor, result, []);
         }
         
-        finally {
-            diplomatReceive.free();
-        }
+        finally {}
     }
 
     constructor(locale) {

@@ -370,20 +370,20 @@ pub struct DayOfYearInfo {
     pub next_year: YearInfo,
 }
 
-/// A day number in a month. Usually 1-based.
+/// A 1-based day number in a month.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DayOfMonth(pub u8);
 
-/// A week number in a month. Usually 1-based.
+/// A week number in a year
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfMonth(pub u8);
-
-/// A week number in a year. Usually 1-based.
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfYear(pub u8);
+pub struct WeekOfYear {
+    /// The 1-based ISO week number
+    pub week_number: u8,
+    /// The ISO year
+    pub iso_year: i32,
+}
 
 /// A day of week in month. 1-based.
 #[derive(Clone, Copy, Debug, PartialEq)]

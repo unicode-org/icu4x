@@ -4,7 +4,8 @@
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::error::DateError;
-use crate::week::{WeekCalculator, WeekOf};
+use crate::types::WeekOfYear;
+use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
@@ -239,58 +240,6 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().day_of_year_info(&self.inner)
     }
 
-    /// The week of the month containing this date.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::types::WeekOfMonth;
-    /// use icu::calendar::types::Weekday;
-    /// use icu::calendar::Date;
-    ///
-    /// let date = Date::try_new_iso(2022, 8, 10).unwrap(); // second Wednesday
-    ///
-    /// // The following info is usually locale-specific
-    /// let first_weekday = Weekday::Sunday;
-    ///
-    /// assert_eq!(date.week_of_month(first_weekday), WeekOfMonth(2));
-    /// ```
-    pub fn week_of_month(&self, first_weekday: types::Weekday) -> types::WeekOfMonth {
-        let config = WeekCalculator {
-            first_weekday,
-            min_week_days: 0, // ignored
-            weekend: None,
-        };
-        config.week_of_month(self.day_of_month(), self.day_of_week())
-    }
-
-    /// The week of the year containing this date.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::week::RelativeUnit;
-    /// use icu::calendar::week::WeekCalculator;
-    /// use icu::calendar::week::WeekOf;
-    /// use icu::calendar::Date;
-    ///
-    /// let date = Date::try_new_iso(2022, 8, 26).unwrap();
-    ///
-    /// // The following info is usually locale-specific
-    /// let week_calculator = WeekCalculator::default();
-    ///
-    /// assert_eq!(
-    ///     date.week_of_year(&week_calculator),
-    ///     WeekOf {
-    ///         week: 35,
-    ///         unit: RelativeUnit::Current
-    ///     }
-    /// );
-    /// ```
-    pub fn week_of_year(&self, config: &WeekCalculator) -> WeekOf {
-        config.week_of_year(self.day_of_year_info(), self.day_of_week())
-    }
-
     /// Construct a date from raw values for a given calendar. This does not check any
     /// invariants for the date and calendar, and should only be called by calendar implementations.
     ///
@@ -340,6 +289,52 @@ impl Date<Iso> {
     #[doc(hidden)] // unstable
     pub fn days_since(&self, other: Date<Iso>) -> i32 {
         (Iso::to_fixed(*self) - Iso::to_fixed(other)) as i32
+    }
+
+    /// The ISO week of the year containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::WeekOfYear;
+    ///
+    /// let date = Date::try_new_iso(2022, 8, 26).unwrap();
+    ///
+    /// assert_eq!(
+    ///     date.week_of_year(),
+    ///     WeekOfYear {
+    ///         week_number: 34,
+    ///         iso_year: 2022,
+    ///     }
+    /// );
+    /// ```
+    pub fn week_of_year(&self) -> WeekOfYear {
+        let day_of_year_info = self.day_of_year_info();
+        let week_of = WeekCalculator::ISO
+            .week_of(
+                day_of_year_info.days_in_prev_year,
+                day_of_year_info.days_in_year,
+                day_of_year_info.day_of_year,
+                self.day_of_week(),
+            )
+            .unwrap_or_else(|_| {
+                // ISO calendar has more than 14 days per year
+                debug_assert!(false);
+                WeekOf {
+                    week: 1,
+                    unit: crate::week::RelativeUnit::Current,
+                }
+            });
+
+        WeekOfYear {
+            week_number: week_of.week,
+            iso_year: match week_of.unit {
+                RelativeUnit::Current => self.year().extended_year,
+                RelativeUnit::Next => self.year().extended_year + 1,
+                RelativeUnit::Previous => self.year().extended_year - 1,
+            },
+        }
     }
 }
 

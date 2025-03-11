@@ -174,6 +174,7 @@ lazy_static::lazy_static! {
         "icu::locale::preferences::extensions::unicode::errors::PreferencesParseError",
         "icu::calendar::AnyCalendarPreferences",
         "icu::calendar::any_calendar::AnyCalendarPreferences",
+        "icu::calendar::week::WeekPreferences",
         "icu::datetime::DateTimeFormatterPreferences",
         "icu::decimal::DecimalFormatterPreferences",
         "icu::list::ListFormatterPreferences",

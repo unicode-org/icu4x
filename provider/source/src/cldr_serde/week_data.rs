@@ -7,12 +7,9 @@
 //! Sample file:
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
-use core::convert::TryFrom;
 use icu::locale::{subtags::region, subtags::Region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
-use std::num::ParseIntError;
-use std::str::FromStr;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -106,23 +103,10 @@ impl<'de> Deserialize<'de> for Territory {
     }
 }
 
-/// Wrapper used to deserialize json string keys as u8s.
-#[derive(Debug, Deserialize)]
-#[serde(try_from = "String")]
-pub(crate) struct U8(pub(crate) u8);
-
-impl TryFrom<String> for U8 {
-    type Error = ParseIntError;
-
-    fn try_from(s: String) -> Result<Self, Self::Error> {
-        Ok(Self(u8::from_str(&s)?))
-    }
-}
-
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct WeekData {
-    pub(crate) min_days: BTreeMap<Territory, U8>,
+    pub(crate) min_days: BTreeMap<Territory, String>,
     pub(crate) first_day: BTreeMap<Territory, Weekday>,
     pub(crate) weekend_start: BTreeMap<Territory, Weekday>,
     pub(crate) weekend_end: BTreeMap<Territory, Weekday>,

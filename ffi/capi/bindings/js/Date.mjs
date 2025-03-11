@@ -3,8 +3,6 @@ import { Calendar } from "./Calendar.mjs"
 import { CalendarError } from "./CalendarError.mjs"
 import { CalendarParseError } from "./CalendarParseError.mjs"
 import { IsoDate } from "./IsoDate.mjs"
-import { WeekCalculator } from "./WeekCalculator.mjs"
-import { WeekOf } from "./WeekOf.mjs"
 import { Weekday } from "./Weekday.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -163,30 +161,6 @@ export class Date {
         }
         
         finally {}
-    }
-
-    weekOfMonth(firstWeekday) {
-        const result = wasm.icu4x_Date_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
-    }
-
-    weekOfYear(calculator) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
-        
-        const result = wasm.icu4x_Date_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
-    
-        try {
-            return WeekOf._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
     }
 
     get ordinalMonth() {

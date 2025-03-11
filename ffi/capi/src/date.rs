@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use ffi::WeekOfYear;
+
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
@@ -15,9 +17,6 @@ pub mod ffi {
     use crate::errors::ffi::{CalendarError, CalendarParseError};
 
     use tinystr::TinyAsciiStr;
-
-    #[cfg(feature = "calendar")]
-    use crate::week::ffi::WeekCalculator;
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
     pub enum Weekday {
@@ -88,30 +87,11 @@ pub mod ffi {
             self.0.day_of_week().into()
         }
 
-        /// Returns the week number in this month, 1-indexed, based on what
-        /// is considered the first day of the week (often a locale preference).
-        ///
-        /// `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
-        #[diplomat::rust_link(icu::calendar::Date::week_of_month, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::calendar::week::WeekCalculator::week_of_month,
-            FnInStruct,
-            hidden
-        )]
-        pub fn week_of_month(&self, first_weekday: Weekday) -> u8 {
-            self.0.week_of_month(first_weekday.into()).0
-        }
-
         /// Returns the week number in this year, using week data
         #[diplomat::rust_link(icu::calendar::Date::week_of_year, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::calendar::week::WeekCalculator::week_of_year,
-            FnInStruct,
-            hidden
-        )]
         #[cfg(feature = "calendar")]
-        pub fn week_of_year(&self, calculator: &WeekCalculator) -> crate::week::ffi::WeekOf {
-            self.0.week_of_year(&calculator.0).into()
+        pub fn week_of_year(&self) -> WeekOfYear {
+            self.0.week_of_year().into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year
@@ -260,32 +240,6 @@ pub mod ffi {
             self.0.day_of_week().into()
         }
 
-        /// Returns the week number in this month, 1-indexed, based on what
-        /// is considered the first day of the week (often a locale preference).
-        ///
-        /// `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
-        #[diplomat::rust_link(icu::calendar::Date::week_of_month, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::calendar::week::WeekCalculator::week_of_month,
-            FnInStruct,
-            hidden
-        )]
-        pub fn week_of_month(&self, first_weekday: Weekday) -> u8 {
-            self.0.week_of_month(first_weekday.into()).0
-        }
-
-        /// Returns the week number in this year, using week data
-        #[diplomat::rust_link(icu::calendar::Date::week_of_year, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::calendar::week::WeekCalculator::week_of_year,
-            FnInStruct,
-            hidden
-        )]
-        #[cfg(feature = "calendar")]
-        pub fn week_of_year(&self, calculator: &WeekCalculator) -> crate::week::ffi::WeekOf {
-            self.0.week_of_year(&calculator.0).into()
-        }
-
         /// Returns 1-indexed number of the month of this date in its year
         ///
         /// Note that for lunar calendars this may not lead to the same month
@@ -395,6 +349,25 @@ pub mod ffi {
         #[diplomat::attr(auto, getter)]
         pub fn calendar(&self) -> Box<Calendar> {
             Box::new(Calendar(self.0.calendar_wrapper().clone()))
+        }
+    }
+
+    pub struct WeekOfYear {
+        pub week_number: u8,
+        pub iso_year: i32,
+    }
+}
+
+impl From<icu_calendar::types::WeekOfYear> for WeekOfYear {
+    fn from(
+        icu_calendar::types::WeekOfYear {
+            week_number,
+            iso_year,
+        }: icu_calendar::types::WeekOfYear,
+    ) -> Self {
+        Self {
+            week_number,
+            iso_year,
         }
     }
 }
