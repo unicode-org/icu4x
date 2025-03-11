@@ -33,7 +33,7 @@ use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 ///
 /// # Era codes
 ///
-/// This calendar supports a single era code, Anno Mundi, with code `"am"`
+/// This calendar uses a single era code `hebrew` (alias `am`), Anno Mundi.
 ///
 /// # Month codes
 ///
@@ -125,15 +125,14 @@ impl Calendar for Hebrew {
 
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "hebrew") && era.0 != tinystr!(16, "am") {
-                return Err(DateError::UnknownEra(era));
-            }
+        match era {
+            Some("hebrew" | "am") | None => {}
+            _ => return Err(DateError::UnknownEra),
         }
 
         let year_info = HebrewYearInfo::compute(year);
@@ -363,7 +362,7 @@ impl Date<Hebrew> {
 mod tests {
 
     use super::*;
-    use crate::types::{Era, MonthCode};
+    use crate::types::MonthCode;
     use calendrical_calculations::hebrew_keviyah::*;
 
     // Sentinel value for Adar I
@@ -438,9 +437,8 @@ mod tests {
             } else {
                 MonthCode::new_normal(m).unwrap()
             };
-            let hebrew_date =
-                Date::try_new_from_codes(Some(Era(tinystr!(16, "am"))), y, month_code, d, Hebrew)
-                    .expect("Date should parse");
+            let hebrew_date = Date::try_new_from_codes(Some("am"), y, month_code, d, Hebrew)
+                .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
@@ -505,7 +503,7 @@ mod tests {
     fn test_weekdays() {
         // https://github.com/unicode-org/icu4x/issues/4893
         let cal = Hebrew::new();
-        let era = Era(tinystr!(16, "am"));
+        let era = "am";
         let month_code = MonthCode(tinystr!(4, "M01"));
         let dt = cal.date_from_codes(Some(era), 3760, month_code, 1).unwrap();
 

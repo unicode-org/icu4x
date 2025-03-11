@@ -49,7 +49,7 @@ impl IterableDataProviderCached<ScriptDisplayNamesV1> for SourceDataProvider {
 }
 
 /// Substring used to denote alternative display names data variants for a given script. For example: "BA-alt-short", "TL-alt-variant".
-/// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
+// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";

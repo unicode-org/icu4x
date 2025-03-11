@@ -172,6 +172,7 @@ macro_rules! impl_marker_with_options {
         $(#[$attr:meta])*
         $type:ident,
         $(sample_length: $sample_length:ident,)?
+        $(date_fields: $date_fields:expr,)?
         $(alignment: $alignment_yes:ident,)?
         $(year_style: $yearstyle_yes:ident,)?
         $(time_precision: $timeprecision_yes:ident,)?
@@ -209,7 +210,8 @@ macro_rules! impl_marker_with_options {
         impl $type {
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
-                    length: yes_or!(self.length, $(Length::$length_override)?),
+                    length: yes_or!(Some(self.length), $(Some(Length::$length_override))?),
+                    date_fields: yes_or!(None, $($date_fields)?),
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
                     time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
@@ -392,6 +394,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             $(#[$attr])*
             $type,
             sample_length: $sample_length,
+            date_fields: Some(builder::DateFields::$type),
             $(alignment: $option_alignment_yes,)?
             $(year_style: $year_yes,)?
         );
@@ -548,6 +551,7 @@ macro_rules! impl_date_marker {
             $(#[$attr])*
             $type_time,
             sample_length: $sample_length,
+            date_fields: Some(builder::DateFields::$type),
             alignment: yes,
             $(year_style: $year_yes,)?
             time_precision: yes,

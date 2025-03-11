@@ -1481,7 +1481,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_winter),
-    ///     "Your time zone is: GMT",
+    ///     "Your time zone is: GMT+00:00",
     /// );
     /// assert_try_writeable_eq!(
     ///     names

@@ -6,7 +6,6 @@ use std::collections::HashSet;
 
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use calendar::patterns::GenericLengthPatterns;
-use either::Either;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::provider::calendar::{DateSkeletonPatterns, TimeLengths};
@@ -14,18 +13,17 @@ use icu::datetime::provider::fields::components;
 use icu::datetime::provider::pattern::{reference, runtime};
 use icu::datetime::provider::skeleton::PatternPlurals;
 use icu::datetime::provider::*;
-use icu::locale::extensions::unicode::{value, Value};
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
-use super::supported_cals;
+use super::DatagenCalendar;
 
 impl SourceDataProvider {
     fn load_neo_skeletons_key<M>(
         &self,
         req: DataRequest,
-        calendar: Either<&Value, &str>,
+        calendar: Option<DatagenCalendar>,
         to_components_bag: impl Fn(
             Length,
             &DataMarkerAttributes,
@@ -54,7 +52,7 @@ impl SourceDataProvider {
     fn make_packed_skeleton_data(
         &self,
         locale: &DataLocale,
-        calendar: Either<&Value, &str>,
+        calendar: Option<DatagenCalendar>,
         attributes: &DataMarkerAttributes,
         to_components_bag: impl Fn(
             Length,
@@ -191,15 +189,11 @@ impl SourceDataProvider {
 
     fn neo_date_skeleton_supported_locales(
         &self,
-        calendar: &Value,
+        calendar: DatagenCalendar,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let cldr_cal = supported_cals()
-            .get(calendar)
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
-
         Ok(self
             .cldr()?
-            .dates(cldr_cal)
+            .dates(calendar.cldr_name())
             .list_locales()?
             .flat_map(|locale| {
                 DateFieldSet::ALL_DATA_MARKER_ATTRIBUTES
@@ -375,7 +369,7 @@ fn gen_date_components(
 
 impl DataProvider<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimeNeoSkeletonPatternsV1>, DataError> {
-        self.load_neo_skeletons_key(req, Either::Right("generic"), gen_time_components)
+        self.load_neo_skeletons_key(req, None, gen_time_components)
     }
 }
 
@@ -389,35 +383,43 @@ macro_rules! impl_neo_skeleton_datagen {
     ($marker:ident, $calendar:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_skeletons_key(
-                    req,
-                    Either::Left(&value!($calendar)),
-                    gen_date_components,
-                )
+                self.load_neo_skeletons_key(req, Some($calendar), gen_date_components)
             }
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.neo_date_skeleton_supported_locales(&value!($calendar))
+                self.neo_date_skeleton_supported_locales($calendar)
             }
         }
     };
 }
 
-impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1, "buddhist");
-impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1, "chinese");
-impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1, "coptic");
-impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1, "dangi");
-impl_neo_skeleton_datagen!(EthiopianDateNeoSkeletonPatternsV1, "ethiopic");
-impl_neo_skeleton_datagen!(GregorianDateNeoSkeletonPatternsV1, "gregory");
-impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, "hebrew");
-impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, "indian");
-impl_neo_skeleton_datagen!(HijriDateNeoSkeletonPatternsV1, "islamic");
-impl_neo_skeleton_datagen!(JapaneseDateNeoSkeletonPatternsV1, "japanese");
-impl_neo_skeleton_datagen!(JapaneseExtendedDateNeoSkeletonPatternsV1, "japanext");
-impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1, "persian");
-impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1, "roc");
+impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1, DatagenCalendar::Buddhist);
+impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1, DatagenCalendar::Chinese);
+impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1, DatagenCalendar::Coptic);
+impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1, DatagenCalendar::Dangi);
+impl_neo_skeleton_datagen!(
+    EthiopianDateNeoSkeletonPatternsV1,
+    DatagenCalendar::Ethiopic
+);
+impl_neo_skeleton_datagen!(
+    GregorianDateNeoSkeletonPatternsV1,
+    DatagenCalendar::Gregorian
+);
+impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, DatagenCalendar::Hebrew);
+impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, DatagenCalendar::Indian);
+impl_neo_skeleton_datagen!(HijriDateNeoSkeletonPatternsV1, DatagenCalendar::Islamic);
+impl_neo_skeleton_datagen!(
+    JapaneseDateNeoSkeletonPatternsV1,
+    DatagenCalendar::JapaneseModern
+);
+impl_neo_skeleton_datagen!(
+    JapaneseExtendedDateNeoSkeletonPatternsV1,
+    DatagenCalendar::JapaneseExtended
+);
+impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1, DatagenCalendar::Persian);
+impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1, DatagenCalendar::Roc);
 
 #[test]
 fn test_en_year_patterns() {
@@ -574,7 +576,7 @@ mod date_skeleton_consistency_tests {
         skeleton_patterns: &'a DateSkeletonPatterns<'a>,
         preferred_hour_cycle: CoarseHourCycle,
         length_combinations_v1: &'a GenericLengthPatterns<'a>,
-        cldr_cal: &'a str,
+        cal: DatagenCalendar,
         locale: &'a DataLocale,
         skeleton_pattern_set: &'a HashSet<String>,
         pattern_canonicalization_strategy: PatternCanonicalizationStrategy,
@@ -694,11 +696,11 @@ mod date_skeleton_consistency_tests {
         // Check if there is a match
         if expected_pattern != selected_pattern {
             let locale = data.locale;
-            let cal = data.cldr_cal;
+            let cal = data.cal;
             let length = info.length;
             let in_available_formats = data.skeleton_pattern_set.contains(&pattern_for_lookup);
             println!(
-                "{}\t{expected_pattern}\t{selected_pattern}\t{locale}\t{cal}\t{length}",
+                "{}\t{expected_pattern}\t{selected_pattern}\t{locale}\t{cal:?}\t{length}",
                 if in_available_formats {
                     "MATCH"
                 } else {
@@ -714,14 +716,12 @@ mod date_skeleton_consistency_tests {
 
     fn check_all_patterns_for_calendar_and_locale(
         provider: &SourceDataProvider,
-        cldr_cal: &str,
+        cal: DatagenCalendar,
         locale: &DataLocale,
         strictness: TestStrictness,
     ) -> usize {
         let mut num_problems = 0;
-        let data = provider
-            .get_datetime_resources(locale, Either::Right(cldr_cal))
-            .unwrap();
+        let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
         let time_lengths_v1 = TimeLengths::from(&data);
         let skeleton_patterns =
@@ -745,7 +745,7 @@ mod date_skeleton_consistency_tests {
             skeleton_patterns: &skeleton_patterns,
             preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
             length_combinations_v1: &length_combinations_v1,
-            cldr_cal,
+            cal,
             locale,
             skeleton_pattern_set: &skeleton_pattern_set,
             pattern_canonicalization_strategy: match strictness {
@@ -801,7 +801,7 @@ mod date_skeleton_consistency_tests {
         {
             num_problems += check_all_patterns_for_calendar_and_locale(
                 &provider,
-                "gregorian",
+                DatagenCalendar::Gregorian,
                 &locale,
                 TestStrictness::LowHangingFruit,
             );
@@ -818,14 +818,34 @@ mod date_skeleton_consistency_tests {
         let provider = SourceDataProvider::new_latest_tested();
 
         let mut num_problems = 0;
-        for (_calendar, cldr_cal) in supported_cals().iter() {
+        use DatagenCalendar::*;
+        for cal in [
+            Buddhist,
+            Chinese,
+            Coptic,
+            Dangi,
+            Ethiopic,
+            EthiopicAmeteAlem,
+            Gregorian,
+            Hebrew,
+            Indian,
+            Islamic,
+            IslamicCivil,
+            IslamicTabular,
+            IslamicRgsa,
+            IslamicUmmAlQura,
+            JapaneseExtended,
+            JapaneseModern,
+            Persian,
+            Roc,
+        ] {
             for locale in provider
                 .locales_for_coverage_levels([CoverageLevel::Modern])
                 .unwrap()
             {
                 num_problems += check_all_patterns_for_calendar_and_locale(
                     &provider,
-                    cldr_cal,
+                    cal,
                     &locale,
                     TestStrictness::Comprehensive,
                 );

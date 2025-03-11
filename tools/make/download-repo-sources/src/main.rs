@@ -67,6 +67,7 @@ fn main() -> eyre::Result<()> {
                 &mut ureq::get(resource)
                     .call()
                     .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                    .into_body()
                     .into_reader(),
                 &mut BufWriter::new(File::create(&root)?),
             )?;

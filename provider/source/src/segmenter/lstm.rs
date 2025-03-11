@@ -92,13 +92,13 @@ impl RawLstmData {
             return Err(DIMENSION_MISMATCH_ERROR);
         }
         // Unwraps okay: dimensions checked above
-        let mut fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
-        let mut fw_u = fw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let fw_b = fw_b.into_shape((4, hunits)).unwrap();
-        let mut bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
-        let mut bw_u = bw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let bw_b = bw_b.into_shape((4, hunits)).unwrap();
-        let mut time_w = time_w.into_shape((2, hunits, 4)).unwrap();
+        let mut fw_w = fw_w.into_shape_with_order((embedd_dim, 4, hunits)).unwrap();
+        let mut fw_u = fw_u.into_shape_with_order((hunits, 4, hunits)).unwrap();
+        let fw_b = fw_b.into_shape_with_order((4, hunits)).unwrap();
+        let mut bw_w = bw_w.into_shape_with_order((embedd_dim, 4, hunits)).unwrap();
+        let mut bw_u = bw_u.into_shape_with_order((hunits, 4, hunits)).unwrap();
+        let bw_b = bw_b.into_shape_with_order((4, hunits)).unwrap();
+        let mut time_w = time_w.into_shape_with_order((2, hunits, 4)).unwrap();
         fw_w.swap_axes(0, 2);
         fw_w.swap_axes(0, 1);
         fw_u.swap_axes(0, 2);

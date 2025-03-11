@@ -25,7 +25,7 @@ pub trait Calendar {
     /// The year is extended_year if no era is provided
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,

@@ -779,11 +779,11 @@ impl DataExporter for BakedExporter {
     }
 }
 
-/// TODO
+/// Metadata of a bake export
 pub struct BakedExporterCloseMetadata {
-    /// TODO
+    /// Per-marker size heuristics
     pub statistics: BTreeMap<DataMarkerInfo, Statistics>,
-    /// TODO
+    /// List of crates required to compile the output
     pub required_crates: BTreeSet<&'static str>,
 }
 

@@ -54,7 +54,7 @@ define_preferences!(
 ///
 /// // construct from era code, year, month code, day, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_date = Date::try_new_from_codes(Some(Era(tinystr!(16, "heisei"))), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
+/// let manual_date = Date::try_new_from_codes(Some("heisei"), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
 ///                     .expect("Failed to construct Date manually");
 ///
 ///
@@ -65,7 +65,7 @@ define_preferences!(
 ///
 /// // Construct a date in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_date = Date::try_new_japanese_with_calendar(Era(tinystr!(16, "heisei")), 15, 3, 28,
+/// let japanese_date = Date::try_new_japanese_with_calendar("heisei", 15, 3, 28,
 ///                                                         japanese_calendar).unwrap();
 /// // This is a Date<AnyCalendar>
 /// let any_japanese_date = japanese_date.to_any();
@@ -197,7 +197,7 @@ impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
@@ -1647,7 +1647,6 @@ mod tests {
         month_code: &str,
         day: u8,
     ) {
-        let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
         let date =
@@ -1687,7 +1686,6 @@ mod tests {
         day: u8,
         error: DateError,
     ) {
-        let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
         let date = Date::try_new_from_codes(Some(era), year, month, day, calendar);
@@ -1749,14 +1747,14 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(coptic, "ad", 100, "M03", 1);
-        single_test_roundtrip(coptic, "ad", 2000, "M03", 1);
+        single_test_roundtrip(coptic, "coptic", 100, "M03", 1);
+        single_test_roundtrip(coptic, "coptic", 2000, "M03", 1);
         // fails ISO roundtrip
         // single_test_roundtrip(coptic, "bd", 100, "M03", 1);
-        single_test_roundtrip(coptic, "ad", 100, "M13", 1);
+        single_test_roundtrip(coptic, "coptic", 100, "M13", 1);
         single_test_error(
             coptic,
-            "ad",
+            "coptic",
             100,
             "M14",
             1,
@@ -1764,7 +1762,7 @@ mod tests {
         );
         single_test_error(
             coptic,
-            "ad",
+            "coptic",
             0,
             "M03",
             1,
@@ -1777,7 +1775,7 @@ mod tests {
         );
         single_test_error(
             coptic,
-            "bd",
+            "coptic-inverse",
             0,
             "M03",
             1,
@@ -1793,7 +1791,7 @@ mod tests {
         single_test_roundtrip(ethiopian, "incar", 2000, "M03", 1);
         single_test_roundtrip(ethiopian, "incar", 2000, "M13", 1);
         // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopian, "pre-incar", 100, "M03", 1);
+        // single_test_roundtrip(ethiopian, "mundi", 5400, "M03", 1);
         single_test_error(
             ethiopian,
             "incar",
@@ -1809,15 +1807,15 @@ mod tests {
         );
         single_test_error(
             ethiopian,
-            "pre-incar",
-            0,
+            "mundi",
+            5600,
             "M03",
             1,
             DateError::Range {
                 field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
+                value: 5600,
+                min: i32::MIN,
+                max: 5500,
             },
         );
         single_test_error(
@@ -2001,12 +1999,12 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(persian, "ah", 477, "M03", 1);
-        single_test_roundtrip(persian, "ah", 2083, "M07", 21);
-        single_test_roundtrip(persian, "ah", 1600, "M12", 20);
+        single_test_roundtrip(persian, "ap", 477, "M03", 1);
+        single_test_roundtrip(persian, "ap", 2083, "M07", 21);
+        single_test_roundtrip(persian, "ap", 1600, "M12", 20);
         single_test_error(
             persian,
-            "ah",
+            "ap",
             100,
             "M9",
             1,

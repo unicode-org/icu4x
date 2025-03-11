@@ -35,7 +35,7 @@ twox-hash = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = { workspace = true }
-getrandom = { workspace = true, features = ["js"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
 iai = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 postcard = { workspace = true, features = ["use-std"] }

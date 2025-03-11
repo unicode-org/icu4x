@@ -5,10 +5,10 @@
 //! High-level entrypoints for Neo DateTime Formatter
 
 use crate::error::DateTimeFormatterLoadError;
-use crate::external_loaders::*;
+use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
-use crate::format::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
 use crate::pattern::*;
 use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
@@ -19,6 +19,7 @@ use crate::scaffold::{
 };
 use crate::size_test_macro::size_test;
 use crate::MismatchedCalendarError;
+use crate::{external_loaders::*, DateTimeWriteError};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
@@ -26,7 +27,7 @@ use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
-use writeable::{impl_display_with_writeable, Writeable};
+use writeable::{impl_display_with_writeable, TryWriteable, Writeable};
 
 define_preferences!(
     /// The user locale preferences for datetime formatting.
@@ -355,10 +356,85 @@ where
     where
         I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
     {
-        let input = ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
+        let input =
+            DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(input);
         FormattedDateTime {
             pattern: self.selection.select(&input),
             input,
+            names: self.names.as_borrowed(),
+        }
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<C, FSet> {
+    /// Formats a datetime without enforcing either the field set or the calendar.
+    ///
+    /// This function is useful when the caller knows something about the field set that the
+    /// type system is unaware of. For example, if the formatter is represented with a
+    /// [dynamic field set](crate::fieldsets::enums), the caller may be able to provide a
+    /// narrower type for formatting.
+    ///
+    /// ❗ The caller must ensure that:
+    ///
+    /// 1. The calendar of the input matches the calendar of the formatter
+    /// 2. The fields of the input are a superset of the fields of the formatter
+    ///
+    /// Returns a [`FormattedDateTimeUnchecked`] to surface errors when they occur,
+    /// but not every invariant will result in an error. Use with caution!
+    ///
+    /// # Examples
+    ///
+    /// In the following example, we know that the formatter's field set is [`YMD`], but the
+    /// type system thinks we are a [`CompositeFieldSet`], which requires a [`ZonedDateTime`]
+    /// as input. However, since [`Date`] contains all the fields required by [`YMD`], we can
+    /// successfully pass it into [`format_unchecked`].
+    ///
+    /// ```
+    /// use icu::calendar::cal::Buddhist;
+    /// use icu::datetime::fieldsets::{T, YMD};
+    /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+    /// use icu::datetime::input::{Date, Time};
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::DateTimeWriteError;
+    /// use icu::datetime::DateTimeInputUnchecked;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = FixedCalendarDateTimeFormatter::<Buddhist, _>::try_new(
+    ///     locale!("th").into(),
+    ///     YMD::long(),
+    /// )
+    /// .unwrap()
+    /// .cast_into_fset::<CompositeFieldSet>();
+    ///
+    /// // Create a date and convert it to the correct calendar:
+    /// let date = Date::try_new_iso(2025, 3, 7).unwrap().to_calendar(Buddhist);
+    ///
+    /// // Extract the fields and use it with format_unchecked:
+    /// let mut input = DateTimeInputUnchecked::default();
+    /// input.set_date_fields(date);
+    /// let result = formatter.format_unchecked(input);
+    ///
+    /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
+    ///
+    /// // If we don't give all needed fields, we will get an error!
+    /// let mut input = DateTimeInputUnchecked::default();
+    /// let result = formatter.format_unchecked(input);
+    /// assert_try_writeable_eq!(
+    ///     result,
+    ///     "{d} {M} {G} {y}",
+    ///     Err(DateTimeWriteError::MissingInputField("day_of_month"))
+    /// );
+    /// ```
+    ///
+    /// [`Date`]: crate::input::Date
+    /// [`ZonedDateTime`]: crate::input::ZonedDateTime
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`format_unchecked`]: Self::format_unchecked
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+        FormattedDateTimeUnchecked {
+            pattern: self.selection.select(&datetime),
+            input: datetime,
             names: self.names.as_borrowed(),
         }
     }
@@ -621,8 +697,9 @@ where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {
         datetime.check_any_calendar_kind(self.calendar.kind())?;
-        let datetime =
-            ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime);
+        let datetime = DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(
+            datetime,
+        );
         Ok(FormattedDateTime {
             pattern: self.selection.select(&datetime),
             input: datetime,
@@ -679,11 +756,86 @@ where
         I::Converted<'a>: Sized + AllInputMarkers<FSet>,
     {
         let datetime = datetime.to_calendar(&self.calendar);
-        let datetime =
-            ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I::Converted<'a>>(
-                &datetime,
-            );
+        let datetime = DateTimeInputUnchecked::extract_from_neo_input::<
+            FSet::D,
+            FSet::T,
+            FSet::Z,
+            I::Converted<'a>,
+        >(&datetime);
         FormattedDateTime {
+            pattern: self.selection.select(&datetime),
+            input: datetime,
+            names: self.names.as_borrowed(),
+        }
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
+    /// Formats a datetime without enforcing either the field set or the calendar.
+    ///
+    /// This function is useful when the caller knows something about the field set that the
+    /// type system is unaware of. For example, if the formatter is represented with a
+    /// [dynamic field set](crate::fieldsets::enums), the caller may be able to provide a
+    /// narrower type for formatting.
+    ///
+    /// ❗ The caller must ensure that:
+    ///
+    /// 1. The calendar of the input matches the calendar of the formatter
+    /// 2. The fields of the input are a superset of the fields of the formatter
+    ///
+    /// Returns a [`FormattedDateTimeUnchecked`] to surface errors when they occur,
+    /// but not every invariant will result in an error. Use with caution!
+    ///
+    /// # Examples
+    ///
+    /// In the following example, we know that the formatter's field set is [`YMD`], but the
+    /// type system thinks we are a [`CompositeFieldSet`], which requires a [`ZonedDateTime`]
+    /// as input. However, since [`Date`] contains all the fields required by [`YMD`], we can
+    /// successfully pass it into [`format_unchecked`].
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::{T, YMD};
+    /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+    /// use icu::datetime::input::{Date, Time};
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::DateTimeWriteError;
+    /// use icu::datetime::DateTimeInputUnchecked;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let formatter = DateTimeFormatter::try_new(
+    ///     locale!("th").into(),
+    ///     YMD::long(),
+    /// )
+    /// .unwrap()
+    /// .cast_into_fset::<CompositeFieldSet>();
+    ///
+    /// // Create a date and convert it to the correct calendar:
+    /// let date = Date::try_new_iso(2025, 3, 7).unwrap().to_calendar(formatter.calendar());
+    ///
+    /// // Extract the fields and use it with format_unchecked:
+    /// let mut input = DateTimeInputUnchecked::default();
+    /// input.set_date_fields(date);
+    /// let result = formatter.format_unchecked(input);
+    ///
+    /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
+    ///
+    /// // If we don't give all needed fields, we will get an error!
+    /// let mut input = DateTimeInputUnchecked::default();
+    /// let result = formatter.format_unchecked(input);
+    /// assert_try_writeable_eq!(
+    ///     result,
+    ///     "{d} {M} {G} {y}",
+    ///     Err(DateTimeWriteError::MissingInputField("day_of_month"))
+    /// );
+    /// ```
+    ///
+    /// [`Date`]: crate::input::Date
+    /// [`ZonedDateTime`]: crate::input::ZonedDateTime
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`format_unchecked`]: Self::format_unchecked
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+        FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
             names: self.names.as_borrowed(),
@@ -770,6 +922,60 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
             names: self.names.cast_into_fset(),
             _calendar: PhantomData,
         }
+    }
+
+    /// Gets a [`FieldSetBuilder`] corresponding to the fields and options configured in this
+    /// formatter. The builder can be used to recreate the formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::input::*;
+    /// use icu::datetime::options::*;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a simple YMDT formatter:
+    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     YMDT::long().hm().with_alignment(Alignment::Column)
+    /// )
+    /// .unwrap();
+    ///
+    /// // Get the builder corresponding to it:
+    /// let builder = formatter.to_field_set_builder();
+    ///
+    /// // Check that the builder is what we expect:
+    /// let mut equivalent_builder = FieldSetBuilder::default();
+    /// equivalent_builder.length = Some(Length::Long);
+    /// equivalent_builder.date_fields = Some(DateFields::YMD);
+    /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
+    /// equivalent_builder.alignment = Some(Alignment::Column);
+    /// assert_eq!(
+    ///     builder,
+    ///     equivalent_builder,
+    /// );
+    ///
+    /// // Check that it creates a formatter with equivalent behavior:
+    /// let built_formatter = FixedCalendarDateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     builder.build_composite_datetime().unwrap(),
+    /// )
+    /// .unwrap();
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_gregorian(2025, 3, 6).unwrap(),
+    ///     time: Time::try_new(16, 41, 0, 0).unwrap(),
+    /// };
+    /// assert_eq!(
+    ///     formatter.format(&datetime).to_string(),
+    ///     built_formatter.format(&datetime).to_string(),
+    /// );
+    /// ```
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        self.selection.to_builder()
     }
 }
 
@@ -903,6 +1109,60 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
         icu_calendar::Ref(&self.calendar)
     }
+
+    /// Gets a [`FieldSetBuilder`] corresponding to the fields and options configured in this
+    /// formatter. The builder can be used to recreate the formatter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::input::*;
+    /// use icu::datetime::options::*;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create a simple YMDT formatter:
+    /// let formatter = DateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     YMDT::long().hm().with_alignment(Alignment::Column)
+    /// )
+    /// .unwrap();
+    ///
+    /// // Get the builder corresponding to it:
+    /// let builder = formatter.to_field_set_builder();
+    ///
+    /// // Check that the builder is what we expect:
+    /// let mut equivalent_builder = FieldSetBuilder::default();
+    /// equivalent_builder.length = Some(Length::Long);
+    /// equivalent_builder.date_fields = Some(DateFields::YMD);
+    /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
+    /// equivalent_builder.alignment = Some(Alignment::Column);
+    /// assert_eq!(
+    ///     builder,
+    ///     equivalent_builder,
+    /// );
+    ///
+    /// // Check that it creates a formatter with equivalent behavior:
+    /// let built_formatter = DateTimeFormatter::try_new(
+    ///     locale!("und").into(),
+    ///     builder.build_composite_datetime().unwrap(),
+    /// )
+    /// .unwrap();
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_iso(2025, 3, 6).unwrap(),
+    ///     time: Time::try_new(16, 41, 0, 0).unwrap(),
+    /// };
+    /// assert_eq!(
+    ///     formatter.format(&datetime).to_string(),
+    ///     built_formatter.format(&datetime).to_string(),
+    /// );
+    /// ```
+    pub fn to_field_set_builder(&self) -> FieldSetBuilder {
+        self.selection.to_builder()
+    }
 }
 
 /// A formatter optimized for time and time zone formatting, when a calendar is not needed.
@@ -943,7 +1203,7 @@ pub type NoCalendarFormatter<FSet> = FixedCalendarDateTimeFormatter<(), FSet>;
 #[derive(Debug)]
 pub struct FormattedDateTime<'a> {
     pattern: DateTimeZonePatternDataBorrowed<'a>,
-    input: ExtractedInput,
+    input: DateTimeInputUnchecked,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
@@ -980,6 +1240,47 @@ impl Writeable for FormattedDateTime<'_> {
 impl_display_with_writeable!(FormattedDateTime<'_>);
 
 impl FormattedDateTime<'_> {
+    /// Gets the pattern used in this formatted value.
+    ///
+    /// From the pattern, one can check the properties of the included components, such as
+    /// the hour cycle being used for formatting. See [`DateTimePattern`].
+    pub fn pattern(&self) -> DateTimePattern {
+        self.pattern.to_pattern()
+    }
+}
+
+/// An intermediate type during a datetime formatting operation with dynamic input.
+///
+/// Unlike [`FormattedDateTime`], converting this to a string could fail.
+///
+/// Not intended to be stored: convert to a string first.
+#[derive(Debug)]
+pub struct FormattedDateTimeUnchecked<'a> {
+    pattern: DateTimeZonePatternDataBorrowed<'a>,
+    input: DateTimeInputUnchecked,
+    names: RawDateTimeNamesBorrowed<'a>,
+}
+
+impl TryWriteable for FormattedDateTimeUnchecked<'_> {
+    type Error = DateTimeWriteError;
+    fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
+        &self,
+        sink: &mut S,
+    ) -> Result<Result<(), Self::Error>, fmt::Error> {
+        try_write_pattern_items(
+            self.pattern.metadata(),
+            self.pattern.iter_items(),
+            &self.input,
+            &self.names,
+            self.names.decimal_formatter,
+            sink,
+        )
+    }
+
+    // TODO(#489): Implement writeable_length_hint
+}
+
+impl FormattedDateTimeUnchecked<'_> {
     /// Gets the pattern used in this formatted value.
     ///
     /// From the pattern, one can check the properties of the included components, such as

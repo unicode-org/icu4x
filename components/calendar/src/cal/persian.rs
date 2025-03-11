@@ -32,7 +32,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Era codes
 ///
-/// This calendar supports only one era code, which starts from the year of the Hijra, designated as "ah".
+/// This calendar uses a single era code: `persian` (alias `ap`), with AP starting the year of the Hijra.
 ///
 /// # Month codes
 ///
@@ -88,16 +88,15 @@ impl Calendar for Persian {
     type DateInner = PersianDateInner;
     fn date_from_codes(
         &self,
-        era: Option<types::Era>,
+        era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        if let Some(era) = era {
-            if era.0 != tinystr!(16, "ah") && era.0 != tinystr!(16, "persian") {
-                return Err(DateError::UnknownEra(era));
-            }
-        }
+        let year = match era {
+            Some("persian" | "ap") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
     }

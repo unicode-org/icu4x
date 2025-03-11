@@ -10,8 +10,8 @@
 //! This file contains important structs and functions relating to location,
 //! time, and astronomy; these are intended for calender calculations and based off
 //! _Calendrical Calculations_ by Reingold & Dershowitz.
-//!
-//! TODO(#3709): Address inconcistencies with existing ICU code for extreme dates.
+
+// TODO(#3709): Address inconcistencies with existing ICU code for extreme dates.
 
 use crate::error::LocationOutOfBoundsError;
 use crate::helpers::{binary_search, i64_to_i32, invert_angular, next_moment, poly};
