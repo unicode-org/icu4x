@@ -60,13 +60,44 @@ pub fn find_posix_alias(
     }
 }
 
+/// Find a matching CLDR collation identifier according to a Windows
+/// "Sort Order Identifier".
+/// The full table is available at:
+/// <https://learn.microsoft.com/en-us/windows/win32/intl/sort-order-identifiers>
 #[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
-pub fn find_windows_alias(lcid: &str) -> Option<icu_locale::Locale> {
-    use icu_locale::locale;
+pub fn strip_windows_collation_suffix_lossy(
+    lcid: &str,
+) -> (&str, Option<icu_locale::extensions::unicode::Value>) {
+    use icu_locale::extensions::unicode::value;
+
+    // All known LCIDs containing an underscore are used for a collation suffix
+    if let Some((prefix, suffix)) = lcid.split_once('_') {
+        let collation_value = match suffix {
+            "phoneb" => value!("phonebk"),
+            "pronun" => value!("zhuyin"),
+            "radstr" => value!("stroke"),
+            "stroke" => value!("stroke"),
+            "tradnl" => value!("trad"),
+            // Strip the suffix on LCIDs with an underscore but no (known) matching CLDR data
+            "tchncl" | "modern" | _ => return (prefix, None),
+        };
+
+        // Return the LCID with the stripped prefix, and the matching CLDR collation key
+        (prefix, Some(collation_value))
+    } else {
+        // No underscore found, return the LCID as-is
+        (lcid, None)
+    }
+}
+
+#[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
+pub fn find_windows_alias_lossy(lcid: &str) -> Option<icu_locale::LanguageIdentifier> {
+    use icu_locale::langid;
 
     match lcid {
-        "es-ES_tradnl" => Some(locale!("es-ES-u-co-trad")),
-        "zh-yue-HK" => Some(locale!("yue-HK")),
+        "zh-yue-HK" => Some(langid!("yue-HK")),
+        // LCID with no (known) matching CLDR data: "math alphanumeric sorting"
+        "x-IV-mathan" => Some(langid!("und")),
         _ => None,
     }
 }
