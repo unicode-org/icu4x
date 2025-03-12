@@ -214,10 +214,6 @@ export { WeekCalculator } from "./WeekCalculator"
 
 export { WindowsParser } from "./WindowsParser"
 
-export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
-
-export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
-
 export { BidiDirection } from "./BidiDirection"
 
 export { AnyCalendarKind } from "./AnyCalendarKind"

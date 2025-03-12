@@ -83,7 +83,6 @@ part 'GraphemeClusterBreakIteratorUtf16.g.dart';
 part 'GraphemeClusterBreakIteratorUtf8.g.dart';
 part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
-part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'HangulSyllableType.g.dart';
 part 'IanaParser.g.dart';
 part 'IanaParserExtended.g.dart';
@@ -171,7 +170,6 @@ part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
 part 'YearStyle.g.dart';
 part 'ZonedDateTime.g.dart';
-part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedIsoDateTime.g.dart';
 
 class _DiplomatFfiUse extends meta.RecordUse {
