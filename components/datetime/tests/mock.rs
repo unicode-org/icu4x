@@ -6,7 +6,7 @@
 
 use icu_calendar::Gregorian;
 use icu_time::{
-    zone::{models, IanaParser, TimeZoneVariant, UtcOffsetCalculator},
+    zone::{models, IanaParser, TimeZoneVariant, VariantOffsetsCalculator},
     TimeZoneInfo, ZonedDateTime,
 };
 
@@ -35,7 +35,7 @@ pub fn parse_zoned_gregorian_from_str(
         input,
         Gregorian,
         IanaParser::new(),
-        &UtcOffsetCalculator::new(),
+        VariantOffsetsCalculator::new(),
     ) {
         Ok(zdt) => zdt,
         Err(icu_time::ParseError::MismatchedTimeZoneFields) => {

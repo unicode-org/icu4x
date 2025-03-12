@@ -160,21 +160,21 @@ where
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut london_winter = ZonedDateTime::try_from_str(
     ///     "2024-01-01T00:00:00+00:00[Europe/London]",
     ///     Gregorian,
     ///     IanaParser::new(),
-    ///     &UtcOffsetCalculator::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
     /// let mut london_summer = ZonedDateTime::try_from_str(
     ///     "2024-07-01T00:00:00+01:00[Europe/London]",
     ///     Gregorian,
     ///     IanaParser::new(),
-    ///     &UtcOffsetCalculator::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
     ///

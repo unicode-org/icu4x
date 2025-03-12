@@ -4,11 +4,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `UtcOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffsets.html) for more information.
+/** See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsets.html) for more information.
 */
 
 
-export class UtcOffsets {
+export class VariantOffsets {
     
     #standard;
     
@@ -24,11 +24,11 @@ export class UtcOffsets {
     
     #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
-            throw new Error("UtcOffsets's constructor takes an object of UtcOffsets's fields.");
+            throw new Error("VariantOffsets's constructor takes an object of VariantOffsets's fields.");
         }
 
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
-            throw new Error("UtcOffsets is an out struct and can only be created internally.");
+            throw new Error("VariantOffsets is an out struct and can only be created internally.");
         }
         if ("standard" in structObj) {
             this.#standard = structObj.standard;
@@ -60,11 +60,11 @@ export class UtcOffsets {
             throw new Error("_fromSuppliedValue cannot be called externally.");
         }
 
-        if (obj instanceof UtcOffsets) {
+        if (obj instanceof VariantOffsets) {
             return obj;
         }
 
-        return UtcOffsets.fromFields(obj);
+        return VariantOffsets.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -84,7 +84,7 @@ export class UtcOffsets {
     // should handle this when constructing edge arrays.
     static _fromFFI(internalConstructor, ptr) {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
-            throw new Error("UtcOffsets._fromFFI is not meant to be called externally. Please use the default constructor.");
+            throw new Error("VariantOffsets._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
         let structObj = {};
         const standardDeref = diplomatRuntime.ptrRead(wasm, ptr);
@@ -92,7 +92,7 @@ export class UtcOffsets {
         const daylightDeref = diplomatRuntime.ptrRead(wasm, ptr + 4);
         structObj.daylight = daylightDeref === 0 ? null : new UtcOffset(diplomatRuntime.internalConstructor, daylightDeref, []);
 
-        return new UtcOffsets(structObj, internalConstructor);
+        return new VariantOffsets(structObj, internalConstructor);
     }
 
     constructor(structObj, internalConstructor) {

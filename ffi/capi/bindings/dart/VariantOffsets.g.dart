@@ -3,13 +3,13 @@
 
 part of 'lib.g.dart';
 
-final class _UtcOffsetsFfi extends ffi.Struct {
+final class _VariantOffsetsFfi extends ffi.Struct {
   external ffi.Pointer<ffi.Opaque> standard;
   external ffi.Pointer<ffi.Opaque> daylight;
 }
 
-/// See the [Rust documentation for `UtcOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffsets.html) for more information.
-final class UtcOffsets {
+/// See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsets.html) for more information.
+final class VariantOffsets {
   final UtcOffset standard;
   final UtcOffset? daylight;
 
@@ -19,13 +19,13 @@ final class UtcOffsets {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  UtcOffsets._fromFfi(_UtcOffsetsFfi ffi) :
+  VariantOffsets._fromFfi(_VariantOffsetsFfi ffi) :
     standard = UtcOffset._fromFfi(ffi.standard, []),
     daylight = ffi.daylight.address == 0 ? null : UtcOffset._fromFfi(ffi.daylight, []);
 
   // ignore: unused_element
-  _UtcOffsetsFfi _toFfi(ffi.Allocator temp) {
-    final struct = ffi.Struct.create<_UtcOffsetsFfi>();
+  _VariantOffsetsFfi _toFfi(ffi.Allocator temp) {
+    final struct = ffi.Struct.create<_VariantOffsetsFfi>();
     struct.standard = standard._ffi;
     struct.daylight = daylight?._ffi ?? ffi.Pointer.fromAddress(0);
     return struct;
@@ -33,7 +33,7 @@ final class UtcOffsets {
 
   @override
   bool operator ==(Object other) =>
-      other is UtcOffsets &&
+      other is VariantOffsets &&
       other.standard == standard &&
       other.daylight == daylight;
 

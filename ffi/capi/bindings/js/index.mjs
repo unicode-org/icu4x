@@ -38,7 +38,7 @@ export { PluralCategories } from "./PluralCategories.mjs"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult.mjs"
 
-export { UtcOffsets } from "./UtcOffsets.mjs"
+export { VariantOffsets } from "./VariantOffsets.mjs"
 
 export { ZonedDateTime } from "./ZonedDateTime.mjs"
 
@@ -200,7 +200,7 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
 
 export { UtcOffset } from "./UtcOffset.mjs"
 
-export { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
+export { VariantOffsetsCalculator } from "./VariantOffsetsCalculator.mjs"
 
 export { WeekInformation } from "./WeekInformation.mjs"
 

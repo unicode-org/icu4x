@@ -17,17 +17,18 @@ pub mod ffi {
         timezone::ffi::TimeZone,
     };
 
-    #[diplomat::rust_link(icu::time::zone::UtcOffsetCalculator, Struct)]
+    #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator, Struct)]
+    #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculatorBorrowed, Struct, hidden)]
     #[diplomat::opaque]
-    pub struct UtcOffsetCalculator(pub icu_time::zone::UtcOffsetCalculator);
+    pub struct VariantOffsetsCalculator(pub icu_time::zone::VariantOffsetsCalculator);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::UtcOffset, Struct)]
     pub struct UtcOffset(pub(crate) icu_time::zone::UtcOffset);
 
     #[diplomat::out]
-    #[diplomat::rust_link(icu::time::zone::UtcOffsets, Struct)]
-    pub struct UtcOffsets {
+    #[diplomat::rust_link(icu::time::zone::VariantOffsets, Struct)]
+    pub struct VariantOffsets {
         pub standard: Box<UtcOffset>,
         pub daylight: Option<Box<UtcOffset>>,
     }
@@ -130,30 +131,37 @@ pub mod ffi {
         }
     }
 
-    impl UtcOffsetCalculator {
-        /// Construct a new [`UtcOffsetCalculator`] instance using compiled data.
-        #[diplomat::rust_link(icu::time::zone::UtcOffsetCalculator::new, FnInStruct)]
+    impl VariantOffsetsCalculator {
+        /// Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+        #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::new,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<UtcOffsetCalculator> {
-            Box::new(UtcOffsetCalculator(
-                icu_time::zone::UtcOffsetCalculator::new(),
+        pub fn create() -> Box<VariantOffsetsCalculator> {
+            Box::new(VariantOffsetsCalculator(
+                icu_time::zone::VariantOffsetsCalculator::new().static_to_owned(),
             ))
         }
-        /// Construct a new [`UtcOffsetCalculator`] instance using a particular data source.
-        #[diplomat::rust_link(icu::time::zone::UtcOffsetCalculator::new, FnInStruct)]
+        /// Construct a new [`VariantOffsetsCalculator`] instance using a particular data source.
+        #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<UtcOffsetCalculator>, DataError> {
-            Ok(Box::new(UtcOffsetCalculator(
-                icu_time::zone::UtcOffsetCalculator::try_new_with_buffer_provider(provider.get()?)?,
+        ) -> Result<Box<VariantOffsetsCalculator>, DataError> {
+            Ok(Box::new(VariantOffsetsCalculator(
+                icu_time::zone::VariantOffsetsCalculator::try_new_with_buffer_provider(
+                    provider.get()?,
+                )?,
             )))
         }
 
         #[diplomat::rust_link(
-            icu::time::zone::UtcOffsetCalculator::compute_offsets_from_time_zone,
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone,
             FnInStruct
         )]
         pub fn compute_offsets_from_time_zone(
@@ -161,14 +169,15 @@ pub mod ffi {
             time_zone: &TimeZone,
             local_date: &IsoDate,
             local_time: &Time,
-        ) -> Option<UtcOffsets> {
-            let icu_time::zone::UtcOffsets {
+        ) -> Option<VariantOffsets> {
+            let icu_time::zone::VariantOffsets {
                 standard, daylight, ..
             } = self
                 .0
+                .as_borrowed()
                 .compute_offsets_from_time_zone(time_zone.0, (local_date.0, local_time.0))?;
 
-            Some(UtcOffsets {
+            Some(VariantOffsets {
                 standard: Box::new(UtcOffset(standard)),
                 daylight: daylight.map(UtcOffset).map(Box::new),
             })

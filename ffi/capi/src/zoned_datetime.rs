@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::iana_parser::ffi::IanaParser;
     use crate::time::ffi::Time;
     use crate::timezone::ffi::TimeZoneInfo;
-    use crate::utc_offset::ffi::UtcOffsetCalculator;
+    use crate::variant_offset::ffi::VariantOffsetsCalculator;
 
     /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
@@ -34,14 +34,14 @@ pub mod ffi {
         pub fn from_string(
             v: &DiplomatStr,
             iana_parser: &IanaParser,
-            offset_calculator: &UtcOffsetCalculator,
+            offset_calculator: &VariantOffsetsCalculator,
         ) -> Result<ZonedIsoDateTime, CalendarParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_from_utf8(
                     v,
                     Iso,
                     iana_parser.0.as_borrowed(),
-                    &offset_calculator.0,
+                    offset_calculator.0.as_borrowed(),
                 )?;
             Ok(ZonedIsoDateTime {
                 date: Box::new(IsoDate(date)),
@@ -69,14 +69,14 @@ pub mod ffi {
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-            offset_calculator: &UtcOffsetCalculator,
+            offset_calculator: &VariantOffsetsCalculator,
         ) -> Result<ZonedDateTime, CalendarParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_from_utf8(
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),
-                    &offset_calculator.0,
+                    offset_calculator.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
