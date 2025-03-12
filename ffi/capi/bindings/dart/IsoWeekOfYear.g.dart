@@ -3,18 +3,18 @@
 
 part of 'lib.g.dart';
 
-final class _WeekOfYearFfi extends ffi.Struct {
+final class _IsoWeekOfYearFfi extends ffi.Struct {
   @ffi.Uint8()
   external int weekNumber;
   @ffi.Int32()
   external int isoYear;
 }
 
-final class WeekOfYear {
+final class IsoWeekOfYear {
   int weekNumber;
   int isoYear;
 
-  WeekOfYear({required this.weekNumber, required this.isoYear});
+  IsoWeekOfYear({required this.weekNumber, required this.isoYear});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -22,13 +22,13 @@ final class WeekOfYear {
   // This method does not attempt to handle any dependencies between lifetimes, the caller
   // should handle this when constructing edge arrays.
   // ignore: unused_element
-  WeekOfYear._fromFfi(_WeekOfYearFfi ffi) :
+  IsoWeekOfYear._fromFfi(_IsoWeekOfYearFfi ffi) :
     weekNumber = ffi.weekNumber,
     isoYear = ffi.isoYear;
 
   // ignore: unused_element
-  _WeekOfYearFfi _toFfi(ffi.Allocator temp) {
-    final struct = ffi.Struct.create<_WeekOfYearFfi>();
+  _IsoWeekOfYearFfi _toFfi(ffi.Allocator temp) {
+    final struct = ffi.Struct.create<_IsoWeekOfYearFfi>();
     struct.weekNumber = weekNumber;
     struct.isoYear = isoYear;
     return struct;
@@ -36,7 +36,7 @@ final class WeekOfYear {
 
   @override
   bool operator ==(Object other) =>
-      other is WeekOfYear &&
+      other is IsoWeekOfYear &&
       other.weekNumber == weekNumber &&
       other.isoYear == isoYear;
 

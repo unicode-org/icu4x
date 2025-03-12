@@ -4,7 +4,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 
-export class WeekOfYear {
+export class IsoWeekOfYear {
     
     #weekNumber;
     
@@ -24,16 +24,16 @@ export class WeekOfYear {
         this.#isoYear = value;
     }
     
-    /** Create `WeekOfYear` from an object that contains all of `WeekOfYear`s fields.
+    /** Create `IsoWeekOfYear` from an object that contains all of `IsoWeekOfYear`s fields.
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj) {
-        return new WeekOfYear(structObj);
+        return new IsoWeekOfYear(structObj);
     }
 
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
-            throw new Error("WeekOfYear's constructor takes an object of WeekOfYear's fields.");
+            throw new Error("IsoWeekOfYear's constructor takes an object of IsoWeekOfYear's fields.");
         }
 
         if ("weekNumber" in structObj) {
@@ -70,11 +70,11 @@ export class WeekOfYear {
             throw new Error("_fromSuppliedValue cannot be called externally.");
         }
 
-        if (obj instanceof WeekOfYear) {
+        if (obj instanceof IsoWeekOfYear) {
             return obj;
         }
 
-        return WeekOfYear.fromFields(obj);
+        return IsoWeekOfYear.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -95,7 +95,7 @@ export class WeekOfYear {
     // should handle this when constructing edge arrays.
     static _fromFFI(internalConstructor, ptr) {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
-            throw new Error("WeekOfYear._fromFFI is not meant to be called externally. Please use the default constructor.");
+            throw new Error("IsoWeekOfYear._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
         let structObj = {};
         const weekNumberDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0];
@@ -103,7 +103,7 @@ export class WeekOfYear {
         const isoYearDeref = (new Int32Array(wasm.memory.buffer, ptr + 4, 1))[0];
         structObj.isoYear = isoYearDeref;
 
-        return new WeekOfYear(structObj);
+        return new IsoWeekOfYear(structObj);
     }
 
     constructor(structObj) {

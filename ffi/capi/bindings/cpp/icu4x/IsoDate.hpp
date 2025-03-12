@@ -15,7 +15,7 @@
 #include "CalendarError.hpp"
 #include "CalendarParseError.hpp"
 #include "Date.hpp"
-#include "WeekOfYear.hpp"
+#include "IsoWeekOfYear.hpp"
 #include "Weekday.hpp"
 
 
@@ -39,7 +39,7 @@ namespace capi {
     
     icu4x::capi::Weekday icu4x_IsoDate_day_of_week_mv1(const icu4x::capi::IsoDate* self);
     
-    icu4x::capi::WeekOfYear icu4x_IsoDate_week_of_year_mv1(const icu4x::capi::IsoDate* self);
+    icu4x::capi::IsoWeekOfYear icu4x_IsoDate_week_of_year_mv1(const icu4x::capi::IsoDate* self);
     
     uint8_t icu4x_IsoDate_month_mv1(const icu4x::capi::IsoDate* self);
     
@@ -98,9 +98,9 @@ inline icu4x::Weekday icu4x::IsoDate::day_of_week() const {
   return icu4x::Weekday::FromFFI(result);
 }
 
-inline icu4x::WeekOfYear icu4x::IsoDate::week_of_year() const {
+inline icu4x::IsoWeekOfYear icu4x::IsoDate::week_of_year() const {
   auto result = icu4x::capi::icu4x_IsoDate_week_of_year_mv1(this->AsFFI());
-  return icu4x::WeekOfYear::FromFFI(result);
+  return icu4x::IsoWeekOfYear::FromFFI(result);
 }
 
 inline uint8_t icu4x::IsoDate::month() const {

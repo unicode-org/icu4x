@@ -4,7 +4,7 @@ export { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 
 export { CollatorOptions } from "./CollatorOptions.mjs"
 
-export { WeekOfYear } from "./WeekOfYear.mjs"
+export { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 

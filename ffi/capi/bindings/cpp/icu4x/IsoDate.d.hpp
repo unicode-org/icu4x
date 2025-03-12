@@ -17,7 +17,7 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
-struct WeekOfYear;
+struct IsoWeekOfYear;
 class CalendarError;
 class CalendarParseError;
 class Weekday;
@@ -48,7 +48,7 @@ public:
 
   inline icu4x::Weekday day_of_week() const;
 
-  inline icu4x::WeekOfYear week_of_year() const;
+  inline icu4x::IsoWeekOfYear week_of_year() const;
 
   inline uint8_t month() const;
 

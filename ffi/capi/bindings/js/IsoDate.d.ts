@@ -3,7 +3,7 @@ import type { Calendar } from "./Calendar"
 import type { CalendarError } from "./CalendarError"
 import type { CalendarParseError } from "./CalendarParseError"
 import type { Date } from "./Date"
-import type { WeekOfYear } from "./WeekOfYear"
+import type { IsoWeekOfYear } from "./IsoWeekOfYear"
 import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
@@ -30,7 +30,7 @@ export class IsoDate {
 
     get dayOfWeek(): Weekday;
 
-    weekOfYear(): WeekOfYear;
+    weekOfYear(): IsoWeekOfYear;
 
     get month(): number;
 
