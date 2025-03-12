@@ -1690,8 +1690,8 @@ mod impls {
         locale: &crate::locale_core::ffi::Locale,
         zone: Zone,
         load: impl FnOnce(
-            &mut DateTimeNames<icu_datetime::fieldsets::Combo<DateAndTimeFieldSet, Zone>>,
-        ) -> Result<(), icu_datetime::pattern::PatternLoadError>,
+            &mut DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
+        ) -> Result<(), PatternLoadError>,
         to_formatter: impl FnOnce(
             DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
             Combo<DateAndTimeFieldSet, Zone>,
@@ -1737,11 +1737,8 @@ mod impls {
         locale: &crate::locale_core::ffi::Locale,
         zone: Zone,
         load: impl FnOnce(
-            &mut FixedCalendarDateTimeNames<
-                Gregorian,
-                icu_datetime::fieldsets::Combo<DateAndTimeFieldSet, Zone>,
-            >,
-        ) -> Result<(), icu_datetime::pattern::PatternLoadError>,
+            &mut FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
+        ) -> Result<(), PatternLoadError>,
         to_formatter: impl FnOnce(
             FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
             Combo<DateAndTimeFieldSet, Zone>,
