@@ -5,7 +5,6 @@
 #![cfg(feature = "serde")]
 
 use icu_datetime::fieldsets::builder::FieldSetBuilder;
-use icu_datetime::provider::fields::components;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -27,44 +26,7 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOptions {
-    pub length: Option<TestOptionsLength>,
-    pub components: Option<TestComponentsBag>,
     pub semantic: Option<FieldSetBuilder>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestOptionsLength {
-    pub date: Option<TestLength>,
-    pub time: Option<TestLength>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestLength {
-    #[serde(rename = "short")]
-    Short,
-    #[serde(rename = "medium")]
-    Medium,
-    #[serde(rename = "long")]
-    Long,
-    #[serde(rename = "full")]
-    Full,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestComponentsBag {
-    pub era: Option<components::Text>,
-    pub year: Option<components::Year>,
-    pub month: Option<components::Month>,
-    pub week: Option<components::Week>,
-    pub day: Option<components::Day>,
-    pub weekday: Option<components::Text>,
-
-    pub hour: Option<components::Numeric>,
-    pub minute: Option<components::Numeric>,
-    pub second: Option<components::Numeric>,
-    pub subsecond: Option<u8>,
-
-    pub time_zone_name: Option<components::TimeZoneName>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
