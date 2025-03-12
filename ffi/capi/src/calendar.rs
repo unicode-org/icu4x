@@ -11,6 +11,7 @@ pub mod ffi {
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::errors::ffi::DataError;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
