@@ -81,6 +81,8 @@ void main() {
 
     var locale = Locale.fromString('de-u-ca-islamic');
 
+    ///// DateTimeFormatter /////
+
     expect(
       DateTimeFormatter.ymdet(
         locale,
@@ -128,6 +130,26 @@ void main() {
       'Do., 25. Raj. 1447 AH, 05:32:12',
     );
 
+    ///// DateTimeFormatterGregorian /////
+
+    expect(
+      DateTimeFormatterGregorian.ymdet(
+        locale,
+      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
+      'Mi., 15.01.2025, 14:32:12',
+    );
+
+    expect(
+      DateTimeFormatterGregorian.ymdet(
+        locale,
+        length: DateTimeLength.long,
+        timePrecision: TimePrecision.minute,
+      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
+      'Mittwoch, 15. Januar 2025, 14:32',
+    );
+
+    ///// ZonedDateTimeFormatter /////
+
     expect(
       DateTimeFormatter.ymdet(locale)
           .withZoneGenericLong(locale)
@@ -172,21 +194,7 @@ void main() {
       '14.07.46 AH, 14:32:12 MEZ',
     );
 
-    expect(
-      DateTimeFormatterGregorian.ymdet(
-        locale,
-      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mi., 15.01.2025, 14:32:12',
-    );
-
-    expect(
-      DateTimeFormatterGregorian.ymdet(
-        locale,
-        length: DateTimeLength.long,
-        timePrecision: TimePrecision.minute,
-      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Januar 2025, 14:32',
-    );
+    ///// ZonedDateTimeFormatterGregorian /////
 
     expect(
       DateTimeFormatterGregorian.ymdet(locale)
