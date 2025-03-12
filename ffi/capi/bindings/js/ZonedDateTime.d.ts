@@ -5,7 +5,7 @@ import type { Date } from "./Date"
 import type { IanaParser } from "./IanaParser"
 import type { Time } from "./Time"
 import type { TimeZoneInfo } from "./TimeZoneInfo"
-import type { UtcOffsetCalculator } from "./UtcOffsetCalculator"
+import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -24,7 +24,7 @@ export class ZonedDateTime {
     get zone() : TimeZoneInfo;
     
 
-    static fromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedDateTime;
+    static fromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedDateTime;
 
     static locationOnlyFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 

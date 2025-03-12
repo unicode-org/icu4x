@@ -17,13 +17,12 @@
                     "dateFields": "YMDE",
                     "length": "medium",
                     "timePrecision": "minute"
-                },
-                "hourCycle": "h12"
+                }
             }
         },
         "output": {
             "values": {
-                "en": {
+                "en-u-hc-h12": {
                     "formatted": "Tue, Jan 7, 2020, 8:25\u202fAM",
                     "pattern": "E, MMM d, y, h:mm\u202fa"
                 }
@@ -48,13 +47,12 @@
                     "dateFields": "YMDE",
                     "length": "long",
                     "timePrecision": "minute"
-                },
-                "hourCycle": "h12"
+                }
             }
         },
         "output": {
             "values": {
-                "en": {
+                "en-u-hc-h12": {
                     "formatted": "Tuesday, January 7, 2020, 8:25\u202fAM",
                     "pattern": "EEEE, MMMM d, y, h:mm\u202fa"
                 }

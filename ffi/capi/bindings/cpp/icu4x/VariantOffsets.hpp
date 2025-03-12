@@ -1,7 +1,7 @@
-#ifndef icu4x_UtcOffsets_HPP
-#define icu4x_UtcOffsets_HPP
+#ifndef icu4x_VariantOffsets_HPP
+#define icu4x_VariantOffsets_HPP
 
-#include "UtcOffsets.d.hpp"
+#include "VariantOffsets.d.hpp"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -24,19 +24,19 @@ namespace capi {
 } // namespace
 
 
-inline icu4x::capi::UtcOffsets icu4x::UtcOffsets::AsFFI() const {
-  return icu4x::capi::UtcOffsets {
+inline icu4x::capi::VariantOffsets icu4x::VariantOffsets::AsFFI() const {
+  return icu4x::capi::VariantOffsets {
     /* .standard = */ standard->AsFFI(),
     /* .daylight = */ daylight ? daylight->AsFFI() : nullptr,
   };
 }
 
-inline icu4x::UtcOffsets icu4x::UtcOffsets::FromFFI(icu4x::capi::UtcOffsets c_struct) {
-  return icu4x::UtcOffsets {
+inline icu4x::VariantOffsets icu4x::VariantOffsets::FromFFI(icu4x::capi::VariantOffsets c_struct) {
+  return icu4x::VariantOffsets {
     /* .standard = */ std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(c_struct.standard)),
     /* .daylight = */ std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(c_struct.daylight)),
   };
 }
 
 
-#endif // icu4x_UtcOffsets_HPP
+#endif // icu4x_VariantOffsets_HPP

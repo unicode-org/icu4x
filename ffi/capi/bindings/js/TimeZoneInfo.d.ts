@@ -5,7 +5,7 @@ import type { Time } from "./Time"
 import type { TimeZone } from "./TimeZone"
 import type { TimeZoneVariant } from "./TimeZoneVariant"
 import type { UtcOffset } from "./UtcOffset"
-import type { UtcOffsetCalculator } from "./UtcOffsetCalculator"
+import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -27,7 +27,7 @@ export class TimeZoneInfo {
 
     withZoneVariant(timeZoneVariant: TimeZoneVariant): TimeZoneInfo;
 
-    inferZoneVariant(offsetCalculator: UtcOffsetCalculator): boolean;
+    inferZoneVariant(offsetCalculator: VariantOffsetsCalculator): boolean;
 
     zoneVariant(): TimeZoneVariant | null;
 

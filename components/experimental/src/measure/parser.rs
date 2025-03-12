@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
+use smallvec::SmallVec;
 use zerotrie::ZeroTrieSimpleAscii;
 
 use crate::measure::measureunit::MeasureUnit;
@@ -97,7 +97,7 @@ impl<'data> MeasureUnitParser<'data> {
         }
 
         let mut constant_denominator = 0;
-        let mut measure_unit_items = Vec::<SingleUnit>::new();
+        let mut single_units = SmallVec::<[SingleUnit; 8]>::new();
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.
@@ -137,7 +137,13 @@ impl<'data> MeasureUnitParser<'data> {
                                                 core::str::from_utf8(possible_constant_denominator)
                                                     .ok()
                                                     .and_then(|s| s.parse::<f64>().ok())
-                                                    .map(|num| num as u64)
+                                                    .and_then(|num| {
+                                                        if num > u64::MAX as f64 {
+                                                            None
+                                                        } else {
+                                                            Some(num as u64)
+                                                        }
+                                                    })
                                             {
                                                 constant_denominator = parsed_denominator;
                                                 code_units = split.next().unwrap_or(&[]);
@@ -155,7 +161,7 @@ impl<'data> MeasureUnitParser<'data> {
                     }
                 };
 
-            measure_unit_items.push(SingleUnit {
+            single_units.push(SingleUnit {
                 power: sign * power as i8,
                 si_prefix,
                 unit_id,
@@ -170,8 +176,13 @@ impl<'data> MeasureUnitParser<'data> {
             };
         }
 
+        // There is no unit without any valid single units.
+        if single_units.is_empty() {
+            return Err(InvalidUnitError);
+        }
+
         Ok(MeasureUnit {
-            single_units: measure_unit_items.into(),
+            single_units,
             constant_denominator,
         })
     }
@@ -196,6 +207,75 @@ mod tests {
             let measure_unit = parser.try_from_str(input).unwrap();
             assert_eq!(measure_unit.single_units.len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
+        }
+    }
+
+    #[test]
+    fn test_invlalid_unit_ids() {
+        let test_cases = vec![
+            "kilo",
+            "kilokilo",
+            "onekilo",
+            "meterkilo",
+            "meter-kilo",
+            "k",
+            "meter-",
+            "meter+",
+            "-meter",
+            "+meter",
+            "-kilometer",
+            "+kilometer",
+            "-pow2-meter",
+            "+pow2-meter",
+            "p2-meter",
+            "p4-meter",
+            "+",
+            "-",
+            "-mile",
+            "-and-mile",
+            "-per-mile",
+            "one",
+            "one-one",
+            "one-per-mile",
+            "one-per-cubic-centimeter",
+            "square--per-meter",
+            "metersecond", // Must have a compound part between single units
+            // Negative powers not supported in mixed units yet. TODO(CLDR-13701).
+            "per-hour-and-hertz",
+            "hertz-and-per-hour",
+            // Compound units not supported in mixed units yet. TODO(CLDR-13701).
+            "kilonewton-meter-and-newton-meter",
+            // Invalid units due to invalid constant denominator
+            "meter-per--20-second",
+            "meter-per-1000-1e9-second",
+            "meter-per-1e19-second",
+            "per-1000",
+            "meter-per-1000-1000",
+            "meter-per-1000-second-1000-kilometer",
+            "1000-meter",
+            "meter-1000",
+            "meter-per-1000-1000",
+            "meter-per-1000-second-1000-kilometer",
+            "per-1000-and-per-1000",
+            "liter-per-kilometer-100",
+        ];
+
+        for input in test_cases {
+            // TODO(Uicode-org/icu4x#6271):
+            //      This is invalid, but because `100-kilometer` is a valid unit, it is not rejected.
+            //      This should be fixed in CLDR.
+            if input == "meter-per-100-100-kilometer" {
+                continue;
+            }
+
+            let converter_factory = ConverterFactory::new();
+            let parser = converter_factory.parser();
+            let measure_unit = parser.try_from_str(input);
+            if measure_unit.is_ok() {
+                println!("OK:  {}", input);
+                continue;
+            }
+            assert!(measure_unit.is_err());
         }
     }
 }

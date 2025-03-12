@@ -60,25 +60,6 @@ enum AnyCalendarKind {
 
   /// The kind of a Roc calendar
   roc;
-
-  /// Read the calendar type off of the -u-ca- extension on a locale.
-  ///
-  /// Returns nothing if there is no calendar on the locale or if the locale's calendar
-  /// is not known or supported.
-  ///
-  /// See the [Rust documentation for `from_prefs`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.from_prefs) for more information.
-  static AnyCalendarKind? createForLocale(Locale locale) {
-    final result = _icu4x_AnyCalendarKind_create_for_locale_mv1(locale._ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return AnyCalendarKind.values[result.union.ok];
-  }
 }
-
-@_DiplomatFfiUse('icu4x_AnyCalendarKind_create_for_locale_mv1')
-@ffi.Native<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_AnyCalendarKind_create_for_locale_mv1')
-// ignore: non_constant_identifier_names
-external _ResultInt32Void _icu4x_AnyCalendarKind_create_for_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 // dart format on

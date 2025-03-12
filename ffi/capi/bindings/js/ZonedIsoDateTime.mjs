@@ -4,7 +4,7 @@ import { IanaParser } from "./IanaParser.mjs"
 import { IsoDate } from "./IsoDate.mjs"
 import { Time } from "./Time.mjs"
 import { TimeZoneInfo } from "./TimeZoneInfo.mjs"
-import { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
+import { VariantOffsetsCalculator } from "./VariantOffsetsCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 

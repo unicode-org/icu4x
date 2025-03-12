@@ -126,7 +126,7 @@ int main() {
 
     std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
     
-    time_zone_info->infer_zone_variant(*UtcOffsetCalculator::create().get());
+    time_zone_info->infer_zone_variant(*VariantOffsetsCalculator::create().get());
 
     std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_generic_short = fmt_mdt->with_zone_generic_short(*locale.get()).ok().value();
     out = fmt_mdt_generic_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();

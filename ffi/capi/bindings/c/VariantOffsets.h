@@ -1,5 +1,5 @@
-#ifndef UtcOffsets_H
-#define UtcOffsets_H
+#ifndef VariantOffsets_H
+#define VariantOffsets_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "UtcOffsets.d.h"
+#include "VariantOffsets.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // UtcOffsets_H
+#endif // VariantOffsets_H

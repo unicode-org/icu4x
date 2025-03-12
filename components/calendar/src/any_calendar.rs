@@ -729,20 +729,24 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
-        let kind = if let Some(kind) = AnyCalendarKind::from_prefs(prefs) {
-            kind
-        } else {
-            // This will eventually need fallback data from the provider
+        // This will eventually need fallback data from the provider
+        let algo = prefs.calendar_algorithm.unwrap_or_else(|| {
             let lang = prefs.locale_preferences.language();
             if lang == language!("th") {
-                AnyCalendarKind::Buddhist
+                CalendarAlgorithm::Buddhist
             } else if lang == language!("sa") {
-                AnyCalendarKind::HijriUmmAlQura
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
             } else if lang == language!("af") || lang == language!("ir") {
-                AnyCalendarKind::Persian
+                CalendarAlgorithm::Persian
             } else {
-                AnyCalendarKind::Gregorian
+                CalendarAlgorithm::Gregory
             }
+        });
+        let kind = if let Ok(kind) = algo.try_into() {
+            kind
+        } else {
+            debug_assert!(false, "unsupported calendar algorithm {algo:?}");
+            AnyCalendarKind::Gregorian
         };
         Self::try_new_for_kind_unstable(provider, kind)
     }
@@ -876,13 +880,6 @@ impl AnyCalendarKind {
             AnyCalendarKind::Roc => Roc.debug_name(),
         }
     }
-
-    /// Extract the calendar component from a [`AnyCalendarPreferences`]
-    ///
-    /// Returns `None` if the calendar is not specified or unknown.
-    pub fn from_prefs(prefs: AnyCalendarPreferences) -> Option<Self> {
-        prefs.calendar_algorithm.and_then(|p| p.try_into().ok())
-    }
 }
 
 impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
@@ -912,32 +909,6 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
                 debug_assert!(false, "unknown calendar algorithm {v:?}");
                 Err(())
             }
-        }
-    }
-}
-
-impl From<AnyCalendarKind> for CalendarAlgorithm {
-    fn from(v: AnyCalendarKind) -> Self {
-        use AnyCalendarKind::*;
-        match v {
-            Buddhist => CalendarAlgorithm::Buddhist,
-            Chinese => CalendarAlgorithm::Chinese,
-            Coptic => CalendarAlgorithm::Coptic,
-            Dangi => CalendarAlgorithm::Dangi,
-            EthiopianAmeteAlem => CalendarAlgorithm::Ethioaa,
-            Ethiopian => CalendarAlgorithm::Ethiopic,
-            Gregorian => CalendarAlgorithm::Gregory,
-            Hebrew => CalendarAlgorithm::Hebrew,
-            Indian => CalendarAlgorithm::Indian,
-            HijriObservational => CalendarAlgorithm::Hijri(None),
-            HijriUmmAlQura => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)),
-            HijriTabular => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)),
-            HijriCivil => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
-            Iso => CalendarAlgorithm::Iso8601,
-            Japanese => CalendarAlgorithm::Japanese,
-            JapaneseExtended => CalendarAlgorithm::Japanese,
-            Persian => CalendarAlgorithm::Persian,
-            Roc => CalendarAlgorithm::Roc,
         }
     }
 }
