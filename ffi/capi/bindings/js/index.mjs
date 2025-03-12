@@ -120,6 +120,8 @@ export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian.mjs"
 
 export { NeoZonedDateTimeFormatter } from "./NeoZonedDateTimeFormatter.mjs"
 
+export { NeoZonedDateTimeFormatterGregorian } from "./NeoZonedDateTimeFormatterGregorian.mjs"
+
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer.mjs"

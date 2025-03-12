@@ -5,6 +5,7 @@ import type { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 import type { DateTimeLength } from "./DateTimeLength"
 import type { IsoDate } from "./IsoDate"
 import type { Locale } from "./Locale"
+import type { NeoZonedDateTimeFormatterGregorian } from "./NeoZonedDateTimeFormatterGregorian"
 import type { Time } from "./Time"
 import type { TimePrecision } from "./TimePrecision"
 import type { YearStyle } from "./YearStyle"
@@ -46,6 +47,30 @@ export class DateTimeFormatterGregorian {
     static createEt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
+
+    withZoneGenericShort(locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneGenericShortAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneGenericLong(locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneGenericLongAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneSpecificShort(locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneSpecificShortAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneSpecificLong(locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneSpecificLongAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneLocalizedOffsetShort(locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneLocalizedOffsetShortAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneLocalizedOffsetLong(locale: Locale): NeoZonedDateTimeFormatterGregorian;
+
+    withZoneLocalizedOffsetLongAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatterGregorian;
 
     formatIso(date: IsoDate, time: Time): string;
 }

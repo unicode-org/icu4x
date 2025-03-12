@@ -207,6 +207,138 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
     return DateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneGenericShort(Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_generic_short_mv1(_ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneGenericShortAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_generic_short_and_provider_mv1(_ffi, provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneGenericLong(Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_generic_long_mv1(_ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneGenericLongAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_generic_long_and_provider_mv1(_ffi, provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneSpecificShort(Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_specific_short_mv1(_ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneSpecificShortAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_specific_short_and_provider_mv1(_ffi, provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneSpecificLong(Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_specific_long_mv1(_ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneSpecificLongAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_specific_long_and_provider_mv1(_ffi, provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneLocalizedOffsetShort(Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_mv1(_ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneLocalizedOffsetShortAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_and_provider_mv1(_ffi, provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneLocalizedOffsetLong(Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_mv1(_ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
+  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  NeoZonedDateTimeFormatterGregorian withZoneLocalizedOffsetLongAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_and_provider_mv1(_ffi, provider._ffi, locale._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return NeoZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
+  }
+
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   String formatIso(IsoDate date, Time time) {
     final write = _Write();
@@ -289,6 +421,66 @@ external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_create_et_mv1(ffi.
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_generic_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_generic_short_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_generic_short_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_generic_short_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_generic_short_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_generic_short_and_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_generic_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_generic_long_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_generic_long_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_generic_long_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_generic_long_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_generic_long_and_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_specific_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_specific_short_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_specific_short_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_specific_short_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_specific_short_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_specific_short_and_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_specific_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_specific_long_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_specific_long_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_specific_long_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_specific_long_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_specific_long_and_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_short_and_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> locale);
+
+@_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_and_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_DateTimeFormatterGregorian_with_zone_localized_offset_long_and_provider_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @_DiplomatFfiUse('icu4x_DateTimeFormatterGregorian_format_iso_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateTimeFormatterGregorian_format_iso_mv1')
