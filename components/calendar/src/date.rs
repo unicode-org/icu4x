@@ -297,13 +297,13 @@ impl Date<Iso> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::calendar::types::WeekOfYear;
+    /// use icu::calendar::types::IsoWeekOfYear;
     ///
     /// let date = Date::try_new_iso(2022, 8, 26).unwrap();
     ///
     /// assert_eq!(
     ///     date.week_of_year(),
-    ///     WeekOfYear {
+    ///     IsoWeekOfYear {
     ///         week_number: 34,
     ///         iso_year: 2022,
     ///     }
