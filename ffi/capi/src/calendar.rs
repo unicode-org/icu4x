@@ -57,17 +57,6 @@ pub mod ffi {
         Roc = 17,
     }
 
-    impl AnyCalendarKind {
-        /// Read the calendar type off of the -u-ca- extension on a locale.
-        ///
-        /// Returns nothing if there is no calendar on the locale or if the locale's calendar
-        /// is not known or supported.
-        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_prefs, FnInEnum)]
-        pub fn create_for_locale(locale: &Locale) -> Option<AnyCalendarKind> {
-            icu_calendar::AnyCalendarKind::from_prefs((&locale.0).into()).map(Into::into)
-        }
-    }
-
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
