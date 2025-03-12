@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use ffi::WeekOfYear;
+use ffi::IsoWeekOfYear;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -90,7 +90,7 @@ pub mod ffi {
         /// Returns the week number in this year, using week data
         #[diplomat::rust_link(icu::calendar::Date::week_of_year, FnInStruct)]
         #[cfg(feature = "calendar")]
-        pub fn week_of_year(&self) -> WeekOfYear {
+        pub fn week_of_year(&self) -> IsoWeekOfYear {
             self.0.week_of_year().into()
         }
 
@@ -352,18 +352,18 @@ pub mod ffi {
         }
     }
 
-    pub struct WeekOfYear {
+    pub struct IsoWeekOfYear {
         pub week_number: u8,
         pub iso_year: i32,
     }
 }
 
-impl From<icu_calendar::types::WeekOfYear> for WeekOfYear {
+impl From<icu_calendar::types::IsoWeekOfYear> for IsoWeekOfYear {
     fn from(
-        icu_calendar::types::WeekOfYear {
+        icu_calendar::types::IsoWeekOfYear {
             week_number,
             iso_year,
-        }: icu_calendar::types::WeekOfYear,
+        }: icu_calendar::types::IsoWeekOfYear,
     ) -> Self {
         Self {
             week_number,

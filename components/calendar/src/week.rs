@@ -602,7 +602,7 @@ fn test_weekdays_iter() {
 
 #[test]
 fn test_iso_weeks() {
-    use crate::types::WeekOfYear;
+    use crate::types::IsoWeekOfYear;
     use crate::Date;
 
     #[allow(clippy::zero_prefixed_literal)]
@@ -626,7 +626,7 @@ fn test_iso_weeks() {
     ] {
         assert_eq!(
             Date::try_new_iso(y, m, d).unwrap().week_of_year(),
-            WeekOfYear {
+            IsoWeekOfYear {
                 iso_year,
                 week_number
             }

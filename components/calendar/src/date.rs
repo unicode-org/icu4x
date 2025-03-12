@@ -4,7 +4,7 @@
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::error::DateError;
-use crate::types::WeekOfYear;
+use crate::types::IsoWeekOfYear;
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 #[cfg(feature = "alloc")]
@@ -309,7 +309,7 @@ impl Date<Iso> {
     ///     }
     /// );
     /// ```
-    pub fn week_of_year(&self) -> WeekOfYear {
+    pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
                 Iso::days_in_year_direct(self.inner.0.year.saturating_sub(1)),
@@ -326,7 +326,7 @@ impl Date<Iso> {
                 }
             });
 
-        WeekOfYear {
+        IsoWeekOfYear {
             week_number: week_of.week,
             iso_year: match week_of.unit {
                 RelativeUnit::Current => self.inner.0.year,
