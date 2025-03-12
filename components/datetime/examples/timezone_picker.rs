@@ -11,7 +11,7 @@ use icu::time::Time;
 
 fn main() {
     let parser = icu::time::zone::IanaParser::new();
-    let offsets = icu::time::zone::UtcOffsetCalculator::new();
+    let offsets = icu::time::zone::VariantOffsetsCalculator::new();
 
     let prefs = locale!("en").into();
 

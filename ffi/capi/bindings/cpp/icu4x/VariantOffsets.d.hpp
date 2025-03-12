@@ -1,5 +1,5 @@
-#ifndef icu4x_UtcOffsets_D_HPP
-#define icu4x_UtcOffsets_D_HPP
+#ifndef icu4x_VariantOffsets_D_HPP
+#define icu4x_VariantOffsets_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -18,24 +18,24 @@ class UtcOffset;
 
 namespace icu4x {
 namespace capi {
-    struct UtcOffsets {
+    struct VariantOffsets {
       icu4x::capi::UtcOffset* standard;
       icu4x::capi::UtcOffset* daylight;
     };
     
-    typedef struct UtcOffsets_option {union { UtcOffsets ok; }; bool is_ok; } UtcOffsets_option;
+    typedef struct VariantOffsets_option {union { VariantOffsets ok; }; bool is_ok; } VariantOffsets_option;
 } // namespace capi
 } // namespace
 
 
 namespace icu4x {
-struct UtcOffsets {
+struct VariantOffsets {
   std::unique_ptr<icu4x::UtcOffset> standard;
   std::unique_ptr<icu4x::UtcOffset> daylight;
 
-  inline icu4x::capi::UtcOffsets AsFFI() const;
-  inline static icu4x::UtcOffsets FromFFI(icu4x::capi::UtcOffsets c_struct);
+  inline icu4x::capi::VariantOffsets AsFFI() const;
+  inline static icu4x::VariantOffsets FromFFI(icu4x::capi::VariantOffsets c_struct);
 };
 
 } // namespace
-#endif // icu4x_UtcOffsets_D_HPP
+#endif // icu4x_VariantOffsets_D_HPP

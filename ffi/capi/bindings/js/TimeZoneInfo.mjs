@@ -5,7 +5,7 @@ import { Time } from "./Time.mjs"
 import { TimeZone } from "./TimeZone.mjs"
 import { TimeZoneVariant } from "./TimeZoneVariant.mjs"
 import { UtcOffset } from "./UtcOffset.mjs"
-import { UtcOffsetCalculator } from "./UtcOffsetCalculator.mjs"
+import { VariantOffsetsCalculator } from "./VariantOffsetsCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 

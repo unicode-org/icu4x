@@ -4,18 +4,18 @@ import { DataProvider } from "./DataProvider.mjs"
 import { IsoDate } from "./IsoDate.mjs"
 import { Time } from "./Time.mjs"
 import { TimeZone } from "./TimeZone.mjs"
-import { UtcOffsets } from "./UtcOffsets.mjs"
+import { VariantOffsets } from "./VariantOffsets.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `UtcOffsetCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffsetCalculator.html) for more information.
+/** See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
 */
-const UtcOffsetCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_UtcOffsetCalculator_destroy_mv1(ptr);
+const VariantOffsetsCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_VariantOffsetsCalculator_destroy_mv1(ptr);
 });
 
-export class UtcOffsetCalculator {
+export class VariantOffsetsCalculator {
     
     // Internal ptr reference:
     #ptr = null;
@@ -26,7 +26,7 @@ export class UtcOffsetCalculator {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("UtcOffsetCalculator is an Opaque type. You cannot call its constructor.");
+            console.error("VariantOffsetsCalculator is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -35,7 +35,7 @@ export class UtcOffsetCalculator {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            UtcOffsetCalculator_box_destroy_registry.register(this, this.#ptr);
+            VariantOffsetsCalculator_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -45,10 +45,10 @@ export class UtcOffsetCalculator {
     }
 
     #defaultConstructor() {
-        const result = wasm.icu4x_UtcOffsetCalculator_create_mv1();
+        const result = wasm.icu4x_VariantOffsetsCalculator_create_mv1();
     
         try {
-            return new UtcOffsetCalculator(diplomatRuntime.internalConstructor, result, []);
+            return new VariantOffsetsCalculator(diplomatRuntime.internalConstructor, result, []);
         }
         
         finally {}
@@ -57,14 +57,14 @@ export class UtcOffsetCalculator {
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_UtcOffsetCalculator_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_VariantOffsetsCalculator_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
-            return new UtcOffsetCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new VariantOffsetsCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -75,13 +75,13 @@ export class UtcOffsetCalculator {
     computeOffsetsFromTimeZone(timeZone, localDate, localTime) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
-        const result = wasm.icu4x_UtcOffsetCalculator_compute_offsets_from_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, localDate.ffiValue, localTime.ffiValue);
+        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, localDate.ffiValue, localTime.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
-            return UtcOffsets._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return VariantOffsets._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

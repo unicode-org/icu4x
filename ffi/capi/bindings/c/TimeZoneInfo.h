@@ -13,7 +13,7 @@
 #include "TimeZone.d.h"
 #include "TimeZoneVariant.d.h"
 #include "UtcOffset.d.h"
-#include "UtcOffsetCalculator.d.h"
+#include "VariantOffsetsCalculator.d.h"
 
 #include "TimeZoneInfo.d.h"
 
@@ -36,7 +36,7 @@ icu4x_TimeZoneInfo_local_time_mv1_result icu4x_TimeZoneInfo_local_time_mv1(const
 TimeZoneInfo* icu4x_TimeZoneInfo_with_zone_variant_mv1(const TimeZoneInfo* self, TimeZoneVariant time_zone_variant);
 
 typedef struct icu4x_TimeZoneInfo_infer_zone_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_infer_zone_variant_mv1_result;
-icu4x_TimeZoneInfo_infer_zone_variant_mv1_result icu4x_TimeZoneInfo_infer_zone_variant_mv1(TimeZoneInfo* self, const UtcOffsetCalculator* offset_calculator);
+icu4x_TimeZoneInfo_infer_zone_variant_mv1_result icu4x_TimeZoneInfo_infer_zone_variant_mv1(TimeZoneInfo* self, const VariantOffsetsCalculator* offset_calculator);
 
 typedef struct icu4x_TimeZoneInfo_zone_variant_mv1_result {union {TimeZoneVariant ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_variant_mv1_result;
 icu4x_TimeZoneInfo_zone_variant_mv1_result icu4x_TimeZoneInfo_zone_variant_mv1(const TimeZoneInfo* self);

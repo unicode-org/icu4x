@@ -154,8 +154,8 @@ part 'TransformResult.g.dart';
 part 'UnitsConverter.g.dart';
 part 'UnitsConverterFactory.g.dart';
 part 'UtcOffset.g.dart';
-part 'UtcOffsetCalculator.g.dart';
-part 'UtcOffsets.g.dart';
+part 'VariantOffsets.g.dart';
+part 'VariantOffsetsCalculator.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
@@ -596,27 +596,27 @@ final class _ResultUint8Void extends ffi.Struct {
   }
 }
 
-final class _ResultUtcOffsetsFfiVoidUnion extends ffi.Union {
-  external _UtcOffsetsFfi ok;
+final class _ResultVariantOffsetsFfiVoidUnion extends ffi.Union {
+  external _VariantOffsetsFfi ok;
 
 }
 
-final class _ResultUtcOffsetsFfiVoid extends ffi.Struct {
-  external _ResultUtcOffsetsFfiVoidUnion union;
+final class _ResultVariantOffsetsFfiVoid extends ffi.Struct {
+  external _ResultVariantOffsetsFfiVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
 
   // ignore: unused_element
-  factory _ResultUtcOffsetsFfiVoid.ok(_UtcOffsetsFfi val) {
-    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+  factory _ResultVariantOffsetsFfiVoid.ok(_VariantOffsetsFfi val) {
+    final struct = ffi.Struct.create<_ResultVariantOffsetsFfiVoid>();
     struct.isOk = true;
     struct.union.ok = val;
     return struct;
   }
   // ignore: unused_element
-  factory _ResultUtcOffsetsFfiVoid.err() {
-    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+  factory _ResultVariantOffsetsFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultVariantOffsetsFfiVoid>();
     struct.isOk = false;
     return struct;
   }

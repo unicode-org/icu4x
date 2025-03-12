@@ -137,7 +137,7 @@ int main() {
 
     std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
     
-    time_zone_info->infer_zone_variant(*UtcOffsetCalculator::create().get());
+    time_zone_info->infer_zone_variant(*VariantOffsetsCalculator::create().get());
     
     std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
     out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();

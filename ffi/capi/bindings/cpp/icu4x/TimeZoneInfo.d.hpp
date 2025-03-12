@@ -21,8 +21,8 @@ namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 namespace capi { struct UtcOffset; }
 class UtcOffset;
-namespace capi { struct UtcOffsetCalculator; }
-class UtcOffsetCalculator;
+namespace capi { struct VariantOffsetsCalculator; }
+class VariantOffsetsCalculator;
 struct IsoDateTime;
 class TimeZoneVariant;
 }
@@ -50,7 +50,7 @@ public:
 
   inline std::unique_ptr<icu4x::TimeZoneInfo> with_zone_variant(icu4x::TimeZoneVariant time_zone_variant) const;
 
-  inline std::optional<std::monostate> infer_zone_variant(const icu4x::UtcOffsetCalculator& offset_calculator);
+  inline std::optional<std::monostate> infer_zone_variant(const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   inline std::optional<icu4x::TimeZoneVariant> zone_variant() const;
 
