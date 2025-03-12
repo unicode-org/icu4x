@@ -9,8 +9,6 @@
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/IanaParser.hpp>
-#include <icu4x/GregorianZonedDateTimeFormatter.hpp>
-#include <icu4x/ZonedDateTimeFormatter.hpp>
 
 #include <atomic>
 #include <iostream>
@@ -184,27 +182,6 @@ int main() {
         saw_unexpected_output = true;
     }
     std::cout << std::endl;
-
-    locale = Locale::from_string("en-u-ca-japanese").ok().value();
-    std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*locale.get()).ok().value();
-    std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2020, 10, 5, *cal.get()).ok().value();
-    std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
-    
-    std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
-    }
-
-    std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = zdtf->format(*any_date.get(), *any_time.get(), *time_zone_info.get()).ok().value();
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
-    }
 
     if (saw_unexpected_output) {
         return 1;

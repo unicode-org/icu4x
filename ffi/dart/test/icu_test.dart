@@ -176,23 +176,5 @@ void main() {
           ),
       'Mi., 15.01.2025, 14:32:12 Mitteleuropäische Zeit',
     );
-
-    expect(
-      ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long).formatIso(
-        zonedDateTimeIso.date,
-        zonedDateTimeIso.time,
-        zonedDateTimeIso.zone,
-      ),
-      '14. Radschab 1446 AH, 14:32:12 MEZ',
-    );
-
-    expect(
-      ZonedDateTimeFormatter.withLength(locale, DateTimeLength.short).formatIso(
-        zonedDateTimeIso.date,
-        zonedDateTimeIso.time,
-        zonedDateTimeIso.zone,
-      ),
-      '14.07.46 AH, 14:32:12 MEZ',
-    );
   });
 }
