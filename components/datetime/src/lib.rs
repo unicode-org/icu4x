@@ -124,6 +124,9 @@ pub mod preferences {
     pub use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
     pub use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting
