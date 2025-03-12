@@ -11,15 +11,12 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct Date; }
-class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
 namespace capi { struct Time; }
 class Time;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
-struct DateTimeMismatchedCalendarError;
 class DateTimeWriteError;
 }
 
@@ -35,8 +32,6 @@ class NeoZonedDateTimeFormatter {
 public:
 
   inline diplomat::result<std::string, icu4x::DateTimeWriteError> format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
-
-  inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> format_same_calendar(const icu4x::Date& _date, const icu4x::Time& _time) const;
 
   inline const icu4x::capi::NeoZonedDateTimeFormatter* AsFFI() const;
   inline icu4x::capi::NeoZonedDateTimeFormatter* AsFFI();
