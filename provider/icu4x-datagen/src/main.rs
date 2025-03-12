@@ -121,7 +121,7 @@ struct Cli {
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
-        help = "Download tzdb from this GitHub tag (https://github.com/eggert/tz)\n\
+        help = "Download tzdb from this IANA tag (https://data.iana.org/time-zones/releases/)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--tzdb-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
