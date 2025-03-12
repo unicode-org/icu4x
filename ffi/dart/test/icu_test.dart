@@ -151,6 +151,28 @@ void main() {
     );
 
     expect(
+      DateTimeFormatter.ymdt(locale, length: DateTimeLength.long)
+          .withZoneSpecificShort(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
+      '14. Radschab 1446 AH, 14:32:12 MEZ',
+    );
+
+    expect(
+      DateTimeFormatter.ymdt(locale, length: DateTimeLength.short)
+          .withZoneSpecificShort(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
+      '14.07.46 AH, 14:32:12 MEZ',
+    );
+
+    expect(
       DateTimeFormatterGregorian.ymdet(
         locale,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
