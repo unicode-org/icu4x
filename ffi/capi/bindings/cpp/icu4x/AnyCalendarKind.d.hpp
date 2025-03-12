@@ -10,12 +10,6 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
-namespace icu4x {
-namespace capi { struct Locale; }
-class Locale;
-class AnyCalendarKind;
-}
-
 
 namespace icu4x {
 namespace capi {
@@ -74,8 +68,6 @@ public:
   constexpr operator Value() const { return value; }
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
-
-  inline static std::optional<icu4x::AnyCalendarKind> create_for_locale(const icu4x::Locale& locale);
 
   inline icu4x::capi::AnyCalendarKind AsFFI() const;
   inline static icu4x::AnyCalendarKind FromFFI(icu4x::capi::AnyCalendarKind c_enum);
