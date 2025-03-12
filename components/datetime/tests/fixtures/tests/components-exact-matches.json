@@ -445,13 +445,12 @@
                     "dateFields": "E",
                     "length": "medium",
                     "timePrecision": "minute"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tue, 08:25"
+                "en-u-hc-h23": "Tue, 08:25"
             }
         }
     },
@@ -470,13 +469,12 @@
                     "dateFields": "E",
                     "length": "medium",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tue, 08:25:07"
+                "en-u-hc-h23": "Tue, 08:25:07"
             }
         }
     },
@@ -491,13 +489,12 @@
                 "semantic": {
                     "length": "short",
                     "timePrecision": "hour"
-                },
-                "hourCycle": "h12"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "8\u202fAM"
+                "en-u-hc-h12": "8\u202fAM"
             }
         }
     },
@@ -513,13 +510,12 @@
                 "semantic": {
                     "length": "short",
                     "timePrecision": "minute"
-                },
-                "hourCycle": "h12"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "8:25\u202fAM"
+                "en-u-hc-h12": "8:25\u202fAM"
             }
         }
     },
@@ -536,13 +532,12 @@
                 "semantic": {
                     "length": "short",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h12"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "8:25:07\u202fAM"
+                "en-u-hc-h12": "8:25:07\u202fAM"
             }
         }
     },
@@ -557,13 +552,12 @@
                 "semantic": {
                     "length": "short",
                     "timePrecision": "hour"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "08"
+                "en-u-hc-h23": "08"
             }
         }
     },
@@ -579,13 +573,12 @@
                 "semantic": {
                     "length": "short",
                     "timePrecision": "minute"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "08:25"
+                "en-u-hc-h23": "08:25"
             }
         }
     },
@@ -602,13 +595,12 @@
                 "semantic": {
                     "length": "short",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "08:25:07"
+                "en-u-hc-h23": "08:25:07"
             }
         }
     },

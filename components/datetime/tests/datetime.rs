@@ -21,12 +21,7 @@ use icu_datetime::{
     pattern::DateTimePattern, pattern::FixedCalendarDateTimeNames, DateTimeFormatter,
     FixedCalendarDateTimeFormatter,
 };
-use icu_locale_core::{
-    extensions::unicode::{key, value, Value},
-    locale,
-    preferences::extensions::unicode::keywords::HourCycle,
-    Locale,
-};
+use icu_locale_core::{locale, Locale};
 use icu_provider::prelude::*;
 use icu_time::{
     zone::{IanaParser, UtcOffset},
@@ -39,21 +34,6 @@ use patterns::{
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
-
-fn apply_preference_bag_to_locale(hour_cycle: HourCycle, locale: &mut Locale) {
-    const H11: Value = value!("h11");
-    const H12: Value = value!("h12");
-    const H23: Value = value!("h23");
-    const H24: Value = value!("h24");
-    let value = match hour_cycle {
-        HourCycle::H11 => H11,
-        HourCycle::H12 => H12,
-        HourCycle::H23 => H23,
-        HourCycle::H24 => H24,
-        _ => unreachable!(),
-    };
-    locale.extensions.unicode.keywords.set(key!("hc"), value);
-}
 
 fn test_fixture(fixture_name: &str, file: &str) {
     for fx in serde_json::from_str::<fixtures::Fixture>(file)
@@ -105,11 +85,9 @@ fn test_fixture(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let mut locale =
+            let locale =
                 Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
-            if let Some(hour_cycle) = fx.input.options.hour_cycle {
-                apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
-            }
+
             if let Some(kind) = AnyCalendarKind::from_prefs((&locale).into()) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
@@ -351,10 +329,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let mut locale: Locale = locale.parse().unwrap();
-            if let Some(hour_cycle) = fx.input.options.hour_cycle {
-                apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
-            }
+            let locale: Locale = locale.parse().unwrap();
             let dtf = {
                 FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), fset)
                     .unwrap()
