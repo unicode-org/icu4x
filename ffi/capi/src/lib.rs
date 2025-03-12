@@ -148,5 +148,3 @@ pub mod week;
 pub mod windows_parser;
 #[cfg(feature = "datetime")]
 pub mod zoned_datetime;
-#[cfg(feature = "datetime")]
-pub mod zoned_formatter;
