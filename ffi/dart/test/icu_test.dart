@@ -167,6 +167,17 @@ void main() {
     );
 
     expect(
+      DateTimeFormatterGregorian.ymdet(locale)
+          .withZoneGenericLong(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
+      'Mi., 15.01.2025, 14:32:12 Mitteleuropäische Zeit',
+    );
+
+    expect(
       ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,
