@@ -1608,7 +1608,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
     #[diplomat::rust_link(
         icu::datetime::fieldsets::enums::DateAndTimeFieldSet::zone,
         FnInStruct,
@@ -1630,7 +1630,7 @@ pub mod ffi {
     );
 
     impl NeoZonedDateTimeFormatterGregorian {
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
