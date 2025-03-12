@@ -19,13 +19,12 @@
                     "length": "long",
                     "zoneStyle": "GenericShort",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -49,13 +48,12 @@
                     "length": "long",
                     "zoneStyle": "GenericShort",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -79,13 +77,12 @@
                     "length": "long",
                     "zoneStyle": "GenericShort",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -109,13 +106,12 @@
                     "length": "long",
                     "zoneStyle": "GenericShort",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -139,13 +135,12 @@
                     "length": "long",
                     "zoneStyle": "LocalizedOffsetShort",
                     "timePrecision": "second"
-                },
-                "hourCycle": "h23"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
