@@ -1,5 +1,5 @@
-#ifndef icu4x_WeekOfYear_D_HPP
-#define icu4x_WeekOfYear_D_HPP
+#ifndef icu4x_IsoWeekOfYear_D_HPP
+#define icu4x_IsoWeekOfYear_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -13,24 +13,24 @@
 
 namespace icu4x {
 namespace capi {
-    struct WeekOfYear {
+    struct IsoWeekOfYear {
       uint8_t week_number;
       int32_t iso_year;
     };
     
-    typedef struct WeekOfYear_option {union { WeekOfYear ok; }; bool is_ok; } WeekOfYear_option;
+    typedef struct IsoWeekOfYear_option {union { IsoWeekOfYear ok; }; bool is_ok; } IsoWeekOfYear_option;
 } // namespace capi
 } // namespace
 
 
 namespace icu4x {
-struct WeekOfYear {
+struct IsoWeekOfYear {
   uint8_t week_number;
   int32_t iso_year;
 
-  inline icu4x::capi::WeekOfYear AsFFI() const;
-  inline static icu4x::WeekOfYear FromFFI(icu4x::capi::WeekOfYear c_struct);
+  inline icu4x::capi::IsoWeekOfYear AsFFI() const;
+  inline static icu4x::IsoWeekOfYear FromFFI(icu4x::capi::IsoWeekOfYear c_struct);
 };
 
 } // namespace
-#endif // icu4x_WeekOfYear_D_HPP
+#endif // icu4x_IsoWeekOfYear_D_HPP

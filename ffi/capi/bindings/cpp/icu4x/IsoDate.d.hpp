@@ -17,7 +17,7 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
-struct WeekOfYear;
+struct IsoWeekOfYear;
 class CalendarError;
 class CalendarParseError;
 class Weekday;
@@ -91,7 +91,7 @@ public:
    *
    * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
    */
-  inline icu4x::WeekOfYear week_of_year() const;
+  inline icu4x::IsoWeekOfYear week_of_year() const;
 
   /**
    * Returns 1-indexed number of the month of this date in its year

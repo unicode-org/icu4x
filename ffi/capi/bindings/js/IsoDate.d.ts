@@ -3,7 +3,7 @@ import type { Calendar } from "./Calendar"
 import type { CalendarError } from "./CalendarError"
 import type { CalendarParseError } from "./CalendarParseError"
 import type { Date } from "./Date"
-import type { WeekOfYear } from "./WeekOfYear"
+import type { IsoWeekOfYear } from "./IsoWeekOfYear"
 import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
@@ -64,7 +64,7 @@ export class IsoDate {
      *
      * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
      */
-    weekOfYear(): WeekOfYear;
+    weekOfYear(): IsoWeekOfYear;
 
     /** 
      * Returns 1-indexed number of the month of this date in its year

@@ -6,7 +6,7 @@ export { TitlecaseOptions } from "./TitlecaseOptions"
 
 export { CollatorOptions } from "./CollatorOptions"
 
-export { WeekOfYear } from "./WeekOfYear"
+export { IsoWeekOfYear } from "./IsoWeekOfYear"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 

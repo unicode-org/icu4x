@@ -366,7 +366,7 @@ pub struct DayOfMonth(pub u8);
 /// A week number in a year
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct WeekOfYear {
+pub struct IsoWeekOfYear {
     /// The 1-based ISO week number
     pub week_number: u8,
     /// The ISO year

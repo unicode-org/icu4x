@@ -3,7 +3,7 @@ import { Calendar } from "./Calendar.mjs"
 import { CalendarError } from "./CalendarError.mjs"
 import { CalendarParseError } from "./CalendarParseError.mjs"
 import { Date } from "./Date.mjs"
-import { WeekOfYear } from "./WeekOfYear.mjs"
+import { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 import { Weekday } from "./Weekday.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -183,7 +183,7 @@ export class IsoDate {
         const result = wasm.icu4x_IsoDate_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return WeekOfYear._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return IsoWeekOfYear._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

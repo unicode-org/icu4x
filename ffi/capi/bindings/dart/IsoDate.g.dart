@@ -93,9 +93,9 @@ final class IsoDate implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  WeekOfYear weekOfYear() {
+  IsoWeekOfYear weekOfYear() {
     final result = _icu4x_IsoDate_week_of_year_mv1(_ffi);
-    return WeekOfYear._fromFfi(result);
+    return IsoWeekOfYear._fromFfi(result);
   }
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -192,9 +192,9 @@ external int _icu4x_IsoDate_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 external int _icu4x_IsoDate_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_IsoDate_week_of_year_mv1')
-@ffi.Native<_WeekOfYearFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_year_mv1')
+@ffi.Native<_IsoWeekOfYearFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_year_mv1')
 // ignore: non_constant_identifier_names
-external _WeekOfYearFfi _icu4x_IsoDate_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
+external _IsoWeekOfYearFfi _icu4x_IsoDate_week_of_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_IsoDate_month_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_month_mv1')

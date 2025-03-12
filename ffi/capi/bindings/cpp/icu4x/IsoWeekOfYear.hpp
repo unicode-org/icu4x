@@ -1,7 +1,7 @@
-#ifndef icu4x_WeekOfYear_HPP
-#define icu4x_WeekOfYear_HPP
+#ifndef icu4x_IsoWeekOfYear_HPP
+#define icu4x_IsoWeekOfYear_HPP
 
-#include "WeekOfYear.d.hpp"
+#include "IsoWeekOfYear.d.hpp"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -23,19 +23,19 @@ namespace capi {
 } // namespace
 
 
-inline icu4x::capi::WeekOfYear icu4x::WeekOfYear::AsFFI() const {
-  return icu4x::capi::WeekOfYear {
+inline icu4x::capi::IsoWeekOfYear icu4x::IsoWeekOfYear::AsFFI() const {
+  return icu4x::capi::IsoWeekOfYear {
     /* .week_number = */ week_number,
     /* .iso_year = */ iso_year,
   };
 }
 
-inline icu4x::WeekOfYear icu4x::WeekOfYear::FromFFI(icu4x::capi::WeekOfYear c_struct) {
-  return icu4x::WeekOfYear {
+inline icu4x::IsoWeekOfYear icu4x::IsoWeekOfYear::FromFFI(icu4x::capi::IsoWeekOfYear c_struct) {
+  return icu4x::IsoWeekOfYear {
     /* .week_number = */ c_struct.week_number,
     /* .iso_year = */ c_struct.iso_year,
   };
 }
 
 
-#endif // icu4x_WeekOfYear_HPP
+#endif // icu4x_IsoWeekOfYear_HPP
