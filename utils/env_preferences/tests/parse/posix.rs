@@ -53,6 +53,53 @@ fn modifier() {
     expect_success("ca_ES@valencia", "ca-ES-posix-valencia");
 }
 
+#[test]
+fn alias() {
+    const CASES: [(&str, &str); 37] = [
+        ("bokmal", "nb-NO-posix"),
+        ("catalan", "ca-ES-posix"),
+        ("croatian", "hr-HR-posix"),
+        ("czech", "cs-CZ-posix"),
+        ("danish", "da-DK-posix"),
+        ("dansk", "da-DK-posix"),
+        ("deutsch", "de-DE-posix"),
+        ("dutch", "nl-NL-posix"),
+        ("eesti", "et-EE-posix"),
+        ("estonian", "et-EE-posix"),
+        ("finnish", "fi-FI-posix"),
+        ("french", "fr-FR-posix"),
+        ("galego", "gl-ES-posix"),
+        ("galician", "gl-ES-posix"),
+        ("german", "de-DE-posix"),
+        ("greek", "el-GR-posix"),
+        ("hebrew", "he-IL-posix"),
+        ("hrvatski", "hr-HR-posix"),
+        ("hungarian", "hu-HU-posix"),
+        ("icelandic", "is-IS-posix"),
+        ("italian", "it-IT-posix"),
+        ("japanese", "ja-JP-posix"),
+        ("korean", "ko-KR-posix"),
+        ("lithuanian", "lt-LT-posix"),
+        ("norwegian", "nb-NO-posix"),
+        ("nynorsk", "nn-NO-posix"),
+        ("polish", "pl-PL-posix"),
+        ("portuguese", "pt-PT-posix"),
+        ("romanian", "ro-RO-posix"),
+        ("russian", "ru-RU-posix"),
+        ("slovak", "sk-SK-posix"),
+        ("slovene", "sl-SI-posix"),
+        ("slovenian", "sl-SI-posix"),
+        ("spanish", "es-ES-posix"),
+        ("swedish", "sv-SE-posix"),
+        ("thai", "th-TH-posix"),
+        ("turkish", "tr-TR-posix"),
+    ];
+
+    for (src, expected) in CASES {
+        expect_success(src, expected);
+    }
+}
+
 mod error {
     mod parse {
         use env_preferences::parse::posix::{PosixLocale, PosixParseError};
