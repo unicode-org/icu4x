@@ -33,7 +33,6 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, RangeError, Time};
 use calendrical_calculations::helpers::I32CastError;
-use calendrical_calculations::iso::{day_of_year, is_leap_year, iso_from_year_day};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -87,13 +86,10 @@ impl CalendarArithmetic for Iso {
         // but there will be less jump and therefore it can be
         // helpful for branch predictor.
         // Also it use less memory space (fewer generated code).
+        debug_assert!((1..=12).contains(&month));
         match month {
-            2 => 28 | (is_leap_year(year) as u8),
-            1..=12 => 30 | (month ^ (month >> 3)),
-            // Should we return `0` on incorrect month?
-            // Or we can return any number?
-            // If any => delete next line & change `1..=12` on prev line to `_`
-            _ => 0,
+            2 => 28 | (calendrical_calculations::iso::is_leap_year(year) as u8),
+            _ => 30 | (month ^ (month >> 3)),
         }
     }
 
@@ -102,7 +98,7 @@ impl CalendarArithmetic for Iso {
     }
 
     fn is_leap_year(year: i32, _data: ()) -> bool {
-        is_leap_year(year)
+        calendrical_calculations::iso::is_leap_year(year)
     }
 
     fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
@@ -180,7 +176,7 @@ impl Calendar for Iso {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        is_leap_year(date.0.year)
+        calendrical_calculations::iso::is_leap_year(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -281,7 +277,11 @@ impl Iso {
     // }
 
     pub(crate) const fn days_in_year_direct(year: i32) -> u16 {
-        365 + (is_leap_year(year) as u16)
+        if calendrical_calculations::iso::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
     }
 
     // Fixed is day count representation of calendars starting from Jan 1st of year 1.
@@ -291,7 +291,7 @@ impl Iso {
     }
 
     pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> Date<Iso> {
-        let (month, day) = iso_from_year_day(year, year_day);
+        let (month, day) = calendrical_calculations::iso::iso_from_year_day(year, year_day);
         debug_assert!(month < 13);
 
         #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
@@ -312,7 +312,7 @@ impl Iso {
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
-        day_of_year(date.0.year, date.0.month, date.0.day)
+        calendrical_calculations::iso::day_of_year(date.0.year, date.0.month, date.0.day)
     }
 
     /// Wrap the year in the appropriate era code

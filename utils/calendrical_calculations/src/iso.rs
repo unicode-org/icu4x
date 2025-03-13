@@ -1,8 +1,8 @@
 // This file is part of ICU4X.
 //
 // The contents of this file implement algorithms from the article:
-// "Euclidean Affine Functions and Applications to Calendar Algorithms"
-// by Cassio Neri & Lorenz Schneider (Feb. 2021), DOI: 10.48550/arXiv.2102.06959
+// "Euclidean affine functions and their application to calendar algorithms"
+// by Cassio Neri & Lorenz Schneider (Dec. 2022), DOI: 10.1002/spe.3172
 // which have been released as C/C++ code at
 // <https://github.com/cassioneri/eaf/blob/main/algorithms/neri_schneider.hpp>
 // under the MIT/GNU license. Accordingly, this file is released under
@@ -87,8 +87,8 @@ pub const fn is_leap_year(year: i32) -> bool {
     // in such case there will be no branching.
     // Otherwise branch predictor will mostly right.
 
-    let divisor_sub_1 = if year % 100 != 0 { 0b11 } else { 0b1111 };
-    (year & divisor_sub_1) == 0
+    let divisor = if year % 100 != 0 { 4 } else { 16 };
+    (year & (divisor - 1)) == 0
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -196,7 +196,7 @@ pub const fn day_of_week(year: i32, month: u8, day: u8) -> u8 {
 }
 
 /// # Returns
-/// day of the year in the Grigorian calendar:
+/// day of the year in the Gregorian calendar:
 /// + `1..=365` for a non leap year
 /// + `1..=366` for a leap year
 pub const fn day_of_year(year: i32, month: u8, day: u8) -> u16 {
