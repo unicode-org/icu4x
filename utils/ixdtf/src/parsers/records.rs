@@ -100,7 +100,8 @@ impl From<bool> for Sign {
     }
 }
 
-/// A full precision `UtcOffsetRecord`
+/// A `UtcOffsetRecord` that is either a minute precision or
+/// full precision UTC offset.
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum UtcOffsetRecord {
@@ -162,8 +163,9 @@ impl UtcOffsetRecord {
     }
 }
 
-#[non_exhaustive]
+/// A minute preicision UTC offseet
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // Minute precision offset can only be a sign, hour and minute field
 pub struct MinutePrecisionOffset {
     /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
@@ -173,8 +175,9 @@ pub struct MinutePrecisionOffset {
     pub minute: u8,
 }
 
-#[non_exhaustive]
+/// A full precision UTC offset with seconds and an optional fractional seconds
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // Full precision offset is only these five component fields
 pub struct FullPrecisionOffset {
     /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
