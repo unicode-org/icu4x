@@ -77,7 +77,7 @@ pub enum TimeZoneRecord<'a> {
     /// TimeZoneIANAName
     Name(&'a [u8]),
     /// TimeZoneOffset
-    Offset(UtcOffsetRecord),
+    Offset(MinutePrecisionOffset),
 }
 
 /// The parsed sign value, representing whether its struct is positive or negative.
@@ -103,7 +103,68 @@ impl From<bool> for Sign {
 /// A full precision `UtcOffsetRecord`
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct UtcOffsetRecord {
+pub enum UtcOffsetRecord {
+    // A UTC offset that is only precise to the minute
+    MinutePrecision(MinutePrecisionOffset),
+    // A UTC offset with full fractional second precision
+    FullPrecisionOffset(FullPrecisionOffset),
+}
+
+impl UtcOffsetRecord {
+    pub fn is_minute_precision(&self) -> bool {
+        matches!(self, Self::MinutePrecision(_))
+    }
+
+    pub fn sign(&self) -> Sign {
+        match self {
+            Self::MinutePrecision(offset) => offset.sign,
+            Self::FullPrecisionOffset(offset) => offset.sign,
+        }
+    }
+
+    pub fn hour(&self) -> u8 {
+        match self {
+            Self::MinutePrecision(offset) => offset.hour,
+            Self::FullPrecisionOffset(offset) => offset.hour,
+        }
+    }
+
+    pub fn minute(&self) -> u8 {
+        match self {
+            Self::MinutePrecision(offset) => offset.minute,
+            Self::FullPrecisionOffset(offset) => offset.minute,
+        }
+    }
+
+    pub fn second(&self) -> Option<u8> {
+        match self {
+            Self::MinutePrecision(_) => None,
+            Self::FullPrecisionOffset(offset) => Some(offset.second),
+        }
+    }
+
+    pub fn fraction(&self) -> Option<Fraction> {
+        match self {
+            Self::MinutePrecision(_) => None,
+            Self::FullPrecisionOffset(offset) => offset.fraction,
+        }
+    }
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct MinutePrecisionOffset {
+    /// The `Sign` value of the `UtcOffsetRecord`.
+    pub sign: Sign,
+    /// The hour value of the `UtcOffsetRecord`.
+    pub hour: u8,
+    /// The minute value of the `UtcOffsetRecord`.
+    pub minute: u8,
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FullPrecisionOffset {
     /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
     /// The hour value of the `UtcOffsetRecord`.
@@ -116,15 +177,13 @@ pub struct UtcOffsetRecord {
     pub fraction: Option<Fraction>,
 }
 
-impl UtcOffsetRecord {
+impl MinutePrecisionOffset {
     /// +0000
     pub const fn zero() -> Self {
         Self {
             sign: Sign::Positive,
             hour: 0,
             minute: 0,
-            second: 0,
-            fraction: None,
         }
     }
 }
@@ -141,13 +200,11 @@ impl UtcOffsetRecordOrZ {
     pub fn resolve_rfc_9557(self) -> UtcOffsetRecord {
         match self {
             UtcOffsetRecordOrZ::Offset(o) => o,
-            UtcOffsetRecordOrZ::Z => UtcOffsetRecord {
+            UtcOffsetRecordOrZ::Z => UtcOffsetRecord::MinutePrecision(MinutePrecisionOffset {
                 sign: Sign::Negative,
                 hour: 0,
                 minute: 0,
-                second: 0,
-                fraction: None,
-            },
+            }),
         }
     }
 }

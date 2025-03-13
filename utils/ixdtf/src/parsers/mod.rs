@@ -9,6 +9,8 @@ use crate::{ParseError, ParserResult};
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
 use records::IxdtfParseRecord;
+#[cfg(feature = "timezone")]
+use records::UtcOffsetRecord;
 
 use self::records::Annotation;
 
@@ -61,9 +63,11 @@ macro_rules! assert_syntax {
 /// assert_eq!(date.day, 2);
 /// assert_eq!(time.hour, 8);
 /// assert_eq!(time.minute, 48);
-/// assert_eq!(offset.sign, Sign::Negative);
-/// assert_eq!(offset.hour, 5);
-/// assert_eq!(offset.minute, 0);
+/// assert_eq!(offset.sign(), Sign::Negative);
+/// assert_eq!(offset.hour(), 5);
+/// assert_eq!(offset.minute(), 0);
+/// assert_eq!(offset.second(), None);
+/// assert_eq!(offset.fraction(), None);
 /// assert!(!tz_annotation.critical);
 /// assert_eq!(
 ///     tz_annotation.tz,
@@ -202,9 +206,9 @@ impl<'a> IxdtfParser<'a> {
     /// assert_eq!(time.hour, 12);
     /// assert_eq!(time.minute, 1);
     /// assert_eq!(time.second, 4);
-    /// assert_eq!(offset.sign, Sign::Negative);
-    /// assert_eq!(offset.hour, 5);
-    /// assert_eq!(offset.minute, 0);
+    /// assert_eq!(offset.sign(), Sign::Negative);
+    /// assert_eq!(offset.hour(), 5);
+    /// assert_eq!(offset.minute(), 0);
     /// assert!(!tz_annotation.critical);
     /// assert_eq!(
     ///     tz_annotation.tz,
@@ -225,6 +229,97 @@ impl<'a> IxdtfParser<'a> {
         handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
     ) -> ParserResult<IxdtfParseRecord<'a>> {
         time::parse_annotated_time_record(&mut self.cursor, handler)
+    }
+}
+
+/// A parser for time zone offset and IANA identifier strings.
+///
+/// ✨ *Enabled with the `timezone` Cargo feature.*
+///
+#[cfg(feature = "timezone")]
+#[derive(Debug)]
+pub struct TimeZoneParser<'a> {
+    cursor: Cursor<'a>,
+}
+
+#[cfg(feature = "timezone")]
+impl<'a> TimeZoneParser<'a> {
+    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
+    }
+
+    /// Creates a new `IxdtfParser` from a source `&str`.
+    #[inline]
+    #[must_use]
+    #[allow(clippy::should_implement_trait)]
+    pub fn from_str(source: &'a str) -> Self {
+        Self::from_utf8(source.as_bytes())
+    }
+
+    /// Parse a UTC offset from the provided source.
+    ///
+    /// This method can parse both a minute precision and full
+    /// precision offset.
+    ///
+    /// ## Minute precision offset example
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    ///
+    /// let offset_src = "-05:00";
+    /// let parse_result = TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
+    /// assert_eq!(parse_result.sign(), Sign::Negative);
+    /// assert_eq!(parse_result.hour(), 5);
+    /// assert_eq!(parse_result.minute(), 0);
+    /// assert_eq!(parse_result.second(), None);
+    /// assert_eq!(parse_result.fraction(), None);
+    /// ```
+    ///
+    /// ## FUll precision offset example
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    ///
+    /// let offset_src = "-05:00:30.123456789";
+    /// let parse_result = TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
+    /// assert_eq!(parse_result.sign(), Sign::Negative);
+    /// assert_eq!(parse_result.hour(), 5);
+    /// assert_eq!(parse_result.minute(), 0);
+    /// assert_eq!(parse_result.second(), Some(30));
+    /// let fraction = parse_result.fraction().unwrap();
+    /// assert_eq!(fraction.to_nanoseconds(), Some(123456789));
+    /// ```
+    #[inline]
+    pub fn parse_offset(&mut self) -> ParserResult<UtcOffsetRecord> {
+        let result = timezone::parse_utc_offset(&mut self.cursor)?;
+        self.cursor.close()?;
+        Ok(result)
+    }
+
+    /// Parse an IANA identifier name.
+    ///
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    ///
+    /// let iana_identifier = "America/Chicago";
+    /// let parse_result = TimeZoneParser::from_str(iana_identifier).parse_iana_identifier().unwrap();
+    /// assert_eq!(parse_result, iana_identifier.as_bytes());
+    ///
+    /// let iana_identifier = "Europe/Berlin";
+    /// let parse_result = TimeZoneParser::from_str(iana_identifier).parse_iana_identifier().unwrap();
+    /// assert_eq!(parse_result, iana_identifier.as_bytes());
+    /// ```
+    #[inline]
+    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [u8]> {
+        let result = timezone::parse_tz_iana_name(&mut self.cursor)?;
+        self.cursor.close()?;
+        Ok(result)
     }
 }
 
@@ -406,7 +501,7 @@ impl<'a> Cursor<'a> {
     /// # Errors
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        let ascii_char = self.next_or(ParseError::InvalidEnd)?;
+        let ascii_char = self.next_or(ParseError::AbruptEnd { location: "digit" })?;
         if ascii_char.is_ascii_digit() {
             Ok(Some(ascii_char - 48))
         } else {
