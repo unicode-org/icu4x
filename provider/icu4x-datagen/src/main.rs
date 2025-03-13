@@ -374,7 +374,7 @@ fn main() -> eyre::Result<()> {
             p = match (cli.cldr_root, cli.cldr_tag.as_str()) {
                 (Some(path), _) => p.with_cldr(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => p.with_cldr_for_tag(SourceDataProvider::LATEST_TESTED_CLDR_TAG),
+                (_, "latest") => p.with_cldr_for_tag(SourceDataProvider::TESTED_CLDR_TAG),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_cldr_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
@@ -389,7 +389,7 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_icuexport(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_icuexport_for_tag(SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG)
+                    p.with_icuexport_for_tag(SourceDataProvider::TESTED_ICUEXPORT_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_icuexport_for_tag(tag),
@@ -405,7 +405,7 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_segmenter_lstm(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_segmenter_lstm_for_tag(SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                    p.with_segmenter_lstm_for_tag(SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
@@ -421,7 +421,7 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_tzdb(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_tzdb_for_tag(SourceDataProvider::LATEST_TESTED_TZDB_TAG)
+                    p.with_tzdb_for_tag(SourceDataProvider::TESTED_TZDB_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_tzdb_for_tag(tag),

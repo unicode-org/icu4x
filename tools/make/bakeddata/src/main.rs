@@ -75,7 +75,7 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new_latest_tested();
+    let source = SourceDataProvider::new_tested();
 
     let driver = ExportDriver::new(
         source
@@ -121,14 +121,14 @@ fn main() {
                 template
                     .replace("_component_", component)
                     .replace("_version_", version)
-                    .replace("_cldr_tag_", SourceDataProvider::LATEST_TESTED_CLDR_TAG)
+                    .replace("_cldr_tag_", SourceDataProvider::TESTED_CLDR_TAG)
                     .replace(
                         "_icuexport_tag_",
-                        SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG,
+                        SourceDataProvider::TESTED_ICUEXPORT_TAG,
                     )
                     .replace(
                         "_segmenter_lstm_tag_",
-                        SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+                        SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG,
                     ),
             )
             .unwrap();
