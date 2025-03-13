@@ -4,11 +4,11 @@
 
 mod fixtures;
 
-use criterion::{criterion_group, criterion_main, Criterion};
-use icu_datetime::FixedCalendarDateTimeFormatter;
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use icu_datetime::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
 
-use icu_calendar::{Date, Gregorian};
-use icu_locale_core::Locale;
+use icu_calendar::{Date, Gregorian, Iso};
+use icu_locale_core::{locale, Locale};
 use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
@@ -94,6 +94,50 @@ fn datetime_benches(c: &mut Criterion) {
         include_str!("fixtures/tests/lengths_with_zones.json"),
         true,
     );
+
+    let ten_cases = [
+        "2001-09-08T18:46:40.000",
+        "2017-07-13T19:40:00.000",
+        "2020-09-13T05:26:40.000",
+        "2021-01-06T22:13:20.000",
+        "2021-05-02T17:00:00.000",
+        "2021-08-26T10:46:40.000",
+        "2021-11-20T03:33:20.000",
+        "2022-04-14T22:20:00.000",
+        "2022-08-08T16:06:40.000",
+        "2033-05-17T20:33:20.000",
+    ]
+    .map(|s| DateTime::try_from_str(s, Iso).unwrap());
+
+    #[inline]
+    fn construct_ymd_numeric() -> DateTimeFormatter<fieldsets::YMD> {
+        DateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::short()).unwrap()
+    }
+
+    group.bench_function("construct_and_format/ymd_numeric/10_cases", |b| {
+        let mut buffer = String::with_capacity(1000);
+        b.iter(|| {
+            for datetime in black_box(&ten_cases).iter() {
+                buffer.clear();
+                let formatter = construct_ymd_numeric();
+                formatter.format(datetime).write_to(&mut buffer).unwrap();
+            }
+        });
+    });
+
+    group.bench_function("format_only/ymd_numeric/10_cases", |b| {
+        let formatter = construct_ymd_numeric();
+        let mut buffer = String::with_capacity(1000);
+        b.iter(|| {
+            for datetime in black_box(&ten_cases).iter() {
+                buffer.clear();
+                black_box(&formatter)
+                    .format(datetime)
+                    .write_to(&mut buffer)
+                    .unwrap();
+            }
+        });
+    });
 
     group.finish();
 }
