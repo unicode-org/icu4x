@@ -7,7 +7,6 @@ import type { DateTimeLength } from "./DateTimeLength"
 import type { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
 import type { IsoDate } from "./IsoDate"
 import type { Locale } from "./Locale"
-import type { NeoZonedDateTimeFormatter } from "./NeoZonedDateTimeFormatter"
 import type { Time } from "./Time"
 import type { TimePrecision } from "./TimePrecision"
 import type { YearStyle } from "./YearStyle"
@@ -49,30 +48,6 @@ export class DateTimeFormatter {
     static createEt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
 
     static createEtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatter;
-
-    withZoneGenericShort(locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneGenericShortAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneGenericLong(locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneGenericLongAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneSpecificShort(locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneSpecificShortAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneSpecificLong(locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneSpecificLongAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneLocalizedOffsetShort(locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneLocalizedOffsetShortAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneLocalizedOffsetLong(locale: Locale): NeoZonedDateTimeFormatter;
-
-    withZoneLocalizedOffsetLongAndProvider(provider: DataProvider, locale: Locale): NeoZonedDateTimeFormatter;
 
     formatIso(date: IsoDate, time: Time): string;
 
