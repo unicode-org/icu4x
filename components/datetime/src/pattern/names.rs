@@ -353,7 +353,7 @@ impl DayPeriodNameLength {
     }
 }
 
-pub struct EmptyDataProvider;
+pub(crate) struct EmptyDataProvider;
 
 impl<M> DataProvider<M> for EmptyDataProvider
 where
@@ -362,6 +362,10 @@ where
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Err(DataErrorKind::MarkerNotFound.with_req(M::INFO, base_req))
     }
+}
+
+pub(crate) struct LoadTimeZoneNamesByFieldResult {
+    pub(crate) needs_decimal_formatter: bool,
 }
 
 size_test!(
@@ -2790,6 +2794,180 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
+    #[must_use]
+    pub(crate) fn load_time_zone_field_z_names(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        let needs_decimal_formatter = true;
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_specific_short_names(
+            mz_specific_short_provider,
+            mz_period_provider,
+            prefs,
+        )?;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    pub(crate) fn load_time_zone_field_zzzz_names(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        let needs_decimal_formatter = true;
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_specific_long_names(
+            mz_specific_long_provider,
+            mz_standard_long_provider,
+            mz_period_provider,
+            prefs,
+        )?;
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    pub(crate) fn load_time_zone_field_v_names(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        let needs_decimal_formatter = true;
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_generic_short_names(
+            mz_generic_short_provider,
+            mz_period_provider,
+            prefs,
+        )?;
+        // For fallback:
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    pub(crate) fn load_time_zone_field_vvvv_names(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
+        mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        let needs_decimal_formatter = true;
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_generic_long_names(
+            mz_generic_long_provider,
+            mz_standard_long_provider,
+            mz_period_provider,
+            prefs,
+        )?;
+        // For fallback:
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_V_names(
+        &mut self,
+        _prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        // no data required
+        let needs_decimal_formatter = false;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_VVV_names(
+        &mut self,
+        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1> + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        let needs_decimal_formatter = false;
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        self.load_time_zone_exemplar_city_names(
+            exemplar_cities_provider,
+            exemplar_cities_root_provider,
+            prefs,
+        )?;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_VVVV_names(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        let needs_decimal_formatter = true;
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_O_names(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        let needs_decimal_formatter = true;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
+    #[must_use]
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_X_names(
+        &mut self,
+        _prefs: DateTimeFormatterPreferences,
+    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+        // no data required
+        let needs_decimal_formatter = false;
+        Ok(LoadTimeZoneNamesByFieldResult {
+            needs_decimal_formatter,
+        })
+    }
+
     pub(crate) fn load_decimal_formatter(
         &mut self,
         loader: &impl DecimalFormatterLoader,
@@ -2918,105 +3096,91 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // z..zzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), One | Two | Three) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_specific_short_names(
+                    let r = self.load_time_zone_field_z_names(
+                        zone_essentials_provider,
                         mz_specific_short_provider,
                         mz_period_provider,
                         prefs,
                     )?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
                 // zzzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), Four) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_specific_long_names(
-                        mz_specific_long_provider,
+                    let r = self.load_time_zone_field_zzzz_names(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
                         mz_standard_long_provider,
+                        mz_specific_long_provider,
                         mz_period_provider,
                         prefs,
                     )?;
-                    self.load_time_zone_location_names(
-                        locations_provider,
-                        locations_root_provider,
-                        prefs,
-                    )?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
-
                 // v
                 (FS::TimeZone(TimeZone::GenericNonLocation), One) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_generic_short_names(
+                    let r = self.load_time_zone_field_v_names(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
                         mz_generic_short_provider,
                         mz_period_provider,
                         prefs,
                     )?;
-                    // For fallback:
-                    self.load_time_zone_location_names(
-                        locations_provider,
-                        locations_root_provider,
-                        prefs,
-                    )?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
                 // vvvv
                 (FS::TimeZone(TimeZone::GenericNonLocation), Four) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_generic_long_names(
+                    let r = self.load_time_zone_field_vvvv_names(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
                         mz_generic_long_provider,
                         mz_standard_long_provider,
                         mz_period_provider,
                         prefs,
                     )?;
-                    // For fallback:
-                    self.load_time_zone_location_names(
-                        locations_provider,
-                        locations_root_provider,
-                        prefs,
-                    )?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
 
                 // V
                 (FS::TimeZone(TimeZone::Location), One) => {
-                    // no data required
+                    let r = self.load_time_zone_field_V_names(prefs)?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
                 // VVV
                 (FS::TimeZone(TimeZone::Location), Three) => {
-                    self.load_time_zone_location_names(
+                    let r = self.load_time_zone_field_VVV_names(
                         locations_provider,
                         locations_root_provider,
-                        prefs,
-                    )?;
-                    self.load_time_zone_exemplar_city_names(
                         exemplar_cities_provider,
                         exemplar_cities_root_provider,
                         prefs,
                     )?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
                 // VVVV
                 (FS::TimeZone(TimeZone::Location), Four) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_location_names(
+                    let r = self.load_time_zone_field_VVVV_names(
+                        zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
                         prefs,
                     )?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
-
                 // O, OOOO
                 (FS::TimeZone(TimeZone::LocalizedOffset), One | Four) => {
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    numeric_field = Some(field);
+                    let r = self.load_time_zone_field_O_names(zone_essentials_provider, prefs)?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
-
                 // X..XXXXX, x..xxxxx
                 (
                     FS::TimeZone(TimeZone::IsoWithZ | TimeZone::Iso),
                     One | Two | Three | Four | Five,
                 ) => {
-                    // no data required
+                    let r = self.load_time_zone_field_X_names(prefs)?;
+                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
 
                 ///// Numeric symbols /////
