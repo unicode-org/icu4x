@@ -7,7 +7,7 @@ mod fixtures;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_datetime::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
 
-use icu_calendar::{Date, Gregorian, Iso};
+use icu_calendar::{Date, Gregorian};
 use icu_locale_core::{locale, Locale};
 use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
@@ -96,37 +96,68 @@ fn datetime_benches(c: &mut Criterion) {
     );
 
     let ten_cases = [
-        "2001-09-08T18:46:40.000",
-        "2017-07-13T19:40:00.000",
-        "2020-09-13T05:26:40.000",
-        "2021-01-06T22:13:20.000",
-        "2021-05-02T17:00:00.000",
-        "2021-08-26T10:46:40.000",
-        "2021-11-20T03:33:20.000",
-        "2022-04-14T22:20:00.000",
-        "2022-08-08T16:06:40.000",
-        "2033-05-17T20:33:20.000",
+        "2001-09-08T18:46:40.000[u-ca=gregory]",
+        "2017-07-13T19:40:00.000[u-ca=gregory]",
+        "2020-09-13T05:26:40.000[u-ca=gregory]",
+        "2021-01-06T22:13:20.000[u-ca=gregory]",
+        "2021-05-02T17:00:00.000[u-ca=gregory]",
+        "2021-08-26T10:46:40.000[u-ca=gregory]",
+        "2021-11-20T03:33:20.000[u-ca=gregory]",
+        "2022-04-14T22:20:00.000[u-ca=gregory]",
+        "2022-08-08T16:06:40.000[u-ca=gregory]",
+        "2033-05-17T20:33:20.000[u-ca=gregory]",
     ]
-    .map(|s| DateTime::try_from_str(s, Iso).unwrap());
+    .map(|s| DateTime::try_from_str(s, Gregorian).unwrap());
 
     #[inline]
-    fn construct_ymd_numeric() -> DateTimeFormatter<fieldsets::YMD> {
+    fn construct_any_ymd_numeric() -> DateTimeFormatter<fieldsets::YMD> {
         DateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::short()).unwrap()
     }
 
-    group.bench_function("construct_and_format/ymd_numeric/10_cases", |b| {
+    #[inline]
+    fn construct_fixed_ymd_numeric() -> FixedCalendarDateTimeFormatter<Gregorian, fieldsets::YMD> {
+        FixedCalendarDateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::short())
+            .unwrap()
+    }
+
+    group.bench_function("any/construct_and_format/ymd_numeric/10_cases", |b| {
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
                 buffer.clear();
-                let formatter = construct_ymd_numeric();
+                let formatter = construct_any_ymd_numeric();
                 formatter.format(datetime).write_to(&mut buffer).unwrap();
             }
         });
     });
 
-    group.bench_function("format_only/ymd_numeric/10_cases", |b| {
-        let formatter = construct_ymd_numeric();
+    group.bench_function("any/format_only/ymd_numeric/10_cases", |b| {
+        let formatter = construct_any_ymd_numeric();
+        let mut buffer = String::with_capacity(1000);
+        b.iter(|| {
+            for datetime in black_box(&ten_cases).iter() {
+                buffer.clear();
+                black_box(&formatter)
+                    .format(datetime)
+                    .write_to(&mut buffer)
+                    .unwrap();
+            }
+        });
+    });
+
+    group.bench_function("fixed/construct_and_format/ymd_numeric/10_cases", |b| {
+        let mut buffer = String::with_capacity(1000);
+        b.iter(|| {
+            for datetime in black_box(&ten_cases).iter() {
+                buffer.clear();
+                let formatter = construct_fixed_ymd_numeric();
+                formatter.format(datetime).write_to(&mut buffer).unwrap();
+            }
+        });
+    });
+
+    group.bench_function("fixed/format_only/ymd_numeric/10_cases", |b| {
+        let formatter = construct_fixed_ymd_numeric();
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
