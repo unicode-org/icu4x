@@ -130,7 +130,7 @@ struct Cli {
     tzdb_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[arg(help = "Path to a local tzdb directory (see https://data.iana.org/time-zones/releases/).")]
+    #[arg(help = "Path to a local tzdb directory (see https://data.iana.org/time-zones/releases/, directory structure matching https://github.com/eggert/tz).")]
     #[cfg(feature = "provider")]
     tzdb_root: Option<PathBuf>,
 
