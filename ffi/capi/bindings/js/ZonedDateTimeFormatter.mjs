@@ -13,11 +13,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 /** See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
 */
-const NeoZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_NeoZonedDateTimeFormatter_destroy_mv1(ptr);
+const ZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_ZonedDateTimeFormatter_destroy_mv1(ptr);
 });
 
-export class NeoZonedDateTimeFormatter {
+export class ZonedDateTimeFormatter {
     
     // Internal ptr reference:
     #ptr = null;
@@ -28,7 +28,7 @@ export class NeoZonedDateTimeFormatter {
     
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("NeoZonedDateTimeFormatter is an Opaque type. You cannot call its constructor.");
+            console.error("ZonedDateTimeFormatter is an Opaque type. You cannot call its constructor.");
             return;
         }
         
@@ -37,7 +37,7 @@ export class NeoZonedDateTimeFormatter {
         
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            NeoZonedDateTimeFormatter_box_destroy_registry.register(this, this.#ptr);
+            ZonedDateTimeFormatter_box_destroy_registry.register(this, this.#ptr);
         }
         
         return this;
@@ -49,14 +49,14 @@ export class NeoZonedDateTimeFormatter {
     static createGenericShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -67,14 +67,14 @@ export class NeoZonedDateTimeFormatter {
     static createGenericShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -85,14 +85,14 @@ export class NeoZonedDateTimeFormatter {
     static createGenericLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -103,14 +103,14 @@ export class NeoZonedDateTimeFormatter {
     static createGenericLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -121,14 +121,14 @@ export class NeoZonedDateTimeFormatter {
     static createSpecificShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -139,14 +139,14 @@ export class NeoZonedDateTimeFormatter {
     static createSpecificShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -157,14 +157,14 @@ export class NeoZonedDateTimeFormatter {
     static createSpecificLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -175,14 +175,14 @@ export class NeoZonedDateTimeFormatter {
     static createSpecificLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -193,14 +193,14 @@ export class NeoZonedDateTimeFormatter {
     static createLocalizedOffsetShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -211,14 +211,14 @@ export class NeoZonedDateTimeFormatter {
     static createLocalizedOffsetShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -229,14 +229,14 @@ export class NeoZonedDateTimeFormatter {
     static createLocalizedOffsetLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -247,14 +247,14 @@ export class NeoZonedDateTimeFormatter {
     static createLocalizedOffsetLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
-            return new NeoZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+            return new ZonedDateTimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
         
         finally {
@@ -267,7 +267,7 @@ export class NeoZonedDateTimeFormatter {
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
-        const result = wasm.icu4x_NeoZonedDateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
+        const result = wasm.icu4x_ZonedDateTimeFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, time.ffiValue, zone.ffiValue, write.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

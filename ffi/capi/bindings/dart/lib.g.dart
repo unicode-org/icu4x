@@ -117,8 +117,6 @@ part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'MeasureUnit.g.dart';
 part 'MeasureUnitParser.g.dart';
-part 'NeoZonedDateTimeFormatter.g.dart';
-part 'NeoZonedDateTimeFormatterGregorian.g.dart';
 part 'NoCalendarFormatter.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
@@ -170,6 +168,8 @@ part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
 part 'YearStyle.g.dart';
 part 'ZonedDateTime.g.dart';
+part 'ZonedDateTimeFormatter.g.dart';
+part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
 
 class _DiplomatFfiUse extends meta.RecordUse {

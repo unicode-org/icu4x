@@ -151,7 +151,7 @@ void main() {
     ///// ZonedDateTimeFormatter /////
 
     expect(
-      NeoZonedDateTimeFormatter.genericLong(
+      ZonedDateTimeFormatter.genericLong(
         locale,
         DateTimeFormatter.ymdet(locale),
       ).formatIso(
@@ -163,7 +163,7 @@ void main() {
     );
 
     expect(
-      () => NeoZonedDateTimeFormatter.genericLong(
+      () => ZonedDateTimeFormatter.genericLong(
         locale,
         DateTimeFormatter.ymdet(locale),
       ).formatIso(
@@ -175,7 +175,7 @@ void main() {
     );
 
     expect(
-      NeoZonedDateTimeFormatter.specificShort(
+      ZonedDateTimeFormatter.specificShort(
         locale,
         DateTimeFormatter.ymdt(locale, length: DateTimeLength.long),
       ).formatIso(
@@ -187,7 +187,7 @@ void main() {
     );
 
     expect(
-      NeoZonedDateTimeFormatter.specificShort(
+      ZonedDateTimeFormatter.specificShort(
         locale,
         DateTimeFormatter.ymdt(locale, length: DateTimeLength.short),
       ).formatIso(
@@ -201,7 +201,7 @@ void main() {
     ///// ZonedDateTimeFormatterGregorian /////
 
     expect(
-      NeoZonedDateTimeFormatterGregorian.genericLong(
+      ZonedDateTimeFormatterGregorian.genericLong(
         locale,
         DateTimeFormatterGregorian.ymdet(locale),
       ).formatIso(

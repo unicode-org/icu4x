@@ -528,18 +528,18 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
     #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
-    pub struct NeoZonedDateTimeFormatter(
+    pub struct ZonedDateTimeFormatter(
         pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::CompositeFieldSet>,
     );
 
-    impl NeoZonedDateTimeFormatter {
+    impl ZonedDateTimeFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_short(
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -562,7 +562,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             formatter_with_zone(
                 &formatter.0,
@@ -591,7 +591,7 @@ pub mod ffi {
         pub fn create_generic_long(
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -614,7 +614,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             formatter_with_zone(
                 &formatter.0,
@@ -643,7 +643,7 @@ pub mod ffi {
         pub fn create_specific_short(
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -665,7 +665,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             formatter_with_zone(
                 &formatter.0,
@@ -693,7 +693,7 @@ pub mod ffi {
         pub fn create_specific_long(
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -716,7 +716,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             formatter_with_zone(
                 &formatter.0,
@@ -745,7 +745,7 @@ pub mod ffi {
         pub fn create_localized_offset_short(
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -766,7 +766,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             formatter_with_zone(
                 &formatter.0,
@@ -791,7 +791,7 @@ pub mod ffi {
         pub fn create_localized_offset_long(
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -812,7 +812,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatter,
-        ) -> Result<Box<NeoZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             formatter_with_zone(
                 &formatter.0,
@@ -1356,21 +1356,21 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
     #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
-    pub struct NeoZonedDateTimeFormatterGregorian(
+    pub struct ZonedDateTimeFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
             icu_datetime::fieldsets::enums::CompositeFieldSet,
         >,
     );
 
-    impl NeoZonedDateTimeFormatterGregorian {
+    impl ZonedDateTimeFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_short(
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             gregorian_formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -1393,7 +1393,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             gregorian_formatter_with_zone(
                 &formatter.0,
@@ -1420,7 +1420,7 @@ pub mod ffi {
         pub fn create_generic_long(
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             gregorian_formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -1443,7 +1443,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             gregorian_formatter_with_zone(
                 &formatter.0,
@@ -1470,7 +1470,7 @@ pub mod ffi {
         pub fn create_specific_short(
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             gregorian_formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -1492,7 +1492,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             gregorian_formatter_with_zone(
                 &formatter.0,
@@ -1518,7 +1518,7 @@ pub mod ffi {
         pub fn create_specific_long(
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             gregorian_formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -1541,7 +1541,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             gregorian_formatter_with_zone(
                 &formatter.0,
@@ -1568,7 +1568,7 @@ pub mod ffi {
         pub fn create_localized_offset_short(
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             gregorian_formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -1589,7 +1589,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             gregorian_formatter_with_zone(
                 &formatter.0,
@@ -1614,7 +1614,7 @@ pub mod ffi {
         pub fn create_localized_offset_long(
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             gregorian_formatter_with_zone(
                 &formatter.0,
                 locale,
@@ -1635,7 +1635,7 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
-        ) -> Result<Box<NeoZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
+        ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
             gregorian_formatter_with_zone(
                 &formatter.0,
@@ -1727,7 +1727,7 @@ mod impls {
             ),
         >,
     ) -> Result<
-        Box<super::ffi::NeoZonedDateTimeFormatter>,
+        Box<super::ffi::ZonedDateTimeFormatter>,
         crate::errors::ffi::DateTimeFormatterLoadError,
     >
     where
@@ -1752,7 +1752,7 @@ mod impls {
             // This can fail if the locale doesn't match and the fields conflict
             .map_err(|(e, _)| e)?
             .cast_into_fset();
-        Ok(Box::new(super::ffi::NeoZonedDateTimeFormatter(formatter)))
+        Ok(Box::new(super::ffi::ZonedDateTimeFormatter(formatter)))
     }
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -1774,7 +1774,7 @@ mod impls {
             ),
         >,
     ) -> Result<
-        Box<super::ffi::NeoZonedDateTimeFormatterGregorian>,
+        Box<super::ffi::ZonedDateTimeFormatterGregorian>,
         crate::errors::ffi::DateTimeFormatterLoadError,
     >
     where
@@ -1799,7 +1799,7 @@ mod impls {
             // This can fail if the locale doesn't match and the fields conflict
             .map_err(|(e, _)| e)?
             .cast_into_fset();
-        Ok(Box::new(super::ffi::NeoZonedDateTimeFormatterGregorian(
+        Ok(Box::new(super::ffi::ZonedDateTimeFormatterGregorian(
             formatter,
         )))
     }

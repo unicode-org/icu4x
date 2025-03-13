@@ -118,9 +118,9 @@ export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian.mjs"
 
-export { NeoZonedDateTimeFormatter } from "./NeoZonedDateTimeFormatter.mjs"
+export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter.mjs"
 
-export { NeoZonedDateTimeFormatterGregorian } from "./NeoZonedDateTimeFormatterGregorian.mjs"
+export { ZonedDateTimeFormatterGregorian } from "./ZonedDateTimeFormatterGregorian.mjs"
 
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 

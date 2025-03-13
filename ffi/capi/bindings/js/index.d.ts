@@ -120,9 +120,9 @@ export { DateTimeFormatter } from "./DateTimeFormatter"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
 
-export { NeoZonedDateTimeFormatter } from "./NeoZonedDateTimeFormatter"
+export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
 
-export { NeoZonedDateTimeFormatterGregorian } from "./NeoZonedDateTimeFormatterGregorian"
+export { ZonedDateTimeFormatterGregorian } from "./ZonedDateTimeFormatterGregorian"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
 

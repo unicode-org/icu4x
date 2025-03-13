@@ -5,7 +5,7 @@
 #include <icu4x/GregorianDateFormatter.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatterGregorian.hpp>
-#include <icu4x/NeoZonedDateTimeFormatter.hpp>
+#include <icu4x/ZonedDateTimeFormatter.hpp>
 #include <icu4x/NoCalendarFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
@@ -129,7 +129,7 @@ int main() {
     
     time_zone_info->infer_zone_variant(*VariantOffsetsCalculator::create().get());
 
-    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_generic_short = NeoZonedDateTimeFormatter::create_generic_short(*locale.get(), *fmt_mdt).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_generic_short = ZonedDateTimeFormatter::create_generic_short(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_generic_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Generic Short: " << out;
     if (out != "11 jul, 13:06 hora de Chicago") {
@@ -139,7 +139,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_generic_long = NeoZonedDateTimeFormatter::create_generic_long(*locale.get(), *fmt_mdt).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_generic_long = ZonedDateTimeFormatter::create_generic_long(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_generic_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Generic Long: " << out;
     if (out != "11 jul, 13:06 hora central") {
@@ -148,7 +148,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_specific_short = NeoZonedDateTimeFormatter::create_specific_short(*locale.get(), *fmt_mdt).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_specific_short = ZonedDateTimeFormatter::create_specific_short(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_specific_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Specific Short: " << out;
     if (out != "11 jul, 13:06 GMT-5") {
@@ -157,7 +157,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_specific_long = NeoZonedDateTimeFormatter::create_specific_long(*locale.get(), *fmt_mdt).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_specific_long = ZonedDateTimeFormatter::create_specific_long(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_specific_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Specific Long: " << out;
     if (out != "11 jul, 13:06 hora de verano central") {
@@ -166,7 +166,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_localized_offset_short = NeoZonedDateTimeFormatter::create_localized_offset_short(*locale.get(), *fmt_mdt).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_localized_offset_short = ZonedDateTimeFormatter::create_localized_offset_short(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_localized_offset_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Localized Offset Short: " << out;
     if (out != "11 jul, 13:06 GMT-5") {
@@ -175,7 +175,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoZonedDateTimeFormatter> fmt_mdt_localized_offset_long = NeoZonedDateTimeFormatter::create_localized_offset_long(*locale.get(), *fmt_mdt).ok().value();
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_localized_offset_long = ZonedDateTimeFormatter::create_localized_offset_long(*locale.get(), *fmt_mdt).ok().value();
     out = fmt_mdt_localized_offset_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset MDT Localized Offset Long: " << out;
     if (out != "11 jul, 13:06 GMT-05:00") {
