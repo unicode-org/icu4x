@@ -62,7 +62,7 @@ export class DateTimeMismatchedCalendarError {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#thisKind.ffiValue, ...diplomatRuntime.optionToArgsForCalling(this.#dateKind, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        return [this.#thisKind.ffiValue, ...diplomatRuntime.optionToArgsForCalling(this.#dateKind, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
