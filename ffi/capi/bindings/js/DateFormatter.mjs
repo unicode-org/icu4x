@@ -2,7 +2,6 @@
 import { Calendar } from "./Calendar.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Date } from "./Date.mjs"
-import { DateTimeFormatError } from "./DateTimeFormatError.mjs"
 import { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 import { DateTimeLength } from "./DateTimeLength.mjs"
 import { IsoDate } from "./IsoDate.mjs"
@@ -88,45 +87,27 @@ export class DateFormatter {
     }
 
     format(value) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_DateFormatter_format_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_DateFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DateTimeFormatError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatError: ' + cause.value, { cause });
-            }
             return write.readString8();
         }
         
         finally {
-            diplomatReceive.free();
-        
             write.free();
         }
     }
 
     formatIso(value) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
-        const result = wasm.icu4x_DateFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, value.ffiValue, write.buffer);
+        wasm.icu4x_DateFormatter_format_iso_mv1(this.ffiValue, value.ffiValue, write.buffer);
     
         try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DateTimeFormatError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatError: ' + cause.value, { cause });
-            }
             return write.readString8();
         }
         
         finally {
-            diplomatReceive.free();
-        
             write.free();
         }
     }

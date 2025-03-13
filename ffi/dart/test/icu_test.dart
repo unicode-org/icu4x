@@ -81,6 +81,8 @@ void main() {
 
     var locale = Locale.fromString('de-u-ca-islamic');
 
+    ///// DateTimeFormatter /////
+
     expect(
       DateTimeFormatter.ymdet(
         locale,
@@ -128,6 +130,8 @@ void main() {
       'Do., 25. Raj. 1447 AH, 05:32:12',
     );
 
+    ///// DateTimeFormatterGregorian /////
+
     expect(
       DateTimeFormatterGregorian.ymdet(
         locale,
@@ -144,22 +148,63 @@ void main() {
       'Mittwoch, 15. Januar 2025, 14:32',
     );
 
+    ///// ZonedDateTimeFormatter /////
+
     expect(
-      ZonedDateTimeFormatter.withLength(locale, DateTimeLength.long).formatIso(
-        zonedDateTimeIso.date,
-        zonedDateTimeIso.time,
-        zonedDateTimeIso.zone,
-      ),
+      DateTimeFormatter.ymdet(locale)
+          .withZoneGenericLong(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
+      'Mi., 14. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
+    );
+
+    expect(
+      () => DateTimeFormatter.ymdet(locale)
+          .withZoneGenericLong(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            TimeZoneInfo.utc(),
+          ),
+      throwsA(DateTimeWriteError.missingInputField),
+    );
+
+    expect(
+      DateTimeFormatter.ymdt(locale, length: DateTimeLength.long)
+          .withZoneSpecificShort(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
       '14. Radschab 1446 AH, 14:32:12 MEZ',
     );
 
     expect(
-      ZonedDateTimeFormatter.withLength(locale, DateTimeLength.short).formatIso(
-        zonedDateTimeIso.date,
-        zonedDateTimeIso.time,
-        zonedDateTimeIso.zone,
-      ),
+      DateTimeFormatter.ymdt(locale, length: DateTimeLength.short)
+          .withZoneSpecificShort(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
       '14.07.46 AH, 14:32:12 MEZ',
+    );
+
+    ///// ZonedDateTimeFormatterGregorian /////
+
+    expect(
+      DateTimeFormatterGregorian.ymdet(locale)
+          .withZoneGenericLong(locale)
+          .formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            zonedDateTimeIso.zone,
+          ),
+      'Mi., 15.01.2025, 14:32:12 Mitteleuropäische Zeit',
     );
   });
 }

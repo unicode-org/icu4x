@@ -2,7 +2,6 @@
 import type { Calendar } from "./Calendar"
 import type { DataProvider } from "./DataProvider"
 import type { Date } from "./Date"
-import type { DateTimeFormatError } from "./DateTimeFormatError"
 import type { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 import type { DateTimeLength } from "./DateTimeLength"
 import type { IsoDate } from "./IsoDate"
