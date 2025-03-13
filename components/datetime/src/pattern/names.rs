@@ -546,6 +546,35 @@ size_test!(
 ///     ]
 /// );
 /// ```
+///
+/// When loading data for time zones, currently only one type can be loaded; see:
+/// <https://github.com/unicode-org/icu4x/issues/6063>
+///
+/// ```
+/// use icu::datetime::input::Date;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+/// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+/// use icu::locale::locale;
+/// use icu::datetime::input::{DateTime, Time};
+/// use writeable::assert_try_writeable_eq;
+///
+/// // Create an instance that can format abbreviated month, weekday, and day period names:
+/// let mut names: FixedCalendarDateTimeNames<(), ZoneFieldSet> =
+///     FixedCalendarDateTimeNames::try_new(locale!("uk").into()).unwrap();
+///
+/// // Load the names for generic short:
+/// names.include_time_zone_essentials().unwrap();
+/// names.include_time_zone_generic_short_names().unwrap();
+/// names.include_time_zone_location_names().unwrap();
+///
+/// // The same functions can be called a second time (nothing will happen):
+/// names.include_time_zone_essentials().unwrap();
+/// names.include_time_zone_generic_short_names().unwrap();
+/// names.include_time_zone_location_names().unwrap();
+///
+/// // But loading names for a different zone style does not currently work:
+/// names.include_time_zone_specific_short_names().unwrap_err();
+/// ```
 #[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
     prefs: DateTimeFormatterPreferences,
@@ -2624,7 +2653,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 || cs1 != cs3 {
+        if cs1 != cs2 || cs1 != cs3 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzGenericLongV1::INFO, req),
@@ -2664,7 +2693,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 {
+        if cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzGenericShortV1::INFO, req),
@@ -2711,7 +2740,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 || cs1 != cs3 {
+        if cs1 != cs2 || cs1 != cs3 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificLongV1::INFO, req),
@@ -2751,7 +2780,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
             .checksum;
-        if cs1.is_none() || cs1 != cs2 {
+        if cs1 != cs2 {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificShortV1::INFO, req),
