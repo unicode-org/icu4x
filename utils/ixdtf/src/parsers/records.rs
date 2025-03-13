@@ -111,10 +111,17 @@ pub enum UtcOffsetRecord {
 }
 
 impl UtcOffsetRecord {
+    /// Returns whether the UTC offset is a minute precision offset.
     pub fn is_minute_precision(&self) -> bool {
         matches!(self, Self::MinutePrecision(_))
     }
 
+    /// Returrns a zerod UTC Offset in minute precision
+    pub fn zero() -> Self {
+        Self::MinutePrecision(MinutePrecisionOffset::zero())
+    }
+
+    /// Returns the `Sign` of this UTC offset.
     pub fn sign(&self) -> Sign {
         match self {
             Self::MinutePrecision(offset) => offset.sign,
@@ -122,6 +129,7 @@ impl UtcOffsetRecord {
         }
     }
 
+    /// Returns the hour value of this UTC offset.
     pub fn hour(&self) -> u8 {
         match self {
             Self::MinutePrecision(offset) => offset.hour,
@@ -129,6 +137,7 @@ impl UtcOffsetRecord {
         }
     }
 
+    /// Returns the minute value of this UTC offset.
     pub fn minute(&self) -> u8 {
         match self {
             Self::MinutePrecision(offset) => offset.minute,
@@ -136,6 +145,7 @@ impl UtcOffsetRecord {
         }
     }
 
+    /// Returns the second value of this UTC offset if it is a full precision offset.
     pub fn second(&self) -> Option<u8> {
         match self {
             Self::MinutePrecision(_) => None,
@@ -143,6 +153,7 @@ impl UtcOffsetRecord {
         }
     }
 
+    /// Returns the fraction value of this UTC offset if it is a full precision offset.
     pub fn fraction(&self) -> Option<Fraction> {
         match self {
             Self::MinutePrecision(_) => None,

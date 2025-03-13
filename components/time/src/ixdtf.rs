@@ -113,11 +113,11 @@ impl From<icu_calendar::ParseError> for ParseError {
 
 impl UtcOffset {
     fn try_from_utc_offset_record(record: UtcOffsetRecord) -> Result<Self, ParseError> {
-        let hour_seconds = i32::from(record.hour) * 3600;
-        let minute_seconds = i32::from(record.minute) * 60;
+        let hour_seconds = i32::from(record.hour()) * 3600;
+        let minute_seconds = i32::from(record.minute()) * 60;
         Self::try_from_seconds(
-            i32::from(record.sign as i8)
-                * (hour_seconds + minute_seconds + i32::from(record.second)),
+            i32::from(record.sign() as i8)
+                * (hour_seconds + minute_seconds + i32::from(record.second().unwrap_or(0))),
         )
         .map_err(Into::into)
     }
@@ -161,7 +161,7 @@ impl<'a> Intermediate<'a> {
                         ..
                     }),
                 ..
-            } => (Some(*offset), false, None),
+            } => (Some(UtcOffsetRecord::MinutePrecision(*offset)), false, None),
             // -0800[-0800]
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
@@ -172,7 +172,8 @@ impl<'a> Intermediate<'a> {
                     }),
                 ..
             } => {
-                if offset != offset1 {
+                let annotation_offset = UtcOffsetRecord::MinutePrecision(*offset1);
+                if offset != &annotation_offset {
                     return Err(ParseError::InconsistentTimeUtcOffsets);
                 }
                 (Some(*offset), false, None)
@@ -196,7 +197,7 @@ impl<'a> Intermediate<'a> {
                         ..
                     }),
                 ..
-            } => (Some(*offset), true, None),
+            } => (Some(UtcOffsetRecord::MinutePrecision(*offset)), true, None),
             // Z[America/Los_Angeles]
             IxdtfParseRecord {
                 offset: Some(UtcOffsetRecordOrZ::Z),
