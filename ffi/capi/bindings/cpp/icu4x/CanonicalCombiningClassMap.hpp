@@ -43,7 +43,7 @@ inline diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalCombiningClassMap>>(std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline uint8_t icu4x::CanonicalCombiningClassMap::get(char32_t ch) const {
+inline uint8_t icu4x::CanonicalCombiningClassMap::operator[](char32_t ch) const {
   auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_get_mv1(this->AsFFI(),
     ch);
   return result;

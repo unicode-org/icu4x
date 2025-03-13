@@ -27,7 +27,7 @@ public:
 
   inline bool is_empty() const;
 
-  inline size_t get(size_t index) const;
+  inline size_t operator[](size_t index) const;
 
   inline const icu4x::capi::ReorderedIndexMap* AsFFI() const;
   inline icu4x::capi::ReorderedIndexMap* AsFFI();

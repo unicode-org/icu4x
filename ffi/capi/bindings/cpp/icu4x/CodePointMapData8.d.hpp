@@ -34,7 +34,7 @@ namespace icu4x {
 class CodePointMapData8 {
 public:
 
-  inline uint8_t get(char32_t cp) const;
+  inline uint8_t operator[](char32_t cp) const;
 
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const;
 

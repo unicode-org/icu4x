@@ -64,7 +64,7 @@ inline diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::Dat
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleDirectionality>>(std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::LocaleDirection icu4x::LocaleDirectionality::get(const icu4x::Locale& locale) const {
+inline icu4x::LocaleDirection icu4x::LocaleDirectionality::operator[](const icu4x::Locale& locale) const {
   auto result = icu4x::capi::icu4x_LocaleDirectionality_get_mv1(this->AsFFI(),
     locale.AsFFI());
   return icu4x::LocaleDirection::FromFFI(result);
