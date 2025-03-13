@@ -4,6 +4,8 @@
 
 use std::path::Path;
 
+use diplomat_tool::config::Config;
+
 fn main() -> std::io::Result<()> {
     let capi = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../ffi/capi"));
 
@@ -11,14 +13,10 @@ fn main() -> std::io::Result<()> {
         panic!("Missing argument <language>");
     };
 
-    let path_arg = std::env::args().nth(2);
-    let path = path_arg.clone().unwrap_or_default();
+    let config_path = capi.join("config.toml");
 
-    let library_config = if path_arg.is_some() {
-        Some(Path::new(&path))
-    } else {
-        None
-    };
+    let mut library_config = Config::default();
+    library_config.read_file(&config_path)?;
 
     diplomat_tool::gen(
         &capi.join("src/lib.rs"),
