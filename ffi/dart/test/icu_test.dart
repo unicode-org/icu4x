@@ -151,46 +151,50 @@ void main() {
     ///// ZonedDateTimeFormatter /////
 
     expect(
-      DateTimeFormatter.ymdet(locale)
-          .withZoneGenericLong(locale)
-          .formatIso(
-            zonedDateTimeIso.date,
-            zonedDateTimeIso.time,
-            zonedDateTimeIso.zone,
-          ),
+      NeoZonedDateTimeFormatter.genericLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        zonedDateTimeIso.zone,
+      ),
       'Mi., 14. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
     );
 
     expect(
-      () => DateTimeFormatter.ymdet(locale)
-          .withZoneGenericLong(locale)
-          .formatIso(
-            zonedDateTimeIso.date,
-            zonedDateTimeIso.time,
-            TimeZoneInfo.utc(),
-          ),
+      () => NeoZonedDateTimeFormatter.genericLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        TimeZoneInfo.utc(),
+      ),
       throwsA(DateTimeWriteError.missingInputField),
     );
 
     expect(
-      DateTimeFormatter.ymdt(locale, length: DateTimeLength.long)
-          .withZoneSpecificShort(locale)
-          .formatIso(
-            zonedDateTimeIso.date,
-            zonedDateTimeIso.time,
-            zonedDateTimeIso.zone,
-          ),
+      NeoZonedDateTimeFormatter.specificShort(
+        locale,
+        DateTimeFormatter.ymdt(locale, length: DateTimeLength.long),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        zonedDateTimeIso.zone,
+      ),
       '14. Radschab 1446 AH, 14:32:12 MEZ',
     );
 
     expect(
-      DateTimeFormatter.ymdt(locale, length: DateTimeLength.short)
-          .withZoneSpecificShort(locale)
-          .formatIso(
-            zonedDateTimeIso.date,
-            zonedDateTimeIso.time,
-            zonedDateTimeIso.zone,
-          ),
+      NeoZonedDateTimeFormatter.specificShort(
+        locale,
+        DateTimeFormatter.ymdt(locale, length: DateTimeLength.short),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        zonedDateTimeIso.zone,
+      ),
       '14.07.46 AH, 14:32:12 MEZ',
     );
 
