@@ -2,6 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Parsing functionality for POSIX locale identifiers.
+//! For more information, see [`PosixLocale`].
+//!
+//! # Usage example
+//! ```
+//! # use icu_locale::locale;
+//! # use env_preferences::parse::posix::PosixLocale;
+//! # use env_preferences::LocaleError;
+//! # fn main() -> Result<(), LocaleError> {
+//! let posix_locale = PosixLocale::try_from_str("en_US")?;
+//! assert_eq!(
+//!     posix_locale.try_convert_lossy()?,
+//!     locale!("en-US-posix")
+//! );
+//! # Ok(())
+//! # }
+//! ```
+
 use displaydoc::Display;
 use icu_locale::extensions::unicode::{key, value};
 use icu_locale::extensions::Extensions;
@@ -11,6 +29,7 @@ use icu_locale::{LanguageIdentifier, Locale, ParseError};
 use super::aliases::find_posix_alias;
 
 #[derive(Display, Debug, PartialEq)]
+/// An error while parsing a POSIX locale identifier
 pub enum PosixParseError {
     #[displaydoc("Empty locale")]
     EmptyLocale,
@@ -86,6 +105,7 @@ impl Delimiter {
 }
 
 #[derive(Debug)]
+/// A parsed and validated POSIX locale identifier.
 pub struct PosixLocale<'src> {
     language: &'src str,
     territory: Option<&'src str>,
@@ -99,7 +119,9 @@ impl<'src> PosixLocale<'src> {
     ///
     /// Locales are expected to be in the format `language[_territory][.codeset][@modifier]`;
     /// only the language section is mandatory, all other sections are optional.
-    /// Example with all sections: `en_US.utf8@euro`
+    /// For example:
+    /// - All sections: `en_US.utf8@euro`
+    /// - Only required sections: `en`
     ///
     /// See section 8.2 of the POSIX spec for more details:
     /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html#tag_08_02>
@@ -171,6 +193,82 @@ impl<'src> PosixLocale<'src> {
     /// POSIX locales that will return an error or silently ignore data.
     /// In particular, the codeset section is always ignored, and only some common modifiers are handled
     /// (unknown modifiers will be silently ignored).
+    ///
+    /// # Examples
+    ///
+    /// ## Parsing behaviour
+    /// ```
+    /// # use icu_locale::locale;
+    /// # use env_preferences::parse::posix::PosixLocale;
+    /// # use env_preferences::LocaleError;
+    /// # fn main() -> Result<(), LocaleError> {
+    /// // Locales will always include the `posix` variant
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("en_US")?.try_convert_lossy()?,
+    ///     locale!("en-US-posix")
+    /// );
+    /// // The codeset field will be ignored
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("en_US.iso88591")?.try_convert_lossy()?,
+    ///     locale!("en-US-posix")
+    /// );
+    /// // Any unknown modifiers will be ignored
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("en_US@unknown")?.try_convert_lossy()?,
+    ///     locale!("en-US-posix")
+    /// );
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// ## Edge cases
+    /// ```
+    /// # use icu_locale::locale;
+    /// # use env_preferences::parse::posix::PosixLocale;
+    /// # use env_preferences::LocaleError;
+    /// # fn main() -> Result<(), LocaleError> {
+    /// // The default "C"/"POSIX" locale will be converted to "und"
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("C")?.try_convert_lossy()?,
+    ///     locale!("und-posix")
+    /// );
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("POSIX")?.try_convert_lossy()?,
+    ///     locale!("und-posix")
+    /// );
+    ///
+    /// // Known language aliases will be converted to the matching BCP-47 identifier
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("french")?.try_convert_lossy()?,
+    ///     locale!("fr-FR-posix")
+    /// );
+    ///
+    /// // Known script modifiers will be converted to the matching CLDR keys
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("uz_UZ@cyrillic")?.try_convert_lossy()?,
+    ///     locale!("uz-Cyrl-UZ-posix")
+    /// );
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("ks_IN@devanagari")?.try_convert_lossy()?,
+    ///     locale!("ks-Deva-IN-posix")
+    /// );
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("be_BY@latin")?.try_convert_lossy()?,
+    ///     locale!("be-Latn-BY-posix")
+    /// );
+    ///
+    /// // Other known modifiers are handled accordingly
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("en_US@euro")?.try_convert_lossy()?,
+    ///     locale!("en-US-posix-u-cu-eur")
+    /// );
+    /// assert_eq!(
+    ///     PosixLocale::try_from_str("aa_ER@saaho")?.try_convert_lossy()?,
+    ///     locale!("ssy-ER-posix")
+    /// );
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
         // Check if the language matches a known alias (e.g. "nynorsk"->("nn", "NO"))
         let (mut language, region) = match find_posix_alias(self.language) {

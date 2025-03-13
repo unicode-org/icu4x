@@ -2,12 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Platform-specific conversion from locale strings to BCP-47 identifiers.
+
 /// Find a BCP-47 language/region from a list of POSIX locale aliases.
 ///
 /// Some of these conversions are approximate and not exact (e.g. "C"->"und").
 /// This is based on GNU libc's `intl/locale.alias` file, with some manual processing
 /// to remove duplicates. The original file is available at:
-/// https://sourceware.org/git/?p=glibc.git;a=blob;f=intl/locale.alias;hb=HEAD
+/// <https://sourceware.org/git/?p=glibc.git;a=blob;f=intl/locale.alias;hb=HEAD>
 #[cfg(any(doc, feature = "parse_posix", target_os = "linux"))]
 pub fn find_posix_alias(
     alias: &str,
@@ -60,8 +62,8 @@ pub fn find_posix_alias(
     }
 }
 
-/// Find a matching CLDR collation identifier according to a Windows
-/// "Sort Order Identifier".
+/// Strip any Windows "Sort Order Identifier" and return a matching CLDR collation value.
+///
 /// The full table is available at:
 /// <https://learn.microsoft.com/en-us/windows/win32/intl/sort-order-identifiers>
 #[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
@@ -90,6 +92,7 @@ pub fn strip_windows_collation_suffix_lossy(
     }
 }
 
+/// Find a BCP-47 identifier from a list of known Windows aliases.
 #[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
 pub fn find_windows_alias_lossy(lcid: &str) -> Option<icu_locale::LanguageIdentifier> {
     use icu_locale::langid;

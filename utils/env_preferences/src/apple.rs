@@ -61,13 +61,13 @@ fn get_string(ptr: CFStringRef) -> Result<String, RetrievalError> {
 
 /// Retrieves system locales for Apple operating systems, in the order preferred by the
 /// user, it consumes [`CFLocaleCopyPreferredLanguages`](https://developer.apple.com/documentation/corefoundation/1542887-cflocalecopypreferredlanguages)
-/// to copy the languages prefered by the user.
+/// to copy the languages preferred by the user.
 pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
     let mut languages: Vec<String> = Vec::new();
 
     // SAFETY: The call to `CFLocaleCopyPreferredLanguages` returns an immutable reference to `CFArray` which is owned by us
     // https://developer.apple.com/documentation/corefoundation/cfarrayref. It is ensured that `locale_carr_ref` is not mutated
-    // Immutablility ensures that nothing is overriden during it's scope
+    // Immutablility ensures that nothing is overridden during it's scope
     let locale_carr_ref = unsafe { CFLocaleCopyPreferredLanguages() };
 
     if !locale_carr_ref.is_null() {

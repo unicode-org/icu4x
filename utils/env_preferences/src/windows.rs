@@ -6,7 +6,7 @@ use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
 
 use crate::RetrievalError;
 
-/// Retrieves languages preffered by the user , it consumes [`GlobalizationPreferences::Languages`](https://learn.microsoft.com/en-us/uwp/api/windows.system.userprofile.globalizationpreferences.languages?view=winrt-26100)
+/// Retrieves languages preferred by the user , it consumes [`GlobalizationPreferences::Languages`](https://learn.microsoft.com/en-us/uwp/api/windows.system.userprofile.globalizationpreferences.languages?view=winrt-26100)
 pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
     let mut locale_vec_str: Vec<String> = Vec::new();
     let locale = GlobalizationPreferences::Languages()?;

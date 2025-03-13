@@ -2,6 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Parsing functionality for Windows LCIDs.
+//! For more information, see [`WindowsLocale`].
+//!
+//! # Usage example
+//! ```
+//! # use icu_locale::locale;
+//! # use env_preferences::parse::windows::WindowsLocale;
+//! # use env_preferences::LocaleError;
+//! # fn main() -> Result<(), LocaleError> {
+//! let windows_locale = WindowsLocale::try_from_str("en-US")?;
+//! assert_eq!(
+//!     windows_locale.try_convert_lossy()?,
+//!     locale!("en-US")
+//! );
+//! # Ok(())
+//! # }
+//! ```
+
 use icu_locale::extensions::unicode::{key, Keywords, Unicode};
 use icu_locale::extensions::Extensions;
 use icu_locale::{LanguageIdentifier, Locale, ParseError};
@@ -18,6 +36,30 @@ impl<'src> WindowsLocale<'src> {
         Ok(Self { src })
     }
 
+    /// ## Edge cases
+    /// ```
+    /// # use icu_locale::locale;
+    /// # use env_preferences::parse::windows::WindowsLocale;
+    /// # use env_preferences::LocaleError;
+    /// # fn main() -> Result<(), LocaleError> {
+    /// // Known invalid values are converted to a matching BCP-47 identifier
+    /// assert_eq!(
+    ///     WindowsLocale::try_from_str("zh-yue-HK")?.try_convert_lossy()?,
+    ///     locale!("yue-HK")
+    /// );
+    ///
+    /// // Known collation suffixes and converted to `-u-co-VALUE` extension syntax
+    /// assert_eq!(
+    ///     WindowsLocale::try_from_str("de-DE_phoneb")?.try_convert_lossy()?,
+    ///     locale!("de-DE-u-co-phonebk")
+    /// );
+    /// assert_eq!(
+    ///     WindowsLocale::try_from_str("zh-TW_pronun")?.try_convert_lossy()?,
+    ///     locale!("zh-TW-u-co-zhuyin")
+    /// );
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
         let (lcid, collation_value) = strip_windows_collation_suffix_lossy(self.src);
         let keywords = match collation_value {

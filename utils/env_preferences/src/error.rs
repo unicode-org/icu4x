@@ -6,6 +6,7 @@ use displaydoc::Display;
 use icu_locale::ParseError;
 use std::{ffi::FromVecWithNulError, str::Utf8Error};
 
+/// An error encountered while retrieving the system locale
 #[derive(Debug)]
 pub enum RetrievalError {
     /// Error converting into `&CStr` to `&str`
@@ -56,6 +57,7 @@ impl From<FromVecWithNulError> for RetrievalError {
     }
 }
 
+/// An error encountered while either retrieving or parsing a system locale
 #[derive(Display, Debug)]
 pub enum LocaleError {
     #[displaydoc("Unable to retrieve locales: {0:?}")]
