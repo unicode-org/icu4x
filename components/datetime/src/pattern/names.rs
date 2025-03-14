@@ -9,7 +9,6 @@ use super::{
 };
 use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
-use crate::fieldsets::E;
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
 use crate::provider::neo::{marker_attrs, *};
 use crate::provider::pattern::PatternItem;
@@ -3318,7 +3317,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // z..zzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), One | Two | Three) => {
-                    let r = self.load_time_zone_field_z_except_decimals(
+                    self.load_time_zone_field_z_except_decimals(
                         zone_essentials_provider,
                         mz_specific_short_provider,
                         mz_period_provider,
@@ -3328,7 +3327,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // zzzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), Four) => {
-                    let r = self.load_time_zone_field_zzzz_except_decimals(
+                    self.load_time_zone_field_zzzz_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3341,7 +3340,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // v
                 (FS::TimeZone(TimeZone::GenericNonLocation), One) => {
-                    let r = self.load_time_zone_field_v_except_decimals(
+                    self.load_time_zone_field_v_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3353,7 +3352,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // vvvv
                 (FS::TimeZone(TimeZone::GenericNonLocation), Four) => {
-                    let r = self.load_time_zone_field_vvvv_except_decimals(
+                    self.load_time_zone_field_vvvv_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3367,11 +3366,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // V
                 (FS::TimeZone(TimeZone::Location), One) => {
-                    let r = self.load_time_zone_field_V(prefs)?;
+                    self.load_time_zone_field_V(prefs)?;
                 }
                 // VVV
                 (FS::TimeZone(TimeZone::Location), Three) => {
-                    let r = self.load_time_zone_field_VVV(
+                    self.load_time_zone_field_VVV(
                         locations_provider,
                         locations_root_provider,
                         exemplar_cities_provider,
@@ -3381,7 +3380,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // VVVV
                 (FS::TimeZone(TimeZone::Location), Four) => {
-                    let r = self.load_time_zone_field_VVVV_except_decimals(
+                    self.load_time_zone_field_VVVV_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3391,8 +3390,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 }
                 // O, OOOO
                 (FS::TimeZone(TimeZone::LocalizedOffset), One | Four) => {
-                    let r = self
-                        .load_time_zone_field_O_except_decimals(zone_essentials_provider, prefs)?;
+                    self.load_time_zone_field_O_except_decimals(zone_essentials_provider, prefs)?;
                     numeric_field = Some(field);
                 }
                 // X..XXXXX, x..xxxxx
@@ -3400,7 +3398,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                     FS::TimeZone(TimeZone::IsoWithZ | TimeZone::Iso),
                     One | Two | Three | Four | Five,
                 ) => {
-                    let r = self.load_time_zone_field_X(prefs)?;
+                    self.load_time_zone_field_X(prefs)?;
                 }
 
                 ///// Numeric symbols /////
