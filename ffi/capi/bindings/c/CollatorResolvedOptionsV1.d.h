@@ -8,7 +8,6 @@
 #include "diplomat_runtime.h"
 
 #include "CollatorAlternateHandling.d.h"
-#include "CollatorBackwardSecondLevel.d.h"
 #include "CollatorCaseFirst.d.h"
 #include "CollatorCaseLevel.d.h"
 #include "CollatorMaxVariable.d.h"
@@ -25,7 +24,6 @@ typedef struct CollatorResolvedOptionsV1 {
   CollatorMaxVariable max_variable;
   CollatorCaseLevel case_level;
   CollatorNumericOrdering numeric;
-  CollatorBackwardSecondLevel backward_second_level;
 } CollatorResolvedOptionsV1;
 
 typedef struct CollatorResolvedOptionsV1_option {union { CollatorResolvedOptionsV1 ok; }; bool is_ok; } CollatorResolvedOptionsV1_option;
