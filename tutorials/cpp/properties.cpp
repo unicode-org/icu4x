@@ -29,7 +29,7 @@ int test_set_property(CodePointSetData* data, char32_t included, char32_t exclud
 }
 
 int test_map_16_property(CodePointMapData16* data, char32_t sample, uint32_t expected) {
-    uint32_t actual = data[sample];
+    uint32_t actual = (*data)[sample];
     std::cout << std::hex; // print hex for U+####
     if (actual == expected) {
         std::cout << "Code point U+" << sample << " correctly mapped to 0x" << actual << std::endl;
@@ -41,7 +41,7 @@ int test_map_16_property(CodePointMapData16* data, char32_t sample, uint32_t exp
 }
 
 int test_map_8_property(CodePointMapData8* data, char32_t sample, uint32_t expected) {
-    uint32_t actual = data[sample];
+    uint32_t actual = (*data)[sample];
     std::cout << std::hex; // print hex for U+####
     if (actual == expected) {
         std::cout << "Code point U+" << sample << " correctly mapped to 0x" << actual << std::endl;
