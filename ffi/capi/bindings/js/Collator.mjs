@@ -106,7 +106,7 @@ export class Collator {
     }
 
     get resolvedOptions() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 28, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 24, 4, false);
         
         const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     
