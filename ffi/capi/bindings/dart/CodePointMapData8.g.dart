@@ -319,7 +319,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// Create a map for the `Vertical_Orientation` property, using compiled data.
   ///
   /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
-  factory CodePointMapData8.canonicalCombiningClass() {
+  factory CodePointMapData8.verticalOrientation() {
     final result = _icu4x_CodePointMapData8_create_vertical_orientation_mv1();
     return CodePointMapData8._fromFfi(result, []);
   }

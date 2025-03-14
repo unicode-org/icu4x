@@ -357,7 +357,7 @@ pub mod ffi {
         }
         /// Create a map for the `Vertical_Orientation` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
-        #[diplomat::attr(auto, named_constructor = "canonical_combining_class")]
+        #[diplomat::attr(auto, named_constructor = "vertical_orientation")]
         #[cfg(feature = "compiled_data")]
         pub fn create_vertical_orientation() -> Box<CodePointMapData8> {
             convert_8(
