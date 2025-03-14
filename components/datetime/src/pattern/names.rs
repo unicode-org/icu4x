@@ -3065,7 +3065,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[must_use]
     pub(crate) fn load_time_zone_field_zzzz_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3086,7 +3085,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[must_use]
     pub(crate) fn load_time_zone_field_v_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3106,7 +3104,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[must_use]
     pub(crate) fn load_time_zone_field_vvvv_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3128,7 +3125,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
     pub(crate) fn load_time_zone_field_V(
         &mut self,
@@ -3138,7 +3134,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
     pub(crate) fn load_time_zone_field_VVV(
         &mut self,
@@ -3156,7 +3151,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
     pub(crate) fn load_time_zone_field_VVVV_except_decimals(
         &mut self,
@@ -3169,7 +3163,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)
     }
 
-    #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
     pub(crate) fn load_time_zone_field_O_except_decimals(
         &mut self,
@@ -3179,7 +3172,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)
     }
 
-    #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
     pub(crate) fn load_time_zone_field_X(
         &mut self,
