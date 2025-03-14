@@ -110,11 +110,11 @@ export function writeOptionToArrayBuffer(arrayBuffer, offset, jsValue, size, ali
 * Calls writeToArrayBufferCallback(arrayBuffer, offset, jsValue) for non-null jsValues
 * 
 * This array will have size<T>/align<T> elements for the actual T, then one element
-* for the is_ok bool, and then align<T> - 1 elements for padding if `needsPaddingFields`` is set.
+* for the is_ok bool, and then align<T> - 1 elements for padding.
 * 
 * See wasm_abi_quirks.md's section on Unions for understanding this ABI.
 */
-export function optionToArgsForCalling(jsValue, size, align, needsPaddingFields, writeToArrayBufferCallback) {
+export function optionToArgsForCalling(jsValue, size, align, writeToArrayBufferCallback) {
     let args;
     // perform a nullish check, not a null check,
     // we want identical behavior for undefined
@@ -140,7 +140,8 @@ export function optionToArgsForCalling(jsValue, size, align, needsPaddingFields,
         args.push(0);
     }
 
-    args = args.concat(maybePaddingFields(needsPaddingFields, size / align));
+    // Unconditionally add padding
+    args = args.concat(Array(align - 1).fill(0));
     return args;
 }
 

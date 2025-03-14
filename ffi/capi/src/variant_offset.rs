@@ -43,7 +43,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::attr(auto, named_constructor = "from_seconds")]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_seconds")]
         pub fn from_seconds(seconds: i32) -> Result<Box<UtcOffset>, TimeZoneInvalidOffsetError> {
             Ok(Box::new(Self(icu_time::zone::UtcOffset::try_from_seconds(
                 seconds,
@@ -65,7 +65,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset::from_str, FnInStruct, hidden)]
-        #[diplomat::attr(auto, named_constructor = "from_string")]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_string")]
         #[diplomat::demo(default_constructor)]
         pub fn from_string(offset: &DiplomatStr) -> Result<Box<Self>, TimeZoneInvalidOffsetError> {
             icu_time::zone::UtcOffset::try_from_utf8(offset)

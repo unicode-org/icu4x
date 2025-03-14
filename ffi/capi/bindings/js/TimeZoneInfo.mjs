@@ -56,7 +56,7 @@ export class TimeZoneInfo {
     }
 
     #defaultConstructor(timeZoneId, offset, zoneVariant) {
-        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(timeZoneId.ffiValue, offset.ffiValue ?? 0, ...diplomatRuntime.optionToArgsForCalling(zoneVariant, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(timeZoneId.ffiValue, offset.ffiValue ?? 0, ...diplomatRuntime.optionToArgsForCalling(zoneVariant, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
     
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);

@@ -138,7 +138,7 @@ args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
 description = "Generate Demo HTML for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen", "ffi/capi/diplomat-demo-config.toml"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"
