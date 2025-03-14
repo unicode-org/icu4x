@@ -170,6 +170,21 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
+    group.bench_function("fixed/format_to_string/ymd_numeric/10_cases", |b| {
+        let formatter = construct_fixed_ymd_numeric();
+        b.iter(|| {
+            let mut counter = 0usize; // make sure the loop is not DCE'd
+            for datetime in black_box(&ten_cases).iter() {
+                let n = black_box(&formatter)
+                    .format(datetime)
+                    .write_to_string()
+                    .len();
+                counter = counter.wrapping_add(n);
+            }
+            counter
+        });
+    });
+
     group.finish();
 }
 
