@@ -545,10 +545,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.as_mut().include_time_zone_essentials()?;
-                    names.as_mut().include_time_zone_generic_short_names()?;
-                    names.as_mut().include_time_zone_location_names()?;
+                    names.as_mut().include_time_zone_generic_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -569,14 +566,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_essentials(&provider)?;
-                    names
-                        .as_mut()
-                        .load_time_zone_generic_short_names(&provider)?;
-                    names.as_mut().load_time_zone_location_names(&provider)?;
+                    names.as_mut().load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -597,10 +589,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.as_mut().include_time_zone_essentials()?;
-                    names.as_mut().include_time_zone_generic_long_names()?;
-                    names.as_mut().include_time_zone_location_names()?;
+                    names.as_mut().include_time_zone_generic_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -621,14 +610,11 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
-                        .load_time_zone_generic_long_names(&provider)?;
-                    names.as_mut().load_time_zone_location_names(&provider)?;
+                        .load_time_zone_generic_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -649,9 +635,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.as_mut().include_time_zone_essentials()?;
-                    names.as_mut().include_time_zone_specific_short_names()?;
+                    names.as_mut().include_time_zone_specific_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -672,13 +656,11 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
-                        .load_time_zone_specific_short_names(&provider)?;
+                        .load_time_zone_specific_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -699,10 +681,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.as_mut().include_time_zone_essentials()?;
-                    names.as_mut().include_time_zone_specific_long_names()?;
-                    names.as_mut().include_time_zone_location_names()?;
+                    names.as_mut().include_time_zone_specific_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -723,14 +702,11 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_essentials(&provider)?;
                     names
                         .as_mut()
-                        .load_time_zone_specific_long_names(&provider)?;
-                    names.as_mut().load_time_zone_location_names(&provider)?;
+                        .load_time_zone_specific_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -751,8 +727,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.as_mut().include_time_zone_essentials()?;
+                    names.as_mut().include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -773,10 +748,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_essentials(&provider)?;
+                    names.as_mut().load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -797,8 +771,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.as_mut().include_time_zone_essentials()?;
+                    names.as_mut().include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -819,10 +792,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_essentials(&provider)?;
+                    names.as_mut().load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -1376,10 +1348,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.include_time_zone_essentials()?;
-                    names.include_time_zone_generic_short_names()?;
-                    names.include_time_zone_location_names()?;
+                    names.include_time_zone_generic_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -1400,12 +1369,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.load_time_zone_essentials(&provider)?;
-                    names.load_time_zone_generic_short_names(&provider)?;
-                    names.load_time_zone_location_names(&provider)?;
+                    names.load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -1426,10 +1392,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.include_time_zone_essentials()?;
-                    names.include_time_zone_generic_long_names()?;
-                    names.include_time_zone_location_names()?;
+                    names.include_time_zone_generic_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -1450,12 +1413,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.load_time_zone_essentials(&provider)?;
-                    names.load_time_zone_generic_long_names(&provider)?;
-                    names.load_time_zone_location_names(&provider)?;
+                    names.load_time_zone_generic_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -1476,9 +1436,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.include_time_zone_essentials()?;
-                    names.include_time_zone_specific_short_names()?;
+                    names.include_time_zone_specific_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -1499,11 +1457,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.load_time_zone_essentials(&provider)?;
-                    names.load_time_zone_specific_short_names(&provider)?;
+                    names.load_time_zone_specific_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -1524,10 +1480,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.include_time_zone_essentials()?;
-                    names.include_time_zone_specific_long_names()?;
-                    names.include_time_zone_location_names()?;
+                    names.include_time_zone_specific_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -1548,12 +1501,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.load_time_zone_essentials(&provider)?;
-                    names.load_time_zone_specific_long_names(&provider)?;
-                    names.load_time_zone_location_names(&provider)?;
+                    names.load_time_zone_specific_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -1574,8 +1524,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.include_time_zone_essentials()?;
+                    names.include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -1596,10 +1545,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.load_time_zone_essentials(&provider)?;
+                    names.load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -1620,8 +1568,7 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
-                    names.include_time_zone_essentials()?;
+                    names.include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -1642,10 +1589,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
                 |names| {
-                    // NOTE: Keep this in sync with RawDateTimeNames::load_for_pattern
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.load_time_zone_essentials(&provider)?;
+                    names.load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {

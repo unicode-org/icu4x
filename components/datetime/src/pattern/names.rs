@@ -2053,6 +2053,191 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         self.load_time_zone_specific_short_names(&crate::provider::Baked)
     }
 
+    /// Loads generic non-location short time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
+    pub fn load_time_zone_generic_short_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzGenericShortV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        self.inner.load_time_zone_field_v_names(
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::MzGenericShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes generic non-location short time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_generic_short_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_generic_short_names_with_fallback(&crate::provider::Baked)
+    }
+
+    /// Loads generic non-location long time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
+    pub fn load_time_zone_generic_long_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzGenericLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        self.inner.load_time_zone_field_vvvv_names(
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::MzGenericLongV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes generic non-location long time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_generic_long_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_generic_long_names_with_fallback(&crate::provider::Baked)
+    }
+
+    /// Loads specific non-location short time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
+    pub fn load_time_zone_specific_short_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzSpecificShortV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        self.inner.load_time_zone_field_z_names(
+            &tz::EssentialsV1::bind(provider),
+            &tz::MzSpecificShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes specific non-location short time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_specific_short_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_specific_short_names_with_fallback(&crate::provider::Baked)
+    }
+
+    /// Loads specific non-location long time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
+    pub fn load_time_zone_specific_long_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzSpecificLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        self.inner.load_time_zone_field_zzzz_names(
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzSpecificLongV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes specific non-location long time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_specific_long_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_specific_long_names_with_fallback(&crate::provider::Baked)
+    }
+
+    /// Loads all data for short and long localized offset time zone formatting.
+    ///
+    /// See:
+    ///
+    /// - [`LocalizedOffsetShort`](crate::fieldsets::zone::LocalizedOffsetShort)
+    /// - [`LocalizedOffsetLong`](crate::fieldsets::zone::LocalizedOffsetLong)
+    pub fn load_time_zone_localized_offset_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::EssentialsV1> + ?Sized,
+    {
+        self.inner
+            .load_time_zone_field_O_names(&tz::EssentialsV1::bind(provider), self.prefs)?;
+        Ok(self)
+    }
+
+    /// Includes all data for short and long localized offset time zone formatting.
+    ///
+    /// See:
+    ///
+    /// - [`LocalizedOffsetShort`](crate::fieldsets::zone::LocalizedOffsetShort)
+    /// - [`LocalizedOffsetLong`](crate::fieldsets::zone::LocalizedOffsetLong)
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_localized_offset_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_localized_offset_names_with_fallback(&crate::provider::Baked)
+    }
+
     /// Loads a [`DecimalFormatter`] from a data provider.
     #[inline]
     pub fn load_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
