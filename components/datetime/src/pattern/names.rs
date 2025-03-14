@@ -364,10 +364,6 @@ where
     }
 }
 
-pub(crate) struct LoadTimeZoneNamesByFieldResult {
-    pub(crate) needs_decimal_formatter: bool,
-}
-
 size_test!(
     FixedCalendarDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
@@ -2069,7 +2065,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             + DataProvider<tz::MzPeriodV1>
             + ?Sized,
     {
-        self.inner.load_time_zone_field_v_names(
+        self.inner.load_time_zone_field_v_except_decimals(
             &tz::EssentialsV1::bind(provider),
             &tz::LocationsV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
@@ -2108,7 +2104,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             + DataProvider<tz::MzPeriodV1>
             + ?Sized,
     {
-        self.inner.load_time_zone_field_vvvv_names(
+        self.inner.load_time_zone_field_vvvv_except_decimals(
             &tz::EssentialsV1::bind(provider),
             &tz::LocationsV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
@@ -2132,7 +2128,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads specific non-location short time zone names
-    /// and all data required for its fallback formats.
+    /// and all data required for its fallback formats
+    /// except for decimal formatting.
     ///
     /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
     pub fn load_time_zone_specific_short_names_with_fallback<P>(
@@ -2147,7 +2144,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             + DataProvider<tz::MzPeriodV1>
             + ?Sized,
     {
-        self.inner.load_time_zone_field_z_names(
+        self.inner.load_time_zone_field_z_except_decimals(
             &tz::EssentialsV1::bind(provider),
             &tz::MzSpecificShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
@@ -2157,7 +2154,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Includes specific non-location short time zone names
-    /// and all data required for its fallback formats.
+    /// and all data required for its fallback formats
+    /// except for decimal formatting.
     ///
     /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
     #[cfg(feature = "compiled_data")]
@@ -2168,7 +2166,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads specific non-location long time zone names
-    /// and all data required for its fallback formats.
+    /// and all data required for its fallback formats
+    /// except for decimal formatting.
     ///
     /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
     pub fn load_time_zone_specific_long_names_with_fallback<P>(
@@ -2184,7 +2183,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             + DataProvider<tz::MzPeriodV1>
             + ?Sized,
     {
-        self.inner.load_time_zone_field_zzzz_names(
+        self.inner.load_time_zone_field_zzzz_except_decimals(
             &tz::EssentialsV1::bind(provider),
             &tz::LocationsV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
@@ -2197,7 +2196,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Includes specific non-location long time zone names
-    /// and all data required for its fallback formats.
+    /// and all data required for its fallback formats
+    /// except for decimal formatting.
     ///
     /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
     #[cfg(feature = "compiled_data")]
@@ -2207,7 +2207,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         self.load_time_zone_specific_long_names_with_fallback(&crate::provider::Baked)
     }
 
-    /// Loads all data for short and long localized offset time zone formatting.
+    /// Loads all data for short and long localized offset time zone formatting
+    /// except for decimal formatting.
     ///
     /// See:
     ///
@@ -2220,12 +2221,15 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     where
         P: DataProvider<tz::EssentialsV1> + ?Sized,
     {
-        self.inner
-            .load_time_zone_field_O_names(&tz::EssentialsV1::bind(provider), self.prefs)?;
+        self.inner.load_time_zone_field_O_except_decimals(
+            &tz::EssentialsV1::bind(provider),
+            self.prefs,
+        )?;
         Ok(self)
     }
 
-    /// Includes all data for short and long localized offset time zone formatting.
+    /// Includes all data for short and long localized offset time zone formatting
+    /// except for decimal formatting.
     ///
     /// See:
     ///
@@ -2979,28 +2983,24 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         Ok(())
     }
 
-    #[must_use]
-    pub(crate) fn load_time_zone_field_z_names(
+    pub(crate) fn load_time_zone_field_z_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
-        let needs_decimal_formatter = true;
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_specific_short_names(
             mz_specific_short_provider,
             mz_period_provider,
             prefs,
         )?;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
-    pub(crate) fn load_time_zone_field_zzzz_names(
+    pub(crate) fn load_time_zone_field_zzzz_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
@@ -3009,8 +3009,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
-        let needs_decimal_formatter = true;
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_specific_long_names(
             mz_specific_long_provider,
@@ -3019,13 +3018,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             prefs,
         )?;
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
-    pub(crate) fn load_time_zone_field_v_names(
+    pub(crate) fn load_time_zone_field_v_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
@@ -3033,8 +3030,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
-        let needs_decimal_formatter = true;
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_generic_short_names(
             mz_generic_short_provider,
@@ -3043,13 +3039,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )?;
         // For fallback:
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
-    pub(crate) fn load_time_zone_field_vvvv_names(
+    pub(crate) fn load_time_zone_field_vvvv_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
@@ -3058,8 +3052,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
-        let needs_decimal_formatter = true;
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_generic_long_names(
             mz_generic_long_provider,
@@ -3069,88 +3062,71 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )?;
         // For fallback:
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
-    pub(crate) fn load_time_zone_field_V_names(
+    pub(crate) fn load_time_zone_field_V(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+    ) -> Result<(), PatternLoadError> {
         // no data required
-        let needs_decimal_formatter = false;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
-    pub(crate) fn load_time_zone_field_VVV_names(
+    pub(crate) fn load_time_zone_field_VVV(
         &mut self,
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1> + ?Sized),
         exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
-        let needs_decimal_formatter = false;
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
         self.load_time_zone_exemplar_city_names(
             exemplar_cities_provider,
             exemplar_cities_root_provider,
             prefs,
         )?;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
-    pub(crate) fn load_time_zone_field_VVVV_names(
+    pub(crate) fn load_time_zone_field_VVVV_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
         locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
-        let needs_decimal_formatter = true;
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
-    pub(crate) fn load_time_zone_field_O_names(
+    pub(crate) fn load_time_zone_field_O_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+    ) -> Result<(), PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-        let needs_decimal_formatter = true;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     #[must_use]
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
-    pub(crate) fn load_time_zone_field_X_names(
+    pub(crate) fn load_time_zone_field_X(
         &mut self,
         _prefs: DateTimeFormatterPreferences,
-    ) -> Result<LoadTimeZoneNamesByFieldResult, PatternLoadError> {
+    ) -> Result<(), PatternLoadError> {
         // no data required
-        let needs_decimal_formatter = false;
-        Ok(LoadTimeZoneNamesByFieldResult {
-            needs_decimal_formatter,
-        })
+        Ok(())
     }
 
     pub(crate) fn load_decimal_formatter(
@@ -3281,17 +3257,17 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // z..zzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), One | Two | Three) => {
-                    let r = self.load_time_zone_field_z_names(
+                    let r = self.load_time_zone_field_z_except_decimals(
                         zone_essentials_provider,
                         mz_specific_short_provider,
                         mz_period_provider,
                         prefs,
                     )?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    numeric_field = Some(field);
                 }
                 // zzzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), Four) => {
-                    let r = self.load_time_zone_field_zzzz_names(
+                    let r = self.load_time_zone_field_zzzz_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3300,11 +3276,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_period_provider,
                         prefs,
                     )?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    numeric_field = Some(field);
                 }
                 // v
                 (FS::TimeZone(TimeZone::GenericNonLocation), One) => {
-                    let r = self.load_time_zone_field_v_names(
+                    let r = self.load_time_zone_field_v_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3312,11 +3288,11 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_period_provider,
                         prefs,
                     )?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    numeric_field = Some(field);
                 }
                 // vvvv
                 (FS::TimeZone(TimeZone::GenericNonLocation), Four) => {
-                    let r = self.load_time_zone_field_vvvv_names(
+                    let r = self.load_time_zone_field_vvvv_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
@@ -3325,47 +3301,45 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_period_provider,
                         prefs,
                     )?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    numeric_field = Some(field);
                 }
 
                 // V
                 (FS::TimeZone(TimeZone::Location), One) => {
-                    let r = self.load_time_zone_field_V_names(prefs)?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    let r = self.load_time_zone_field_V(prefs)?;
                 }
                 // VVV
                 (FS::TimeZone(TimeZone::Location), Three) => {
-                    let r = self.load_time_zone_field_VVV_names(
+                    let r = self.load_time_zone_field_VVV(
                         locations_provider,
                         locations_root_provider,
                         exemplar_cities_provider,
                         exemplar_cities_root_provider,
                         prefs,
                     )?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
                 }
                 // VVVV
                 (FS::TimeZone(TimeZone::Location), Four) => {
-                    let r = self.load_time_zone_field_VVVV_names(
+                    let r = self.load_time_zone_field_VVVV_except_decimals(
                         zone_essentials_provider,
                         locations_provider,
                         locations_root_provider,
                         prefs,
                     )?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    numeric_field = Some(field);
                 }
                 // O, OOOO
                 (FS::TimeZone(TimeZone::LocalizedOffset), One | Four) => {
-                    let r = self.load_time_zone_field_O_names(zone_essentials_provider, prefs)?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    let r = self
+                        .load_time_zone_field_O_except_decimals(zone_essentials_provider, prefs)?;
+                    numeric_field = Some(field);
                 }
                 // X..XXXXX, x..xxxxx
                 (
                     FS::TimeZone(TimeZone::IsoWithZ | TimeZone::Iso),
                     One | Two | Three | Four | Five,
                 ) => {
-                    let r = self.load_time_zone_field_X_names(prefs)?;
-                    numeric_field = r.needs_decimal_formatter.then_some(field).or(numeric_field);
+                    let r = self.load_time_zone_field_X(prefs)?;
                 }
 
                 ///// Numeric symbols /////
