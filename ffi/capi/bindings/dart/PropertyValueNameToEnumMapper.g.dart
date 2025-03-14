@@ -274,7 +274,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.VerticalOrientation.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.verticalOrientation(DataProvider provider) {
+  factory PropertyValueNameToEnumMapper.verticalOrientationWithProvider(DataProvider provider) {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];

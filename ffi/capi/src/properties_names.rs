@@ -330,7 +330,7 @@ pub mod ffi {
         }
         /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::VerticalOrientation, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "vertical_orientation")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "vertical_orientation_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_vertical_orientation_with_provider(
             provider: &DataProvider,
