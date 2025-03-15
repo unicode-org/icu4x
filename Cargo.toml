@@ -88,6 +88,7 @@ members = [
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
+    "tools/codegen",
     "tools/make/bakeddata",
     "tools/make/depcheck",
     "tools/make/diplomat-coverage",

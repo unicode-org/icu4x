@@ -1,0 +1,57 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use icu::datetime::fieldsets::builder::*;
+
+#[derive(Debug)]
+struct ConsumedOptions {
+    length: bool,
+    alignment: bool,
+    year_style: bool,
+}
+
+impl ConsumedOptions {
+    fn from_builder(builder: FieldSetBuilder) -> Option<Self> {
+        match builder.build_composite() {
+            Ok(_) => Some(ConsumedOptions {
+                length: true,
+                alignment: true,
+                year_style: true,
+            }),
+            Err(BuilderError::SuperfluousOptions(options)) => Some(ConsumedOptions {
+                length: options.length.is_none(),
+                alignment: options.alignment.is_none(),
+                year_style: options.year_style.is_none(),
+            }),
+            Err(BuilderError::InvalidDateFields) => None,
+            Err(e) => panic!("unexpected error: {e}"),
+        }
+    }
+}
+
+pub fn main() {
+    for date_fields in DateFields::VALUES.iter() {
+        // Determine the options for these date fields
+        let mut builder = FieldSetBuilder::new();
+        builder.date_fields = Some(*date_fields);
+        builder.length = Some(Default::default());
+        builder.alignment = Some(Default::default());
+        builder.year_style = Some(Default::default());
+
+        let consumed_options = ConsumedOptions::from_builder(builder.clone());
+        println!("{date_fields:?} as Date => {consumed_options:?}");
+
+        builder.time_precision = Some(Default::default());
+        let consumed_options = ConsumedOptions::from_builder(builder.clone());
+        println!("{date_fields:?} as DateTime => {consumed_options:?}");
+
+        builder.zone_style = Some(ZoneStyle::LocalizedOffsetShort);
+        let consumed_options = ConsumedOptions::from_builder(builder.clone());
+        println!("{date_fields:?} as DateTimeZone => {consumed_options:?}");
+
+        builder.time_precision = None;
+        let consumed_options = ConsumedOptions::from_builder(builder.clone());
+        println!("{date_fields:?} as DateZone => {consumed_options:?}");
+    }
+}
