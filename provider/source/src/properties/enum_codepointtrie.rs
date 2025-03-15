@@ -520,6 +520,15 @@ expand!(
         ),
         "jt"
     ),
+    (
+        PropertyEnumVerticalOrientationV1,
+        PropertyNameParseVerticalOrientationV1,
+        (
+            linear: PropertyNameShortVerticalOrientationV1,
+            PropertyNameLongVerticalOrientationV1
+        ),
+        "vo"
+    ),
 );
 
 #[cfg(test)]

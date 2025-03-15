@@ -1,0 +1,12 @@
+{
+  "map": {
+    "R": 0,
+    "Rotated": 0,
+    "Tr": 1,
+    "Transformed_Rotated": 1,
+    "Transformed_Upright": 2,
+    "Tu": 2,
+    "U": 3,
+    "Upright": 3
+  }
+}

@@ -185,6 +185,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/Term.toml",
     "uprops/small/UIdeo.toml",
     "uprops/small/Upper.toml",
+    "uprops/small/vo.toml",
     "uprops/small/VS.toml",
     "uprops/small/WB.toml",
     "uprops/small/WSpace.toml",

@@ -155,6 +155,7 @@ part 'UnitsConverterFactory.g.dart';
 part 'UtcOffset.g.dart';
 part 'VariantOffsets.g.dart';
 part 'VariantOffsetsCalculator.g.dart';
+part 'VerticalOrientation.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';

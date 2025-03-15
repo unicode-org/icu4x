@@ -61,4 +61,8 @@ export class PropertyValueNameToEnumMapper {
     static createScript(): PropertyValueNameToEnumMapper;
 
     static createScriptWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    static createVerticalOrientation(): PropertyValueNameToEnumMapper;
+
+    static createVerticalOrientationWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 }

@@ -2164,6 +2164,71 @@ pub mod ffi {
             props::GeneralCategoryGroup::Symbol.into()
         }
     }
+
+    #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::VerticalOrientation, needs_wildcard)]
+    pub enum VerticalOrientation {
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientaiton::Rotated, EnumVariant)]
+        Rotated = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientaiton::TransformedRotated,
+            EnumVariant
+        )]
+        TransformedRotated = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientaiton::TransformedUpright,
+            EnumVariant
+        )]
+        TransformedUpright = 2,
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientaiton::Upright, EnumVariant)]
+        Upright = 3,
+    }
+
+    impl VerticalOrientation {
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::VerticalOrientation>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::VerticalOrientation>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::VerticalOrientation>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Rotated,
+                1 => Self::TransformedRotated,
+                2 => Self::TransformedUpright,
+                3 => Self::Upright,
+                _ => return None,
+            })
+        }
+    }
 }
 
 impl From<icu_properties::props::GeneralCategoryGroup> for ffi::GeneralCategoryGroup {

@@ -23,18 +23,20 @@ pub use names::{
     PropertyNameLongGraphemeClusterBreakV1, PropertyNameLongHangulSyllableTypeV1,
     PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningTypeV1,
     PropertyNameLongLineBreakV1, PropertyNameLongScriptV1, PropertyNameLongSentenceBreakV1,
-    PropertyNameLongWordBreakV1, PropertyNameParseBidiClassV1,
-    PropertyNameParseCanonicalCombiningClassV1, PropertyNameParseEastAsianWidthV1,
-    PropertyNameParseGeneralCategoryMaskV1, PropertyNameParseGeneralCategoryV1,
-    PropertyNameParseGraphemeClusterBreakV1, PropertyNameParseHangulSyllableTypeV1,
-    PropertyNameParseIndicSyllabicCategoryV1, PropertyNameParseJoiningTypeV1,
-    PropertyNameParseLineBreakV1, PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
+    PropertyNameLongVerticalOrientationV1, PropertyNameLongWordBreakV1,
+    PropertyNameParseBidiClassV1, PropertyNameParseCanonicalCombiningClassV1,
+    PropertyNameParseEastAsianWidthV1, PropertyNameParseGeneralCategoryMaskV1,
+    PropertyNameParseGeneralCategoryV1, PropertyNameParseGraphemeClusterBreakV1,
+    PropertyNameParseHangulSyllableTypeV1, PropertyNameParseIndicSyllabicCategoryV1,
+    PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1, PropertyNameParseScriptV1,
+    PropertyNameParseSentenceBreakV1, PropertyNameParseVerticalOrientationV1,
     PropertyNameParseWordBreakV1, PropertyNameShortBidiClassV1,
     PropertyNameShortCanonicalCombiningClassV1, PropertyNameShortEastAsianWidthV1,
     PropertyNameShortGeneralCategoryV1, PropertyNameShortGraphemeClusterBreakV1,
     PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicSyllabicCategoryV1,
     PropertyNameShortJoiningTypeV1, PropertyNameShortLineBreakV1, PropertyNameShortScriptV1,
-    PropertyNameShortSentenceBreakV1, PropertyNameShortWordBreakV1,
+    PropertyNameShortSentenceBreakV1, PropertyNameShortVerticalOrientationV1,
+    PropertyNameShortWordBreakV1,
 };
 
 pub use crate::props::gc::GeneralCategoryULE;
@@ -146,6 +148,7 @@ const _: () = {
     impl_property_enum_line_break_v1!(Baked);
     impl_property_enum_script_v1!(Baked);
     impl_property_enum_sentence_break_v1!(Baked);
+    impl_property_enum_vertical_orientation_v1!(Baked);
     impl_property_enum_word_break_v1!(Baked);
     impl_property_name_long_bidi_class_v1!(Baked);
     impl_property_name_long_canonical_combining_class_v1!(Baked);
@@ -158,6 +161,7 @@ const _: () = {
     impl_property_name_long_line_break_v1!(Baked);
     impl_property_name_long_script_v1!(Baked);
     impl_property_name_long_sentence_break_v1!(Baked);
+    impl_property_name_long_vertical_orientation_v1!(Baked);
     impl_property_name_long_word_break_v1!(Baked);
     impl_property_name_parse_bidi_class_v1!(Baked);
     impl_property_name_parse_canonical_combining_class_v1!(Baked);
@@ -171,6 +175,7 @@ const _: () = {
     impl_property_name_parse_line_break_v1!(Baked);
     impl_property_name_parse_script_v1!(Baked);
     impl_property_name_parse_sentence_break_v1!(Baked);
+    impl_property_name_parse_vertical_orientation_v1!(Baked);
     impl_property_name_parse_word_break_v1!(Baked);
     impl_property_name_short_bidi_class_v1!(Baked);
     impl_property_name_short_canonical_combining_class_v1!(Baked);
@@ -183,6 +188,7 @@ const _: () = {
     impl_property_name_short_line_break_v1!(Baked);
     impl_property_name_short_script_v1!(Baked);
     impl_property_name_short_sentence_break_v1!(Baked);
+    impl_property_name_short_vertical_orientation_v1!(Baked);
     impl_property_name_short_word_break_v1!(Baked);
     impl_property_script_with_extensions_v1!(Baked);
 };
@@ -644,6 +650,12 @@ icu_provider::data_marker!(
     is_singleton = true,
 );
 icu_provider::data_marker!(
+    /// Data marker for the 'Vertical_Orientation' Unicode property
+    PropertyEnumVerticalOrientationV1,
+    PropertyCodePointMap<'static, crate::props::VerticalOrientation>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
     /// Data marker for the 'WordBreak' Unicode property
     PropertyEnumWordBreakV1,
     PropertyCodePointMap<'static, crate::props::WordBreak>,
@@ -681,6 +693,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameLongLineBreakV1::INFO,
     PropertyNameLongScriptV1::INFO,
     PropertyNameLongSentenceBreakV1::INFO,
+    PropertyNameLongVerticalOrientationV1::INFO,
     PropertyNameLongWordBreakV1::INFO,
     PropertyNameParseBidiClassV1::INFO,
     PropertyNameParseCanonicalCombiningClassV1::INFO,
@@ -694,6 +707,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameParseLineBreakV1::INFO,
     PropertyNameParseScriptV1::INFO,
     PropertyNameParseSentenceBreakV1::INFO,
+    PropertyNameParseVerticalOrientationV1::INFO,
     PropertyNameParseWordBreakV1::INFO,
     PropertyNameShortBidiClassV1::INFO,
     PropertyNameShortCanonicalCombiningClassV1::INFO,
@@ -706,6 +720,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameShortLineBreakV1::INFO,
     PropertyNameShortScriptV1::INFO,
     PropertyNameShortSentenceBreakV1::INFO,
+    PropertyNameShortVerticalOrientationV1::INFO,
     PropertyNameShortWordBreakV1::INFO,
     PropertyBinaryAlnumV1::INFO,
     PropertyBinaryAlphabeticV1::INFO,
@@ -783,6 +798,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyEnumLineBreakV1::INFO,
     PropertyEnumScriptV1::INFO,
     PropertyEnumSentenceBreakV1::INFO,
+    PropertyEnumVerticalOrientationV1::INFO,
     PropertyEnumWordBreakV1::INFO,
     PropertyEnumBidiMirroringGlyphV1::INFO,
     PropertyBinaryBasicEmojiV1::INFO,

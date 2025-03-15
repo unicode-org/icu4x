@@ -11,7 +11,7 @@ pub mod ffi {
     use icu_properties::props::{
         BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
         HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
-        WordBreak,
+        VerticalOrientation, WordBreak,
     };
 
     use crate::properties_enums::ffi::GeneralCategoryGroup;
@@ -351,6 +351,28 @@ pub mod ffi {
         ) -> Result<Box<CodePointMapData8>, DataError> {
             Ok(convert_8(icu_properties::CodePointMapData::<
                 CanonicalCombiningClass,
+            >::try_new_unstable(
+                &provider.get_unstable()?
+            )?))
+        }
+        /// Create a map for the `Vertical_Orientation` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(auto, named_constructor = "vertical_orientation")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_vertical_orientation() -> Box<CodePointMapData8> {
+            convert_8(
+                icu_properties::CodePointMapData::<VerticalOrientation>::new().static_to_owned(),
+            )
+        }
+        /// Create a map for the `Vertical_Orientation` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "vertical_orientation_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_vertical_orientation_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointMapData8>, DataError> {
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                VerticalOrientation,
             >::try_new_unstable(
                 &provider.get_unstable()?
             )?))

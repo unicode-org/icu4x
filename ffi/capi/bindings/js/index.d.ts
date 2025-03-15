@@ -310,6 +310,8 @@ export { Script } from "./Script"
 
 export { SentenceBreak } from "./SentenceBreak"
 
+export { VerticalOrientation } from "./VerticalOrientation"
+
 export { WordBreak } from "./WordBreak"
 
 export { LineBreakStrictness } from "./LineBreakStrictness"

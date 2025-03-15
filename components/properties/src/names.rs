@@ -897,3 +897,11 @@ impl_value_getter! {
         PropertyEnumToValueNameLinearMap / PropertyNameLongJoiningTypeV1 / SINGLETON_PROPERTY_NAME_LONG_JOINING_TYPE_V1;
     }
 }
+
+impl_value_getter! {
+    impl VerticalOrientation {
+        PropertyNameParseVerticalOrientationV1 / SINGLETON_PROPERTY_NAME_PARSE_VERTICAL_ORIENTATION_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameShortVerticalOrientationV1 / SINGLETON_PROPERTY_NAME_SHORT_VERTICAL_ORIENTATION_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameLongVerticalOrientationV1 / SINGLETON_PROPERTY_NAME_LONG_VERTICAL_ORIENTATION_V1;
+    }
+}

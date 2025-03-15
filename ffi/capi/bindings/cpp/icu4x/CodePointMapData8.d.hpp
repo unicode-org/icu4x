@@ -88,6 +88,10 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider);
 
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_vertical_orientation();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_vertical_orientation_with_provider(const icu4x::DataProvider& provider);
+
   inline const icu4x::capi::CodePointMapData8* AsFFI() const;
   inline icu4x::capi::CodePointMapData8* AsFFI();
   inline static const icu4x::CodePointMapData8* FromFFI(const icu4x::capi::CodePointMapData8* ptr);
