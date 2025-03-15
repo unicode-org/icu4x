@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::{fs::File, path::PathBuf};
+
 use askama::Template;
 use icu::datetime::fieldsets::builder::*;
 
@@ -108,5 +110,15 @@ pub fn main() {
         println!("{date_fields:?} as DateZone => {consumed_options:?}");
     }
 
-    println!("{}", date_formatter_template.render().unwrap());
+    let mut path_buf = PathBuf::new();
+    path_buf.push(env!("CARGO_MANIFEST_DIR"));
+    path_buf.push("../../ffi/capi/src");
+    
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("date_formatter.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        write!(&mut file, "{}", date_formatter_template).unwrap();
+    }
 }
