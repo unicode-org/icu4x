@@ -3065,6 +3065,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn load_time_zone_field_zzzz_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3104,6 +3105,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn load_time_zone_field_vvvv_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
