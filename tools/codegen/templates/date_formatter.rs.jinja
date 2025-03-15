@@ -1,0 +1,44 @@
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
+pub mod ffi {
+    pub struct DateFormatter {
+        {% for variant in variants %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.date_fields.name_lower() }}")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}, Struct)]
+        {%- if variant.consumed_options.alignment %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_alignment, FnInStruct, compact)]
+        {%- endif %}
+        {%- if variant.consumed_options.year_style %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_year_style, FnInStruct, compact)]
+        {%- endif %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::long, FnInStruct, hidden)]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_{{ variant.date_fields.name_lower() }}(
+            locale: &Locale,
+            length: Option<DateTimeLength>,
+            {%- if variant.consumed_options.alignment %}
+            alignment: Option<DateTimeAlignment>,
+            {%- endif %}
+            {%- if variant.consumed_options.year_style %}
+            year_style: Option<YearStyle>,
+            {%- endif %}
+        ) -> Result<Box<DateTimeFormatter>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            let mut options = icu_datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_length(map_or_default(length));
+            {%- if variant.consumed_options.alignment %}
+            options.alignment = alignment.map(Into::into);
+            {%- endif %}
+            {%- if variant.consumed_options.year_style %}
+            options.year_style = year_style.map(Into::into);
+            {%- endif %}
+            Ok(Box::new(DateTimeFormatter(
+                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+            )))
+        }
+        {% endfor %}
+    }
+}

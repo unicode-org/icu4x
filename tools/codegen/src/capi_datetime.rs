@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use askama::Template;
 use icu::datetime::fieldsets::builder::*;
 
 #[derive(Debug)]
@@ -30,7 +31,55 @@ impl ConsumedOptions {
     }
 }
 
+struct DateFieldsWrap(DateFields);
+
+impl DateFieldsWrap {
+    pub fn name_upper(&self) -> &str {
+        match self.0 {
+            DateFields::D => "D",
+            DateFields::MD => "MD",
+            DateFields::YMD => "YMD",
+            DateFields::DE => "DE",
+            DateFields::MDE => "MDE",
+            DateFields::YMDE => "YMDE",
+            DateFields::E => "E",
+            DateFields::M => "M",
+            DateFields::YM => "YM",
+            DateFields::Y => "Y",
+            _ => unreachable!("unknown variant"),
+        }
+    }
+    pub fn name_lower(&self) -> &str {
+        match self.0 {
+            DateFields::D => "d",
+            DateFields::MD => "md",
+            DateFields::YMD => "ymd",
+            DateFields::DE => "de",
+            DateFields::MDE => "mde",
+            DateFields::YMDE => "ymde",
+            DateFields::E => "e",
+            DateFields::M => "m",
+            DateFields::YM => "ym",
+            DateFields::Y => "y",
+            _ => unreachable!("unknown variant"),
+        }
+    }
+}
+
+#[derive(Template, Default)]
+#[template(path = "date_formatter.rs.jinja")]
+struct DateFormatterTemplate {
+    variants: Vec<DateFormatterVariant>,
+}
+
+struct DateFormatterVariant {
+    date_fields: DateFieldsWrap,
+    consumed_options: ConsumedOptions,
+}
+
 pub fn main() {
+    let mut date_formatter_template = DateFormatterTemplate::default();
+
     for date_fields in DateFields::VALUES.iter() {
         // Determine the options for these date fields
         let mut builder = FieldSetBuilder::new();
@@ -39,8 +88,12 @@ pub fn main() {
         builder.alignment = Some(Default::default());
         builder.year_style = Some(Default::default());
 
-        let consumed_options = ConsumedOptions::from_builder(builder.clone());
+        let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
         println!("{date_fields:?} as Date => {consumed_options:?}");
+        date_formatter_template.variants.push(DateFormatterVariant {
+            date_fields: DateFieldsWrap(*date_fields),
+            consumed_options
+        });
 
         builder.time_precision = Some(Default::default());
         let consumed_options = ConsumedOptions::from_builder(builder.clone());
@@ -54,4 +107,6 @@ pub fn main() {
         let consumed_options = ConsumedOptions::from_builder(builder.clone());
         println!("{date_fields:?} as DateZone => {consumed_options:?}");
     }
+
+    println!("{}", date_formatter_template.render().unwrap());
 }
