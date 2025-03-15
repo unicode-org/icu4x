@@ -737,7 +737,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
                 |names| {
-                    names.as_mut().include_time_zone_localized_offset_names_with_fallback()?;
+                    names
+                        .as_mut()
+                        .include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
