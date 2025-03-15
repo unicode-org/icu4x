@@ -140,6 +140,22 @@ pub enum DateFields {
     Y,
 }
 
+impl DateFields {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::D,
+        Self::MD,
+        Self::YMD,
+        Self::DE,
+        Self::MDE,
+        Self::YMDE,
+        Self::E,
+        Self::M,
+        Self::YM,
+        Self::Y,
+    ];
+}
+
 /// An enumeration over all possible time zone styles.
 ///
 /// This is a builder enum. See [`builder`](crate::fieldsets::builder).
@@ -174,6 +190,20 @@ pub enum ZoneStyle {
     /// The exemplar city format, as in
     /// “Los Angeles”.
     ExemplarCity,
+}
+
+impl ZoneStyle {
+    /// All values of this enumeration.
+    pub const VALUES: &[Self] = &[
+        Self::SpecificLong,
+        Self::SpecificShort,
+        Self::LocalizedOffsetLong,
+        Self::LocalizedOffsetShort,
+        Self::GenericLong,
+        Self::GenericShort,
+        Self::Location,
+        Self::ExemplarCity,
+    ];
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
