@@ -545,7 +545,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
                 |names| {
-                    names.as_mut().include_time_zone_generic_short_names_with_fallback()?;
+                    names
+                        .as_mut()
+                        .include_time_zone_generic_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -568,7 +570,9 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_generic_short_names_with_fallback(&provider)?;
+                    names
+                        .as_mut()
+                        .load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -589,7 +593,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
                 |names| {
-                    names.as_mut().include_time_zone_generic_long_names_with_fallback()?;
+                    names
+                        .as_mut()
+                        .include_time_zone_generic_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -635,7 +641,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
                 |names| {
-                    names.as_mut().include_time_zone_specific_short_names_with_fallback()?;
+                    names
+                        .as_mut()
+                        .include_time_zone_specific_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -681,7 +689,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
                 |names| {
-                    names.as_mut().include_time_zone_specific_long_names_with_fallback()?;
+                    names
+                        .as_mut()
+                        .include_time_zone_specific_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -750,7 +760,9 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_localized_offset_names_with_fallback(&provider)?;
+                    names
+                        .as_mut()
+                        .load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
@@ -771,7 +783,9 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
                 |names| {
-                    names.as_mut().include_time_zone_localized_offset_names_with_fallback()?;
+                    names
+                        .as_mut()
+                        .include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
@@ -794,7 +808,9 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names.as_mut().load_time_zone_localized_offset_names_with_fallback(&provider)?;
+                    names
+                        .as_mut()
+                        .load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| {
