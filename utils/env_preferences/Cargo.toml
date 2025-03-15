@@ -18,6 +18,8 @@ include.workspace = true
 
 [dependencies]
 core-foundation-sys = "0.8.6"
+displaydoc = { workspace = true }
+icu_locale = { workspace = true }
 libc = "0.2.155"
 
 [dependencies.windows]
@@ -30,8 +32,13 @@ features = [
     "Globalization",
     "Globalization_DateTimeFormatting",
     "Win32",
-    "Win32_Globalization"
+    "Win32_Globalization",
 ]
 
 [dev-dependencies]
-icu_locale = { path = "../../components/locale" }
+icu_locale = { workspace = true }
+
+[features]
+parse_apple = []
+parse_posix = []
+parse_windows = []
