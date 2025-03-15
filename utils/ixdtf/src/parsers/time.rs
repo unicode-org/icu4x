@@ -14,7 +14,6 @@ use crate::{
             is_utc_designator,
         },
         records::{Annotation, TimeRecord},
-        timezone::parse_date_time_utc,
         Cursor,
     },
     ParseError, ParserResult,
@@ -24,6 +23,7 @@ use super::{
     annotations,
     grammar::is_ascii_sign,
     records::{Fraction, IxdtfParseRecord},
+    timezone,
 };
 
 /// Parse annotated time record is silently fallible returning None in the case that the
@@ -41,7 +41,7 @@ pub(crate) fn parse_annotated_time_record<'a>(
     // valid AnnotatedTimeRecord.
 
     let offset = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch)) {
-        Some(parse_date_time_utc(cursor)?)
+        Some(timezone::parse_date_time_utc_offset(cursor)?)
     } else {
         None
     };

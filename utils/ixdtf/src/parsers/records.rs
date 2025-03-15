@@ -77,7 +77,7 @@ pub enum TimeZoneRecord<'a> {
     /// TimeZoneIANAName
     Name(&'a [u8]),
     /// TimeZoneOffset
-    Offset(UtcOffsetRecord),
+    Offset(MinutePrecisionOffset),
 }
 
 /// The parsed sign value, representing whether its struct is positive or negative.
@@ -100,10 +100,85 @@ impl From<bool> for Sign {
     }
 }
 
-/// A full precision `UtcOffsetRecord`
+/// A `UtcOffsetRecord` that is either a minute precision or
+/// full precision UTC offset.
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct UtcOffsetRecord {
+pub enum UtcOffsetRecord {
+    // A UTC offset that is only precise to the minute
+    MinutePrecision(MinutePrecisionOffset),
+    // A UTC offset with full fractional second precision
+    FullPrecisionOffset(FullPrecisionOffset),
+}
+
+impl UtcOffsetRecord {
+    /// Returns whether the UTC offset is a minute precision offset.
+    pub fn is_minute_precision(&self) -> bool {
+        matches!(self, Self::MinutePrecision(_))
+    }
+
+    /// Returrns a zerod UTC Offset in minute precision
+    pub fn zero() -> Self {
+        Self::MinutePrecision(MinutePrecisionOffset::zero())
+    }
+
+    /// Returns the `Sign` of this UTC offset.
+    pub fn sign(&self) -> Sign {
+        match self {
+            Self::MinutePrecision(offset) => offset.sign,
+            Self::FullPrecisionOffset(offset) => offset.sign,
+        }
+    }
+
+    /// Returns the hour value of this UTC offset.
+    pub fn hour(&self) -> u8 {
+        match self {
+            Self::MinutePrecision(offset) => offset.hour,
+            Self::FullPrecisionOffset(offset) => offset.hour,
+        }
+    }
+
+    /// Returns the minute value of this UTC offset.
+    pub fn minute(&self) -> u8 {
+        match self {
+            Self::MinutePrecision(offset) => offset.minute,
+            Self::FullPrecisionOffset(offset) => offset.minute,
+        }
+    }
+
+    /// Returns the second value of this UTC offset if it is a full precision offset.
+    pub fn second(&self) -> Option<u8> {
+        match self {
+            Self::MinutePrecision(_) => None,
+            Self::FullPrecisionOffset(offset) => Some(offset.second),
+        }
+    }
+
+    /// Returns the fraction value of this UTC offset if it is a full precision offset.
+    pub fn fraction(&self) -> Option<Fraction> {
+        match self {
+            Self::MinutePrecision(_) => None,
+            Self::FullPrecisionOffset(offset) => offset.fraction,
+        }
+    }
+}
+
+/// A minute preicision UTC offseet
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // Minute precision offset can only be a sign, hour and minute field
+pub struct MinutePrecisionOffset {
+    /// The `Sign` value of the `UtcOffsetRecord`.
+    pub sign: Sign,
+    /// The hour value of the `UtcOffsetRecord`.
+    pub hour: u8,
+    /// The minute value of the `UtcOffsetRecord`.
+    pub minute: u8,
+}
+
+/// A full precision UTC offset with seconds and an optional fractional seconds
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // Full precision offset is only these five component fields
+pub struct FullPrecisionOffset {
     /// The `Sign` value of the `UtcOffsetRecord`.
     pub sign: Sign,
     /// The hour value of the `UtcOffsetRecord`.
@@ -116,15 +191,13 @@ pub struct UtcOffsetRecord {
     pub fraction: Option<Fraction>,
 }
 
-impl UtcOffsetRecord {
+impl MinutePrecisionOffset {
     /// +0000
     pub const fn zero() -> Self {
         Self {
             sign: Sign::Positive,
             hour: 0,
             minute: 0,
-            second: 0,
-            fraction: None,
         }
     }
 }
@@ -141,13 +214,11 @@ impl UtcOffsetRecordOrZ {
     pub fn resolve_rfc_9557(self) -> UtcOffsetRecord {
         match self {
             UtcOffsetRecordOrZ::Offset(o) => o,
-            UtcOffsetRecordOrZ::Z => UtcOffsetRecord {
+            UtcOffsetRecordOrZ::Z => UtcOffsetRecord::MinutePrecision(MinutePrecisionOffset {
                 sign: Sign::Negative,
                 hour: 0,
                 minute: 0,
-                second: 0,
-                fraction: None,
-            },
+            }),
         }
     }
 }

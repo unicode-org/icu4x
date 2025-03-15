@@ -159,7 +159,7 @@ fn parse_date_time(cursor: &mut Cursor) -> ParserResult<DateTimeRecord> {
     let time = parse_time_record(cursor)?;
 
     let time_zone = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch)) {
-        Some(timezone::parse_date_time_utc(cursor)?)
+        Some(timezone::parse_date_time_utc_offset(cursor)?)
     } else {
         None
     };
