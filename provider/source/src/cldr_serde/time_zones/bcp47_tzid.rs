@@ -7,7 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json>
 
-use icu::time::TimeZone;
+use icu::{locale::subtags::Region, time::TimeZone};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -25,6 +25,8 @@ pub(crate) struct Bcp47TzidAliasData {
     pub(crate) since: Option<String>,
     #[serde(rename = "_iana")]
     pub(crate) iana: Option<String>,
+    #[serde(rename = "_region")]
+    pub(crate) region: Option<Region>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
