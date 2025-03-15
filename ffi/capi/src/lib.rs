@@ -78,6 +78,8 @@ pub mod collator;
 pub mod collections_sets;
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod date;
+#[cfg(feature = "datetime")]
+pub mod date_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod datetime;
 #[cfg(feature = "datetime")]

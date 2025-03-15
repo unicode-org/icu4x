@@ -1689,7 +1689,7 @@ pub mod ffi {
     }
 }
 
-mod impls {
+pub(crate) mod impls {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use alloc::boxed::Box;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -1701,7 +1701,7 @@ mod impls {
     };
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    pub(super) fn map_or_default<Input, Output>(input: Option<Input>) -> Output
+    pub(crate) fn map_or_default<Input, Output>(input: Option<Input>) -> Output
     where
         Output: From<Input> + Default,
     {
