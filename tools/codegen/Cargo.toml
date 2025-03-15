@@ -9,4 +9,5 @@ publish = false
 edition = "2021"
 
 [dependencies]
+askama = { workspace = true }
 icu = { workspace = true }
