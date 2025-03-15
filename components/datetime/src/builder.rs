@@ -215,11 +215,11 @@ pub enum BuilderError {
     /// 
     /// This variant is also returned when building a composite field set if none of the
     /// possible required options were set (date fields, time precision, zone style).
-    NeedsDateFields,
+    MissingDateFields,
     /// The builder needs [`TimePrecision`] in order to build the specified field set.
-    NeedsTimePrecision,
+    MissingTimePrecision,
     /// The builder needs [`ZoneStyle`] in order to build the specified field set.
-    NeedsZoneStyle,
+    MissingZoneStyle,
     /// The value in [`DateFields`] is not a valid for the specified field set.
     /// 
     /// This can happen if, for example:
@@ -441,7 +441,7 @@ impl FieldSetBuilder {
             Some(DateFields::Y) => CalendarPeriod(CalendarPeriodFieldSet::Y(
                 fieldsets::Y::take_from_builder(self),
             )),
-            Option::None => return Err(BuilderError::NeedsDateFields),
+            Option::None => return Err(BuilderError::MissingDateFields),
         };
         Ok(field_set)
     }
@@ -504,7 +504,7 @@ impl FieldSetBuilder {
             Some(ZoneStyle::ExemplarCity) => {
                 ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity)
             }
-            Option::None => return Err(BuilderError::NeedsZoneStyle),
+            Option::None => return Err(BuilderError::MissingZoneStyle),
         };
         Ok(zone_field_set)
     }
@@ -523,7 +523,7 @@ impl FieldSetBuilder {
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_date_and_time(mut self) -> Result<DateAndTimeFieldSet, BuilderError> {
         if self.time_precision.is_none() {
-            return Err(BuilderError::NeedsTimePrecision);
+            return Err(BuilderError::MissingTimePrecision);
         }
         let date_and_time_field_set = match self.date_fields.take() {
             Some(DateFields::D) => {
@@ -577,7 +577,7 @@ impl FieldSetBuilder {
             (true, true) => self
                 .build_date_and_time()
                 .map(CompositeDateTimeFieldSet::DateTime),
-            (false, false) => Err(BuilderError::NeedsDateFields),
+            (false, false) => Err(BuilderError::MissingDateFields),
         }
     }
 
@@ -629,7 +629,7 @@ impl FieldSetBuilder {
                     zone_field_set,
                 )))
             }
-            (false, false, false) => Err(BuilderError::NeedsDateFields),
+            (false, false, false) => Err(BuilderError::MissingDateFields),
         }
     }
 
