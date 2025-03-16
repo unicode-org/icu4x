@@ -87,15 +87,6 @@ impl Serialize for &ByteStr {
     }
 }
 
-impl Serialize for Box<ByteStr> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        self.as_ref().serialize(serializer)
-    }
-}
-
 impl<'data, 'de: 'data, Store> Deserialize<'de> for ZeroTrieSimpleAscii<Store>
 where
     // DISCUSS: There are several possibilities for the bounds here that would
@@ -229,8 +220,8 @@ where
         if serializer.is_human_readable() {
             let lm = self.to_litemap();
             let lm = lm
-                .into_iter()
-                .map(|(k, v)| (ByteStr::from_boxed_bytes(k.into_boxed_slice()), v))
+                .iter()
+                .map(|(k, v)| (ByteStr::from_bytes(k), v))
                 .collect::<LiteMap<_, _>>();
             lm.serialize(serializer)
         } else {
@@ -282,8 +273,8 @@ where
         if serializer.is_human_readable() {
             let lm = self.to_litemap();
             let lm = lm
-                .into_iter()
-                .map(|(k, v)| (ByteStr::from_boxed_bytes(k.into_boxed_slice()), v))
+                .iter()
+                .map(|(k, v)| (ByteStr::from_bytes(k), v))
                 .collect::<LiteMap<_, _>>();
             lm.serialize(serializer)
         } else {
@@ -343,8 +334,8 @@ where
         if serializer.is_human_readable() {
             let lm = self.to_litemap();
             let lm = lm
-                .into_iter()
-                .map(|(k, v)| (ByteStr::from_boxed_bytes(k), v))
+                .iter()
+                .map(|(k, v)| (ByteStr::from_bytes(k), v))
                 .collect::<LiteMap<_, _>>();
             lm.serialize(serializer)
         } else {
