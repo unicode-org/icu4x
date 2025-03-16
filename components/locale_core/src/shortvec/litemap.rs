@@ -12,6 +12,15 @@ impl<K, V> StoreConstEmpty<K, V> for ShortBoxSlice<(K, V)> {
     const EMPTY: ShortBoxSlice<(K, V)> = ShortBoxSlice::new();
 }
 
+impl<K, V> StoreSlice<K, V> for ShortBoxSlice<(K, V)> {
+    type Slice = [(K, V)];
+
+    #[inline]
+    fn lm_get_range(&self, range: core::ops::Range<usize>) -> Option<&Self::Slice> {
+        self.get(range)
+    }
+}
+
 impl<K, V> Store<K, V> for ShortBoxSlice<(K, V)> {
     #[inline]
     fn lm_len(&self) -> usize {
