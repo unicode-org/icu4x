@@ -17,7 +17,7 @@ impl<K, V, R> Serialize for LiteMap<K, V, R>
 where
     K: Serialize,
     V: Serialize,
-    R: for<'a> StoreIterable<'a, K, V>,
+    R: Store<K, V>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -33,15 +33,26 @@ where
                 .is_some_and(|(k, _)| super::serde_helpers::is_num_or_string(k));
             if !k_is_num_or_string {
                 let mut seq = serializer.serialize_seq(Some(self.len()))?;
-                for pair in self.values.lm_iter() {
-                    seq.serialize_element(&pair)?;
+                // Note that we can't require StoreIterable for R, see below.
+                for index in 0..self.len() {
+                    #[allow(clippy::unwrap_used)] // looping over 0..len
+                    seq.serialize_element(&self.get_indexed(index).unwrap())?;
                 }
                 return seq.end();
             }
             // continue to regular serialization
         }
+
+        // Note that we can't require StoreIterable for R, because the Higher-Rank Trait Bounds (HRTBs)
+        // `R: for<'a> StoreIterable<'a, K, V>` would end up being too strict for some use cases
+        // as it would require Self, K and V to be 'static. See https://github.com/rust-lang/types-team/blob/master/minutes/2022-07-08-implied-bounds-and-wf-checking.md#problem-fora-shouldnt-really-mean-for-all-a
+        // Instead, we require only R: Store and manually iterate over the items.
+        // For some R types this is equivalent to StoreIterable after compiler optimizations but retains
+        // flexibility for other types.
         let mut map = serializer.serialize_map(Some(self.len()))?;
-        for (k, v) in self.values.lm_iter() {
+        for index in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // looping over 0..len
+            let (k, v) = self.get_indexed(index).unwrap();
             map.serialize_entry(k, v)?;
         }
         map.end()
@@ -224,7 +235,7 @@ mod test {
             assert_eq!(deserialized.values.capacity(), len);
             assert_eq!(deserialized.values.len(), len);
             // again, but with a shuffled map
-            rand::seq::SliceRandom::shuffle(&mut map[..], &mut rand::thread_rng());
+            rand::seq::SliceRandom::shuffle(&mut map[..], &mut rand::rng());
             let postcard = postcard::to_stdvec(&map).unwrap();
             let deserialized: LiteMap<u32, String> = postcard::from_bytes(&postcard).unwrap();
             assert_eq!(deserialized.values.capacity(), len);
