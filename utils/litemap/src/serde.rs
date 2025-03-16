@@ -7,18 +7,17 @@ use crate::store::*;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
-use serde::de::{MapAccess, SeqAccess, Visitor};
-use serde::{Deserialize, Deserializer};
+use serde::{
+    de::{MapAccess, SeqAccess, Visitor},
+    ser::{SerializeMap, SerializeSeq},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 
-#[cfg(feature = "serde")]
-use serde::{ser::SerializeMap, Serialize, Serializer};
-
-#[cfg(feature = "serde")]
 impl<K, V, R> Serialize for LiteMap<K, V, R>
 where
     K: Serialize,
     V: Serialize,
-    R: Store<K, V> + Serialize,
+    R: for<'a> StoreIterable<'a, K, V>,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -26,25 +25,24 @@ where
     {
         // Many human-readable formats don't support values other
         // than numbers and strings as map keys. For them, we can serialize
-        // as a vec of tuples instead
-        // Note from the future: while this is true for the provided stores
-        // (Vec, Slice, ..) it may not be true for all stores.
+        // as a sequence of tuples instead
         if serializer.is_human_readable() {
-            if let Some((ref k, _)) = self.values.lm_get(0) {
-                if !super::serde_helpers::is_num_or_string(k) {
-                    return self.values.serialize(serializer);
+            let k_is_num_or_string = self
+                .values
+                .lm_get(0)
+                .is_some_and(|(k, _)| super::serde_helpers::is_num_or_string(k));
+            if !k_is_num_or_string {
+                let mut seq = serializer.serialize_seq(Some(self.len()))?;
+                for pair in self.values.lm_iter() {
+                    seq.serialize_element(&pair)?;
                 }
-                // continue to regular serialization
+                return seq.end();
             }
+            // continue to regular serialization
         }
         let mut map = serializer.serialize_map(Some(self.len()))?;
-        // TODO: We could require R to be StoreIter in order to avoid the manual loop here.
-        let mut i = 0;
-        while i < self.values.lm_len() {
-            #[allow(clippy::unwrap_used)] // i is in range
-            let (k, v) = self.values.lm_get(i).unwrap();
+        for (k, v) in self.values.lm_iter() {
             map.serialize_entry(k, v)?;
-            i += 1;
         }
         map.end()
     }
