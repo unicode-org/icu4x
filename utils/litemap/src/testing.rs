@@ -141,12 +141,6 @@ where
     populate_litemap(&mut litemap_std);
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
-    litemap_test.retain(|_, v| v % 2 == 0);
-    litemap_std.retain(|_, v| v % 2 == 0);
-    assert_eq!(11, litemap_test.len());
-    assert_eq!(11, litemap_std.len());
-    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
-
     litemap_test
         .remove(&175)
         .ok_or(())
@@ -158,8 +152,8 @@ where
         .expect_err("does not exist");
     litemap_std.remove(&147).ok_or(()).expect("exists");
 
-    assert_eq!(10, litemap_test.len());
-    assert_eq!(10, litemap_std.len());
+    assert_eq!(19, litemap_test.len());
+    assert_eq!(19, litemap_std.len());
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
     litemap_test.clear();
@@ -168,7 +162,7 @@ where
 }
 
 /// Similar to [`check_store`] function, but also checks the validitiy of [`StoreIterableMut`]
-/// trait.
+/// and [`StoreBulkMut`] traits.
 // Test code
 #[allow(clippy::expect_used)]
 pub fn check_store_full<'a, S>()
@@ -177,6 +171,7 @@ where
         + StoreIterableMut<'a, u32, u64>
         + StoreIntoIterator<u32, u64>
         + StoreFromIterator<u32, u64>
+        + StoreBulkMut<u32, u64>
         + Clone
         + Debug
         + PartialEq
@@ -199,6 +194,7 @@ where
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
     check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
+    assert_eq!(20, litemap_test.len());
     litemap_test.retain(|_, v| v % 2 == 0);
     litemap_std.retain(|_, v| v % 2 == 0);
     assert_eq!(11, litemap_test.len());
@@ -217,8 +213,20 @@ where
     assert_eq!(20, litemap_test.len());
     assert_eq!(20, litemap_std.len());
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
-    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
+    assert_eq!(20, litemap_test.len());
+    litemap_test.retain(|_, v| v % 2 == 0);
+    litemap_std.retain(|_, v| v % 2 == 0);
+    assert_eq!(11, litemap_test.len());
+    assert_eq!(11, litemap_std.len());
+    let mut extras = LiteMap::<u32, u64>::new();
+    populate_litemap(&mut extras);
+    litemap_test.extend(extras.clone());
+    litemap_std.extend(extras);
+    assert_eq!(20, litemap_test.len());
+    assert_eq!(20, litemap_std.len());
+
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
     litemap_test
         .remove(&175)
         .ok_or(())

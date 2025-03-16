@@ -96,7 +96,9 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
     fn lm_clear(&mut self) {
         self.clear()
     }
+}
 
+impl<K: Ord, V> StoreBulkMut<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_retain<F>(&mut self, mut predicate: F)
     where

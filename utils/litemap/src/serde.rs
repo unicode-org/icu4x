@@ -68,7 +68,7 @@ impl<'de, K, V, R> Visitor<'de> for LiteMapVisitor<K, V, R>
 where
     K: Deserialize<'de> + Ord,
     V: Deserialize<'de>,
-    R: StoreMut<K, V>,
+    R: StoreBulkMut<K, V>,
 {
     type Value = LiteMap<K, V, R>;
 
@@ -131,7 +131,7 @@ impl<'de, K, V, R> Deserialize<'de> for LiteMap<K, V, R>
 where
     K: Ord + Deserialize<'de>,
     V: Deserialize<'de>,
-    R: StoreMut<K, V>,
+    R: StoreBulkMut<K, V>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where

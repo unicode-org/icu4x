@@ -83,12 +83,38 @@ impl<K, V> StoreMut<K, V> for ShortBoxSlice<(K, V)> {
     fn lm_clear(&mut self) {
         self.clear();
     }
+}
 
+#[cfg(feature = "alloc")]
+impl<K: Ord, V> StoreBulkMut<K, V> for ShortBoxSlice<(K, V)> {
     fn lm_retain<F>(&mut self, mut predicate: F)
     where
         F: FnMut(&K, &V) -> bool,
     {
         self.retain(|(k, v)| predicate(k, v))
+    }
+
+    fn lm_extend<I>(&mut self, other: I)
+    where
+        I: IntoIterator<Item = (K, V)>,
+    {
+        let other = other.into_iter();
+        let mut items = alloc::vec::Vec::with_capacity(self.len() + other.size_hint().0);
+        match core::mem::take(&mut self.0) {
+            ShortBoxSliceInner::ZeroOne(None) => (),
+            ShortBoxSliceInner::ZeroOne(Some(existing_item)) => {
+                items.push(existing_item);
+            }
+            ShortBoxSliceInner::Multi(existing_items) => {
+                items.extend(existing_items);
+            }
+        }
+        items.lm_extend(other);
+        if items.len() <= 1 {
+            self.0 = ShortBoxSliceInner::ZeroOne(items.pop());
+        } else {
+            self.0 = ShortBoxSliceInner::Multi(items.into_boxed_slice());
+        }
     }
 }
 

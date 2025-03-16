@@ -966,7 +966,7 @@ where
 
 impl<K, V, S> LiteMap<K, V, S>
 where
-    S: StoreMut<K, V>,
+    S: StoreBulkMut<K, V>,
 {
     /// Retains only the elements specified by the predicate.
     ///
@@ -1389,7 +1389,7 @@ where
 impl<K, V, S> Extend<(K, V)> for LiteMap<K, V, S>
 where
     K: Ord,
-    S: StoreMut<K, V>,
+    S: StoreBulkMut<K, V>,
 {
     fn extend<T: IntoIterator<Item = (K, V)>>(&mut self, iter: T) {
         self.values.lm_extend(iter)
