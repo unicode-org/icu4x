@@ -143,14 +143,14 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
         // Use stable sort to keep relative order of duplicates.
         self.sort_by(|a, b| a.0.cmp(&b.0));
         // Deduplicate by keeping the last element of the run in the first slice.
-        let (dedup, _merged_dup) = partition_dedup_by(self, |a, b| a.0 == b.0);
+        let (dedup, _merged_dup) = partition_dedup_by(self);
         sorted_len = dedup.len();
         self.truncate(sorted_len);
     }
 }
 
 /// Moves all but the _last_ of consecutive elements to the end of the slice satisfying
-/// a given equality relation.
+/// equality on K.
 ///
 /// Returns two slices. The first contains no consecutive repeated elements.
 /// The second contains all the duplicates in no specified order.
@@ -158,12 +158,10 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 /// This is based on std::slice::partition_dedup_by (currently unstable) but retains the
 /// _last_ element of the duplicate run in the first slice (instead of first).
 #[inline]
-fn partition_dedup_by<T, F>(v: &mut [T], mut same_bucket: F) -> (&mut [T], &mut [T])
-where
-    F: FnMut(&mut T, &mut T) -> bool,
-{
+#[allow(clippy::type_complexity)]
+fn partition_dedup_by<K: Eq, V>(v: &mut [(K, V)]) -> (&mut [(K, V)], &mut [(K, V)]) {
     // Although we have a mutable reference to `self`, we cannot make
-    // *arbitrary* changes. The `same_bucket` calls could panic, so we
+    // *arbitrary* changes. The comparison could panic, so we
     // must ensure that the slice is in a valid state at all times.
     //
     // The way that we handle this is by using swaps; we iterate
@@ -173,14 +171,14 @@ where
     // This operation is still `O(n)`.
     //
     // Example:
-    // Assume T is (char, u8) and the bucketing function is equality on the char.
+    // Assume (K, V) is (char, u8):
     //
     // We start in this state, where `r` represents "next
     // read" and `w` represents "next_write".
     //
     //              r
     //     | a,0 | b,0 | b,1 | c,0 | d,0 | d,1 |
-    //             w
+    //              w
     //
     // Comparing self[r] against self[w-1], this is not a duplicate, so
     // we swap self[r] and self[w] (no effect as r==w) and then increment both
@@ -195,7 +193,7 @@ where
     //
     //                          r
     //     | a,0 | b,1 | b,0 | c,0 | d,0 | d,1 |
-    //                   w
+    //                    w
     //
     // Comparing self[r] against self[w-1], this is not a duplicate,
     // so swap self[r] and self[w] and advance r and w:
@@ -219,48 +217,32 @@ where
     //
     // End of slice, as r > len. Split at w.
 
-    let len = v.len();
-    if len <= 1 {
+    if v.len() <= 1 {
         return (v, &mut []);
     }
 
-    let ptr = v.as_mut_ptr();
-    let mut next_read: usize = 1;
-    let mut next_write: usize = 1;
+    let mut read_idx: usize = 1;
+    let mut write_idx: usize = 1;
 
-    // SAFETY: the `while` condition guarantees `next_read` and `next_write`
-    // are less than `len`, thus are inside `self`. `prev_ptr_write` points to
-    // one element before `ptr_write`, but `next_write` starts at 1, so
-    // `prev_ptr_write` is never less than 0 and is inside the slice.
-    // This fulfils the requirements for dereferencing `ptr_read`, `prev_ptr_write`
-    // and `ptr_write`, and for using `ptr.add(next_read)`, `ptr.add(next_write - 1)`
-    // and `prev_ptr_write.offset(1)`.
-    //
-    // `next_write` is also incremented at most once per loop at most meaning
-    // no element is skipped when it may need to be swapped.
-    //
-    // `ptr_read` and `prev_ptr_write` never point to the same element. This
-    // is required for `&mut *ptr_read`, `&mut *prev_ptr_write` to be safe.
-    // The explanation is simply that `next_read >= next_write` is always true,
-    // thus `next_read > next_write - 1` is too.
-    unsafe {
-        // Avoid bounds checks by using raw pointers.
-        while next_read < len {
-            let ptr_read = ptr.add(next_read);
-            let prev_ptr_write = ptr.add(next_write - 1);
-            if same_bucket(&mut *ptr_read, &mut *prev_ptr_write) {
-                core::ptr::swap(&mut *ptr_read, &mut *prev_ptr_write);
-            } else {
-                if next_read != next_write {
-                    let ptr_write = prev_ptr_write.add(1);
-                    core::ptr::swap(&mut *ptr_read, &mut *ptr_write);
-                }
-                next_write += 1;
+    while let Some((before_read, [read, ..])) = v.split_at_mut_checked(read_idx) {
+        // First, `read_idx >= write_idx` is always true as `read_idx` is always incremented
+        // whereas `write_idx` is only incremented when a distinct element is found.
+        // Second, before_read is always at least 1 length due to read_idx being initialized to 1.
+        // Thus it is safe to index before_read with `write_idx - 1`.
+        #[allow(clippy::indexing_slicing)]
+        let prev_write = &mut before_read[write_idx - 1];
+        if read.0 == prev_write.0 {
+            core::mem::swap(read, prev_write);
+        } else {
+            // Equivalent to checking if write_idx == read_idx
+            if let Some(write) = before_read.get_mut(write_idx) {
+                core::mem::swap(read, write);
             }
-            next_read += 1;
+            write_idx += 1;
         }
-        v.split_at_mut_unchecked(next_write)
+        read_idx += 1;
     }
+    v.split_at_mut(write_idx)
 }
 
 impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
