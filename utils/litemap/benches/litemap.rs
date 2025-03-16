@@ -103,7 +103,7 @@ fn bench_deserialize_large(c: &mut Criterion) {
 fn bench_from_iter(c: &mut Criterion) {
     c.bench_function("litemap/from_iter_rand/small", |b| {
         let mut ff = build_litemap(false).into_iter().collect::<Vec<_>>();
-        ff[..].shuffle(&mut rand::thread_rng());
+        ff[..].shuffle(&mut rand::rng());
         b.iter(|| {
             let map: LiteMap<&String, &String> = LiteMap::from_iter(ff.iter().map(|(k, v)| (k, v)));
             black_box(map)
@@ -114,7 +114,7 @@ fn bench_from_iter(c: &mut Criterion) {
 fn bench_from_iter_rand_large(c: &mut Criterion) {
     c.bench_function("litemap/from_iter_rand/large", |b| {
         let mut ff = build_litemap(true).into_iter().collect::<Vec<_>>();
-        ff[..].shuffle(&mut rand::thread_rng());
+        ff[..].shuffle(&mut rand::rng());
         b.iter(|| {
             let map: LiteMap<&String, &String> = LiteMap::from_iter(ff.iter().map(|(k, v)| (k, v)));
             black_box(map)
@@ -145,7 +145,7 @@ fn bench_from_iter_large_sorted(c: &mut Criterion) {
 fn bench_extend_rand(c: &mut Criterion) {
     c.bench_function("litemap/extend_rand/large", |b| {
         let mut ff = build_litemap(true).into_iter().collect::<Vec<_>>();
-        ff[..].shuffle(&mut rand::thread_rng());
+        ff[..].shuffle(&mut rand::rng());
         b.iter(|| {
             let mut map: LiteMap<&String, &String> = LiteMap::with_capacity(0);
             let mut iter = ff.iter().map(|(k, v)| (k, v));
@@ -161,7 +161,7 @@ fn bench_extend_rand(c: &mut Criterion) {
 fn bench_extend_rand_dups(c: &mut Criterion) {
     c.bench_function("litemap/extend_rand_dups/large", |b| {
         let mut ff = build_litemap(true).into_iter().collect::<Vec<_>>();
-        ff[..].shuffle(&mut rand::thread_rng());
+        ff[..].shuffle(&mut rand::rng());
         b.iter(|| {
             let mut map: LiteMap<&String, &String> = LiteMap::with_capacity(0);
             for _ in 0..2 {
@@ -179,7 +179,7 @@ fn bench_extend_rand_dups(c: &mut Criterion) {
 fn bench_extend_from_litemap_rand(c: &mut Criterion) {
     c.bench_function("litemap/extend_from_litemap_rand/large", |b| {
         let mut ff = build_litemap(true).into_iter().collect::<Vec<_>>();
-        ff[..].shuffle(&mut rand::thread_rng());
+        ff[..].shuffle(&mut rand::rng());
         b.iter(|| {
             let mut map: LiteMap<&String, &String> = LiteMap::with_capacity(0);
             let mut iter = ff.iter().map(|(k, v)| (k, v));
