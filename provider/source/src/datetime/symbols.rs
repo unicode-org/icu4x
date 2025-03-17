@@ -101,11 +101,7 @@ pub(crate) fn get_month_code_map(calendar: DatagenCalendar) -> &'static [TinyStr
         | DatagenCalendar::Dangi
         | DatagenCalendar::Gregorian
         | DatagenCalendar::Indian
-        | DatagenCalendar::Islamic
-        | DatagenCalendar::IslamicCivil
-        | DatagenCalendar::IslamicRgsa
-        | DatagenCalendar::IslamicTabular
-        | DatagenCalendar::IslamicUmmAlQura
+        | DatagenCalendar::Hijri
         | DatagenCalendar::JapaneseExtended
         | DatagenCalendar::JapaneseModern
         | DatagenCalendar::Persian

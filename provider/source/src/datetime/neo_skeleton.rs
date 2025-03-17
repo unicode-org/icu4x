@@ -409,7 +409,7 @@ impl_neo_skeleton_datagen!(
 );
 impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, DatagenCalendar::Hebrew);
 impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, DatagenCalendar::Indian);
-impl_neo_skeleton_datagen!(HijriDateNeoSkeletonPatternsV1, DatagenCalendar::Islamic);
+impl_neo_skeleton_datagen!(HijriDateNeoSkeletonPatternsV1, DatagenCalendar::Hijri);
 impl_neo_skeleton_datagen!(
     JapaneseDateNeoSkeletonPatternsV1,
     DatagenCalendar::JapaneseModern
@@ -829,11 +829,7 @@ mod date_skeleton_consistency_tests {
             Gregorian,
             Hebrew,
             Indian,
-            Islamic,
-            IslamicCivil,
-            IslamicTabular,
-            IslamicRgsa,
-            IslamicUmmAlQura,
+            Hijri,
             JapaneseExtended,
             JapaneseModern,
             Persian,
