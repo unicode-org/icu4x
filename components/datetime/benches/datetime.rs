@@ -110,29 +110,35 @@ fn datetime_benches(c: &mut Criterion) {
     .map(|s| DateTime::try_from_str(s, Gregorian).unwrap());
 
     #[inline]
-    fn construct_any_ymd_numeric() -> DateTimeFormatter<fieldsets::YMD> {
+    fn construct_any_ymd_short() -> DateTimeFormatter<fieldsets::YMD> {
         DateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::short()).unwrap()
     }
 
     #[inline]
-    fn construct_fixed_ymd_numeric() -> FixedCalendarDateTimeFormatter<Gregorian, fieldsets::YMD> {
+    fn construct_fixed_ymd_short() -> FixedCalendarDateTimeFormatter<Gregorian, fieldsets::YMD> {
         FixedCalendarDateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::short())
             .unwrap()
     }
 
-    group.bench_function("any/construct_and_format/ymd_numeric/10_cases", |b| {
+    #[inline]
+    fn construct_fixed_ymd_long() -> FixedCalendarDateTimeFormatter<Gregorian, fieldsets::YMD> {
+        FixedCalendarDateTimeFormatter::try_new(locale!("fr").into(), fieldsets::YMD::long())
+            .unwrap()
+    }
+
+    group.bench_function("any/construct_and_format/ymd_short/10_cases", |b| {
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
                 buffer.clear();
-                let formatter = construct_any_ymd_numeric();
+                let formatter = construct_any_ymd_short();
                 formatter.format(datetime).write_to(&mut buffer).unwrap();
             }
         });
     });
 
-    group.bench_function("any/format_only/ymd_numeric/10_cases", |b| {
-        let formatter = construct_any_ymd_numeric();
+    group.bench_function("any/format_only/ymd_short/10_cases", |b| {
+        let formatter = construct_any_ymd_short();
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
@@ -145,19 +151,34 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/construct_and_format/ymd_numeric/10_cases", |b| {
+    group.bench_function("any/format_to_string/ymd_short/10_cases", |b| {
+        let formatter = construct_any_ymd_short();
+        b.iter(|| {
+            let mut counter = 0usize; // make sure the loop is not DCE'd
+            for datetime in black_box(&ten_cases).iter() {
+                let n = black_box(&formatter)
+                    .format(datetime)
+                    .write_to_string()
+                    .len();
+                counter = counter.wrapping_add(n);
+            }
+            counter
+        });
+    });
+
+    group.bench_function("fixed/construct_and_format/ymd_short/10_cases", |b| {
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
                 buffer.clear();
-                let formatter = construct_fixed_ymd_numeric();
+                let formatter = construct_fixed_ymd_short();
                 formatter.format(datetime).write_to(&mut buffer).unwrap();
             }
         });
     });
 
-    group.bench_function("fixed/format_only/ymd_numeric/10_cases", |b| {
-        let formatter = construct_fixed_ymd_numeric();
+    group.bench_function("fixed/format_only/ymd_short/10_cases", |b| {
+        let formatter = construct_fixed_ymd_short();
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
@@ -170,8 +191,48 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/format_to_string/ymd_numeric/10_cases", |b| {
-        let formatter = construct_fixed_ymd_numeric();
+    group.bench_function("fixed/format_to_string/ymd_short/10_cases", |b| {
+        let formatter = construct_fixed_ymd_short();
+        b.iter(|| {
+            let mut counter = 0usize; // make sure the loop is not DCE'd
+            for datetime in black_box(&ten_cases).iter() {
+                let n = black_box(&formatter)
+                    .format(datetime)
+                    .write_to_string()
+                    .len();
+                counter = counter.wrapping_add(n);
+            }
+            counter
+        });
+    });
+
+    group.bench_function("fixed/construct_and_format/ymd_long/10_cases", |b| {
+        let mut buffer = String::with_capacity(1000);
+        b.iter(|| {
+            for datetime in black_box(&ten_cases).iter() {
+                buffer.clear();
+                let formatter = construct_fixed_ymd_long();
+                formatter.format(datetime).write_to(&mut buffer).unwrap();
+            }
+        });
+    });
+
+    group.bench_function("fixed/format_only/ymd_long/10_cases", |b| {
+        let formatter = construct_fixed_ymd_long();
+        let mut buffer = String::with_capacity(1000);
+        b.iter(|| {
+            for datetime in black_box(&ten_cases).iter() {
+                buffer.clear();
+                black_box(&formatter)
+                    .format(datetime)
+                    .write_to(&mut buffer)
+                    .unwrap();
+            }
+        });
+    });
+
+    group.bench_function("fixed/format_to_string/ymd_long/10_cases", |b| {
+        let formatter = construct_fixed_ymd_long();
         b.iter(|| {
             let mut counter = 0usize; // make sure the loop is not DCE'd
             for datetime in black_box(&ten_cases).iter() {
