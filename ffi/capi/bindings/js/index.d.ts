@@ -40,7 +40,7 @@ export { PluralCategories } from "./PluralCategories"
 
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
 
-export { UtcOffsets } from "./UtcOffsets"
+export { VariantOffsets } from "./VariantOffsets"
 
 export { WeekOf } from "./WeekOf"
 
@@ -119,6 +119,10 @@ export { Logger } from "./Logger"
 export { DateTimeFormatter } from "./DateTimeFormatter"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
+
+export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
+
+export { ZonedDateTimeFormatterGregorian } from "./ZonedDateTimeFormatterGregorian"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
@@ -204,15 +208,11 @@ export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { UtcOffset } from "./UtcOffset"
 
-export { UtcOffsetCalculator } from "./UtcOffsetCalculator"
+export { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 
 export { WeekCalculator } from "./WeekCalculator"
 
 export { WindowsParser } from "./WindowsParser"
-
-export { GregorianZonedDateTimeFormatter } from "./GregorianZonedDateTimeFormatter"
-
-export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
 
 export { BidiDirection } from "./BidiDirection"
 
@@ -240,6 +240,12 @@ export { Weekday } from "./Weekday"
 
 export { DateTimeLength } from "./DateTimeLength"
 
+export { DateTimeAlignment } from "./DateTimeAlignment"
+
+export { TimePrecision } from "./TimePrecision"
+
+export { YearStyle } from "./YearStyle"
+
 export { DecimalGroupingStrategy } from "./DecimalGroupingStrategy"
 
 export { DisplayNamesFallback } from "./DisplayNamesFallback"
@@ -254,9 +260,9 @@ export { CalendarParseError } from "./CalendarParseError"
 
 export { DataError } from "./DataError"
 
-export { DateTimeFormatError } from "./DateTimeFormatError"
-
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
+
+export { DateTimeWriteError } from "./DateTimeWriteError"
 
 export { FixedDecimalParseError } from "./FixedDecimalParseError"
 
@@ -277,12 +283,6 @@ export { ListLength } from "./ListLength"
 export { TransformResult } from "./TransformResult"
 
 export { LocaleDirection } from "./LocaleDirection"
-
-export { DateTimeAlignment } from "./DateTimeAlignment"
-
-export { TimePrecision } from "./TimePrecision"
-
-export { YearStyle } from "./YearStyle"
 
 export { PluralCategory } from "./PluralCategory"
 

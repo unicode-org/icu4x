@@ -40,7 +40,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> create_extended_with_provider(const icu4x::DataProvider& provider);
 
-  inline icu4x::LocaleDirection get(const icu4x::Locale& locale) const;
+  inline icu4x::LocaleDirection operator[](const icu4x::Locale& locale) const;
 
   inline bool is_left_to_right(const icu4x::Locale& locale) const;
 

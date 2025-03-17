@@ -82,6 +82,8 @@ pub mod date;
 pub mod datetime;
 #[cfg(feature = "datetime")]
 pub mod datetime_formatter;
+#[cfg(feature = "datetime")]
+pub mod datetime_options;
 #[cfg(feature = "decimal")]
 pub mod decimal;
 #[cfg(feature = "experimental")]
@@ -139,12 +141,10 @@ pub mod timezone;
 #[cfg(feature = "experimental")]
 pub mod units_converter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
-pub mod utc_offset;
+pub mod variant_offset;
 #[cfg(feature = "calendar")]
 pub mod week;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod windows_parser;
 #[cfg(feature = "datetime")]
 pub mod zoned_datetime;
-#[cfg(feature = "datetime")]
-pub mod zoned_formatter;

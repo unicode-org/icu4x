@@ -94,7 +94,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline uint8_t icu4x::CodePointMapData8::get(char32_t cp) const {
+inline uint8_t icu4x::CodePointMapData8::operator[](char32_t cp) const {
   auto result = icu4x::capi::icu4x_CodePointMapData8_get_mv1(this->AsFFI(),
     cp);
   return result;

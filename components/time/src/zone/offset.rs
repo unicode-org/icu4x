@@ -4,13 +4,14 @@
 
 use core::str::FromStr;
 
-use crate::provider::{MinutesSinceEpoch, TimeZoneOffsetsV1};
+use crate::provider::{EighthsOfHourOffset, MinutesSinceEpoch, TimeZoneOffsetsV1};
 use crate::{Time, TimeZone};
 use icu_calendar::Date;
 use icu_calendar::Iso;
 use icu_provider::prelude::*;
 
 use displaydoc::Display;
+use zerovec::ZeroMap2d;
 
 /// The time zone offset was invalid. Must be within ±18:00:00.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -187,34 +188,40 @@ impl FromStr for UtcOffset {
     }
 }
 
-/// [`UtcOffsetCalculator`] uses data from the [data provider] to calculate time zone offsets.
+/// [`VariantOffsetsCalculator`] uses data from the [data provider] to calculate time zone offsets.
 ///
 /// [data provider]: icu_provider
 #[derive(Debug)]
-pub struct UtcOffsetCalculator {
+pub struct VariantOffsetsCalculator {
     pub(super) offset_period: DataPayload<TimeZoneOffsetsV1>,
 }
 
+/// The borrowed version of a  [`VariantOffsetsCalculator`]
+#[derive(Debug)]
+pub struct VariantOffsetsCalculatorBorrowed<'a> {
+    pub(super) offset_period:
+        &'a ZeroMap2d<'a, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+}
+
 #[cfg(feature = "compiled_data")]
-impl Default for UtcOffsetCalculator {
+impl Default for VariantOffsetsCalculatorBorrowed<'static> {
     fn default() -> Self {
-        Self::new()
+        VariantOffsetsCalculator::new()
     }
 }
 
-impl UtcOffsetCalculator {
-    /// Constructs a `UtcOffsetCalculator` using compiled data.
+impl VariantOffsetsCalculator {
+    /// Constructs a `VariantOffsetsCalculator` using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[inline]
-    pub const fn new() -> Self {
-        UtcOffsetCalculator {
-            offset_period: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
-            ),
+    #[allow(clippy::new_ret_no_self)]
+    pub const fn new() -> VariantOffsetsCalculatorBorrowed<'static> {
+        VariantOffsetsCalculatorBorrowed {
+            offset_period: crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
         }
     }
 
@@ -237,6 +244,42 @@ impl UtcOffsetCalculator {
         })
     }
 
+    /// Returns a borrowed version of the calculator that can be queried.
+    ///
+    /// This avoids a small potential indirection cost when querying.
+    pub fn as_borrowed(&self) -> VariantOffsetsCalculatorBorrowed {
+        VariantOffsetsCalculatorBorrowed {
+            offset_period: self.offset_period.get(),
+        }
+    }
+}
+
+impl VariantOffsetsCalculatorBorrowed<'static> {
+    /// Constructs a `VariantOffsetsCalculatorBorrowed` using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[inline]
+    pub const fn new() -> Self {
+        Self {
+            offset_period: crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
+        }
+    }
+
+    /// Cheaply converts a [`VariantOffsetsCalculatorBorrowed<'static>`] into a [`VariantOffsetsCalculator`].
+    ///
+    /// Note: Due to branching and indirection, using [`VariantOffsetsCalculator`] might inhibit some
+    /// compile-time optimizations that are possible with [`VariantOffsetsCalculatorBorrowed`].
+    pub fn static_to_owned(&self) -> VariantOffsetsCalculator {
+        VariantOffsetsCalculator {
+            offset_period: DataPayload::from_static_ref(self.offset_period),
+        }
+    }
+}
+
+impl VariantOffsetsCalculatorBorrowed<'_> {
     /// Calculate zone offsets from timezone and local datetime.
     ///
     /// # Examples
@@ -244,12 +287,12 @@ impl UtcOffsetCalculator {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::time::zone::UtcOffset;
-    /// use icu::time::zone::UtcOffsetCalculator;
+    /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
     /// use tinystr::tinystr;
     ///
-    /// let zoc = UtcOffsetCalculator::new();
+    /// let zoc = VariantOffsetsCalculator::new();
     ///
     /// // America/Denver observes DST
     /// let offsets = zoc
@@ -284,9 +327,9 @@ impl UtcOffsetCalculator {
         &self,
         time_zone_id: TimeZone,
         dt: (Date<Iso>, Time),
-    ) -> Option<UtcOffsets> {
+    ) -> Option<VariantOffsets> {
         use zerovec::ule::AsULE;
-        match self.offset_period.get().get0(&time_zone_id) {
+        match self.offset_period.get0(&time_zone_id) {
             Some(cursor) => {
                 let mut offsets = None;
                 let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);
@@ -298,7 +341,7 @@ impl UtcOffsetCalculator {
                     }
                 }
                 let offsets = offsets?;
-                Some(UtcOffsets {
+                Some(VariantOffsets {
                     standard: UtcOffset::from_eighths_of_hour(offsets.0),
                     daylight: (offsets.1 != 0)
                         .then_some(UtcOffset::from_eighths_of_hour(offsets.0 + offsets.1)),
@@ -312,7 +355,7 @@ impl UtcOffsetCalculator {
 /// Represents the different offsets in use for a time zone
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
-pub struct UtcOffsets {
+pub struct VariantOffsets {
     /// The standard offset.
     pub standard: UtcOffset,
     /// The daylight-saving offset, if used.

@@ -33,7 +33,7 @@ public:
 
   inline static diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-  inline uint8_t get(char32_t ch) const;
+  inline uint8_t operator[](char32_t ch) const;
 
   inline const icu4x::capi::CanonicalCombiningClassMap* AsFFI() const;
   inline icu4x::capi::CanonicalCombiningClassMap* AsFFI();

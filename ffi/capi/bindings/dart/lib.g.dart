@@ -51,12 +51,12 @@ part 'Date.g.dart';
 part 'DateFormatter.g.dart';
 part 'DateTime.g.dart';
 part 'DateTimeAlignment.g.dart';
-part 'DateTimeFormatError.g.dart';
 part 'DateTimeFormatter.g.dart';
 part 'DateTimeFormatterGregorian.g.dart';
 part 'DateTimeFormatterLoadError.g.dart';
 part 'DateTimeLength.g.dart';
 part 'DateTimeMismatchedCalendarError.g.dart';
+part 'DateTimeWriteError.g.dart';
 part 'Decimal.g.dart';
 part 'DecimalFormatter.g.dart';
 part 'DecimalGroupingStrategy.g.dart';
@@ -83,7 +83,6 @@ part 'GraphemeClusterBreakIteratorUtf16.g.dart';
 part 'GraphemeClusterBreakIteratorUtf8.g.dart';
 part 'GraphemeClusterSegmenter.g.dart';
 part 'GregorianDateFormatter.g.dart';
-part 'GregorianZonedDateTimeFormatter.g.dart';
 part 'HangulSyllableType.g.dart';
 part 'IanaParser.g.dart';
 part 'IanaParserExtended.g.dart';
@@ -154,8 +153,8 @@ part 'TransformResult.g.dart';
 part 'UnitsConverter.g.dart';
 part 'UnitsConverterFactory.g.dart';
 part 'UtcOffset.g.dart';
-part 'UtcOffsetCalculator.g.dart';
-part 'UtcOffsets.g.dart';
+part 'VariantOffsets.g.dart';
+part 'VariantOffsetsCalculator.g.dart';
 part 'WeekCalculator.g.dart';
 part 'WeekOf.g.dart';
 part 'WeekRelativeUnit.g.dart';
@@ -170,6 +169,7 @@ part 'WordSegmenter.g.dart';
 part 'YearStyle.g.dart';
 part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
+part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
 
 class _DiplomatFfiUse extends meta.RecordUse {
@@ -596,27 +596,27 @@ final class _ResultUint8Void extends ffi.Struct {
   }
 }
 
-final class _ResultUtcOffsetsFfiVoidUnion extends ffi.Union {
-  external _UtcOffsetsFfi ok;
+final class _ResultVariantOffsetsFfiVoidUnion extends ffi.Union {
+  external _VariantOffsetsFfi ok;
 
 }
 
-final class _ResultUtcOffsetsFfiVoid extends ffi.Struct {
-  external _ResultUtcOffsetsFfiVoidUnion union;
+final class _ResultVariantOffsetsFfiVoid extends ffi.Struct {
+  external _ResultVariantOffsetsFfiVoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
 
   // ignore: unused_element
-  factory _ResultUtcOffsetsFfiVoid.ok(_UtcOffsetsFfi val) {
-    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+  factory _ResultVariantOffsetsFfiVoid.ok(_VariantOffsetsFfi val) {
+    final struct = ffi.Struct.create<_ResultVariantOffsetsFfiVoid>();
     struct.isOk = true;
     struct.union.ok = val;
     return struct;
   }
   // ignore: unused_element
-  factory _ResultUtcOffsetsFfiVoid.err() {
-    final struct = ffi.Struct.create<_ResultUtcOffsetsFfiVoid>();
+  factory _ResultVariantOffsetsFfiVoid.err() {
+    final struct = ffi.Struct.create<_ResultVariantOffsetsFfiVoid>();
     struct.isOk = false;
     return struct;
   }

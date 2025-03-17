@@ -41,7 +41,7 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline uint16_t icu4x::CodePointMapData16::get(char32_t cp) const {
+inline uint16_t icu4x::CodePointMapData16::operator[](char32_t cp) const {
   auto result = icu4x::capi::icu4x_CodePointMapData16_get_mv1(this->AsFFI(),
     cp);
   return result;

@@ -4,7 +4,7 @@ import type { IanaParser } from "./IanaParser"
 import type { IsoDate } from "./IsoDate"
 import type { Time } from "./Time"
 import type { TimeZoneInfo } from "./TimeZoneInfo"
-import type { UtcOffsetCalculator } from "./UtcOffsetCalculator"
+import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -23,5 +23,5 @@ export class ZonedIsoDateTime {
     get zone() : TimeZoneInfo;
     
 
-    static fromString(v: string, ianaParser: IanaParser, offsetCalculator: UtcOffsetCalculator): ZonedIsoDateTime;
+    static fromString(v: string, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedIsoDateTime;
 }
