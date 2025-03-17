@@ -94,6 +94,7 @@ pub mod ffi {
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
+        UnsupportedCalendar = 0x8_01,
         UnsupportedLength = 0x8_03,
         ConflictingField = 0x8_09,
         TypeTooSpecific = 0x8_0A,
@@ -202,6 +203,10 @@ impl From<icu_time::ParseError> for CalendarParseError {
 impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadError {
     fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {
         match e {
+            icu_datetime::DateTimeFormatterLoadError::UnsupportedAnyCalendar(_)
+            | icu_datetime::DateTimeFormatterLoadError::UnsupportedCalendar(_) => {
+                Self::UnsupportedCalendar
+            }
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::ConflictingField(_),
             ) => Self::ConflictingField,
