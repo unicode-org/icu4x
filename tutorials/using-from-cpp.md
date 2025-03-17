@@ -56,7 +56,7 @@ cargo rustc --release -p icu_capi --crate-type staticlib
 - Be sure to pass `--release` to get an optimized build
 - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
 - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
-- See [cargo profiles](cargo-profiles) for more options
+- See [cargo profiles] for more options
 
 You should now have a `target/release/libicu_capi.a`, ready to compile into your C++ binary.
 
