@@ -81,7 +81,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_d_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -137,7 +137,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_md_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -198,7 +198,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ymd_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -256,7 +256,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_de_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -312,7 +312,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_mde_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -372,7 +372,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ymde_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -427,7 +427,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_e_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -482,7 +482,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_m_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -542,7 +542,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ym_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -604,7 +604,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_y_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -689,7 +689,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_d_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -745,7 +745,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_md_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -806,7 +806,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ymd_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -864,7 +864,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_de_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -920,7 +920,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_mde_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -980,7 +980,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ymde_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -1035,7 +1035,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_e_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -1090,7 +1090,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_m_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -1150,7 +1150,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_ym_with_provider(
             provider: &DataProvider,
             locale: &Locale,
@@ -1212,7 +1212,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "buffer_provider")]
         pub fn create_y_with_provider(
             provider: &DataProvider,
             locale: &Locale,

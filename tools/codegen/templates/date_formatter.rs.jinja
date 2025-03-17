@@ -73,7 +73,7 @@ pub mod ffi {
         {%- if variant.date_fields.is_default_constructor() && !is_with_provider %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
-        #[cfg(feature = "compiled_data")]
+        #[cfg(feature = "{% if is_with_provider %}buffer_provider{% else %}compiled_data{% endif %}")]
         pub fn create_{{ variant.date_fields.name_lower() }}{% if is_with_provider %}_with_provider{% endif %}(
             {%- if is_with_provider %}
             provider: &DataProvider,
