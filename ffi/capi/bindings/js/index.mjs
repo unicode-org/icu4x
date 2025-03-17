@@ -70,6 +70,10 @@ export { Date } from "./Date.mjs"
 
 export { IsoDate } from "./IsoDate.mjs"
 
+export { NeoDateFormatter } from "./NeoDateFormatter.mjs"
+
+export { NeoDateFormatterGregorian } from "./NeoDateFormatterGregorian.mjs"
+
 export { DateFormatter } from "./DateFormatter.mjs"
 
 export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"

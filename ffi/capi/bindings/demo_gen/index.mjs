@@ -5,6 +5,10 @@ import * as TitlecaseMapperDemo from "./TitlecaseMapper.mjs";
 export * as TitlecaseMapperDemo from "./TitlecaseMapper.mjs";
 import * as DateDemo from "./Date.mjs";
 export * as DateDemo from "./Date.mjs";
+import * as NeoDateFormatterDemo from "./NeoDateFormatter.mjs";
+export * as NeoDateFormatterDemo from "./NeoDateFormatter.mjs";
+import * as NeoDateFormatterGregorianDemo from "./NeoDateFormatterGregorian.mjs";
+export * as NeoDateFormatterGregorianDemo from "./NeoDateFormatterGregorian.mjs";
 import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
 import * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
@@ -231,6 +235,165 @@ let termini = Object.assign({
                 name: "Date:Calendar:Locale:Name",
                 type: "string",
                 typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "NeoDateFormatter.formatIso": {
+        func: NeoDateFormatterDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "NeoDateFormatter.formatIso",
+        parameters: [
+            
+            {
+                name: "NeoDateFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "NeoDateFormatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "NeoDateFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "NeoDateFormatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "NeoDateFormatter.formatSameCalendar": {
+        func: NeoDateFormatterDemo.formatSameCalendar,
+        // For avoiding webpacking minifying issues:
+        funcName: "NeoDateFormatter.formatSameCalendar",
+        parameters: [
+            
+            {
+                name: "NeoDateFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "NeoDateFormatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "NeoDateFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "NeoDateFormatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Calendar:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "NeoDateFormatterGregorian.formatIso": {
+        func: NeoDateFormatterGregorianDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "NeoDateFormatterGregorian.formatIso",
+        parameters: [
+            
+            {
+                name: "NeoDateFormatterGregorian:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "NeoDateFormatterGregorian:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "NeoDateFormatterGregorian:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "NeoDateFormatterGregorian:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
             }
             
         ]
