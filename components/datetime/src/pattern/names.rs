@@ -1081,7 +1081,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::AnyCalendar;
+    /// use icu::calendar::{AnyCalendar, AnyCalendarKind};
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
@@ -1090,7 +1090,7 @@ where
     ///
     /// let names = DateTimeNames::new_without_number_formatting(
     ///     locale!("es-MX").into(),
-    ///     AnyCalendar::try_new(locale!("es-MX").into()).unwrap(),
+    ///     AnyCalendar::new_for_kind(AnyCalendarKind::Gregorian),
     /// );
     ///
     /// let field_set = T::long().hm();
