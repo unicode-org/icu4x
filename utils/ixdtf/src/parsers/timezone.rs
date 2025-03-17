@@ -166,9 +166,7 @@ pub(crate) fn parse_utc_offset(cursor: &mut Cursor) -> ParserResult<UtcOffsetRec
     let fraction = parse_fraction(cursor)?;
 
     Ok(UtcOffsetRecord::FullPrecisionOffset(FullPrecisionOffset {
-        sign: minute_precision_offset.sign,
-        hour: minute_precision_offset.hour,
-        minute: minute_precision_offset.minute,
+        minute_precision_offset,
         second,
         fraction,
     }))

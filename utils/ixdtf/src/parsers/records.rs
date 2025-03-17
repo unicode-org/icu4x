@@ -126,7 +126,7 @@ impl UtcOffsetRecord {
     pub fn sign(&self) -> Sign {
         match self {
             Self::MinutePrecision(offset) => offset.sign,
-            Self::FullPrecisionOffset(offset) => offset.sign,
+            Self::FullPrecisionOffset(offset) => offset.minute_precision_offset.sign,
         }
     }
 
@@ -134,7 +134,7 @@ impl UtcOffsetRecord {
     pub fn hour(&self) -> u8 {
         match self {
             Self::MinutePrecision(offset) => offset.hour,
-            Self::FullPrecisionOffset(offset) => offset.hour,
+            Self::FullPrecisionOffset(offset) => offset.minute_precision_offset.hour,
         }
     }
 
@@ -142,7 +142,7 @@ impl UtcOffsetRecord {
     pub fn minute(&self) -> u8 {
         match self {
             Self::MinutePrecision(offset) => offset.minute,
-            Self::FullPrecisionOffset(offset) => offset.minute,
+            Self::FullPrecisionOffset(offset) => offset.minute_precision_offset.minute,
         }
     }
 
@@ -163,7 +163,7 @@ impl UtcOffsetRecord {
     }
 }
 
-/// A minute preicision UTC offseet
+/// A minute preicision UTC offset
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // Minute precision offset can only be a sign, hour and minute field
 pub struct MinutePrecisionOffset {
@@ -175,19 +175,16 @@ pub struct MinutePrecisionOffset {
     pub minute: u8,
 }
 
-/// A full precision UTC offset with seconds and an optional fractional seconds
+/// A full precision UTC offset represented by a `MinutePrecisionOffset`
+/// with seconds and an optional fractional seconds
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // Full precision offset is only these five component fields
 pub struct FullPrecisionOffset {
-    /// The `Sign` value of the `UtcOffsetRecord`.
-    pub sign: Sign,
-    /// The hour value of the `UtcOffsetRecord`.
-    pub hour: u8,
-    /// The minute value of the `UtcOffsetRecord`.
-    pub minute: u8,
-    /// The second value of the `UtcOffsetRecord`.
+    /// The minute precision offset of a `FullPrecisionOffset`.
+    pub minute_precision_offset: MinutePrecisionOffset,
+    /// The second value of a `FullPrecisionOffset`.
     pub second: u8,
-    /// Any nanosecond value of the `UTCOffsetRecord`.
+    /// Any nanosecond value of a `FullPrecisionOffset`.
     pub fraction: Option<Fraction>,
 }
 
