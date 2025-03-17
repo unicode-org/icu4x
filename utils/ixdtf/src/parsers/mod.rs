@@ -8,9 +8,7 @@ use crate::{ParseError, ParserResult};
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
-use records::IxdtfParseRecord;
-#[cfg(feature = "timezone")]
-use records::UtcOffsetRecord;
+use records::{IxdtfParseRecord, UtcOffsetRecord};
 
 use self::records::Annotation;
 
@@ -236,13 +234,11 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// ✨ *Enabled with the `timezone` Cargo feature.*
 ///
-#[cfg(feature = "timezone")]
 #[derive(Debug)]
 pub struct TimeZoneParser<'a> {
     cursor: Cursor<'a>,
 }
 
-#[cfg(feature = "timezone")]
 impl<'a> TimeZoneParser<'a> {
     /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
     #[inline]

@@ -25,7 +25,6 @@ all-features = true
 [features]
 default = ["duration"]
 duration = []
-timezone = []
 
 [dependencies]
 displaydoc = { workspace = true }
