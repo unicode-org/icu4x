@@ -67,7 +67,7 @@ impl DateFieldsWrap {
         }
     }
     pub fn is_default_constructor(&self) -> bool {
-        return matches!(self.0, DateFields::YMD);
+        matches!(self.0, DateFields::YMD)
     }
 }
 
