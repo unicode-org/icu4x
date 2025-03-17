@@ -167,6 +167,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
+        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymd(
             locale: &Locale,
@@ -774,6 +775,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
+        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymd(
             locale: &Locale,

@@ -70,6 +70,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::long, FnInStruct, hidden)]
+        {%- if variant.date_fields.is_default_constructor() && !is_with_provider %}
+        #[diplomat::demo(default_constructor)]
+        {%- endif %}
         #[cfg(feature = "compiled_data")]
         pub fn create_{{ variant.date_fields.name_lower() }}{% if is_with_provider %}_with_provider{% endif %}(
             {%- if is_with_provider %}

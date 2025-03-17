@@ -66,6 +66,9 @@ impl DateFieldsWrap {
             _ => unreachable!("unknown variant"),
         }
     }
+    pub fn is_default_constructor(&self) -> bool {
+        return matches!(self.0, DateFields::YMD)
+    }
 }
 
 #[derive(Template, Default)]
