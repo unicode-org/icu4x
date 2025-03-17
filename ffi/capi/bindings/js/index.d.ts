@@ -72,13 +72,9 @@ export { Date } from "./Date"
 
 export { IsoDate } from "./IsoDate"
 
-export { NeoDateFormatter } from "./NeoDateFormatter"
-
-export { NeoDateFormatterGregorian } from "./NeoDateFormatterGregorian"
-
 export { DateFormatter } from "./DateFormatter"
 
-export { GregorianDateFormatter } from "./GregorianDateFormatter"
+export { DateFormatterGregorian } from "./DateFormatterGregorian"
 
 export { NoCalendarFormatter } from "./NoCalendarFormatter"
 

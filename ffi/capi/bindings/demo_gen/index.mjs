@@ -5,14 +5,10 @@ import * as TitlecaseMapperDemo from "./TitlecaseMapper.mjs";
 export * as TitlecaseMapperDemo from "./TitlecaseMapper.mjs";
 import * as DateDemo from "./Date.mjs";
 export * as DateDemo from "./Date.mjs";
-import * as NeoDateFormatterDemo from "./NeoDateFormatter.mjs";
-export * as NeoDateFormatterDemo from "./NeoDateFormatter.mjs";
-import * as NeoDateFormatterGregorianDemo from "./NeoDateFormatterGregorian.mjs";
-export * as NeoDateFormatterGregorianDemo from "./NeoDateFormatterGregorian.mjs";
 import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
-import * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
-export * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
+import * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
+export * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
 import * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 export * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
@@ -240,32 +236,32 @@ let termini = Object.assign({
         ]
     },
 
-    "NeoDateFormatter.formatIso": {
-        func: NeoDateFormatterDemo.formatIso,
+    "DateFormatter.formatIso": {
+        func: DateFormatterDemo.formatIso,
         // For avoiding webpacking minifying issues:
-        funcName: "NeoDateFormatter.formatIso",
+        funcName: "DateFormatter.formatIso",
         parameters: [
             
             {
-                name: "NeoDateFormatter:Locale:Name",
+                name: "DateFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "NeoDateFormatter:Length",
+                name: "DateFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "NeoDateFormatter:Alignment",
+                name: "DateFormatter:Alignment",
                 type: "DateTimeAlignment",
                 typeUse: "enumerator"
             },
             
             {
-                name: "NeoDateFormatter:YearStyle",
+                name: "DateFormatter:YearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator"
             },
@@ -291,32 +287,32 @@ let termini = Object.assign({
         ]
     },
 
-    "NeoDateFormatter.formatSameCalendar": {
-        func: NeoDateFormatterDemo.formatSameCalendar,
+    "DateFormatter.formatSameCalendar": {
+        func: DateFormatterDemo.formatSameCalendar,
         // For avoiding webpacking minifying issues:
-        funcName: "NeoDateFormatter.formatSameCalendar",
+        funcName: "DateFormatter.formatSameCalendar",
         parameters: [
             
             {
-                name: "NeoDateFormatter:Locale:Name",
+                name: "DateFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "NeoDateFormatter:Length",
+                name: "DateFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "NeoDateFormatter:Alignment",
+                name: "DateFormatter:Alignment",
                 type: "DateTimeAlignment",
                 typeUse: "enumerator"
             },
             
             {
-                name: "NeoDateFormatter:YearStyle",
+                name: "DateFormatter:YearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator"
             },
@@ -348,32 +344,32 @@ let termini = Object.assign({
         ]
     },
 
-    "NeoDateFormatterGregorian.formatIso": {
-        func: NeoDateFormatterGregorianDemo.formatIso,
+    "DateFormatterGregorian.formatIso": {
+        func: DateFormatterGregorianDemo.formatIso,
         // For avoiding webpacking minifying issues:
-        funcName: "NeoDateFormatterGregorian.formatIso",
+        funcName: "DateFormatterGregorian.formatIso",
         parameters: [
             
             {
-                name: "NeoDateFormatterGregorian:Locale:Name",
+                name: "DateFormatterGregorian:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "NeoDateFormatterGregorian:Length",
+                name: "DateFormatterGregorian:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "NeoDateFormatterGregorian:Alignment",
+                name: "DateFormatterGregorian:Alignment",
                 type: "DateTimeAlignment",
                 typeUse: "enumerator"
             },
             
             {
-                name: "NeoDateFormatterGregorian:YearStyle",
+                name: "DateFormatterGregorian:YearStyle",
                 type: "YearStyle",
                 typeUse: "enumerator"
             },
@@ -392,129 +388,6 @@ let termini = Object.assign({
             
             {
                 name: "Date:Day",
-                type: "number",
-                typeUse: "number"
-            }
-            
-        ]
-    },
-
-    "DateFormatter.format": {
-        func: DateFormatterDemo.format,
-        // For avoiding webpacking minifying issues:
-        funcName: "DateFormatter.format",
-        parameters: [
-            
-            {
-                name: "DateFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "DateFormatter:Length",
-                type: "DateTimeLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Value:Year",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Month",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Day",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Calendar:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "DateFormatter.formatIso": {
-        func: DateFormatterDemo.formatIso,
-        // For avoiding webpacking minifying issues:
-        funcName: "DateFormatter.formatIso",
-        parameters: [
-            
-            {
-                name: "DateFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "DateFormatter:Length",
-                type: "DateTimeLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Value:Year",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Month",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Day",
-                type: "number",
-                typeUse: "number"
-            }
-            
-        ]
-    },
-
-    "GregorianDateFormatter.formatIso": {
-        func: GregorianDateFormatterDemo.formatIso,
-        // For avoiding webpacking minifying issues:
-        funcName: "GregorianDateFormatter.formatIso",
-        parameters: [
-            
-            {
-                name: "GregorianDateFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "GregorianDateFormatter:Length",
-                type: "DateTimeLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Value:Year",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Month",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Day",
                 type: "number",
                 typeUse: "number"
             }
