@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/NeoDateFormatter.hpp>
-#include <icu4x/GregorianDateFormatter.hpp>
+#include <icu4x/DateFormatter.hpp>
+#include <icu4x/DateFormatterGregorian.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatterGregorian.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
@@ -30,7 +30,7 @@ int main() {
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
     std::string out;
 
-    std::unique_ptr<NeoDateFormatter> fmt_d = NeoDateFormatter::create_d(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_d = DateFormatter::create_d(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
     out = fmt_d->format_iso(*date.get());
     std::cout << "Fieldset D: " << out;
     if (out != "11") {
@@ -39,7 +39,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_md = NeoDateFormatter::create_md(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_md = DateFormatter::create_md(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
     out = fmt_md->format_iso(*date.get());
     std::cout << "Fieldset MD: " << out;
     if (out != "11 jul") {
@@ -48,7 +48,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_ymd = NeoDateFormatter::create_ymd(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_ymd = DateFormatter::create_ymd(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
     out = fmt_ymd->format_iso(*date.get());
     std::cout << "Fieldset YMD: " << out;
     if (out != "11 jul 2022") {
@@ -57,7 +57,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_de = NeoDateFormatter::create_de(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_de = DateFormatter::create_de(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
     out = fmt_de->format_iso(*date.get());
     std::cout << "Fieldset DE: " << out;
     if (out != "lun 11") {
@@ -66,7 +66,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_mde = NeoDateFormatter::create_mde(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_mde = DateFormatter::create_mde(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
     out = fmt_mde->format_iso(*date.get());
     std::cout << "Fieldset MDE: " << out;
     if (out != "lun, 11 jul") {
@@ -75,7 +75,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_ymde = NeoDateFormatter::create_ymde(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_ymde = DateFormatter::create_ymde(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
     out = fmt_ymde->format_iso(*date.get());
     std::cout << "Fieldset YMDE: " << out;
     if (out != "lun, 11 jul 2022") {
@@ -84,7 +84,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_e = NeoDateFormatter::create_e(*locale.get(), DateTimeLength::Medium).ok().value();
+    std::unique_ptr<DateFormatter> fmt_e = DateFormatter::create_e(*locale.get(), DateTimeLength::Medium).ok().value();
     out = fmt_e->format_iso(*date.get());
     std::cout << "Fieldset E: " << out;
     if (out != "lun") {
@@ -93,7 +93,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_m = NeoDateFormatter::create_m(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_m = DateFormatter::create_m(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
     out = fmt_m->format_iso(*date.get());
     std::cout << "Fieldset M: " << out;
     if (out != "jul") {
@@ -102,7 +102,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_ym = NeoDateFormatter::create_ym(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_ym = DateFormatter::create_ym(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
     out = fmt_ym->format_iso(*date.get());
     std::cout << "Fieldset YM: " << out;
     if (out != "jul 2022") {
@@ -111,7 +111,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NeoDateFormatter> fmt_y = NeoDateFormatter::create_y(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    std::unique_ptr<DateFormatter> fmt_y = DateFormatter::create_y(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
     out = fmt_y->format_iso(*date.get());
     std::cout << "Fieldset Y: " << out;
     if (out != "2022") {
@@ -191,7 +191,7 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<GregorianDateFormatter> df = GregorianDateFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
+    std::unique_ptr<DateFormatterGregorian> df = DateFormatterGregorian::create_ymd(*locale.get(), DateTimeLength::Long, std::nullopt, std::nullopt).ok().value();
     out = df->format_iso(*date.get());
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "11 de julio de 2022") {
