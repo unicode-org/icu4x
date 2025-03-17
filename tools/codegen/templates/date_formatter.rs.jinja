@@ -48,7 +48,16 @@ pub mod ffi {
         >,
     );
     {% for is_gregorian in [false, true] %}
-    impl {% if is_gregorian %}NeoDateFormatterGregorian{% else %}NeoDateFormatter{% endif %} {
+    {%- let ffi_type %}
+    {%- let rust_type %}
+    {%- if is_gregorian %}
+        {%- let ffi_type = "NeoDateFormatterGregorian" %}
+        {%- let rust_type = "FixedCalendarDateTimeFormatter" %}
+    {%- else %}
+        {%- let ffi_type = "NeoDateFormatter" %}
+        {%- let rust_type = "DateTimeFormatter" %}
+    {%- endif %}
+    impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.date_fields.name_lower() }}{% if is_with_provider %}_with_provider{% endif %}")]
@@ -90,7 +99,7 @@ pub mod ffi {
             {%- endif %}
             Ok(Box::new(Self(
                 icu_datetime
-                    ::{% if is_gregorian %}FixedCalendarDateTimeFormatter{% else %}DateTimeFormatter{% endif %}
+                    ::{{ rust_type }}
                     ::try_new{% if is_with_provider %}_with_buffer_provider{% endif %}(
                         {%- if is_with_provider %}
                         provider.get()?,
@@ -103,6 +112,39 @@ pub mod ffi {
         }
         {% endfor %}
         {%- endfor %}
+        #[diplomat::rust_link(icu::datetime::{{ rust_type }}::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            time: &Time,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
+            let value = icu_time::DateTime {
+                date: date.0{% if is_gregorian %}.to_calendar(Gregorian){% endif %},
+                time: time.0,
+            };
+            let _infallible = self.0.format(&value).write_to(write);
+        }
+        {% if !is_gregorian %}
+        #[diplomat::rust_link(icu::datetime::{{ rust_type }}::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_same_calendar(
+            &self,
+            date: &Date,
+            time: &Time,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeMismatchedCalendarError> {
+            let value = icu_time::DateTime {
+                date: date.0.wrap_calendar_in_ref(),
+                time: time.0,
+            };
+            let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
+            Ok(())
+        }
+        {%- endif %}
     }
-    {%- endfor %}
+    {% endfor %}
 }

@@ -629,7 +629,40 @@ pub mod ffi {
             )))
         }
         
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            time: &Time,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
+            let value = icu_time::DateTime {
+                date: date.0,
+                time: time.0,
+            };
+            let _infallible = self.0.format(&value).write_to(write);
+        }
+        
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_same_calendar(
+            &self,
+            date: &Date,
+            time: &Time,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeMismatchedCalendarError> {
+            let value = icu_time::DateTime {
+                date: date.0.wrap_calendar_in_ref(),
+                time: time.0,
+            };
+            let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
+            Ok(())
+        }
     }
+    
     impl NeoDateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
@@ -1211,5 +1244,22 @@ pub mod ffi {
             )))
         }
         
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            time: &Time,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
+            let value = icu_time::DateTime {
+                date: date.0.to_calendar(Gregorian),
+                time: time.0,
+            };
+            let _infallible = self.0.format(&value).write_to(write);
+        }
+        
     }
+    
 }
