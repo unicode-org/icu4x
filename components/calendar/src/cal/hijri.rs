@@ -527,9 +527,9 @@ impl Calendar for HijriObservational {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic"), prev_year),
+            prev_year: year_as_hijri(tinystr!(16, "islamic-rgsa"), prev_year),
             days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_hijri(tinystr!(16, "islamic"), next_year),
+            next_year: year_as_hijri(tinystr!(16, "islamic-rgsa"), next_year),
         }
     }
 

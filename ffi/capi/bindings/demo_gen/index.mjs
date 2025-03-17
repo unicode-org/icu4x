@@ -195,9 +195,9 @@ let termini = Object.assign({
             },
             
             {
-                name: "Date:Calendar:Locale:Name",
-                type: "string",
-                typeUse: "string"
+                name: "Date:Calendar:Kind",
+                type: "AnyCalendarKind",
+                typeUse: "enumerator"
             }
             
         ]
@@ -228,9 +228,9 @@ let termini = Object.assign({
             },
             
             {
-                name: "Date:Calendar:Locale:Name",
-                type: "string",
-                typeUse: "string"
+                name: "Date:Calendar:Kind",
+                type: "AnyCalendarKind",
+                typeUse: "enumerator"
             }
             
         ]
@@ -273,9 +273,9 @@ let termini = Object.assign({
             },
             
             {
-                name: "Value:Calendar:Locale:Name",
-                type: "string",
-                typeUse: "string"
+                name: "Value:Calendar:Kind",
+                type: "AnyCalendarKind",
+                typeUse: "enumerator"
             }
             
         ]
@@ -732,9 +732,9 @@ let termini = Object.assign({
             },
             
             {
-                name: "Date:Calendar:Locale:Name",
-                type: "string",
-                typeUse: "string"
+                name: "Date:Calendar:Kind",
+                type: "AnyCalendarKind",
+                typeUse: "enumerator"
             },
             
             {

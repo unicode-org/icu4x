@@ -448,7 +448,7 @@ pub fn japanese_and_japanext_are_compatible() {
 fn test_calendar_eras() {
     use icu::calendar::types::FormattingEra;
     use icu::calendar::Iso;
-    use icu::calendar::{AnyCalendar, Date, AnyCalendarKind};
+    use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
     use icu::datetime::preferences::CalendarAlgorithm;
     use icu::locale::extensions::unicode::Value;
 
@@ -470,7 +470,10 @@ fn test_calendar_eras() {
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,
-            c => CalendarAlgorithm::try_from(&Value::try_from_str(c).unwrap()).unwrap().try_into().expect(&calendar),
+            c => CalendarAlgorithm::try_from(&Value::try_from_str(c).unwrap())
+                .unwrap()
+                .try_into()
+                .expect(&calendar),
         };
 
         let cal = AnyCalendar::try_new_for_kind_unstable(&provider, kind).unwrap();

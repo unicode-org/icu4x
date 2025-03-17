@@ -2,7 +2,6 @@
 import type { AnyCalendarKind } from "./AnyCalendarKind"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
-import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -14,13 +13,9 @@ export class Calendar {
     
     get ffiValue(): pointer;
 
-    static createForLocale(locale: Locale): Calendar;
-
-    static createForKind(kind: AnyCalendarKind): Calendar;
-
-    static createForLocaleWithProvider(provider: DataProvider, locale: Locale): Calendar;
-
     static createForKindWithProvider(provider: DataProvider, kind: AnyCalendarKind): Calendar;
 
     get kind(): AnyCalendarKind;
+
+    constructor(kind: AnyCalendarKind);
 }

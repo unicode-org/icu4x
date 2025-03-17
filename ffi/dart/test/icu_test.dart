@@ -74,12 +74,12 @@ void main() {
 
     final zonedDateTimeBuddhist = ZonedDateTime.fromString(
       '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
-      Calendar.forKind(AnyCalendarKind.buddhist),
+      Calendar(AnyCalendarKind.buddhist),
       IanaParser(),
       VariantOffsetsCalculator(),
     );
 
-    var locale = Locale.fromString('de-u-ca-islamic');
+    var locale = Locale.fromString('de-u-ca-islamic-rgsa');
 
     ///// DateTimeFormatter /////
 
@@ -115,7 +115,7 @@ void main() {
     expect(
       DateTimeFormatter.ymdet(locale).formatSameCalendar(
         zonedDateTimeBuddhist.date.toCalendar(
-          Calendar.forKind(AnyCalendarKind.hijriObservational),
+          Calendar(AnyCalendarKind.hijriObservational),
         ),
         zonedDateTimeBuddhist.time,
       ),

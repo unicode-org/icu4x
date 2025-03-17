@@ -64,11 +64,11 @@ pub mod ffi {
     impl Calendar {
         /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind")]
+        #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_for_kind(kind: AnyCalendarKind) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(Arc::new(
-                icu_calendar::AnyCalendar::new_for_kind(kind.into()),
+        pub fn create_for_kind(kind: AnyCalendarKind) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(icu_calendar::AnyCalendar::new_for_kind(
+                kind.into(),
             ))))
         }
 
