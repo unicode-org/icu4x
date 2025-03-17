@@ -39,10 +39,19 @@ pub mod ffi {
         >,
     );
 
-    impl NeoDateFormatter {
-        {% for variant in variants %}
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
+    pub struct NeoDateFormatterGregorian(
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
+            Gregorian,
+            icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet,
+        >,
+    );
+    {% for is_gregorian in [false, true] %}
+    impl {% if is_gregorian %}NeoDateFormatterGregorian{% else %}NeoDateFormatter{% endif %} {
+        {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.date_fields.name_lower() }}")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.date_fields.name_lower() }}{% if is_with_provider %}_with_provider{% endif %}")]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}, Struct)]
         {%- if variant.consumed_options.alignment %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_alignment, FnInStruct, compact)]
@@ -80,16 +89,20 @@ pub mod ffi {
             options.year_style = year_style.map(Into::into);
             {%- endif %}
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new{% if is_with_provider %}_with_buffer_provider{% endif %}(
-                    {%- if is_with_provider %}
-                    provider.get()?,
-                    {%- endif %}
-                    prefs,
-                    options
-                )?.cast_into_fset(),
+                icu_datetime
+                    ::{% if is_gregorian %}FixedCalendarDateTimeFormatter{% else %}DateTimeFormatter{% endif %}
+                    ::try_new{% if is_with_provider %}_with_buffer_provider{% endif %}(
+                        {%- if is_with_provider %}
+                        provider.get()?,
+                        {%- endif %}
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
         {% endfor %}
         {%- endfor %}
     }
+    {%- endfor %}
 }
