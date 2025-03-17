@@ -72,7 +72,7 @@ export { IsoDate } from "./IsoDate.mjs"
 
 export { DateFormatter } from "./DateFormatter.mjs"
 
-export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
+export { DateFormatterGregorian } from "./DateFormatterGregorian.mjs"
 
 export { NoCalendarFormatter } from "./NoCalendarFormatter.mjs"
 
