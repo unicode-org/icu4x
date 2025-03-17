@@ -272,17 +272,25 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["run", "--manifest-path", "tools/make/codegen/Cargo.toml"]
 
+[tasks.codegen-fmt]
+description = "Run the codegen tool and format the output"
+category = "ICU4X Development"
+dependencies = [
+    "codegen"
+]
+command = "cargo"
+args = ["fmt"]
+
 [tasks.codegen-check]
 description = "Check that the codegen is in sync with the output."
 category = "ICU4X Development"
 dependencies = [
-    "codegen"
+    "codegen-fmt"
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cargo fmt
 output = exec git status --porcelain=v1
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
