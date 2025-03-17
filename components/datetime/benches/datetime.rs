@@ -126,7 +126,7 @@ fn datetime_benches(c: &mut Criterion) {
             .unwrap()
     }
 
-    group.bench_function("any/construct_and_format/ymd_short/10_cases", |b| {
+    group.bench_function("ymd_short/any/construct_and_format/10_cases", |b| {
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
@@ -137,7 +137,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("any/format_only/ymd_short/10_cases", |b| {
+    group.bench_function("ymd_short/any/format_only/10_cases", |b| {
         let formatter = construct_any_ymd_short();
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
@@ -151,7 +151,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("any/format_to_string/ymd_short/10_cases", |b| {
+    group.bench_function("ymd_short/any/format_to_string/10_cases", |b| {
         let formatter = construct_any_ymd_short();
         b.iter(|| {
             let mut counter = 0usize; // make sure the loop is not DCE'd
@@ -166,7 +166,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/construct_and_format/ymd_short/10_cases", |b| {
+    group.bench_function("ymd_short/fixed/construct_and_format/10_cases", |b| {
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
@@ -177,7 +177,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/format_only/ymd_short/10_cases", |b| {
+    group.bench_function("ymd_short/fixed/format_only/10_cases", |b| {
         let formatter = construct_fixed_ymd_short();
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
@@ -191,7 +191,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/format_to_string/ymd_short/10_cases", |b| {
+    group.bench_function("ymd_short/fixed/format_to_string/10_cases", |b| {
         let formatter = construct_fixed_ymd_short();
         b.iter(|| {
             let mut counter = 0usize; // make sure the loop is not DCE'd
@@ -206,7 +206,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/construct_and_format/ymd_long/10_cases", |b| {
+    group.bench_function("ymd_long/fixed/construct_and_format/10_cases", |b| {
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
             for datetime in black_box(&ten_cases).iter() {
@@ -217,7 +217,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/format_only/ymd_long/10_cases", |b| {
+    group.bench_function("ymd_long/fixed/format_only/10_cases", |b| {
         let formatter = construct_fixed_ymd_long();
         let mut buffer = String::with_capacity(1000);
         b.iter(|| {
@@ -231,7 +231,7 @@ fn datetime_benches(c: &mut Criterion) {
         });
     });
 
-    group.bench_function("fixed/format_to_string/ymd_long/10_cases", |b| {
+    group.bench_function("ymd_long/fixed/format_to_string/10_cases", |b| {
         let formatter = construct_fixed_ymd_long();
         b.iter(|| {
             let mut counter = 0usize; // make sure the loop is not DCE'd
