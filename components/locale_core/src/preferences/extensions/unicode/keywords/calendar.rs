@@ -66,4 +66,4 @@ enum_keyword!(
         ("persian" => Persian),
         /// Republic of China calendar
         ("roc" => Roc)
-}, "ca");
+}, "ca", s, if *s == value!("islamicc") { return Ok(Self::Hijri(Some(HijriCalendarAlgorithm::Civil))); });
