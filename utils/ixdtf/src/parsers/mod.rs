@@ -244,7 +244,7 @@ pub struct TimeZoneParser<'a> {
 
 #[cfg(feature = "timezone")]
 impl<'a> TimeZoneParser<'a> {
-    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
+    /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
     #[inline]
     #[must_use]
     pub fn from_utf8(source: &'a [u8]) -> Self {
@@ -253,7 +253,7 @@ impl<'a> TimeZoneParser<'a> {
         }
     }
 
-    /// Creates a new `IxdtfParser` from a source `&str`.
+    /// Creates a new `TimeZoneParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
@@ -280,7 +280,7 @@ impl<'a> TimeZoneParser<'a> {
     /// assert_eq!(parse_result.fraction(), None);
     /// ```
     ///
-    /// ## FUll precision offset example
+    /// ## Full precision offset example
     ///
     /// ```rust
     /// use ixdtf::parsers::{TimeZoneParser, records::Sign};

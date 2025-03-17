@@ -136,7 +136,7 @@ pub(crate) fn parse_tz_iana_name<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'
 
 // ==== Utc Offset Parsing ====
 
-/// Parses a UTC offset or Z
+/// Parses a potentially full precision UTC offset or Z
 pub(crate) fn parse_date_time_utc_offset(cursor: &mut Cursor) -> ParserResult<UtcOffsetRecordOrZ> {
     if cursor.check_or(false, is_utc_designator) {
         cursor.advance();
@@ -147,7 +147,7 @@ pub(crate) fn parse_date_time_utc_offset(cursor: &mut Cursor) -> ParserResult<Ut
     Ok(UtcOffsetRecordOrZ::Offset(utc_offset))
 }
 
-/// Parse a full precision `UtcOffset`
+/// Parse a potentially full precision `UtcOffset`
 pub(crate) fn parse_utc_offset(cursor: &mut Cursor) -> ParserResult<UtcOffsetRecord> {
     let (minute_precision_offset, separated) = parse_utc_offset_minute_precision(cursor)?;
 
