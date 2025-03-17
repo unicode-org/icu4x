@@ -1359,7 +1359,6 @@ fn subseconds_parsing_extended_truncated() {
     );
 }
 
-#[cfg(feature = "timezone")]
 #[test]
 fn tz_parser_offset_invalid() {
     use super::TimeZoneParser;
