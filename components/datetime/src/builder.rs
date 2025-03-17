@@ -212,7 +212,7 @@ impl ZoneStyle {
 #[non_exhaustive]
 pub enum BuilderError {
     /// The builder needs [`DateFields`] in order to build the specified field set.
-    /// 
+    ///
     /// This variant is also returned when building a composite field set if none of the
     /// possible required options were set (date fields, time precision, zone style).
     MissingDateFields,
@@ -221,15 +221,15 @@ pub enum BuilderError {
     /// The builder needs [`ZoneStyle`] in order to build the specified field set.
     MissingZoneStyle,
     /// The value in [`DateFields`] is not a valid for the specified field set.
-    /// 
+    ///
     /// This can happen if, for example:
-    /// 
+    ///
     /// - You requested [`DateFieldSet`] but the fields are for a calendar period
     /// - You requested [`CalendarPeriodFieldSet`] but the fields are for a date
     /// - You requested a field set with time but the fields are for a calendar period
     InvalidDateFields,
     /// Superfluous options were specified.
-    /// 
+    ///
     /// For example, you cannot set a [`YearStyle`] unless the field set contains years.
     SuperfluousOptions(FieldSetBuilder),
 }
@@ -464,11 +464,12 @@ impl FieldSetBuilder {
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
     pub fn build_calendar_period(mut self) -> Result<CalendarPeriodFieldSet, BuilderError> {
-        let calendar_period_field_set =
-            match self.build_date_or_calendar_period_without_checking_options()? {
-                DateOrCalendarPeriodFieldSet::Date(_) => return Err(BuilderError::InvalidDateFields),
-                DateOrCalendarPeriodFieldSet::CalendarPeriod(fs) => fs,
-            };
+        let calendar_period_field_set = match self
+            .build_date_or_calendar_period_without_checking_options()?
+        {
+            DateOrCalendarPeriodFieldSet::Date(_) => return Err(BuilderError::InvalidDateFields),
+            DateOrCalendarPeriodFieldSet::CalendarPeriod(fs) => fs,
+        };
         self.check_options_consumed()?;
         Ok(calendar_period_field_set)
     }

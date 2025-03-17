@@ -67,7 +67,7 @@ impl DateFieldsWrap {
         }
     }
     pub fn is_default_constructor(&self) -> bool {
-        return matches!(self.0, DateFields::YMD)
+        return matches!(self.0, DateFields::YMD);
     }
 }
 
@@ -98,7 +98,7 @@ pub fn main() {
         assert!(consumed_options.length); // all constructors accept a length
         date_formatter_template.variants.push(DateFormatterVariant {
             date_fields: DateFieldsWrap(*date_fields),
-            consumed_options
+            consumed_options,
         });
 
         builder.time_precision = Some(Default::default());
@@ -117,7 +117,7 @@ pub fn main() {
     let mut path_buf = PathBuf::new();
     path_buf.push(env!("CARGO_MANIFEST_DIR"));
     path_buf.push("../../../ffi/capi/src");
-    
+
     {
         let mut path_buf = path_buf.clone();
         path_buf.push("date_formatter.rs");
