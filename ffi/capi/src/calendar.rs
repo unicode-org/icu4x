@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
 
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    #[cfg(feature = "buffer_provider")]
     use crate::errors::ffi::DataError;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
