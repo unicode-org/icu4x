@@ -92,6 +92,7 @@ pub fn main() {
 
         let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
         println!("{date_fields:?} as Date => {consumed_options:?}");
+        assert!(consumed_options.length); // all constructors accept a length
         date_formatter_template.variants.push(DateFormatterVariant {
             date_fields: DateFieldsWrap(*date_fields),
             consumed_options

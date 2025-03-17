@@ -11,13 +11,11 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Gregorian;
-    use writeable::{TryWriteable, Writeable};
+    use writeable::Writeable;
 
     use crate::{
         date::ffi::{Date, IsoDate},
-        errors::ffi::{DateTimeMismatchedCalendarError, DateTimeWriteError},
-        time::ffi::Time,
-        timezone::ffi::TimeZoneInfo,
+        errors::ffi::DateTimeMismatchedCalendarError,
     };
 
     #[cfg(feature = "buffer_provider")]
@@ -25,7 +23,7 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
         datetime_formatter::ffi::DateTimeLength,
-        datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
+        datetime_options::ffi::{DateTimeAlignment, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
         neo_datetime::impls::map_or_default,
@@ -44,7 +42,7 @@ pub mod ffi {
     pub struct NeoDateFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
-            icu_datetime::fieldsets::enums::CompositeDateTimeFieldSet,
+            icu_datetime::fieldsets::enums::DateFieldSet,
         >,
     );
     
@@ -635,13 +633,9 @@ pub mod ffi {
         pub fn format_iso(
             &self,
             date: &IsoDate,
-            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = icu_time::DateTime {
-                date: date.0,
-                time: time.0,
-            };
+            let value = date.0;
             let _infallible = self.0.format(&value).write_to(write);
         }
         
@@ -651,13 +645,9 @@ pub mod ffi {
         pub fn format_same_calendar(
             &self,
             date: &Date,
-            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let value = icu_time::DateTime {
-                date: date.0.wrap_calendar_in_ref(),
-                time: time.0,
-            };
+            let value = date.0.wrap_calendar_in_ref();
             let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
             Ok(())
         }
@@ -1250,13 +1240,9 @@ pub mod ffi {
         pub fn format_iso(
             &self,
             date: &IsoDate,
-            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = icu_time::DateTime {
-                date: date.0.to_calendar(Gregorian),
-                time: time.0,
-            };
+            let value = date.0.to_calendar(Gregorian);
             let _infallible = self.0.format(&value).write_to(write);
         }
         
