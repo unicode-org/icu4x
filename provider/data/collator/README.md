@@ -4,7 +4,7 @@
 
 Data for the `icu_collator` crate
 
-This data was generated with CLDR version 47.0.0, ICU version release-77-rc, and
+This data was generated with CLDR version 47.0.0, ICU version release-77-1, and
 LSTM segmenter version v0.1.0.
 
 <!-- cargo-rdme end -->
