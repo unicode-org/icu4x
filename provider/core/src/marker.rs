@@ -528,16 +528,15 @@ impl DataMarkerInfo {
 #[doc(hidden)] // macro
 #[macro_export]
 macro_rules! __data_marker_id {
-    ($name:ident) => {{
-        // Force the DataMarkerInfo into a const context
-        const X: $crate::marker::DataMarkerId =
+    ($name:ident) => {
+        const {
             match $crate::marker::DataMarkerId::construct_internal(stringify!($name)) {
                 Ok(path) => path,
                 #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid marker name: ", stringify!($name))),
-            };
-        X
-    }};
+            }
+        }
+    };
 }
 #[doc(inline)]
 pub use __data_marker_id as data_marker_id;
