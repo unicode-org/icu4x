@@ -1603,8 +1603,6 @@ make_enumerated_property! {
 /// Property Vertical_Orientation
 /// See UTR #50:
 /// <https://www.unicode.org/reports/tr50/#vo>
-///
-/// The numeric value is compatible with `UVerticalOrientation` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
