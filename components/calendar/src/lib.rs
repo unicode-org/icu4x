@@ -129,21 +129,9 @@ pub use ixdtf::ParseError;
 
 // Reexports
 #[doc(no_inline)]
-pub use any_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
+pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 #[doc(no_inline)]
 pub use cal::{Gregorian, Iso};
-
-/// Locale preferences used by this crate
-pub mod preferences {
-    #[doc(inline)]
-    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
-    #[doc = "\n"] // prevent autoformatting
-    pub use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
-    #[doc(inline)]
-    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
-    #[doc = "\n"] // prevent autoformatting
-    pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
-}
 
 #[cfg(test)]
 mod tests;

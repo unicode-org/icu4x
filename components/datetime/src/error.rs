@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::pattern::PatternLoadError;
+use crate::preferences::CalendarAlgorithm;
 use displaydoc::Display;
 use icu_calendar::{
     any_calendar::AnyCalendarKind,
@@ -28,6 +29,12 @@ pub enum DateTimeFormatterLoadError {
     /// such as skeleton patterns or calendar conversions.
     #[displaydoc("{0}")]
     Data(DataError),
+    /// The calendar preference is not supported
+    #[displaydoc("Unsupported calendar {0:?}")]
+    UnsupportedCalendar(CalendarAlgorithm),
+    /// The AnyCalendar is not supported
+    #[displaydoc("Unsupported calendar {0:?}")]
+    UnsupportedAnyCalendar(AnyCalendarKind),
 }
 
 impl core::error::Error for DateTimeFormatterLoadError {}
