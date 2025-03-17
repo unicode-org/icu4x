@@ -220,7 +220,7 @@ mod tests {
     };
 
     #[test]
-    fn please_dont_do_this() {
+    fn mismatched_zone_at_time() {
         let mapper = IanaParser::new();
         let calculator = UtcOffsetCalculator::new();
         let formatter =
