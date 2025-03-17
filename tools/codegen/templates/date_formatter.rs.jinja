@@ -31,7 +31,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct NeoDateFormatter(
+    pub struct DateFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::DateFieldSet,
         >,
@@ -39,7 +39,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct NeoDateFormatterGregorian(
+    pub struct DateFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
             icu_datetime::fieldsets::enums::DateFieldSet,
@@ -49,10 +49,10 @@ pub mod ffi {
     {%- let ffi_type %}
     {%- let rust_type %}
     {%- if is_gregorian %}
-        {%- let ffi_type = "NeoDateFormatterGregorian" %}
+        {%- let ffi_type = "DateFormatterGregorian" %}
         {%- let rust_type = "FixedCalendarDateTimeFormatter" %}
     {%- else %}
-        {%- let ffi_type = "NeoDateFormatter" %}
+        {%- let ffi_type = "DateFormatter" %}
         {%- let rust_type = "DateTimeFormatter" %}
     {%- endif %}
     impl {{ ffi_type }} {

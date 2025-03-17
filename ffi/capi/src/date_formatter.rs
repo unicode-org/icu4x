@@ -31,7 +31,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct NeoDateFormatter(
+    pub struct DateFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::DateFieldSet,
         >,
@@ -39,14 +39,14 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct NeoDateFormatterGregorian(
+    pub struct DateFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
             icu_datetime::fieldsets::enums::DateFieldSet,
         >,
     );
     
-    impl NeoDateFormatter {
+    impl DateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
@@ -654,7 +654,7 @@ pub mod ffi {
         }
     }
     
-    impl NeoDateFormatterGregorian {
+    impl DateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
