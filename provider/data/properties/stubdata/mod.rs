@@ -43,6 +43,7 @@ include!("property_name_long_east_asian_width_v1.rs.data");
 include!("property_name_parse_sentence_break_v1.rs.data");
 include!("property_binary_alnum_v1.rs.data");
 include!("property_name_short_general_category_v1.rs.data");
+include!("property_name_short_vertical_orientation_v1.rs.data");
 include!("property_binary_changes_when_casefolded_v1.rs.data");
 include!("property_name_parse_hangul_syllable_type_v1.rs.data");
 include!("property_enum_sentence_break_v1.rs.data");
@@ -61,6 +62,7 @@ include!("property_name_short_joining_type_v1.rs.data");
 include!("property_binary_print_v1.rs.data");
 include!("property_enum_canonical_combining_class_v1.rs.data");
 include!("property_binary_terminal_punctuation_v1.rs.data");
+include!("property_enum_vertical_orientation_v1.rs.data");
 include!("property_binary_cased_v1.rs.data");
 include!("property_binary_nfkc_inert_v1.rs.data");
 include!("property_binary_id_continue_v1.rs.data");
@@ -71,6 +73,7 @@ include!("property_name_short_script_v1.rs.data");
 include!("property_enum_hangul_syllable_type_v1.rs.data");
 include!("property_binary_xdigit_v1.rs.data");
 include!("property_binary_full_composition_exclusion_v1.rs.data");
+include!("property_name_long_vertical_orientation_v1.rs.data");
 include!("property_binary_changes_when_nfkc_casefolded_v1.rs.data");
 include!("property_binary_hex_digit_v1.rs.data");
 include!("property_name_parse_joining_type_v1.rs.data");
@@ -115,6 +118,7 @@ include!("property_enum_grapheme_cluster_break_v1.rs.data");
 include!("property_binary_blank_v1.rs.data");
 include!("property_binary_default_ignorable_code_point_v1.rs.data");
 include!("property_binary_extended_pictographic_v1.rs.data");
+include!("property_name_parse_vertical_orientation_v1.rs.data");
 include!("property_name_parse_canonical_combining_class_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -189,6 +193,7 @@ macro_rules! impl_data_provider {
         impl_property_name_parse_sentence_break_v1!($provider);
         impl_property_binary_alnum_v1!($provider);
         impl_property_name_short_general_category_v1!($provider);
+        impl_property_name_short_vertical_orientation_v1!($provider);
         impl_property_binary_changes_when_casefolded_v1!($provider);
         impl_property_name_parse_hangul_syllable_type_v1!($provider);
         impl_property_enum_sentence_break_v1!($provider);
@@ -207,6 +212,7 @@ macro_rules! impl_data_provider {
         impl_property_binary_print_v1!($provider);
         impl_property_enum_canonical_combining_class_v1!($provider);
         impl_property_binary_terminal_punctuation_v1!($provider);
+        impl_property_enum_vertical_orientation_v1!($provider);
         impl_property_binary_cased_v1!($provider);
         impl_property_binary_nfkc_inert_v1!($provider);
         impl_property_binary_id_continue_v1!($provider);
@@ -217,6 +223,7 @@ macro_rules! impl_data_provider {
         impl_property_enum_hangul_syllable_type_v1!($provider);
         impl_property_binary_xdigit_v1!($provider);
         impl_property_binary_full_composition_exclusion_v1!($provider);
+        impl_property_name_long_vertical_orientation_v1!($provider);
         impl_property_binary_changes_when_nfkc_casefolded_v1!($provider);
         impl_property_binary_hex_digit_v1!($provider);
         impl_property_name_parse_joining_type_v1!($provider);
@@ -261,6 +268,7 @@ macro_rules! impl_data_provider {
         impl_property_binary_blank_v1!($provider);
         impl_property_binary_default_ignorable_code_point_v1!($provider);
         impl_property_binary_extended_pictographic_v1!($provider);
+        impl_property_name_parse_vertical_orientation_v1!($provider);
         impl_property_name_parse_canonical_combining_class_v1!($provider);
     };
 }

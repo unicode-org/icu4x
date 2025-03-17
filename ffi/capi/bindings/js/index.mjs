@@ -308,6 +308,8 @@ export { Script } from "./Script.mjs"
 
 export { SentenceBreak } from "./SentenceBreak.mjs"
 
+export { VerticalOrientation } from "./VerticalOrientation.mjs"
+
 export { WordBreak } from "./WordBreak.mjs"
 
 export { LineBreakStrictness } from "./LineBreakStrictness.mjs"
