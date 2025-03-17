@@ -116,7 +116,7 @@ pub fn main() {
 
     let mut path_buf = PathBuf::new();
     path_buf.push(env!("CARGO_MANIFEST_DIR"));
-    path_buf.push("../../ffi/capi/src");
+    path_buf.push("../../../ffi/capi/src");
     
     {
         let mut path_buf = path_buf.clone();
