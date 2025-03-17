@@ -546,9 +546,6 @@ impl Calendar for AnyCalendar {
 impl AnyCalendar {
     /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
-    /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
-    /// fallbacking. If this is desired, use [`Self::try_new()`].
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
