@@ -8,15 +8,15 @@
 mod readme {}
 
 mod tutorials {
-    #[doc = include_str!("../../../tutorials/intro.md")]
+    #[doc = include_str!("../../../tutorials/quickstart.md")]
     mod intro_md {}
-    #[doc = include_str!("../../../tutorials/intro_interactive.md")]
+    #[doc = include_str!("../../../tutorials/date-picker.md")]
     mod intro_interactive_md {}
-    #[doc = include_str!("../../../tutorials/data_provider.md")]
+    #[doc = include_str!("../../../tutorials/data-provider-runtime.md")]
     mod data_provider_md {}
-    #[doc = include_str!("../../../tutorials/data_management.md")]
+    #[doc = include_str!("../../../tutorials/date-picker-data.md")]
     mod data_management_md {}
-    #[doc = include_str!("../../../tutorials/js.md")]
+    #[doc = include_str!("../../../tutorials/using-from-js.md")]
     mod js_md {}
 }
 
