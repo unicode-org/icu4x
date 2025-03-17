@@ -63,16 +63,15 @@ extern crate alloc;
 // We don't depend on icu_properties to minimize deps, but we want to be able
 // to ensure we're using the right CCC values
 macro_rules! ccc {
-    ($name:ident, $num:expr) => {{
-        const X: CanonicalCombiningClass = {
+    ($name:ident, $num:expr) => {
+        const {
             #[cfg(feature = "icu_properties")]
             if icu_properties::props::CanonicalCombiningClass::$name.to_icu4c_value() != $num {
                 panic!("icu_normalizer has incorrect ccc values")
             }
             CanonicalCombiningClass::from_icu4c_value($num)
-        };
-        X
-    }};
+        }
+    };
 }
 
 pub mod properties;
