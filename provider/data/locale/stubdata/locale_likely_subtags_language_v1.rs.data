@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 2320B[^1] for the singleton data struct
+/// * 2310B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -23,7 +23,7 @@ macro_rules! __impl_locale_likely_subtags_language_v1 {
                 },
                 language_region: unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"az\0IQ\0az\0IR\0az\0RU\0ha\0CM\0ha\0SD\0kk\0AF\0kk\0CN\0kk\0IR\0kk\0MN\0ku\0LB\0ky\0CN\0ky\0TR\0mn\0CN\0ms\0CC\0pa\0PK\0sd\0IN\0sr\0ME\0sr\0RO\0sr\0RU\0sr\0TR\0tg\0PK\0ug\0KZ\0ug\0MN\0uz\0AF\0uz\0CN\0yueCN\0zh\0AU\0zh\0BN\0zh\0GB\0zh\0GF\0zh\0HK\0zh\0ID\0zh\0MO\0zh\0PA\0zh\0PF\0zh\0PH\0zh\0SR\0zh\0TH\0zh\0TW\0zh\0US\0zh\0VN\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ArabArabCyrlArabArabArabArabArabArabArabArabLatnMongArabArabDevaLatnLatnLatnLatnArabCyrlCyrlArabCyrlHansHantHantHantHantHantHantHantHantHantHantHantHantHantHantHant") })
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"az\0IQ\0az\0IR\0az\0RU\0ha\0CM\0ha\0SD\0kk\0AF\0kk\0CN\0kk\0IR\0kk\0MN\0ku\0LB\0ky\0CN\0ky\0TR\0mn\0CN\0ms\0CC\0pa\0PK\0sd\0IN\0sr\0ME\0sr\0RO\0sr\0TR\0tg\0PK\0ug\0KZ\0ug\0MN\0uz\0AF\0uz\0CN\0yueCN\0zh\0AU\0zh\0BN\0zh\0GB\0zh\0GF\0zh\0HK\0zh\0ID\0zh\0MO\0zh\0PA\0zh\0PF\0zh\0PH\0zh\0SR\0zh\0TH\0zh\0TW\0zh\0US\0zh\0VN\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ArabArabCyrlArabArabArabArabArabArabArabArabLatnMongArabArabDevaLatnLatnLatnArabCyrlCyrlArabCyrlHansHantHantHantHantHantHantHantHantHantHantHantHantHantHantHant") })
                 },
                 language: unsafe {
                     #[allow(unused_unsafe)]
