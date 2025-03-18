@@ -29,6 +29,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+ */
 struct DateTimeMismatchedCalendarError {
   icu4x::AnyCalendarKind this_kind;
   std::optional<icu4x::AnyCalendarKind> date_kind;

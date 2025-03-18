@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
+ */
 
 
 export class BidiClass {
@@ -127,6 +128,9 @@ export class BidiClass {
     static RightToLeftIsolate = BidiClass.#objectValues[21];
     static PopDirectionalIsolate = BidiClass.#objectValues[22];
 
+    /** 
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     */
     static forChar(ch) {
         const result = wasm.icu4x_BidiClass_for_char_mv1(ch);
     
@@ -137,6 +141,11 @@ export class BidiClass {
         finally {}
     }
 
+    /** 
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
@@ -154,6 +163,11 @@ export class BidiClass {
         }
     }
 
+    /** 
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
@@ -171,6 +185,11 @@ export class BidiClass {
         }
     }
 
+    /** 
+     * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html#method.to_icu4c_value) for more information.
+     */
     toIntegerValue() {
         const result = wasm.icu4x_BidiClass_to_integer_value_mv1(this.ffiValue);
     
@@ -181,6 +200,11 @@ export class BidiClass {
         finally {}
     }
 
+    /** 
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html#method.from_icu4c_value) for more information.
+     */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

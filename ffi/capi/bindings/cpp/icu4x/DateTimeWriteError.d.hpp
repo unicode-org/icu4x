@@ -30,6 +30,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
+ */
 class DateTimeWriteError {
 public:
   enum Value {

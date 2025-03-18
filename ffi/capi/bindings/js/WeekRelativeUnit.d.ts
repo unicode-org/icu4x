@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
+ */
 
 
 export class WeekRelativeUnit {

@@ -34,6 +34,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
+ */
 class TimePrecision {
 public:
   enum Value {

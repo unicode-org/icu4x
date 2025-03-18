@@ -8,12 +8,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
-*
-*See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
-*
-*Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
-*/
+/** 
+ * An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
+ *
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
+ *
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
+ */
 const NoCalendarFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_NoCalendarFormatter_destroy_mv1(ptr);
 });
@@ -47,6 +48,11 @@ export class NoCalendarFormatter {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a new [`NoCalendarFormatter`] using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     */
     static createWithLength(locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -65,6 +71,11 @@ export class NoCalendarFormatter {
         }
     }
 
+    /** 
+     * Creates a new [`NoCalendarFormatter`] using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     */
     static createWithLengthAndProvider(provider, locale, length) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -83,6 +94,11 @@ export class NoCalendarFormatter {
         }
     }
 
+    /** 
+     * Formats a [`Time`] to a string.
+     *
+     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
+     */
     format(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_NoCalendarFormatter_format_mv1(this.ffiValue, value.ffiValue, write.buffer);

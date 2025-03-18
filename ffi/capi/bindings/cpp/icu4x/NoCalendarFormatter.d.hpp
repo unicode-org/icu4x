@@ -31,13 +31,35 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An ICU4X NoCalendarFormatter object capable of formatting an [`Time`] type (and others) as a string
+ *
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
+ *
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html)
+ */
 class NoCalendarFormatter {
 public:
 
+  /**
+   * Creates a new [`NoCalendarFormatter`] using compiled data.
+   *
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+   */
   inline static diplomat::result<std::unique_ptr<icu4x::NoCalendarFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
+  /**
+   * Creates a new [`NoCalendarFormatter`] using a particular data source.
+   *
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+   */
   inline static diplomat::result<std::unique_ptr<icu4x::NoCalendarFormatter>, icu4x::DateTimeFormatterLoadError> create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
 
+  /**
+   * Formats a [`Time`] to a string.
+   *
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
+   */
   inline std::string format(const icu4x::Time& value) const;
 
   inline const icu4x::capi::NoCalendarFormatter* AsFFI() const;

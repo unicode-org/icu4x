@@ -25,6 +25,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.DateError.html)
+ */
 class CalendarError {
 public:
   enum Value {

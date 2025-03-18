@@ -2,10 +2,11 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** The various calendar types currently supported by [`Calendar`]
-*
-*See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
-*/
+/** 
+ * The various calendar types currently supported by [`Calendar`]
+ *
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ */
 
 
 export class AnyCalendarKind {

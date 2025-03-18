@@ -31,6 +31,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
+ */
 class PluralCategory {
 public:
   enum Value {
@@ -49,6 +52,14 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
+  /**
+   * Construct from a string in the format
+   * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
+   *
+   * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
+   *
+   * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+   */
   inline static std::optional<icu4x::PluralCategory> get_for_cldr_string(std::string_view s);
 
   inline icu4x::capi::PluralCategory AsFFI() const;

@@ -39,6 +39,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * The various calendar types currently supported by [`Calendar`]
+ *
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ */
 class AnyCalendarKind {
 public:
   enum Value {

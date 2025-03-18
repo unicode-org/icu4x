@@ -24,6 +24,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locale/enum.Direction.html) for more information.
+ */
 class LocaleDirection {
 public:
   enum Value {

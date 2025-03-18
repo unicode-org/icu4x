@@ -23,6 +23,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/options/enum.BackwardSecondLevel.html) for more information.
+ */
 class CollatorBackwardSecondLevel {
 public:
   enum Value {

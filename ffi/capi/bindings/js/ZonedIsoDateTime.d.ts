@@ -8,10 +8,11 @@ import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
-*
-*See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
-*/
+/** 
+ * An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+ *
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+ */
 
 
 export class ZonedIsoDateTime {
@@ -23,5 +24,10 @@ export class ZonedIsoDateTime {
     get zone() : TimeZoneInfo;
     
 
+    /** 
+     * Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     */
     static fromString(v: string, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedIsoDateTime;
 }

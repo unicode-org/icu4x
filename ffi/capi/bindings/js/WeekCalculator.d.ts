@@ -7,24 +7,47 @@ import type { WeekendContainsDay } from "./WeekendContainsDay"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
-*
-*See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
-*/
+/** 
+ * A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
+ *
+ * See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
+ */
 
 
 export class WeekCalculator {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Creates a new [`WeekCalculator`] from locale data using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
+     */
     static createWithProvider(provider: DataProvider, locale: Locale): WeekCalculator;
 
+    /** 
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
+     */
     static fromFirstDayOfWeekAndMinWeekDays(firstWeekday: Weekday, minWeekDays: number): WeekCalculator;
 
+    /** 
+     * Returns the weekday that starts the week for this object's locale
+     *
+     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
+     */
     get firstWeekday(): Weekday;
 
+    /** 
+     * The minimum number of days overlapping a year required for a week to be
+     * considered part of that year
+     *
+     * See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
+     */
     get minWeekDays(): number;
 
+    /** 
+     * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+     */
     get weekend(): WeekendContainsDay;
 
     constructor(locale: Locale);

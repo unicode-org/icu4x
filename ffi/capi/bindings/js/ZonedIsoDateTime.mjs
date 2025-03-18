@@ -9,10 +9,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
-*
-*See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
-*/
+/** 
+ * An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
+ *
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+ */
 
 
 export class ZonedIsoDateTime {
@@ -117,6 +118,11 @@ export class ZonedIsoDateTime {
         return new ZonedIsoDateTime(structObj, internalConstructor);
     }
 
+    /** 
+     * Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     */
     static fromString(v, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         

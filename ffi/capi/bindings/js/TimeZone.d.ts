@@ -4,19 +4,38 @@ import type { UtcOffset } from "./UtcOffset"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
+ */
 
 
 export class TimeZone {
     
     get ffiValue(): pointer;
 
+    /** 
+     * The unknown time zone.
+     *
+     * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
+     */
     static unknown(): TimeZone;
 
+    /** 
+     * Creates a time zone from a BCP-47 string.
+     *
+     * Returns the unknown time zone if the string is not a valid BCP-47 subtag.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html)
+     */
     static createFromBcp47(id: string): TimeZone;
 
+    /** 
+     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.with_offset) for more information.
+     */
     withOffset(offset: UtcOffset): TimeZoneInfo;
 
+    /** 
+     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.without_offset) for more information.
+     */
     withoutOffset(): TimeZoneInfo;
 }

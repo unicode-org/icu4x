@@ -3,16 +3,23 @@ import type { MeasureUnit } from "./MeasureUnit"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
-*(e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-*
-*See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
-*/
+/** 
+ * An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
+ * (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+ *
+ * See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
+ */
 
 
 export class MeasureUnitParser {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
+     * if the identifier is valid.
+     *
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
+     */
     parse(unitId: string): MeasureUnit | null;
 }

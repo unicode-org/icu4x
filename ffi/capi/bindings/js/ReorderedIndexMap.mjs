@@ -3,12 +3,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Thin wrapper around a vector that maps visual indices to source indices
-*
-*`map[visualIndex] = sourceIndex`
-*
-*Produced by `reorder_visual()` on [`Bidi`].
-*/
+/** 
+ * Thin wrapper around a vector that maps visual indices to source indices
+ *
+ * `map[visualIndex] = sourceIndex`
+ *
+ * Produced by `reorder_visual()` on [`Bidi`].
+ */
 const ReorderedIndexMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ReorderedIndexMap_destroy_mv1(ptr);
 });
@@ -42,6 +43,9 @@ export class ReorderedIndexMap {
         return this.#ptr;
     }
 
+    /** 
+     * Get this as a slice/array of indices
+     */
     get asSlice() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         
@@ -59,6 +63,9 @@ export class ReorderedIndexMap {
         }
     }
 
+    /** 
+     * The length of this map
+     */
     get length() {
         const result = wasm.icu4x_ReorderedIndexMap_len_mv1(this.ffiValue);
     
@@ -69,6 +76,9 @@ export class ReorderedIndexMap {
         finally {}
     }
 
+    /** 
+     * Whether this map is empty
+     */
     get isEmpty() {
         const result = wasm.icu4x_ReorderedIndexMap_is_empty_mv1(this.ffiValue);
     
@@ -79,6 +89,11 @@ export class ReorderedIndexMap {
         finally {}
     }
 
+    /** 
+     * Get element at `index`. Returns 0 when out of bounds
+     * (note that 0 is also a valid in-bounds value, please use `len()`
+     * to avoid out-of-bounds)
+     */
     get(index) {
         const result = wasm.icu4x_ReorderedIndexMap_get_mv1(this.ffiValue, index);
     

@@ -4,8 +4,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
+ */
 const TimeZoneIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneIterator_destroy_mv1(ptr);
 });
@@ -43,6 +44,9 @@ export class TimeZoneIterator {
         return this.#ptr;
     }
 
+    /** 
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
+     */
     #iteratorNext() {
         const result = wasm.icu4x_TimeZoneIterator_next_mv1(this.ffiValue);
     

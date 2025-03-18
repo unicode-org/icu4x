@@ -29,6 +29,11 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * Documents which days of the week are considered to be a part of the weekend
+ *
+ * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+ */
 struct WeekendContainsDay {
   bool monday;
   bool tuesday;

@@ -24,6 +24,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * The sign of a FixedDecimal, as shown in formatting.
+ *
+ * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
+ */
 class FixedDecimalSign {
 public:
   enum Value {
