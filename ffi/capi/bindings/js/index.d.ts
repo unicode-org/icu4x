@@ -74,7 +74,7 @@ export { IsoDate } from "./IsoDate"
 
 export { DateFormatter } from "./DateFormatter"
 
-export { GregorianDateFormatter } from "./GregorianDateFormatter"
+export { DateFormatterGregorian } from "./DateFormatterGregorian"
 
 export { NoCalendarFormatter } from "./NoCalendarFormatter"
 
