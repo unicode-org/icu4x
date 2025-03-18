@@ -216,7 +216,7 @@ export { WindowsParser } from "./WindowsParser"
 
 export { BidiDirection } from "./BidiDirection"
 
-export { AnyCalendarKind } from "./AnyCalendarKind"
+export { CalendarKind } from "./CalendarKind"
 
 export { LeadingAdjustment } from "./LeadingAdjustment"
 

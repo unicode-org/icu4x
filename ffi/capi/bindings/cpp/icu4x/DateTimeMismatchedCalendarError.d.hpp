@@ -9,18 +9,18 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "AnyCalendarKind.d.hpp"
+#include "CalendarKind.d.hpp"
 
 namespace icu4x {
-class AnyCalendarKind;
+class CalendarKind;
 }
 
 
 namespace icu4x {
 namespace capi {
     struct DateTimeMismatchedCalendarError {
-      icu4x::capi::AnyCalendarKind this_kind;
-      icu4x::capi::AnyCalendarKind_option date_kind;
+      icu4x::capi::CalendarKind this_kind;
+      icu4x::capi::CalendarKind_option date_kind;
     };
     
     typedef struct DateTimeMismatchedCalendarError_option {union { DateTimeMismatchedCalendarError ok; }; bool is_ok; } DateTimeMismatchedCalendarError_option;
@@ -33,8 +33,8 @@ namespace icu4x {
  * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
  */
 struct DateTimeMismatchedCalendarError {
-  icu4x::AnyCalendarKind this_kind;
-  std::optional<icu4x::AnyCalendarKind> date_kind;
+  icu4x::CalendarKind this_kind;
+  std::optional<icu4x::CalendarKind> date_kind;
 
   inline icu4x::capi::DateTimeMismatchedCalendarError AsFFI() const;
   inline static icu4x::DateTimeMismatchedCalendarError FromFFI(icu4x::capi::DateTimeMismatchedCalendarError c_struct);
