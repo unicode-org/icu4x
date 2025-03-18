@@ -127,6 +127,7 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
