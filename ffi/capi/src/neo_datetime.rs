@@ -527,7 +527,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
-    #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
     pub struct ZonedDateTimeFormatter(
         pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::CompositeFieldSet>,
     );
@@ -1345,7 +1344,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::fieldsets::MDET::zone, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::datetime::fieldsets::YMDET::zone, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::datetime::fieldsets::ET::zone, FnInStruct, hidden)]
-    #[diplomat::attr(demo_gen, disable)] // constructors are on a different type :(
     pub struct ZonedDateTimeFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
