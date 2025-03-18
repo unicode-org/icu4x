@@ -25,19 +25,19 @@ final class Calendar implements ffi.Finalizable {
 
   /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
   ///
-  /// See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   factory Calendar(AnyCalendarKind kind) {
-    final result = _icu4x_Calendar_create_for_kind_mv1(kind.index);
+    final result = _icu4x_Calendar_create_mv1(kind.index);
     return Calendar._fromFfi(result, []);
   }
 
   /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
   ///
-  /// See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory Calendar.forKindWithProvider(DataProvider provider, AnyCalendarKind kind) {
-    final result = _icu4x_Calendar_create_for_kind_with_provider_mv1(provider._ffi, kind.index);
+    final result = _icu4x_Calendar_create_with_provider_mv1(provider._ffi, kind.index);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -58,15 +58,15 @@ final class Calendar implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_Calendar_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_Calendar_create_for_kind_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Calendar_create_for_kind_mv1')
+@_DiplomatFfiUse('icu4x_Calendar_create_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Calendar_create_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Calendar_create_for_kind_mv1(int kind);
+external ffi.Pointer<ffi.Opaque> _icu4x_Calendar_create_mv1(int kind);
 
-@_DiplomatFfiUse('icu4x_Calendar_create_for_kind_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Calendar_create_for_kind_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_Calendar_create_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_Calendar_create_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Calendar_create_for_kind_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, int kind);
+external _ResultOpaqueInt32 _icu4x_Calendar_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, int kind);
 
 @_DiplomatFfiUse('icu4x_Calendar_kind_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Calendar_kind_mv1')

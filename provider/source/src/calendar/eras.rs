@@ -476,7 +476,7 @@ fn test_calendar_eras() {
                 .expect(&calendar),
         };
 
-        let cal = AnyCalendar::try_new_for_kind_unstable(&provider, kind).unwrap();
+        let cal = AnyCalendar::try_new_unstable(&provider, kind).unwrap();
         let cal = icu::calendar::Ref(&cal);
 
         for (idx, ref era) in data.eras {

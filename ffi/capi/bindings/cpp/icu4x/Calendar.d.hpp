@@ -30,9 +30,9 @@ namespace icu4x {
 class Calendar {
 public:
 
-  inline static std::unique_ptr<icu4x::Calendar> create_for_kind(icu4x::AnyCalendarKind kind);
+  inline static std::unique_ptr<icu4x::Calendar> create(icu4x::AnyCalendarKind kind);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind);
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind);
 
   inline icu4x::AnyCalendarKind kind() const;
 

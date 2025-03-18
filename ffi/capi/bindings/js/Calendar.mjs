@@ -42,7 +42,7 @@ export class Calendar {
     }
 
     #defaultConstructor(kind) {
-        const result = wasm.icu4x_Calendar_create_for_kind_mv1(kind.ffiValue);
+        const result = wasm.icu4x_Calendar_create_mv1(kind.ffiValue);
     
         try {
             return new Calendar(diplomatRuntime.internalConstructor, result, []);
@@ -51,10 +51,10 @@ export class Calendar {
         finally {}
     }
 
-    static createForKindWithProvider(provider, kind) {
+    static createWithProvider(provider, kind) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Calendar_create_for_kind_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, kind.ffiValue);
+        const result = wasm.icu4x_Calendar_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, kind.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

@@ -13,7 +13,7 @@ export class Calendar {
     
     get ffiValue(): pointer;
 
-    static createForKindWithProvider(provider: DataProvider, kind: AnyCalendarKind): Calendar;
+    static createWithProvider(provider: DataProvider, kind: AnyCalendarKind): Calendar;
 
     get kind(): AnyCalendarKind;
 

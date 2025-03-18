@@ -63,25 +63,25 @@ pub mod ffi {
 
     impl Calendar {
         /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_for_kind(kind: AnyCalendarKind) -> Box<Calendar> {
-            Box::new(Calendar(Arc::new(icu_calendar::AnyCalendar::new_for_kind(
+        pub fn create(kind: AnyCalendarKind) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(icu_calendar::AnyCalendar::new(
                 kind.into(),
             ))))
         }
 
         /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_for_kind_with_provider(
+        pub fn create_with_provider(
             provider: &DataProvider,
             kind: AnyCalendarKind,
         ) -> Result<Box<Calendar>, DataError> {
             Ok(Box::new(Calendar(Arc::new(
-                icu_calendar::AnyCalendar::try_new_for_kind_with_buffer_provider(
+                icu_calendar::AnyCalendar::try_new_with_buffer_provider(
                     provider.get()?,
                     kind.into(),
                 )?,

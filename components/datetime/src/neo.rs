@@ -10,7 +10,7 @@ use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::DateTimeInputUnchecked;
 use crate::pattern::*;
-use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm, HourCycle, NumberingSystem};
+use crate::preferences::{CalendarAlgorithm, HourCycle, NumberingSystem};
 use crate::raw::neo::*;
 use crate::scaffold::*;
 use crate::scaffold::{
@@ -23,10 +23,9 @@ use crate::{external_loaders::*, DateTimeWriteError};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, AnyCalendarKind};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, CalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
-use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 use writeable::{impl_display_with_writeable, TryWriteable, Writeable};
 
@@ -82,6 +81,10 @@ define_preferences!(
 
 prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
     numbering_system
+});
+
+prefs_convert!(DateTimeFormatterPreferences, CalendarPreferences, {
+    calendar_algorithm
 });
 
 /// Helper macro for generating any/buffer constructors in this file.
@@ -559,28 +562,8 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: DecimalFormatterLoader + AnyCalendarLoader,
     {
-        // This will eventually need fallback data from the provider
-        let algo = prefs.calendar_algorithm.unwrap_or_else(|| {
-            let lang = prefs.locale_preferences.language();
-            if lang == language!("th") {
-                CalendarAlgorithm::Buddhist
-            } else if lang == language!("sa") {
-                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-            } else if lang == language!("af") || lang == language!("ir") {
-                CalendarAlgorithm::Persian
-            } else {
-                CalendarAlgorithm::Gregory
-            }
-        });
-
-        let Ok(kind) = AnyCalendarKind::try_from(algo) else {
-            // Calendar not supported by AnyCalendar
-            // Currently, this is the non-specific u-ca-islamic
-            return Err(DateTimeFormatterLoadError::UnsupportedCalendar(algo));
-        };
-
         let calendar =
-            AnyCalendarLoader::load(loader, kind).map_err(DateTimeFormatterLoadError::Data)?;
+            AnyCalendarLoader::load(loader, CalendarPreferences::from(&prefs).resolve_calendar())?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
             provider, provider, loader, prefs, field_set, calendar, names,

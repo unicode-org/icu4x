@@ -18,10 +18,10 @@
 
 
 
-Calendar* icu4x_Calendar_create_for_kind_mv1(AnyCalendarKind kind);
+Calendar* icu4x_Calendar_create_mv1(AnyCalendarKind kind);
 
-typedef struct icu4x_Calendar_create_for_kind_with_provider_mv1_result {union {Calendar* ok; DataError err;}; bool is_ok;} icu4x_Calendar_create_for_kind_with_provider_mv1_result;
-icu4x_Calendar_create_for_kind_with_provider_mv1_result icu4x_Calendar_create_for_kind_with_provider_mv1(const DataProvider* provider, AnyCalendarKind kind);
+typedef struct icu4x_Calendar_create_with_provider_mv1_result {union {Calendar* ok; DataError err;}; bool is_ok;} icu4x_Calendar_create_with_provider_mv1_result;
+icu4x_Calendar_create_with_provider_mv1_result icu4x_Calendar_create_with_provider_mv1(const DataProvider* provider, AnyCalendarKind kind);
 
 AnyCalendarKind icu4x_Calendar_kind_mv1(const Calendar* self);
 

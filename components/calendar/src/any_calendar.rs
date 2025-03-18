@@ -12,12 +12,41 @@ use crate::cal::{
 use crate::error::DateError;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
-use icu_locale_core::preferences::extensions::unicode::keywords::{
-    CalendarAlgorithm, HijriCalendarAlgorithm,
-};
+use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
+use icu_locale_core::preferences::define_preferences;
+use icu_locale_core::subtags::language;
 use icu_provider::prelude::*;
 
 use core::fmt;
+
+define_preferences!(
+    /// The prefs for calendrical calculations.
+    [Copy]
+    CalendarPreferences,
+    {
+        /// The user's preferred calendar system.
+        calendar_algorithm: CalendarAlgorithm
+    }
+);
+
+impl CalendarPreferences {
+    /// Resolves the `calendar_algorithm` field.
+    pub fn resolve_calendar(&self) -> CalendarAlgorithm {
+        // This will eventually need fallback data from the provider
+        self.calendar_algorithm.unwrap_or_else(|| {
+            let lang = self.locale_preferences.language();
+            if lang == language!("th") {
+                CalendarAlgorithm::Buddhist
+            } else if lang == language!("sa") {
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
+            } else if lang == language!("af") || lang == language!("ir") {
+                CalendarAlgorithm::Persian
+            } else {
+                CalendarAlgorithm::Gregory
+            }
+        })
+    }
+}
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
 ///
@@ -31,11 +60,15 @@ use core::fmt;
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, Date, cal::Japanese, types::{Era, MonthCode}};
+/// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
 ///
-/// let calendar = AnyCalendar::new_for_kind(AnyCalendarKind::Japanese);
+/// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
+/// let prefs = CalendarPreferences::from(&locale);
+///
+/// let calendar = AnyCalendar::new(locale.resolve_calendar().try_into().unwrap());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
@@ -550,7 +583,7 @@ impl AnyCalendar {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_for_kind(kind: AnyCalendarKind) -> Self {
+    pub const fn new(kind: AnyCalendarKind) -> Self {
         match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::new()),
@@ -582,8 +615,8 @@ impl AnyCalendar {
     }
 
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new_for_kind)]
-    pub fn try_new_for_kind_with_buffer_provider<P>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
+    pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
@@ -629,10 +662,7 @@ impl AnyCalendar {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_kind)]
-    pub fn try_new_for_kind_unstable<P>(
-        provider: &P,
-        kind: AnyCalendarKind,
-    ) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
@@ -1594,25 +1624,24 @@ mod tests {
 
     #[test]
     fn test_any_construction() {
-        let buddhist = AnyCalendar::new_for_kind(AnyCalendarKind::Buddhist);
-        let chinese = AnyCalendar::new_for_kind(AnyCalendarKind::Chinese);
-        let coptic = AnyCalendar::new_for_kind(AnyCalendarKind::Coptic);
-        let dangi = AnyCalendar::new_for_kind(AnyCalendarKind::Dangi);
-        let ethioaa = AnyCalendar::new_for_kind(AnyCalendarKind::EthiopianAmeteAlem);
-        let ethiopian = AnyCalendar::new_for_kind(AnyCalendarKind::Ethiopian);
-        let gregorian = AnyCalendar::new_for_kind(AnyCalendarKind::Gregorian);
-        let hebrew = AnyCalendar::new_for_kind(AnyCalendarKind::Hebrew);
-        let indian = AnyCalendar::new_for_kind(AnyCalendarKind::Indian);
-        let hijri_civil: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::HijriCivil);
+        let buddhist = AnyCalendar::new(AnyCalendarKind::Buddhist);
+        let chinese = AnyCalendar::new(AnyCalendarKind::Chinese);
+        let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
+        let dangi = AnyCalendar::new(AnyCalendarKind::Dangi);
+        let ethioaa = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
+        let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
+        let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
+        let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
+        let indian = AnyCalendar::new(AnyCalendarKind::Indian);
+        let hijri_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriCivil);
         let hijri_observational: AnyCalendar =
-            AnyCalendar::new_for_kind(AnyCalendarKind::HijriObservational);
-        let hijri_tabular: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::HijriTabular);
-        let hijri_umm_al_qura: AnyCalendar =
-            AnyCalendar::new_for_kind(AnyCalendarKind::HijriUmmAlQura);
-        let japanese = AnyCalendar::new_for_kind(AnyCalendarKind::Japanese);
-        let japanext = AnyCalendar::new_for_kind(AnyCalendarKind::JapaneseExtended);
-        let persian = AnyCalendar::new_for_kind(AnyCalendarKind::Persian);
-        let roc = AnyCalendar::new_for_kind(AnyCalendarKind::Roc);
+            AnyCalendar::new(AnyCalendarKind::HijriObservational);
+        let hijri_tabular: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriTabular);
+        let hijri_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
+        let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
+        let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
+        let persian = AnyCalendar::new(AnyCalendarKind::Persian);
+        let roc = AnyCalendar::new(AnyCalendarKind::Roc);
         let buddhist = Ref(&buddhist);
         let chinese = Ref(&chinese);
         let coptic = Ref(&coptic);
