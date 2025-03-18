@@ -40,6 +40,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
+ */
 struct CollatorOptionsV1 {
   std::optional<icu4x::CollatorStrength> strength;
   std::optional<icu4x::CollatorAlternateHandling> alternate_handling;

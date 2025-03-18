@@ -6,21 +6,47 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
+ */
 
 
 export class Calendar {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Creates a new [`Calendar`] from the specified date and time, using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
+     */
     static createForLocale(locale: Locale): Calendar;
 
+    /** 
+     * Creates a new [`Calendar`] from the specified date and time, using compiled data.
+     *
+     * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
+     */
     static createForKind(kind: AnyCalendarKind): Calendar;
 
+    /** 
+     * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
+     */
     static createForLocaleWithProvider(provider: DataProvider, locale: Locale): Calendar;
 
+    /** 
+     * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
+     *
+     * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
+     */
     static createForKindWithProvider(provider: DataProvider, kind: AnyCalendarKind): Calendar;
 
+    /** 
+     * Returns the kind of this calendar
+     *
+     * See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+     */
     get kind(): AnyCalendarKind;
 }

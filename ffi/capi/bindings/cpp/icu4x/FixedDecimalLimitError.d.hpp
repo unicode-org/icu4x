@@ -19,6 +19,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
+ */
 struct FixedDecimalLimitError {
 
 };

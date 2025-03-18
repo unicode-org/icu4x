@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
+ */
 const SentenceBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_SentenceBreakIteratorUtf16_destroy_mv1(ptr);
 });
@@ -42,6 +43,12 @@ export class SentenceBreakIteratorUtf16 {
         return this.#ptr;
     }
 
+    /** 
+     * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
+     * out of range of a 32-bit signed integer.
+     *
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html#method.next) for more information.
+     */
     next() {
         const result = wasm.icu4x_SentenceBreakIteratorUtf16_next_mv1(this.ffiValue);
     

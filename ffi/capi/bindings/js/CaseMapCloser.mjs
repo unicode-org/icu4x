@@ -6,8 +6,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
+ */
 const CaseMapCloser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CaseMapCloser_destroy_mv1(ptr);
 });
@@ -41,6 +42,11 @@ export class CaseMapCloser {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new CaseMapCloser instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -59,6 +65,11 @@ export class CaseMapCloser {
         }
     }
 
+    /** 
+     * Construct a new CaseMapCloser instance using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -77,6 +88,12 @@ export class CaseMapCloser {
         }
     }
 
+    /** 
+     * Adds all simple case mappings and the full case folding for `c` to `builder`.
+     * Also adds special case closure mappings.
+     *
+     * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
+     */
     addCaseClosureTo(c, builder) {wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
     
         try {}
@@ -84,6 +101,14 @@ export class CaseMapCloser {
         finally {}
     }
 
+    /** 
+     * Finds all characters and strings which may casemap to `s` as their full case folding string
+     * and adds them to the set.
+     *
+     * Returns true if the string was found
+     *
+     * See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
+     */
     addStringCaseClosureTo(s, builder) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         

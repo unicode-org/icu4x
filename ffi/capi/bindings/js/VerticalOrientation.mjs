@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
+ */
 
 
 export class VerticalOrientation {
@@ -70,6 +71,9 @@ export class VerticalOrientation {
     static TransformedUpright = VerticalOrientation.#objectValues[2];
     static Upright = VerticalOrientation.#objectValues[3];
 
+    /** 
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.VerticalOrientation.html#tymethod.for_char) for more information.
+     */
     static forChar(ch) {
         const result = wasm.icu4x_VerticalOrientation_for_char_mv1(ch);
     
@@ -80,6 +84,11 @@ export class VerticalOrientation {
         finally {}
     }
 
+    /** 
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
     longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
@@ -97,6 +106,11 @@ export class VerticalOrientation {
         }
     }
 
+    /** 
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
     shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
@@ -114,6 +128,11 @@ export class VerticalOrientation {
         }
     }
 
+    /** 
+     * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
+     */
     toIntegerValue() {
         const result = wasm.icu4x_VerticalOrientation_to_integer_value_mv1(this.ffiValue);
     
@@ -124,6 +143,11 @@ export class VerticalOrientation {
         finally {}
     }
 
+    /** 
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
+     */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

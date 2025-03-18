@@ -23,9 +23,21 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
+ * (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+ *
+ * See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
+ */
 class MeasureUnitParser {
 public:
 
+  /**
+   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
+   * if the identifier is valid.
+   *
+   * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
+   */
   inline std::unique_ptr<icu4x::MeasureUnit> parse(std::string_view unit_id) const;
 
   inline const icu4x::capi::MeasureUnitParser* AsFFI() const;

@@ -29,6 +29,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
+ */
 struct WeekOf {
   uint8_t week;
   icu4x::WeekRelativeUnit unit;

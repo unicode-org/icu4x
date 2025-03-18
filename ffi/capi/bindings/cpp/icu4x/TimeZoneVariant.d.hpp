@@ -41,6 +41,15 @@ public:
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
+  /**
+   * Sets the `zone_variant` field to "daylight" time.
+   *
+   * See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
+   *
+   * See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
+   */
   inline icu4x::TimeZoneVariant from_rearguard_isdst(bool isdst);
 
   inline icu4x::capi::TimeZoneVariant AsFFI() const;

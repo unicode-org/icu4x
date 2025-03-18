@@ -23,11 +23,30 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+ *
+ * You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+ *
+ * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
+ */
 class UnitsConverter {
 public:
 
+  /**
+   * Converts the input value from the input unit to the output unit (that have been used to create this converter).
+   * NOTE:
+   * The conversion using floating-point operations is not as accurate as the conversion using ratios.
+   *
+   * See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
+   */
   inline double convert(double value) const;
 
+  /**
+   * Clones the current [`UnitsConverter`] object.
+   *
+   * See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+   */
   inline std::unique_ptr<icu4x::UnitsConverter> clone() const;
 
   inline const icu4x::capi::UnitsConverter* AsFFI() const;

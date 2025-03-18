@@ -9,42 +9,118 @@ import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X Date object capable of containing a ISO-8601 date
-*
-*See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
-*/
+/** 
+ * An ICU4X Date object capable of containing a ISO-8601 date
+ *
+ * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
+ */
 
 
 export class IsoDate {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Creates a new [`IsoDate`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_iso_from_str) for more information.
+     */
     static fromString(v: string): IsoDate;
 
+    /** 
+     * Convert this date to one in a different calendar
+     *
+     * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+     */
     toCalendar(calendar: Calendar): Date;
 
+    /** 
+     * See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
+     */
     toAny(): Date;
 
+    /** 
+     * Returns the 1-indexed day in the year for this date
+     *
+     * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+     */
     get dayOfYear(): number;
 
+    /** 
+     * Returns the 1-indexed day in the month for this date
+     *
+     * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+     */
     get dayOfMonth(): number;
 
+    /** 
+     * Returns the day in the week for this day
+     *
+     * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     */
     get dayOfWeek(): Weekday;
 
+    /** 
+     * Returns the week number in this month, 1-indexed, based on what
+     * is considered the first day of the week (often a locale preference).
+     *
+     * `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
+     *
+     * See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
+     */
     weekOfMonth(firstWeekday: Weekday): number;
 
+    /** 
+     * Returns the week number in this year, using week data
+     *
+     * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+     */
     weekOfYear(calculator: WeekCalculator): WeekOf;
 
+    /** 
+     * Returns 1-indexed number of the month of this date in its year
+     *
+     * See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
+     */
     get month(): number;
 
+    /** 
+     * Returns the year number in the current era for this date
+     *
+     * For calendars without an era, returns the extended year
+     *
+     * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
+     */
     get year(): number;
 
+    /** 
+     * Returns if the year is a leap year for this date
+     *
+     * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+     */
     get isInLeapYear(): boolean;
 
+    /** 
+     * Returns the number of months in the year represented by this date
+     *
+     * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+     */
     get monthsInYear(): number;
 
+    /** 
+     * Returns the number of days in the month represented by this date
+     *
+     * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+     */
     get daysInMonth(): number;
 
+    /** 
+     * Returns the number of days in the year represented by this date
+     *
+     * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+     */
     get daysInYear(): number;
 
     constructor(year: number, month: number, day: number);

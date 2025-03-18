@@ -6,11 +6,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
-*in strings.
-*
-*See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
-*/
+/** 
+ * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
+ * in strings.
+ *
+ * See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
+ */
 const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GraphemeClusterSegmenter_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class GraphemeClusterSegmenter {
         return this.#ptr;
     }
 
+    /** 
+     * Construct an [`GraphemeClusterSegmenter`] using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1();
     
@@ -54,6 +60,11 @@ export class GraphemeClusterSegmenter {
         finally {}
     }
 
+    /** 
+     * Construct an [`GraphemeClusterSegmenter`].
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -72,6 +83,14 @@ export class GraphemeClusterSegmenter {
         }
     }
 
+    /** 
+     * Segments a string.
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16) for more information.
+     */
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input));

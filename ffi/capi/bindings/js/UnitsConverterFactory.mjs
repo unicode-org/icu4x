@@ -8,13 +8,14 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
-*for converting between two [`MeasureUnit`]s.
-*
-*Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-*
-*See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
-*/
+/** 
+ * An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
+ * for converting between two [`MeasureUnit`]s.
+ *
+ * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+ *
+ * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
+ */
 const UnitsConverterFactory_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_UnitsConverterFactory_destroy_mv1(ptr);
 });
@@ -48,6 +49,11 @@ export class UnitsConverterFactory {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new [`UnitsConverterFactory`] instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_UnitsConverterFactory_create_mv1();
     
@@ -58,6 +64,11 @@ export class UnitsConverterFactory {
         finally {}
     }
 
+    /** 
+     * Construct a new [`UnitsConverterFactory`] instance using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -76,6 +87,13 @@ export class UnitsConverterFactory {
         }
     }
 
+    /** 
+     * Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
+     * Returns nothing if the conversion between the two units is not possible.
+     * For example, conversion between `meter` and `second` is not possible.
+     *
+     * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
+     */
     converter(from, to) {
         const result = wasm.icu4x_UnitsConverterFactory_converter_mv1(this.ffiValue, from.ffiValue, to.ffiValue);
     
@@ -86,6 +104,11 @@ export class UnitsConverterFactory {
         finally {}
     }
 
+    /** 
+     * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+     *
+     * See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
+     */
     parser() {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];

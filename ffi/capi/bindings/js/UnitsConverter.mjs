@@ -3,12 +3,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
-*
-*You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
-*
-*See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
-*/
+/** 
+ * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+ *
+ * You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+ *
+ * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
+ */
 const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_UnitsConverter_destroy_mv1(ptr);
 });
@@ -42,6 +43,13 @@ export class UnitsConverter {
         return this.#ptr;
     }
 
+    /** 
+     * Converts the input value from the input unit to the output unit (that have been used to create this converter).
+     * NOTE:
+     * The conversion using floating-point operations is not as accurate as the conversion using ratios.
+     *
+     * See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
+     */
     convertNumber(value) {
         const result = wasm.icu4x_UnitsConverter_convert_double_mv1(this.ffiValue, value);
     
@@ -52,6 +60,11 @@ export class UnitsConverter {
         finally {}
     }
 
+    /** 
+     * Clones the current [`UnitsConverter`] object.
+     *
+     * See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+     */
     clone() {
         const result = wasm.icu4x_UnitsConverter_clone_mv1(this.ffiValue);
     

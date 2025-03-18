@@ -3,10 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An object that represents the Script_Extensions property for a single character
-*
-*See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
-*/
+/** 
+ * An object that represents the Script_Extensions property for a single character
+ *
+ * See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
+ */
 const ScriptExtensionsSet_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ScriptExtensionsSet_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class ScriptExtensionsSet {
         return this.#ptr;
     }
 
+    /** 
+     * Check if the Script_Extensions property of the given code point covers the given script
+     *
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
+     */
     contains(script) {
         const result = wasm.icu4x_ScriptExtensionsSet_contains_mv1(this.ffiValue, script);
     
@@ -54,6 +60,11 @@ export class ScriptExtensionsSet {
         finally {}
     }
 
+    /** 
+     * Get the number of scripts contained in here
+     *
+     * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+     */
     get count() {
         const result = wasm.icu4x_ScriptExtensionsSet_count_mv1(this.ffiValue);
     
@@ -64,6 +75,11 @@ export class ScriptExtensionsSet {
         finally {}
     }
 
+    /** 
+     * Get script at index
+     *
+     * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+     */
     scriptAt(index) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 3, 2, true);
         

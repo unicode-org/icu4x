@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/options/enum.ListLength.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/options/enum.ListLength.html) for more information.
+ */
 
 
 export class ListLength {

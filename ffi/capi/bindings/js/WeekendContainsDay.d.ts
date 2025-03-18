@@ -2,10 +2,11 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** Documents which days of the week are considered to be a part of the weekend
-*
-*See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
-*/
+/** 
+ * Documents which days of the week are considered to be a part of the weekend
+ *
+ * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+ */
 type WeekendContainsDay_obj = {
     monday: boolean;
     tuesday: boolean;

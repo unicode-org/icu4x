@@ -26,6 +26,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * ECMA-402 compatible sign display preference.
+ *
+ * See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
+ */
 class FixedDecimalSignDisplay {
 public:
   enum Value {

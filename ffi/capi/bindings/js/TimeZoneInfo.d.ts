@@ -9,26 +9,56 @@ import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
+ */
 
 
 export class TimeZoneInfo {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Creates a time zone for UTC (Coordinated Universal Time).
+     *
+     * See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
+     */
     static utc(): TimeZoneInfo;
 
+    /** 
+     * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
+     */
     timeZoneId(): TimeZone;
 
+    /** 
+     * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
+     */
     atTime(date: IsoDate, time: Time): TimeZoneInfo;
 
+    /** 
+     * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
+     */
     localTime(): IsoDateTime | null;
 
+    /** 
+     * See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
+     */
     withZoneVariant(timeZoneVariant: TimeZoneVariant): TimeZoneInfo;
 
+    /** 
+     * Infers the zone variant.
+     *
+     * Requires the offset and local time to be set.
+     *
+     * See the [Rust documentation for `infer_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_zone_variant) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
+     */
     inferZoneVariant(offsetCalculator: VariantOffsetsCalculator): boolean;
 
+    /** 
+     * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_variant) for more information.
+     */
     zoneVariant(): TimeZoneVariant | null;
 
     constructor(timeZoneId: TimeZone, offset: UtcOffset | null, zoneVariant: TimeZoneVariant | null);

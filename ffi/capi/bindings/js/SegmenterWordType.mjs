@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
+ */
 
 
 export class SegmenterWordType {
@@ -67,6 +68,9 @@ export class SegmenterWordType {
     static Number = SegmenterWordType.#objectValues[1];
     static Letter = SegmenterWordType.#objectValues[2];
 
+    /** 
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+     */
     get isWordLike() {
         const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
     

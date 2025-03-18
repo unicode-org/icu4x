@@ -7,10 +7,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
-*
-*See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
-*/
+/** 
+ * An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
+ *
+ * See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
+ */
 const WordSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_WordSegmenter_destroy_mv1(ptr);
 });
@@ -44,6 +45,15 @@ export class WordSegmenter {
         return this.#ptr;
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+     * or dictionary payload data, using compiled data. This does not assume any content locale.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
+     */
     static createAuto() {
         const result = wasm.icu4x_WordSegmenter_create_auto_mv1();
     
@@ -54,6 +64,15 @@ export class WordSegmenter {
         finally {}
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+     * or dictionary payload data, using compiled data.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
+     */
     static createAutoWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -72,6 +91,15 @@ export class WordSegmenter {
         }
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+     * or dictionary payload data, using a particular data source.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
+     */
     static createAutoWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -90,6 +118,15 @@ export class WordSegmenter {
         }
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+     * Thai, using compiled data.  This does not assume any content locale.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
+     */
     static createLstm() {
         const result = wasm.icu4x_WordSegmenter_create_lstm_mv1();
     
@@ -100,6 +137,15 @@ export class WordSegmenter {
         finally {}
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+     * Thai, using compiled data.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
+     */
     static createLstmWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -118,6 +164,15 @@ export class WordSegmenter {
         }
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+     * Thai, using a particular data source.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
+     */
     static createLstmWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -136,6 +191,15 @@ export class WordSegmenter {
         }
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
+     */
     static createDictionary() {
         const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1();
     
@@ -146,6 +210,15 @@ export class WordSegmenter {
         finally {}
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai, using compiled data.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
+     */
     static createDictionaryWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -164,6 +237,15 @@ export class WordSegmenter {
         }
     }
 
+    /** 
+     * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai, using a particular data source.
+     *
+     * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
+     * Khmer, Lao, and Thai.
+     *
+     * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
+     */
     static createDictionaryWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -182,6 +264,14 @@ export class WordSegmenter {
         }
     }
 
+    /** 
+     * Segments a string.
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
+     */
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input));
