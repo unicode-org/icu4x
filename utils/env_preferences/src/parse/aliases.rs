@@ -94,13 +94,17 @@ pub fn strip_windows_collation_suffix_lossy(
 
 /// Find a BCP-47 identifier from a list of known Windows aliases.
 #[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
-pub fn find_windows_alias_lossy(lcid: &str) -> Option<icu_locale::LanguageIdentifier> {
+pub fn find_windows_language_alias_lossy(lcid: &str) -> Option<icu_locale::LanguageIdentifier> {
     use icu_locale::langid;
 
     match lcid {
         "zh-yue-HK" => Some(langid!("yue-HK")),
         // LCID with no (known) matching CLDR data: "math alphanumeric sorting"
-        "x-IV-mathan" => Some(langid!("und")),
+        // This would be `x-IV_mathan`, but the collation suffix may already be stripped by
+        // `strip_windows_collation_suffix_lossy`. For some reason, `LocaleEnumProcEx` also uses
+        // `x-IV-mathan`, so that is included here too.
+        // https://learn.microsoft.com/en-us/windows/win32/api/winnls/nc-winnls-locale_enumprocex
+        "x-IV" | "x-IV_mathan" | "x-IV-mathan" => Some(langid!("und")),
         _ => None,
     }
 }

@@ -24,7 +24,7 @@ use icu_locale::extensions::unicode::{key, Keywords, Unicode};
 use icu_locale::extensions::Extensions;
 use icu_locale::{LanguageIdentifier, Locale, ParseError};
 
-use super::aliases::{find_windows_alias_lossy, strip_windows_collation_suffix_lossy};
+use super::aliases::{find_windows_language_alias_lossy, strip_windows_collation_suffix_lossy};
 use crate::RetrievalError;
 
 pub struct WindowsLocale<'src> {
@@ -70,7 +70,7 @@ impl<'src> WindowsLocale<'src> {
         };
 
         // Use a matching alias if found
-        let language = match find_windows_alias_lossy(lcid) {
+        let language = match find_windows_language_alias_lossy(lcid) {
             Some(locale) => locale,
             None => LanguageIdentifier::try_from_str(lcid)?,
         };
