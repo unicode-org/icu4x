@@ -8,7 +8,7 @@ To use `ICU4X` in the Rust ecosystem one can either add dependencies on selected
 
 In this tutorial we are going to build up to writing an app that uses the `icu::datetime` component to format a date and time, covering various topics in the process.
 
-# 1. Requirements
+## 1. Requirements
 
 For this tutorial we assume the user has basic Rust knowledge. If acquiring it is necessary, the [Rust Book](https://doc.rust-lang.org/book/) provides an excellent introduction.
 We also assume that the user is familiar with a terminal and have `rust` and `cargo` installed.
@@ -20,7 +20,7 @@ $ cargo --version
 cargo 1.71.1 (7f1d04c00 2023-07-29)
 ```
 
-# 2. Creating an app with ICU4X as a dependency
+## 2. Creating an app with ICU4X as a dependency
 
 Use `cargo` to initialize a binary application:
 
@@ -35,7 +35,7 @@ Then add a dependency on `ICU4X`'s main crate, `icu`:
 $ cargo add icu
 ```
 
-# 3. Locales
+## 3. Locales
 
 `ICU4X` comes with a variety of components allowing to manage various facets of software internationalization.
 
@@ -73,7 +73,7 @@ You are using: es-AR
 
 Congratulations! `ICU4X` has been used to semantically operate on a locale!
 
-## Convenience macro
+### Convenience macro
 
 The scenario of working with statically declared `Locale`s is common.
 
@@ -99,7 +99,7 @@ In this case, the parsing is performed at compilation time, so we don't need to 
 
 Next, let's add some more complex functionality.
 
-# 4. Using an ICU4X component
+## 4. Using an ICU4X component
 
 We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data; we will look at custom data generation later and for now use the default included data,
 which is exposed through constructors such as `try_new`.
@@ -141,7 +141,7 @@ Here's an internationalized date!
 *Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`.
 
 
-# 5. Data Management
+## 5. Data Management
 
 While the locale API is purely algorithmic, many internationalization APIs like the date formatting API require more complex data to work. You've seen this in the previous example where we had to call `.expect("ja data should be available")` after the constructor.
 
@@ -155,7 +155,7 @@ However, shipping the library with all locales will have a size impact on your b
 
 [^1]: All locales with coverage level `basic`, `moderate`, or `modern` in [`CLDR`](https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/coverageLevels.json)
 
-# 6. Summary
+## 6. Summary
 
 This concludes this introduction tutorial. With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just the start. 
 
