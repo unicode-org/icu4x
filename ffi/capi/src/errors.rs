@@ -249,7 +249,9 @@ impl From<icu_datetime::pattern::PatternLoadError> for ffi::DateTimeFormatterLoa
             icu_datetime::pattern::PatternLoadError::UnsupportedLength(_) => {
                 Self::UnsupportedLength
             }
-            icu_datetime::pattern::PatternLoadError::FormatterTooSpecific(_) => Self::FormatterTooSpecific,
+            icu_datetime::pattern::PatternLoadError::FormatterTooSpecific(_) => {
+                Self::FormatterTooSpecific
+            }
             icu_datetime::pattern::PatternLoadError::Data(data_error, _) => data_error.into(),
             _ => Self::Unknown,
         }
