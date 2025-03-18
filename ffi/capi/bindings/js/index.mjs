@@ -214,7 +214,7 @@ export { WindowsParser } from "./WindowsParser.mjs"
 
 export { BidiDirection } from "./BidiDirection.mjs"
 
-export { AnyCalendarKind } from "./AnyCalendarKind.mjs"
+export { CalendarKind } from "./CalendarKind.mjs"
 
 export { LeadingAdjustment } from "./LeadingAdjustment.mjs"
 

@@ -17,7 +17,7 @@ namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct Locale; }
 class Locale;
-class AnyCalendarKind;
+class CalendarKind;
 class DataError;
 }
 
@@ -47,7 +47,7 @@ public:
    *
    * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind(icu4x::AnyCalendarKind kind);
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind(icu4x::CalendarKind kind);
 
   /**
    * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
@@ -61,14 +61,14 @@ public:
    *
    * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind);
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind);
 
   /**
    * Returns the kind of this calendar
    *
    * See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
    */
-  inline icu4x::AnyCalendarKind kind() const;
+  inline icu4x::CalendarKind kind() const;
 
   inline const icu4x::capi::Calendar* AsFFI() const;
   inline icu4x::capi::Calendar* AsFFI();

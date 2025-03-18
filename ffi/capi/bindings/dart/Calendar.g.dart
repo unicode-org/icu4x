@@ -41,7 +41,7 @@ final class Calendar implements ffi.Finalizable {
   /// See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Calendar.forKind(AnyCalendarKind kind) {
+  factory Calendar.forKind(CalendarKind kind) {
     final result = _icu4x_Calendar_create_for_kind_mv1(kind.index);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -67,7 +67,7 @@ final class Calendar implements ffi.Finalizable {
   /// See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Calendar.forKindWithProvider(DataProvider provider, AnyCalendarKind kind) {
+  factory Calendar.forKindWithProvider(DataProvider provider, CalendarKind kind) {
     final result = _icu4x_Calendar_create_for_kind_with_provider_mv1(provider._ffi, kind.index);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -78,9 +78,9 @@ final class Calendar implements ffi.Finalizable {
   /// Returns the kind of this calendar
   ///
   /// See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
-  AnyCalendarKind get kind {
+  CalendarKind get kind {
     final result = _icu4x_Calendar_kind_mv1(_ffi);
-    return AnyCalendarKind.values[result];
+    return CalendarKind.values[result];
   }
 }
 

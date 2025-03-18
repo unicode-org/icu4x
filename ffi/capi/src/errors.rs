@@ -12,7 +12,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatOption;
 
     #[cfg(feature = "datetime")]
-    use crate::calendar::ffi::AnyCalendarKind;
+    use crate::calendar::ffi::CalendarKind;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -111,8 +111,8 @@ pub mod ffi {
     #[cfg(feature = "datetime")]
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
     pub struct DateTimeMismatchedCalendarError {
-        pub this_kind: AnyCalendarKind,
-        pub date_kind: DiplomatOption<AnyCalendarKind>,
+        pub this_kind: CalendarKind,
+        pub date_kind: DiplomatOption<CalendarKind>,
     }
 
     #[cfg(feature = "datetime")]
