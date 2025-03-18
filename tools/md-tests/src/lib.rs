@@ -14,7 +14,7 @@ mod tutorials {
     mod intro_interactive_md {}
     #[doc = include_str!("../../../tutorials/data-provider-runtime.md")]
     mod data_provider_md {}
-    #[doc = include_str!("../../../tutorials/date-picker-data.md")]
+    #[doc = include_str!("../../../tutorials/data-management.md")]
     mod data_management_md {}
     #[doc = include_str!("../../../tutorials/using-from-js.md")]
     mod js_md {}
