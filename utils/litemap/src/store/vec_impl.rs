@@ -131,12 +131,18 @@ impl<K: Ord, V> StoreBulkMut<K, V> for Vec<(K, V)> {
         {
             // Count new elements that are sorted and non-duplicated.
             // Starting from the end of the existing sorted run, if any.
+            // Thus, start the slice at sorted_len.saturating_sub(1).
             sorted_len += self[sorted_len.saturating_sub(1)..]
                 .windows(2)
                 .take_while(|w| w[0].0 < w[1].0)
-                .count()
-                + (sorted_len == 0) as usize;
+                .count();
         }
+        // `windows(2)` only yields `slice len - 1` times, or none if the slice is empty.
+        // In other words, the first extended element of the slice won't be counted as sorted
+        // if self was initially empty (sorted_len == 0). We adjust this by adding 1 if the
+        // original slice was empty but became not empty after extend.
+        sorted_len += (sorted_len == 0 && !self.is_empty()) as usize;
+
         // If everything was in order, we're done
         if sorted_len >= self.len() {
             return;
