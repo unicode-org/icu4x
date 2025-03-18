@@ -269,16 +269,14 @@ pub enum CaseLevel {
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
 /// This is the BCP47 key `kc`. The default is [`CaseLevel::Off`].
 ///
-/// ## Backward second level
-///
-/// Compare the second level in backward order. This is the BCP47 key `kb`. `kb`
-/// is prohibited by ECMA-402. The default is [`BackwardSecondLevel::Off`], except
-/// for Canadian French.
-///
 /// # Unsupported BCP47 options
 ///
 /// Reordering (BCP47 `kr`) currently cannot be set via the API and is implied
 /// by the locale of the collation. `kr` is prohibited by ECMA-402.
+///
+/// Backward second level (BCP47 `kb`) cannot be set via the API and is implied
+/// by the locale of the collation (in practice only `fr-CA` turns it on and it's
+/// off otherwise). `kb` is prohibited by ECMA-402.
 ///
 /// Normalization is always enabled and cannot be turned off. Therefore, there
 /// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA-402.
