@@ -5,6 +5,9 @@
 mod datasets;
 mod parse;
 
+#[cfg(target_os = "windows")]
+mod windows;
+
 #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod linux_tests {
