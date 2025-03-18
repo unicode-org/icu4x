@@ -51,7 +51,7 @@ icu = { version = "1.5", features = ["serde"] }
 icu_provider_blob = "1.5"
 ```
 
-To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data_management.md](./data_management.md).
+To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data-management.md](./data-management.md).
 
 [« Fully Working Example »](./crates/buffer)
 
