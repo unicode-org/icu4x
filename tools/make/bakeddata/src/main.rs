@@ -122,10 +122,7 @@ fn main() {
                     .replace("_component_", component)
                     .replace("_version_", version)
                     .replace("_cldr_tag_", SourceDataProvider::TESTED_CLDR_TAG)
-                    .replace(
-                        "_icuexport_tag_",
-                        SourceDataProvider::TESTED_ICUEXPORT_TAG,
-                    )
+                    .replace("_icuexport_tag_", SourceDataProvider::TESTED_ICUEXPORT_TAG)
                     .replace(
                         "_segmenter_lstm_tag_",
                         SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG,
