@@ -7,8 +7,8 @@ import * as DateDemo from "./Date.mjs";
 export * as DateDemo from "./Date.mjs";
 import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
-import * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
-export * as GregorianDateFormatterDemo from "./GregorianDateFormatter.mjs";
+import * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
+export * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
 import * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 export * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
@@ -236,51 +236,6 @@ let termini = Object.assign({
         ]
     },
 
-    "DateFormatter.format": {
-        func: DateFormatterDemo.format,
-        // For avoiding webpacking minifying issues:
-        funcName: "DateFormatter.format",
-        parameters: [
-            
-            {
-                name: "DateFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "DateFormatter:Length",
-                type: "DateTimeLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Value:Year",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Month",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Day",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Calendar:Kind",
-                type: "AnyCalendarKind",
-                typeUse: "enumerator"
-            }
-            
-        ]
-    },
-
     "DateFormatter.formatIso": {
         func: DateFormatterDemo.formatIso,
         // For avoiding webpacking minifying issues:
@@ -300,19 +255,31 @@ let termini = Object.assign({
             },
             
             {
-                name: "Value:Year",
+                name: "DateFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateFormatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Value:Month",
+                name: "Date:Month",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Value:Day",
+                name: "Date:Day",
                 type: "number",
                 typeUse: "number"
             }
@@ -320,38 +287,107 @@ let termini = Object.assign({
         ]
     },
 
-    "GregorianDateFormatter.formatIso": {
-        func: GregorianDateFormatterDemo.formatIso,
+    "DateFormatter.formatSameCalendar": {
+        func: DateFormatterDemo.formatSameCalendar,
         // For avoiding webpacking minifying issues:
-        funcName: "GregorianDateFormatter.formatIso",
+        funcName: "DateFormatter.formatSameCalendar",
         parameters: [
             
             {
-                name: "GregorianDateFormatter:Locale:Name",
+                name: "DateFormatter:Locale:Name",
                 type: "string",
                 typeUse: "string"
             },
             
             {
-                name: "GregorianDateFormatter:Length",
+                name: "DateFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "Value:Year",
+                name: "DateFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateFormatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Value:Month",
+                name: "Date:Month",
                 type: "number",
                 typeUse: "number"
             },
             
             {
-                name: "Value:Day",
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Calendar:Kind",
+                type: "AnyCalendarKind",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "DateFormatterGregorian.formatIso": {
+        func: DateFormatterGregorianDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "DateFormatterGregorian.formatIso",
+        parameters: [
+            
+            {
+                name: "DateFormatterGregorian:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "DateFormatterGregorian:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateFormatterGregorian:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "DateFormatterGregorian:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
                 type: "number",
                 typeUse: "number"
             }

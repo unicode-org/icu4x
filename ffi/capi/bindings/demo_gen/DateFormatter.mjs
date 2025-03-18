@@ -3,30 +3,30 @@ import { Date } from "icu4x"
 import { DateFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
-export function format(dateFormatterLocaleName, dateFormatterLength, valueYear, valueMonth, valueDay, valueCalendarKind) {
+export function formatIso(dateFormatterLocaleName, dateFormatterLength, dateFormatterAlignment, dateFormatterYearStyle, dateYear, dateMonth, dateDay) {
     
     let dateFormatterLocale = Locale.fromString(dateFormatterLocaleName);
     
-    let dateFormatter = DateFormatter.createWithLength(dateFormatterLocale,dateFormatterLength);
+    let dateFormatter = DateFormatter.createYmd(dateFormatterLocale,dateFormatterLength,dateFormatterAlignment,dateFormatterYearStyle);
     
-    let valueCalendar = new Calendar(valueCalendarKind);
+    let date = new IsoDate(dateYear,dateMonth,dateDay);
     
-    let value = Date.fromIsoInCalendar(valueYear,valueMonth,valueDay,valueCalendar);
-    
-    let out = dateFormatter.format(value);
+    let out = dateFormatter.formatIso(date);
     
 
     return out;
 }
-export function formatIso(dateFormatterLocaleName, dateFormatterLength, valueYear, valueMonth, valueDay) {
+export function formatSameCalendar(dateFormatterLocaleName, dateFormatterLength, dateFormatterAlignment, dateFormatterYearStyle, dateYear, dateMonth, dateDay, dateCalendarKind) {
     
     let dateFormatterLocale = Locale.fromString(dateFormatterLocaleName);
     
-    let dateFormatter = DateFormatter.createWithLength(dateFormatterLocale,dateFormatterLength);
+    let dateFormatter = DateFormatter.createYmd(dateFormatterLocale,dateFormatterLength,dateFormatterAlignment,dateFormatterYearStyle);
     
-    let value = new IsoDate(valueYear,valueMonth,valueDay);
+    let dateCalendar = new Calendar(dateCalendarKind);
     
-    let out = dateFormatter.formatIso(value);
+    let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
+    
+    let out = dateFormatter.formatSameCalendar(date);
     
 
     return out;

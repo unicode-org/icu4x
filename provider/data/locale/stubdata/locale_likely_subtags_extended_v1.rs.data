@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 72428B[^1] for the singleton data struct
+/// * 72418B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 #[doc(hidden)]
@@ -23,7 +23,7 @@ macro_rules! __impl_locale_likely_subtags_extended_v1 {
                 },
                 language_region: unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hakTW\0lzzGE\0manGN\0nanTW\0pntRU\0pntTR\0unrNP\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"HantGeorNkooHantCyrlLatnDeva") })
+                    zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"hakTW\0lzzGE\0nanTW\0pntRU\0pntTR\0unrNP\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"HantGeorHantCyrlLatnDeva") })
                 },
                 language: unsafe {
                     #[allow(unused_unsafe)]
