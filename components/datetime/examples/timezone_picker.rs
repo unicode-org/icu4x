@@ -8,6 +8,8 @@ use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::Time;
+use icu_time::zone::models::LocalTime;
+use icu_time::DateTime;
 
 fn main() {
     let parser = icu::time::zone::IanaParser::new();
@@ -22,7 +24,10 @@ fn main() {
     let city_formatter =
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
-    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
+    let reference_date = LocalTime::from(DateTime {
+        date: Date::try_new_iso(2025, 1, 1).unwrap(),
+        time: Time::midnight(),
+    });
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 

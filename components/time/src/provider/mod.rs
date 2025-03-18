@@ -15,6 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::zone::models::LocalTime;
 use crate::Time;
 use calendrical_calculations::rata_die::RataDie;
 use core::ops::Deref;
@@ -168,7 +169,7 @@ pub enum TimeZoneVariant {
 
 /// Storage type for storing UTC offsets as eights of an hour.
 pub type EighthsOfHourOffset = i8;
-/// Storage type for storing `(Date<Iso>, Time)`.
+/// Storage type for storing `LocalTime`.
 #[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Debug)]
 pub struct MinutesSinceEpoch(pub i32);
 
@@ -178,6 +179,13 @@ impl From<(Date<Iso>, Time)> for MinutesSinceEpoch {
             ((Iso::to_fixed(d) - Self::EPOCH) as i32 * 24 + t.hour.number() as i32) * 60
                 + t.minute.number() as i32,
         )
+    }
+}
+
+impl From<LocalTime> for MinutesSinceEpoch {
+    fn from(dt: LocalTime) -> MinutesSinceEpoch {
+        let (date, time): (Date<Iso>, Time) = dt.into();
+        Self::from((date, time))
     }
 }
 
@@ -251,10 +259,10 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
-            return Ok(Self::from((
+            return Ok(Self::from(LocalTime::from((
                 Date::try_new_iso(year, month, day).map_err(e2)?,
                 Time::try_new(hour, minute, 0, 0).map_err(e3)?,
-            )));
+            ))));
         }
         i32::deserialize(deserializer).map(Self)
     }

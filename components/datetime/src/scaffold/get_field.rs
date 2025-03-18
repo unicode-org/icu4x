@@ -4,10 +4,13 @@
 
 use icu_calendar::{
     types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
-    AsCalendar, Calendar, Date, Iso,
+    AsCalendar, Calendar, Date,
 };
 use icu_time::{
-    zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset},
+    zone::{
+        models::{LocalTime, TimeZoneModel},
+        TimeZoneVariant, UtcOffset,
+    },
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 
@@ -264,13 +267,12 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<(Date<Iso>, Time)>
-    for ZonedDateTime<A, Z>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<LocalTime> for ZonedDateTime<A, Z>
 where
-    Z: GetField<(Date<Iso>, Time)>,
+    Z: GetField<LocalTime>,
 {
     #[inline]
-    fn get_field(&self) -> (Date<Iso>, Time) {
+    fn get_field(&self) -> LocalTime {
         self.zone.get_field()
     }
 }
@@ -316,12 +318,12 @@ where
     }
 }
 
-impl<O> GetField<(Date<Iso>, Time)> for TimeZoneInfo<O>
+impl<O> GetField<LocalTime> for TimeZoneInfo<O>
 where
-    O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    O: TimeZoneModel<LocalTime = LocalTime>,
 {
     #[inline]
-    fn get_field(&self) -> (Date<Iso>, Time) {
+    fn get_field(&self) -> LocalTime {
         self.local_time()
     }
 }

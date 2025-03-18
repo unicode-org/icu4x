@@ -107,8 +107,40 @@ use icu_calendar::{Date, Iso};
 /// Time zone data model choices.
 pub mod models {
     use super::*;
+    use crate::DateTime;
     mod private {
         pub trait Sealed {}
+    }
+
+    /// A local time for time zone display name resolution.
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    pub struct LocalTime(pub(crate) DateTime<Iso>);
+
+    impl From<(Date<Iso>, Time)> for LocalTime {
+        fn from(value: (Date<Iso>, Time)) -> Self {
+            LocalTime(DateTime {
+                date: value.0,
+                time: value.1,
+            })
+        }
+    }
+
+    impl From<DateTime<Iso>> for LocalTime {
+        fn from(value: DateTime<Iso>) -> Self {
+            LocalTime(value)
+        }
+    }
+
+    impl From<LocalTime> for (Date<Iso>, Time) {
+        fn from(value: LocalTime) -> Self {
+            (value.0.date, value.0.time)
+        }
+    }
+
+    impl From<LocalTime> for DateTime<Iso> {
+        fn from(value: LocalTime) -> Self {
+            value.0
+        }
     }
 
     /// Trait encoding a particular data model for time zones.
@@ -120,8 +152,8 @@ pub mod models {
     pub trait TimeZoneModel: private::Sealed {
         /// The zone variant, if required for this time zone model.
         type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
-        /// The local time, if required for this time zone model.
-        type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
+        /// The reference time for time zone display names, if required for this time zone model.
+        type LocalTime: IntoOption<LocalTime> + fmt::Debug + Copy;
     }
 
     /// A time zone containing a time zone ID and optional offset.
@@ -143,7 +175,7 @@ pub mod models {
     impl private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
         type TimeZoneVariant = ();
-        type LocalTime = (Date<Iso>, Time);
+        type LocalTime = LocalTime;
     }
 
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
@@ -154,7 +186,7 @@ pub mod models {
     impl private::Sealed for Full {}
     impl TimeZoneModel for Full {
         type TimeZoneVariant = TimeZoneVariant;
-        type LocalTime = (Date<Iso>, Time);
+        type LocalTime = LocalTime;
     }
 }
 
@@ -192,10 +224,10 @@ impl<Model: models::TimeZoneModel> TimeZoneInfo<Model> {
 
 impl<Model> TimeZoneInfo<Model>
 where
-    Model: models::TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    Model: models::TimeZoneModel<LocalTime = models::LocalTime>,
 {
     /// The time at which to interpret the time zone.
-    pub fn local_time(self) -> (Date<Iso>, Time) {
+    pub fn local_time(self) -> models::LocalTime {
         self.local_time
     }
 }
@@ -246,7 +278,7 @@ impl TimeZoneInfo<models::Base> {
     }
 
     /// Sets a local time on this time zone.
-    pub const fn at_time(self, local_time: (Date<Iso>, Time)) -> TimeZoneInfo<models::AtTime> {
+    pub fn at_time(self, local_time: models::LocalTime) -> TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
             time_zone_id: self.time_zone_id,

@@ -175,7 +175,7 @@ pub mod ffi {
             } = self
                 .0
                 .as_borrowed()
-                .compute_offsets_from_time_zone(time_zone.0, (local_date.0, local_time.0))?;
+                .compute_offsets_from_time_zone(time_zone.0, (local_date.0, local_time.0).into())?;
 
             Some(VariantOffsets {
                 standard: Box::new(UtcOffset(standard)),

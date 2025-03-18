@@ -151,7 +151,7 @@ pub mod ffi {
             let info = self
                 .time_zone_id
                 .with_offset(self.offset)
-                .at_time(self.local_time?)
+                .at_time(self.local_time?.into())
                 .infer_zone_variant(offset_calculator.0.as_borrowed());
 
             self.time_zone_id = info.time_zone_id();
@@ -194,7 +194,7 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::AtTime>> for TimeZoneIn
             time_zone_id: other.time_zone_id(),
             offset: other.offset(),
             zone_variant: None,
-            local_time: Some(other.local_time()),
+            local_time: Some(other.local_time().into()),
         }
     }
 }
@@ -205,7 +205,7 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::Full>> for TimeZoneInfo
             time_zone_id: other.time_zone_id(),
             offset: other.offset(),
             zone_variant: Some(other.zone_variant()),
-            local_time: Some(other.local_time()),
+            local_time: Some(other.local_time().into()),
         }
     }
 }

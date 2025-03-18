@@ -9,17 +9,17 @@ use crate::provider::time_zones::MetazoneId;
 use crate::{format::DateTimeInputUnchecked, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::Decimal;
-use icu_calendar::{Date, Iso};
 use icu_decimal::DecimalFormatter;
 use icu_time::provider::MinutesSinceEpoch;
+use icu_time::zone::models::LocalTime;
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
-    Time, TimeZone,
+    TimeZone,
 };
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriod<'_> {
-    fn resolve(&self, time_zone_id: TimeZone, dt: (Date<Iso>, Time)) -> Option<MetazoneId> {
+    fn resolve(&self, time_zone_id: TimeZone, dt: LocalTime) -> Option<MetazoneId> {
         use zerovec::ule::AsULE;
         let cursor = self.list.get0(&time_zone_id)?;
         let mut metazone_id = None;

@@ -37,10 +37,13 @@ fn datetime_benches(c: &mut Criterion) {
                                     time,
                                     // zone is unused but we need to make the types match
                                     zone: TimeZoneInfo::utc()
-                                        .at_time((
-                                            Date::try_new_iso(2024, 1, 1).unwrap(),
-                                            Time::midnight(),
-                                        ))
+                                        .at_time(
+                                            (
+                                                Date::try_new_iso(2024, 1, 1).unwrap(),
+                                                Time::midnight(),
+                                            )
+                                                .into(),
+                                        )
                                         .with_zone_variant(TimeZoneVariant::Standard),
                                 }
                             }

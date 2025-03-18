@@ -7,8 +7,9 @@
 
 use crate::scaffold::*;
 use icu_calendar::types::DayOfYearInfo;
-use icu_calendar::{AsCalendar, Calendar, Iso};
+use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
+use icu_time::zone::models::LocalTime;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
 use icu_calendar::Date;
@@ -56,7 +57,7 @@ pub struct DateTimeInputUnchecked {
     pub(crate) zone_variant: Option<TimeZoneVariant>,
     /// The local ISO time, required for field sets with
     /// certain time zone styles.
-    pub(crate) local_time: Option<(Date<Iso>, Time)>,
+    pub(crate) local_time: Option<LocalTime>,
 }
 
 impl DateTimeInputUnchecked {
@@ -88,7 +89,7 @@ impl DateTimeInputUnchecked {
     }
 
     /// Sets the local time for time zone name resolution.
-    pub fn set_time_zone_local_time(&mut self, local_time: (Date<Iso>, Time)) {
+    pub fn set_time_zone_local_time(&mut self, local_time: LocalTime) {
         self.local_time = Some(local_time);
     }
 

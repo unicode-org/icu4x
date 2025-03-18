@@ -840,7 +840,7 @@ pub mod ffi {
                 input.set_time_zone_utc_offset(offset);
             }
             if let Some(local_time) = zone.local_time {
-                input.set_time_zone_local_time(local_time);
+                input.set_time_zone_local_time(local_time.into());
             }
             if let Some(zone_variant) = zone.zone_variant {
                 input.set_time_zone_variant(zone_variant);
@@ -1637,7 +1637,7 @@ pub mod ffi {
                 input.set_time_zone_utc_offset(offset);
             }
             if let Some(local_time) = zone.local_time {
-                input.set_time_zone_local_time(local_time);
+                input.set_time_zone_local_time(local_time.into());
             }
             if let Some(zone_variant) = zone.zone_variant {
                 input.set_time_zone_variant(zone_variant);

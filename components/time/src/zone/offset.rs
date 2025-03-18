@@ -5,9 +5,7 @@
 use core::str::FromStr;
 
 use crate::provider::{EighthsOfHourOffset, MinutesSinceEpoch, TimeZoneOffsetsV1};
-use crate::{Time, TimeZone};
-use icu_calendar::Date;
-use icu_calendar::Iso;
+use crate::TimeZone;
 use icu_provider::prelude::*;
 
 use displaydoc::Display;
@@ -298,7 +296,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
     ///         TimeZone(tinystr!(8, "usden")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()).into(),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -314,7 +312,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
     ///         TimeZone(tinystr!(8, "usphx")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()).into(),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -326,7 +324,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     pub fn compute_offsets_from_time_zone(
         &self,
         time_zone_id: TimeZone,
-        dt: (Date<Iso>, Time),
+        dt: super::models::LocalTime,
     ) -> Option<VariantOffsets> {
         use zerovec::ule::AsULE;
         match self.offset_period.get0(&time_zone_id) {

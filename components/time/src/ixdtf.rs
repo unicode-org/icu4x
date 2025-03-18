@@ -285,7 +285,9 @@ impl<'a> Intermediate<'a> {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
         };
-        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
+        Ok(time_zone_id
+            .with_offset(offset)
+            .at_time((date, time).into()))
     }
 
     fn loose(
@@ -317,7 +319,9 @@ impl<'a> Intermediate<'a> {
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
+        Ok(time_zone_id
+            .with_offset(offset)
+            .at_time((date, time).into()))
     }
 
     fn full(
@@ -337,7 +341,7 @@ impl<'a> Intermediate<'a> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_time((date, time))
+            .at_time((date, time).into())
             .infer_zone_variant(offset_calculator))
     }
 }
@@ -480,7 +484,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
     /// );
     /// assert_eq!(zoneddatetime.zone.zone_variant(), TimeZoneVariant::Daylight);
-    /// let (_, _) = zoneddatetime.zone.local_time();
+    /// let _ = zoneddatetime.zone.local_time();
     /// ```
     ///
     /// An IXDTF string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
@@ -565,7 +569,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(consistent_tz_from_both.zone.time_zone_id(), TimeZone(tinystr!(8, "uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset(), Some(UtcOffset::try_from_seconds(-18000).unwrap()));
     /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), TimeZoneVariant::Daylight);
-    /// let (_, _) = consistent_tz_from_both.zone.local_time();
+    /// let _ = consistent_tz_from_both.zone.local_time();
     ///
     /// // There is no name for America/Los_Angeles never at -05:00 (at least in 2024), so either the
     /// // time zone or the offset are wrong.
