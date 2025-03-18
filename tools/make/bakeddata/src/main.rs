@@ -75,7 +75,7 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new_tested();
+    let source = SourceDataProvider::new();
 
     let driver = ExportDriver::new(
         source

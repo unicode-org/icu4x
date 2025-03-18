@@ -792,7 +792,7 @@ mod date_skeleton_consistency_tests {
     #[test]
     fn gregorian_only() {
         // NOTE: This test is intended to run over all modern locales
-        let provider = SourceDataProvider::new_tested();
+        let provider = SourceDataProvider::new();
 
         let mut num_problems = 0;
         for locale in provider
@@ -815,7 +815,7 @@ mod date_skeleton_consistency_tests {
     #[ignore]
     fn all_calendars() {
         // NOTE: This test is intended to run over all modern locales
-        let provider = SourceDataProvider::new_tested();
+        let provider = SourceDataProvider::new();
 
         let mut num_problems = 0;
         use DatagenCalendar::*;
