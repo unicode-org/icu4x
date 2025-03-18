@@ -49,15 +49,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return TimeZoneInfo._fromFfi(result, []);
   }
 
-  /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
-  IsoDateTime? localTime() {
-    final result = _icu4x_TimeZoneInfo_local_time_mv1(_ffi);
-    if (!result.isOk) {
-      return null;
-    }
-    return IsoDateTime._fromFfi(result.union.ok);
-  }
-
   /// See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
   TimeZoneInfo withZoneVariant(TimeZoneVariant timeZoneVariant) {
     final result = _icu4x_TimeZoneInfo_with_zone_variant_mv1(_ffi, timeZoneVariant.index);
@@ -110,11 +101,6 @@ external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_time_zone_id_mv1(ffi.Pointe
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_at_time_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_at_time_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
-
-@_DiplomatFfiUse('icu4x_TimeZoneInfo_local_time_mv1')
-@ffi.Native<_ResultIsoDateTimeFfiVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_local_time_mv1')
-// ignore: non_constant_identifier_names
-external _ResultIsoDateTimeFfiVoid _icu4x_TimeZoneInfo_local_time_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_TimeZoneInfo_with_zone_variant_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_with_zone_variant_mv1')

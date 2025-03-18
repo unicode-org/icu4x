@@ -8,7 +8,6 @@
 #include "diplomat_runtime.h"
 
 #include "IsoDate.d.h"
-#include "IsoDateTime.d.h"
 #include "Time.d.h"
 #include "TimeZone.d.h"
 #include "TimeZoneVariant.d.h"
@@ -29,9 +28,6 @@ TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(const TimeZone* time_zone_id, co
 TimeZone* icu4x_TimeZoneInfo_time_zone_id_mv1(const TimeZoneInfo* self);
 
 TimeZoneInfo* icu4x_TimeZoneInfo_at_time_mv1(const TimeZoneInfo* self, const IsoDate* date, const Time* time);
-
-typedef struct icu4x_TimeZoneInfo_local_time_mv1_result {union {IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_local_time_mv1_result;
-icu4x_TimeZoneInfo_local_time_mv1_result icu4x_TimeZoneInfo_local_time_mv1(const TimeZoneInfo* self);
 
 TimeZoneInfo* icu4x_TimeZoneInfo_with_zone_variant_mv1(const TimeZoneInfo* self, TimeZoneVariant time_zone_variant);
 

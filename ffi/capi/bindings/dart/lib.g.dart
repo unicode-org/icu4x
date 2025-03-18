@@ -331,32 +331,6 @@ final class _ResultIsoDateTimeFfiInt32 extends ffi.Struct {
   }
 }
 
-final class _ResultIsoDateTimeFfiVoidUnion extends ffi.Union {
-  external _IsoDateTimeFfi ok;
-
-}
-
-final class _ResultIsoDateTimeFfiVoid extends ffi.Struct {
-  external _ResultIsoDateTimeFfiVoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultIsoDateTimeFfiVoid.ok(_IsoDateTimeFfi val) {
-    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiVoid>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultIsoDateTimeFfiVoid.err() {
-    final struct = ffi.Struct.create<_ResultIsoDateTimeFfiVoid>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
 final class _ResultOpaqueFixedDecimalLimitErrorFfiUnion extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
