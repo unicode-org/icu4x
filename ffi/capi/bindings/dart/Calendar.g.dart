@@ -26,7 +26,7 @@ final class Calendar implements ffi.Finalizable {
   /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
-  factory Calendar(AnyCalendarKind kind) {
+  factory Calendar(CalendarKind kind) {
     final result = _icu4x_Calendar_create_mv1(kind.index);
     return Calendar._fromFfi(result, []);
   }
@@ -36,7 +36,7 @@ final class Calendar implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Calendar.forKindWithProvider(DataProvider provider, AnyCalendarKind kind) {
+  factory Calendar.forKindWithProvider(DataProvider provider, CalendarKind kind) {
     final result = _icu4x_Calendar_create_with_provider_mv1(provider._ffi, kind.index);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
@@ -47,9 +47,9 @@ final class Calendar implements ffi.Finalizable {
   /// Returns the kind of this calendar
   ///
   /// See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
-  AnyCalendarKind get kind {
+  CalendarKind get kind {
     final result = _icu4x_Calendar_kind_mv1(_ffi);
-    return AnyCalendarKind.values[result];
+    return CalendarKind.values[result];
   }
 }
 

@@ -15,7 +15,7 @@ namespace capi { struct Calendar; }
 class Calendar;
 namespace capi { struct DataProvider; }
 class DataProvider;
-class AnyCalendarKind;
+class CalendarKind;
 class DataError;
 }
 
@@ -27,14 +27,32 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
+ */
 class Calendar {
 public:
 
-  inline static std::unique_ptr<icu4x::Calendar> create(icu4x::AnyCalendarKind kind);
+  /**
+   * Creates a new [`Calendar`] from the specified date and time, using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+   */
+  inline static std::unique_ptr<icu4x::Calendar> create(icu4x::CalendarKind kind);
 
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind);
+  /**
+   * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind);
 
-  inline icu4x::AnyCalendarKind kind() const;
+  /**
+   * Returns the kind of this calendar
+   *
+   * See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+   */
+  inline icu4x::CalendarKind kind() const;
 
   inline const icu4x::capi::Calendar* AsFFI() const;
   inline icu4x::capi::Calendar* AsFFI();

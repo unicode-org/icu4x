@@ -25,6 +25,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/locale/enum.ParseError.html)
+ */
 class LocaleParseError {
 public:
   enum Value {

@@ -5,8 +5,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
+ */
 const TimeZone_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZone_destroy_mv1(ptr);
 });
@@ -40,6 +41,11 @@ export class TimeZone {
         return this.#ptr;
     }
 
+    /** 
+     * The unknown time zone.
+     *
+     * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
+     */
     static unknown() {
         const result = wasm.icu4x_TimeZone_unknown_mv1();
     
@@ -50,6 +56,13 @@ export class TimeZone {
         finally {}
     }
 
+    /** 
+     * Creates a time zone from a BCP-47 string.
+     *
+     * Returns the unknown time zone if the string is not a valid BCP-47 subtag.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html)
+     */
     static createFromBcp47(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -66,6 +79,9 @@ export class TimeZone {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.with_offset) for more information.
+     */
     withOffset(offset) {
         const result = wasm.icu4x_TimeZone_with_offset_mv1(this.ffiValue, offset.ffiValue);
     
@@ -76,6 +92,9 @@ export class TimeZone {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.without_offset) for more information.
+     */
     withoutOffset() {
         const result = wasm.icu4x_TimeZone_without_offset_mv1(this.ffiValue);
     

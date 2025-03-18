@@ -74,7 +74,7 @@ void main() {
 
     final zonedDateTimeBuddhist = ZonedDateTime.fromString(
       '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
-      Calendar(AnyCalendarKind.buddhist),
+      Calendar(CalendarKind.buddhist),
       IanaParser(),
       VariantOffsetsCalculator(),
     );
@@ -106,8 +106,8 @@ void main() {
       ),
       throwsA(
         DateTimeMismatchedCalendarError(
-          thisKind: AnyCalendarKind.hijriObservational,
-          dateKind: AnyCalendarKind.buddhist,
+          thisKind: CalendarKind.hijriObservational,
+          dateKind: CalendarKind.buddhist,
         ),
       ),
     );
@@ -115,7 +115,7 @@ void main() {
     expect(
       DateTimeFormatter.ymdet(locale).formatSameCalendar(
         zonedDateTimeBuddhist.date.toCalendar(
-          Calendar(AnyCalendarKind.hijriObservational),
+          Calendar(CalendarKind.hijriObservational),
         ),
         zonedDateTimeBuddhist.time,
       ),

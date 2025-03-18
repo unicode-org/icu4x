@@ -2,10 +2,11 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** The sign of a FixedDecimal, as shown in formatting.
-*
-*See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
-*/
+/** 
+ * The sign of a FixedDecimal, as shown in formatting.
+ *
+ * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
+ */
 
 
 export class FixedDecimalSign {

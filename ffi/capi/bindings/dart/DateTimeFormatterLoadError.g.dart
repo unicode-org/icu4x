@@ -13,7 +13,7 @@ enum DateTimeFormatterLoadError {
 
   conflictingField,
 
-  typeTooSpecific,
+  formatterTooSpecific,
 
   dataMarkerNotFound,
 
@@ -41,7 +41,7 @@ enum DateTimeFormatterLoadError {
         return 2051;
       case conflictingField:
         return 2057;
-      case typeTooSpecific:
+      case formatterTooSpecific:
         return 2058;
       case dataMarkerNotFound:
         return 1;

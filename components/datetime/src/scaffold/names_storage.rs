@@ -98,7 +98,7 @@ impl_holder_trait!(tz::MzPeriodV1);
 #[non_exhaustive]
 pub enum MaybePayloadError {
     /// TODO
-    TypeTooSpecific,
+    FormatterTooSpecific,
     /// TODO
     ConflictingField,
 }
@@ -108,7 +108,7 @@ impl core::error::Error for MaybePayloadError {}
 impl MaybePayloadError {
     pub(crate) fn into_load_error(self, error_field: ErrorField) -> PatternLoadError {
         match self {
-            Self::TypeTooSpecific => PatternLoadError::TypeTooSpecific(error_field),
+            Self::FormatterTooSpecific => PatternLoadError::FormatterTooSpecific(error_field),
             Self::ConflictingField => PatternLoadError::ConflictingField(error_field),
         }
     }
@@ -262,7 +262,7 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
-        Err(MaybePayloadError::TypeTooSpecific)
+        Err(MaybePayloadError::FormatterTooSpecific)
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]

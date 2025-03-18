@@ -4,9 +4,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An iterator over code point ranges, produced by `CodePointSetData` or
-*one of the `CodePointMapData` types
-*/
+/** 
+ * An iterator over code point ranges, produced by `CodePointSetData` or
+ * one of the `CodePointMapData` types
+ */
 const CodePointRangeIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointRangeIterator_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class CodePointRangeIterator {
         return this.#ptr;
     }
 
+    /** 
+     * Advance the iterator by one and return the next range.
+     *
+     * If the iterator is out of items, `done` will be true
+     */
     next() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 12, 4, false);
         

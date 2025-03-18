@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
-*/
+/** 
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
+ */
 
 
 export class DateTimeFormatterLoadError {
@@ -16,7 +17,7 @@ export class DateTimeFormatterLoadError {
         ["UnsupportedCalendar", 2049],
         ["UnsupportedLength", 2051],
         ["ConflictingField", 2057],
-        ["TypeTooSpecific", 2058],
+        ["FormatterTooSpecific", 2058],
         ["DataMarkerNotFound", 1],
         ["DataIdentifierNotFound", 2],
         ["DataInvalidRequest", 3],
@@ -91,7 +92,7 @@ export class DateTimeFormatterLoadError {
     static UnsupportedCalendar = DateTimeFormatterLoadError.#objectValues[2049];
     static UnsupportedLength = DateTimeFormatterLoadError.#objectValues[2051];
     static ConflictingField = DateTimeFormatterLoadError.#objectValues[2057];
-    static TypeTooSpecific = DateTimeFormatterLoadError.#objectValues[2058];
+    static FormatterTooSpecific = DateTimeFormatterLoadError.#objectValues[2058];
     static DataMarkerNotFound = DateTimeFormatterLoadError.#objectValues[1];
     static DataIdentifierNotFound = DateTimeFormatterLoadError.#objectValues[2];
     static DataInvalidRequest = DateTimeFormatterLoadError.#objectValues[3];

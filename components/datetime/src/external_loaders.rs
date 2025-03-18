@@ -4,12 +4,12 @@
 
 //! Internal traits and structs for loading data from other crates.
 
+use crate::DateTimeFormatterLoadError;
 use icu_calendar::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_provider::prelude::*;
-use crate::DateTimeFormatterLoadError;
 
 /// Trait for loading a DecimalFormatter.
 ///

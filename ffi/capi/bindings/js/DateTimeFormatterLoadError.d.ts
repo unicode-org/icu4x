@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
-*/
+/** 
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
+ */
 
 
 export class DateTimeFormatterLoadError {
@@ -19,7 +20,7 @@ export class DateTimeFormatterLoadError {
     static UnsupportedCalendar : DateTimeFormatterLoadError;
     static UnsupportedLength : DateTimeFormatterLoadError;
     static ConflictingField : DateTimeFormatterLoadError;
-    static TypeTooSpecific : DateTimeFormatterLoadError;
+    static FormatterTooSpecific : DateTimeFormatterLoadError;
     static DataMarkerNotFound : DateTimeFormatterLoadError;
     static DataIdentifierNotFound : DateTimeFormatterLoadError;
     static DataInvalidRequest : DateTimeFormatterLoadError;

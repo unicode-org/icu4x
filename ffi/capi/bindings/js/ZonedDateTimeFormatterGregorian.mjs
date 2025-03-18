@@ -11,8 +11,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+ */
 const ZonedDateTimeFormatterGregorian_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1(ptr);
 });
@@ -46,6 +47,9 @@ export class ZonedDateTimeFormatterGregorian {
         return this.#ptr;
     }
 
+    /** 
+     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+     */
     static createGenericShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -64,6 +68,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+     */
     static createGenericShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -82,6 +89,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+     */
     static createGenericLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -100,6 +110,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+     */
     static createGenericLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -118,6 +131,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+     */
     static createSpecificShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -136,6 +152,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+     */
     static createSpecificShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -154,6 +173,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+     */
     static createSpecificLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -172,6 +194,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+     */
     static createSpecificLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -190,6 +215,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+     */
     static createLocalizedOffsetShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -208,6 +236,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+     */
     static createLocalizedOffsetShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -226,6 +257,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+     */
     static createLocalizedOffsetLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -244,6 +278,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+     */
     static createLocalizedOffsetLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -262,6 +299,9 @@ export class ZonedDateTimeFormatterGregorian {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
+     */
     formatIso(date, time, zone) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

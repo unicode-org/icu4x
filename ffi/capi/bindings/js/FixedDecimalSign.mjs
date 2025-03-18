@@ -3,10 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** The sign of a FixedDecimal, as shown in formatting.
-*
-*See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
-*/
+/** 
+ * The sign of a FixedDecimal, as shown in formatting.
+ *
+ * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
+ */
 
 
 export class FixedDecimalSign {

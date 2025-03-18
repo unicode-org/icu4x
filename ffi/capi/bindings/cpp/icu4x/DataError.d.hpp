@@ -30,6 +30,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [2](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
+ */
 class DataError {
 public:
   enum Value {

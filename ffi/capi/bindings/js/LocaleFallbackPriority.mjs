@@ -3,10 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Priority mode for the ICU4X fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
-*/
+/** 
+ * Priority mode for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
+ */
 
 
 export class LocaleFallbackPriority {

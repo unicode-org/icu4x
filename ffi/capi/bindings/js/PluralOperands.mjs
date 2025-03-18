@@ -5,8 +5,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
+ */
 const PluralOperands_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_PluralOperands_destroy_mv1(ptr);
 });
@@ -40,6 +41,11 @@ export class PluralOperands {
         return this.#ptr;
     }
 
+    /** 
+     * Construct for a given string representing a number
+     *
+     * See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+     */
     static fromString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -64,6 +70,9 @@ export class PluralOperands {
         }
     }
 
+    /** 
+     * Construct for a given integer
+     */
     static fromBigInt(i) {
         const result = wasm.icu4x_PluralOperands_from_int64_mv1(i);
     
@@ -74,6 +83,11 @@ export class PluralOperands {
         finally {}
     }
 
+    /** 
+     * Construct from a FixedDecimal
+     *
+     * Retains at most 18 digits each from the integer and fraction parts.
+     */
     static fromFixedDecimal(x) {
         const result = wasm.icu4x_PluralOperands_from_fixed_decimal_mv1(x.ffiValue);
     

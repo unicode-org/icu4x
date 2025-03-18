@@ -30,6 +30,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Mode used in a rounding operation for signed numbers.
+ *
+ * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
+ */
 class FixedDecimalSignedRoundingMode {
 public:
   enum Value {

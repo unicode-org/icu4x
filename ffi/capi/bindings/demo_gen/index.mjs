@@ -196,7 +196,7 @@ let termini = Object.assign({
             
             {
                 name: "Date:Calendar:Kind",
-                type: "AnyCalendarKind",
+                type: "CalendarKind",
                 typeUse: "enumerator"
             }
             
@@ -229,7 +229,7 @@ let termini = Object.assign({
             
             {
                 name: "Date:Calendar:Kind",
-                type: "AnyCalendarKind",
+                type: "CalendarKind",
                 typeUse: "enumerator"
             }
             
@@ -337,7 +337,7 @@ let termini = Object.assign({
             
             {
                 name: "Date:Calendar:Kind",
-                type: "AnyCalendarKind",
+                type: "CalendarKind",
                 typeUse: "enumerator"
             }
             
@@ -769,7 +769,7 @@ let termini = Object.assign({
             
             {
                 name: "Date:Calendar:Kind",
-                type: "AnyCalendarKind",
+                type: "CalendarKind",
                 typeUse: "enumerator"
             },
             

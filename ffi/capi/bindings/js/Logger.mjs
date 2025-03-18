@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An object allowing control over the logging used
-*/
+/** 
+ * An object allowing control over the logging used
+ */
 const Logger_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Logger_destroy_mv1(ptr);
 });
@@ -38,6 +39,13 @@ export class Logger {
         return this.#ptr;
     }
 
+    /** 
+     * Initialize the logger using `simple_logger`
+     *
+     * Requires the `simple_logger` Cargo feature.
+     *
+     * Returns `false` if there was already a logger set.
+     */
     static initSimpleLogger() {
         const result = wasm.icu4x_Logger_init_simple_logger_mv1();
     

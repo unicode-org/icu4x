@@ -7,14 +7,14 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "AnyCalendarKind.d.h"
+#include "CalendarKind.d.h"
 
 
 
 
 typedef struct DateTimeMismatchedCalendarError {
-  AnyCalendarKind this_kind;
-  AnyCalendarKind_option date_kind;
+  CalendarKind this_kind;
+  CalendarKind_option date_kind;
 } DateTimeMismatchedCalendarError;
 
 typedef struct DateTimeMismatchedCalendarError_option {union { DateTimeMismatchedCalendarError ok; }; bool is_ok; } DateTimeMismatchedCalendarError_option;

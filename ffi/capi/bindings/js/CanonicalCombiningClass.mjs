@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+ */
 
 
 export class CanonicalCombiningClass {
@@ -236,6 +237,9 @@ export class CanonicalCombiningClass {
     static DoubleAbove = CanonicalCombiningClass.#objectValues[234];
     static IotaSubscript = CanonicalCombiningClass.#objectValues[240];
 
+    /** 
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     */
     static forChar(ch) {
         const result = wasm.icu4x_CanonicalCombiningClass_for_char_mv1(ch);
     
@@ -246,6 +250,11 @@ export class CanonicalCombiningClass {
         finally {}
     }
 
+    /** 
+     * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
+     */
     toIntegerValue() {
         const result = wasm.icu4x_CanonicalCombiningClass_to_integer_value_mv1(this.ffiValue);
     
@@ -256,6 +265,11 @@ export class CanonicalCombiningClass {
         finally {}
     }
 
+    /** 
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
+     */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

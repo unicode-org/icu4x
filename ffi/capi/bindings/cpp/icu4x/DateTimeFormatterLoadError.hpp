@@ -32,7 +32,7 @@ inline icu4x::DateTimeFormatterLoadError icu4x::DateTimeFormatterLoadError::From
     case icu4x::capi::DateTimeFormatterLoadError_UnsupportedCalendar:
     case icu4x::capi::DateTimeFormatterLoadError_UnsupportedLength:
     case icu4x::capi::DateTimeFormatterLoadError_ConflictingField:
-    case icu4x::capi::DateTimeFormatterLoadError_TypeTooSpecific:
+    case icu4x::capi::DateTimeFormatterLoadError_FormatterTooSpecific:
     case icu4x::capi::DateTimeFormatterLoadError_DataMarkerNotFound:
     case icu4x::capi::DateTimeFormatterLoadError_DataIdentifierNotFound:
     case icu4x::capi::DateTimeFormatterLoadError_DataInvalidRequest:

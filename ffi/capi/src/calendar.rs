@@ -17,7 +17,7 @@ pub mod ffi {
     /// The various calendar types currently supported by [`Calendar`]
     #[diplomat::enum_convert(icu_calendar::AnyCalendarKind, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::AnyCalendarKind, Enum)]
-    pub enum AnyCalendarKind {
+    pub enum CalendarKind {
         /// The kind of an Iso calendar
         Iso = 0,
         /// The kind of a Gregorian calendar
@@ -66,7 +66,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create(kind: AnyCalendarKind) -> Box<Calendar> {
+        pub fn create(kind: CalendarKind) -> Box<Calendar> {
             Box::new(Calendar(Arc::new(icu_calendar::AnyCalendar::new(
                 kind.into(),
             ))))
@@ -78,7 +78,7 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-            kind: AnyCalendarKind,
+            kind: CalendarKind,
         ) -> Result<Box<Calendar>, DataError> {
             Ok(Box::new(Calendar(Arc::new(
                 icu_calendar::AnyCalendar::try_new_with_buffer_provider(
@@ -91,7 +91,7 @@ pub mod ffi {
         /// Returns the kind of this calendar
         #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
         #[diplomat::attr(auto, getter)]
-        pub fn kind(&self) -> AnyCalendarKind {
+        pub fn kind(&self) -> CalendarKind {
             self.0.kind().into()
         }
     }

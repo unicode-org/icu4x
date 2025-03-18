@@ -18,7 +18,7 @@ namespace capi {
       DateTimeFormatterLoadError_UnsupportedCalendar = 2049,
       DateTimeFormatterLoadError_UnsupportedLength = 2051,
       DateTimeFormatterLoadError_ConflictingField = 2057,
-      DateTimeFormatterLoadError_TypeTooSpecific = 2058,
+      DateTimeFormatterLoadError_FormatterTooSpecific = 2058,
       DateTimeFormatterLoadError_DataMarkerNotFound = 1,
       DateTimeFormatterLoadError_DataIdentifierNotFound = 2,
       DateTimeFormatterLoadError_DataInvalidRequest = 3,
@@ -34,6 +34,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
+ */
 class DateTimeFormatterLoadError {
 public:
   enum Value {
@@ -41,7 +44,7 @@ public:
     UnsupportedCalendar = 2049,
     UnsupportedLength = 2051,
     ConflictingField = 2057,
-    TypeTooSpecific = 2058,
+    FormatterTooSpecific = 2058,
     DataMarkerNotFound = 1,
     DataIdentifierNotFound = 2,
     DataInvalidRequest = 3,

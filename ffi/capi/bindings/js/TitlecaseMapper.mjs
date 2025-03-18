@@ -7,8 +7,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
+ */
 const TitlecaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TitlecaseMapper_destroy_mv1(ptr);
 });
@@ -42,6 +43,11 @@ export class TitlecaseMapper {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new `TitlecaseMapper` instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -60,6 +66,11 @@ export class TitlecaseMapper {
         }
     }
 
+    /** 
+     * Construct a new `TitlecaseMapper` instance using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -78,6 +89,13 @@ export class TitlecaseMapper {
         }
     }
 
+    /** 
+     * Returns the full titlecase mapping of the given string
+     *
+     * The `v1` refers to the version of the options struct, which may change as we add more options
+     *
+     * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+     */
     titlecaseSegment(s, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         

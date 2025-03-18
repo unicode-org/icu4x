@@ -8,10 +8,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
-*
-*See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
-*/
+/** 
+ * A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
+ *
+ * See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
+ */
 const WeekCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_WeekCalculator_destroy_mv1(ptr);
 });
@@ -45,6 +46,11 @@ export class WeekCalculator {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a new [`WeekCalculator`] from locale data using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
+     */
     #defaultConstructor(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -63,6 +69,11 @@ export class WeekCalculator {
         }
     }
 
+    /** 
+     * Creates a new [`WeekCalculator`] from locale data using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
+     */
     static createWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -81,6 +92,9 @@ export class WeekCalculator {
         }
     }
 
+    /** 
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
+     */
     static fromFirstDayOfWeekAndMinWeekDays(firstWeekday, minWeekDays) {
         const result = wasm.icu4x_WeekCalculator_from_first_day_of_week_and_min_week_days_mv1(firstWeekday.ffiValue, minWeekDays);
     
@@ -91,6 +105,11 @@ export class WeekCalculator {
         finally {}
     }
 
+    /** 
+     * Returns the weekday that starts the week for this object's locale
+     *
+     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
+     */
     get firstWeekday() {
         const result = wasm.icu4x_WeekCalculator_first_weekday_mv1(this.ffiValue);
     
@@ -101,6 +120,12 @@ export class WeekCalculator {
         finally {}
     }
 
+    /** 
+     * The minimum number of days overlapping a year required for a week to be
+     * considered part of that year
+     *
+     * See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
+     */
     get minWeekDays() {
         const result = wasm.icu4x_WeekCalculator_min_week_days_mv1(this.ffiValue);
     
@@ -111,6 +136,9 @@ export class WeekCalculator {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.weekend) for more information.
+     */
     get weekend() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 7, 1, false);
         
