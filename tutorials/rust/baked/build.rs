@@ -25,7 +25,7 @@ fn main() {
     // markers will speed up the datagen.
     .with_markers([icu::plurals::provider::PluralsCardinalV1::INFO])
     .export(
-        &SourceDataProvider::new_latest_tested(),
+        &SourceDataProvider::new_tested(),
         BakedExporter::new(mod_directory, {
             let mut options = Options::default();
             options.overwrite = true;

@@ -16,7 +16,7 @@ use icu_provider_export::prelude::*;
 use icu_provider_source::SourceDataProvider;
 use std::fs::File;
 
-let provider = SourceDataProvider::new_latest_tested();
+let provider = SourceDataProvider::new_tested();
 
 ExportDriver::new(
     [DataLocaleFamily::FULL],
