@@ -72,7 +72,7 @@ export { IsoDate } from "./IsoDate.mjs"
 
 export { DateFormatter } from "./DateFormatter.mjs"
 
-export { GregorianDateFormatter } from "./GregorianDateFormatter.mjs"
+export { DateFormatterGregorian } from "./DateFormatterGregorian.mjs"
 
 export { NoCalendarFormatter } from "./NoCalendarFormatter.mjs"
 
@@ -305,6 +305,8 @@ export { LineBreak } from "./LineBreak.mjs"
 export { Script } from "./Script.mjs"
 
 export { SentenceBreak } from "./SentenceBreak.mjs"
+
+export { VerticalOrientation } from "./VerticalOrientation.mjs"
 
 export { WordBreak } from "./WordBreak.mjs"
 

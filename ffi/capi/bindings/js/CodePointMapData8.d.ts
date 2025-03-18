@@ -77,4 +77,8 @@ export class CodePointMapData8 {
     static createCanonicalCombiningClass(): CodePointMapData8;
 
     static createCanonicalCombiningClassWithProvider(provider: DataProvider): CodePointMapData8;
+
+    static createVerticalOrientation(): CodePointMapData8;
+
+    static createVerticalOrientationWithProvider(provider: DataProvider): CodePointMapData8;
 }

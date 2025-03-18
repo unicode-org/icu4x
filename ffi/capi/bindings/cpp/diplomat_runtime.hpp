@@ -152,17 +152,37 @@ public:
     return std::holds_alternative<Err<E>>(this->val);
   }
 
+  template<typename U = T, typename std::enable_if_t<!std::is_reference_v<U>, std::nullptr_t> = nullptr>
   std::optional<T> ok() && {
     if (!this->is_ok()) {
       return std::nullopt;
     }
     return std::make_optional(std::move(std::get<Ok<T>>(std::move(this->val)).inner));
   }
+
+  template<typename U = E, typename std::enable_if_t<!std::is_reference_v<U>, std::nullptr_t> = nullptr>
   std::optional<E> err() && {
     if (!this->is_err()) {
       return std::nullopt;
     }
     return std::make_optional(std::move(std::get<Err<E>>(std::move(this->val)).inner));
+  }
+
+  // std::optional does not work with reference types directly, so wrap them if present
+  template<typename U = T, typename std::enable_if_t<std::is_reference_v<U>, std::nullptr_t> = nullptr>
+  std::optional<std::reference_wrapper<std::remove_reference_t<T>>> ok() && {
+    if (!this->is_ok()) {
+      return std::nullopt;
+    }
+    return std::make_optional(std::reference_wrapper(std::forward<T>(std::get<Ok<T>>(std::move(this->val)).inner)));
+  }
+
+  template<typename U = E, typename std::enable_if_t<std::is_reference_v<U>, std::nullptr_t> = nullptr>
+  std::optional<std::reference_wrapper<std::remove_reference_t<E>>> err() && {
+    if (!this->is_err()) {
+      return std::nullopt;
+    }
+    return std::make_optional(std::reference_wrapper(std::forward<E>(std::get<Err<E>>(std::move(this->val)).inner)));
   }
 
   void set_ok(T&& t) {

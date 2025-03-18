@@ -34,7 +34,7 @@ namespace icu4x {
 class CodePointMapData8 {
 public:
 
-  inline uint8_t get(char32_t cp) const;
+  inline uint8_t operator[](char32_t cp) const;
 
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const;
 
@@ -87,6 +87,10 @@ public:
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_canonical_combining_class();
 
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider);
+
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_vertical_orientation();
+
+  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_vertical_orientation_with_provider(const icu4x::DataProvider& provider);
 
   inline const icu4x::capi::CodePointMapData8* AsFFI() const;
   inline icu4x::capi::CodePointMapData8* AsFFI();

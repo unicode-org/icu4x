@@ -121,7 +121,7 @@ struct Cli {
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
-        help = "Download tzdb from this GitHub tag (https://github.com/eggert/tzdb)\n\
+        help = "Download tzdb from this IANA tag (https://data.iana.org/time-zones/releases/)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--tzdb-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
@@ -130,7 +130,9 @@ struct Cli {
     tzdb_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[arg(help = "Path to a local tzdb directory (see https://github.com/eggert/tzdb).")]
+    #[arg(help = "Path to a local tzdb directory \
+                (see any zip file from https://data.iana.org/time-zones/releases/, \
+                directory structure matching https://data.iana.org/time-zones/tzdb-2025a/).")]
     #[cfg(feature = "provider")]
     tzdb_root: Option<PathBuf>,
 

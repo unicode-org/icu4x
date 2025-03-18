@@ -77,7 +77,7 @@ export class BidiMirroringGlyph {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#mirroringGlyph, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint32Array)]), this.#mirrored, /* [3 x i8] padding */ 0, 0, 0 /* end padding */, this.#pairedBracketType.ffiValue]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#mirroringGlyph, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue, Uint32Array)]), this.#mirrored, /* [3 x i8] padding */ 0, 0, 0 /* end padding */, this.#pairedBracketType.ffiValue]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {

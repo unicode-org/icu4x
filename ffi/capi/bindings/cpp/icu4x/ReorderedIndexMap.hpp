@@ -47,7 +47,7 @@ inline bool icu4x::ReorderedIndexMap::is_empty() const {
   return result;
 }
 
-inline size_t icu4x::ReorderedIndexMap::get(size_t index) const {
+inline size_t icu4x::ReorderedIndexMap::operator[](size_t index) const {
   auto result = icu4x::capi::icu4x_ReorderedIndexMap_get_mv1(this->AsFFI(),
     index);
   return result;

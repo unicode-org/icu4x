@@ -74,7 +74,7 @@ export { IsoDate } from "./IsoDate"
 
 export { DateFormatter } from "./DateFormatter"
 
-export { GregorianDateFormatter } from "./GregorianDateFormatter"
+export { DateFormatterGregorian } from "./DateFormatterGregorian"
 
 export { NoCalendarFormatter } from "./NoCalendarFormatter"
 
@@ -307,6 +307,8 @@ export { LineBreak } from "./LineBreak"
 export { Script } from "./Script"
 
 export { SentenceBreak } from "./SentenceBreak"
+
+export { VerticalOrientation } from "./VerticalOrientation"
 
 export { WordBreak } from "./WordBreak"
 

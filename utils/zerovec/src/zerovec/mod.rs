@@ -1120,16 +1120,12 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
-    () => (
+    () => {
         $crate::ZeroSlice::new_empty()
-    );
-    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
-        $crate::ZeroSlice::<$aligned>::from_ule_slice(
-            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
-                $($convert($x)),*
-            ]; X}
-        )
-    );
+    };
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => {
+        $crate::ZeroSlice::<$aligned>::from_ule_slice(const { &[$($convert($x)),*] })
+    };
 }
 
 /// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value

@@ -739,8 +739,8 @@ locale/exemplar/characters/punctuation/v1, yue-Hans, 296B, 243B, 6f5dc7c33d9cb21
 locale/exemplar/characters/punctuation/v1, za, -> af
 locale/exemplar/characters/punctuation/v1, zh, -> yue-Hans
 locale/exemplar/characters/punctuation/v1, zh-Hant, -> yue
-locale/likely/subtags/extended/v1, <singleton>, 72428B, 72160B, 11843be7dd4d75be
-locale/likely/subtags/language/v1, <singleton>, 2320B, 2181B, 36b60e76bc0d9a20
+locale/likely/subtags/extended/v1, <singleton>, 72418B, 72150B, a95576f55ee5c93b
+locale/likely/subtags/language/v1, <singleton>, 2310B, 2171B, cd4fe07b1028d8ad
 locale/likely/subtags/script/region/v1, <singleton>, 3304B, 3172B, d955ac1bc856facc
 locale/parents/v1, <singleton>, 2846B, 2802B, 20f2dd2d3f0748bd
 locale/script/direction/v1, <singleton>, 740B, 696B, b43c5a46f6b655d7

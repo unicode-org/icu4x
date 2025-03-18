@@ -48,7 +48,7 @@ export class DecimalFormatter {
     static createWithGroupingStrategy(locale, groupingStrategy) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -66,7 +66,7 @@ export class DecimalFormatter {
     static createWithGroupingStrategyAndProvider(provider, locale, groupingStrategy) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -100,7 +100,7 @@ export class DecimalFormatter {
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice.splat(), ...plusSignSuffixSlice.splat(), ...minusSignPrefixSlice.splat(), ...minusSignSuffixSlice.splat(), ...decimalSeparatorSlice.splat(), ...groupingSeparatorSlice.splat(), primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice.splat(), ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_DecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice.splat(), ...plusSignSuffixSlice.splat(), ...minusSignPrefixSlice.splat(), ...minusSignSuffixSlice.splat(), ...decimalSeparatorSlice.splat(), ...groupingSeparatorSlice.splat(), primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice.splat(), ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
     
         try {
             if (!diplomatReceive.resultFlag) {

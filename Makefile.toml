@@ -219,6 +219,7 @@ dependencies = [
     "generated-readme-check",
     "license-file-check",
     "depcheck",
+    "codegen-check",
 ]
 
 [tasks.ci-job-clippy]

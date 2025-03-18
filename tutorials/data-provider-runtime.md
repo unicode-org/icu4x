@@ -64,7 +64,7 @@ assert_eq!(
 );
 ```
 
-# Caching Data Provider
+## Caching Data Provider
 
 ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and, for example, a less-efficient data provider such as JSON is being used.
 
@@ -189,7 +189,7 @@ assert_eq!(
 assert_eq!(provider.cache.lock().unwrap().len(), 2);
 ```
 
-# Overwriting Specific Data Items
+## Overwriting Specific Data Items
 
 ICU4X's explicit data pipeline allows for specific data entries to be overwritten in order to customize the output or comply with policy.
 
@@ -256,11 +256,11 @@ let formatter = DecimalFormatter::try_new_unstable(
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
 
-## Forking Data Providers
+### Forking Data Providers
 
 Forking providers can be implemented using `DataPayload::dynamic_cast`. For an example, see that function's documentation.
 
-## Exporting Custom Data Markers
+### Exporting Custom Data Markers
 
 To add custom data markers to your baked data or postcard file, create a forking exportable provider:
 
@@ -341,7 +341,7 @@ assert!(blob_provider.load_data(PluralsCardinalV1::INFO, req).is_ok());
 assert!(blob_provider.load_data(CustomV1::INFO, req).is_ok());
 ```
 
-## Accessing the Resolved Locale
+### Accessing the Resolved Locale
 
 ICU4X objects do not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necessarily mean that a locale is not supported.
 
