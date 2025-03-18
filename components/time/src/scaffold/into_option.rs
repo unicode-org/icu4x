@@ -3,10 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
+    provider::MinutesSinceEpoch,
     zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
-use icu_calendar::{types::*, AnyCalendarKind, Date, Iso};
+use icu_calendar::{types::*, AnyCalendarKind};
 
 /// Converts Self to an `Option<T>`, either `Some(T)` if able or `None`
 pub trait IntoOption<T> {
@@ -119,7 +120,7 @@ impl IntoOption<TimeZoneVariant> for TimeZoneVariant {
     }
 }
 
-impl IntoOption<(Date<Iso>, Time)> for (Date<Iso>, Time) {
+impl IntoOption<MinutesSinceEpoch> for MinutesSinceEpoch {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

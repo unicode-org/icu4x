@@ -4,9 +4,10 @@
 
 use icu_calendar::{
     types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
-    AsCalendar, Calendar, Date, Iso,
+    AsCalendar, Calendar, Date,
 };
 use icu_time::{
+    provider::MinutesSinceEpoch,
     zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
@@ -264,13 +265,13 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<(Date<Iso>, Time)>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<MinutesSinceEpoch>
     for ZonedDateTime<A, Z>
 where
-    Z: GetField<(Date<Iso>, Time)>,
+    Z: GetField<MinutesSinceEpoch>,
 {
     #[inline]
-    fn get_field(&self) -> (Date<Iso>, Time) {
+    fn get_field(&self) -> MinutesSinceEpoch {
         self.zone.get_field()
     }
 }
@@ -316,13 +317,13 @@ where
     }
 }
 
-impl<O> GetField<(Date<Iso>, Time)> for TimeZoneInfo<O>
+impl<O> GetField<MinutesSinceEpoch> for TimeZoneInfo<O>
 where
-    O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    O: TimeZoneModel<LocalReferenceTime = MinutesSinceEpoch>,
 {
     #[inline]
-    fn get_field(&self) -> (Date<Iso>, Time) {
-        self.local_time()
+    fn get_field(&self) -> MinutesSinceEpoch {
+        self.local_reference_time()
     }
 }
 

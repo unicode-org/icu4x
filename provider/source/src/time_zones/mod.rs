@@ -10,6 +10,7 @@ use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
 use icu::time::provider::*;
+use icu::time::DateTime;
 use icu::time::Time;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
@@ -73,8 +74,10 @@ impl SourceDataProvider {
                     let mut curr_offset = offsets.next().unwrap();
                     let mut curr_mz = mzs.next().unwrap();
 
-                    let horizon =
-                        MinutesSinceEpoch::from((self.timezone_horizon, Time::midnight()));
+                    let horizon = MinutesSinceEpoch::from(DateTime {
+                        date: self.timezone_horizon,
+                        time: Time::midnight(),
+                    });
 
                     while offsets.peek().is_some_and(|&(start, _)| start < horizon) {
                         curr_offset = offsets.next().unwrap();

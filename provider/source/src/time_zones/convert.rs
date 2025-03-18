@@ -16,6 +16,7 @@ use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
 use icu::time::zone::UtcOffset;
+use icu::time::DateTime;
 use icu::time::Time;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
@@ -232,7 +233,7 @@ impl SourceDataProvider {
                             let mut periods = periods
                                 .iter()
                                 .flat_map(move |period| {
-                                    fn parse_mzone_date(from: &str) -> (Date<Iso>, Time) {
+                                    fn parse_mzone_date(from: &str) -> DateTime<Iso> {
                                         // TODO(#2127): Ideally this parsing can move into a library function
                                         let mut parts = from.split(' ');
                                         let date = parts.next().unwrap();
@@ -249,10 +250,10 @@ impl SourceDataProvider {
                                         let minute =
                                             time_parts.next().unwrap().parse::<u8>().unwrap();
 
-                                        (
-                                            Date::try_new_iso(year, month, day).unwrap(),
-                                            Time::try_new(hour, minute, 0, 0).unwrap(),
-                                        )
+                                        DateTime {
+                                            date: Date::try_new_iso(year, month, day).unwrap(),
+                                            time: Time::try_new(hour, minute, 0, 0).unwrap(),
+                                        }
                                     }
 
                                     [
@@ -290,7 +291,7 @@ impl SourceDataProvider {
                                     // The next period starts at the same time
                                     periods.remove(i);
                                 } else if i + 1 < periods.len()
-                                    && periods[i + 1].1 .0 <= self.timezone_horizon
+                                    && periods[i + 1].1.date <= self.timezone_horizon
                                 {
                                     // This next period still starts before the horizon, so we can drop this one
                                     periods.remove(i);
