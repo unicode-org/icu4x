@@ -108,10 +108,10 @@ macro_rules! make_enumerated_property {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, BidiClass};
+/// use icu::properties::{CodePointMapData, props::BidiClass};
 ///
-/// assert_eq!(maps::bidi_class().get('y'), BidiClass::LeftToRight);  // U+0079
-/// assert_eq!(maps::bidi_class().get('ع'), BidiClass::ArabicLetter);  // U+0639
+/// assert_eq!(CodePointMapData::<BidiClass>::new().get('y'), BidiClass::LeftToRight);  // U+0079
+/// assert_eq!(CodePointMapData::<BidiClass>::new().get('ع'), BidiClass::ArabicLetter);  // U+0639
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -208,10 +208,10 @@ pub(crate) mod gc {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu::properties::{CodePointMapData, props::GeneralCategory};
     ///
-    /// assert_eq!(maps::general_category().get('木'), GeneralCategory::OtherLetter);  // U+6728
-    /// assert_eq!(maps::general_category().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// assert_eq!(CodePointMapData::<GeneralCategory>::new().get('木'), GeneralCategory::OtherLetter);  // U+6728
+    /// assert_eq!(CodePointMapData::<GeneralCategory>::new().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
     #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -667,10 +667,10 @@ impl From<GeneralCategoryGroup> for u32 {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, Script};
+/// use icu::properties::{CodePointMapData, props::Script};
 ///
-/// assert_eq!(maps::script().get('木'), Script::Han);  // U+6728
-/// assert_eq!(maps::script().get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
+/// assert_eq!(CodePointMapData::<Script>::new().get('木'), Script::Han);  // U+6728
+/// assert_eq!(CodePointMapData::<Script>::new().get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
 /// ```
 /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
 /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
@@ -884,10 +884,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, HangulSyllableType};
+/// use icu::properties::{CodePointMapData, props::HangulSyllableType};
 ///
-/// assert_eq!(maps::hangul_syllable_type().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
-/// assert_eq!(maps::hangul_syllable_type().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
+/// assert_eq!(CodePointMapData::<HangulSyllableType>::new().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
+/// assert_eq!(CodePointMapData::<HangulSyllableType>::new().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -944,10 +944,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, EastAsianWidth};
+/// use icu::properties::{CodePointMapData, props::EastAsianWidth};
 ///
-/// assert_eq!(maps::east_asian_width().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
-/// assert_eq!(maps::east_asian_width().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+/// assert_eq!(CodePointMapData::<EastAsianWidth>::new().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
+/// assert_eq!(CodePointMapData::<EastAsianWidth>::new().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1002,10 +1002,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, LineBreak};
+/// use icu::properties::{CodePointMapData, props::LineBreak};
 ///
-/// assert_eq!(maps::line_break().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
-/// assert_eq!(maps::line_break().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+/// assert_eq!(CodePointMapData::<LineBreak>::new().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
+/// assert_eq!(CodePointMapData::<LineBreak>::new().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1103,10 +1103,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, GraphemeClusterBreak};
+/// use icu::properties::{CodePointMapData, props::GraphemeClusterBreak};
 ///
-/// assert_eq!(maps::grapheme_cluster_break().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
-/// assert_eq!(maps::grapheme_cluster_break().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+/// assert_eq!(CodePointMapData::<GraphemeClusterBreak>::new().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
+/// assert_eq!(CodePointMapData::<GraphemeClusterBreak>::new().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1176,10 +1176,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, WordBreak};
+/// use icu::properties::{CodePointMapData, props::WordBreak};
 ///
-/// assert_eq!(maps::word_break().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
-/// assert_eq!(maps::word_break().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+/// assert_eq!(CodePointMapData::<WordBreak>::new().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
+/// assert_eq!(CodePointMapData::<WordBreak>::new().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1254,10 +1254,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, SentenceBreak};
+/// use icu::properties::{CodePointMapData, props::SentenceBreak};
 ///
-/// assert_eq!(maps::sentence_break().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
-/// assert_eq!(maps::sentence_break().get(','), SentenceBreak::SContinue); // U+002C: Comma
+/// assert_eq!(CodePointMapData::<SentenceBreak>::new().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
+/// assert_eq!(CodePointMapData::<SentenceBreak>::new().get(','), SentenceBreak::SContinue); // U+002C: Comma
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1322,10 +1322,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, CanonicalCombiningClass};
+/// use icu::properties::{CodePointMapData, props::CanonicalCombiningClass};
 ///
-/// assert_eq!(maps::canonical_combining_class().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-/// assert_eq!(maps::canonical_combining_class().get('\u{0301}'), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// assert_eq!(CodePointMapData::<CanonicalCombiningClass>::new().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+/// assert_eq!(CodePointMapData::<CanonicalCombiningClass>::new().get('\u{0301}'), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
 //
 // NOTE: The Pernosco debugger has special knowledge
@@ -1433,10 +1433,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, IndicSyllabicCategory};
+/// use icu::properties::{CodePointMapData, props::IndicSyllabicCategory};
 ///
-/// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
-/// assert_eq!(maps::indic_syllabic_category().get('\u{0900}'), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
+/// assert_eq!(CodePointMapData::<IndicSyllabicCategory>::new().get('a'), IndicSyllabicCategory::Other);
+/// assert_eq!(CodePointMapData::<IndicSyllabicCategory>::new().get('\u{0900}'), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1518,10 +1518,10 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, JoiningType};
+/// use icu::properties::{CodePointMapData, props::JoiningType};
 ///
-/// assert_eq!(maps::joining_type().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
-/// assert_eq!(maps::joining_type().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
+/// assert_eq!(CodePointMapData::<JoiningType>::new().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
+/// assert_eq!(CodePointMapData::<JoiningType>::new().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -1572,12 +1572,12 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{maps, VerticalOrientation};
+/// use icu::properties::{CodePointMapData, props::VerticalOrientation};
 ///
-/// assert_eq!(maps::vertical_orientation().get('a'), VerticalOrientation::Rotated);
-/// assert_eq!(maps::vertical_orientation().get('§'), VerticalOrientation::Upright);
-/// assert_eq!(maps::vertical_orientation().get32(0x2329), VerticalOrientation::TransformedRotated);
-/// assert_eq!(maps::vertical_orientation().get32(0x3001), VerticalOrientation::TransformedUpright);
+/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get('a'), VerticalOrientation::Rotated);
+/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get('§'), VerticalOrientation::Upright);
+/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get32(0x2329), VerticalOrientation::TransformedRotated);
+/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get32(0x3001), VerticalOrientation::TransformedUpright);
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
