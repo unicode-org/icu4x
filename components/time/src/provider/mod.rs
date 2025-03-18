@@ -15,10 +15,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::{DateTime, Time};
+use crate::DateTime;
 use calendrical_calculations::rata_die::RataDie;
 use core::ops::Deref;
-use icu_calendar::{Date, Iso};
+use icu_calendar::Iso;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::maps::ZeroMapKV;
@@ -255,8 +255,8 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
             return Ok(Self::from(DateTime {
-                date: Date::try_new_iso(year, month, day).map_err(e2)?,
-                time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
+                date: icu_calendar::Date::try_new_iso(year, month, day).map_err(e2)?,
+                time: crate::Time::try_new(hour, minute, 0, 0).map_err(e3)?,
             }));
         }
         i32::deserialize(deserializer).map(Self)
