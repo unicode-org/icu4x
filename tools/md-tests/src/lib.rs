@@ -9,15 +9,15 @@ mod readme {}
 
 mod tutorials {
     #[doc = include_str!("../../../tutorials/quickstart.md")]
-    mod intro_md {}
+    mod quickstart_md {}
     #[doc = include_str!("../../../tutorials/date-picker.md")]
-    mod intro_interactive_md {}
+    mod date_picker_md {}
     #[doc = include_str!("../../../tutorials/data-provider-runtime.md")]
-    mod data_provider_md {}
+    mod data_provider_runtime_md {}
     #[doc = include_str!("../../../tutorials/data-management.md")]
     mod data_management_md {}
     #[doc = include_str!("../../../tutorials/using-from-js.md")]
-    mod js_md {}
+    mod using_from_js_md {}
 }
 
 mod documents {
