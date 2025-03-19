@@ -63,6 +63,7 @@ pub mod locale_core;
 pub mod logging;
 #[macro_use]
 pub mod provider;
+#[cfg(feature = "datetime")]
 pub(crate) mod datetime_helpers;
 
 // Components
