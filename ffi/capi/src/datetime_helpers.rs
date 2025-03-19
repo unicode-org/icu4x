@@ -8,8 +8,8 @@ use alloc::boxed::Box;
 use icu_calendar::Gregorian;
 #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 use icu_datetime::{
-    fieldsets::enums::*, fieldsets::Combo, pattern::*, scaffold::*, DateTimeFormatter,
-    DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
+    fieldsets::builder::BuilderError, fieldsets::enums::*, fieldsets::Combo, pattern::*,
+    scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
 };
 
 #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -55,9 +55,14 @@ where
     let field_set = formatter
         .to_field_set_builder()
         .build_date()
-        .map_err(|e| {
-            debug_assert!(false, "should be infallible, but got: {e:?}");
-            crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
         })?
         .zone(zone);
     let formatter = to_formatter(names, field_set)
@@ -153,9 +158,14 @@ where
     let field_set = formatter
         .to_field_set_builder()
         .build_date()
-        .map_err(|e| {
-            debug_assert!(false, "should be infallible, but got: {e:?}");
-            crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
         })?
         .zone(zone);
     let formatter = to_formatter(names, field_set)

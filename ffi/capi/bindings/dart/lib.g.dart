@@ -168,6 +168,8 @@ part 'WordBreakIteratorUtf16.g.dart';
 part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
 part 'YearStyle.g.dart';
+part 'ZonedDateFormatter.g.dart';
+part 'ZonedDateFormatterGregorian.g.dart';
 part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedDateTimeFormatterGregorian.g.dart';

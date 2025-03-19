@@ -81,6 +81,10 @@ void main() {
 
     var locale = Locale.fromString('de-u-ca-islamic');
 
+    ///// DateFormatter /////
+
+    expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '14.07.');
+
     ///// DateTimeFormatter /////
 
     expect(
@@ -146,6 +150,29 @@ void main() {
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
       'Mittwoch, 15. Januar 2025, 14:32',
+    );
+
+    ///// ZonedDateFormatter /////
+
+    expect(
+      ZonedDateFormatter.genericLong(
+        locale,
+        DateFormatter.md(locale),
+      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.zone),
+      '14.07. Mitteleuropäische Zeit',
+    );
+
+    expect(
+      () => ZonedDateFormatter.genericLong(locale, DateFormatter.ym(locale)),
+      throwsA(DateTimeFormatterLoadError.invalidDateFields),
+    );
+
+    expect(
+      () => ZonedDateFormatter.genericLong(
+        locale,
+        DateFormatter.ymd(locale),
+      ).formatIso(zonedDateTimeIso.date, TimeZoneInfo.utc()),
+      throwsA(DateTimeWriteError.missingInputField),
     );
 
     ///// ZonedDateTimeFormatter /////
