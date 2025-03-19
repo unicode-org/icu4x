@@ -63,14 +63,12 @@ use crate::{
     scaffold::*,
 };
 use enums::*;
-use icu_calendar::{
-    types::{DayOfMonth, MonthInfo, Weekday, YearInfo},
-    Date, Iso,
-};
+use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
+    provider::MinutesSinceEpoch,
     zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
 #[cfg(doc)]
@@ -1437,7 +1435,7 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == MinutesSinceEpoch`
         /// // note: required by a bound in `NoCalendarFormatter::<C, FSet>::format`
         /// formatter.format(&time_zone_basic);
         /// ```
@@ -1479,7 +1477,7 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == MinutesSinceEpoch`
         /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
         /// formatter.format(&time_zone_basic);
         /// ```

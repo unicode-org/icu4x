@@ -285,7 +285,9 @@ impl<'a> Intermediate<'a> {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
         };
-        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
+        Ok(time_zone_id
+            .with_offset(offset)
+            .at_datetime(DateTime { date, time }))
     }
 
     fn loose(
@@ -317,7 +319,9 @@ impl<'a> Intermediate<'a> {
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
+        Ok(time_zone_id
+            .with_offset(offset)
+            .at_datetime(DateTime { date, time }))
     }
 
     fn full(
@@ -337,7 +341,7 @@ impl<'a> Intermediate<'a> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_time((date, time))
+            .at_datetime(DateTime { date, time })
             .infer_zone_variant(offset_calculator))
     }
 }

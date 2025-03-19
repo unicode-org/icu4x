@@ -87,8 +87,10 @@ pub mod iana;
 mod offset;
 pub mod windows;
 
+use crate::provider::MinutesSinceEpoch;
 #[doc(inline)]
 pub use crate::provider::{TimeZone, TimeZoneVariant};
+use crate::DateTime;
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
 pub use offset::VariantOffsets;
@@ -100,9 +102,9 @@ pub use iana::IanaParser;
 #[doc(no_inline)]
 pub use windows::WindowsParser;
 
-use crate::{scaffold::IntoOption, Time};
+use crate::scaffold::IntoOption;
 use core::fmt;
-use icu_calendar::{Date, Iso};
+use icu_calendar::Iso;
 
 /// Time zone data model choices.
 pub mod models {
@@ -121,7 +123,7 @@ pub mod models {
         /// The zone variant, if required for this time zone model.
         type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
         /// The local time, if required for this time zone model.
-        type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
+        type LocalReferenceTime: IntoOption<MinutesSinceEpoch> + fmt::Debug + Copy;
     }
 
     /// A time zone containing a time zone ID and optional offset.
@@ -132,7 +134,7 @@ pub mod models {
     impl private::Sealed for Base {}
     impl TimeZoneModel for Base {
         type TimeZoneVariant = ();
-        type LocalTime = ();
+        type LocalReferenceTime = ();
     }
 
     /// A time zone containing a time zone ID, optional offset, and local time.
@@ -143,7 +145,7 @@ pub mod models {
     impl private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
         type TimeZoneVariant = ();
-        type LocalTime = (Date<Iso>, Time);
+        type LocalReferenceTime = MinutesSinceEpoch;
     }
 
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
@@ -154,7 +156,7 @@ pub mod models {
     impl private::Sealed for Full {}
     impl TimeZoneModel for Full {
         type TimeZoneVariant = TimeZoneVariant;
-        type LocalTime = (Date<Iso>, Time);
+        type LocalReferenceTime = MinutesSinceEpoch;
     }
 }
 
@@ -164,7 +166,7 @@ pub mod models {
 pub struct TimeZoneInfo<Model: models::TimeZoneModel> {
     time_zone_id: TimeZone,
     offset: Option<UtcOffset>,
-    local_time: Model::LocalTime,
+    local_time: Model::LocalReferenceTime,
     zone_variant: Model::TimeZoneVariant,
 }
 
@@ -192,10 +194,10 @@ impl<Model: models::TimeZoneModel> TimeZoneInfo<Model> {
 
 impl<Model> TimeZoneInfo<Model>
 where
-    Model: models::TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    Model: models::TimeZoneModel<LocalReferenceTime = MinutesSinceEpoch>,
 {
     /// The time at which to interpret the time zone.
-    pub fn local_time(self) -> (Date<Iso>, Time) {
+    pub fn local_reference_time(self) -> Model::LocalReferenceTime {
         self.local_time
     }
 }
@@ -245,8 +247,20 @@ impl TimeZoneInfo<models::Base> {
         TimeZone(tinystr::tinystr!(8, "utc")).with_offset(Some(UtcOffset::zero()))
     }
 
-    /// Sets a local time on this time zone.
-    pub const fn at_time(self, local_time: (Date<Iso>, Time)) -> TimeZoneInfo<models::AtTime> {
+    /// Sets the reference time for which time zone names should be resolved.
+    pub fn at_datetime(self, datetime: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+        self.at_inner(datetime.into())
+    }
+
+    /// Sets the reference time for which time zone names should be resolved.
+    pub fn at_minutes_since_local_epoch(
+        self,
+        local_time: MinutesSinceEpoch,
+    ) -> TimeZoneInfo<models::AtTime> {
+        self.at_inner(local_time)
+    }
+
+    pub(crate) fn at_inner(self, local_time: MinutesSinceEpoch) -> TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
             time_zone_id: self.time_zone_id,
@@ -283,11 +297,11 @@ impl TimeZoneInfo<models::AtTime> {
         let Some(offset) = self.offset else {
             return TimeZone::unknown()
                 .with_offset(self.offset)
-                .at_time(self.local_time)
+                .at_inner(self.local_time)
                 .with_zone_variant(TimeZoneVariant::Standard);
         };
         let Some(zone_variant) = calculator
-            .compute_offsets_from_time_zone(self.time_zone_id, self.local_time)
+            .compute_offsets_inner(self.time_zone_id, self.local_time)
             .and_then(|os| {
                 if os.standard == offset {
                     Some(TimeZoneVariant::Standard)
@@ -300,7 +314,7 @@ impl TimeZoneInfo<models::AtTime> {
         else {
             return TimeZone::unknown()
                 .with_offset(self.offset)
-                .at_time(self.local_time)
+                .at_inner(self.local_time)
                 .with_zone_variant(TimeZoneVariant::Standard);
         };
         self.with_zone_variant(zone_variant)

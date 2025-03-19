@@ -8,6 +8,7 @@ use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::Time;
+use icu_time::DateTime;
 
 fn main() {
     let parser = icu::time::zone::IanaParser::new();
@@ -22,7 +23,10 @@ fn main() {
     let city_formatter =
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
-    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
+    let reference_date = DateTime {
+        date: Date::try_new_iso(2025, 1, 1).unwrap(),
+        time: Time::midnight(),
+    };
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
@@ -32,12 +36,12 @@ fn main() {
         }
 
         let offsets = offsets
-            .compute_offsets_from_time_zone(tz, reference_date)
+            .compute_offsets_for_time_zone_and_local_datetime(tz, reference_date)
             .unwrap();
 
         let tzi = tz
             .with_offset(Some(offsets.standard))
-            .at_time(reference_date);
+            .at_datetime(reference_date);
 
         grouped_tzs
             .entry(non_location_formatter.format(&tzi).to_string())
@@ -60,7 +64,7 @@ fn main() {
                             offset_formatter.format(
                                 &tzi.time_zone_id()
                                     .with_offset(Some(daylight))
-                                    .at_time(reference_date)
+                                    .at_datetime(reference_date)
                             )
                         )
                     } else {

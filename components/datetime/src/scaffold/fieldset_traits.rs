@@ -12,14 +12,13 @@ use icu_calendar::{
         CalendarJapaneseExtendedV1, CalendarJapaneseModernV1,
     },
     types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
-    Date, Iso,
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_time::scaffold::IntoOption;
+use icu_time::{provider::MinutesSinceEpoch, scaffold::IntoOption};
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
 // TODO: Add WeekCalculator and DecimalFormatter optional bindings here
@@ -127,7 +126,7 @@ pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone variant input field.
     type TimeZoneVariantInput: IntoOption<TimeZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
-    type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
+    type TimeZoneLocalTimeInput: IntoOption<MinutesSinceEpoch>;
     /// Marker for loading core time zone data.
     type EssentialsV1: DataMarker<DataStruct = tz::Essentials<'static>>;
     /// Marker for loading location names for time zone formatting
@@ -719,7 +718,7 @@ macro_rules! datetime_marker_helper {
         TimeZoneVariant
     };
     (@input/timezone/local_time, yes) => {
-        (Date<Iso>, Time)
+        MinutesSinceEpoch
     };
     (@input/timezone/$any:ident,) => {
         ()

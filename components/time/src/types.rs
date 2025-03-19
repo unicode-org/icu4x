@@ -168,7 +168,7 @@ impl Time {
 }
 
 /// A date and time for a given calendar.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     /// The date
@@ -177,8 +177,10 @@ pub struct DateTime<A: AsCalendar> {
     pub time: Time,
 }
 
+impl<A> Copy for DateTime<A> where A: AsCalendar + Copy {}
+
 /// A date and time for a given calendar, local to a specified time zone.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone
@@ -187,4 +189,11 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     pub time: Time,
     /// The time zone
     pub zone: Z,
+}
+
+impl<A, Z> Copy for ZonedDateTime<A, Z>
+where
+    A: AsCalendar + Copy,
+    Z: Copy,
+{
 }

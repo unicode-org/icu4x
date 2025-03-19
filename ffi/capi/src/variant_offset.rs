@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_time::DateTime;
 
     #[cfg(feature = "buffer_provider")]
     use crate::errors::ffi::DataError;
@@ -161,10 +162,10 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone,
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_for_time_zone_and_local_datetime,
             FnInStruct
         )]
-        pub fn compute_offsets_from_time_zone(
+        pub fn compute_offsets_for_time_zone_and_local_datetime(
             &self,
             time_zone: &TimeZone,
             local_date: &IsoDate,
@@ -175,7 +176,13 @@ pub mod ffi {
             } = self
                 .0
                 .as_borrowed()
-                .compute_offsets_from_time_zone(time_zone.0, (local_date.0, local_time.0))?;
+                .compute_offsets_for_time_zone_and_local_datetime(
+                    time_zone.0,
+                    DateTime {
+                        date: local_date.0,
+                        time: local_time.0,
+                    },
+                )?;
 
             Some(VariantOffsets {
                 standard: Box::new(UtcOffset(standard)),

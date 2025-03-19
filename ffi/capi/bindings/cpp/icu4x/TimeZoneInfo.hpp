@@ -12,7 +12,6 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "IsoDate.hpp"
-#include "IsoDateTime.hpp"
 #include "Time.hpp"
 #include "TimeZone.hpp"
 #include "TimeZoneVariant.hpp"
@@ -31,9 +30,6 @@ namespace capi {
     icu4x::capi::TimeZone* icu4x_TimeZoneInfo_time_zone_id_mv1(const icu4x::capi::TimeZoneInfo* self);
     
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_time_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
-    
-    typedef struct icu4x_TimeZoneInfo_local_time_mv1_result {union {icu4x::capi::IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_local_time_mv1_result;
-    icu4x_TimeZoneInfo_local_time_mv1_result icu4x_TimeZoneInfo_local_time_mv1(const icu4x::capi::TimeZoneInfo* self);
     
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_with_zone_variant_mv1(const icu4x::capi::TimeZoneInfo* self, icu4x::capi::TimeZoneVariant time_zone_variant);
     
@@ -72,11 +68,6 @@ inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_time(const i
     date.AsFFI(),
     time.AsFFI());
   return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
-}
-
-inline std::optional<icu4x::IsoDateTime> icu4x::TimeZoneInfo::local_time() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_local_time_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::with_zone_variant(icu4x::TimeZoneVariant time_zone_variant) const {

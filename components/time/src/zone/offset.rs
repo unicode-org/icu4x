@@ -5,8 +5,7 @@
 use core::str::FromStr;
 
 use crate::provider::{EighthsOfHourOffset, MinutesSinceEpoch, TimeZoneOffsetsV1};
-use crate::{Time, TimeZone};
-use icu_calendar::Date;
+use crate::{DateTime, TimeZone};
 use icu_calendar::Iso;
 use icu_provider::prelude::*;
 
@@ -296,7 +295,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// // America/Denver observes DST
     /// let offsets = zoc
-    ///     .compute_offsets_from_time_zone(
+    ///     .compute_offsets_for_time_zone_and_local_datetime(
     ///         TimeZone(tinystr!(8, "usden")),
     ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
     ///     )
@@ -312,7 +311,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// // America/Phoenix does not
     /// let offsets = zoc
-    ///     .compute_offsets_from_time_zone(
+    ///     .compute_offsets_for_time_zone_and_local_datetime(
     ///         TimeZone(tinystr!(8, "usphx")),
     ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
     ///     )
@@ -323,16 +322,23 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```
-    pub fn compute_offsets_from_time_zone(
+    pub fn compute_offsets_for_time_zone_and_local_datetime(
         &self,
         time_zone_id: TimeZone,
-        dt: (Date<Iso>, Time),
+        local_datetime: DateTime<Iso>,
+    ) -> Option<VariantOffsets> {
+        self.compute_offsets_inner(time_zone_id, local_datetime.into())
+    }
+
+    pub(crate) fn compute_offsets_inner(
+        &self,
+        time_zone_id: TimeZone,
+        minutes_since_epoch_walltime: MinutesSinceEpoch,
     ) -> Option<VariantOffsets> {
         use zerovec::ule::AsULE;
         match self.offset_period.get0(&time_zone_id) {
             Some(cursor) => {
                 let mut offsets = None;
-                let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);
                 for (minutes, id) in cursor.iter1_copied() {
                     if minutes_since_epoch_walltime >= MinutesSinceEpoch::from_unaligned(*minutes) {
                         offsets = Some(id);

@@ -12,7 +12,6 @@ pub mod ffi {
 
     use crate::{
         date::ffi::IsoDate,
-        datetime::ffi::IsoDateTime,
         time::ffi::Time,
         variant_offset::ffi::{UtcOffset, VariantOffsetsCalculator},
     };
@@ -83,7 +82,7 @@ pub mod ffi {
         pub(crate) time_zone_id: icu_time::TimeZone,
         pub(crate) offset: Option<icu_time::zone::UtcOffset>,
         pub(crate) zone_variant: Option<icu_time::zone::TimeZoneVariant>,
-        pub(crate) local_time: Option<(icu_calendar::Date<icu_calendar::Iso>, icu_time::Time)>,
+        pub(crate) local_time: Option<icu_time::provider::MinutesSinceEpoch>,
     }
 
     impl TimeZoneInfo {
@@ -118,16 +117,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZoneInfo::at_time, FnInStruct)]
         pub fn at_time(&self, date: &IsoDate, time: &Time) -> Box<Self> {
             Box::new(Self {
-                local_time: Some((date.0, time.0)),
+                local_time: Some(
+                    icu_time::DateTime {
+                        date: date.0,
+                        time: time.0,
+                    }
+                    .into(),
+                ),
                 ..*self
-            })
-        }
-
-        #[diplomat::rust_link(icu::time::TimeZoneInfo::local_time, FnInStruct)]
-        pub fn local_time(&self) -> Option<IsoDateTime> {
-            Some(IsoDateTime {
-                date: Box::new(IsoDate(self.local_time?.0)),
-                time: Box::new(Time(self.local_time?.1)),
             })
         }
 
@@ -151,7 +148,7 @@ pub mod ffi {
             let info = self
                 .time_zone_id
                 .with_offset(self.offset)
-                .at_time(self.local_time?)
+                .at_minutes_since_local_epoch(self.local_time?)
                 .infer_zone_variant(offset_calculator.0.as_borrowed());
 
             self.time_zone_id = info.time_zone_id();
@@ -194,7 +191,7 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::AtTime>> for TimeZoneIn
             time_zone_id: other.time_zone_id(),
             offset: other.offset(),
             zone_variant: None,
-            local_time: Some(other.local_time()),
+            local_time: Some(other.local_reference_time()),
         }
     }
 }
@@ -205,7 +202,7 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::Full>> for TimeZoneInfo
             time_zone_id: other.time_zone_id(),
             offset: other.offset(),
             zone_variant: Some(other.zone_variant()),
-            local_time: Some(other.local_time()),
+            local_time: Some(other.local_reference_time()),
         }
     }
 }

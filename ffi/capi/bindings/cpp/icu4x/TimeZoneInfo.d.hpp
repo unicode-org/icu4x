@@ -23,7 +23,6 @@ namespace capi { struct UtcOffset; }
 class UtcOffset;
 namespace capi { struct VariantOffsetsCalculator; }
 class VariantOffsetsCalculator;
-struct IsoDateTime;
 class TimeZoneVariant;
 }
 
@@ -62,11 +61,6 @@ public:
    * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZoneInfo> at_time(const icu4x::IsoDate& date, const icu4x::Time& time) const;
-
-  /**
-   * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
-   */
-  inline std::optional<icu4x::IsoDateTime> local_time() const;
 
   /**
    * See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
