@@ -13,20 +13,16 @@ pub mod ffi {
     use icu_calendar::Gregorian;
     use writeable::TryWriteable;
 
-    use crate::{
-        date::ffi::IsoDate,
-        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
-        errors::ffi::DateTimeWriteError,
-    };
+    use crate::{date::ffi::IsoDate, errors::ffi::DateTimeWriteError, timezone::ffi::TimeZoneInfo};
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
+        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         datetime_helpers::{date_formatter_gregorian_with_zone, date_formatter_with_zone},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
-        timezone::ffi::TimeZoneInfo,
     };
 
     #[diplomat::opaque]
@@ -85,7 +81,9 @@ pub mod ffi {
                         .load_time_zone_specific_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -129,7 +127,9 @@ pub mod ffi {
                         .load_time_zone_specific_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -173,7 +173,9 @@ pub mod ffi {
                         .load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -217,7 +219,9 @@ pub mod ffi {
                         .load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -261,7 +265,9 @@ pub mod ffi {
                         .load_time_zone_generic_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -306,7 +312,9 @@ pub mod ffi {
                         .load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -346,7 +354,9 @@ pub mod ffi {
                     names.as_mut().load_time_zone_location_names(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -388,7 +398,9 @@ pub mod ffi {
                         .load_time_zone_exemplar_city_names(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -461,7 +473,9 @@ pub mod ffi {
                     names.load_time_zone_specific_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -501,7 +515,9 @@ pub mod ffi {
                     names.load_time_zone_specific_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -541,7 +557,9 @@ pub mod ffi {
                     names.load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -581,7 +599,9 @@ pub mod ffi {
                     names.load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -621,7 +641,9 @@ pub mod ffi {
                     names.load_time_zone_generic_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -662,7 +684,9 @@ pub mod ffi {
                     names.load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -702,7 +726,9 @@ pub mod ffi {
                     names.load_time_zone_location_names(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 
@@ -742,7 +768,9 @@ pub mod ffi {
                     names.load_time_zone_exemplar_city_names(&provider)?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| {
+                    names.try_into_formatter_with_buffer_provider(&provider, field_set)
+                },
             )
         }
 

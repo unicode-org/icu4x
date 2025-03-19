@@ -58,13 +58,16 @@ pub mod ffi {
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
-        {%- let ctor_suffix %}
+        {%- let ctor_suffix_ffi %}
+        {%- let ctor_suffix_rust %}
         {%- if is_with_provider %}
-            {%- let ctor_suffix = "_with_provider" %}
+            {%- let ctor_suffix_ffi = "_with_provider" %}
+            {%- let ctor_suffix_rust = "_with_buffer_provider" %}
         {%- else %}
-            {%- let ctor_suffix = "" %}
+            {%- let ctor_suffix_ffi = "" %}
+            {%- let ctor_suffix_rust = "" %}
         {%- endif %}
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix }}")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
         {%- if variant.consumed_options.alignment %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_alignment, FnInStruct, compact)]
@@ -80,7 +83,7 @@ pub mod ffi {
         #[diplomat::demo(default_constructor)]
         {%- endif %}
         #[cfg(feature = "{% if is_with_provider %}buffer_provider{% else %}compiled_data{% endif %}")]
-        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix }}(
+        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
             {%- if is_with_provider %}
             provider: &DataProvider,
             {%- endif %}
@@ -107,7 +110,7 @@ pub mod ffi {
             Ok(Box::new(Self(
                 icu_datetime
                     ::{{ rust_type }}
-                    ::try_new{% if is_with_provider %}_with_buffer_provider{% endif %}(
+                    ::try_new{{ ctor_suffix_rust }}(
                         {%- if is_with_provider %}
                         provider.get()?,
                         {%- endif %}

@@ -15,8 +15,8 @@ pub mod ffi {
 
     use crate::{
         date::ffi::IsoDate,
+        timezone::ffi::TimeZoneInfo,
         errors::ffi::DateTimeWriteError,
-        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
     };
 
     #[cfg(feature = "buffer_provider")]
@@ -25,8 +25,8 @@ pub mod ffi {
     use crate::{
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
+        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         datetime_helpers::{date_formatter_with_zone, date_formatter_gregorian_with_zone},
-        timezone::ffi::TimeZoneInfo,
     };
 
     #[diplomat::opaque]
@@ -65,20 +65,23 @@ pub mod ffi {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
         {%- let ctor_prefix %}
-        {%- let ctor_suffix %}
+        {%- let ctor_suffix_ffi %}
+        {%- let ctor_suffix_rust %}
         {%- if is_with_provider %}
             {%- let ctor_prefix = "load_" %}
-            {%- let ctor_suffix = "_with_provider" %}
+            {%- let ctor_suffix_ffi = "_with_provider" %}
+            {%- let ctor_suffix_rust = "_with_buffer_provider" %}
         {%- else %}
             {%- let ctor_prefix = "include_" %}
-            {%- let ctor_suffix = "" %}
+            {%- let ctor_suffix_ffi = "" %}
+            {%- let ctor_suffix_rust = "" %}
         {%- endif %}
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix }}")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
         {%- if variant.is_default_constructor() && !is_with_provider %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
         #[cfg(feature = "{% if is_with_provider %}buffer_provider{% else %}compiled_data{% endif %}")]
-        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix }}(
+        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
             {%- if is_with_provider %}
             provider: &DataProvider,
             {%- endif %}
@@ -108,7 +111,12 @@ pub mod ffi {
                         )?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter(field_set),
+                |names, field_set| names.try_into_formatter{{ ctor_suffix_rust }}(
+                    {%- if is_with_provider %}
+                    &provider,
+                    {%- endif %}
+                    field_set
+                ),
             )
         }
         {% endfor %}
