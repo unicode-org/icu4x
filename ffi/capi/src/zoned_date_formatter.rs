@@ -15,26 +15,24 @@ pub mod ffi {
 
     use crate::{
         date::ffi::IsoDate,
-        errors::ffi::DateTimeWriteError,
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        errors::ffi::DateTimeWriteError,
     };
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
+        datetime_helpers::{date_formatter_gregorian_with_zone, date_formatter_with_zone},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
-        datetime_helpers::{date_formatter_with_zone, date_formatter_gregorian_with_zone},
         timezone::ffi::TimeZoneInfo,
     };
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
     pub struct ZonedDateFormatter(
-        pub  icu_datetime::DateTimeFormatter<
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
-        >,
+        pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::CompositeFieldSet>,
     );
 
     #[diplomat::opaque]
@@ -45,7 +43,7 @@ pub mod ffi {
             icu_datetime::fieldsets::enums::CompositeFieldSet,
         >,
     );
-    
+
     impl ZonedDateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]
@@ -60,14 +58,13 @@ pub mod ffi {
                 |names| {
                     names
                         .as_mut()
-                        .include_time_zone_specific_long_names_with_fallback(
-                        )?;
+                        .include_time_zone_specific_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_long_with_provider(
@@ -85,15 +82,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_specific_long_names_with_fallback(
-                            &provider
-                        )?;
+                        .load_time_zone_specific_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_short(
@@ -107,14 +102,13 @@ pub mod ffi {
                 |names| {
                     names
                         .as_mut()
-                        .include_time_zone_specific_short_names_with_fallback(
-                        )?;
+                        .include_time_zone_specific_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_short_with_provider(
@@ -132,15 +126,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_specific_short_names_with_fallback(
-                            &provider
-                        )?;
+                        .load_time_zone_specific_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_long(
@@ -154,14 +146,13 @@ pub mod ffi {
                 |names| {
                     names
                         .as_mut()
-                        .include_time_zone_localized_offset_names_with_fallback(
-                        )?;
+                        .include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_long_with_provider(
@@ -179,15 +170,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_localized_offset_names_with_fallback(
-                            &provider
-                        )?;
+                        .load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_short(
@@ -201,14 +190,13 @@ pub mod ffi {
                 |names| {
                     names
                         .as_mut()
-                        .include_time_zone_localized_offset_names_with_fallback(
-                        )?;
+                        .include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_short_with_provider(
@@ -226,15 +214,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_localized_offset_names_with_fallback(
-                            &provider
-                        )?;
+                        .load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_long(
@@ -248,14 +234,13 @@ pub mod ffi {
                 |names| {
                     names
                         .as_mut()
-                        .include_time_zone_generic_long_names_with_fallback(
-                        )?;
+                        .include_time_zone_generic_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_long_with_provider(
@@ -273,15 +258,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_generic_long_names_with_fallback(
-                            &provider
-                        )?;
+                        .load_time_zone_generic_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
@@ -296,14 +279,13 @@ pub mod ffi {
                 |names| {
                     names
                         .as_mut()
-                        .include_time_zone_generic_short_names_with_fallback(
-                        )?;
+                        .include_time_zone_generic_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_short_with_provider(
@@ -321,15 +303,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_generic_short_names_with_fallback(
-                            &provider
-                        )?;
+                        .load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
         #[cfg(feature = "compiled_data")]
         pub fn create_location(
@@ -341,16 +321,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::Location,
                 |names| {
-                    names
-                        .as_mut()
-                        .include_time_zone_location_names(
-                        )?;
+                    names.as_mut().include_time_zone_location_names()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_location_with_provider(
@@ -366,17 +343,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .as_mut()
-                        .load_time_zone_location_names(
-                            &provider
-                        )?;
+                    names.as_mut().load_time_zone_location_names(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
         #[cfg(feature = "compiled_data")]
         pub fn create_exemplar_city(
@@ -388,16 +361,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::ExemplarCity,
                 |names| {
-                    names
-                        .as_mut()
-                        .include_time_zone_exemplar_city_names(
-                        )?;
+                    names.as_mut().include_time_zone_exemplar_city_names()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_exemplar_city_with_provider(
@@ -415,15 +385,13 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     names
                         .as_mut()
-                        .load_time_zone_exemplar_city_names(
-                            &provider
-                        )?;
+                        .load_time_zone_exemplar_city_names(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -455,7 +423,7 @@ pub mod ffi {
             Ok(())
         }
     }
-    
+
     impl ZonedDateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]
@@ -468,15 +436,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
                 |names| {
-                    names
-                        .include_time_zone_specific_long_names_with_fallback(
-                        )?;
+                    names.include_time_zone_specific_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_long_with_provider(
@@ -492,16 +458,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_specific_long_names_with_fallback(
-                            &provider
-                        )?;
+                    names.load_time_zone_specific_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_short(
@@ -513,15 +476,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
                 |names| {
-                    names
-                        .include_time_zone_specific_short_names_with_fallback(
-                        )?;
+                    names.include_time_zone_specific_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_short_with_provider(
@@ -537,16 +498,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_specific_short_names_with_fallback(
-                            &provider
-                        )?;
+                    names.load_time_zone_specific_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_long(
@@ -558,15 +516,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
                 |names| {
-                    names
-                        .include_time_zone_localized_offset_names_with_fallback(
-                        )?;
+                    names.include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_long_with_provider(
@@ -582,16 +538,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_localized_offset_names_with_fallback(
-                            &provider
-                        )?;
+                    names.load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_short(
@@ -603,15 +556,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
                 |names| {
-                    names
-                        .include_time_zone_localized_offset_names_with_fallback(
-                        )?;
+                    names.include_time_zone_localized_offset_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_short_with_provider(
@@ -627,16 +578,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_localized_offset_names_with_fallback(
-                            &provider
-                        )?;
+                    names.load_time_zone_localized_offset_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_long(
@@ -648,15 +596,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
                 |names| {
-                    names
-                        .include_time_zone_generic_long_names_with_fallback(
-                        )?;
+                    names.include_time_zone_generic_long_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_long_with_provider(
@@ -672,16 +618,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_generic_long_names_with_fallback(
-                            &provider
-                        )?;
+                    names.load_time_zone_generic_long_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
@@ -694,15 +637,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
                 |names| {
-                    names
-                        .include_time_zone_generic_short_names_with_fallback(
-                        )?;
+                    names.include_time_zone_generic_short_names_with_fallback()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_short_with_provider(
@@ -718,16 +659,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_generic_short_names_with_fallback(
-                            &provider
-                        )?;
+                    names.load_time_zone_generic_short_names_with_fallback(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
         #[cfg(feature = "compiled_data")]
         pub fn create_location(
@@ -739,15 +677,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::Location,
                 |names| {
-                    names
-                        .include_time_zone_location_names(
-                        )?;
+                    names.include_time_zone_location_names()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_location_with_provider(
@@ -763,16 +699,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_location_names(
-                            &provider
-                        )?;
+                    names.load_time_zone_location_names(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
         #[cfg(feature = "compiled_data")]
         pub fn create_exemplar_city(
@@ -784,15 +717,13 @@ pub mod ffi {
                 locale,
                 icu_datetime::fieldsets::zone::ExemplarCity,
                 |names| {
-                    names
-                        .include_time_zone_exemplar_city_names(
-                        )?;
+                    names.include_time_zone_exemplar_city_names()?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_exemplar_city_with_provider(
@@ -808,16 +739,13 @@ pub mod ffi {
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_exemplar_city_names(
-                            &provider
-                        )?;
+                    names.load_time_zone_exemplar_city_names(&provider)?;
                     Ok(())
                 },
                 |names, field_set| names.try_into_formatter(field_set),
             )
         }
-        
+
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -849,5 +777,4 @@ pub mod ffi {
             Ok(())
         }
     }
-    
 }

@@ -169,7 +169,11 @@ pub fn main() {
     }
 
     for zone_style in ZoneStyle::VALUES.iter() {
-        zoned_date_formatter_template.variants.push(ZonedDateFormatterVariant { zone_style: *zone_style });
+        zoned_date_formatter_template
+            .variants
+            .push(ZonedDateFormatterVariant {
+                zone_style: *zone_style,
+            });
     }
 
     let mut path_buf = PathBuf::new();

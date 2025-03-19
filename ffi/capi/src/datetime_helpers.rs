@@ -64,7 +64,9 @@ where
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
         .cast_into_fset();
-    Ok(Box::new(crate::zoned_date_formatter::ffi::ZonedDateFormatter(formatter)))
+    Ok(Box::new(
+        crate::zoned_date_formatter::ffi::ZonedDateFormatter(formatter),
+    ))
 }
 
 #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -111,7 +113,9 @@ where
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
         .cast_into_fset();
-    Ok(Box::new(crate::neo_datetime::ffi::ZonedDateTimeFormatter(formatter)))
+    Ok(Box::new(crate::neo_datetime::ffi::ZonedDateTimeFormatter(
+        formatter,
+    )))
 }
 
 #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -158,9 +162,9 @@ where
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
         .cast_into_fset();
-    Ok(Box::new(crate::zoned_date_formatter::ffi::ZonedDateFormatterGregorian(
-        formatter,
-    )))
+    Ok(Box::new(
+        crate::zoned_date_formatter::ffi::ZonedDateFormatterGregorian(formatter),
+    ))
 }
 
 #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -207,7 +211,7 @@ where
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
         .cast_into_fset();
-    Ok(Box::new(crate::neo_datetime::ffi::ZonedDateTimeFormatterGregorian(
-        formatter,
-    )))
+    Ok(Box::new(
+        crate::neo_datetime::ffi::ZonedDateTimeFormatterGregorian(formatter),
+    ))
 }
