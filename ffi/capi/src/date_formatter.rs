@@ -26,13 +26,15 @@ pub mod ffi {
         datetime_options::ffi::{DateTimeAlignment, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
-        neo_datetime::impls::map_or_default,
+        datetime_helpers::map_or_default,
     };
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
     pub struct DateFormatter(
-        pub icu_datetime::DateTimeFormatter<icu_datetime::fieldsets::enums::DateFieldSet>,
+        pub  icu_datetime::DateTimeFormatter<
+            icu_datetime::fieldsets::enums::DateFieldSet,
+        >,
     );
 
     #[diplomat::opaque]
@@ -43,7 +45,7 @@ pub mod ffi {
             icu_datetime::fieldsets::enums::DateFieldSet,
         >,
     );
-
+    
     impl DateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
@@ -62,10 +64,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
@@ -84,15 +92,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
@@ -110,10 +120,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
@@ -132,15 +148,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
@@ -162,10 +180,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
@@ -187,15 +211,17 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
@@ -213,10 +239,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
@@ -235,15 +267,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
@@ -261,10 +295,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
@@ -283,15 +323,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
@@ -312,10 +354,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
@@ -337,15 +385,17 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e")]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
@@ -361,10 +411,16 @@ pub mod ffi {
             #[allow(unused_mut)]
             let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
@@ -381,15 +437,17 @@ pub mod ffi {
             #[allow(unused_mut)]
             let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m")]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
@@ -407,10 +465,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
@@ -429,15 +493,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
@@ -458,10 +524,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
@@ -483,15 +555,17 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y")]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
@@ -512,10 +586,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new(prefs, options)?.cast_into_fset(),
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
@@ -537,23 +617,29 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::DateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_iso(&self, date: &IsoDate, write: &mut diplomat_runtime::DiplomatWrite) {
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
             let value = date.0;
             let _infallible = self.0.format(&value).write_to(write);
         }
-
+        
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
@@ -567,7 +653,7 @@ pub mod ffi {
             Ok(())
         }
     }
-
+    
     impl DateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
@@ -586,11 +672,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
@@ -609,15 +700,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
@@ -635,11 +728,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
@@ -658,15 +756,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
@@ -688,11 +788,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
@@ -714,15 +819,17 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
@@ -740,11 +847,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
@@ -763,15 +875,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
@@ -789,11 +903,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
@@ -812,15 +931,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
@@ -841,11 +962,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
@@ -867,15 +993,17 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e")]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
@@ -891,11 +1019,16 @@ pub mod ffi {
             #[allow(unused_mut)]
             let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
@@ -912,15 +1045,17 @@ pub mod ffi {
             #[allow(unused_mut)]
             let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m")]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
@@ -938,11 +1073,16 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
@@ -961,15 +1101,17 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
@@ -990,11 +1132,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
@@ -1016,15 +1163,17 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y")]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
@@ -1045,11 +1194,16 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new(prefs, options)?
-                    .cast_into_fset(),
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
@@ -1071,21 +1225,29 @@ pub mod ffi {
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
-                icu_datetime::FixedCalendarDateTimeFormatter::try_new_with_buffer_provider(
-                    provider.get()?,
-                    prefs,
-                    options,
-                )?
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider.get()?,
+                        prefs,
+                        options
+                    )?
                 .cast_into_fset(),
             )))
         }
-
+        
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_iso(&self, date: &IsoDate, write: &mut diplomat_runtime::DiplomatWrite) {
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
             let value = date.0.to_calendar(Gregorian);
             let _infallible = self.0.format(&value).write_to(write);
         }
+        
     }
+    
 }

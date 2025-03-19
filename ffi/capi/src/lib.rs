@@ -63,6 +63,7 @@ pub mod locale_core;
 pub mod logging;
 #[macro_use]
 pub mod provider;
+pub(crate) mod datetime_helpers;
 
 // Components
 
@@ -148,5 +149,7 @@ pub mod variant_offset;
 pub mod week;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod windows_parser;
+#[cfg(feature = "datetime")]
+pub mod zoned_date_formatter;
 #[cfg(feature = "datetime")]
 pub mod zoned_datetime;

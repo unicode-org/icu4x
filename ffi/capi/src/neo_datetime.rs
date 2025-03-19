@@ -25,7 +25,7 @@ pub mod ffi {
         datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
-        neo_datetime::impls::{formatter_with_zone, gregorian_formatter_with_zone, map_or_default},
+        datetime_helpers::{datetime_formatter_with_zone, datetime_formatter_gregorian_with_zone, map_or_default},
     };
 
     #[diplomat::opaque]
@@ -540,7 +540,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
@@ -563,7 +563,7 @@ pub mod ffi {
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
@@ -588,7 +588,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
@@ -611,7 +611,7 @@ pub mod ffi {
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
@@ -636,7 +636,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
@@ -659,7 +659,7 @@ pub mod ffi {
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
@@ -684,7 +684,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
@@ -707,7 +707,7 @@ pub mod ffi {
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
@@ -732,7 +732,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
@@ -755,7 +755,7 @@ pub mod ffi {
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
@@ -780,7 +780,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
@@ -803,7 +803,7 @@ pub mod ffi {
             formatter: &DateTimeFormatter,
         ) -> Result<Box<ZonedDateTimeFormatter>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            formatter_with_zone(
+            datetime_formatter_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
@@ -1361,7 +1361,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
@@ -1382,7 +1382,7 @@ pub mod ffi {
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericShort,
@@ -1405,7 +1405,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
@@ -1426,7 +1426,7 @@ pub mod ffi {
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::GenericLong,
@@ -1449,7 +1449,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
@@ -1470,7 +1470,7 @@ pub mod ffi {
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificShort,
@@ -1493,7 +1493,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
@@ -1514,7 +1514,7 @@ pub mod ffi {
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::SpecificLong,
@@ -1537,7 +1537,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
@@ -1558,7 +1558,7 @@ pub mod ffi {
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetShort,
@@ -1581,7 +1581,7 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
@@ -1602,7 +1602,7 @@ pub mod ffi {
             formatter: &DateTimeFormatterGregorian,
         ) -> Result<Box<ZonedDateTimeFormatterGregorian>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            gregorian_formatter_with_zone(
+            datetime_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::LocalizedOffsetLong,
@@ -1650,121 +1650,5 @@ pub mod ffi {
                 .transpose()?;
             Ok(())
         }
-    }
-}
-
-pub(crate) mod impls {
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use alloc::boxed::Box;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use icu_calendar::Gregorian;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use icu_datetime::{
-        fieldsets::enums::*, fieldsets::Combo, pattern::*, scaffold::*, DateTimeFormatter,
-        DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
-    };
-
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    pub(crate) fn map_or_default<Input, Output>(input: Option<Input>) -> Output
-    where
-        Output: From<Input> + Default,
-    {
-        input.map(Output::from).unwrap_or_default()
-    }
-
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    pub(super) fn formatter_with_zone<Zone>(
-        formatter: &DateTimeFormatter<CompositeDateTimeFieldSet>,
-        locale: &crate::locale_core::ffi::Locale,
-        zone: Zone,
-        load: impl FnOnce(
-            &mut DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
-        ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
-        to_formatter: impl FnOnce(
-            DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
-            Combo<DateAndTimeFieldSet, Zone>,
-        ) -> Result<
-            DateTimeFormatter<Combo<DateAndTimeFieldSet, Zone>>,
-            (
-                DateTimeFormatterLoadError,
-                DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
-            ),
-        >,
-    ) -> Result<
-        Box<super::ffi::ZonedDateTimeFormatter>,
-        crate::errors::ffi::DateTimeFormatterLoadError,
-    >
-    where
-        Zone: DateTimeMarkers + ZoneMarkers,
-        <Zone as DateTimeMarkers>::Z: ZoneMarkers,
-        Combo<DateAndTimeFieldSet, Zone>: DateTimeNamesFrom<CompositeDateTimeFieldSet>,
-        CompositeFieldSet: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
-    {
-        let prefs = (&locale.0).into();
-        let mut names = DateTimeNames::from_formatter(prefs, formatter.clone())
-            .cast_into_fset::<Combo<DateAndTimeFieldSet, Zone>>();
-        load(&mut names)?;
-        let field_set = formatter
-            .to_field_set_builder()
-            .build_date_and_time()
-            .map_err(|e| {
-                debug_assert!(false, "should be infallible, but got: {e:?}");
-                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
-            })?
-            .zone(zone);
-        let formatter = to_formatter(names, field_set)
-            // This can fail if the locale doesn't match and the fields conflict
-            .map_err(|(e, _)| e)?
-            .cast_into_fset();
-        Ok(Box::new(super::ffi::ZonedDateTimeFormatter(formatter)))
-    }
-
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    pub(super) fn gregorian_formatter_with_zone<Zone>(
-        formatter: &FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>,
-        locale: &crate::locale_core::ffi::Locale,
-        zone: Zone,
-        load: impl FnOnce(
-            &mut FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
-        ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
-        to_formatter: impl FnOnce(
-            FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
-            Combo<DateAndTimeFieldSet, Zone>,
-        ) -> Result<
-            FixedCalendarDateTimeFormatter<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
-            (
-                DateTimeFormatterLoadError,
-                FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
-            ),
-        >,
-    ) -> Result<
-        Box<super::ffi::ZonedDateTimeFormatterGregorian>,
-        crate::errors::ffi::DateTimeFormatterLoadError,
-    >
-    where
-        Zone: DateTimeMarkers + ZoneMarkers,
-        <Zone as DateTimeMarkers>::Z: ZoneMarkers,
-        Combo<DateAndTimeFieldSet, Zone>: DateTimeNamesFrom<CompositeDateTimeFieldSet>,
-        CompositeFieldSet: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
-    {
-        let prefs = (&locale.0).into();
-        let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter.clone())
-            .cast_into_fset::<Combo<DateAndTimeFieldSet, Zone>>();
-        load(&mut names)?;
-        let field_set = formatter
-            .to_field_set_builder()
-            .build_date_and_time()
-            .map_err(|e| {
-                debug_assert!(false, "should be infallible, but got: {e:?}");
-                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
-            })?
-            .zone(zone);
-        let formatter = to_formatter(names, field_set)
-            // This can fail if the locale doesn't match and the fields conflict
-            .map_err(|(e, _)| e)?
-            .cast_into_fset();
-        Ok(Box::new(super::ffi::ZonedDateTimeFormatterGregorian(
-            formatter,
-        )))
     }
 }

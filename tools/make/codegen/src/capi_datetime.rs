@@ -33,11 +33,20 @@ impl ConsumedOptions {
     }
 }
 
-struct DateFieldsWrap(DateFields);
+#[derive(Template, Default)]
+#[template(path = "date_formatter.rs.jinja")]
+struct DateFormatterTemplate {
+    variants: Vec<DateFormatterVariant>,
+}
 
-impl DateFieldsWrap {
+struct DateFormatterVariant {
+    date_fields: DateFields,
+    consumed_options: ConsumedOptions,
+}
+
+impl DateFormatterVariant {
     pub fn name_upper(&self) -> &str {
-        match self.0 {
+        match self.date_fields {
             DateFields::D => "D",
             DateFields::MD => "MD",
             DateFields::YMD => "YMD",
@@ -52,7 +61,7 @@ impl DateFieldsWrap {
         }
     }
     pub fn name_lower(&self) -> &str {
-        match self.0 {
+        match self.date_fields {
             DateFields::D => "d",
             DateFields::MD => "md",
             DateFields::YMD => "ymd",
@@ -67,23 +76,68 @@ impl DateFieldsWrap {
         }
     }
     pub fn is_default_constructor(&self) -> bool {
-        matches!(self.0, DateFields::YMD)
+        matches!(self.date_fields, DateFields::YMD)
     }
 }
 
 #[derive(Template, Default)]
-#[template(path = "date_formatter.rs.jinja")]
-struct DateFormatterTemplate {
-    variants: Vec<DateFormatterVariant>,
+#[template(path = "zoned_date_formatter.rs.jinja")]
+struct ZonedDateFormatterTemplate {
+    variants: Vec<ZonedDateFormatterVariant>,
 }
 
-struct DateFormatterVariant {
-    date_fields: DateFieldsWrap,
-    consumed_options: ConsumedOptions,
+struct ZonedDateFormatterVariant {
+    zone_style: ZoneStyle,
+}
+
+impl ZonedDateFormatterVariant {
+    pub fn name_lower(&self) -> &str {
+        match self.zone_style {
+            ZoneStyle::SpecificLong => "specific_long",
+            ZoneStyle::SpecificShort => "specific_short",
+            ZoneStyle::LocalizedOffsetLong => "localized_offset_long",
+            ZoneStyle::LocalizedOffsetShort => "localized_offset_short",
+            ZoneStyle::GenericLong => "generic_long",
+            ZoneStyle::GenericShort => "generic_short",
+            ZoneStyle::Location => "location",
+            ZoneStyle::ExemplarCity => "exemplar_city",
+            _ => unreachable!("unknown variant"),
+        }
+    }
+    pub fn name_camel(&self) -> &str {
+        match self.zone_style {
+            ZoneStyle::SpecificLong => "SpecificLong",
+            ZoneStyle::SpecificShort => "SpecificShort",
+            ZoneStyle::LocalizedOffsetLong => "LocalizedOffsetLong",
+            ZoneStyle::LocalizedOffsetShort => "LocalizedOffsetShort",
+            ZoneStyle::GenericLong => "GenericLong",
+            ZoneStyle::GenericShort => "GenericShort",
+            ZoneStyle::Location => "Location",
+            ZoneStyle::ExemplarCity => "ExemplarCity",
+            _ => unreachable!("unknown variant"),
+        }
+    }
+    pub fn load_fn(&self) -> &str {
+        match self.zone_style {
+            ZoneStyle::SpecificLong => "specific_long_names_with_fallback",
+            ZoneStyle::SpecificShort => "specific_short_names_with_fallback",
+            ZoneStyle::LocalizedOffsetLong => "localized_offset_names_with_fallback",
+            ZoneStyle::LocalizedOffsetShort => "localized_offset_names_with_fallback",
+            ZoneStyle::GenericLong => "generic_long_names_with_fallback",
+            ZoneStyle::GenericShort => "generic_short_names_with_fallback",
+            ZoneStyle::Location => "location_names",
+            ZoneStyle::ExemplarCity => "exemplar_city_names",
+            _ => unreachable!("unknown variant"),
+        }
+    }
+    pub fn is_default_constructor(&self) -> bool {
+        matches!(self.zone_style, ZoneStyle::GenericShort)
+    }
 }
 
 pub fn main() {
     let mut date_formatter_template = DateFormatterTemplate::default();
+    let mut zoned_date_formatter_template = ZonedDateFormatterTemplate::default();
 
     for date_fields in DateFields::VALUES.iter() {
         // Determine the options for these date fields
@@ -97,7 +151,7 @@ pub fn main() {
         println!("{date_fields:?} as Date => {consumed_options:?}");
         assert!(consumed_options.length); // all constructors accept a length
         date_formatter_template.variants.push(DateFormatterVariant {
-            date_fields: DateFieldsWrap(*date_fields),
+            date_fields: *date_fields,
             consumed_options,
         });
 
@@ -114,6 +168,10 @@ pub fn main() {
         println!("{date_fields:?} as DateZone => {consumed_options:?}");
     }
 
+    for zone_style in ZoneStyle::VALUES.iter() {
+        zoned_date_formatter_template.variants.push(ZonedDateFormatterVariant { zone_style: *zone_style });
+    }
+
     let mut path_buf = PathBuf::new();
     path_buf.push(env!("CARGO_MANIFEST_DIR"));
     path_buf.push("../../../ffi/capi/src");
@@ -124,5 +182,13 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         write!(&mut file, "{}", date_formatter_template).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("zoned_date_formatter.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        write!(&mut file, "{}", zoned_date_formatter_template).unwrap();
     }
 }
