@@ -65,6 +65,22 @@ void main() {
     expect(iter.current.canonical, 'Africa/Abidjan');
   });
 
+  test('Dates', () {
+    final date = IsoDate(2022, 8, 26);
+    expect(date.weekOfYear().weekNumber, 34);
+
+    final weekInfo = WeekInformation(Locale.fromString('de'));
+    expect(weekInfo.firstWeekday, Weekday.monday);
+    expect(weekInfo.isWeekend(Weekday.sunday), isTrue);
+
+    final weekend = weekInfo.weekend;
+    expect(weekend.moveNext(), true);
+    expect(weekend.current, Weekday.saturday);
+    expect(weekend.moveNext(), true);
+    expect(weekend.current, Weekday.sunday);
+    expect(weekend.moveNext(), false);
+  });
+
   test('DateTime formatting', () {
     final zonedDateTimeIso = ZonedIsoDateTime.fromString(
       '2025-01-15T14:32:12.34+01[Europe/Zurich]',

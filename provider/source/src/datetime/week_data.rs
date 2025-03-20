@@ -37,15 +37,6 @@ impl DataProvider<CalendarWeekV1> for SourceDataProvider {
             ))?
             .into();
 
-        let min_week_days: u8 = week_data
-            .min_days
-            .get(&territory)
-            .or_else(|| week_data.min_days.get(&DEFAULT_TERRITORY))
-            .ok_or(DataError::custom(
-                "Missing default entry for minDays in weekData.json",
-            ))?
-            .0;
-
         let weekend = {
             let weekend_start = week_data
                 .weekend_start
@@ -69,7 +60,6 @@ impl DataProvider<CalendarWeekV1> for SourceDataProvider {
             metadata: Default::default(),
             payload: DataPayload::from_owned(WeekData {
                 first_weekday,
-                min_week_days,
                 weekend,
             }),
         })
@@ -87,6 +77,8 @@ impl IterableDataProviderCached<CalendarWeekV1> for SourceDataProvider {
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
+            .chain(week_data.weekend_end.keys())
+            .chain(week_data.weekend_start.keys())
             .filter_map(|t| match t {
                 &DEFAULT_TERRITORY => Some(None),
                 Territory::Region(r) => Some(Some(*r)),
@@ -111,7 +103,6 @@ fn test_basic_cldr_week_data_v2() {
 
     let default_week_data: DataResponse<CalendarWeekV1> =
         provider.load(Default::default()).unwrap();
-    assert_eq!(1, default_week_data.payload.get().min_week_days);
     assert_eq!(Monday, default_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Saturday, Sunday]),
@@ -124,7 +115,6 @@ fn test_basic_cldr_week_data_v2() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(4, fr_week_data.payload.get().min_week_days);
     assert_eq!(Monday, fr_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Saturday, Sunday]),
@@ -138,10 +128,6 @@ fn test_basic_cldr_week_data_v2() {
         })
         .unwrap();
     // Only first_weekday is defined for IQ, min_week_days uses the default.
-    assert_eq!(
-        default_week_data.payload.get().min_week_days,
-        iq_week_data.payload.get().min_week_days
-    );
     assert_eq!(Saturday, iq_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Friday, Saturday]),
@@ -154,7 +140,6 @@ fn test_basic_cldr_week_data_v2() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(4, gg_week_data.payload.get().min_week_days);
     // Only min_week_days is defined for GG, first_weekday uses the default.
     assert_eq!(
         default_week_data.payload.get().first_weekday,
@@ -171,10 +156,6 @@ fn test_basic_cldr_week_data_v2() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(
-        default_week_data.payload.get().min_week_days,
-        ir_week_data.payload.get().min_week_days
-    );
     assert_eq!(Saturday, ir_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Friday]),

@@ -104,7 +104,7 @@ impl ChineseBasedCache<'_> {
         let this_packed = self.data.get(delta)?;
         let prev_packed = self.data.get(delta - 1)?;
 
-        let iso_in_year = iso.day_of_year();
+        let iso_in_year = iso.day_of_year().0;
         let fetched_data_ny_in_iso = u16::from(this_packed.ny_day_of_iso_year());
 
         if iso_in_year >= fetched_data_ny_in_iso {
