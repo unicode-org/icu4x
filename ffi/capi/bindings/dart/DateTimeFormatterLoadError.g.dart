@@ -7,6 +7,8 @@ part of 'lib.g.dart';
 enum DateTimeFormatterLoadError {
   unknown,
 
+  invalidDateFields,
+
   unsupportedLength,
 
   conflictingField,
@@ -33,6 +35,8 @@ enum DateTimeFormatterLoadError {
     switch (this) {
       case unknown:
         return 0;
+      case invalidDateFields:
+        return 2049;
       case unsupportedLength:
         return 2051;
       case conflictingField:

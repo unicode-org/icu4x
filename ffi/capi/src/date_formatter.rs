@@ -23,10 +23,10 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::{
         datetime_formatter::ffi::DateTimeLength,
+        datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
-        neo_datetime::impls::map_or_default,
     };
 
     #[diplomat::opaque]
