@@ -12,9 +12,8 @@ mod formatter;
 pub mod provider;
 
 pub mod options;
-mod validated_options;
+pub mod validated_options;
 
 pub use duration::{Duration, DurationSign};
 pub use format::FormattedDuration;
-pub use formatter::DurationFormatter;
-pub use formatter::DurationFormatterPreferences;
+pub use formatter::{DurationFormatter, DurationFormatterPreferences};

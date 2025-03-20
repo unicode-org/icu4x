@@ -73,7 +73,7 @@ mod helpers;
 
 mod data;
 mod langid;
-mod locale;
+pub mod locale;
 mod macros;
 mod parser;
 mod shortvec;
