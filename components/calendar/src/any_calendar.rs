@@ -53,14 +53,14 @@ impl CalendarPreferences {
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
 ///
 /// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
-/// compile time. When the type is known at runtime, the [`AnyCalendar::new_for_kind()`] and sibling methods may be used.
+/// compile time. When the type is known at runtime, the [`AnyCalendar::new()`] and sibling methods may be used.
 ///
 /// [`Date`] can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, Date, cal::Japanese, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, CalendarPreferences, Date, cal::Japanese, types::{Era, MonthCode}};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -68,7 +68,7 @@ impl CalendarPreferences {
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 /// let prefs = CalendarPreferences::from(&locale);
 ///
-/// let calendar = AnyCalendar::new(locale.resolve_calendar().try_into().unwrap());
+/// let calendar = AnyCalendar::new(prefs.resolve_calendar().try_into().unwrap());
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///

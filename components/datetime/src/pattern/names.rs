@@ -1090,7 +1090,7 @@ where
     ///
     /// let names = DateTimeNames::new_without_number_formatting(
     ///     locale!("es-MX").into(),
-    ///     AnyCalendar::new_for_kind(AnyCalendarKind::Gregorian),
+    ///     AnyCalendar::new(AnyCalendarKind::Gregorian),
     /// );
     ///
     /// let field_set = T::long().hm();
