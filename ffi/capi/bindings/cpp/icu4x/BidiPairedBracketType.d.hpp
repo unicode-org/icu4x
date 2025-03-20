@@ -24,6 +24,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+ */
 class BidiPairedBracketType {
 public:
   enum Value {

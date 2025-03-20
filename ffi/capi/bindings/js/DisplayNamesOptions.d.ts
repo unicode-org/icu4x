@@ -5,8 +5,9 @@ import type { LanguageDisplay } from "./LanguageDisplay"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+ */
 type DisplayNamesOptions_obj = {
     style?: DisplayNamesStyle | null;
     fallback?: DisplayNamesFallback | null;

@@ -9,8 +9,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ */
 const VariantOffsetsCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_VariantOffsetsCalculator_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class VariantOffsetsCalculator {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_VariantOffsetsCalculator_create_mv1();
     
@@ -54,6 +60,11 @@ export class VariantOffsetsCalculator {
         finally {}
     }
 
+    /** 
+     * Construct a new [`VariantOffsetsCalculator`] instance using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -72,6 +83,9 @@ export class VariantOffsetsCalculator {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
+     */
     computeOffsetsFromTimeZone(timeZone, localDate, localTime) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         

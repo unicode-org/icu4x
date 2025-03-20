@@ -304,6 +304,7 @@ macro_rules! impl_zone_combo_helpers {
         impl_combo_get_field!($type, $composite, $enum, zone::GenericLong);
         impl_combo_get_field!($type, $composite, $enum, zone::GenericShort);
         impl_combo_get_field!($type, $composite, $enum, zone::Location);
+        impl_combo_get_field!($type, $composite, $enum, zone::ExemplarCity);
     };
 }
 

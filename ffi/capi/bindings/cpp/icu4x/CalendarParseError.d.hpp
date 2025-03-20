@@ -26,6 +26,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
+ */
 class CalendarParseError {
 public:
   enum Value {

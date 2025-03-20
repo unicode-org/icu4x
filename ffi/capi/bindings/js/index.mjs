@@ -212,9 +212,13 @@ export { WeekCalculator } from "./WeekCalculator.mjs"
 
 export { WindowsParser } from "./WindowsParser.mjs"
 
+export { ZonedDateFormatter } from "./ZonedDateFormatter.mjs"
+
+export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian.mjs"
+
 export { BidiDirection } from "./BidiDirection.mjs"
 
-export { AnyCalendarKind } from "./AnyCalendarKind.mjs"
+export { CalendarKind } from "./CalendarKind.mjs"
 
 export { LeadingAdjustment } from "./LeadingAdjustment.mjs"
 

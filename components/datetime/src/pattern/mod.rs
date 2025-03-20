@@ -80,12 +80,12 @@ pub enum PatternLoadError {
     /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
     #[displaydoc("The field {0:?} symbol is not supported in that length.")]
     UnsupportedLength(ErrorField),
-    /// The specific type does not support this field.
+    /// The specific formatter does not support this field.
     ///
     /// This happens for example when trying to load a month field
     /// on a [`FixedCalendarDateTimeNames<Gregorian, ZoneFieldSet>`].
-    #[displaydoc("The specific type does not support the field {0:?}.")]
-    TypeTooSpecific(ErrorField),
+    #[displaydoc("The specific formatter does not support the field {0:?}.")]
+    FormatterTooSpecific(ErrorField),
     /// An error arising from the [`data provider`](icu_provider) for loading names.
     #[displaydoc("Problem loading data for field {1:?}: {0}")]
     Data(icu_provider::DataError, ErrorField),

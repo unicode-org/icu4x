@@ -10,10 +10,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Date object capable of containing a ISO-8601 date
-*
-*See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
-*/
+/** 
+ * An ICU4X Date object capable of containing a ISO-8601 date
+ *
+ * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
+ */
 const IsoDate_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_IsoDate_destroy_mv1(ptr);
 });
@@ -47,6 +48,11 @@ export class IsoDate {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a new [`IsoDate`] from the specified date and time.
+     *
+     * See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
+     */
     #defaultConstructor(year, month, day) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -65,6 +71,11 @@ export class IsoDate {
         }
     }
 
+    /** 
+     * Creates a new [`IsoDate`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_iso_from_str) for more information.
+     */
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -89,6 +100,11 @@ export class IsoDate {
         }
     }
 
+    /** 
+     * Convert this date to one in a different calendar
+     *
+     * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+     */
     toCalendar(calendar) {
         const result = wasm.icu4x_IsoDate_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
@@ -99,6 +115,9 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
+     */
     toAny() {
         const result = wasm.icu4x_IsoDate_to_any_mv1(this.ffiValue);
     
@@ -109,6 +128,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the 1-indexed day in the year for this date
+     *
+     * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+     */
     get dayOfYear() {
         const result = wasm.icu4x_IsoDate_day_of_year_mv1(this.ffiValue);
     
@@ -119,6 +143,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the 1-indexed day in the month for this date
+     *
+     * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+     */
     get dayOfMonth() {
         const result = wasm.icu4x_IsoDate_day_of_month_mv1(this.ffiValue);
     
@@ -129,6 +158,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the day in the week for this day
+     *
+     * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     */
     get dayOfWeek() {
         const result = wasm.icu4x_IsoDate_day_of_week_mv1(this.ffiValue);
     
@@ -139,6 +173,14 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the week number in this month, 1-indexed, based on what
+     * is considered the first day of the week (often a locale preference).
+     *
+     * `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
+     *
+     * See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
+     */
     weekOfMonth(firstWeekday) {
         const result = wasm.icu4x_IsoDate_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
     
@@ -149,6 +191,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the week number in this year, using week data
+     *
+     * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+     */
     weekOfYear(calculator) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         
@@ -163,6 +210,13 @@ export class IsoDate {
         }
     }
 
+    /** 
+     * Returns 1-indexed number of the month of this date in its year
+     *
+     * See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
+     */
     get month() {
         const result = wasm.icu4x_IsoDate_month_mv1(this.ffiValue);
     
@@ -173,6 +227,13 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the year number in the current era for this date
+     *
+     * For calendars without an era, returns the extended year
+     *
+     * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
+     */
     get year() {
         const result = wasm.icu4x_IsoDate_year_mv1(this.ffiValue);
     
@@ -183,6 +244,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns if the year is a leap year for this date
+     *
+     * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+     */
     get isInLeapYear() {
         const result = wasm.icu4x_IsoDate_is_in_leap_year_mv1(this.ffiValue);
     
@@ -193,6 +259,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the number of months in the year represented by this date
+     *
+     * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+     */
     get monthsInYear() {
         const result = wasm.icu4x_IsoDate_months_in_year_mv1(this.ffiValue);
     
@@ -203,6 +274,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the number of days in the month represented by this date
+     *
+     * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+     */
     get daysInMonth() {
         const result = wasm.icu4x_IsoDate_days_in_month_mv1(this.ffiValue);
     
@@ -213,6 +289,11 @@ export class IsoDate {
         finally {}
     }
 
+    /** 
+     * Returns the number of days in the year represented by this date
+     *
+     * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+     */
     get daysInYear() {
         const result = wasm.icu4x_IsoDate_days_in_year_mv1(this.ffiValue);
     

@@ -3,8 +3,9 @@ import type { BidiPairedBracketType } from "./BidiPairedBracketType"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
+ */
 type BidiMirroringGlyph_obj = {
     mirroringGlyph?: codepoint | null;
     mirrored: boolean;
@@ -30,6 +31,9 @@ export class BidiMirroringGlyph {
     static fromFields(structObj : BidiMirroringGlyph_obj) : BidiMirroringGlyph;
 
 
+    /** 
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     */
     static forChar(ch: codepoint): BidiMirroringGlyph;
 
     constructor(structObj : BidiMirroringGlyph_obj);

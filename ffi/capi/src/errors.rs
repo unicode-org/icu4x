@@ -12,7 +12,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatOption;
 
     #[cfg(feature = "datetime")]
-    use crate::calendar::ffi::AnyCalendarKind;
+    use crate::calendar::ffi::CalendarKind;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -94,9 +94,10 @@ pub mod ffi {
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
+        InvalidDateFields = 0x8_01,
         UnsupportedLength = 0x8_03,
         ConflictingField = 0x8_09,
-        TypeTooSpecific = 0x8_0A,
+        FormatterTooSpecific = 0x8_0A,
 
         DataMarkerNotFound = 0x01,
         DataIdentifierNotFound = 0x02,
@@ -111,8 +112,8 @@ pub mod ffi {
     #[cfg(feature = "datetime")]
     #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
     pub struct DateTimeMismatchedCalendarError {
-        pub this_kind: AnyCalendarKind,
-        pub date_kind: DiplomatOption<AnyCalendarKind>,
+        pub this_kind: CalendarKind,
+        pub date_kind: DiplomatOption<CalendarKind>,
     }
 
     #[cfg(feature = "datetime")]
@@ -209,8 +210,8 @@ impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadErr
                 icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
             ) => Self::UnsupportedLength,
             icu_datetime::DateTimeFormatterLoadError::Names(
-                icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_),
-            ) => Self::TypeTooSpecific,
+                icu_datetime::pattern::PatternLoadError::FormatterTooSpecific(_),
+            ) => Self::FormatterTooSpecific,
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::Data(data_error, _),
             ) => data_error.into(),
@@ -249,7 +250,9 @@ impl From<icu_datetime::pattern::PatternLoadError> for ffi::DateTimeFormatterLoa
             icu_datetime::pattern::PatternLoadError::UnsupportedLength(_) => {
                 Self::UnsupportedLength
             }
-            icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_) => Self::TypeTooSpecific,
+            icu_datetime::pattern::PatternLoadError::FormatterTooSpecific(_) => {
+                Self::FormatterTooSpecific
+            }
             icu_datetime::pattern::PatternLoadError::Data(data_error, _) => data_error.into(),
             _ => Self::Unknown,
         }

@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+ */
 
 
 export class BidiPairedBracketType {

@@ -23,6 +23,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `NumericOrdering`](https://docs.rs/icu/latest/icu/collator/options/enum.NumericOrdering.html) for more information.
+ */
 class CollatorNumericOrdering {
 public:
   enum Value {

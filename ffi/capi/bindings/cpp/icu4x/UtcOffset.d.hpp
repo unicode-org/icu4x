@@ -24,27 +24,100 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html) for more information.
+ */
 class UtcOffset {
 public:
 
+  /**
+   * Creates an offset from seconds.
+   *
+   * Errors if the offset seconds are out of range.
+   *
+   * See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
+   */
   inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_seconds(int32_t seconds);
 
+  /**
+   * Creates an offset from eighths of an hour.
+   *
+   * See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline static std::unique_ptr<icu4x::UtcOffset> from_eighths_of_hour(int8_t eighths_of_hour);
 
+  /**
+   * Creates an offset from a string.
+   *
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_string(std::string_view offset);
 
+  /**
+   * Gets the offset as eighths of an hour.
+   *
+   * See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
+   */
   inline int8_t eighths_of_hour() const;
 
+  /**
+   * Returns the value as offset seconds.
+   *
+   * See the [Rust documentation for `offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+   *
+   * See the [Rust documentation for `to_seconds`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline int32_t seconds() const;
 
+  /**
+   * Returns whether the offset is positive.
+   *
+   * See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline bool is_non_negative() const;
 
+  /**
+   * Returns whether the offset is zero.
+   *
+   * See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline bool is_zero() const;
 
+  /**
+   * Returns the hours part of the offset.
+   *
+   * See the [Rust documentation for `hours_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline int32_t hours_part() const;
 
+  /**
+   * Returns the minutes part of the offset.
+   *
+   * See the [Rust documentation for `minutes_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline uint32_t minutes_part() const;
 
+  /**
+   * Returns the seconds part of the offset.
+   *
+   * See the [Rust documentation for `seconds_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+   */
   inline uint32_t seconds_part() const;
 
   inline const icu4x::capi::UtcOffset* AsFFI() const;

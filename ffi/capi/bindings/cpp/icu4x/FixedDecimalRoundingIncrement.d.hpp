@@ -25,6 +25,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Increment used in a rounding operation.
+ *
+ * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
+ */
 class FixedDecimalRoundingIncrement {
 public:
   enum Value {

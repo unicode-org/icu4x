@@ -1,5 +1,5 @@
-#ifndef AnyCalendarKind_H
-#define AnyCalendarKind_H
+#ifndef CalendarKind_H
+#define CalendarKind_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "AnyCalendarKind.d.h"
+#include "CalendarKind.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // AnyCalendarKind_H
+#endif // CalendarKind_H

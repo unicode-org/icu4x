@@ -165,8 +165,8 @@ fn main() -> eyre::Result<()> {
     extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
-            SourceDataProvider::LATEST_TESTED_CLDR_TAG,
-            SourceDataProvider::LATEST_TESTED_CLDR_TAG
+            SourceDataProvider::TESTED_CLDR_TAG,
+            SourceDataProvider::TESTED_CLDR_TAG
         ))
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
@@ -179,8 +179,8 @@ fn main() -> eyre::Result<()> {
     extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-            SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG,
-            SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+            SourceDataProvider::TESTED_ICUEXPORT_TAG,
+            SourceDataProvider::TESTED_ICUEXPORT_TAG.replace('/', "-")
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
@@ -192,7 +192,7 @@ fn main() -> eyre::Result<()> {
     extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
-            SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+            SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG,
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
@@ -204,7 +204,7 @@ fn main() -> eyre::Result<()> {
     extract_tar(
         cached(&format!(
             "https://www.iana.org/time-zones/repository/releases/tzdata{}.tar.gz",
-            SourceDataProvider::LATEST_TESTED_TZDB_TAG,
+            SourceDataProvider::TESTED_TZDB_TAG,
         ))
         .with_context(|| "Failed to download TZDB ZIP".to_owned())?,
         TZDB_GLOB.iter().copied().map(String::from).collect(),
@@ -255,7 +255,7 @@ fn main() -> eyre::Result<()> {
 use crate::{{AbstractFs, CldrCache, SerdeCache, SourceDataProvider, TzdbCache}};
 use std::sync::{{Arc, OnceLock}};
 impl SourceDataProvider {{
-    // This is equivalent to `new_latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {{
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();

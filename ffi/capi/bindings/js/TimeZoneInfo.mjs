@@ -10,8 +10,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
+ */
 const TimeZoneInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneInfo_destroy_mv1(ptr);
 });
@@ -45,6 +46,11 @@ export class TimeZoneInfo {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a time zone for UTC (Coordinated Universal Time).
+     *
+     * See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
+     */
     static utc() {
         const result = wasm.icu4x_TimeZoneInfo_utc_mv1();
     
@@ -55,6 +61,9 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    /** 
+     * Creates a time zone info from parts.
+     */
     #defaultConstructor(timeZoneId, offset, zoneVariant) {
         const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(timeZoneId.ffiValue, offset.ffiValue ?? 0, ...diplomatRuntime.optionToArgsForCalling(zoneVariant, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
     
@@ -65,6 +74,9 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
+     */
     timeZoneId() {
         const result = wasm.icu4x_TimeZoneInfo_time_zone_id_mv1(this.ffiValue);
     
@@ -75,6 +87,9 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
+     */
     atTime(date, time) {
         const result = wasm.icu4x_TimeZoneInfo_at_time_mv1(this.ffiValue, date.ffiValue, time.ffiValue);
     
@@ -85,6 +100,9 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
+     */
     localTime() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
@@ -102,6 +120,9 @@ export class TimeZoneInfo {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
+     */
     withZoneVariant(timeZoneVariant) {
         const result = wasm.icu4x_TimeZoneInfo_with_zone_variant_mv1(this.ffiValue, timeZoneVariant.ffiValue);
     
@@ -112,6 +133,15 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    /** 
+     * Infers the zone variant.
+     *
+     * Requires the offset and local time to be set.
+     *
+     * See the [Rust documentation for `infer_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_zone_variant) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
+     */
     inferZoneVariant(offsetCalculator) {
         const result = wasm.icu4x_TimeZoneInfo_infer_zone_variant_mv1(this.ffiValue, offsetCalculator.ffiValue);
     
@@ -122,6 +152,9 @@ export class TimeZoneInfo {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_variant) for more information.
+     */
     zoneVariant() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

@@ -8,8 +8,9 @@ import type { CollatorStrength } from "./CollatorStrength"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
+ */
 
 
 export class CollatorResolvedOptions {

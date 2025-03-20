@@ -7,10 +7,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
-*
-*See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
-*/
+/** 
+ * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
+ *
+ * See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
+ */
 const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_SentenceSegmenter_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class SentenceSegmenter {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_SentenceSegmenter_create_mv1();
     
@@ -54,6 +60,9 @@ export class SentenceSegmenter {
         finally {}
     }
 
+    /** 
+     * Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
+     */
     static createWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -72,6 +81,9 @@ export class SentenceSegmenter {
         }
     }
 
+    /** 
+     * Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+     */
     static createWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -90,6 +102,14 @@ export class SentenceSegmenter {
         }
     }
 
+    /** 
+     * Segments a string.
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
+     */
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input));

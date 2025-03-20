@@ -7,10 +7,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An object that runs the ICU4X locale fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
-*/
+/** 
+ * An object that runs the ICU4X locale fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
+ */
 const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbacker_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class LocaleFallbacker {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a new `LocaleFallbacker` from compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_LocaleFallbacker_create_mv1();
     
@@ -54,6 +60,11 @@ export class LocaleFallbacker {
         finally {}
     }
 
+    /** 
+     * Creates a new `LocaleFallbacker` from a data provider.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -72,6 +83,11 @@ export class LocaleFallbacker {
         }
     }
 
+    /** 
+     * Creates a new `LocaleFallbacker` without data for limited functionality.
+     *
+     * See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+     */
     static withoutData() {
         const result = wasm.icu4x_LocaleFallbacker_without_data_mv1();
     
@@ -82,6 +98,11 @@ export class LocaleFallbacker {
         finally {}
     }
 
+    /** 
+     * Associates this `LocaleFallbacker` with configuration options.
+     *
+     * See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+     */
     forConfig(config) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         

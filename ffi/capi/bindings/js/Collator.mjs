@@ -8,8 +8,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
+ */
 const Collator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Collator_destroy_mv1(ptr);
 });
@@ -43,6 +44,11 @@ export class Collator {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new Collator instance using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+     */
     static create(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -65,6 +71,11 @@ export class Collator {
         }
     }
 
+    /** 
+     * Construct a new Collator instance using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+     */
     #defaultConstructor(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -87,6 +98,14 @@ export class Collator {
         }
     }
 
+    /** 
+     * Compare two strings.
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
+     */
     compare(left, right) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -105,6 +124,13 @@ export class Collator {
         }
     }
 
+    /** 
+     * The resolved options showing how the default options, the requested options,
+     * and the options from locale data were combined. None of the struct fields
+     * will have `Auto` as the value.
+     *
+     * See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
+     */
     get resolvedOptions() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 24, 4, false);
         

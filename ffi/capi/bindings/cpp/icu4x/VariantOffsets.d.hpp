@@ -29,6 +29,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsets.html) for more information.
+ */
 struct VariantOffsets {
   std::unique_ptr<icu4x::UtcOffset> standard;
   std::unique_ptr<icu4x::UtcOffset> daylight;

@@ -74,12 +74,16 @@ void main() {
 
     final zonedDateTimeBuddhist = ZonedDateTime.fromString(
       '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
-      Calendar.forKind(AnyCalendarKind.buddhist),
+      Calendar.forKind(CalendarKind.buddhist),
       IanaParser(),
       VariantOffsetsCalculator(),
     );
 
     var locale = Locale.fromString('de-u-ca-islamic');
+
+    ///// DateFormatter /////
+
+    expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '14.07.');
 
     ///// DateTimeFormatter /////
 
@@ -106,8 +110,8 @@ void main() {
       ),
       throwsA(
         DateTimeMismatchedCalendarError(
-          thisKind: AnyCalendarKind.hijriObservational,
-          dateKind: AnyCalendarKind.buddhist,
+          thisKind: CalendarKind.hijriObservational,
+          dateKind: CalendarKind.buddhist,
         ),
       ),
     );
@@ -115,7 +119,7 @@ void main() {
     expect(
       DateTimeFormatter.ymdet(locale).formatSameCalendar(
         zonedDateTimeBuddhist.date.toCalendar(
-          Calendar.forKind(AnyCalendarKind.hijriObservational),
+          Calendar.forKind(CalendarKind.hijriObservational),
         ),
         zonedDateTimeBuddhist.time,
       ),
@@ -146,6 +150,29 @@ void main() {
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
       'Mittwoch, 15. Januar 2025, 14:32',
+    );
+
+    ///// ZonedDateFormatter /////
+
+    expect(
+      ZonedDateFormatter.genericLong(
+        locale,
+        DateFormatter.md(locale),
+      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.zone),
+      '14.07. Mitteleuropäische Zeit',
+    );
+
+    expect(
+      () => ZonedDateFormatter.genericLong(locale, DateFormatter.ym(locale)),
+      throwsA(DateTimeFormatterLoadError.invalidDateFields),
+    );
+
+    expect(
+      () => ZonedDateFormatter.genericLong(
+        locale,
+        DateFormatter.ymd(locale),
+      ).formatIso(zonedDateTimeIso.date, TimeZoneInfo.utc()),
+      throwsA(DateTimeWriteError.missingInputField),
     );
 
     ///// ZonedDateTimeFormatter /////

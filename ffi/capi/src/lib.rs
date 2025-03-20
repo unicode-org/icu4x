@@ -38,7 +38,7 @@
 //!
 //! More information on using ICU4X from C++ can be found in [our tutorial].
 //!
-//! [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/cpp.md
+//! [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/using-from-cpp.md
 //! [TypeScript]: https://unicode-org.github.io/icu4x/tsdoc
 //! [C++]: https://unicode-org.github.io/icu4x/cppdoc
 
@@ -63,6 +63,8 @@ pub mod locale_core;
 pub mod logging;
 #[macro_use]
 pub mod provider;
+#[cfg(feature = "datetime")]
+pub(crate) mod datetime_helpers;
 
 // Components
 
@@ -148,5 +150,7 @@ pub mod variant_offset;
 pub mod week;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod windows_parser;
+#[cfg(feature = "datetime")]
+pub mod zoned_date_formatter;
 #[cfg(feature = "datetime")]
 pub mod zoned_datetime;

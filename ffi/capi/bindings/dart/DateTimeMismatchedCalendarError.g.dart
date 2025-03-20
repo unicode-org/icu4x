@@ -11,8 +11,8 @@ final class _DateTimeMismatchedCalendarErrorFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
 final class DateTimeMismatchedCalendarError {
-  AnyCalendarKind thisKind;
-  AnyCalendarKind? dateKind;
+  CalendarKind thisKind;
+  CalendarKind? dateKind;
 
   DateTimeMismatchedCalendarError({required this.thisKind, this.dateKind});
 
@@ -23,14 +23,14 @@ final class DateTimeMismatchedCalendarError {
   // should handle this when constructing edge arrays.
   // ignore: unused_element
   DateTimeMismatchedCalendarError._fromFfi(_DateTimeMismatchedCalendarErrorFfi ffi) :
-    thisKind = AnyCalendarKind.values[ffi.thisKind],
-    dateKind = ffi.dateKind.isOk ? AnyCalendarKind.values[ffi.dateKind.union.ok] : null;
+    thisKind = CalendarKind.values[ffi.thisKind],
+    dateKind = ffi.dateKind.isOk ? CalendarKind.values[ffi.dateKind.union.ok] : null;
 
   // ignore: unused_element
   _DateTimeMismatchedCalendarErrorFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_DateTimeMismatchedCalendarErrorFfi>();
     struct.thisKind = thisKind.index;
-    AnyCalendarKind? dateKind = this.dateKind;
+    CalendarKind? dateKind = this.dateKind;
     struct.dateKind = dateKind != null ? _ResultInt32Void.ok(dateKind.index) : _ResultInt32Void.err();
     return struct;
   }

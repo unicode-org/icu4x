@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
-#include "AnyCalendarKind.hpp"
+#include "CalendarKind.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
@@ -25,15 +25,15 @@ namespace capi {
     icu4x_Calendar_create_for_locale_mv1_result icu4x_Calendar_create_for_locale_mv1(const icu4x::capi::Locale* locale);
     
     typedef struct icu4x_Calendar_create_for_kind_mv1_result {union {icu4x::capi::Calendar* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Calendar_create_for_kind_mv1_result;
-    icu4x_Calendar_create_for_kind_mv1_result icu4x_Calendar_create_for_kind_mv1(icu4x::capi::AnyCalendarKind kind);
+    icu4x_Calendar_create_for_kind_mv1_result icu4x_Calendar_create_for_kind_mv1(icu4x::capi::CalendarKind kind);
     
     typedef struct icu4x_Calendar_create_for_locale_with_provider_mv1_result {union {icu4x::capi::Calendar* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Calendar_create_for_locale_with_provider_mv1_result;
     icu4x_Calendar_create_for_locale_with_provider_mv1_result icu4x_Calendar_create_for_locale_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
     
     typedef struct icu4x_Calendar_create_for_kind_with_provider_mv1_result {union {icu4x::capi::Calendar* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Calendar_create_for_kind_with_provider_mv1_result;
-    icu4x_Calendar_create_for_kind_with_provider_mv1_result icu4x_Calendar_create_for_kind_with_provider_mv1(const icu4x::capi::DataProvider* provider, icu4x::capi::AnyCalendarKind kind);
+    icu4x_Calendar_create_for_kind_with_provider_mv1_result icu4x_Calendar_create_for_kind_with_provider_mv1(const icu4x::capi::DataProvider* provider, icu4x::capi::CalendarKind kind);
     
-    icu4x::capi::AnyCalendarKind icu4x_Calendar_kind_mv1(const icu4x::capi::Calendar* self);
+    icu4x::capi::CalendarKind icu4x_Calendar_kind_mv1(const icu4x::capi::Calendar* self);
     
     
     void icu4x_Calendar_destroy_mv1(Calendar* self);
@@ -47,7 +47,7 @@ inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Calendar>>(std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4x::Calendar::create_for_kind(icu4x::AnyCalendarKind kind) {
+inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4x::Calendar::create_for_kind(icu4x::CalendarKind kind) {
   auto result = icu4x::capi::icu4x_Calendar_create_for_kind_mv1(kind.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Calendar>>(std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
@@ -58,15 +58,15 @@ inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Calendar>>(std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4x::Calendar::create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::AnyCalendarKind kind) {
+inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4x::Calendar::create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind) {
   auto result = icu4x::capi::icu4x_Calendar_create_for_kind_with_provider_mv1(provider.AsFFI(),
     kind.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Calendar>>(std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline icu4x::AnyCalendarKind icu4x::Calendar::kind() const {
+inline icu4x::CalendarKind icu4x::Calendar::kind() const {
   auto result = icu4x::capi::icu4x_Calendar_kind_mv1(this->AsFFI());
-  return icu4x::AnyCalendarKind::FromFFI(result);
+  return icu4x::CalendarKind::FromFFI(result);
 }
 
 inline const icu4x::capi::Calendar* icu4x::Calendar::AsFFI() const {

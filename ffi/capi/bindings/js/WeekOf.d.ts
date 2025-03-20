@@ -3,8 +3,9 @@ import type { WeekRelativeUnit } from "./WeekRelativeUnit"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
+ */
 
 
 export class WeekOf {

@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
+ */
 
 
 export class TimePrecision {

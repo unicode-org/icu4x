@@ -5,10 +5,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
-*
-*See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
-*/
+/** 
+ * An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
+ *
+ * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
+ */
 const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Time_destroy_mv1(ptr);
 });
@@ -42,6 +43,11 @@ export class Time {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a new [`Time`] given field values
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_new) for more information.
+     */
     #defaultConstructor(hour, minute, second, subsecond) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -60,6 +66,11 @@ export class Time {
         }
     }
 
+    /** 
+     * Creates a new [`Time`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
+     */
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
@@ -84,6 +95,11 @@ export class Time {
         }
     }
 
+    /** 
+     * Creates a new [`Time`] representing midnight (00:00.000).
+     *
+     * See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
+     */
     static midnight() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -102,6 +118,11 @@ export class Time {
         }
     }
 
+    /** 
+     * Returns the hour in this time
+     *
+     * See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.hour) for more information.
+     */
     get hour() {
         const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
     
@@ -112,6 +133,11 @@ export class Time {
         finally {}
     }
 
+    /** 
+     * Returns the minute in this time
+     *
+     * See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.minute) for more information.
+     */
     get minute() {
         const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
     
@@ -122,6 +148,11 @@ export class Time {
         finally {}
     }
 
+    /** 
+     * Returns the second in this time
+     *
+     * See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.second) for more information.
+     */
     get second() {
         const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
     
@@ -132,6 +163,11 @@ export class Time {
         finally {}
     }
 
+    /** 
+     * Returns the subsecond in this time as nanoseconds
+     *
+     * See the [Rust documentation for `subsecond`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.subsecond) for more information.
+     */
     get subsecond() {
         const result = wasm.icu4x_Time_subsecond_mv1(this.ffiValue);
     

@@ -26,7 +26,7 @@ pub mod ffi {
         datetime_options::ffi::{DateTimeAlignment, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
-        neo_datetime::impls::map_or_default,
+        datetime_helpers::map_or_default,
     };
 
     #[diplomat::opaque]
@@ -58,23 +58,32 @@ pub mod ffi {
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.date_fields.name_lower() }}{% if is_with_provider %}_with_provider{% endif %}")]
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}, Struct)]
+        {%- let ctor_suffix_ffi %}
+        {%- let ctor_suffix_rust %}
+        {%- if is_with_provider %}
+            {%- let ctor_suffix_ffi = "_with_provider" %}
+            {%- let ctor_suffix_rust = "_with_buffer_provider" %}
+        {%- else %}
+            {%- let ctor_suffix_ffi = "" %}
+            {%- let ctor_suffix_rust = "" %}
+        {%- endif %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
         {%- if variant.consumed_options.alignment %}
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_alignment, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_alignment, FnInStruct, compact)]
         {%- endif %}
         {%- if variant.consumed_options.year_style %}
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_year_style, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_year_style, FnInStruct, compact)]
         {%- endif %}
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_length, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::short, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::medium, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.date_fields.name_upper() }}::long, FnInStruct, hidden)]
-        {%- if variant.date_fields.is_default_constructor() && !is_with_provider %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::long, FnInStruct, hidden)]
+        {%- if variant.is_default_constructor() && !is_with_provider %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
         #[cfg(feature = "{% if is_with_provider %}buffer_provider{% else %}compiled_data{% endif %}")]
-        pub fn create_{{ variant.date_fields.name_lower() }}{% if is_with_provider %}_with_provider{% endif %}(
+        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
             {%- if is_with_provider %}
             provider: &DataProvider,
             {%- endif %}
@@ -91,7 +100,7 @@ pub mod ffi {
             {%- if !variant.consumed_options.alignment && !variant.consumed_options.year_style %}
             #[allow(unused_mut)]
             {%- endif %}
-            let mut options = icu_datetime::fieldsets::{{ variant.date_fields.name_upper() }}::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::with_length(map_or_default(length));
             {%- if variant.consumed_options.alignment %}
             options.alignment = alignment.map(Into::into);
             {%- endif %}
@@ -101,7 +110,7 @@ pub mod ffi {
             Ok(Box::new(Self(
                 icu_datetime
                     ::{{ rust_type }}
-                    ::try_new{% if is_with_provider %}_with_buffer_provider{% endif %}(
+                    ::try_new{{ ctor_suffix_rust }}(
                         {%- if is_with_provider %}
                         provider.get()?,
                         {%- endif %}
