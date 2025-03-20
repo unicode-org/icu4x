@@ -9,7 +9,6 @@ use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
-use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
@@ -60,15 +59,10 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        let units_conversion_trie =
-            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
-                DataError::custom("Could not create ZeroTrie from units.json data")
-                    .with_display_context(&e)
-            })?;
+        // TODO: now we need to create `MeasureUnitParser` in order to create the conversion info. how to do that ?
+        let parser = MeasureUnitParser::new();
 
-        let parser = MeasureUnitParser::from_payload(units_conversion_trie.as_borrowed());
-
-        let convert_infos = convert_units_vec
+        let conversion_info = convert_units_vec
             .iter()
             .map(|convert_unit| {
                 extract_conversion_info(
@@ -81,8 +75,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
 
         let result = UnitsInfo {
-            units_conversion_trie: units_conversion_trie.convert_store(),
-            convert_infos: VarZeroVec::from(&convert_infos),
+            conversion_info: VarZeroVec::from(&conversion_info),
         };
 
         Ok(DataResponse {
@@ -102,6 +95,7 @@ impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
 fn test_basic() {
     use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
     use icu::experimental::measure::provider::single_unit::SingleUnit;
+    use icu::experimental::measure::provider::trie::UnitsTrieV1;
     use icu::experimental::units::provider::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
@@ -120,15 +114,22 @@ fn test_basic() {
         })
         .unwrap();
 
+    let und_trie: DataResponse<UnitsTrieV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
+            ..Default::default()
+        })
+        .unwrap();
+
     let units_info = und.payload.get().to_owned();
-    let units_info_map = &units_info.units_conversion_trie;
-    let convert_units = &units_info.convert_infos;
+    let units_info_map = &und_trie.payload.get().trie;
+    let conversion_info = &units_info.conversion_info;
 
     let meter_index = units_info_map.get("meter").unwrap();
 
     let big_one = BigUint::from(1u32);
 
-    let meter_convert_ule = convert_units.zvl_get(meter_index).unwrap();
+    let meter_convert_ule = conversion_info.zvl_get(meter_index).unwrap();
     let meter_convert: ConversionInfo = ZeroFrom::zero_from(meter_convert_ule);
 
     assert_eq!(meter_convert.factor_sign, Sign::Positive);
@@ -170,7 +171,7 @@ fn test_basic() {
     );
 
     let foot_convert_index = units_info_map.get("foot").unwrap();
-    let foot_convert_ule = convert_units.zvl_get(foot_convert_index).unwrap();
+    let foot_convert_ule = conversion_info.zvl_get(foot_convert_index).unwrap();
     let foot_convert: ConversionInfo = ZeroFrom::zero_from(foot_convert_ule);
     let ft_to_m = Ratio::new(BigUint::from(3048u32), BigUint::from(10000u32));
 
