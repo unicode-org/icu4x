@@ -7,7 +7,7 @@
 use crate::{AbstractFs, CldrCache, SerdeCache, SourceDataProvider, TzdbCache};
 use std::sync::{Arc, OnceLock};
 impl SourceDataProvider {
-    // This is equivalent to `new_latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();

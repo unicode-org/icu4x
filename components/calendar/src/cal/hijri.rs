@@ -240,13 +240,6 @@ impl HijriYearLength {
             _ => None,
         }
     }
-    fn to_int(self) -> u16 {
-        match self {
-            Self::L355 => 355,
-            Self::L354 => 354,
-            Self::L353 => 353,
-        }
-    }
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -310,11 +303,6 @@ impl HijriYearInfo {
         };
         // -1 since the offset is 1-indexed but the new year is also day 1
         ny - 1 + month_offset.into() + day.into()
-    }
-
-    #[inline]
-    fn days_in_prev_year(self) -> u16 {
-        self.prev_year_length.to_int()
     }
 }
 
@@ -521,16 +509,8 @@ impl Calendar for HijriObservational {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-rgsa"), prev_year),
-            days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_hijri(tinystr!(16, "islamic-rgsa"), next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
@@ -702,16 +682,8 @@ impl Calendar for HijriUmmAlQura {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-umalqura"), prev_year),
-            days_in_prev_year: date.0.year_info.days_in_prev_year(),
-            next_year: year_as_hijri(tinystr!(16, "islamic-umalqura"), next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
@@ -887,16 +859,8 @@ impl Calendar for HijriCivil {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-civil"), prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_hijri(tinystr!(16, "islamic-civil"), next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
@@ -1076,16 +1040,8 @@ impl Calendar for HijriTabular {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: year_as_hijri(tinystr!(16, "islamic-tbla"), prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
-            next_year: year_as_hijri(tinystr!(16, "islamic-tbla"), next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {

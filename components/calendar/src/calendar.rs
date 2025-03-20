@@ -88,7 +88,7 @@ pub trait Calendar {
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;
 
     /// Information of the day of the year
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo;
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     /// The [`AnyCalendarKind`] corresponding to this calendar,
     /// if one exists. Implementors outside of `icu::calendar` should return `None`

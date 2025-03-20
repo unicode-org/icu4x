@@ -325,7 +325,7 @@ where
         }
         (FieldSymbol::Day(fields::Day::DayOfYear), l) => {
             input!(_, day_of_year = input.day_of_year);
-            try_write_number_without_part(w, decimal_formatter, day_of_year.day_of_year.into(), l)?
+            try_write_number_without_part(w, decimal_formatter, day_of_year.0.into(), l)?
         }
         (FieldSymbol::Hour(symbol), l) => {
             const PART: Part = parts::HOUR;

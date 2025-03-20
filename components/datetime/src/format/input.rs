@@ -6,7 +6,7 @@
 //! formatting operations.
 
 use crate::scaffold::*;
-use icu_calendar::types::DayOfYearInfo;
+use icu_calendar::types::DayOfYear;
 use icu_calendar::{AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
@@ -36,7 +36,7 @@ pub struct DateTimeInputUnchecked {
     /// The weekday, required for field sets with weekdays (`E`).
     pub(crate) iso_weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
-    pub(crate) day_of_year: Option<DayOfYearInfo>,
+    pub(crate) day_of_year: Option<DayOfYear>,
     /// The hour, required for field sets with times (`T`).
     pub(crate) hour: Option<Hour>,
     /// The minute, required for field sets with times (`T`).
@@ -66,7 +66,7 @@ impl DateTimeInputUnchecked {
         self.month = Some(input.month());
         self.day_of_month = Some(input.day_of_month());
         self.iso_weekday = Some(input.day_of_week());
-        self.day_of_year = Some(input.day_of_year_info());
+        self.day_of_year = Some(input.day_of_year());
     }
 
     /// Sets all fields from a [`Time`] input.

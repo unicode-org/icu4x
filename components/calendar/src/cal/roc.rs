@@ -130,16 +130,8 @@ impl Calendar for Roc {
         Iso.day_of_month(&date.0)
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> crate::types::DayOfYearInfo {
-        let prev_year = date.0 .0.year.saturating_sub(1);
-        let next_year = date.0 .0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: Iso::day_of_year(date.0),
-            days_in_year: Iso::days_in_year_direct(date.0 .0.year),
-            prev_year: year_as_roc(prev_year as i64),
-            days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: year_as_roc(next_year as i64),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        Iso.day_of_year(&date.0)
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {

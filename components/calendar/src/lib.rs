@@ -100,15 +100,7 @@ pub mod any_calendar;
 pub mod cal;
 pub mod provider;
 pub mod types;
-pub mod week {
-    //! Functions for week-of-month and week-of-year arithmetic.
-    use crate::week_of;
-    pub use week_of::RelativeUnit;
-    pub use week_of::WeekCalculator;
-    pub use week_of::WeekOf;
-    #[doc(hidden)] // for debug-assert in datetime
-    pub use week_of::MIN_UNIT_DAYS;
-}
+pub mod week;
 
 mod calendar;
 mod calendar_arithmetic;
@@ -116,7 +108,6 @@ mod duration;
 mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
-mod week_of;
 
 // Top-level types
 pub use calendar::Calendar;

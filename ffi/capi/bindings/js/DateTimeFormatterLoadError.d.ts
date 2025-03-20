@@ -17,6 +17,7 @@ export class DateTimeFormatterLoadError {
     get ffiValue() : number;
 
     static Unknown : DateTimeFormatterLoadError;
+    static InvalidDateFields : DateTimeFormatterLoadError;
     static UnsupportedCalendar : DateTimeFormatterLoadError;
     static UnsupportedLength : DateTimeFormatterLoadError;
     static ConflictingField : DateTimeFormatterLoadError;

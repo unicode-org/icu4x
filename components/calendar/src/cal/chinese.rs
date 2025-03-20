@@ -264,16 +264,8 @@ impl Calendar for Chinese {
     }
 
     /// Information of the day of the year
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0 .0.year.saturating_sub(1);
-        let next_year = date.0 .0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year_inner(),
-            prev_year: Self::format_chinese_year(prev_year, None),
-            days_in_prev_year: date.0.days_in_prev_year(),
-            next_year: Self::format_chinese_year(next_year, None),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        types::DayOfYear(date.0.day_of_year())
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {

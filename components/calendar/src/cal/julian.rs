@@ -162,16 +162,8 @@ impl Calendar for Julian {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: year_as_julian(prev_year),
-            days_in_prev_year: Julian::days_in_year_direct(prev_year),
-            next_year: year_as_julian(next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {
@@ -215,16 +207,6 @@ impl Julian {
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     pub(crate) const fn fixed_from_julian(date: ArithmeticDate<Julian>) -> RataDie {
         calendrical_calculations::julian::fixed_from_julian(date.year, date.month, date.day)
-    }
-
-    /// Convenience function so we can call days_in_year without
-    /// needing to construct a full ArithmeticDate
-    fn days_in_year_direct(year: i32) -> u16 {
-        if Julian::is_leap_year(year, ()) {
-            366
-        } else {
-            365
-        }
     }
 
     fn julian_from_fixed(date: RataDie) -> JulianDateInner {

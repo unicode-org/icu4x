@@ -312,7 +312,7 @@ impl IterableDataProvider<CustomV1> for CustomProvider {
 extern crate alloc;
 icu_provider::export::make_exportable_provider!(CustomProvider, [CustomV1,]);
 
-let icu4x_source_provider = SourceDataProvider::new_latest_tested();
+let icu4x_source_provider = SourceDataProvider::new();
 let custom_source_provider = CustomProvider;
 
 let mut buffer = Vec::<u8>::new();

@@ -94,7 +94,8 @@ pub mod ffi {
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
-        UnsupportedCalendar = 0x8_01,
+        InvalidDateFields = 0x8_01,
+        UnsupportedCalendar = 0x8_02,
         UnsupportedLength = 0x8_03,
         ConflictingField = 0x8_09,
         FormatterTooSpecific = 0x8_0A,

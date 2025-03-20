@@ -4,64 +4,36 @@ calendar/hijri/observational/v1, <singleton>, 532B, 504B, 18af87d272c76f14
 calendar/hijri/ummalqura/v1, <singleton>, 532B, 504B, ef6ac9ff14fd3f3
 calendar/japanese/extended/v1, <singleton>, 5238B, 5216B, 781ca7801695fa36
 calendar/japanese/modern/v1, <singleton>, 134B, 111B, b31e52deaf52706f
-calendar/week/v1, <lookup>, 447B, 114 identifiers
-calendar/week/v1, <total>, 33B, 33B, 11 unique payloads
-calendar/week/v1, und, 3B, 3B, 9d9f0d8d13520828
-calendar/week/v1, und-AD, 3B, 3B, bd6a06572fc718be
-calendar/week/v1, und-AF, 3B, 3B, 38f1b64f8a840a6
-calendar/week/v1, und-AG, 3B, 3B, c7700ca0a16a1d32
-calendar/week/v1, und-AN, -> und-AD
+calendar/week/v1, <lookup>, 292B, 72 identifiers
+calendar/week/v1, <total>, 20B, 20B, 10 unique payloads
+calendar/week/v1, und, 2B, 2B, db63f20c2a6a914a
+calendar/week/v1, und-AF, 2B, 2B, 16c731ae6e8c3ec5
+calendar/week/v1, und-AG, 2B, 2B, 1165aed44af61a3f
 calendar/week/v1, und-AS, -> und-AG
-calendar/week/v1, und-AT, -> und-AD
-calendar/week/v1, und-AX, -> und-AD
 calendar/week/v1, und-BD, -> und-AG
-calendar/week/v1, und-BE, -> und-AD
-calendar/week/v1, und-BG, -> und-AD
-calendar/week/v1, und-BH, 3B, 3B, 192922f263e2955a
+calendar/week/v1, und-BH, 2B, 2B, e8b19528e4f62bde
 calendar/week/v1, und-BR, -> und-AG
 calendar/week/v1, und-BS, -> und-AG
 calendar/week/v1, und-BT, -> und-AG
 calendar/week/v1, und-BW, -> und-AG
 calendar/week/v1, und-BZ, -> und-AG
 calendar/week/v1, und-CA, -> und-AG
-calendar/week/v1, und-CH, -> und-AD
 calendar/week/v1, und-CO, -> und-AG
-calendar/week/v1, und-CZ, -> und-AD
-calendar/week/v1, und-DE, -> und-AD
-calendar/week/v1, und-DJ, 3B, 3B, a0405d18fe0583e1
-calendar/week/v1, und-DK, -> und-AD
+calendar/week/v1, und-DJ, 2B, 2B, c1e3bc64f37a9b7c
 calendar/week/v1, und-DM, -> und-AG
 calendar/week/v1, und-DO, -> und-AG
 calendar/week/v1, und-DZ, -> und-BH
-calendar/week/v1, und-EE, -> und-AD
 calendar/week/v1, und-EG, -> und-BH
-calendar/week/v1, und-ES, -> und-AD
 calendar/week/v1, und-ET, -> und-AG
-calendar/week/v1, und-FI, -> und-AD
-calendar/week/v1, und-FJ, -> und-AD
-calendar/week/v1, und-FO, -> und-AD
-calendar/week/v1, und-FR, -> und-AD
-calendar/week/v1, und-GB, -> und-AD
-calendar/week/v1, und-GF, -> und-AD
-calendar/week/v1, und-GG, -> und-AD
-calendar/week/v1, und-GI, -> und-AD
-calendar/week/v1, und-GP, -> und-AD
-calendar/week/v1, und-GR, -> und-AD
 calendar/week/v1, und-GT, -> und-AG
 calendar/week/v1, und-GU, -> und-AG
 calendar/week/v1, und-HK, -> und-AG
 calendar/week/v1, und-HN, -> und-AG
-calendar/week/v1, und-HU, -> und-AD
 calendar/week/v1, und-ID, -> und-AG
-calendar/week/v1, und-IE, -> und-AD
-calendar/week/v1, und-IL, 3B, 3B, 257ef99eb9c9f947
-calendar/week/v1, und-IM, -> und-AD
-calendar/week/v1, und-IN, 3B, 3B, 5085dd7e984fe2f6
+calendar/week/v1, und-IL, 2B, 2B, cb9ee1109d9e876d
+calendar/week/v1, und-IN, 2B, 2B, 636a8b37946c4ebf
 calendar/week/v1, und-IQ, -> und-BH
-calendar/week/v1, und-IR, 3B, 3B, dc0305cec487fdc4
-calendar/week/v1, und-IS, -> und-AD
-calendar/week/v1, und-IT, -> und-AD
-calendar/week/v1, und-JE, -> und-AD
+calendar/week/v1, und-IR, 2B, 2B, b90bfc6cd21be7d7
 calendar/week/v1, und-JM, -> und-AG
 calendar/week/v1, und-JO, -> und-BH
 calendar/week/v1, und-JP, -> und-AG
@@ -70,50 +42,36 @@ calendar/week/v1, und-KH, -> und-AG
 calendar/week/v1, und-KR, -> und-AG
 calendar/week/v1, und-KW, -> und-BH
 calendar/week/v1, und-LA, -> und-AG
-calendar/week/v1, und-LI, -> und-AD
-calendar/week/v1, und-LT, -> und-AD
-calendar/week/v1, und-LU, -> und-AD
 calendar/week/v1, und-LY, -> und-BH
-calendar/week/v1, und-MC, -> und-AD
 calendar/week/v1, und-MH, -> und-AG
 calendar/week/v1, und-MM, -> und-AG
 calendar/week/v1, und-MO, -> und-AG
-calendar/week/v1, und-MQ, -> und-AD
 calendar/week/v1, und-MT, -> und-AG
-calendar/week/v1, und-MV, 3B, 3B, 93e4d86cf627066f
+calendar/week/v1, und-MV, 2B, 2B, 58178b0b7b9d9c16
 calendar/week/v1, und-MX, -> und-AG
 calendar/week/v1, und-MZ, -> und-AG
 calendar/week/v1, und-NI, -> und-AG
-calendar/week/v1, und-NL, -> und-AD
-calendar/week/v1, und-NO, -> und-AD
 calendar/week/v1, und-NP, -> und-AG
 calendar/week/v1, und-OM, -> und-BH
 calendar/week/v1, und-PA, -> und-AG
 calendar/week/v1, und-PE, -> und-AG
 calendar/week/v1, und-PH, -> und-AG
 calendar/week/v1, und-PK, -> und-AG
-calendar/week/v1, und-PL, -> und-AD
 calendar/week/v1, und-PR, -> und-AG
-calendar/week/v1, und-PT, 3B, 3B, 89113284be803545
+calendar/week/v1, und-PT, -> und-AG
 calendar/week/v1, und-PY, -> und-AG
 calendar/week/v1, und-QA, -> und-BH
-calendar/week/v1, und-RE, -> und-AD
-calendar/week/v1, und-RU, -> und-AD
 calendar/week/v1, und-SA, -> und-IL
 calendar/week/v1, und-SD, -> und-BH
-calendar/week/v1, und-SE, -> und-AD
 calendar/week/v1, und-SG, -> und-AG
-calendar/week/v1, und-SJ, -> und-AD
-calendar/week/v1, und-SK, -> und-AD
-calendar/week/v1, und-SM, -> und-AD
 calendar/week/v1, und-SV, -> und-AG
 calendar/week/v1, und-SY, -> und-BH
 calendar/week/v1, und-TH, -> und-AG
 calendar/week/v1, und-TT, -> und-AG
 calendar/week/v1, und-TW, -> und-AG
+calendar/week/v1, und-UG, 2B, 2B, 62c3506f27376c25
 calendar/week/v1, und-UM, -> und-AG
 calendar/week/v1, und-US, -> und-AG
-calendar/week/v1, und-VA, -> und-AD
 calendar/week/v1, und-VE, -> und-AG
 calendar/week/v1, und-VI, -> und-AG
 calendar/week/v1, und-WS, -> und-AG

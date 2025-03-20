@@ -27,6 +27,10 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
+import * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
+export * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
+import * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
+export * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
 
 import RenderTerminiWordSegmenter from "./WordSegmenter.mjs";
 
@@ -906,6 +910,156 @@ let termini = Object.assign({
                 name: "S",
                 type: "string",
                 typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "ZonedDateFormatter.formatIso": {
+        func: ZonedDateFormatterDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "ZonedDateFormatter.formatIso",
+        parameters: [
+            
+            {
+                name: "ZonedDateFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateFormatter:Formatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateFormatter:Formatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateFormatter:Formatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateFormatter:Formatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "ZonedDateFormatterGregorian.formatIso": {
+        func: ZonedDateFormatterGregorianDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "ZonedDateFormatterGregorian.formatIso",
+        parameters: [
+            
+            {
+                name: "ZonedDateFormatterGregorian:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateFormatterGregorian:Formatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateFormatterGregorian:Formatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateFormatterGregorian:Formatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateFormatterGregorian:Formatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
             }
             
         ]

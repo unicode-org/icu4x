@@ -11,7 +11,7 @@ use icu_calendar::{
         CalendarChineseV1, CalendarDangiV1, CalendarHijriObservationalV1, CalendarHijriUmmalquraV1,
         CalendarJapaneseExtendedV1, CalendarJapaneseModernV1,
     },
-    types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
+    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
     Date, Iso,
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
@@ -41,7 +41,7 @@ pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type DayOfMonthInput: IntoOption<DayOfMonth>;
     /// Marker for resolving the day-of-year input field.
-    type DayOfYearInput: IntoOption<DayOfYearInfo>;
+    type DayOfYearInput: IntoOption<DayOfYear>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<Weekday>;
 }
@@ -695,7 +695,7 @@ macro_rules! datetime_marker_helper {
         Weekday
     };
     (@input/day_of_year, yes) => {
-        DayOfYearInfo
+        DayOfYear
     };
     (@input/hour, yes) => {
         Hour

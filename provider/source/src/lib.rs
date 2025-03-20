@@ -106,37 +106,38 @@ icu_provider_registry::registry!(cb);
 icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
-    /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0";
+    /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_CLDR_TAG: &'static str = "47.0.0";
 
-    /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-77-1";
+    /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-77-1";
 
-    /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
+    /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    /// The latest TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_TZDB_TAG: &'static str = "2025a";
+    /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_TZDB_TAG: &'static str = "2025a";
 
-    /// A provider using the latest data that has been verified to work with this version of `SourceDataProvider`.
+    /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
-    /// See [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG),
-    /// [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG),
-    /// [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG),
-    /// [`LATEST_TESTED_TZDB_TAG`](Self::LATEST_TESTED_TZDB_TAG).
+    /// See [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG),
+    /// [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG),
+    /// [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG),
+    /// [`TESTED_TZDB_TAG`](Self::TESTED_TZDB_TAG).
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn new_latest_tested() -> Self {
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
         SINGLETON
             .get_or_init(|| {
                 Self::new_custom()
-                    .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG)
-                    .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-                    .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-                    .with_tzdb_for_tag(Self::LATEST_TESTED_TZDB_TAG)
+                    .with_cldr_for_tag(Self::TESTED_CLDR_TAG)
+                    .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
+                    .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
+                    .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
             })
             .clone()
     }
@@ -207,7 +208,7 @@ impl SourceDataProvider {
     /// Adds CLDR source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
-    /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
+    /// Also see: [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -223,7 +224,7 @@ impl SourceDataProvider {
     /// Adds ICU export source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
-    /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
+    /// Also see: [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -243,7 +244,7 @@ impl SourceDataProvider {
     /// Adds segmenter LSTM source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
     ///
-    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    /// Also see: [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -259,7 +260,7 @@ impl SourceDataProvider {
     /// Adds timezone database source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub](https://github.com/eggert/tz)).
     ///
-    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    /// Also see: [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]

@@ -545,8 +545,8 @@ impl Calendar for AnyCalendar {
     }
 
     /// Information of the day of the year
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.day_of_year_info(d))
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        match_cal_and_date!(match (self, date): (c, d) => c.day_of_year(d))
     }
 
     fn debug_name(&self) -> &'static str {

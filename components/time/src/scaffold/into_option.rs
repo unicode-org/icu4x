@@ -56,7 +56,7 @@ impl IntoOption<Weekday> for Weekday {
     }
 }
 
-impl IntoOption<DayOfYearInfo> for DayOfYearInfo {
+impl IntoOption<DayOfYear> for DayOfYear {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

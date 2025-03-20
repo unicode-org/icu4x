@@ -65,6 +65,22 @@ void main() {
     expect(iter.current.canonical, 'Africa/Abidjan');
   });
 
+  test('Dates', () {
+    final date = IsoDate(2022, 8, 26);
+    expect(date.weekOfYear().weekNumber, 34);
+
+    final weekInfo = WeekInformation(Locale.fromString('de'));
+    expect(weekInfo.firstWeekday, Weekday.monday);
+    expect(weekInfo.isWeekend(Weekday.sunday), isTrue);
+
+    final weekend = weekInfo.weekend;
+    expect(weekend.moveNext(), true);
+    expect(weekend.current, Weekday.saturday);
+    expect(weekend.moveNext(), true);
+    expect(weekend.current, Weekday.sunday);
+    expect(weekend.moveNext(), false);
+  });
+
   test('DateTime formatting', () {
     final zonedDateTimeIso = ZonedIsoDateTime.fromString(
       '2025-01-15T14:32:12.34+01[Europe/Zurich]',
@@ -80,6 +96,10 @@ void main() {
     );
 
     var locale = Locale.fromString('de-u-ca-islamic-rgsa');
+
+    ///// DateFormatter /////
+
+    expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '14.07.');
 
     ///// DateTimeFormatter /////
 
@@ -146,6 +166,29 @@ void main() {
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
       'Mittwoch, 15. Januar 2025, 14:32',
+    );
+
+    ///// ZonedDateFormatter /////
+
+    expect(
+      ZonedDateFormatter.genericLong(
+        locale,
+        DateFormatter.md(locale),
+      ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.zone),
+      '14.07. Mitteleuropäische Zeit',
+    );
+
+    expect(
+      () => ZonedDateFormatter.genericLong(locale, DateFormatter.ym(locale)),
+      throwsA(DateTimeFormatterLoadError.invalidDateFields),
+    );
+
+    expect(
+      () => ZonedDateFormatter.genericLong(
+        locale,
+        DateFormatter.ymd(locale),
+      ).formatIso(zonedDateTimeIso.date, TimeZoneInfo.utc()),
+      throwsA(DateTimeWriteError.missingInputField),
     );
 
     ///// ZonedDateTimeFormatter /////
