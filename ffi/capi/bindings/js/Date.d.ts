@@ -3,8 +3,6 @@ import type { Calendar } from "./Calendar"
 import type { CalendarError } from "./CalendarError"
 import type { CalendarParseError } from "./CalendarParseError"
 import type { IsoDate } from "./IsoDate"
-import type { WeekCalculator } from "./WeekCalculator"
-import type { WeekOf } from "./WeekOf"
 import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
@@ -61,7 +59,7 @@ export class Date {
     /** 
      * Returns the 1-indexed day in the year for this date
      *
-     * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+     * See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
      */
     get dayOfYear(): number;
 
@@ -78,23 +76,6 @@ export class Date {
      * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
      */
     get dayOfWeek(): Weekday;
-
-    /** 
-     * Returns the week number in this month, 1-indexed, based on what
-     * is considered the first day of the week (often a locale preference).
-     *
-     * `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
-     *
-     * See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-     */
-    weekOfMonth(firstWeekday: Weekday): number;
-
-    /** 
-     * Returns the week number in this year, using week data
-     *
-     * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-     */
-    weekOfYear(calculator: WeekCalculator): WeekOf;
 
     /** 
      * Returns 1-indexed number of the month of this date in its year

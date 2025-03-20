@@ -124,16 +124,8 @@ impl Calendar for Buddhist {
     }
 
     /// Information of the day of the year
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
-        types::DayOfYearInfo {
-            day_of_year: Iso::day_of_year(*date),
-            days_in_year: Iso::days_in_year_direct(date.0.year),
-            prev_year: iso_year_as_buddhist(prev_year),
-            days_in_prev_year: Iso::days_in_year_direct(prev_year),
-            next_year: iso_year_as_buddhist(next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        Iso.day_of_year(date)
     }
 
     fn debug_name(&self) -> &'static str {

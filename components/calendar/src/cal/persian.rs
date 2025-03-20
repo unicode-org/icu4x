@@ -158,16 +158,8 @@ impl Calendar for Persian {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: Persian::year_as_persian(prev_year),
-            days_in_prev_year: Persian::days_in_provided_year(prev_year, ()),
-            next_year: Persian::year_as_persian(next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {
@@ -428,57 +420,6 @@ mod tests {
                 Persian::fast_persian_from_fixed(RataDie::new(*f_date)),
                 date.inner,
                 "{case:?}"
-            );
-        }
-    }
-
-    #[test]
-    fn test_day_of_year_info() {
-        #[derive(Debug)]
-        struct TestCase {
-            input: i32,
-            expected_prev: i32,
-            expected_next: i32,
-        }
-
-        let test_cases = [
-            TestCase {
-                input: 0,
-                expected_prev: -1,
-                expected_next: 1,
-            },
-            TestCase {
-                input: i32::MAX,
-                expected_prev: i32::MAX - 1,
-                expected_next: i32::MAX, // can't go above i32::MAX
-            },
-            TestCase {
-                input: i32::MIN + 1,
-                expected_prev: i32::MIN,
-                expected_next: i32::MIN + 2,
-            },
-            TestCase {
-                input: i32::MIN,
-                expected_prev: i32::MIN, // can't go below i32::MIN
-                expected_next: i32::MIN + 1,
-            },
-        ];
-
-        for case in test_cases {
-            let date = Date::try_new_persian(case.input, 1, 1).unwrap();
-            let info = Persian::day_of_year_info(&Persian, date.inner());
-
-            assert_eq!(
-                info.prev_year.era_year_or_extended(),
-                case.expected_prev,
-                "{:?}",
-                case
-            );
-            assert_eq!(
-                info.next_year.era_year_or_extended(),
-                case.expected_next,
-                "{:?}",
-                case
             );
         }
     }

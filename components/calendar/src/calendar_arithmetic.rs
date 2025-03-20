@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DateError;
+use crate::types::DayOfYear;
 use crate::{types, Calendar, DateDuration, DateDurationUnit, RangeError};
 use core::cmp::Ordering;
 use core::convert::TryInto;
@@ -261,15 +262,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn day_of_year(&self) -> u16 {
-        let mut day_of_year = 0;
-        for month in 1..self.month {
-            day_of_year += C::month_days(self.year, month, self.year_info) as u16;
-        }
-        day_of_year + (self.day as u16)
-    }
-
-    #[inline]
     pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C>
     where
         C: CalendarArithmetic<YearInfo = ()>,
@@ -301,6 +293,15 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
         types::DayOfMonth(self.day)
+    }
+
+    #[inline]
+    pub fn day_of_year(&self) -> DayOfYear {
+        let mut day_of_year = 0;
+        for month in 1..self.month {
+            day_of_year += C::month_days(self.year, month, self.year_info) as u16;
+        }
+        DayOfYear(day_of_year + (self.day as u16))
     }
 
     /// The [`types::MonthInfo`] for the current month (with month code) for a solar calendar

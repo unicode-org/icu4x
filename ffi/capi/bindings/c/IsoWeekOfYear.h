@@ -1,5 +1,5 @@
-#ifndef WeekOf_H
-#define WeekOf_H
+#ifndef IsoWeekOfYear_H
+#define IsoWeekOfYear_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #include "diplomat_runtime.h"
 
 
-#include "WeekOf.d.h"
+#include "IsoWeekOfYear.d.h"
 
 
 
@@ -20,4 +20,4 @@
 
 
 
-#endif // WeekOf_H
+#endif // IsoWeekOfYear_H

@@ -2,43 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    error::RangeError,
-    provider::*,
-    types::{DayOfMonth, DayOfYearInfo, WeekOfMonth, Weekday},
-};
+//! Functions for region-specific weekday information.
+
+use crate::{error::RangeError, provider::*, types::Weekday};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
-pub const MIN_UNIT_DAYS: u16 = 14;
+const MIN_UNIT_DAYS: u16 = 14;
 
 define_preferences!(
-    /// The preferences for the week calculator.
+    /// The preferences for the week information.
     [Copy]
     WeekPreferences,
     {}
 );
 
-/// Calculator for week-of-month and week-of-year based on locale-specific configurations.
-///
-/// Note that things get subtly tricky for weeks that straddle the boundary between two years: different locales
-/// may consider them as belonging to the preceding or succeeding year based on where exactly the week gets split.
-/// While this struct can be populated by values supplied by the programmer, we do recommend using one of the
-/// constructors to get locale data.
+/// Information about the first day of the week and the weekend.
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
-pub struct WeekCalculator {
+pub struct WeekInformation {
     /// The first day of a week.
     pub first_weekday: Weekday,
-    /// For a given week, the minimum number of that week's days present in a given month or year
-    /// for the week to be considered part of that month or year.
-    pub min_week_days: u8,
-    /// The set of weekend days, if available
-    pub weekend: Option<WeekdaySet>,
+    /// The set of weekend days
+    pub weekend: WeekdaySet,
 }
 
-impl WeekCalculator {
+impl WeekInformation {
     icu_provider::gen_buffer_data_constructors!(
         (prefs: WeekPreferences) -> error: DataError,
         /// Creates a new [`WeekCalculator`] from compiled data.
@@ -55,110 +45,80 @@ impl WeekCalculator {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })
-            .map(|response| WeekCalculator {
+            .map(|response| WeekInformation {
                 first_weekday: response.payload.get().first_weekday,
-                min_week_days: response.payload.get().min_week_days,
-                weekend: Some(response.payload.get().weekend),
+                weekend: response.payload.get().weekend,
             })
     }
 
-    /// Returns the week of month according to a calendar with min_week_days = 1.
-    ///
-    /// This is different from what the UTS35 spec describes [1] but the latter is
-    /// missing a month of week-of-month field so following the spec would result
-    /// in inconsistencies (e.g. in the ISO calendar 2021-01-01 is the last week
-    /// of December but 'MMMMW' would have it formatted as 'week 5 of January').
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::types::{DayOfMonth, WeekOfMonth, Weekday};
-    /// use icu::calendar::week::WeekCalculator;
-    ///
-    /// let week_calculator =
-    ///     WeekCalculator::try_new(icu::locale::locale!("und-GB").into())
-    ///         .expect("locale should be present");
-    ///
-    /// // Wednesday the 10th is in week 2:
-    /// assert_eq!(
-    ///     WeekOfMonth(2),
-    ///     week_calculator.week_of_month(DayOfMonth(10), Weekday::Wednesday)
-    /// );
-    /// ```
-    ///
-    /// [1]: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
-    pub fn week_of_month(self, day_of_month: DayOfMonth, iso_weekday: Weekday) -> WeekOfMonth {
-        WeekOfMonth(simple_week_of(
-            self.first_weekday,
-            day_of_month.0 as u16,
-            iso_weekday,
-        ))
+    /// Weekdays that are part of the 'weekend', for calendar purposes.
+    /// Days may not be contiguous, and order is based off the first weekday.
+    pub fn weekend(self) -> WeekdaySetIterator {
+        WeekdaySetIterator::new(self.first_weekday, self.weekend)
     }
+}
 
-    /// Returns the week of year according to the weekday and [`DayOfYearInfo`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::types::Weekday;
-    /// use icu::calendar::week::{RelativeUnit, WeekCalculator, WeekOf};
-    /// use icu::calendar::Date;
-    ///
-    /// let week_calculator =
-    ///     WeekCalculator::try_new(icu::locale::locale!("und-GB").into())
-    ///         .expect("locale should be present");
-    ///
-    /// let iso_date = Date::try_new_iso(2022, 8, 26).unwrap();
-    ///
-    /// // Friday August 26 is in week 34 of year 2022:
-    /// assert_eq!(
-    ///     WeekOf {
-    ///         unit: RelativeUnit::Current,
-    ///         week: 34
-    ///     },
-    ///     week_calculator
-    ///         .week_of_year(iso_date.day_of_year_info(), Weekday::Friday)
-    /// );
-    /// ```
-    pub fn week_of_year(self, day_of_year_info: DayOfYearInfo, iso_weekday: Weekday) -> WeekOf {
-        week_of(
-            self,
-            day_of_year_info.days_in_prev_year,
-            day_of_year_info.days_in_year,
-            day_of_year_info.day_of_year,
-            iso_weekday,
-        )
-        .unwrap_or_else(|_| {
-            // We don't have any calendars with < 14 days per year, and it's unlikely we'll add one
-            debug_assert!(false);
-            WeekOf {
-                week: 1,
-                unit: RelativeUnit::Current,
-            }
-        })
-    }
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct WeekCalculator {
+    first_weekday: Weekday,
+    min_week_days: u8,
+}
+
+impl WeekCalculator {
+    pub(crate) const ISO: Self = Self {
+        first_weekday: Weekday::Monday,
+        min_week_days: 4,
+    };
 
     /// Returns the zero based index of `weekday` vs this calendar's start of week.
     fn weekday_index(self, weekday: Weekday) -> i8 {
         (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
     }
 
-    /// Weekdays that are part of the 'weekend', for calendar purposes.
-    /// Days may not be contiguous, and order is based off the first weekday.
-    pub fn weekend(self) -> impl Iterator<Item = Weekday> {
-        WeekdaySetIterator::new(
-            self.first_weekday,
-            self.weekend.unwrap_or(WeekdaySet::new(&[])),
-        )
-    }
-}
+    /// Computes & returns the week of given month/year according to `calendar`.
+    ///
+    /// # Arguments
+    ///  - calendar: Calendar information used to compute the week number.
+    ///  - num_days_in_previous_unit: The number of days in the preceding month/year.
+    ///  - num_days_in_unit: The number of days in the month/year.
+    ///  - day: 1-based day of month/year.
+    ///  - week_day: The weekday of `day`..
+    ///
+    /// # Error
+    /// If num_days_in_unit/num_days_in_previous_unit < MIN_UNIT_DAYS
+    pub(crate) fn week_of(
+        self,
+        num_days_in_previous_unit: u16,
+        num_days_in_unit: u16,
+        day: u16,
+        week_day: Weekday,
+    ) -> Result<WeekOf, RangeError> {
+        let current = UnitInfo::new(
+            // The first day of this month/year is (day - 1) days from `day`.
+            add_to_weekday(week_day, 1 - i32::from(day)),
+            num_days_in_unit,
+        )?;
 
-impl Default for WeekCalculator {
-    fn default() -> Self {
-        Self {
-            first_weekday: Weekday::Monday,
-            min_week_days: 1,
-            weekend: Some(WeekdaySet::new(&[Weekday::Saturday, Weekday::Sunday])),
+        match current.relative_week(self, day) {
+            RelativeWeek::LastWeekOfPreviousUnit => {
+                let previous = UnitInfo::new(
+                    add_to_weekday(current.first_day, -i32::from(num_days_in_previous_unit)),
+                    num_days_in_previous_unit,
+                )?;
+
+                Ok(WeekOf {
+                    week: previous.num_weeks(self),
+                    unit: RelativeUnit::Previous,
+                })
+            }
+            RelativeWeek::WeekOfCurrentUnit(w) => Ok(WeekOf {
+                week: w,
+                unit: RelativeUnit::Current,
+            }),
+            RelativeWeek::FirstWeekOfNextUnit => Ok(WeekOf {
+                week: 1,
+                unit: RelativeUnit::Next,
+            }),
         }
     }
 }
@@ -252,7 +212,7 @@ impl UnitInfo {
 /// The year or month that a calendar assigns a week to relative to the year/month that it is in.
 #[derive(Debug, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum RelativeUnit {
+pub(crate) enum RelativeUnit {
     /// A week that is assigned to previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
     Previous,
     /// A week that's assigned to the current year/month. e.g. 2021-01-11 is week 2 of 2021 per the ISO calendar.
@@ -264,86 +224,11 @@ pub enum RelativeUnit {
 /// The week number assigned to a given week according to a calendar.
 #[derive(Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct WeekOf {
+pub(crate) struct WeekOf {
     /// Week of month/year. 1 based.
     pub week: u8,
     /// The month/year that this week is in, relative to the month/year of the input date.
     pub unit: RelativeUnit,
-}
-
-/// Computes & returns the week of given month/year according to `calendar`.
-///
-/// # Arguments
-///  - calendar: Calendar information used to compute the week number.
-///  - num_days_in_previous_unit: The number of days in the preceding month/year.
-///  - num_days_in_unit: The number of days in the month/year.
-///  - day: 1-based day of month/year.
-///  - week_day: The weekday of `day`..
-pub fn week_of(
-    calendar: WeekCalculator,
-    num_days_in_previous_unit: u16,
-    num_days_in_unit: u16,
-    day: u16,
-    week_day: Weekday,
-) -> Result<WeekOf, RangeError> {
-    let current = UnitInfo::new(
-        // The first day of this month/year is (day - 1) days from `day`.
-        add_to_weekday(week_day, 1 - i32::from(day)),
-        num_days_in_unit,
-    )?;
-
-    match current.relative_week(calendar, day) {
-        RelativeWeek::LastWeekOfPreviousUnit => {
-            let previous = UnitInfo::new(
-                add_to_weekday(current.first_day, -i32::from(num_days_in_previous_unit)),
-                num_days_in_previous_unit,
-            )?;
-
-            Ok(WeekOf {
-                week: previous.num_weeks(calendar),
-                unit: RelativeUnit::Previous,
-            })
-        }
-        RelativeWeek::WeekOfCurrentUnit(w) => Ok(WeekOf {
-            week: w,
-            unit: RelativeUnit::Current,
-        }),
-        RelativeWeek::FirstWeekOfNextUnit => Ok(WeekOf {
-            week: 1,
-            unit: RelativeUnit::Next,
-        }),
-    }
-}
-
-/// Computes & returns the week of given month or year according to a calendar with min_week_days = 1.
-///
-/// Does not know anything about the unit size (month or year), and will just assume the date falls
-/// within whatever unit that is being considered. In other words, this function returns strictly increasing
-/// values as `day` increases, unlike [`week_of()`] which is cyclic.
-///
-/// # Arguments
-///  - first_weekday: The first day of a week.
-///  - day: 1-based day of the month or year.
-///  - week_day: The weekday of `day`.
-pub fn simple_week_of(first_weekday: Weekday, day: u16, week_day: Weekday) -> u8 {
-    let calendar = WeekCalculator {
-        first_weekday,
-        min_week_days: 1,
-        weekend: None,
-    };
-
-    #[allow(clippy::unwrap_used)] // week_of should can't fail with MIN_UNIT_DAYS
-    week_of(
-        calendar,
-        // The duration of the previous unit does not influence the result if min_week_days = 1
-        // so we only need to use a valid value.
-        MIN_UNIT_DAYS,
-        u16::MAX,
-        day,
-        week_day,
-    )
-    .unwrap()
-    .week
 }
 
 /// [Iterator] that yields weekdays that are part of the weekend.
@@ -396,25 +281,22 @@ impl Iterator for WeekdaySetIterator {
 
 #[cfg(test)]
 mod tests {
-    use super::{week_of, RelativeUnit, RelativeWeek, UnitInfo, WeekCalculator, WeekOf};
+    use super::*;
     use crate::{types::Weekday, Date, DateDuration, RangeError};
 
     static ISO_CALENDAR: WeekCalculator = WeekCalculator {
         first_weekday: Weekday::Monday,
         min_week_days: 4,
-        weekend: None,
     };
 
     static AE_CALENDAR: WeekCalculator = WeekCalculator {
         first_weekday: Weekday::Saturday,
         min_week_days: 4,
-        weekend: None,
     };
 
     static US_CALENDAR: WeekCalculator = WeekCalculator {
         first_weekday: Weekday::Sunday,
         min_week_days: 1,
-        weekend: None,
     };
 
     #[test]
@@ -529,7 +411,6 @@ mod tests {
                 let calendar = WeekCalculator {
                     first_weekday: Weekday::from(start_of_week),
                     min_week_days,
-                    weekend: None,
                 };
                 for unit_duration in super::MIN_UNIT_DAYS..400 {
                     for start_of_unit in 1..7 {
@@ -563,8 +444,7 @@ mod tests {
         let date = Date::try_new_iso(year, month, day)?;
         let previous_month = date.added(DateDuration::new(0, -1, 0, 0));
 
-        week_of(
-            calendar,
+        calendar.week_of(
             u16::from(previous_month.days_in_month()),
             u16::from(date.days_in_month()),
             u16::from(day),
@@ -642,27 +522,11 @@ mod tests {
 }
 
 #[test]
-fn test_simple_week_of() {
-    // The 1st is a Monday and the week starts on Mondays.
-    assert_eq!(simple_week_of(Weekday::Monday, 2, Weekday::Tuesday), 1);
-    assert_eq!(simple_week_of(Weekday::Monday, 7, Weekday::Sunday), 1);
-    assert_eq!(simple_week_of(Weekday::Monday, 8, Weekday::Monday), 2);
-
-    // The 1st is a Wednesday and the week starts on Tuesdays.
-    assert_eq!(simple_week_of(Weekday::Tuesday, 1, Weekday::Wednesday), 1);
-    assert_eq!(simple_week_of(Weekday::Tuesday, 6, Weekday::Monday), 1);
-    assert_eq!(simple_week_of(Weekday::Tuesday, 7, Weekday::Tuesday), 2);
-
-    // The 1st is a Monday and the week starts on Sundays.
-    assert_eq!(simple_week_of(Weekday::Sunday, 26, Weekday::Friday), 4);
-}
-
-#[test]
 fn test_weekend() {
     use icu_locale_core::locale;
 
     assert_eq!(
-        WeekCalculator::try_new(locale!("und").into())
+        WeekInformation::try_new(locale!("und").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -670,7 +534,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(locale!("und-FR").into())
+        WeekInformation::try_new(locale!("und-FR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -678,7 +542,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(locale!("und-IQ").into())
+        WeekInformation::try_new(locale!("und-IQ").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -686,7 +550,7 @@ fn test_weekend() {
     );
 
     assert_eq!(
-        WeekCalculator::try_new(locale!("und-IR").into())
+        WeekInformation::try_new(locale!("und-IR").into())
             .unwrap()
             .weekend()
             .collect::<Vec<_>>(),
@@ -734,4 +598,38 @@ fn test_weekdays_iter() {
         vec![Thursday, Friday, Sunday, Tuesday],
         multiple_non_contiguous_days.collect::<Vec<_>>()
     );
+}
+
+#[test]
+fn test_iso_weeks() {
+    use crate::types::IsoWeekOfYear;
+    use crate::Date;
+
+    #[allow(clippy::zero_prefixed_literal)]
+    for ((y, m, d), (iso_year, week_number)) in [
+        // 2010 starts on a Thursday, so 2009 has 53 ISO weeks
+        ((2009, 12, 30), (2009, 53)),
+        ((2009, 12, 31), (2009, 53)),
+        ((2010, 01, 01), (2009, 53)),
+        ((2010, 01, 02), (2009, 53)),
+        ((2010, 01, 03), (2009, 53)),
+        ((2010, 01, 04), (2010, 1)),
+        ((2010, 01, 05), (2010, 1)),
+        // 2030 starts on a Monday
+        ((2029, 12, 29), (2029, 52)),
+        ((2029, 12, 30), (2029, 52)),
+        ((2029, 12, 31), (2030, 1)),
+        ((2030, 01, 01), (2030, 1)),
+        ((2030, 01, 02), (2030, 1)),
+        ((2030, 01, 03), (2030, 1)),
+        ((2030, 01, 04), (2030, 1)),
+    ] {
+        assert_eq!(
+            Date::try_new_iso(y, m, d).unwrap().week_of_year(),
+            IsoWeekOfYear {
+                iso_year,
+                week_number
+            }
+        );
+    }
 }

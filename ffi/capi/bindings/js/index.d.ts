@@ -6,6 +6,8 @@ export { TitlecaseOptions } from "./TitlecaseOptions"
 
 export { CollatorOptions } from "./CollatorOptions"
 
+export { IsoWeekOfYear } from "./IsoWeekOfYear"
+
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
@@ -21,8 +23,6 @@ export { BidiMirroringGlyph } from "./BidiMirroringGlyph"
 export { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 
 export { LineBreakOptions } from "./LineBreakOptions"
-
-export { WeekendContainsDay } from "./WeekendContainsDay"
 
 export { CollatorResolvedOptions } from "./CollatorResolvedOptions"
 
@@ -41,8 +41,6 @@ export { PluralCategories } from "./PluralCategories"
 export { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult"
 
 export { VariantOffsets } from "./VariantOffsets"
-
-export { WeekOf } from "./WeekOf"
 
 export { ZonedDateTime } from "./ZonedDateTime"
 
@@ -210,7 +208,9 @@ export { UtcOffset } from "./UtcOffset"
 
 export { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 
-export { WeekCalculator } from "./WeekCalculator"
+export { WeekInformation } from "./WeekInformation"
+
+export { WeekdaySetIterator } from "./WeekdaySetIterator"
 
 export { WindowsParser } from "./WindowsParser"
 
@@ -323,5 +323,3 @@ export { LineBreakWordOption } from "./LineBreakWordOption"
 export { SegmenterWordType } from "./SegmenterWordType"
 
 export { TimeZoneVariant } from "./TimeZoneVariant"
-
-export { WeekRelativeUnit } from "./WeekRelativeUnit"
