@@ -187,7 +187,7 @@ pub fn main() {
         path_buf.push("date_formatter.rs");
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
-        write!(&mut file, "{}", date_formatter_template).unwrap();
+        writeln!(&mut file, "{}", date_formatter_template).unwrap();
     }
 
     {
@@ -195,6 +195,6 @@ pub fn main() {
         path_buf.push("zoned_date_formatter.rs");
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
-        write!(&mut file, "{}", zoned_date_formatter_template).unwrap();
+        writeln!(&mut file, "{}", zoned_date_formatter_template).unwrap();
     }
 }
