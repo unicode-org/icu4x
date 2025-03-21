@@ -192,6 +192,8 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
+export { TimeFormatter } from "./TimeFormatter"
+
 export { TimeZone } from "./TimeZone"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
