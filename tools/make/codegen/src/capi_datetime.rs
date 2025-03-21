@@ -77,6 +77,13 @@ impl DateOrTime {
             ],
         }
     }
+    pub fn field_set(self) -> &'static str {
+        match self {
+            DateOrTime::Date => "DateFieldSet",
+            DateOrTime::Time => "TimeFieldSet",
+            DateOrTime::DateTime => "CompositeDateTimeFieldSet",
+        }
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -165,8 +172,14 @@ impl DateTimeFormatterVariant {
         use DateTimeFormatterVariantInner as Inner;
         match self.inner {
             Inner::Date(DateFields::YMD) => true,
-            Inner::Time => true,
             Inner::DateTime(DateFields::YMD) => true,
+            _ => false
+        }
+    }
+    pub fn is_only_constructor(&self) -> bool {
+        use DateTimeFormatterVariantInner as Inner;
+        match self.inner {
+            Inner::Time => true,
             _ => false
         }
     }

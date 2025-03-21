@@ -50,7 +50,7 @@ pub mod ffi {
             (),
             {%- endif %}
             {%- endif %}
-            icu_datetime::fieldsets::enums::DateFieldSet,
+            icu_datetime::fieldsets::enums::{{ flavor.field_set() }},
         >,
     );
 
@@ -60,16 +60,36 @@ pub mod ffi {
         {%- let ctor_suffix_ffi %}
         {%- let ctor_suffix_rust %}
         {%- let cargo_feature %}
+        {%- let named_constructor %}
+        {%- let named_constructor_full %}
         {%- if is_with_provider %}
-            {%- let ctor_suffix_ffi = "_with_provider" %}
+            {%- if variant.is_only_constructor() %}
+                {%- let named_constructor = "with_provider".to_string() %}
+                {%- let named_constructor_full = "create_with_provider".to_string() %}
+            {%- else %}
+                {%- let named_constructor = format!("{}_with_provider", variant.name_lower()) %}
+                {%- let named_constructor_full = format!("create_{}_with_provider", variant.name_lower()) %}
+            {%- endif %}
+            {%- let ctor_suffix_ffi = "with_provider" %}
             {%- let ctor_suffix_rust = "_with_buffer_provider" %}
             {%- let cargo_feature = "buffer_provider" %}
         {%- else %}
+            {%- if variant.is_only_constructor() %}
+                {%- let named_constructor = "".to_string() %}
+                {%- let named_constructor_full = "create".to_string() %}
+            {%- else %}
+                {%- let named_constructor = format!("{}", variant.name_lower()) %}
+                {%- let named_constructor_full = format!("create_{}", variant.name_lower()) %}
+            {%- endif %}
             {%- let ctor_suffix_ffi = "" %}
             {%- let ctor_suffix_rust = "" %}
             {%- let cargo_feature = "compiled_data" %}
         {%- endif %}
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
+        {%- if named_constructor == "" %}
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        {%- else %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
+        {%- endif %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
         {%- if variant.consumed_options.alignment %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_alignment, FnInStruct, compact)]
@@ -85,7 +105,7 @@ pub mod ffi {
         #[diplomat::demo(default_constructor)]
         {%- endif %}
         #[cfg(feature = "{{ cargo_feature }}")]
-        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
+        pub fn {{ named_constructor_full }}(
             {%- if is_with_provider %}
             provider: &DataProvider,
             {%- endif %}

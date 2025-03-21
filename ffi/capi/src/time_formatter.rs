@@ -34,21 +34,20 @@ pub mod ffi {
     pub struct TimeFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             (),
-            icu_datetime::fieldsets::enums::DateFieldSet,
+            icu_datetime::fieldsets::enums::TimeFieldSet,
         >,
     );
 
     impl TimeFormatter {
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "t")]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::long, FnInStruct, hidden)]
-        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_t(
+        pub fn create(
             locale: &Locale,
             length: Option<DateTimeLength>,
             alignment: Option<DateTimeAlignment>,
@@ -67,7 +66,7 @@ pub mod ffi {
             )))
         }
         
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "t_with_provider")]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_length, FnInStruct, compact)]
@@ -75,7 +74,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::T::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::long, FnInStruct, hidden)]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_t_with_provider(
+        pub fn create_with_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: Option<DateTimeLength>,
