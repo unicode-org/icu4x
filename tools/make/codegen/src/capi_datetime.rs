@@ -256,6 +256,10 @@ pub fn main() {
         flavor: DateOrTime::Date,
         variants: Vec::new(),
     };
+    let mut zoned_time_formatter_template = ZonedFormatterTemplate {
+        flavor: DateOrTime::Time,
+        variants: Vec::new(),
+    };
 
     for date_fields in DateFields::VALUES.iter() {
         // Determine the options for these date fields
@@ -290,6 +294,11 @@ pub fn main() {
 
     for zone_style in ZoneStyle::VALUES.iter() {
         zoned_date_formatter_template
+            .variants
+            .push(ZonedFormatterVariant {
+                zone_style: *zone_style,
+            });
+        zoned_time_formatter_template
             .variants
             .push(ZonedFormatterVariant {
                 zone_style: *zone_style,
@@ -337,5 +346,13 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", zoned_date_formatter_template).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("zoned_time_formatter.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", zoned_time_formatter_template).unwrap();
     }
 }

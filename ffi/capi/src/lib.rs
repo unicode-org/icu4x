@@ -155,4 +155,6 @@ pub mod windows_parser;
 #[cfg(feature = "datetime")]
 pub mod zoned_date_formatter;
 #[cfg(feature = "datetime")]
+pub mod zoned_time_formatter;
+#[cfg(feature = "datetime")]
 pub mod zoned_datetime;
