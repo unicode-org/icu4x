@@ -1,4 +1,5 @@
 use crate::astronomy::*;
+use crate::error::LocationOutOfBoundsError;
 use crate::helpers::{i64_to_saturated_i32, next};
 use crate::rata_die::{Moment, RataDie};
 #[allow(unused_imports)]
@@ -10,7 +11,7 @@ const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = crate::julian::fixed_from_julian(622
 const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = crate::julian::fixed_from_julian(622, 7, 15);
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898>
-const CAIRO: Location = Location {
+pub(crate) const CAIRO: Location = Location {
     latitude: 30.1,
     longitude: 31.3,
     elevation: 200.0,
@@ -18,7 +19,7 @@ const CAIRO: Location = Location {
 };
 
 /// The location of Mecca; used for Islamic calendar calculations.
-const MECCA: Location = Location {
+pub(crate) const MECCA: Location = Location {
     latitude: 6427.0 / 300.0,
     longitude: 11947.0 / 300.0,
     elevation: 298.0,
@@ -26,7 +27,7 @@ const MECCA: Location = Location {
 };
 
 /// Common abstraction over islamic-style calendars
-pub trait IslamicBasedMarker {
+pub trait IslamicBased: Copy {
     /// The epoch of the calendar. Different calendars use a different epoch (Thu or Fri) due to disagreement on the exact date of Mohammed's migration to Mecca.
     const EPOCH: RataDie;
     /// The name of the calendar for debugging.
@@ -46,13 +47,13 @@ pub trait IslamicBasedMarker {
         (years + 1.).floor() as i32
     }
     /// Convert an islamic date in this calendar to a R.D.
-    fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie;
+    fn fixed_from_islamic(&self, year: i32, month: u8, day: u8) -> RataDie;
     /// Convert an R.D. To an islamic date in this calendar
-    fn islamic_from_fixed(date: RataDie) -> (i32, u8, u8);
+    fn islamic_from_fixed(&self, date: RataDie) -> (i32, u8, u8);
 
     /// Given an extended year, calculate whether each month is 29 or 30 days long
-    fn month_lengths_for_year(extended_year: i32, ny: RataDie) -> [bool; 12] {
-        let next_ny = Self::fixed_from_islamic(extended_year + 1, 1, 1);
+    fn month_lengths_for_year(&self, extended_year: i32, ny: RataDie) -> [bool; 12] {
+        let next_ny = self.fixed_from_islamic(extended_year + 1, 1, 1);
         match next_ny - ny {
             355 | 354 => (),
             353 if Self::HAS_353_DAY_YEARS => {
@@ -77,7 +78,7 @@ pub trait IslamicBasedMarker {
         let mut lengths = core::array::from_fn(|month_idx| {
             let month_idx = month_idx as u8;
             let new_rd = if month_idx < 11 {
-                Self::fixed_from_islamic(extended_year, month_idx + 2, 1)
+                self.fixed_from_islamic(extended_year, month_idx + 2, 1)
             } else {
                 next_ny
             };
@@ -125,70 +126,92 @@ pub trait IslamicBasedMarker {
     }
 }
 
-/// Marker type for observational islamic calendar, for use with [`IslamicBasedMarker`]
-#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // marker
-pub struct ObservationalCairoIslamicMarker;
+/// Observational islamic calendar for a particular location
+#[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)]
+pub struct ObservationalIslamic(Location);
 
-/// Marker type for Saudi islamic calendar, for use with [`IslamicBasedMarker`]
-#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // marker
-pub struct SaudiIslamicMarker;
-
-/// Marker type for civil-era tabular islamic calendar, for use with [`IslamicBasedMarker`]
-#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // marker
-pub struct CivilIslamicMarker;
-
-/// Marker type for astronomical-era tabular islamic calendar, for use with [`IslamicBasedMarker`]
-#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // marker
-pub struct TabularIslamicMarker;
-
-impl IslamicBasedMarker for ObservationalCairoIslamicMarker {
-    const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
-    const DEBUG_NAME: &'static str = "ObservationalIslamic";
-    const HAS_353_DAY_YEARS: bool = true;
-    fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
-        fixed_from_islamic_observational(year, month, day, CAIRO)
+impl ObservationalIslamic {
+    /// Creates a new [`ObservationalIslamic`] for the Cairo, Egypt location
+    pub const fn cairo() -> Self {
+        Self(CAIRO)
     }
-    fn islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
-        observational_islamic_from_fixed(date, CAIRO)
+
+    /// Creates a new [`ObservationalIslamic`] for the Mecca, Saudi Arabia location
+    pub const fn mecca() -> Self {
+        Self(MECCA)
+    }
+
+    /// Creates a new [`ObservationalIslamic`] for an arbitrary location
+    pub fn for_location(
+        latitude: f64,
+        longitude: f64,
+        elevation: f64,
+        utc_offset_days: f64,
+    ) -> Result<Self, LocationOutOfBoundsError> {
+        Location::try_new(latitude, longitude, elevation, utc_offset_days).map(Self)
     }
 }
 
-impl IslamicBasedMarker for SaudiIslamicMarker {
+/// Saudi islamic calendar
+#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)]
+pub struct SaudiIslamic;
+
+/// Civil-era tabular islamic calendar
+#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)]
+pub struct CivilIslamic;
+
+/// Astronomical-era tabular islamic calendar
+#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[allow(clippy::exhaustive_structs)]
+pub struct TabularIslamic;
+
+impl IslamicBased for ObservationalIslamic {
+    const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
+    const DEBUG_NAME: &'static str = "ObservationalIslamic";
+    const HAS_353_DAY_YEARS: bool = true;
+    fn fixed_from_islamic(&self, year: i32, month: u8, day: u8) -> RataDie {
+        fixed_from_islamic_observational(year, month, day, self.0)
+    }
+    fn islamic_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
+        observational_islamic_from_fixed(date, self.0)
+    }
+}
+
+impl IslamicBased for SaudiIslamic {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = "SaudiIslamic";
     const HAS_353_DAY_YEARS: bool = true;
-    fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
+    fn fixed_from_islamic(&self, year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_saudi_islamic(year, month, day)
     }
-    fn islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
+    fn islamic_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         saudi_islamic_from_fixed(date)
     }
 }
 
-impl IslamicBasedMarker for CivilIslamicMarker {
+impl IslamicBased for CivilIslamic {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = "CivilIslamic";
     const HAS_353_DAY_YEARS: bool = false;
-    fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
+    fn fixed_from_islamic(&self, year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_civil(year, month, day)
     }
-    fn islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
+    fn islamic_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         islamic_civil_from_fixed(date)
     }
 }
 
-impl IslamicBasedMarker for TabularIslamicMarker {
+impl IslamicBased for TabularIslamic {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_THURSDAY;
     const DEBUG_NAME: &'static str = "TabularIslamic";
     const HAS_353_DAY_YEARS: bool = false;
-    fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
+    fn fixed_from_islamic(&self, year: i32, month: u8, day: u8) -> RataDie {
         fixed_from_islamic_tabular(year, month, day)
     }
-    fn islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
+    fn islamic_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         islamic_tabular_from_fixed(date)
     }
 }

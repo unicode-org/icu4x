@@ -5,9 +5,7 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use calendrical_calculations::islamic::{
-    IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
-};
+use calendrical_calculations::islamic::{IslamicBased, ObservationalIslamic, SaudiIslamic};
 use calendrical_calculations::iso;
 use icu::calendar::provider::hijri::*;
 use icu_provider::prelude::*;
@@ -15,10 +13,10 @@ use icu_provider::prelude::*;
 const YEARS: i32 = 250;
 const ISO_START: i32 = 1900;
 
-fn load<IB: IslamicBasedMarker>() -> HijriCache<'static> {
+fn load<IB: IslamicBased>(model: IB) -> HijriCache<'static> {
     let extended_start = IB::approximate_islamic_from_fixed(iso::fixed_from_iso(ISO_START, 1, 1));
     let extended_end = extended_start + YEARS;
-    HijriCache::compute_for::<IB>(extended_start..extended_end)
+    HijriCache::compute_for(extended_start..extended_end, model)
 }
 
 impl DataProvider<CalendarHijriObservationalCairoV1> for SourceDataProvider {
@@ -27,7 +25,7 @@ impl DataProvider<CalendarHijriObservationalCairoV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CalendarHijriObservationalCairoV1>, DataError> {
         self.check_req::<CalendarHijriObservationalCairoV1>(req)?;
-        let cache = load::<ObservationalIslamicMarker>();
+        let cache = load(ObservationalIslamic::cairo());
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(cache),
@@ -44,7 +42,7 @@ impl crate::IterableDataProviderCached<CalendarHijriObservationalCairoV1> for So
 impl DataProvider<CalendarHijriUmmalquraV1> for crate::SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarHijriUmmalquraV1>, DataError> {
         self.check_req::<CalendarHijriUmmalquraV1>(req)?;
-        let cache = load::<SaudiIslamicMarker>();
+        let cache = load(SaudiIslamic);
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(cache),
