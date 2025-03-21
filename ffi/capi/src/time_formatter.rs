@@ -39,6 +39,7 @@ pub mod ffi {
     impl TimeFormatter {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::T::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::short, FnInStruct, hidden)]
@@ -69,6 +70,7 @@ pub mod ffi {
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::T::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::short, FnInStruct, hidden)]

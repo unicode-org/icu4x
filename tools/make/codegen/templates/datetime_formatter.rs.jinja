@@ -92,6 +92,9 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
         {%- endif %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
+        {%- if flavor.has_time() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_precision, FnInStruct, compact)]
+        {%- endif %}
         {%- if variant.consumed_options.alignment %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_alignment, FnInStruct, compact)]
         {%- endif %}
