@@ -65,11 +65,7 @@ impl SourceDataProvider {
                     DatagenCalendar::Dangi,
                     DatagenCalendar::Chinese,
                     DatagenCalendar::Indian,
-                    DatagenCalendar::Islamic,
-                    DatagenCalendar::IslamicCivil,
-                    DatagenCalendar::IslamicUmmAlQura,
-                    DatagenCalendar::IslamicTabular,
-                    DatagenCalendar::IslamicRgsa,
+                    DatagenCalendar::Hijri,
                     DatagenCalendar::Persian,
                     DatagenCalendar::Hebrew,
                     DatagenCalendar::Ethiopic,
@@ -450,33 +446,40 @@ pub fn japanese_and_japanext_are_compatible() {
 
 #[test]
 fn test_calendar_eras() {
-    use icu::calendar::preferences::CalendarAlgorithm;
     use icu::calendar::types::FormattingEra;
     use icu::calendar::Iso;
     use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
+    use icu::datetime::preferences::CalendarAlgorithm;
     use icu::locale::extensions::unicode::Value;
 
     let provider = crate::SourceDataProvider::new_testing();
 
-    let data = provider.all_eras().unwrap();
+    let era_dates_map = &provider
+        .cldr()
+        .unwrap()
+        .core()
+        .read_and_parse::<cldr_serde::eras::Resource>("supplemental/calendarData.json")
+        .unwrap()
+        .supplemental
+        .calendar_data;
+    let era_dates_map = process_era_dates_map(era_dates_map.clone());
 
-    for (&calendar, data) in data {
-        let kind = match calendar {
-            DatagenCalendar::IslamicRgsa => continue,
-            DatagenCalendar::Gregorian => AnyCalendarKind::Gregorian,
-            DatagenCalendar::EthiopicAmeteAlem => AnyCalendarKind::EthiopianAmeteAlem,
-            DatagenCalendar::JapaneseExtended => AnyCalendarKind::JapaneseExtended,
-            DatagenCalendar::JapaneseModern => AnyCalendarKind::Japanese,
-            c => icu::calendar::AnyCalendarKind::try_from(
-                CalendarAlgorithm::try_from(&Value::try_from_str(c.cldr_name()).unwrap()).unwrap(),
-            )
-            .unwrap(),
+    for (calendar, data) in era_dates_map {
+        let kind = match calendar.as_str() {
+            "generic" | "islamic-rgsa" => continue,
+            "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
+            "gregorian" => AnyCalendarKind::Gregorian,
+            "japanese" => AnyCalendarKind::JapaneseExtended,
+            c => CalendarAlgorithm::try_from(&Value::try_from_str(c).unwrap())
+                .unwrap()
+                .try_into()
+                .expect(&calendar),
         };
 
         let cal = AnyCalendar::try_new_for_kind_unstable(&provider, kind).unwrap();
         let cal = icu::calendar::Ref(&cal);
 
-        for &(idx, ref era) in data {
+        for (idx, ref era) in data.eras {
             let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
                 (Some(start), None) => {
                     let start = Date::try_new_iso(start.year, start.month, start.day).unwrap();
@@ -514,7 +517,7 @@ fn test_calendar_eras() {
 
             // Unless this is the first era and it's not an inverse era, check that the
             // not_in_era date is in a different era
-            if idx > 0 || era.end.is_some() {
+            if idx != "0" || era.end.is_some() {
                 assert_ne!(
                     not_in_era.year().standard_era(),
                     in_era.year().standard_era()
@@ -522,12 +525,12 @@ fn test_calendar_eras() {
             }
 
             // The remaining tests don't work for cyclic calendars
-            if calendar == DatagenCalendar::Dangi || calendar == DatagenCalendar::Chinese {
+            if calendar == "dangi" || calendar == "chinese" {
                 continue;
             }
 
             if let Some(FormattingEra::Index(i, _)) = in_era.year().formatting_era() {
-                assert_eq!(i as usize, idx);
+                assert_eq!(i.to_string(), idx);
             }
 
             // Check that the correct era code is returned
@@ -537,9 +540,7 @@ fn test_calendar_eras() {
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
             assert_eq!(in_era.year().era_year_or_extended(), 1);
-            if calendar == DatagenCalendar::JapaneseExtended
-                || calendar == DatagenCalendar::JapaneseModern
-            {
+            if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't have its own months
             } else if era.start.is_some() {
                 assert_eq!(in_era.month().ordinal, 1);
