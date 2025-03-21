@@ -69,12 +69,10 @@ impl DateOrTime {
                     is_gregorian: true,
                 },
             ],
-            DateOrTime::Time => &[
-                FormatterKind {
-                    is_fixed_calendar: true,
-                    is_gregorian: false,
-                },
-            ],
+            DateOrTime::Time => &[FormatterKind {
+                is_fixed_calendar: true,
+                is_gregorian: false,
+            }],
         }
     }
     pub fn field_set(self) -> &'static str {
@@ -180,14 +178,14 @@ impl DateTimeFormatterVariant {
             Inner::Date(DateFields::YMD) => true,
             Inner::Time => true,
             Inner::DateTime(DateFields::YMD) => true,
-            _ => false
+            _ => false,
         }
     }
     pub fn is_only_constructor(&self) -> bool {
         use DateTimeFormatterVariantInner as Inner;
         match self.inner {
             Inner::Time => true,
-            _ => false
+            _ => false,
         }
     }
 }
@@ -251,15 +249,15 @@ impl ZonedFormatterVariant {
 pub fn main() {
     let mut date_formatter_template = DateTimeFormatterTemplate {
         flavor: DateOrTime::Date,
-        variants: Vec::new()
+        variants: Vec::new(),
     };
     let mut time_formatter_template = DateTimeFormatterTemplate {
         flavor: DateOrTime::Time,
-        variants: Vec::new()
+        variants: Vec::new(),
     };
     let mut zoned_date_formatter_template = ZonedFormatterTemplate {
         flavor: DateOrTime::Date,
-        variants: Vec::new()
+        variants: Vec::new(),
     };
 
     for date_fields in DateFields::VALUES.iter() {
@@ -273,10 +271,12 @@ pub fn main() {
         let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
         println!("{date_fields:?} as Date => {consumed_options:?}");
         assert!(consumed_options.length); // all constructors accept a length
-        date_formatter_template.variants.push(DateTimeFormatterVariant {
-            inner: DateTimeFormatterVariantInner::Date(*date_fields),
-            consumed_options,
-        });
+        date_formatter_template
+            .variants
+            .push(DateTimeFormatterVariant {
+                inner: DateTimeFormatterVariantInner::Date(*date_fields),
+                consumed_options,
+            });
 
         builder.time_precision = Some(Default::default());
         let consumed_options = ConsumedOptions::from_builder(builder.clone());
@@ -306,7 +306,12 @@ pub fn main() {
         builder.alignment = Some(Default::default());
         builder.year_style = Some(Default::default());
         let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
-        time_formatter_template.variants.push(DateTimeFormatterVariant { inner: DateTimeFormatterVariantInner::Time, consumed_options });
+        time_formatter_template
+            .variants
+            .push(DateTimeFormatterVariant {
+                inner: DateTimeFormatterVariantInner::Time,
+                consumed_options,
+            });
     }
 
     let mut path_buf = PathBuf::new();
