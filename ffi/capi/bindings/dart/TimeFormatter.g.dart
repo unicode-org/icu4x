@@ -25,7 +25,7 @@ final class TimeFormatter implements ffi.Finalizable {
 
   /// See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeFormatter(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -38,7 +38,7 @@ final class TimeFormatter implements ffi.Finalizable {
 
   /// See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeFormatter.withProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
