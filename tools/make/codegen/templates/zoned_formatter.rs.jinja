@@ -12,23 +12,20 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    {%- if flavor.has_date() %}
     use icu_calendar::Gregorian;
+    {%- endif %}
     use writeable::TryWriteable;
 
+    #[allow(unused_imports)]
     use crate::{
         date::ffi::IsoDate,
         timezone::ffi::TimeZoneInfo,
         errors::ffi::DateTimeWriteError,
-    };
-
-    #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
         errors::ffi::DateTimeFormatterLoadError,
         locale_core::ffi::Locale,
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
-        datetime_helpers::{date_formatter_with_zone, date_formatter_gregorian_with_zone},
+        datetime_helpers,
     };
 
     #[diplomat::opaque]
@@ -93,7 +90,7 @@ pub mod ffi {
             {%- if is_with_provider %}
             let provider = provider.get()?;
             {%- endif %}
-            {{ conversion_fn }}(
+            datetime_helpers::{{ conversion_fn }}(
                 &formatter.0,
                 locale,
                 icu_datetime::fieldsets::zone::{{ variant.name_camel() }},
