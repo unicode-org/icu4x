@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::measure::measureunit::MeasureUnit;
-use crate::measure::parser::MeasureUnitParser;
 use crate::measure::provider::single_unit::SingleUnit;
 use crate::units::provider;
 use crate::units::ratio::IcuRatio;
@@ -71,10 +70,6 @@ impl ConverterFactory {
         Ok(Self { payload })
     }
 
-    pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(self.payload.get().units_conversion_trie.as_borrowed())
-    }
-
     /// Calculates the offset between two units by performing the following steps:
     /// 1. Identify the conversion rate from the first unit to the base unit as ConversionRate1: N1/D1 with an Offset1: OffsetN1/OffsetD1.
     /// 2. Identify the conversion rate from the second unit to the base unit as ConversionRate2: N2/D2 with an Offset2: OffsetN2/OffsetD2.
@@ -116,7 +111,7 @@ impl ConverterFactory {
         let input_conversion_info = self
             .payload
             .get()
-            .convert_infos
+            .conversion_info
             .get(input_unit.single_units[0].unit_id as usize);
         debug_assert!(
             input_conversion_info.is_some(),
@@ -127,7 +122,7 @@ impl ConverterFactory {
         let output_conversion_info = self
             .payload
             .get()
-            .convert_infos
+            .conversion_info
             .get(output_unit.single_units[0].unit_id as usize);
         debug_assert!(
             output_conversion_info.is_some(),
@@ -181,7 +176,7 @@ impl ConverterFactory {
                 let items_from_item = factory
                     .payload
                     .get()
-                    .convert_infos
+                    .conversion_info
                     .get(item.unit_id as usize);
 
                 debug_assert!(items_from_item.is_some(), "Failed to get convert info");
@@ -250,7 +245,7 @@ impl ConverterFactory {
         let conversion_info = self
             .payload
             .get()
-            .convert_infos
+            .conversion_info
             .get(unit_item.unit_id as usize);
         debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
         let conversion_info = conversion_info?;
@@ -339,12 +334,14 @@ impl ConverterFactory {
 #[cfg(test)]
 mod tests {
     use super::ConverterFactory;
+    use crate::measure::parser::MeasureUnitParser;
 
     #[test]
     fn test_converter_factory() {
         let factory = ConverterFactory::new();
-        let input_unit = factory.parser().try_from_str("meter").unwrap();
-        let output_unit = factory.parser().try_from_str("foot").unwrap();
+        let parser = MeasureUnitParser::new();
+        let input_unit = parser.try_from_str("meter").unwrap();
+        let output_unit = parser.try_from_str("foot").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(&1000.0);
         assert!(
@@ -357,11 +354,9 @@ mod tests {
     #[test]
     fn test_converter_factory_with_constant_denominator() {
         let factory = ConverterFactory::new();
-        let input_unit = factory
-            .parser()
-            .try_from_str("liter-per-100-kilometer")
-            .unwrap();
-        let output_unit = factory.parser().try_from_str("mile-per-gallon").unwrap();
+        let parser = MeasureUnitParser::new();
+        let input_unit = parser.try_from_str("liter-per-100-kilometer").unwrap();
+        let output_unit = parser.try_from_str("mile-per-gallon").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(&1.0);
         assert!(
@@ -374,8 +369,9 @@ mod tests {
     #[test]
     fn test_converter_factory_with_offset() {
         let factory = ConverterFactory::new();
-        let input_unit = factory.parser().try_from_str("celsius").unwrap();
-        let output_unit = factory.parser().try_from_str("fahrenheit").unwrap();
+        let parser = MeasureUnitParser::new();
+        let input_unit = parser.try_from_str("celsius").unwrap();
+        let output_unit = parser.try_from_str("fahrenheit").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(&0.0);
         assert!(

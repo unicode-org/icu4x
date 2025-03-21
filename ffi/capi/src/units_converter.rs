@@ -65,44 +65,14 @@ pub mod ffi {
                 .map(UnitsConverter)
                 .map(Box::new)
         }
-
-        /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-        #[diplomat::rust_link(
-            icu::experimental::units::converter_factory::ConverterFactory::parser,
-            FnInStruct
-        )]
-        pub fn parser<'a>(&'a self) -> Box<MeasureUnitParser<'a>> {
-            MeasureUnitParser(self.0.parser()).into()
-        }
     }
 
-    #[diplomat::opaque]
-    /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
-    /// (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-    #[diplomat::rust_link(icu::experimental::measure::parser::MeasureUnitParser, Struct)]
-    pub struct MeasureUnitParser<'a>(pub icu_experimental::measure::parser::MeasureUnitParser<'a>);
-
-    impl<'a> MeasureUnitParser<'a> {
-        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
-        /// if the identifier is valid.
-        #[diplomat::rust_link(
-            icu::experimental::measure::parser::MeasureUnitParser::parse,
-            FnInStruct
-        )]
-        pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {
-            self.0
-                .try_from_utf8(unit_id)
-                .ok()
-                .map(MeasureUnit)
-                .map(Box::new)
-        }
-    }
-
+    // TODO: This is now duplicated in measure_unit_parser.rs, is that okay ?
     #[diplomat::opaque]
     /// An ICU4X Measurement Unit object which represents a single unit of measurement
     /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
     ///
-    /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse_measure_unit` method.
+    /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse` method.
     #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnit, Struct)]
     pub struct MeasureUnit(pub icu_experimental::measure::measureunit::MeasureUnit);
 
