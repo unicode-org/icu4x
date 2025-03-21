@@ -67,20 +67,23 @@ pub mod ffi {
         {%- let ctor_prefix %}
         {%- let ctor_suffix_ffi %}
         {%- let ctor_suffix_rust %}
+        {%- let cargo_feature %}
         {%- if is_with_provider %}
             {%- let ctor_prefix = "load_" %}
             {%- let ctor_suffix_ffi = "_with_provider" %}
             {%- let ctor_suffix_rust = "_with_buffer_provider" %}
+            {%- let cargo_feature = "buffer_provider" %}
         {%- else %}
             {%- let ctor_prefix = "include_" %}
             {%- let ctor_suffix_ffi = "" %}
             {%- let ctor_suffix_rust = "" %}
+            {%- let cargo_feature = "compiled_data" %}
         {%- endif %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
         {%- if variant.is_default_constructor() && !is_with_provider %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
-        #[cfg(feature = "{% if is_with_provider %}buffer_provider{% else %}compiled_data{% endif %}")]
+        #[cfg(feature = "{{ cargo_feature }}")]
         pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
             {%- if is_with_provider %}
             provider: &DataProvider,
