@@ -21,9 +21,11 @@ pub mod ffi {
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeMismatchedCalendarError,
         locale_core::ffi::Locale,
-        provider::ffi::DataProvider,
         time::ffi::Time,
     };
+
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
