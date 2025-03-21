@@ -804,7 +804,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     locale!("th").into(),
+    ///     locale!("th-TH").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap()
@@ -1097,7 +1097,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter =
-    ///     DateTimeFormatter::try_new(locale!("th").into(), YMD::long()).unwrap();
+    ///     DateTimeFormatter::try_new(locale!("th-TH").into(), YMD::long()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_iso(2024, 12, 16).unwrap()),
