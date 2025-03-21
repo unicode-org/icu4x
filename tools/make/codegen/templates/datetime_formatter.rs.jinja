@@ -12,23 +12,22 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    {%- if flavor.has_date() %}
     use icu_calendar::Gregorian;
+    {%- endif %}
     use writeable::Writeable;
 
+    #[allow(unused_imports)]
     use crate::{
         date::ffi::{Date, IsoDate},
-        errors::ffi::DateTimeMismatchedCalendarError,
-    };
-
-    #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
         datetime_formatter::ffi::DateTimeLength,
-        datetime_options::ffi::{DateTimeAlignment, YearStyle},
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
         datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
+        errors::ffi::DateTimeFormatterLoadError,
+        errors::ffi::DateTimeMismatchedCalendarError,
+        locale_core::ffi::Locale,
+        provider::ffi::DataProvider,
+        time::ffi::Time,
     };
 
     {%- for formatter_kind in flavor.formatter_kinds() %}
@@ -111,7 +110,7 @@ pub mod ffi {
             {%- endif %}
             locale: &Locale,
             length: Option<DateTimeLength>,
-            {%- if flavor.needs_time_input() %}
+            {%- if flavor.has_time() %}
             time_precision: Option<TimePrecision>,
             {%- endif %}
             {%- if variant.consumed_options.alignment %}
@@ -126,7 +125,7 @@ pub mod ffi {
             #[allow(unused_mut)]
             {%- endif %}
             let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::with_length(map_or_default(length));
-            {%- if flavor.needs_time_input() %}
+            {%- if flavor.has_time() %}
             options.time_precision = time_precision.map(Into::into);
             {%- endif %}
             {%- if variant.consumed_options.alignment %}
@@ -153,19 +152,19 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format{% if flavor.needs_date_input() %}_iso{% endif %}(
+        pub fn format{% if flavor.has_date() %}_iso{% endif %}(
             &self,
-            {%- if flavor.needs_date_input() %}
+            {%- if flavor.has_date() %}
             date: &IsoDate,
             {%- endif %}
-            {%- if flavor.needs_time_input() %}
+            {%- if flavor.has_time() %}
             time: &Time,
             {%- endif %}
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            {%- if flavor.needs_date_input() %}
+            {%- if flavor.has_date() %}
             let date = date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
-            {%- if flavor.needs_time_input() %}
+            {%- if flavor.has_time() %}
             let value = DateTime {
                 date,
                 time: time.0,
@@ -188,7 +187,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
             let date = date.0.wrap_calendar_in_ref();
-            {%- if flavor.needs_time_input() %}
+            {%- if flavor.has_time() %}
             let value = DateTime {
                 date,
                 time: time.0,

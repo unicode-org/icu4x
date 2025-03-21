@@ -13,20 +13,17 @@ pub mod ffi {
     use icu_calendar::Gregorian;
     use writeable::Writeable;
 
+    #[allow(unused_imports)]
     use crate::{
         date::ffi::{Date, IsoDate},
-        errors::ffi::DateTimeMismatchedCalendarError,
-    };
-
-    #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
         datetime_formatter::ffi::DateTimeLength,
-        datetime_options::ffi::{DateTimeAlignment, YearStyle},
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
         datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
+        errors::ffi::DateTimeFormatterLoadError,
+        errors::ffi::DateTimeMismatchedCalendarError,
+        locale_core::ffi::Locale,
+        provider::ffi::DataProvider,
+        time::ffi::Time,
     };
 
     #[diplomat::opaque]

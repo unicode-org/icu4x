@@ -39,6 +39,7 @@ impl ConsumedOptions {
 enum DateOrTime {
     Date,
     Time,
+    #[allow(dead_code)] // temporary
     DateTime,
 }
 
@@ -82,10 +83,10 @@ impl DateOrTime {
             DateOrTime::DateTime => "CompositeDateTimeFieldSet",
         }
     }
-    pub fn needs_date_input(self) -> bool {
+    pub fn has_date(self) -> bool {
         matches!(self, DateOrTime::Date | DateOrTime::DateTime)
     }
-    pub fn needs_time_input(self) -> bool {
+    pub fn has_time(self) -> bool {
         matches!(self, DateOrTime::Time | DateOrTime::DateTime)
     }
 }
@@ -120,6 +121,7 @@ struct DateTimeFormatterVariant {
 enum DateTimeFormatterVariantInner {
     Date(DateFields),
     Time,
+    #[allow(dead_code)] // temporary
     DateTime(DateFields),
 }
 
@@ -174,19 +176,14 @@ impl DateTimeFormatterVariant {
     }
     pub fn is_default_constructor(&self) -> bool {
         use DateTimeFormatterVariantInner as Inner;
-        match self.inner {
-            Inner::Date(DateFields::YMD) => true,
-            Inner::Time => true,
-            Inner::DateTime(DateFields::YMD) => true,
-            _ => false,
-        }
+        matches!(
+            self.inner,
+            Inner::Date(DateFields::YMD) | Inner::Time | Inner::DateTime(DateFields::YMD)
+        )
     }
     pub fn is_only_constructor(&self) -> bool {
         use DateTimeFormatterVariantInner as Inner;
-        match self.inner {
-            Inner::Time => true,
-            _ => false,
-        }
+        matches!(self.inner, Inner::Time)
     }
 }
 
