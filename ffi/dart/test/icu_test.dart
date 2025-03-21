@@ -108,7 +108,7 @@ void main() {
         locale,
         timePrecision: TimePrecision.minuteOptional,
       ).format(zonedDateTimeIso.time),
-      '14:32:12',
+      '14:32',
     );
 
     ///// DateTimeFormatter /////
