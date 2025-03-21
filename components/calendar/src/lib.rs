@@ -120,7 +120,7 @@ pub use ixdtf::ParseError;
 
 // Reexports
 #[doc(no_inline)]
-pub use any_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarPreferences};
+pub use any_calendar::{AnyCalendar, AnyCalendarKind, CalendarPreferences};
 #[doc(no_inline)]
 pub use cal::{Gregorian, Iso};
 

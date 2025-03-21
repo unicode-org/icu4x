@@ -20,9 +20,9 @@ use icu_provider::prelude::*;
 use core::fmt;
 
 define_preferences!(
-    /// The prefs for date formatting.
+    /// The preferences for calendars formatting.
     [Copy]
-    AnyCalendarPreferences,
+    CalendarPreferences,
     {
         /// The user's preferred calendar system.
         calendar_algorithm: CalendarAlgorithm
@@ -701,12 +701,12 @@ impl AnyCalendar {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(prefs: AnyCalendarPreferences) -> Result<Self, DataError> {
+    pub fn try_new(prefs: CalendarPreferences) -> Result<Self, DataError> {
         Self::try_new_unstable(&crate::provider::Baked, prefs)
     }
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: AnyCalendarPreferences) -> error: DataError,
+        (prefs: CalendarPreferences) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -716,10 +716,7 @@ impl AnyCalendar {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(
-        provider: &P,
-        prefs: AnyCalendarPreferences,
-    ) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, prefs: CalendarPreferences) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>

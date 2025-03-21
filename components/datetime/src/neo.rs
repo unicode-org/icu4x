@@ -23,7 +23,7 @@ use crate::{external_loaders::*, DateTimeWriteError};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
+use icu_calendar::{AnyCalendar, CalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
@@ -83,7 +83,7 @@ prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
     numbering_system
 });
 
-prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
+prefs_convert!(DateTimeFormatterPreferences, CalendarPreferences, {
     calendar_algorithm
 });
 
