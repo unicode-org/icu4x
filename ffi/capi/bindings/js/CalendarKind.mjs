@@ -29,6 +29,7 @@ export class CalendarKind {
         ["Hebrew", 11],
         ["HijriCivil", 12],
         ["HijriObservationalCairo", 13],
+        ["HijriObservationalMecca", 18],
         ["HijriTabular", 14],
         ["HijriUmmAlQura", 15],
         ["Persian", 16],
@@ -69,32 +70,37 @@ export class CalendarKind {
     }
 
     get value() {
-        return [...CalendarKind.#values.keys()][this.#value];
+        for (let entry of CalendarKind.#values) {
+            if (entry[1] == this.#value) {
+                return entry[0];
+            }
+        }
     }
 
     get ffiValue() {
         return this.#value;
     }
-    static #objectValues = [
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 12),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 13),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 16),
-        new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
-    ];
+    static #objectValues = {
+        [0]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        [1]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        [2]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
+        [3]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        [4]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        [5]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
+        [6]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        [7]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
+        [8]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
+        [9]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
+        [10]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
+        [11]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
+        [12]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 12),
+        [13]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 13),
+        [18]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 18),
+        [14]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
+        [15]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
+        [16]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 16),
+        [17]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
+    };
 
     static Iso = CalendarKind.#objectValues[0];
     static Gregorian = CalendarKind.#objectValues[1];
@@ -110,6 +116,7 @@ export class CalendarKind {
     static Hebrew = CalendarKind.#objectValues[11];
     static HijriCivil = CalendarKind.#objectValues[12];
     static HijriObservationalCairo = CalendarKind.#objectValues[13];
+    static HijriObservationalMecca = CalendarKind.#objectValues[18];
     static HijriTabular = CalendarKind.#objectValues[14];
     static HijriUmmAlQura = CalendarKind.#objectValues[15];
     static Persian = CalendarKind.#objectValues[16];

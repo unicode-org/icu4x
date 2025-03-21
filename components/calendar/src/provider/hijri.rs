@@ -29,6 +29,14 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
+    /// Precomputed data for the Hijri obsevational calendar
+    CalendarHijriObservationalMeccaV1,
+    "calendar/hijri/observational/mecca/v1",
+    HijriCache<'static>,
+    is_singleton = true,
+);
+
+icu_provider::data_marker!(
     /// Precomputed data for the Hijri Umm-Al-Qura calendar
     CalendarHijriUmmalquraV1,
     "calendar/hijri/ummalqura/v1",

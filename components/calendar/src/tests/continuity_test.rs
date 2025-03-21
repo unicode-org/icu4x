@@ -168,6 +168,18 @@ fn test_hijri_observational_cairo_continuity() {
 }
 
 #[test]
+fn test_hijri_observational_mecca_continuity() {
+    #[cfg(feature = "logging")]
+    let _ = simple_logger::SimpleLogger::new().env().init();
+    let cal = crate::cal::HijriObservational::new_mecca_always_calculating();
+    let cal = Ref(&cal);
+    let date = Date::try_new_observational_hijri_with_calendar(-10, 1, 1, cal);
+    check_continuity(date.unwrap());
+    let date = Date::try_new_observational_hijri_with_calendar(-300, 1, 1, cal);
+    check_every_250_days(date.unwrap());
+}
+
+#[test]
 fn test_hijri_tabular_continuity() {
     let cal = crate::cal::HijriTabular::new();
     let cal = Ref(&cal);

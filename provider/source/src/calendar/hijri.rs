@@ -39,6 +39,26 @@ impl crate::IterableDataProviderCached<CalendarHijriObservationalCairoV1> for So
     }
 }
 
+impl DataProvider<CalendarHijriObservationalMeccaV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CalendarHijriObservationalMeccaV1>, DataError> {
+        self.check_req::<CalendarHijriObservationalMeccaV1>(req)?;
+        let cache = load(ObservationalIslamic::mecca());
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(cache),
+        })
+    }
+}
+
+impl crate::IterableDataProviderCached<CalendarHijriObservationalMeccaV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
 impl DataProvider<CalendarHijriUmmalquraV1> for crate::SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarHijriUmmalquraV1>, DataError> {
         self.check_req::<CalendarHijriUmmalquraV1>(req)?;

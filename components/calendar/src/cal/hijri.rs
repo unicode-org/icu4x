@@ -24,7 +24,8 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::hijri::{
-    CalendarHijriObservationalCairoV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
+    CalendarHijriObservationalCairoV1, CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1,
+    HijriCache, PackedHijriYearInfo,
 };
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
@@ -65,6 +66,7 @@ pub struct HijriObservational {
 #[derive(Clone, Debug, Copy, PartialEq)]
 pub enum HijriObservationalLocation {
     Cairo,
+    Mecca,
 }
 
 /// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (civil epoch)
@@ -141,6 +143,21 @@ impl HijriObservational {
         }
     }
 
+    /// Creates a new [`HijriObservational`] for reference location Mecca, with some compiled data containing precomputed calendrical calculations.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_mecca() -> Self {
+        Self {
+            location: HijriObservationalLocation::Mecca,
+            data: Some(DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_OBSERVATIONAL_MECCA_V1,
+            )),
+        }
+    }
+
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
@@ -159,10 +176,36 @@ impl HijriObservational {
         })
     }
 
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
+        functions: [
+            new: skip,
+            try_new_mecca_with_buffer_provider,
+            try_new_mecca_unstable,
+            Self,
+    ]);
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
+    pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriObservationalMeccaV1> + ?Sized>(
+        provider: &D,
+    ) -> Result<Self, DataError> {
+        Ok(Self {
+            location: HijriObservationalLocation::Mecca,
+            data: Some(provider.load(Default::default())?.payload.cast()),
+        })
+    }
+
     /// Construct a new [`HijriObservational`] for reference location Cairo, without any precomputed calendrical calculations.
-    pub fn new_cairo_always_calculating() -> Self {
+    pub const fn new_cairo_always_calculating() -> Self {
         Self {
             location: HijriObservationalLocation::Cairo,
+            data: None,
+        }
+    }
+
+    /// Construct a new [`HijriObservational`] for reference location Mecca, without any precomputed calendrical calculations.
+    pub const fn new_mecca_always_calculating() -> Self {
+        Self {
+            location: HijriObservationalLocation::Mecca,
             data: None,
         }
     }
@@ -539,6 +582,9 @@ impl HijriObservational {
                 self.data.as_ref().map(|x| x.get()),
                 ObservationalIslamic::cairo(),
             ),
+            HijriObservationalLocation::Mecca => {
+                HijriPrecomputedData::new(None, ObservationalIslamic::mecca())
+            }
         }
     }
 

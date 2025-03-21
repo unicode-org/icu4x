@@ -107,6 +107,7 @@ where
         + DataProvider<icu_calendar::provider::CalendarChineseV1>
         + DataProvider<icu_calendar::provider::CalendarDangiV1>
         + DataProvider<icu_calendar::provider::CalendarHijriObservationalCairoV1>
+        + DataProvider<icu_calendar::provider::CalendarHijriObservationalMeccaV1>
         + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>
         + ?Sized,
 {
