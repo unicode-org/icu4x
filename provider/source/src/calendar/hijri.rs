@@ -21,12 +21,12 @@ fn load<IB: IslamicBasedMarker>() -> HijriCache<'static> {
     HijriCache::compute_for::<IB>(extended_start..extended_end)
 }
 
-impl DataProvider<CalendarHijriObservationalV1> for SourceDataProvider {
+impl DataProvider<CalendarHijriObservationalCairoV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<CalendarHijriObservationalV1>, DataError> {
-        self.check_req::<CalendarHijriObservationalV1>(req)?;
+    ) -> Result<DataResponse<CalendarHijriObservationalCairoV1>, DataError> {
+        self.check_req::<CalendarHijriObservationalCairoV1>(req)?;
         let cache = load::<ObservationalIslamicMarker>();
         Ok(DataResponse {
             metadata: Default::default(),
@@ -35,7 +35,7 @@ impl DataProvider<CalendarHijriObservationalV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CalendarHijriObservationalV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarHijriObservationalCairoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

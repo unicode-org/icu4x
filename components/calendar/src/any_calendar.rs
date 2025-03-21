@@ -655,7 +655,7 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarHijriObservationalV1>
+            + DataProvider<crate::provider::CalendarHijriObservationalCairoV1>
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
@@ -726,7 +726,7 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarHijriObservationalV1>
+            + DataProvider<crate::provider::CalendarHijriObservationalCairoV1>
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {

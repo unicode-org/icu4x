@@ -24,7 +24,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::hijri::{
-    CalendarHijriObservationalV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
+    CalendarHijriObservationalCairoV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
 };
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
@@ -139,7 +139,7 @@ impl HijriObservational {
         Self {
             location: HijriObservationalLocation::Cairo,
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_OBSERVATIONAL_V1,
+                crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_OBSERVATIONAL_CAIRO_V1,
             )),
         }
     }
@@ -153,7 +153,7 @@ impl HijriObservational {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_cairo)]
-    pub fn try_new_cairo_unstable<D: DataProvider<CalendarHijriObservationalV1> + ?Sized>(
+    pub fn try_new_cairo_unstable<D: DataProvider<CalendarHijriObservationalCairoV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
