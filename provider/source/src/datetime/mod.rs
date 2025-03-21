@@ -16,9 +16,8 @@ mod skeletons;
 mod symbols;
 pub(crate) mod week_data;
 
-/// Another list of calendars. These are the calendars that we can generate data for,
-/// which are all CLDR calendars (even the ones we don't support in ICU right now),
-/// with the Japanese calendar split.
+/// These are the calendars that datetime needs names for. They are roughly the
+/// CLDR calendars, with the Hijri calendars merged, and the Japanese calendar split.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub(crate) enum DatagenCalendar {
     Buddhist,
@@ -30,11 +29,7 @@ pub(crate) enum DatagenCalendar {
     Gregorian,
     Hebrew,
     Indian,
-    Islamic,
-    IslamicCivil,
-    IslamicTabular,
-    IslamicRgsa,
-    IslamicUmmAlQura,
+    Hijri,
     JapaneseExtended,
     JapaneseModern,
     Persian,
@@ -54,11 +49,7 @@ impl DatagenCalendar {
             Gregorian => "gregorian",
             Hebrew => "hebrew",
             Indian => "indian",
-            Islamic => "islamic",
-            IslamicCivil => "islamic-civil",
-            IslamicTabular => "islamic-tbla",
-            IslamicRgsa => "islamic-rgsa",
-            IslamicUmmAlQura => "islamic-umalqura",
+            Hijri => "islamic",
             JapaneseExtended => "japanese",
             JapaneseModern => "japanese",
             Persian => "persian",
@@ -257,12 +248,12 @@ impl_data_provider!(
 impl_data_provider!(
     HijriDateLengthsV1,
     |dates, _, _| DateLengths::from(dates),
-    DatagenCalendar::IslamicCivil
+    DatagenCalendar::Hijri
 );
 impl_data_provider!(
     HijriDateSymbolsV1,
     symbols::convert_dates,
-    DatagenCalendar::IslamicCivil
+    DatagenCalendar::Hijri
 );
 impl_data_provider!(
     JapaneseDateLengthsV1,
