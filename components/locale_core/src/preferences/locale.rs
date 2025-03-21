@@ -156,7 +156,6 @@ impl LocalePreferences {
         self.region
     }
 
-
     /// Extends the preferences with the values from another set of preferences.
     pub fn extend(&mut self, other: LocalePreferences) {
         if !other.language.is_default() {
