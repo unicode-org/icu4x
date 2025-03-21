@@ -8,7 +8,7 @@
 //! use icu::calendar::cal::HijriObservational;
 //! use icu::calendar::Date;
 //!
-//! let hijri = HijriObservational::new_always_calculating();
+//! let hijri = HijriObservational::new_cairo_always_calculating();
 //! let hijri_date = Date::try_new_observational_hijri_with_calendar(
 //!     1348, 10, 11, hijri,
 //! )
@@ -29,10 +29,11 @@ use crate::provider::hijri::{
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
-    IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
+    IslamicBasedMarker, ObservationalCairoIslamicMarker, SaudiIslamicMarker,
 };
 use calendrical_calculations::rata_die::RataDie;
 use core::marker::PhantomData;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
@@ -58,9 +59,15 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct HijriObservational {
-    data: Option<DataPayload<CalendarHijriObservationalV1>>,
+    pub(crate) location: HijriObservationalLocation,
+    data: Option<DataPayload<ErasedMarker<HijriCache<'static>>>>,
+}
+
+#[derive(Clone, Debug, Copy, PartialEq)]
+pub enum HijriObservationalLocation {
+    Cairo,
 }
 
 /// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (civil epoch)
@@ -122,14 +129,15 @@ pub struct HijriUmmAlQura {
 pub struct HijriTabular;
 
 impl HijriObservational {
-    /// Creates a new [`HijriObservational`] with some compiled data containing precomputed calendrical calculations.
+    /// Creates a new [`HijriObservational`] for reference location Cairo, with some compiled data containing precomputed calendrical calculations.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
+    pub const fn new_cairo() -> Self {
         Self {
+            location: HijriObservationalLocation::Cairo,
             data: Some(DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_OBSERVATIONAL_V1,
             )),
@@ -139,23 +147,27 @@ impl HijriObservational {
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_cairo_with_buffer_provider,
+            try_new_cairo_unstable,
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<CalendarHijriObservationalV1> + ?Sized>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_cairo)]
+    pub fn try_new_cairo_unstable<D: DataProvider<CalendarHijriObservationalV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.payload),
+            location: HijriObservationalLocation::Cairo,
+            data: Some(provider.load(Default::default())?.payload.cast()),
         })
     }
 
-    /// Construct a new [`HijriObservational`] without any precomputed calendrical calculations.
-    pub fn new_always_calculating() -> Self {
-        Self { data: None }
+    /// Construct a new [`HijriObservational`] for reference location Cairo, without any precomputed calendrical calculations.
+    pub fn new_cairo_always_calculating() -> Self {
+        Self {
+            location: HijriObservationalLocation::Cairo,
+            data: None,
+        }
     }
 }
 
@@ -450,7 +462,7 @@ impl Calendar for HijriObservational {
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
-        let fixed = date.0.year_info.rd_for::<ObservationalIslamicMarker>(
+        let fixed = date.0.year_info.rd_for::<ObservationalCairoIslamicMarker>(
             date.0.year,
             date.0.month,
             date.0.day,
@@ -519,8 +531,12 @@ impl Calendar for HijriObservational {
 }
 
 impl HijriObservational {
-    fn precomputed_data(&self) -> HijriPrecomputedData<ObservationalIslamicMarker> {
-        HijriPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
+    fn precomputed_data(&self) -> HijriPrecomputedData<ObservationalCairoIslamicMarker> {
+        match self.location {
+            HijriObservationalLocation::Cairo => {
+                HijriPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
+            }
+        }
     }
 
     pub(crate) const DEBUG_NAME: &'static str = "Hijri (observational)";
@@ -535,7 +551,7 @@ impl<A: AsCalendar<Calendar = HijriObservational>> Date<A> {
     /// use icu::calendar::cal::HijriObservational;
     /// use icu::calendar::Date;
     ///
-    /// let hijri = HijriObservational::new_always_calculating();
+    /// let hijri = HijriObservational::new_cairo_always_calculating();
     ///
     /// let date_hijri =
     ///     Date::try_new_observational_hijri_with_calendar(1392, 4, 25, hijri)
@@ -1793,7 +1809,7 @@ mod test {
 
     #[test]
     fn test_observational_hijri_from_fixed() {
-        let calendar = HijriObservational::new();
+        let calendar = HijriObservational::new_cairo();
         let calendar = Ref(&calendar);
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_observational_hijri_with_calendar(
@@ -1808,7 +1824,7 @@ mod test {
 
     #[test]
     fn test_fixed_from_observational_hijri() {
-        let calendar = HijriObservational::new();
+        let calendar = HijriObservational::new_cairo();
         let calendar = Ref(&calendar);
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_observational_hijri_with_calendar(
@@ -1924,7 +1940,7 @@ mod test {
     #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_observational() {
-        let calendar = HijriObservational::new();
+        let calendar = HijriObservational::new_cairo();
         let calendar = Ref(&calendar);
         // -1245 1 1 = -214526 (R.D Date)
         // 1518 1 1 = 764589 (R.D Date)
@@ -1932,7 +1948,7 @@ mod test {
             .map(|year| {
                 HijriObservational::days_in_provided_year(
                     year,
-                    HijriYearInfo::compute::<ObservationalIslamicMarker>(year),
+                    HijriYearInfo::compute::<ObservationalCairoIslamicMarker>(year),
                 ) as i64
             })
             .sum();

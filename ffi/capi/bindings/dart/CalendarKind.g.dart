@@ -46,8 +46,8 @@ enum CalendarKind {
   /// The kind of a Hijri civil calendar
   hijriCivil,
 
-  /// The kind of a Hijri observational calendar
-  hijriObservational,
+  /// The kind of a Hijri observational, Cairo calendar
+  hijriObservationalCairo,
 
   /// The kind of a Hijri tabular calendar
   hijriTabular,

@@ -128,7 +128,7 @@ pub trait IslamicBasedMarker {
 /// Marker type for observational islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // marker
-pub struct ObservationalIslamicMarker;
+pub struct ObservationalCairoIslamicMarker;
 
 /// Marker type for Saudi islamic calendar, for use with [`IslamicBasedMarker`]
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
@@ -145,15 +145,15 @@ pub struct CivilIslamicMarker;
 #[allow(clippy::exhaustive_structs)] // marker
 pub struct TabularIslamicMarker;
 
-impl IslamicBasedMarker for ObservationalIslamicMarker {
+impl IslamicBasedMarker for ObservationalCairoIslamicMarker {
     const EPOCH: RataDie = FIXED_ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = "ObservationalIslamic";
     const HAS_353_DAY_YEARS: bool = true;
     fn fixed_from_islamic(year: i32, month: u8, day: u8) -> RataDie {
-        fixed_from_islamic_observational(year, month, day)
+        fixed_from_islamic_observational(year, month, day, CAIRO)
     }
     fn islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
-        observational_islamic_from_fixed(date)
+        observational_islamic_from_fixed(date, CAIRO)
     }
 }
 
@@ -194,21 +194,27 @@ impl IslamicBasedMarker for TabularIslamicMarker {
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904>
-pub fn fixed_from_islamic_observational(year: i32, month: u8, day: u8) -> RataDie {
+pub fn fixed_from_islamic_observational(
+    year: i32,
+    month: u8,
+    day: u8,
+    location: Location,
+) -> RataDie {
     let year = i64::from(year);
     let month = i64::from(month);
     let day = i64::from(day);
     let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
         + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
     let lunar_phase = Astronomical::calculate_new_moon_at_or_before(RataDie::new(midmonth as i64));
-    Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, Some(lunar_phase)) + day
+    Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), location, Some(lunar_phase))
+        + day
         - 1
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L6983-L6995>
-pub fn observational_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
+pub fn observational_islamic_from_fixed(date: RataDie, location: Location) -> (i32, u8, u8) {
     let lunar_phase = Astronomical::calculate_new_moon_at_or_before(date);
-    let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
+    let crescent = Astronomical::phasis_on_or_before(date, location, Some(lunar_phase));
     let elapsed_months =
         ((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH).round() as i32;
     let year = elapsed_months.div_euclid(12) + 1;
@@ -338,16 +344,19 @@ pub fn islamic_tabular_from_fixed(date: RataDie) -> (i32, u8, u8) {
 }
 
 /// The number of days in a month for the observational islamic calendar
-pub fn observational_islamic_month_days(year: i32, month: u8) -> u8 {
+pub fn observational_islamic_month_days(year: i32, month: u8, location: Location) -> u8 {
     let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
         + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
     let lunar_phase: f64 =
         Astronomical::calculate_new_moon_at_or_before(RataDie::new(midmonth as i64));
-    let f_date =
-        Astronomical::phasis_on_or_before(RataDie::new(midmonth as i64), CAIRO, Some(lunar_phase));
+    let f_date = Astronomical::phasis_on_or_before(
+        RataDie::new(midmonth as i64),
+        location,
+        Some(lunar_phase),
+    );
 
-    Astronomical::month_length(f_date, CAIRO)
+    Astronomical::month_length(f_date, location)
 }
 
 /// The number of days in a month for the Saudi (Umm Al-Qura) calendar
