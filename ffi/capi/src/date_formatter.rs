@@ -13,21 +13,20 @@ pub mod ffi {
     use icu_calendar::Gregorian;
     use writeable::Writeable;
 
+    #[allow(unused_imports)]
     use crate::{
         date::ffi::{Date, IsoDate},
+        datetime_formatter::ffi::DateTimeLength,
+        datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision, YearStyle},
+        errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeMismatchedCalendarError,
+        locale_core::ffi::Locale,
+        time::ffi::Time,
     };
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
-        datetime_formatter::ffi::DateTimeLength,
-        datetime_options::ffi::{DateTimeAlignment, YearStyle},
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
-        datetime_helpers::map_or_default,
-    };
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
@@ -37,15 +36,6 @@ pub mod ffi {
         >,
     );
 
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct DateFormatterGregorian(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            Gregorian,
-            icu_datetime::fieldsets::enums::DateFieldSet,
-        >,
-    );
-    
     impl DateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
@@ -636,7 +626,8 @@ pub mod ffi {
             date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0;
+            let date = date.0;
+            let value = date;
             let _infallible = self.0.format(&value).write_to(write);
         }
         
@@ -648,12 +639,23 @@ pub mod ffi {
             date: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let value = date.0.wrap_calendar_in_ref();
+            let date = date.0.wrap_calendar_in_ref();
+            let value = date;
             let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
             Ok(())
         }
     }
     
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
+    pub struct DateFormatterGregorian(
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
+            Gregorian,
+            icu_datetime::fieldsets::enums::DateFieldSet,
+        >,
+    );
+
     impl DateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
@@ -1244,7 +1246,8 @@ pub mod ffi {
             date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0.to_calendar(Gregorian);
+            let date = date.0.to_calendar(Gregorian);
+            let value = date;
             let _infallible = self.0.format(&value).write_to(write);
         }
         

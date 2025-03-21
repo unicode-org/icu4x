@@ -101,6 +101,16 @@ void main() {
 
     expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '14.07.');
 
+    ///// TimeFormatter /////
+
+    expect(
+      TimeFormatter(
+        locale,
+        timePrecision: TimePrecision.minuteOptional,
+      ).format(zonedDateTimeIso.time),
+      '14:32',
+    );
+
     ///// DateTimeFormatter /////
 
     expect(

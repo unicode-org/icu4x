@@ -45,7 +45,6 @@ pub mod ffi {
             icu_datetime::fieldsets::enums::CompositeFieldSet,
         >,
     );
-    
     impl ZonedDateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]

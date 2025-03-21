@@ -190,6 +190,8 @@ export { WordSegmenter } from "./WordSegmenter.mjs"
 
 export { Time } from "./Time.mjs"
 
+export { TimeFormatter } from "./TimeFormatter.mjs"
+
 export { TimeZone } from "./TimeZone.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"

@@ -27,6 +27,8 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
+import * as TimeFormatterDemo from "./TimeFormatter.mjs";
+export * as TimeFormatterDemo from "./TimeFormatter.mjs";
 import * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 export * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 import * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
@@ -910,6 +912,63 @@ let termini = Object.assign({
                 name: "S",
                 type: "string",
                 typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "TimeFormatter.format": {
+        func: TimeFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "TimeFormatter.format",
+        parameters: [
+            
+            {
+                name: "TimeFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "TimeFormatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "TimeFormatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "TimeFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Subsecond",
+                type: "number",
+                typeUse: "number"
             }
             
         ]

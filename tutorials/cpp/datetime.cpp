@@ -6,6 +6,7 @@
 #include <icu4x/DateFormatterGregorian.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatterGregorian.hpp>
+#include <icu4x/TimeFormatter.hpp>
 #include <icu4x/ZonedDateFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
 #include <icu4x/NoCalendarFormatter.hpp>
@@ -116,6 +117,15 @@ int main() {
     out = fmt_y->format_iso(*date.get());
     std::cout << "Fieldset Y: " << out;
     if (out != "2022") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<TimeFormatter> fmt_t = TimeFormatter::create(*locale.get(), std::nullopt, TimePrecision::Minute, std::nullopt).ok().value();
+    out = fmt_t->format(*time.get());
+    std::cout << "Fieldset T: " << out;
+    if (out != "13:06") {
         std::cout << " (unexpected!)";
         saw_unexpected_output = true;
     }

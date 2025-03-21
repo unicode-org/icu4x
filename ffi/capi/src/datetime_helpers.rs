@@ -2,17 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+#![allow(dead_code)] // features in here are a mess
+
 use alloc::boxed::Box;
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 use icu_calendar::Gregorian;
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 use icu_datetime::{
     fieldsets::builder::BuilderError, fieldsets::enums::*, fieldsets::Combo, pattern::*,
     scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
 };
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(crate) fn map_or_default<Input, Output>(input: Option<Input>) -> Output
 where
     Output: From<Input> + Default,
@@ -20,7 +18,6 @@ where
     input.map(Output::from).unwrap_or_default()
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn date_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<DateFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -74,7 +71,6 @@ where
     ))
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn datetime_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<CompositeDateTimeFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -123,7 +119,6 @@ where
     )))
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn date_formatter_gregorian_with_zone<Zone>(
     formatter: &FixedCalendarDateTimeFormatter<Gregorian, DateFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -177,7 +172,6 @@ where
     ))
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn datetime_formatter_gregorian_with_zone<Zone>(
     formatter: &FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
