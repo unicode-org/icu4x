@@ -4,6 +4,8 @@
 
 // {{ crate::capi_datetime::GENERATED_BY }}
 
+{%- let flavor = flavor %}
+
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -45,21 +47,18 @@ pub mod ffi {
             icu_datetime::fieldsets::enums::CompositeFieldSet,
         >,
     );
-    {% for is_gregorian in [false, true] %}
+    {%- for formatter_kind in flavor.formatter_kinds() %}
     {%- let ffi_type %}
     {%- let ffi_base_type %}
-    {%- let rust_type %}
     {%- let conversion_fn %}
-    {%- if is_gregorian %}
-        {%- let ffi_type = "ZonedDateFormatterGregorian" %}
-        {%- let ffi_base_type = "DateFormatterGregorian" %}
-        {%- let rust_type = "FixedCalendarDateTimeFormatter" %}
-        {%- let conversion_fn = "date_formatter_gregorian_with_zone" %}
+    {%- if formatter_kind.is_gregorian %}
+        {%- let ffi_type = format!("Zoned{}FormatterGregorian", flavor.camel()) %}
+        {%- let ffi_base_type = format!("{}FormatterGregorian", flavor.camel()) %}
+        {%- let conversion_fn = format!("{}_formatter_gregorian_with_zone", flavor.lower()) %}
     {%- else %}
-        {%- let ffi_type = "ZonedDateFormatter" %}
-        {%- let ffi_base_type = "DateFormatter" %}
-        {%- let rust_type = "DateTimeFormatter" %}
-        {%- let conversion_fn = "date_formatter_with_zone" %}
+        {%- let ffi_type = format!("Zoned{}Formatter", flavor.camel()) %}
+        {%- let ffi_base_type = format!("{}Formatter", flavor.camel()) %}
+        {%- let conversion_fn = format!("{}_formatter_with_zone", flavor.lower()) %}
     {%- endif %}
     impl {{ ffi_type }} {
         {%- for variant in variants %}
@@ -104,7 +103,7 @@ pub mod ffi {
                     let provider = provider.as_deserializing();
                     {%- endif %}
                     names
-                        {%- if !is_gregorian %}
+                        {%- if !formatter_kind.is_fixed_calendar %}
                         .as_mut()
                         {%- endif %}
                         .{{ ctor_prefix }}time_zone_{{ variant.load_fn() }}(
@@ -124,7 +123,7 @@ pub mod ffi {
         }
         {% endfor %}
         {%- endfor %}
-        #[diplomat::rust_link(icu::datetime::{{ rust_type }}::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
@@ -133,7 +132,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            {%- if is_gregorian %}
+            {%- if formatter_kind.is_fixed_calendar %}
             let date = date.0.to_calendar(Gregorian);
             {%- else %}
             let date = date.0.to_calendar(self.0.calendar());

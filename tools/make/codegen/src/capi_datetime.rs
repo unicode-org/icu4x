@@ -35,64 +35,155 @@ impl ConsumedOptions {
     }
 }
 
-#[derive(Template, Default)]
-#[template(path = "date_formatter.rs.jinja")]
-struct DateFormatterTemplate {
-    variants: Vec<DateFormatterVariant>,
+#[derive(Copy, Clone)]
+enum DateOrTime {
+    Date,
+    Time,
+    DateTime,
 }
 
-struct DateFormatterVariant {
-    date_fields: DateFields,
+impl DateOrTime {
+    pub fn camel(self) -> &'static str {
+        match self {
+            DateOrTime::Date => "Date",
+            DateOrTime::Time => "Time",
+            DateOrTime::DateTime => "DateTime",
+        }
+    }
+    pub fn lower(self) -> &'static str {
+        match self {
+            DateOrTime::Date => "date",
+            DateOrTime::Time => "time",
+            DateOrTime::DateTime => "datetime",
+        }
+    }
+    pub fn formatter_kinds(self) -> &'static [FormatterKind] {
+        match self {
+            DateOrTime::Date | DateOrTime::DateTime => &[
+                FormatterKind {
+                    is_fixed_calendar: false,
+                    is_gregorian: false,
+                },
+                FormatterKind {
+                    is_fixed_calendar: true,
+                    is_gregorian: true,
+                },
+            ],
+            DateOrTime::Time => &[
+                FormatterKind {
+                    is_fixed_calendar: true,
+                    is_gregorian: false,
+                },
+            ],
+        }
+    }
+}
+
+#[derive(Copy, Clone)]
+struct FormatterKind {
+    pub is_fixed_calendar: bool,
+    pub is_gregorian: bool,
+}
+
+impl FormatterKind {
+    pub fn rust_type(self) -> &'static str {
+        match self.is_fixed_calendar {
+            true => "FixedCalendarDateTimeFormatter",
+            false => "DateTimeFormatter",
+        }
+    }
+}
+
+#[derive(Template)]
+#[template(path = "datetime_formatter.rs.jinja")]
+struct DateTimeFormatterTemplate {
+    flavor: DateOrTime,
+    variants: Vec<DateTimeFormatterVariant>,
+}
+
+struct DateTimeFormatterVariant {
+    inner: DateTimeFormatterVariantInner,
     consumed_options: ConsumedOptions,
 }
 
-impl DateFormatterVariant {
-    pub fn name_upper(&self) -> &str {
-        match self.date_fields {
-            DateFields::D => "D",
-            DateFields::MD => "MD",
-            DateFields::YMD => "YMD",
-            DateFields::DE => "DE",
-            DateFields::MDE => "MDE",
-            DateFields::YMDE => "YMDE",
-            DateFields::E => "E",
-            DateFields::M => "M",
-            DateFields::YM => "YM",
-            DateFields::Y => "Y",
+enum DateTimeFormatterVariantInner {
+    Date(DateFields),
+    Time,
+    DateTime(DateFields),
+}
+
+impl DateTimeFormatterVariant {
+    pub fn name_upper(&self) -> &'static str {
+        use DateTimeFormatterVariantInner as Inner;
+        match self.inner {
+            Inner::Date(DateFields::D) => "D",
+            Inner::Date(DateFields::MD) => "MD",
+            Inner::Date(DateFields::YMD) => "YMD",
+            Inner::Date(DateFields::DE) => "DE",
+            Inner::Date(DateFields::MDE) => "MDE",
+            Inner::Date(DateFields::YMDE) => "YMDE",
+            Inner::Date(DateFields::E) => "E",
+            Inner::Date(DateFields::M) => "M",
+            Inner::Date(DateFields::YM) => "YM",
+            Inner::Date(DateFields::Y) => "Y",
+            Inner::Time => "T",
+            Inner::DateTime(DateFields::D) => "DT",
+            Inner::DateTime(DateFields::MD) => "MDT",
+            Inner::DateTime(DateFields::YMD) => "YMDT",
+            Inner::DateTime(DateFields::DE) => "DET",
+            Inner::DateTime(DateFields::MDE) => "MDET",
+            Inner::DateTime(DateFields::YMDE) => "YMDET",
+            Inner::DateTime(DateFields::E) => "ET",
             _ => unreachable!("unknown variant"),
         }
     }
-    pub fn name_lower(&self) -> &str {
-        match self.date_fields {
-            DateFields::D => "d",
-            DateFields::MD => "md",
-            DateFields::YMD => "ymd",
-            DateFields::DE => "de",
-            DateFields::MDE => "mde",
-            DateFields::YMDE => "ymde",
-            DateFields::E => "e",
-            DateFields::M => "m",
-            DateFields::YM => "ym",
-            DateFields::Y => "y",
+    pub fn name_lower(&self) -> &'static str {
+        use DateTimeFormatterVariantInner as Inner;
+        match self.inner {
+            Inner::Date(DateFields::D) => "d",
+            Inner::Date(DateFields::MD) => "md",
+            Inner::Date(DateFields::YMD) => "ymd",
+            Inner::Date(DateFields::DE) => "de",
+            Inner::Date(DateFields::MDE) => "mde",
+            Inner::Date(DateFields::YMDE) => "ymde",
+            Inner::Date(DateFields::E) => "e",
+            Inner::Date(DateFields::M) => "m",
+            Inner::Date(DateFields::YM) => "ym",
+            Inner::Date(DateFields::Y) => "y",
+            Inner::Time => "t",
+            Inner::DateTime(DateFields::D) => "dt",
+            Inner::DateTime(DateFields::MD) => "mdt",
+            Inner::DateTime(DateFields::YMD) => "ymdt",
+            Inner::DateTime(DateFields::DE) => "det",
+            Inner::DateTime(DateFields::MDE) => "mdet",
+            Inner::DateTime(DateFields::YMDE) => "ymdet",
+            Inner::DateTime(DateFields::E) => "et",
             _ => unreachable!("unknown variant"),
         }
     }
     pub fn is_default_constructor(&self) -> bool {
-        matches!(self.date_fields, DateFields::YMD)
+        use DateTimeFormatterVariantInner as Inner;
+        match self.inner {
+            Inner::Date(DateFields::YMD) => true,
+            Inner::Time => true,
+            Inner::DateTime(DateFields::YMD) => true,
+            _ => false
+        }
     }
 }
 
-#[derive(Template, Default)]
-#[template(path = "zoned_date_formatter.rs.jinja")]
-struct ZonedDateFormatterTemplate {
-    variants: Vec<ZonedDateFormatterVariant>,
+#[derive(Template)]
+#[template(path = "zoned_formatter.rs.jinja")]
+struct ZonedFormatterTemplate {
+    flavor: DateOrTime,
+    variants: Vec<ZonedFormatterVariant>,
 }
 
-struct ZonedDateFormatterVariant {
+struct ZonedFormatterVariant {
     zone_style: ZoneStyle,
 }
 
-impl ZonedDateFormatterVariant {
+impl ZonedFormatterVariant {
     pub fn name_lower(&self) -> &str {
         match self.zone_style {
             ZoneStyle::SpecificLong => "specific_long",
@@ -138,8 +229,18 @@ impl ZonedDateFormatterVariant {
 }
 
 pub fn main() {
-    let mut date_formatter_template = DateFormatterTemplate::default();
-    let mut zoned_date_formatter_template = ZonedDateFormatterTemplate::default();
+    let mut date_formatter_template = DateTimeFormatterTemplate {
+        flavor: DateOrTime::Date,
+        variants: Vec::new()
+    };
+    let mut time_formatter_template = DateTimeFormatterTemplate {
+        flavor: DateOrTime::Time,
+        variants: Vec::new()
+    };
+    let mut zoned_date_formatter_template = ZonedFormatterTemplate {
+        flavor: DateOrTime::Date,
+        variants: Vec::new()
+    };
 
     for date_fields in DateFields::VALUES.iter() {
         // Determine the options for these date fields
@@ -152,8 +253,8 @@ pub fn main() {
         let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
         println!("{date_fields:?} as Date => {consumed_options:?}");
         assert!(consumed_options.length); // all constructors accept a length
-        date_formatter_template.variants.push(DateFormatterVariant {
-            date_fields: *date_fields,
+        date_formatter_template.variants.push(DateTimeFormatterVariant {
+            inner: DateTimeFormatterVariantInner::Date(*date_fields),
             consumed_options,
         });
 
@@ -173,9 +274,19 @@ pub fn main() {
     for zone_style in ZoneStyle::VALUES.iter() {
         zoned_date_formatter_template
             .variants
-            .push(ZonedDateFormatterVariant {
+            .push(ZonedFormatterVariant {
                 zone_style: *zone_style,
             });
+    }
+
+    {
+        let mut builder = FieldSetBuilder::new();
+        builder.time_precision = Some(Default::default());
+        builder.length = Some(Default::default());
+        builder.alignment = Some(Default::default());
+        builder.year_style = Some(Default::default());
+        let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
+        time_formatter_template.variants.push(DateTimeFormatterVariant { inner: DateTimeFormatterVariantInner::Time, consumed_options });
     }
 
     let mut path_buf = PathBuf::new();
@@ -188,6 +299,14 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", date_formatter_template).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("time_formatter.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", time_formatter_template).unwrap();
     }
 
     {

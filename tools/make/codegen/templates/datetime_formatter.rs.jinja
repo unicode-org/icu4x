@@ -4,6 +4,8 @@
 
 // {{ crate::capi_datetime::GENERATED_BY }}
 
+{%- let flavor = flavor %}
+
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -29,32 +31,29 @@ pub mod ffi {
         datetime_helpers::map_or_default,
     };
 
+    {%- for formatter_kind in flavor.formatter_kinds() %}
+    {%- let ffi_type %}
+    {%- if formatter_kind.is_gregorian %}
+        {%- let ffi_type = format!("{}FormatterGregorian", {{ flavor.camel() }}) %}
+    {%- else %}
+        {%- let ffi_type = format!("{}Formatter", {{ flavor.camel() }}) %}
+    {%- endif %}
+
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct DateFormatter(
-        pub  icu_datetime::DateTimeFormatter<
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}, Typedef)]
+    pub struct {{ ffi_type }}(
+        pub  icu_datetime::{{ formatter_kind.rust_type() }}<
+            {%- if formatter_kind.is_fixed_calendar %}
+            {%- if formatter_kind.is_gregorian %}
+            Gregorian,
+            {%- else %}
+            (),
+            {%- endif %}
+            {%- endif %}
             icu_datetime::fieldsets::enums::DateFieldSet,
         >,
     );
 
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct DateFormatterGregorian(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            Gregorian,
-            icu_datetime::fieldsets::enums::DateFieldSet,
-        >,
-    );
-    {% for is_gregorian in [false, true] %}
-    {%- let ffi_type %}
-    {%- let rust_type %}
-    {%- if is_gregorian %}
-        {%- let ffi_type = "DateFormatterGregorian" %}
-        {%- let rust_type = "FixedCalendarDateTimeFormatter" %}
-    {%- else %}
-        {%- let ffi_type = "DateFormatter" %}
-        {%- let rust_type = "DateTimeFormatter" %}
-    {%- endif %}
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
@@ -112,7 +111,7 @@ pub mod ffi {
             {%- endif %}
             Ok(Box::new(Self(
                 icu_datetime
-                    ::{{ rust_type }}
+                    ::{{ formatter_kind.rust_type() }}
                     ::try_new{{ ctor_suffix_rust }}(
                         {%- if is_with_provider %}
                         provider.get()?,
@@ -125,7 +124,7 @@ pub mod ffi {
         }
         {% endfor %}
         {%- endfor %}
-        #[diplomat::rust_link(icu::datetime::{{ rust_type }}::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
@@ -133,11 +132,11 @@ pub mod ffi {
             date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0{% if is_gregorian %}.to_calendar(Gregorian){% endif %};
+            let value = date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
             let _infallible = self.0.format(&value).write_to(write);
         }
-        {% if !is_gregorian %}
-        #[diplomat::rust_link(icu::datetime::{{ rust_type }}::format_same_calendar, FnInStruct)]
+        {% if !formatter_kind.is_fixed_calendar %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format_same_calendar, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_same_calendar(
