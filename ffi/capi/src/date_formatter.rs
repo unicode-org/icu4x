@@ -627,7 +627,8 @@ pub mod ffi {
             date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0;
+            let date = date.0;
+            let value = date;
             let _infallible = self.0.format(&value).write_to(write);
         }
         
@@ -639,7 +640,8 @@ pub mod ffi {
             date: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let value = date.0.wrap_calendar_in_ref();
+            let date = date.0.wrap_calendar_in_ref();
+            let value = date;
             let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
             Ok(())
         }
@@ -1245,7 +1247,8 @@ pub mod ffi {
             date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0.to_calendar(Gregorian);
+            let date = date.0.to_calendar(Gregorian);
+            let value = date;
             let _infallible = self.0.format(&value).write_to(write);
         }
         

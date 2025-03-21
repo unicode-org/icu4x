@@ -111,6 +111,9 @@ pub mod ffi {
             {%- endif %}
             locale: &Locale,
             length: Option<DateTimeLength>,
+            {%- if flavor.needs_time_input() %}
+            time_precision: Option<TimePrecision>,
+            {%- endif %}
             {%- if variant.consumed_options.alignment %}
             alignment: Option<DateTimeAlignment>,
             {%- endif %}
@@ -123,6 +126,9 @@ pub mod ffi {
             #[allow(unused_mut)]
             {%- endif %}
             let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::with_length(map_or_default(length));
+            {%- if flavor.needs_time_input() %}
+            options.time_precision = time_precision.map(Into::into);
+            {%- endif %}
             {%- if variant.consumed_options.alignment %}
             options.alignment = alignment.map(Into::into);
             {%- endif %}
@@ -147,12 +153,29 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_iso(
+        pub fn format{% if flavor.needs_date_input() %}_iso{% endif %}(
             &self,
+            {%- if flavor.needs_date_input() %}
             date: &IsoDate,
+            {%- endif %}
+            {%- if flavor.needs_time_input() %}
+            time: &Time,
+            {%- endif %}
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
+            {%- if flavor.needs_date_input() %}
+            let date = date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
+            {%- if flavor.needs_time_input() %}
+            let value = DateTime {
+                date,
+                time: time.0,
+            };
+            {%- else %}
+            let value = date;
+            {%- endif %}
+            {%- else %}
+            let value = time.0;
+            {%- endif %}
             let _infallible = self.0.format(&value).write_to(write);
         }
         {% if !formatter_kind.is_fixed_calendar %}
@@ -164,7 +187,15 @@ pub mod ffi {
             date: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let value = date.0.wrap_calendar_in_ref();
+            let date = date.0.wrap_calendar_in_ref();
+            {%- if flavor.needs_time_input() %}
+            let value = DateTime {
+                date,
+                time: time.0,
+            };
+            {%- else %}
+            let value = date;
+            {%- endif %}
             let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
             Ok(())
         }

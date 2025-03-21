@@ -46,14 +46,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::T::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::long, FnInStruct, hidden)]
+        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create(
             locale: &Locale,
             length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -78,10 +81,12 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: Option<DateTimeLength>,
+            time_precision: Option<TimePrecision>,
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -98,12 +103,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_iso(
+        pub fn format(
             &self,
-            date: &IsoDate,
+            time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let value = date.0;
+            let value = time.0;
             let _infallible = self.0.format(&value).write_to(write);
         }
         

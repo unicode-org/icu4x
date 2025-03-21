@@ -84,6 +84,12 @@ impl DateOrTime {
             DateOrTime::DateTime => "CompositeDateTimeFieldSet",
         }
     }
+    pub fn needs_date_input(self) -> bool {
+        matches!(self, DateOrTime::Date | DateOrTime::DateTime)
+    }
+    pub fn needs_time_input(self) -> bool {
+        matches!(self, DateOrTime::Time | DateOrTime::DateTime)
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -172,6 +178,7 @@ impl DateTimeFormatterVariant {
         use DateTimeFormatterVariantInner as Inner;
         match self.inner {
             Inner::Date(DateFields::YMD) => true,
+            Inner::Time => true,
             Inner::DateTime(DateFields::YMD) => true,
             _ => false
         }
