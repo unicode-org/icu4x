@@ -1605,10 +1605,8 @@ fn test_backward_second_level() {
         }
     }
 
-    options.backward_second_level = Some(BackwardSecondLevel::On);
-
     {
-        let collator = Collator::try_new(Default::default(), options).unwrap();
+        let collator = Collator::try_new(locale!("fr-CA").into(), options).unwrap();
 
         {
             let cases = ["cote", "côte", "coté", "côté"];
@@ -1805,7 +1803,6 @@ fn test_default_resolved_options() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1822,7 +1819,6 @@ fn test_data_resolved_options_th() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     // There's a separate more comprehensive test for the shifted behavior
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
@@ -1840,7 +1836,6 @@ fn test_data_resolved_options_da() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1857,7 +1852,7 @@ fn test_data_resolved_options_fr_ca() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+    // bacward second level is hidden from the API
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(
@@ -1879,7 +1874,7 @@ fn test_manual_and_data_resolved_options_fr_ca() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+    // backwards second level is hidden from the API
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
     assert_eq!(
@@ -1901,7 +1896,6 @@ fn test_manual_resolved_options_da() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);

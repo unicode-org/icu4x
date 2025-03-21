@@ -8,7 +8,6 @@ final class _CollatorOptionsFfi extends ffi.Struct {
   external _ResultInt32Void alternateHandling;
   external _ResultInt32Void maxVariable;
   external _ResultInt32Void caseLevel;
-  external _ResultInt32Void backwardSecondLevel;
 }
 
 /// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
@@ -17,9 +16,8 @@ final class CollatorOptions {
   CollatorAlternateHandling? alternateHandling;
   CollatorMaxVariable? maxVariable;
   CollatorCaseLevel? caseLevel;
-  CollatorBackwardSecondLevel? backwardSecondLevel;
 
-  CollatorOptions({this.strength, this.alternateHandling, this.maxVariable, this.caseLevel, this.backwardSecondLevel});
+  CollatorOptions({this.strength, this.alternateHandling, this.maxVariable, this.caseLevel});
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -31,8 +29,7 @@ final class CollatorOptions {
     strength = ffi.strength.isOk ? CollatorStrength.values[ffi.strength.union.ok] : null,
     alternateHandling = ffi.alternateHandling.isOk ? CollatorAlternateHandling.values[ffi.alternateHandling.union.ok] : null,
     maxVariable = ffi.maxVariable.isOk ? CollatorMaxVariable.values[ffi.maxVariable.union.ok] : null,
-    caseLevel = ffi.caseLevel.isOk ? CollatorCaseLevel.values[ffi.caseLevel.union.ok] : null,
-    backwardSecondLevel = ffi.backwardSecondLevel.isOk ? CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel.union.ok] : null;
+    caseLevel = ffi.caseLevel.isOk ? CollatorCaseLevel.values[ffi.caseLevel.union.ok] : null;
 
   // ignore: unused_element
   _CollatorOptionsFfi _toFfi(ffi.Allocator temp) {
@@ -45,8 +42,6 @@ final class CollatorOptions {
     struct.maxVariable = maxVariable != null ? _ResultInt32Void.ok(maxVariable.index) : _ResultInt32Void.err();
     CollatorCaseLevel? caseLevel = this.caseLevel;
     struct.caseLevel = caseLevel != null ? _ResultInt32Void.ok(caseLevel.index) : _ResultInt32Void.err();
-    CollatorBackwardSecondLevel? backwardSecondLevel = this.backwardSecondLevel;
-    struct.backwardSecondLevel = backwardSecondLevel != null ? _ResultInt32Void.ok(backwardSecondLevel.index) : _ResultInt32Void.err();
     return struct;
   }
 
@@ -56,8 +51,7 @@ final class CollatorOptions {
       other.strength == strength &&
       other.alternateHandling == alternateHandling &&
       other.maxVariable == maxVariable &&
-      other.caseLevel == caseLevel &&
-      other.backwardSecondLevel == backwardSecondLevel;
+      other.caseLevel == caseLevel;
 
   @override
   int get hashCode => Object.hashAll([
@@ -65,7 +59,6 @@ final class CollatorOptions {
         alternateHandling,
         maxVariable,
         caseLevel,
-        backwardSecondLevel,
       ]);
 }
 

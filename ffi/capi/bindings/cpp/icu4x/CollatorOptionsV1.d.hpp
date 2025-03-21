@@ -10,14 +10,12 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "CollatorAlternateHandling.d.hpp"
-#include "CollatorBackwardSecondLevel.d.hpp"
 #include "CollatorCaseLevel.d.hpp"
 #include "CollatorMaxVariable.d.hpp"
 #include "CollatorStrength.d.hpp"
 
 namespace icu4x {
 class CollatorAlternateHandling;
-class CollatorBackwardSecondLevel;
 class CollatorCaseLevel;
 class CollatorMaxVariable;
 class CollatorStrength;
@@ -31,7 +29,6 @@ namespace capi {
       icu4x::capi::CollatorAlternateHandling_option alternate_handling;
       icu4x::capi::CollatorMaxVariable_option max_variable;
       icu4x::capi::CollatorCaseLevel_option case_level;
-      icu4x::capi::CollatorBackwardSecondLevel_option backward_second_level;
     };
     
     typedef struct CollatorOptionsV1_option {union { CollatorOptionsV1 ok; }; bool is_ok; } CollatorOptionsV1_option;
@@ -48,7 +45,6 @@ struct CollatorOptionsV1 {
   std::optional<icu4x::CollatorAlternateHandling> alternate_handling;
   std::optional<icu4x::CollatorMaxVariable> max_variable;
   std::optional<icu4x::CollatorCaseLevel> case_level;
-  std::optional<icu4x::CollatorBackwardSecondLevel> backward_second_level;
 
   inline icu4x::capi::CollatorOptionsV1 AsFFI() const;
   inline static icu4x::CollatorOptionsV1 FromFFI(icu4x::capi::CollatorOptionsV1 c_struct);
