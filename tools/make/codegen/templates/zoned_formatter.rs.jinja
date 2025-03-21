@@ -28,22 +28,6 @@ pub mod ffi {
         datetime_helpers,
     };
 
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct ZonedDateFormatter(
-        pub  icu_datetime::DateTimeFormatter<
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
-        >,
-    );
-
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct ZonedDateFormatterGregorian(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            Gregorian,
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
-        >,
-    );
     {%- for formatter_kind in flavor.formatter_kinds() %}
     {%- let ffi_type %}
     {%- let ffi_base_type %}
@@ -57,6 +41,22 @@ pub mod ffi {
         {%- let ffi_base_type = format!("{}Formatter", flavor.camel()) %}
         {%- let conversion_fn = format!("{}_formatter_with_zone", flavor.lower()) %}
     {%- endif %}
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}, Typedef)]
+    pub struct {{ ffi_type }}(
+        pub  icu_datetime::{{ formatter_kind.rust_type() }}<
+            {%- if formatter_kind.is_fixed_calendar %}
+            {%- if formatter_kind.is_gregorian %}
+            Gregorian,
+            {%- else %}
+            (),
+            {%- endif %}
+            {%- endif %}
+            icu_datetime::fieldsets::enums::CompositeFieldSet,
+        >,
+    );
+
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}

@@ -32,14 +32,6 @@ pub mod ffi {
         >,
     );
 
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct ZonedDateFormatterGregorian(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            Gregorian,
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
-        >,
-    );
     impl ZonedDateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]
@@ -490,6 +482,16 @@ pub mod ffi {
         }
     }
     
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
+    pub struct ZonedDateFormatterGregorian(
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
+            Gregorian,
+            icu_datetime::fieldsets::enums::CompositeFieldSet,
+        >,
+    );
+
     impl ZonedDateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]
