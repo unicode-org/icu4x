@@ -27,97 +27,18 @@ pub trait ChineseBased {
     /// may not track years ordinally in the same way many western calendars do.
     const EPOCH: RataDie;
 
-    /// The ISO year that corresponds to year 1
-    const EPOCH_ISO: i32;
-
     /// The name of the calendar for debugging.
     const DEBUG_NAME: &'static str;
 
     /// Given an ISO year, return the extended year
     fn extended_from_iso(iso_year: i32) -> i32 {
-        iso_year - Self::EPOCH_ISO + 1
+        iso_year - const { crate::iso::iso_year_from_fixed(Self::EPOCH) as i32 - 1 }
     }
     /// Given an extended year, return the ISO year
     fn iso_from_extended(extended_year: i32) -> i32 {
-        extended_year - 1 + Self::EPOCH_ISO
+        extended_year + const { crate::iso::iso_year_from_fixed(Self::EPOCH) as i32 - 1 }
     }
 }
-
-// The equivalent first day in the Chinese calendar (based on inception of the calendar)
-const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-2636)
-const CHINESE_EPOCH_ISO: i32 = -2636;
-
-/// The Chinese calendar relies on knowing the current day at the moment of a new moon;
-/// however, this can vary depending on location. As such, new moon calculations are based
-/// on the time in Beijing. Before 1929, local time was used, represented as UTC+(1397/180 h).
-/// In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
-/// from 1929 onward, all new moon calculations are based on UTC+8h.
-///
-/// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day)
-const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
-const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
-
-const CHINESE_LOCATION_PRE_1929: Location =
-    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_PRE_1929);
-const CHINESE_LOCATION_POST_1929: Location =
-    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_POST_1929);
-
-// The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
-const KOREAN_EPOCH: RataDie = RataDie::new(-852065); // Lunar new year 2333 BCE (-2332 ISO)
-const KOREAN_EPOCH_ISO: i32 = -2332; // Lunar new year 2333 BCE (-2332 ISO)
-
-/// The Korean Dangi calendar relies on knowing the current day at the moment of a new moon;
-/// however, this can vary depending on location. As such, new moon calculations are based on
-/// the time in Seoul. Before 1908, local time was used, represented as UTC+(3809/450 h).
-/// This changed multiple times as different standard timezones were adopted in Korea.
-/// Currently, UTC+9h is used.
-///
-/// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day).
-const UTC_OFFSET_ORIGINAL: f64 = (3809.0 / 450.0) / 24.0;
-const UTC_OFFSET_1908: f64 = 8.5 / 24.0;
-const UTC_OFFSET_1912: f64 = 9.0 / 24.0;
-const UTC_OFFSET_1954: f64 = 8.5 / 24.0;
-const UTC_OFFSET_1961: f64 = 9.0 / 24.0;
-
-const FIXED_1908: RataDie = RataDie::new(696608); // Apr 1, 1908
-const FIXED_1912: RataDie = RataDie::new(697978); // Jan 1, 1912
-const FIXED_1954: RataDie = RataDie::new(713398); // Mar 21, 1954
-const FIXED_1961: RataDie = RataDie::new(716097); // Aug 10, 1961
-
-const KOREAN_LATITUDE: f64 = 37.0 + (34.0 / 60.0);
-const KOREAN_LONGITUDE: f64 = 126.0 + (58.0 / 60.0);
-const KOREAN_ELEVATION: f64 = 0.0;
-
-const KOREAN_LOCATION_ORIGINAL: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_ORIGINAL,
-);
-const KOREAN_LOCATION_1908: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1908,
-);
-const KOREAN_LOCATION_1912: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1912,
-);
-const KOREAN_LOCATION_1954: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1954,
-);
-const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1961,
-);
 
 /// A type implementing [`ChineseBased`] for the Chinese calendar
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
@@ -131,36 +52,73 @@ pub struct Dangi;
 
 impl ChineseBased for Chinese {
     fn location(fixed: RataDie) -> Location {
-        let year = crate::iso::iso_year_from_fixed(fixed);
-        if year < 1929 {
-            CHINESE_LOCATION_PRE_1929
-        } else {
-            CHINESE_LOCATION_POST_1929
+        /// The Chinese calendar relies on knowing the current day at the moment of a new moon;
+        /// however, this can vary depending on location. As such, new moon calculations are based
+        /// on the time in Beijing. Before 1929, local time was used, represented as UTC+(1397/180 h).
+        /// In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
+        /// from 1929 onward, all new moon calculations are based on UTC+8h.
+        ///
+        /// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day)
+        const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
+        const FIXED_1929: RataDie = RataDie::new(704188); // Jan 1, 1929
+        const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
+
+        Location {
+            latitude: 39.0,
+            longitude: 116.0,
+            elevation: 43.5,
+            utc_offset: if fixed < FIXED_1929 {
+                UTC_OFFSET_PRE_1929
+            } else {
+                UTC_OFFSET_POST_1929
+            },
         }
     }
 
-    const EPOCH: RataDie = CHINESE_EPOCH;
-    const EPOCH_ISO: i32 = CHINESE_EPOCH_ISO;
+    /// The equivalent first day in the Chinese calendar (based on inception of the calendar), Feb. 15, -2636
+    const EPOCH: RataDie = RataDie::new(-963099);
     const DEBUG_NAME: &'static str = "chinese";
 }
 
 impl ChineseBased for Dangi {
     fn location(fixed: RataDie) -> Location {
-        if fixed < FIXED_1908 {
-            KOREAN_LOCATION_ORIGINAL
-        } else if fixed < FIXED_1912 {
-            KOREAN_LOCATION_1908
-        } else if fixed < FIXED_1954 {
-            KOREAN_LOCATION_1912
-        } else if fixed < FIXED_1961 {
-            KOREAN_LOCATION_1954
-        } else {
-            KOREAN_LOCATION_1961
+        // The Korean Dangi calendar relies on knowing the current day at the moment of a new moon;
+        // however, this can vary depending on location. As such, new moon calculations are based on
+        // the time in Seoul. Before 1908, local time was used, represented as UTC+(3809/450 h).
+        // This changed multiple times as different standard timezones were adopted in Korea.
+        // Currently, UTC+9h is used.
+        ///
+        /// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day).
+        const UTC_OFFSET_ORIGINAL: f64 = (3809.0 / 450.0) / 24.0;
+        const FIXED_1908: RataDie = RataDie::new(696608); // Apr 1, 1908
+        const UTC_OFFSET_1908: f64 = 8.5 / 24.0;
+        const FIXED_1912: RataDie = RataDie::new(697978); // Jan 1, 1912
+        const UTC_OFFSET_1912: f64 = 9.0 / 24.0;
+        const FIXED_1954: RataDie = RataDie::new(713398); // Mar 21, 1954
+        const UTC_OFFSET_1954: f64 = 8.5 / 24.0;
+        const FIXED_1961: RataDie = RataDie::new(716097); // Aug 10, 1961
+        const UTC_OFFSET_1961: f64 = 9.0 / 24.0;
+
+        Location {
+            latitude: 37.0 + (34.0 / 60.0),
+            longitude: 126.0 + (58.0 / 60.0),
+            elevation: 0.0,
+            utc_offset: if fixed < FIXED_1908 {
+                UTC_OFFSET_ORIGINAL
+            } else if fixed < FIXED_1912 {
+                UTC_OFFSET_1908
+            } else if fixed < FIXED_1954 {
+                UTC_OFFSET_1912
+            } else if fixed < FIXED_1961 {
+                UTC_OFFSET_1954
+            } else {
+                UTC_OFFSET_1961
+            },
         }
     }
 
-    const EPOCH: RataDie = KOREAN_EPOCH;
-    const EPOCH_ISO: i32 = KOREAN_EPOCH_ISO;
+    /// The first day in the Korean Dangi calendar (based on the founding of Gojoseon), lunar new year -2332
+    const EPOCH: RataDie = RataDie::new(-852065);
     const DEBUG_NAME: &'static str = "dangi";
 }
 

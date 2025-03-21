@@ -14,7 +14,15 @@ const CAIRO: Location = Location {
     latitude: 30.1,
     longitude: 31.3,
     elevation: 200.0,
-    zone: (1_f64 / 12_f64),
+    utc_offset: (1_f64 / 12_f64),
+};
+
+/// The location of Mecca; used for Islamic calendar calculations.
+const MECCA: Location = Location {
+    latitude: 6427.0 / 300.0,
+    longitude: 11947.0 / 300.0,
+    elevation: 298.0,
+    utc_offset: (1_f64 / 8_f64),
 };
 
 /// Common abstraction over islamic-style calendars
