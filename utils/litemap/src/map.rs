@@ -966,7 +966,7 @@ where
 
 impl<K, V, S> LiteMap<K, V, S>
 where
-    S: StoreMut<K, V>,
+    S: StoreBulkMut<K, V>,
 {
     /// Retains only the elements specified by the predicate.
     ///
@@ -1217,20 +1217,12 @@ impl_const_get_with_index_for_integer!(isize);
 
 /// An entry in a `LiteMap`, which may be either occupied or vacant.
 #[allow(clippy::exhaustive_enums)]
-pub enum Entry<'a, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+pub enum Entry<'a, K, V, S> {
     Occupied(OccupiedEntry<'a, K, V, S>),
     Vacant(VacantEntry<'a, K, V, S>),
 }
 
-impl<K, V, S> Debug for Entry<'_, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+impl<K, V, S> Debug for Entry<'_, K, V, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::Occupied(arg0) => f.debug_tuple("Occupied").field(arg0).finish(),
@@ -1240,20 +1232,12 @@ where
 }
 
 /// A view into an occupied entry in a `LiteMap`.
-pub struct OccupiedEntry<'a, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+pub struct OccupiedEntry<'a, K, V, S> {
     map: &'a mut LiteMap<K, V, S>,
     index: usize,
 }
 
-impl<K, V, S> Debug for OccupiedEntry<'_, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+impl<K, V, S> Debug for OccupiedEntry<'_, K, V, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("OccupiedEntry")
             .field("index", &self.index)
@@ -1262,21 +1246,13 @@ where
 }
 
 /// A view into a vacant entry in a `LiteMap`.
-pub struct VacantEntry<'a, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+pub struct VacantEntry<'a, K, V, S> {
     map: &'a mut LiteMap<K, V, S>,
     key: K,
     index: usize,
 }
 
-impl<K, V, S> Debug for VacantEntry<'_, K, V, S>
-where
-    K: Ord,
-    S: StoreMut<K, V>,
-{
+impl<K, V, S> Debug for VacantEntry<'_, K, V, S> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("VacantEntry")
             .field("index", &self.index)
@@ -1410,6 +1386,16 @@ where
     }
 }
 
+impl<K, V, S> Extend<(K, V)> for LiteMap<K, V, S>
+where
+    K: Ord,
+    S: StoreBulkMut<K, V>,
+{
+    fn extend<T: IntoIterator<Item = (K, V)>>(&mut self, iter: T) {
+        self.values.lm_extend(iter)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -1434,6 +1420,39 @@ mod test {
         .collect::<LiteMap<_, _>>();
 
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn extend() {
+        let mut expected: LiteMap<i32, &str> = LiteMap::with_capacity(4);
+        expected.insert(1, "updated-one");
+        expected.insert(2, "original-two");
+        expected.insert(3, "original-three");
+        expected.insert(4, "updated-four");
+
+        let mut actual: LiteMap<i32, &str> = LiteMap::new();
+        actual.insert(1, "original-one");
+        actual.extend([
+            (2, "original-two"),
+            (4, "original-four"),
+            (4, "updated-four"),
+            (1, "updated-one"),
+            (3, "original-three"),
+        ]);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn extend2() {
+        let mut map: LiteMap<usize, &str> = LiteMap::new();
+        map.extend(make_13());
+        map.extend(make_24());
+        map.extend(make_24());
+        map.extend(make_46());
+        map.extend(make_13());
+        map.extend(make_46());
+        assert_eq!(map.len(), 5);
     }
 
     fn make_13() -> LiteMap<usize, &'static str> {
