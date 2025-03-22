@@ -178,6 +178,13 @@ void main() {
       'Mittwoch, 15. Januar 2025, 14:32',
     );
 
+    ///// TimeZoneFormatter /////
+
+    expect(
+      TimeZoneFormatter.genericLong(locale).format(zonedDateTimeIso.zone),
+      'Mitteleuropäische Zeit',
+    );
+
     ///// ZonedDateFormatter /////
 
     expect(

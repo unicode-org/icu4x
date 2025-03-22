@@ -10,6 +10,7 @@
 #include <icu4x/ZonedDateFormatter.hpp>
 #include <icu4x/ZonedTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
+#include <icu4x/TimeZoneFormatter.hpp>
 #include <icu4x/NoCalendarFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
@@ -232,6 +233,16 @@ int main() {
     std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
     
     time_zone_info->infer_zone_variant(*VariantOffsetsCalculator::create().get());
+
+    std::unique_ptr<TimeZoneFormatter> fmt_generic_short = TimeZoneFormatter::create_generic_short(*locale.get()).ok().value();
+    out = fmt_generic_short->format(*time_zone_info.get()).ok().value();
+    std::cout << "Fieldset Z Generic Short: " << out;
+    if (out != "hora de Chicago") {
+        // note: this falls back to Generic Location
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
 
     std::unique_ptr<ZonedDateFormatter> fmt_md_generic_short = ZonedDateFormatter::create_generic_short(*locale.get(), *fmt_md).ok().value();
     out = fmt_md_generic_short->format_iso(*date.get(), *time_zone_info.get()).ok().value();
