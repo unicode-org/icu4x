@@ -41,6 +41,10 @@ pub mod ffi {
         {%- let ffi_type = format!("Zoned{}FormatterGregorian", flavor.camel()) %}
         {%- let ffi_base_type = format!("{}FormatterGregorian", flavor.camel()) %}
         {%- let conversion_fn = format!("{}_formatter_gregorian_with_zone", flavor.lower()) %}
+    {%- else if flavor.is_zone_only() %}
+        {%- let ffi_type = format!("TimeZoneFormatter") %}
+        {%- let ffi_base_type = format!("") %}
+        {%- let conversion_fn = format!("formatter_with_zone") %}
     {%- else %}
         {%- let ffi_type = format!("Zoned{}Formatter", flavor.camel()) %}
         {%- let ffi_base_type = format!("{}Formatter", flavor.camel()) %}
@@ -58,7 +62,11 @@ pub mod ffi {
             (),
             {%- endif %}
             {%- endif %}
+            {%- if flavor.is_zone_only() %}
+            icu_datetime::fieldsets::enums::ZoneFieldSet,
+            {%- else %}
             icu_datetime::fieldsets::enums::CompositeFieldSet,
+            {%- endif %}
         >,
     );
 
@@ -90,15 +98,23 @@ pub mod ffi {
             provider: &DataProvider,
             {%- endif %}
             locale: &Locale,
+            {%- if !flavor.is_zone_only() %}
             formatter: &{{ ffi_base_type }},
+            {%- endif %}
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             {%- if is_with_provider %}
             let provider = provider.get()?;
             {%- endif %}
             datetime_helpers::{{ conversion_fn }}(
+                {%- if flavor.is_zone_only() %}
+                icu_datetime::fieldsets::enums::ZoneFieldSet::{{ variant.name_camel() }}(icu_datetime::fieldsets::zone::{{ variant.name_camel() }}),
+                {%- else %}
                 &formatter.0,
+                {%- endif %}
                 locale,
+                {%- if !flavor.is_zone_only() %}
                 icu_datetime::fieldsets::zone::{{ variant.name_camel() }},
+                {%- endif %}
                 |names| {
                     {%- if is_with_provider %}
                     use icu_provider::buf::AsDeserializingBufferProvider;

@@ -18,6 +18,38 @@ where
     input.map(Output::from).unwrap_or_default()
 }
 
+pub(super) fn formatter_with_zone(
+    field_set: ZoneFieldSet,
+    locale: &crate::locale_core::ffi::Locale,
+    load: impl FnOnce(
+        &mut FixedCalendarDateTimeNames<(), ZoneFieldSet>,
+    ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+    to_formatter: impl FnOnce(
+        FixedCalendarDateTimeNames<(), ZoneFieldSet>,
+        ZoneFieldSet,
+    ) -> Result<
+        FixedCalendarDateTimeFormatter<(), ZoneFieldSet>,
+        (
+            DateTimeFormatterLoadError,
+            FixedCalendarDateTimeNames<(), ZoneFieldSet>,
+        ),
+    >,
+) -> Result<
+    Box<crate::timezone_formatter::ffi::TimeZoneFormatter>,
+    crate::errors::ffi::DateTimeFormatterLoadError,
+> {
+    let prefs = (&locale.0).into();
+    let mut names = FixedCalendarDateTimeNames::new_without_number_formatting(prefs);
+    load(&mut names)?;
+    let formatter = to_formatter(names, field_set).map_err(|(e, _)| {
+        debug_assert!(false, "expected infallible but got: {e}");
+        e
+    })?;
+    Ok(Box::new(crate::timezone_formatter::ffi::TimeZoneFormatter(
+        formatter,
+    )))
+}
+
 pub(super) fn date_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<DateFieldSet>,
     locale: &crate::locale_core::ffi::Locale,

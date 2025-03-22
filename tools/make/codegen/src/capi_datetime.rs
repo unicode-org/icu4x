@@ -36,31 +36,34 @@ impl ConsumedOptions {
 }
 
 #[derive(Copy, Clone)]
-enum DateOrTime {
+enum FormatterFlavor {
     Date,
     Time,
+    Zone,
     #[allow(dead_code)] // temporary
     DateTime,
 }
 
-impl DateOrTime {
+impl FormatterFlavor {
     pub fn camel(self) -> &'static str {
         match self {
-            DateOrTime::Date => "Date",
-            DateOrTime::Time => "Time",
-            DateOrTime::DateTime => "DateTime",
+            FormatterFlavor::Date => "Date",
+            FormatterFlavor::Time => "Time",
+            FormatterFlavor::Zone => "Zone",
+            FormatterFlavor::DateTime => "DateTime",
         }
     }
     pub fn lower(self) -> &'static str {
         match self {
-            DateOrTime::Date => "date",
-            DateOrTime::Time => "time",
-            DateOrTime::DateTime => "datetime",
+            FormatterFlavor::Date => "date",
+            FormatterFlavor::Time => "time",
+            FormatterFlavor::Zone => "zone",
+            FormatterFlavor::DateTime => "datetime",
         }
     }
     pub fn formatter_kinds(self) -> &'static [FormatterKind] {
         match self {
-            DateOrTime::Date | DateOrTime::DateTime => &[
+            FormatterFlavor::Date | FormatterFlavor::DateTime => &[
                 FormatterKind {
                     is_fixed_calendar: false,
                     is_gregorian: false,
@@ -70,7 +73,7 @@ impl DateOrTime {
                     is_gregorian: true,
                 },
             ],
-            DateOrTime::Time => &[FormatterKind {
+            FormatterFlavor::Time | FormatterFlavor::Zone => &[FormatterKind {
                 is_fixed_calendar: true,
                 is_gregorian: false,
             }],
@@ -78,16 +81,20 @@ impl DateOrTime {
     }
     pub fn field_set(self) -> &'static str {
         match self {
-            DateOrTime::Date => "DateFieldSet",
-            DateOrTime::Time => "TimeFieldSet",
-            DateOrTime::DateTime => "CompositeDateTimeFieldSet",
+            FormatterFlavor::Date => "DateFieldSet",
+            FormatterFlavor::Time => "TimeFieldSet",
+            FormatterFlavor::Zone => "ZoneFieldSet",
+            FormatterFlavor::DateTime => "CompositeDateTimeFieldSet",
         }
     }
     pub fn has_date(self) -> bool {
-        matches!(self, DateOrTime::Date | DateOrTime::DateTime)
+        matches!(self, FormatterFlavor::Date | FormatterFlavor::DateTime)
     }
     pub fn has_time(self) -> bool {
-        matches!(self, DateOrTime::Time | DateOrTime::DateTime)
+        matches!(self, FormatterFlavor::Time | FormatterFlavor::DateTime)
+    }
+    pub fn is_zone_only(self) -> bool {
+        matches!(self, FormatterFlavor::Zone)
     }
 }
 
@@ -109,7 +116,7 @@ impl FormatterKind {
 #[derive(Template)]
 #[template(path = "datetime_formatter.rs.jinja")]
 struct DateTimeFormatterTemplate {
-    flavor: DateOrTime,
+    flavor: FormatterFlavor,
     variants: Vec<DateTimeFormatterVariant>,
 }
 
@@ -190,7 +197,7 @@ impl DateTimeFormatterVariant {
 #[derive(Template)]
 #[template(path = "zoned_formatter.rs.jinja")]
 struct ZonedFormatterTemplate {
-    flavor: DateOrTime,
+    flavor: FormatterFlavor,
     variants: Vec<ZonedFormatterVariant>,
 }
 
@@ -245,19 +252,23 @@ impl ZonedFormatterVariant {
 
 pub fn main() {
     let mut date_formatter_template = DateTimeFormatterTemplate {
-        flavor: DateOrTime::Date,
+        flavor: FormatterFlavor::Date,
         variants: Vec::new(),
     };
     let mut time_formatter_template = DateTimeFormatterTemplate {
-        flavor: DateOrTime::Time,
+        flavor: FormatterFlavor::Time,
+        variants: Vec::new(),
+    };
+    let mut zone_formatter_template = ZonedFormatterTemplate {
+        flavor: FormatterFlavor::Zone,
         variants: Vec::new(),
     };
     let mut zoned_date_formatter_template = ZonedFormatterTemplate {
-        flavor: DateOrTime::Date,
+        flavor: FormatterFlavor::Date,
         variants: Vec::new(),
     };
     let mut zoned_time_formatter_template = ZonedFormatterTemplate {
-        flavor: DateOrTime::Time,
+        flavor: FormatterFlavor::Time,
         variants: Vec::new(),
     };
 
@@ -270,7 +281,6 @@ pub fn main() {
         builder.year_style = Some(Default::default());
 
         let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
-        println!("{date_fields:?} as Date => {consumed_options:?}");
         assert!(consumed_options.length); // all constructors accept a length
         date_formatter_template
             .variants
@@ -278,21 +288,14 @@ pub fn main() {
                 inner: DateTimeFormatterVariantInner::Date(*date_fields),
                 consumed_options,
             });
-
-        builder.time_precision = Some(Default::default());
-        let consumed_options = ConsumedOptions::from_builder(builder.clone());
-        println!("{date_fields:?} as DateTime => {consumed_options:?}");
-
-        builder.zone_style = Some(ZoneStyle::LocalizedOffsetShort);
-        let consumed_options = ConsumedOptions::from_builder(builder.clone());
-        println!("{date_fields:?} as DateTimeZone => {consumed_options:?}");
-
-        builder.time_precision = None;
-        let consumed_options = ConsumedOptions::from_builder(builder.clone());
-        println!("{date_fields:?} as DateZone => {consumed_options:?}");
     }
 
     for zone_style in ZoneStyle::VALUES.iter() {
+        zone_formatter_template
+            .variants
+            .push(ZonedFormatterVariant {
+                zone_style: *zone_style,
+            });
         zoned_date_formatter_template
             .variants
             .push(ZonedFormatterVariant {
@@ -338,6 +341,14 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", time_formatter_template).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("timezone_formatter.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", zone_formatter_template).unwrap();
     }
 
     {
