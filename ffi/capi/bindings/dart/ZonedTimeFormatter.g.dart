@@ -26,8 +26,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.specificLong(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_specific_long_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.specificLong(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_specific_long_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -37,8 +37,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.specificLongWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.specificLongWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -48,8 +48,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.specificShort(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_specific_short_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.specificShort(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_specific_short_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -59,8 +59,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.specificShortWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.specificShortWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -70,8 +70,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.localizedOffsetLong(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.localizedOffsetLong(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -81,8 +81,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -92,8 +92,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.localizedOffsetShort(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.localizedOffsetShort(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -103,8 +103,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -114,8 +114,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.genericLong(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_generic_long_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.genericLong(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_generic_long_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -125,8 +125,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.genericLongWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.genericLongWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -136,8 +136,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.genericShort(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_generic_short_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.genericShort(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_generic_short_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -147,8 +147,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.genericShortWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.genericShortWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -158,8 +158,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.location(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_location_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.location(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_location_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -169,8 +169,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.locationWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_location_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.locationWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_location_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -180,8 +180,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.exemplarCity(Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_exemplar_city_mv1(locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.exemplarCity(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_exemplar_city_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -191,8 +191,8 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
   /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedTimeFormatter.exemplarCityWithProvider(DataProvider provider, Locale locale, TimeFormatter formatter) {
-    final result = _icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedTimeFormatter.exemplarCityWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
+    final result = _icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1(provider._ffi, locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -218,84 +218,84 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
 external void _icu4x_ZonedTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_long_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_long_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_short_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_short_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_short_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_short_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_long_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_long_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_long_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_short_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_short_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_short_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_short_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_location_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_location_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_location_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_location_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_location_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_location_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_location_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_location_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_location_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_location_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_exemplar_city_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_exemplar_city_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_exemplar_city_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_exemplar_city_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_exemplar_city_mv1(ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _ResultInt32Void length, _ResultInt32Void timePrecision, _ResultInt32Void alignment);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_format_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_format_mv1')

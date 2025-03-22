@@ -1174,25 +1174,19 @@ let termini = Object.assign({
             },
             
             {
-                name: "ZonedTimeFormatter:Formatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "ZonedTimeFormatter:Formatter:Length",
+                name: "ZonedTimeFormatter:Length",
                 type: "DateTimeLength",
                 typeUse: "enumerator"
             },
             
             {
-                name: "ZonedTimeFormatter:Formatter:TimePrecision",
+                name: "ZonedTimeFormatter:TimePrecision",
                 type: "TimePrecision",
                 typeUse: "enumerator"
             },
             
             {
-                name: "ZonedTimeFormatter:Formatter:Alignment",
+                name: "ZonedTimeFormatter:Alignment",
                 type: "DateTimeAlignment",
                 typeUse: "enumerator"
             },

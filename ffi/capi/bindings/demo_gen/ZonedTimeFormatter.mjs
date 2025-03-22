@@ -1,19 +1,14 @@
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
-import { TimeFormatter } from "icu4x"
 import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedTimeFormatter } from "icu4x"
-export function format(zonedTimeFormatterLocaleName, zonedTimeFormatterFormatterLocaleName, zonedTimeFormatterFormatterLength, zonedTimeFormatterFormatterTimePrecision, zonedTimeFormatterFormatterAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneTimeZoneIdId, zoneOffsetOffset, zoneZoneVariant) {
+export function format(zonedTimeFormatterLocaleName, zonedTimeFormatterLength, zonedTimeFormatterTimePrecision, zonedTimeFormatterAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneTimeZoneIdId, zoneOffsetOffset, zoneZoneVariant) {
     
     let zonedTimeFormatterLocale = Locale.fromString(zonedTimeFormatterLocaleName);
     
-    let zonedTimeFormatterFormatterLocale = Locale.fromString(zonedTimeFormatterFormatterLocaleName);
-    
-    let zonedTimeFormatterFormatter = new TimeFormatter(zonedTimeFormatterFormatterLocale,zonedTimeFormatterFormatterLength,zonedTimeFormatterFormatterTimePrecision,zonedTimeFormatterFormatterAlignment);
-    
-    let zonedTimeFormatter = ZonedTimeFormatter.createGenericShort(zonedTimeFormatterLocale,zonedTimeFormatterFormatter);
+    let zonedTimeFormatter = ZonedTimeFormatter.createGenericShort(zonedTimeFormatterLocale,zonedTimeFormatterLength,zonedTimeFormatterTimePrecision,zonedTimeFormatterAlignment);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
