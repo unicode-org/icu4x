@@ -144,6 +144,7 @@ part 'TimeZoneAndCanonical.g.dart';
 part 'TimeZoneAndCanonicalAndNormalized.g.dart';
 part 'TimeZoneAndCanonicalAndNormalizedIterator.g.dart';
 part 'TimeZoneAndCanonicalIterator.g.dart';
+part 'TimeZoneFormatter.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TimeZoneIterator.g.dart';

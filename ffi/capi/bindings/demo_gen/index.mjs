@@ -29,6 +29,8 @@ import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 import * as TimeFormatterDemo from "./TimeFormatter.mjs";
 export * as TimeFormatterDemo from "./TimeFormatter.mjs";
+import * as TimeZoneFormatterDemo from "./TimeZoneFormatter.mjs";
+export * as TimeZoneFormatterDemo from "./TimeZoneFormatter.mjs";
 import * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 export * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 import * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
@@ -971,6 +973,39 @@ let termini = Object.assign({
                 name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "TimeZoneFormatter.format": {
+        func: TimeZoneFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "TimeZoneFormatter.format",
+        parameters: [
+            
+            {
+                name: "TimeZoneFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
             }
             
         ]

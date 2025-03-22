@@ -198,6 +198,8 @@ export { TimeZone } from "./TimeZone"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
+export { TimeZoneFormatter } from "./TimeZoneFormatter"
+
 export { MeasureUnit } from "./MeasureUnit"
 
 export { MeasureUnitParser } from "./MeasureUnitParser"

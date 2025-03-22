@@ -196,6 +196,8 @@ export { TimeZone } from "./TimeZone.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
+export { TimeZoneFormatter } from "./TimeZoneFormatter.mjs"
+
 export { MeasureUnit } from "./MeasureUnit.mjs"
 
 export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
