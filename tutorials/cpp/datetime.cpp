@@ -254,7 +254,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<ZonedTimeFormatter> fmt_t_specific_short = ZonedTimeFormatter::create_specific_short(*locale.get(), *fmt_t).ok().value();
+    std::unique_ptr<ZonedTimeFormatter> fmt_t_specific_short = ZonedTimeFormatter::create_specific_short(*locale.get(), std::nullopt, TimePrecision::Minute, std::nullopt).ok().value();
     out = fmt_t_specific_short->format(*time.get(), *time_zone_info.get()).ok().value();
     std::cout << "Fieldset T Specific Short: " << out;
     if (out != "13:06 GMT-5") {

@@ -213,9 +213,9 @@ void main() {
     expect(
       ZonedTimeFormatter.specificLong(
         locale,
-        TimeFormatter(locale),
+        timePrecision: TimePrecision.minuteOptional,
       ).format(zonedDateTimeIso.time, zonedDateTimeIso.zone),
-      '14:32:12 Mitteleuropäische Normalzeit',
+      '14:32 Mitteleuropäische Normalzeit',
     );
 
     ///// ZonedDateTimeFormatter /////
