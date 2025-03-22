@@ -54,6 +54,7 @@ where
         .build_date()
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
+                // This can fail if the date fields are for a calendar period
                 crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
@@ -105,9 +106,15 @@ where
     let field_set = formatter
         .to_field_set_builder()
         .build_date_and_time()
-        .map_err(|e| {
-            debug_assert!(false, "should be infallible, but got: {e:?}");
-            crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                debug_assert!(false, "fields were already validated in DateTimeFormatter");
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
         })?
         .zone(zone);
     let formatter = to_formatter(names, field_set)
@@ -155,6 +162,7 @@ where
         .build_date()
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
+                // This can fail if the date fields are for a calendar period
                 crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
@@ -206,9 +214,15 @@ where
     let field_set = formatter
         .to_field_set_builder()
         .build_date_and_time()
-        .map_err(|e| {
-            debug_assert!(false, "should be infallible, but got: {e:?}");
-            crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                debug_assert!(false, "fields were already validated in DateTimeFormatter");
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
         })?
         .zone(zone);
     let formatter = to_formatter(names, field_set)

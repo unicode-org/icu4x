@@ -12,41 +12,30 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    {%- if flavor.has_date() %}
     use icu_calendar::Gregorian;
+    {%- endif %}
     use writeable::TryWriteable;
 
+    #[allow(unused_imports)]
     use crate::{
+        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        datetime_formatter::ffi::DateTimeLength,
         date::ffi::IsoDate,
-        timezone::ffi::TimeZoneInfo,
+        datetime_helpers,
+        datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision},
+        errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
+        locale_core::ffi::Locale,
+        time_formatter::ffi::TimeFormatter,
+        time::ffi::Time,
+        timezone::ffi::TimeZoneInfo,
     };
 
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
-        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
-        datetime_helpers::{date_formatter_with_zone, date_formatter_gregorian_with_zone},
-    };
 
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
-    pub struct ZonedDateFormatter(
-        pub  icu_datetime::DateTimeFormatter<
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
-        >,
-    );
-
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
-    pub struct ZonedDateFormatterGregorian(
-        pub  icu_datetime::FixedCalendarDateTimeFormatter<
-            Gregorian,
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
-        >,
-    );
     {%- for formatter_kind in flavor.formatter_kinds() %}
     {%- let ffi_type %}
     {%- let ffi_base_type %}
@@ -55,11 +44,35 @@ pub mod ffi {
         {%- let ffi_type = format!("Zoned{}FormatterGregorian", flavor.camel()) %}
         {%- let ffi_base_type = format!("{}FormatterGregorian", flavor.camel()) %}
         {%- let conversion_fn = format!("{}_formatter_gregorian_with_zone", flavor.lower()) %}
+    {%- else if flavor.is_zone_only() %}
+        {%- let ffi_type = format!("TimeZoneFormatter") %}
+        {%- let ffi_base_type = format!("") %}
+        {%- let conversion_fn = format!("formatter_with_zone") %}
     {%- else %}
         {%- let ffi_type = format!("Zoned{}Formatter", flavor.camel()) %}
         {%- let ffi_base_type = format!("{}Formatter", flavor.camel()) %}
         {%- let conversion_fn = format!("{}_formatter_with_zone", flavor.lower()) %}
     {%- endif %}
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}, Typedef)]
+    pub struct {{ ffi_type }}(
+        pub  icu_datetime::{{ formatter_kind.rust_type() }}<
+            {%- if formatter_kind.is_fixed_calendar %}
+            {%- if formatter_kind.is_gregorian %}
+            Gregorian,
+            {%- else %}
+            (),
+            {%- endif %}
+            {%- endif %}
+            {%- if flavor.is_zone_only() %}
+            icu_datetime::fieldsets::enums::ZoneFieldSet,
+            {%- else %}
+            icu_datetime::fieldsets::enums::CompositeFieldSet,
+            {%- endif %}
+        >,
+    );
+
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for is_with_provider in [false, true] %}
@@ -88,15 +101,59 @@ pub mod ffi {
             provider: &DataProvider,
             {%- endif %}
             locale: &Locale,
+            {%- if let Some(consumed_options) = consumed_options %}
+            {%- if consumed_options.length %}
+            length: Option<DateTimeLength>,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time_precision: Option<TimePrecision>,
+            {%- endif %}
+            {%- if consumed_options.alignment %}
+            alignment: Option<DateTimeAlignment>,
+            {%- endif %}
+            {%- else %}
             formatter: &{{ ffi_base_type }},
+            {%- endif %}
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             {%- if is_with_provider %}
             let provider = provider.get()?;
             {%- endif %}
-            {{ conversion_fn }}(
+            let zone = icu_datetime::fieldsets::zone::{{ variant.name_camel() }};
+            {%- if let Some(consumed_options) = consumed_options %}
+            let prefs = (&locale.0).into();
+            {%- if flavor.has_time() %}
+            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            options.time_precision = time_precision.map(Into::into);
+            {%- if consumed_options.alignment %}
+            options.alignment = alignment.map(Into::into);
+            {%- endif %}
+            let options = options.zone(zone);
+            {%- else %}
+            let options = zone;
+            {%- endif %}
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::{{ formatter_kind.rust_type() }}
+                    ::try_new{{ ctor_suffix_rust }}(
+                        {%- if is_with_provider %}
+                        provider,
+                        {%- endif %}
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
+            {%- else %}
+            datetime_helpers::{{ conversion_fn }}(
+                {%- if flavor.is_zone_only() %}
+                icu_datetime::fieldsets::enums::ZoneFieldSet::{{ variant.name_camel() }}(zone),
+                {%- else %}
                 &formatter.0,
+                {%- endif %}
                 locale,
-                icu_datetime::fieldsets::zone::{{ variant.name_camel() }},
+                {%- if !flavor.is_zone_only() %}
+                zone,
+                {%- endif %}
                 |names| {
                     {%- if is_with_provider %}
                     use icu_provider::buf::AsDeserializingBufferProvider;
@@ -120,25 +177,36 @@ pub mod ffi {
                     field_set
                 ),
             )
+            {%- endif %}
         }
         {% endfor %}
         {%- endfor %}
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_iso(
+        pub fn format{% if flavor.has_date() %}_iso{% endif %}(
             &self,
+            {%- if flavor.has_date() %}
             date: &IsoDate,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time: &Time,
+            {%- endif %}
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
+            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            {%- if flavor.has_date() %}
             {%- if formatter_kind.is_fixed_calendar %}
             let date = date.0.to_calendar(Gregorian);
             {%- else %}
             let date = date.0.to_calendar(self.0.calendar());
             {%- endif %}
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
             input.set_date_fields(date);
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            input.set_time_fields(time.0);
+            {%- endif %}
             input.set_time_zone_id(zone.time_zone_id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);

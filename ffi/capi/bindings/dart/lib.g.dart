@@ -144,6 +144,7 @@ part 'TimeZoneAndCanonical.g.dart';
 part 'TimeZoneAndCanonicalAndNormalized.g.dart';
 part 'TimeZoneAndCanonicalAndNormalizedIterator.g.dart';
 part 'TimeZoneAndCanonicalIterator.g.dart';
+part 'TimeZoneFormatter.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TimeZoneIterator.g.dart';
@@ -174,6 +175,7 @@ part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
+part 'ZonedTimeFormatter.g.dart';
 
 class _DiplomatFfiUse extends meta.RecordUse {
   final String symbol;

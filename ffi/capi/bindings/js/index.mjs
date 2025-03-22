@@ -196,6 +196,8 @@ export { TimeZone } from "./TimeZone.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
+export { TimeZoneFormatter } from "./TimeZoneFormatter.mjs"
+
 export { MeasureUnit } from "./MeasureUnit.mjs"
 
 export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
@@ -217,6 +219,8 @@ export { WindowsParser } from "./WindowsParser.mjs"
 export { ZonedDateFormatter } from "./ZonedDateFormatter.mjs"
 
 export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian.mjs"
+
+export { ZonedTimeFormatter } from "./ZonedTimeFormatter.mjs"
 
 export { BidiDirection } from "./BidiDirection.mjs"
 
