@@ -16,8 +16,11 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        datetime_formatter::ffi::DateTimeLength,
         date::ffi::IsoDate,
         datetime_helpers,
+        datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
         locale_core::ffi::Locale,
@@ -44,10 +47,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::SpecificLong;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificLong,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -69,10 +73,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::SpecificLong;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificLong,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -96,10 +101,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::SpecificShort;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificShort,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -121,10 +127,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::SpecificShort;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificShort,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -148,10 +155,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetLong,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -173,10 +181,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetLong,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -200,10 +209,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetShort,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -225,10 +235,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetShort,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -252,10 +263,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::GenericLong;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericLong,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -277,10 +289,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::GenericLong;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericLong,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -305,10 +318,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::GenericShort;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericShort,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -330,10 +344,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::GenericShort;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericShort,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -357,10 +372,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::Location;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::Location,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -382,10 +398,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::Location;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::Location,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -409,10 +426,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::ExemplarCity;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::ExemplarCity,
+                zone,
                 |names| {
                     names
                         .as_mut()
@@ -434,10 +452,11 @@ pub mod ffi {
             formatter: &DateFormatter,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::ExemplarCity;
             datetime_helpers::date_formatter_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::ExemplarCity,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -504,10 +523,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::SpecificLong;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificLong,
+                zone,
                 |names| {
                     names
                         .include_time_zone_specific_long_names_with_fallback(
@@ -528,10 +548,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::SpecificLong;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificLong,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -554,10 +575,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::SpecificShort;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificShort,
+                zone,
                 |names| {
                     names
                         .include_time_zone_specific_short_names_with_fallback(
@@ -578,10 +600,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::SpecificShort;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::SpecificShort,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -604,10 +627,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetLong,
+                zone,
                 |names| {
                     names
                         .include_time_zone_localized_offset_names_with_fallback(
@@ -628,10 +652,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetLong,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -654,10 +679,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetShort,
+                zone,
                 |names| {
                     names
                         .include_time_zone_localized_offset_names_with_fallback(
@@ -678,10 +704,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::LocalizedOffsetShort,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -704,10 +731,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::GenericLong;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericLong,
+                zone,
                 |names| {
                     names
                         .include_time_zone_generic_long_names_with_fallback(
@@ -728,10 +756,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::GenericLong;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericLong,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -755,10 +784,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::GenericShort;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericShort,
+                zone,
                 |names| {
                     names
                         .include_time_zone_generic_short_names_with_fallback(
@@ -779,10 +809,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::GenericShort;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::GenericShort,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -805,10 +836,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::Location;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::Location,
+                zone,
                 |names| {
                     names
                         .include_time_zone_location_names(
@@ -829,10 +861,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::Location;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::Location,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
@@ -855,10 +888,11 @@ pub mod ffi {
             locale: &Locale,
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let zone = icu_datetime::fieldsets::zone::ExemplarCity;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::ExemplarCity,
+                zone,
                 |names| {
                     names
                         .include_time_zone_exemplar_city_names(
@@ -879,10 +913,11 @@ pub mod ffi {
             formatter: &DateFormatterGregorian,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
+            let zone = icu_datetime::fieldsets::zone::ExemplarCity;
             datetime_helpers::date_formatter_gregorian_with_zone(
                 &formatter.0,
                 locale,
-                icu_datetime::fieldsets::zone::ExemplarCity,
+                zone,
                 |names| {
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();

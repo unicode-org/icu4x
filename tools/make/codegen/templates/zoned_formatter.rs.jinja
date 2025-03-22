@@ -20,8 +20,11 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        datetime_formatter::ffi::DateTimeLength,
         date::ffi::IsoDate,
         datetime_helpers,
+        datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
         locale_core::ffi::Locale,
@@ -98,22 +101,58 @@ pub mod ffi {
             provider: &DataProvider,
             {%- endif %}
             locale: &Locale,
-            {%- if !flavor.is_zone_only() %}
+            {%- if let Some(consumed_options) = consumed_options %}
+            {%- if consumed_options.length %}
+            length: Option<DateTimeLength>,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time_precision: Option<TimePrecision>,
+            {%- endif %}
+            {%- if consumed_options.alignment %}
+            alignment: Option<DateTimeAlignment>,
+            {%- endif %}
+            {%- else %}
             formatter: &{{ ffi_base_type }},
             {%- endif %}
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             {%- if is_with_provider %}
             let provider = provider.get()?;
             {%- endif %}
+            let zone = icu_datetime::fieldsets::zone::{{ variant.name_camel() }};
+            {%- if let Some(consumed_options) = consumed_options %}
+            let prefs = (&locale.0).into();
+            {%- if flavor.has_time() %}
+            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            options.time_precision = time_precision.map(Into::into);
+            {%- if consumed_options.alignment %}
+            options.alignment = alignment.map(Into::into);
+            {%- endif %}
+            let options = options.zone(zone);
+            {%- else %}
+            let options = zone;
+            {%- endif %}
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::{{ formatter_kind.rust_type() }}
+                    ::try_new{{ ctor_suffix_rust }}(
+                        {%- if is_with_provider %}
+                        provider,
+                        {%- endif %}
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
+            {%- else %}
             datetime_helpers::{{ conversion_fn }}(
                 {%- if flavor.is_zone_only() %}
-                icu_datetime::fieldsets::enums::ZoneFieldSet::{{ variant.name_camel() }}(icu_datetime::fieldsets::zone::{{ variant.name_camel() }}),
+                icu_datetime::fieldsets::enums::ZoneFieldSet::{{ variant.name_camel() }}(zone),
                 {%- else %}
                 &formatter.0,
                 {%- endif %}
                 locale,
                 {%- if !flavor.is_zone_only() %}
-                icu_datetime::fieldsets::zone::{{ variant.name_camel() }},
+                zone,
                 {%- endif %}
                 |names| {
                     {%- if is_with_provider %}
@@ -138,6 +177,7 @@ pub mod ffi {
                     field_set
                 ),
             )
+            {%- endif %}
         }
         {% endfor %}
         {%- endfor %}

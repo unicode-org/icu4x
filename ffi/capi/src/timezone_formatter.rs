@@ -15,8 +15,11 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        datetime_formatter::ffi::DateTimeLength,
         date::ffi::IsoDate,
         datetime_helpers,
+        datetime_helpers::map_or_default,
+        datetime_options::ffi::{DateTimeAlignment, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
         locale_core::ffi::Locale,
@@ -43,19 +46,18 @@ pub mod ffi {
         pub fn create_specific_long(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::SpecificLong(icu_datetime::fieldsets::zone::SpecificLong),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_specific_long_names_with_fallback(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::SpecificLong;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
@@ -65,23 +67,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::SpecificLong(icu_datetime::fieldsets::zone::SpecificLong),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_specific_long_names_with_fallback(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::SpecificLong;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
@@ -89,19 +87,18 @@ pub mod ffi {
         pub fn create_specific_short(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::SpecificShort(icu_datetime::fieldsets::zone::SpecificShort),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_specific_short_names_with_fallback(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::SpecificShort;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
@@ -111,23 +108,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::SpecificShort(icu_datetime::fieldsets::zone::SpecificShort),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_specific_short_names_with_fallback(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::SpecificShort;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
@@ -135,19 +128,18 @@ pub mod ffi {
         pub fn create_localized_offset_long(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::LocalizedOffsetLong(icu_datetime::fieldsets::zone::LocalizedOffsetLong),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_localized_offset_names_with_fallback(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
@@ -157,23 +149,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::LocalizedOffsetLong(icu_datetime::fieldsets::zone::LocalizedOffsetLong),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_localized_offset_names_with_fallback(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
@@ -181,19 +169,18 @@ pub mod ffi {
         pub fn create_localized_offset_short(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::LocalizedOffsetShort(icu_datetime::fieldsets::zone::LocalizedOffsetShort),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_localized_offset_names_with_fallback(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
@@ -203,23 +190,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::LocalizedOffsetShort(icu_datetime::fieldsets::zone::LocalizedOffsetShort),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_localized_offset_names_with_fallback(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
@@ -227,19 +210,18 @@ pub mod ffi {
         pub fn create_generic_long(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::GenericLong(icu_datetime::fieldsets::zone::GenericLong),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_generic_long_names_with_fallback(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::GenericLong;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
@@ -249,23 +231,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::GenericLong(icu_datetime::fieldsets::zone::GenericLong),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_generic_long_names_with_fallback(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::GenericLong;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
@@ -274,19 +252,18 @@ pub mod ffi {
         pub fn create_generic_short(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::GenericShort(icu_datetime::fieldsets::zone::GenericShort),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_generic_short_names_with_fallback(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::GenericShort;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
@@ -296,23 +273,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::GenericShort(icu_datetime::fieldsets::zone::GenericShort),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_generic_short_names_with_fallback(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::GenericShort;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
@@ -320,19 +293,18 @@ pub mod ffi {
         pub fn create_location(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::Location(icu_datetime::fieldsets::zone::Location),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_location_names(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::Location;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
@@ -342,23 +314,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::Location(icu_datetime::fieldsets::zone::Location),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_location_names(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::Location;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
@@ -366,19 +334,18 @@ pub mod ffi {
         pub fn create_exemplar_city(
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::ExemplarCity(icu_datetime::fieldsets::zone::ExemplarCity),
-                locale,
-                |names| {
-                    names
-                        .include_time_zone_exemplar_city_names(
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter(
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::ExemplarCity;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
@@ -388,23 +355,19 @@ pub mod ffi {
             locale: &Locale,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let provider = provider.get()?;
-            datetime_helpers::formatter_with_zone(
-                icu_datetime::fieldsets::enums::ZoneFieldSet::ExemplarCity(icu_datetime::fieldsets::zone::ExemplarCity),
-                locale,
-                |names| {
-                    use icu_provider::buf::AsDeserializingBufferProvider;
-                    let provider = provider.as_deserializing();
-                    names
-                        .load_time_zone_exemplar_city_names(
-                            &provider
-                        )?;
-                    Ok(())
-                },
-                |names, field_set| names.try_into_formatter_with_buffer_provider(
-                    &provider,
-                    field_set
-                ),
-            )
+            let zone = icu_datetime::fieldsets::zone::ExemplarCity;
+            let prefs = (&locale.0).into();
+            let options = zone;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
         }
         
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]

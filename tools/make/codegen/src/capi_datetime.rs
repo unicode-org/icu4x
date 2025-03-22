@@ -198,6 +198,7 @@ impl DateTimeFormatterVariant {
 #[template(path = "zoned_formatter.rs.jinja")]
 struct ZonedFormatterTemplate {
     flavor: FormatterFlavor,
+    consumed_options: Option<ConsumedOptions>,
     variants: Vec<ZonedFormatterVariant>,
 }
 
@@ -261,14 +262,17 @@ pub fn main() {
     };
     let mut zone_formatter_template = ZonedFormatterTemplate {
         flavor: FormatterFlavor::Zone,
+        consumed_options: None,
         variants: Vec::new(),
     };
     let mut zoned_date_formatter_template = ZonedFormatterTemplate {
         flavor: FormatterFlavor::Date,
+        consumed_options: None,
         variants: Vec::new(),
     };
     let mut zoned_time_formatter_template = ZonedFormatterTemplate {
         flavor: FormatterFlavor::Time,
+        consumed_options: None,
         variants: Vec::new(),
     };
 
@@ -321,6 +325,16 @@ pub fn main() {
                 inner: DateTimeFormatterVariantInner::Time,
                 consumed_options,
             });
+
+        builder.zone_style = Some(ZoneStyle::LocalizedOffsetShort);
+        let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
+        assert!(!consumed_options.year_style); // template doesn't handle year style
+        zoned_time_formatter_template.consumed_options = Some(consumed_options);
+
+        builder.time_precision = None;
+        let consumed_options = ConsumedOptions::from_builder(builder.clone()).unwrap();
+        assert!(!consumed_options.year_style); // template doesn't handle year style
+        zone_formatter_template.consumed_options = Some(consumed_options);
     }
 
     let mut path_buf = PathBuf::new();
