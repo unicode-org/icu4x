@@ -19,14 +19,19 @@ pub mod ffi {
 
     #[allow(unused_imports)]
     use crate::{
-        date::ffi::IsoDate,
-        timezone::ffi::TimeZoneInfo,
-        errors::ffi::DateTimeWriteError,
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        date::ffi::IsoDate,
         datetime_helpers,
+        errors::ffi::DateTimeFormatterLoadError,
+        errors::ffi::DateTimeWriteError,
+        locale_core::ffi::Locale,
+        time_formatter::ffi::TimeFormatter,
+        time::ffi::Time,
+        timezone::ffi::TimeZoneInfo,
     };
+
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
 
     {%- for formatter_kind in flavor.formatter_kinds() %}
     {%- let ffi_type %}
@@ -123,19 +128,29 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        pub fn format_iso(
+        pub fn format{% if flavor.has_date() %}_iso{% endif %}(
             &self,
+            {%- if flavor.has_date() %}
             date: &IsoDate,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time: &Time,
+            {%- endif %}
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
+            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            {%- if flavor.has_date() %}
             {%- if formatter_kind.is_fixed_calendar %}
             let date = date.0.to_calendar(Gregorian);
             {%- else %}
             let date = date.0.to_calendar(self.0.calendar());
             {%- endif %}
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
             input.set_date_fields(date);
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            input.set_time_fields(time.0);
+            {%- endif %}
             input.set_time_zone_id(zone.time_zone_id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);

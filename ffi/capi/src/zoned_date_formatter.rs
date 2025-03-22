@@ -15,14 +15,19 @@ pub mod ffi {
 
     #[allow(unused_imports)]
     use crate::{
-        date::ffi::IsoDate,
-        timezone::ffi::TimeZoneInfo,
-        errors::ffi::DateTimeWriteError,
-        errors::ffi::DateTimeFormatterLoadError,
-        locale_core::ffi::Locale,
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        date::ffi::IsoDate,
         datetime_helpers,
+        errors::ffi::DateTimeFormatterLoadError,
+        errors::ffi::DateTimeWriteError,
+        locale_core::ffi::Locale,
+        time_formatter::ffi::TimeFormatter,
+        time::ffi::Time,
+        timezone::ffi::TimeZoneInfo,
     };
+
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
@@ -459,8 +464,8 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let date = date.0.to_calendar(self.0.calendar());
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let date = date.0.to_calendar(self.0.calendar());
             input.set_date_fields(date);
             input.set_time_zone_id(zone.time_zone_id);
             if let Some(offset) = zone.offset {
@@ -903,8 +908,8 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let date = date.0.to_calendar(Gregorian);
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let date = date.0.to_calendar(Gregorian);
             input.set_date_fields(date);
             input.set_time_zone_id(zone.time_zone_id);
             if let Some(offset) = zone.offset {

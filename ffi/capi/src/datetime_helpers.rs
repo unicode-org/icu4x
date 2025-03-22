@@ -71,6 +71,59 @@ where
     ))
 }
 
+pub(super) fn time_formatter_with_zone<Zone>(
+    formatter: &FixedCalendarDateTimeFormatter<(), TimeFieldSet>,
+    locale: &crate::locale_core::ffi::Locale,
+    zone: Zone,
+    load: impl FnOnce(
+        &mut FixedCalendarDateTimeNames<(), Combo<TimeFieldSet, Zone>>,
+    ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+    to_formatter: impl FnOnce(
+        FixedCalendarDateTimeNames<(), Combo<TimeFieldSet, Zone>>,
+        Combo<TimeFieldSet, Zone>,
+    ) -> Result<
+        FixedCalendarDateTimeFormatter<(), Combo<TimeFieldSet, Zone>>,
+        (
+            DateTimeFormatterLoadError,
+            FixedCalendarDateTimeNames<(), Combo<TimeFieldSet, Zone>>,
+        ),
+    >,
+) -> Result<
+    Box<crate::zoned_time_formatter::ffi::ZonedTimeFormatter>,
+    crate::errors::ffi::DateTimeFormatterLoadError,
+>
+where
+    Zone: DateTimeMarkers + ZoneMarkers,
+    <Zone as DateTimeMarkers>::Z: ZoneMarkers,
+    Combo<TimeFieldSet, Zone>: DateTimeNamesFrom<TimeFieldSet>,
+    CompositeFieldSet: DateTimeNamesFrom<Combo<TimeFieldSet, Zone>>,
+{
+    let prefs = (&locale.0).into();
+    let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter.clone())
+        .cast_into_fset::<Combo<TimeFieldSet, Zone>>();
+    load(&mut names)?;
+    let field_set = formatter
+        .to_field_set_builder()
+        .build_time()
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
+        })?
+        .zone(zone);
+    let formatter = to_formatter(names, field_set)
+        // This can fail if the locale doesn't match and the fields conflict
+        .map_err(|(e, _)| e)?
+        .cast_into_fset();
+    Ok(Box::new(
+        crate::zoned_time_formatter::ffi::ZonedTimeFormatter(formatter),
+    ))
+}
+
 pub(super) fn datetime_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<CompositeDateTimeFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
