@@ -13,6 +13,7 @@ keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+rust-version = "1.71.1"
 
 [package.metadata.workspaces]
 independent = true
@@ -30,4 +31,3 @@ synstructure = { workspace = true }
 [dev-dependencies]
 zerofrom = { path = "..", features = ["derive"]}
 zerovec = { path = "../../../utils/zerovec", features = ["yoke"] }
-
