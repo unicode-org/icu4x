@@ -220,6 +220,8 @@ export { ZonedDateFormatter } from "./ZonedDateFormatter"
 
 export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian"
 
+export { ZonedTimeFormatter } from "./ZonedTimeFormatter"
+
 export { BidiDirection } from "./BidiDirection"
 
 export { CalendarKind } from "./CalendarKind"

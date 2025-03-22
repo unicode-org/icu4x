@@ -174,6 +174,7 @@ part 'ZonedDateTime.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
+part 'ZonedTimeFormatter.g.dart';
 
 class _DiplomatFfiUse extends meta.RecordUse {
   final String symbol;

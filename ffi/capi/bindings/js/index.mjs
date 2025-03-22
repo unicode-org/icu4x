@@ -218,6 +218,8 @@ export { ZonedDateFormatter } from "./ZonedDateFormatter.mjs"
 
 export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian.mjs"
 
+export { ZonedTimeFormatter } from "./ZonedTimeFormatter.mjs"
+
 export { BidiDirection } from "./BidiDirection.mjs"
 
 export { CalendarKind } from "./CalendarKind.mjs"

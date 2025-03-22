@@ -33,6 +33,8 @@ import * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 export * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 import * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
 export * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
+import * as ZonedTimeFormatterDemo from "./ZonedTimeFormatter.mjs";
+export * as ZonedTimeFormatterDemo from "./ZonedTimeFormatter.mjs";
 
 import RenderTerminiWordSegmenter from "./WordSegmenter.mjs";
 
@@ -1099,6 +1101,87 @@ let termini = Object.assign({
             
             {
                 name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "ZonedTimeFormatter.format": {
+        func: ZonedTimeFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "ZonedTimeFormatter.format",
+        parameters: [
+            
+            {
+                name: "ZonedTimeFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:Formatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:Formatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:Formatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:Formatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             },
