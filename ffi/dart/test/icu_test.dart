@@ -136,7 +136,7 @@ void main() {
       ),
       throwsA(
         DateTimeMismatchedCalendarError(
-          thisKind: CalendarKind.hijriObservational,
+          thisKind: CalendarKind.hijriObservationalMecca,
           dateKind: CalendarKind.buddhist,
         ),
       ),
@@ -145,7 +145,7 @@ void main() {
     expect(
       DateTimeFormatter.ymdet(locale).formatSameCalendar(
         zonedDateTimeBuddhist.date.toCalendar(
-          Calendar.forKind(CalendarKind.hijriObservational),
+          Calendar.forKind(CalendarKind.hijriObservationalMecca),
         ),
         zonedDateTimeBuddhist.time,
       ),

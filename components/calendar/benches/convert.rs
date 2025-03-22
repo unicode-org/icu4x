@@ -72,7 +72,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
-        icu::calendar::cal::HijriObservational::new_always_calculating(),
+        icu::calendar::cal::HijriObservational::new_cairo_always_calculating(),
     );
 
     bench_calendar(
