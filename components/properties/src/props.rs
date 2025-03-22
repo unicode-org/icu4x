@@ -672,7 +672,6 @@ impl From<GeneralCategoryGroup> for u32 {
 /// assert_eq!(CodePointMapData::<Script>::new().get('木'), Script::Han);  // U+6728
 /// assert_eq!(CodePointMapData::<Script>::new().get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
 /// ```
-/// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
 /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
