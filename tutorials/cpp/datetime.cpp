@@ -8,6 +8,7 @@
 #include <icu4x/DateTimeFormatterGregorian.hpp>
 #include <icu4x/TimeFormatter.hpp>
 #include <icu4x/ZonedDateFormatter.hpp>
+#include <icu4x/ZonedTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
 #include <icu4x/NoCalendarFormatter.hpp>
 #include <icu4x/Logger.hpp>
@@ -237,6 +238,16 @@ int main() {
     std::cout << "Fieldset MD Generic Short: " << out;
     if (out != "11 jul hora de Chicago") {
         // note: this falls back to Generic Location
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<ZonedTimeFormatter> fmt_t_specific_short = ZonedTimeFormatter::create_specific_short(*locale.get(), *fmt_t).ok().value();
+    out = fmt_t_specific_short->format(*time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset T Specific Short: " << out;
+    if (out != "13:06 GMT-5") {
+        // note: this falls back to Localized Offset
         std::cout << " (unexpected!)";
         saw_unexpected_output = true;
     }

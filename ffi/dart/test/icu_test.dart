@@ -201,6 +201,16 @@ void main() {
       throwsA(DateTimeWriteError.missingInputField),
     );
 
+    ///// ZonedTimeFormatter /////
+
+    expect(
+      ZonedTimeFormatter.specificLong(
+        locale,
+        TimeFormatter(locale),
+      ).format(zonedDateTimeIso.time, zonedDateTimeIso.zone),
+      '14:32:12 Mitteleuropäische Normalzeit',
+    );
+
     ///// ZonedDateTimeFormatter /////
 
     expect(
