@@ -11,8 +11,13 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
+namespace capi { struct DataProvider; }
+class DataProvider;
 namespace capi { struct MeasureUnit; }
 class MeasureUnit;
+namespace capi { struct MeasureUnitParser; }
+class MeasureUnitParser;
+class DataError;
 }
 
 
@@ -24,8 +29,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
- * (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+ * An ICU4X Measure Unit Parser object, capable of parsing the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
  *
  * See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
  */
@@ -33,9 +37,20 @@ class MeasureUnitParser {
 public:
 
   /**
-   * Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
-   * if the identifier is valid.
+   * Construct a new [`MeasureUnitParser`] instance using compiled data.
    *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
+   */
+  inline static std::unique_ptr<icu4x::MeasureUnitParser> create();
+
+  /**
+   * Construct a new [`MeasureUnitParser`] instance using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::MeasureUnitParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
    */
   inline std::unique_ptr<icu4x::MeasureUnit> parse(std::string_view unit_id) const;

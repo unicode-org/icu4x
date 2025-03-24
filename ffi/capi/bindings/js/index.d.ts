@@ -116,6 +116,10 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
+export { MeasureUnit } from "./MeasureUnit"
+
+export { MeasureUnitParser } from "./MeasureUnitParser"
+
 export { DateTimeFormatter } from "./DateTimeFormatter"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
@@ -197,10 +201,6 @@ export { Time } from "./Time"
 export { TimeZone } from "./TimeZone"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
-
-export { MeasureUnit } from "./MeasureUnit"
-
-export { MeasureUnitParser } from "./MeasureUnitParser"
 
 export { UnitsConverter } from "./UnitsConverter"
 

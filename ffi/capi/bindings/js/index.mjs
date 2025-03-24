@@ -114,6 +114,10 @@ export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
 
+export { MeasureUnit } from "./MeasureUnit.mjs"
+
+export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
+
 export { DateTimeFormatter } from "./DateTimeFormatter.mjs"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian.mjs"
@@ -195,10 +199,6 @@ export { Time } from "./Time.mjs"
 export { TimeZone } from "./TimeZone.mjs"
 
 export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
-
-export { MeasureUnit } from "./MeasureUnit.mjs"
-
-export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
 
 export { UnitsConverter } from "./UnitsConverter.mjs"
 

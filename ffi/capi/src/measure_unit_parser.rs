@@ -14,6 +14,14 @@ pub mod ffi {
     use crate::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
+    /// An ICU4X Measurement Unit object which represents a single unit of measurement
+    /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
+    ///
+    /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse` method.
+    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnit, Struct)]
+    pub struct MeasureUnit(pub icu_experimental::measure::measureunit::MeasureUnit);
+
+    #[diplomat::opaque]
     /// An ICU4X Measure Unit Parser object, capable of parsing the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
     #[diplomat::rust_link(icu::experimental::measure::parser::MeasureUnitParser, Struct)]
     pub struct MeasureUnitParser(pub icu_experimental::measure::parser::MeasureUnitParser);
@@ -60,11 +68,4 @@ pub mod ffi {
                 .map(Box::new)
         }
     }
-    #[diplomat::opaque]
-    /// An ICU4X Measurement Unit object which represents a single unit of measurement
-    /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
-    ///
-    /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse` method.
-    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnit, Struct)]
-    pub struct MeasureUnit(pub icu_experimental::measure::measureunit::MeasureUnit);
 }

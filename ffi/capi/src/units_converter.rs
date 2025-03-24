@@ -6,6 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    use crate::measure_unit_parser::ffi::MeasureUnit;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
@@ -66,15 +67,6 @@ pub mod ffi {
                 .map(Box::new)
         }
     }
-
-    // TODO: This is now duplicated in measure_unit_parser.rs, is that okay ?
-    #[diplomat::opaque]
-    /// An ICU4X Measurement Unit object which represents a single unit of measurement
-    /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
-    ///
-    /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse` method.
-    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnit, Struct)]
-    pub struct MeasureUnit(pub icu_experimental::measure::measureunit::MeasureUnit);
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
