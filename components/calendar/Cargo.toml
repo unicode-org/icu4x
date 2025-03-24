@@ -33,6 +33,8 @@ databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_calendar_data = { workspace = true, optional = true }
+icu_provider_baked = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -52,7 +54,8 @@ ixdtf = ["dep:ixdtf"]
 logging = ["calendrical_calculations/logging"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
-compiled_data = ["dep:icu_calendar_data"]
+compiled_data = ["dep:icu_calendar_data", "dep:icu_provider_baked", "dep:icu_locale", "icu_locale?/compiled_data"]
+
 alloc = []
 
 [[bench]]
