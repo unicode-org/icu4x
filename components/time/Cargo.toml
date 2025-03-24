@@ -34,6 +34,7 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive"], optional = true }
 
 icu_time_data = { workspace = true, optional = true }
+icu_provider_baked = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -43,5 +44,5 @@ default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_provider/export"]
-compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data"]
+compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "dep:icu_provider_baked"]
 alloc = ["tinystr/alloc", "zerotrie/alloc", "serde?/alloc"]
