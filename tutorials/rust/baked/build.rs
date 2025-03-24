@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// GitHub Contribution Metadata
+// Author: <Your Name>
+// Date: <YYYY-MM-DD>
+// Description: Added/exported Russian locale data for ICU4X plural rules.
+
 use icu_provider_export::baked_exporter::*;
 use icu_provider_export::prelude::*;
 use icu_provider_source::SourceDataProvider;
@@ -35,4 +40,7 @@ fn main() {
         .unwrap(),
     )
     .expect("Datagen should be successful");
+
+    // GitHub Contribution: Log successful export
+    println!("Locale data for Russian exported successfully.");
 }
