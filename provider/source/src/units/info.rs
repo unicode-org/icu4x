@@ -7,11 +7,11 @@ use std::collections::{BTreeMap, HashSet};
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
+use icu::experimental::measure::provider::trie::UnitsTrie;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
-use icu::experimental::measure::provider::trie::UnitsTrie;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
@@ -74,10 +74,8 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             trie: units_conversion_trie.convert_store(),
         };
 
-        let parser = MeasureUnitParser::from_payload(DataPayload::from_owned(
-            units_trie,
-        ));
-        
+        let parser = MeasureUnitParser::from_payload(DataPayload::from_owned(units_trie));
+
         let conversion_info = convert_units_vec
             .iter()
             .map(|convert_unit| {
