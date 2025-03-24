@@ -301,16 +301,8 @@ impl Calendar for Hebrew {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year.saturating_sub(1);
-        let next_year = date.0.year.saturating_add(1);
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: Self::year_as_hebrew(prev_year),
-            days_in_prev_year: date.0.year_info.prev_keviyah.year_length(),
-            next_year: Self::year_as_hebrew(next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {

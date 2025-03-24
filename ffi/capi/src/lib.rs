@@ -142,6 +142,8 @@ pub mod segmenter_sentence;
 pub mod segmenter_word;
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod time;
+#[cfg(feature = "datetime")]
+pub mod time_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
 #[cfg(feature = "experimental")]

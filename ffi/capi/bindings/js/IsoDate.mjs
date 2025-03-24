@@ -3,8 +3,7 @@ import { Calendar } from "./Calendar.mjs"
 import { CalendarError } from "./CalendarError.mjs"
 import { CalendarParseError } from "./CalendarParseError.mjs"
 import { Date } from "./Date.mjs"
-import { WeekCalculator } from "./WeekCalculator.mjs"
-import { WeekOf } from "./WeekOf.mjs"
+import { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 import { Weekday } from "./Weekday.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -131,7 +130,7 @@ export class IsoDate {
     /** 
      * Returns the 1-indexed day in the year for this date
      *
-     * See the [Rust documentation for `day_of_year_info`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year_info) for more information.
+     * See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
      */
     get dayOfYear() {
         const result = wasm.icu4x_IsoDate_day_of_year_mv1(this.ffiValue);
@@ -174,35 +173,17 @@ export class IsoDate {
     }
 
     /** 
-     * Returns the week number in this month, 1-indexed, based on what
-     * is considered the first day of the week (often a locale preference).
-     *
-     * `first_weekday` can be obtained via `first_weekday()` on [`WeekCalculator`]
-     *
-     * See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-     */
-    weekOfMonth(firstWeekday) {
-        const result = wasm.icu4x_IsoDate_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
-    }
-
-    /** 
      * Returns the week number in this year, using week data
      *
      * See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
      */
-    weekOfYear(calculator) {
+    weekOfYear() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         
-        const result = wasm.icu4x_IsoDate_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
+        const result = wasm.icu4x_IsoDate_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
-            return WeekOf._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return IsoWeekOfYear._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
         
         finally {

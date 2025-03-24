@@ -167,16 +167,8 @@ impl Calendar for Coptic {
         date.0.day_of_month()
     }
 
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = date.0.year - 1;
-        let next_year = date.0.year + 1;
-        types::DayOfYearInfo {
-            day_of_year: date.0.day_of_year(),
-            days_in_year: date.0.days_in_year(),
-            prev_year: year_as_coptic(prev_year),
-            days_in_prev_year: Coptic::days_in_year_direct(prev_year),
-            next_year: year_as_coptic(next_year),
-        }
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
     }
 
     fn debug_name(&self) -> &'static str {
@@ -201,14 +193,6 @@ impl Coptic {
         };
 
         CopticDateInner(ArithmeticDate::new_unchecked(year, month, day))
-    }
-
-    fn days_in_year_direct(year: i32) -> u16 {
-        if Coptic::is_leap_year(year, ()) {
-            366
-        } else {
-            365
-        }
     }
 }
 

@@ -157,8 +157,6 @@ icu_provider::data_struct!(
 pub struct WeekData {
     /// The first day of a week.
     pub first_weekday: Weekday,
-    /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
-    pub min_week_days: u8,
     /// Bitset representing weekdays that are part of the 'weekend', for calendar purposes.
     /// The number of days can be different between locales, and may not be contiguous.
     pub weekend: WeekdaySet,
@@ -231,7 +229,7 @@ impl databake::Bake for WeekdaySet {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_calendar");
         let days =
-            crate::week_of::WeekdaySetIterator::new(Weekday::Monday, *self).map(|d| d.bake(ctx));
+            crate::week::WeekdaySetIterator::new(Weekday::Monday, *self).map(|d| d.bake(ctx));
         databake::quote! {
             icu_calendar::provider::WeekdaySet::new(&[#(#days),*])
         }
@@ -255,7 +253,7 @@ impl serde::Serialize for WeekdaySet {
             use serde::ser::SerializeSeq;
 
             let mut seq = serializer.serialize_seq(None)?;
-            for day in crate::week_of::WeekdaySetIterator::new(Weekday::Monday, *self) {
+            for day in crate::week::WeekdaySetIterator::new(Weekday::Monday, *self) {
                 seq.serialize_element(&day)?;
             }
             seq.end()

@@ -1,0 +1,162 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::capi_datetime::GENERATED_BY }}
+
+{%- let flavor = flavor %}
+
+#[rustfmt::skip]
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
+pub mod ffi {
+    use alloc::boxed::Box;
+    use icu_calendar::Gregorian;
+    use writeable::TryWriteable;
+
+    use crate::{
+        date::ffi::IsoDate,
+        timezone::ffi::TimeZoneInfo,
+        errors::ffi::DateTimeWriteError,
+    };
+
+    #[cfg(feature = "buffer_provider")]
+    use crate::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::{
+        errors::ffi::DateTimeFormatterLoadError,
+        locale_core::ffi::Locale,
+        date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        datetime_helpers::{date_formatter_with_zone, date_formatter_gregorian_with_zone},
+    };
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
+    pub struct ZonedDateFormatter(
+        pub  icu_datetime::DateTimeFormatter<
+            icu_datetime::fieldsets::enums::CompositeFieldSet,
+        >,
+    );
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
+    pub struct ZonedDateFormatterGregorian(
+        pub  icu_datetime::FixedCalendarDateTimeFormatter<
+            Gregorian,
+            icu_datetime::fieldsets::enums::CompositeFieldSet,
+        >,
+    );
+    {%- for formatter_kind in flavor.formatter_kinds() %}
+    {%- let ffi_type %}
+    {%- let ffi_base_type %}
+    {%- let conversion_fn %}
+    {%- if formatter_kind.is_gregorian %}
+        {%- let ffi_type = format!("Zoned{}FormatterGregorian", flavor.camel()) %}
+        {%- let ffi_base_type = format!("{}FormatterGregorian", flavor.camel()) %}
+        {%- let conversion_fn = format!("{}_formatter_gregorian_with_zone", flavor.lower()) %}
+    {%- else %}
+        {%- let ffi_type = format!("Zoned{}Formatter", flavor.camel()) %}
+        {%- let ffi_base_type = format!("{}Formatter", flavor.camel()) %}
+        {%- let conversion_fn = format!("{}_formatter_with_zone", flavor.lower()) %}
+    {%- endif %}
+    impl {{ ffi_type }} {
+        {%- for variant in variants %}
+        {%- for is_with_provider in [false, true] %}
+        {%- let ctor_prefix %}
+        {%- let ctor_suffix_ffi %}
+        {%- let ctor_suffix_rust %}
+        {%- let cargo_feature %}
+        {%- if is_with_provider %}
+            {%- let ctor_prefix = "load_" %}
+            {%- let ctor_suffix_ffi = "_with_provider" %}
+            {%- let ctor_suffix_rust = "_with_buffer_provider" %}
+            {%- let cargo_feature = "buffer_provider" %}
+        {%- else %}
+            {%- let ctor_prefix = "include_" %}
+            {%- let ctor_suffix_ffi = "" %}
+            {%- let ctor_suffix_rust = "" %}
+            {%- let cargo_feature = "compiled_data" %}
+        {%- endif %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
+        {%- if variant.is_default_constructor() && !is_with_provider %}
+        #[diplomat::demo(default_constructor)]
+        {%- endif %}
+        #[cfg(feature = "{{ cargo_feature }}")]
+        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
+            {%- if is_with_provider %}
+            provider: &DataProvider,
+            {%- endif %}
+            locale: &Locale,
+            formatter: &{{ ffi_base_type }},
+        ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            {%- if is_with_provider %}
+            let provider = provider.get()?;
+            {%- endif %}
+            {{ conversion_fn }}(
+                &formatter.0,
+                locale,
+                icu_datetime::fieldsets::zone::{{ variant.name_camel() }},
+                |names| {
+                    {%- if is_with_provider %}
+                    use icu_provider::buf::AsDeserializingBufferProvider;
+                    let provider = provider.as_deserializing();
+                    {%- endif %}
+                    names
+                        {%- if !formatter_kind.is_fixed_calendar %}
+                        .as_mut()
+                        {%- endif %}
+                        .{{ ctor_prefix }}time_zone_{{ variant.load_fn() }}(
+                            {%- if is_with_provider %}
+                            &provider
+                            {%- endif %}
+                        )?;
+                    Ok(())
+                },
+                |names, field_set| names.try_into_formatter{{ ctor_suffix_rust }}(
+                    {%- if is_with_provider %}
+                    &provider,
+                    {%- endif %}
+                    field_set
+                ),
+            )
+        }
+        {% endfor %}
+        {%- endfor %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format_iso(
+            &self,
+            date: &IsoDate,
+            zone: &TimeZoneInfo,
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeWriteError> {
+            {%- if formatter_kind.is_fixed_calendar %}
+            let date = date.0.to_calendar(Gregorian);
+            {%- else %}
+            let date = date.0.to_calendar(self.0.calendar());
+            {%- endif %}
+            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            input.set_date_fields(date);
+            input.set_time_zone_id(zone.time_zone_id);
+            if let Some(offset) = zone.offset {
+                input.set_time_zone_utc_offset(offset);
+            }
+            if let Some(local_time) = zone.local_time {
+                input.set_time_zone_local_time(local_time);
+            }
+            if let Some(zone_variant) = zone.zone_variant {
+                input.set_time_zone_variant(zone_variant);
+            }
+            let _infallible = self
+                .0
+                .format_unchecked(input)
+                .try_write_to(write)
+                .ok()
+                .transpose()?;
+            Ok(())
+        }
+    }
+    {% endfor %}
+}

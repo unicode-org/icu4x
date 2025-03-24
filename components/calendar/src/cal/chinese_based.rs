@@ -233,10 +233,6 @@ impl ChineseBasedYearInfo {
         self.packed_data.days_in_year()
     }
 
-    fn days_in_prev_year(self) -> u16 {
-        self.days_in_prev_year
-    }
-
     /// The last day of year in the current month.
     /// `month` is 1-indexed, and the returned value is also
     /// a 1-indexed day of year
@@ -396,10 +392,6 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// Calls days_in_year on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
         self.0.year_info.days_in_year()
-    }
-    /// Gets the days in the previous year
-    pub(crate) fn days_in_prev_year(&self) -> u16 {
-        self.0.year_info.days_in_prev_year()
     }
 
     /// Calculate the number of days in the year so far for a ChineseBasedDate;

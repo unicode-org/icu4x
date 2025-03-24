@@ -14,7 +14,7 @@ use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, R
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::subtags::language;
+use icu_locale_core::subtags::region;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -525,8 +525,8 @@ impl Calendar for AnyCalendar {
     }
 
     /// Information of the day of the year
-    fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.day_of_year_info(d))
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        match_cal_and_date!(match (self, date): (c, d) => c.day_of_year(d))
     }
 
     fn debug_name(&self) -> &'static str {
@@ -731,12 +731,10 @@ impl AnyCalendar {
     {
         // This will eventually need fallback data from the provider
         let algo = prefs.calendar_algorithm.unwrap_or_else(|| {
-            let lang = prefs.locale_preferences.language();
-            if lang == language!("th") {
+            let reg = prefs.locale_preferences.region();
+            if reg == Some(region!("th")) {
                 CalendarAlgorithm::Buddhist
-            } else if lang == language!("sa") {
-                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-            } else if lang == language!("af") || lang == language!("ir") {
+            } else if reg == Some(region!("af")) || reg == Some(region!("ir")) {
                 CalendarAlgorithm::Persian
             } else {
                 CalendarAlgorithm::Gregory
