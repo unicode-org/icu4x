@@ -64,7 +64,7 @@ pub struct HijriObservational {
 }
 
 #[derive(Clone, Debug, Copy, PartialEq)]
-pub enum HijriObservationalLocation {
+pub(crate) enum HijriObservationalLocation {
     Cairo,
     Mecca,
 }

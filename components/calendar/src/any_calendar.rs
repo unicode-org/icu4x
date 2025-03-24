@@ -587,7 +587,7 @@ impl AnyCalendar {
                 AnyCalendar::HijriObservational(HijriObservational::new_cairo())
             }
             AnyCalendarKind::HijriObservationalMecca => {
-                AnyCalendar::HijriObservational(HijriObservational::new_mecca_always_calculating())
+                AnyCalendar::HijriObservational(HijriObservational::new_mecca())
             }
             AnyCalendarKind::HijriTabular => AnyCalendar::HijriTabular(HijriTabular),
             AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),

@@ -23,7 +23,8 @@
 - Utils
     - General
         - ...
-    - ...
+    - `calendrical_calculations`
+      - Parametrise the HijriObservational calendar by location (unicode-org#6332)
 
 ## icu4x 2.0-beta2
 
