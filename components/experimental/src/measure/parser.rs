@@ -27,7 +27,7 @@ impl MeasureUnitParser {
         () -> error: DataError,
         functions: [
             new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]
@@ -53,6 +53,12 @@ impl MeasureUnitParser {
         let payload = provider.load(DataRequest::default())?.payload;
 
         Ok(Self { payload })
+    }
+
+    // TODO: remove this function after being able to use the `try_new_with_buffer_provider` constructor in `provider/source/src/units/info.rs`.
+    /// Creates a new [`MeasureUnitParser`] from a [`DataPayload`].
+    pub fn from_payload(payload: DataPayload<super::provider::trie::UnitsTrieV1>) -> Self {
+        Self { payload }
     }
 
     /// Get the unit id.

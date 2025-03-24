@@ -9,7 +9,9 @@ use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
+use icu::experimental::measure::provider::trie::UnitsTrie;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
@@ -59,9 +61,23 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        // TODO: now we need to create `MeasureUnitParser` in order to create the conversion info. how to do that ?
-        let parser = MeasureUnitParser::new();
+        // TODO: remove this once we can use the `try_new_with_buffer_provider` constructor in `components/experimental/src/measure/parser.rs`.
+        // OR just using `MeasureUnitParser::new()`
+        let units_conversion_trie =
+            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
+                DataError::custom("Could not create ZeroTrie from units.json data")
+                    .with_display_context(&e)
+            })?;
 
+        // Convert the trie to use ZeroVec and wrap it in UnitsTrie
+        let units_trie = UnitsTrie {
+            trie: units_conversion_trie.convert_store(),
+        };
+
+        let parser = MeasureUnitParser::from_payload(DataPayload::from_owned(
+            units_trie,
+        ));
+        
         let conversion_info = convert_units_vec
             .iter()
             .map(|convert_unit| {
