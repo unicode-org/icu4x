@@ -286,7 +286,6 @@ fn test_unparsable_units() {
         "meter second",
     ];
 
-    let converter_factory = ConverterFactory::new();
     let parser = MeasureUnitParser::new();
 
     unparsable_units.iter().for_each(|unit| {

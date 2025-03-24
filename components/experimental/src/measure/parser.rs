@@ -33,7 +33,7 @@ impl MeasureUnitParser {
         ]
     );
 
-    /// Creates a new [`ConverterFactory`] from compiled data.
+    /// Creates a new [`MeasureUnitParser`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
