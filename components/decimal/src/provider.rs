@@ -124,7 +124,7 @@ const _: () = {
     use icu_decimal_data::*;
     pub mod icu {
         pub use crate as decimal;
-        pub use icu_decimal_data::icu_locale as locale;
+        pub use icu_locale as locale;
     }
     make_provider!(Baked);
     impl_decimal_symbols_v1!(Baked);

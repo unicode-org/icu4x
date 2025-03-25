@@ -35,6 +35,7 @@ zerovec = { workspace = true,  features = ["alloc", "yoke"] }
 icu_collections = { workspace = true }
 
 icu_locale_data = { workspace = true, optional = true }
+icu_provider_baked = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde = { workspace = true, features = ["derive"] }
@@ -52,7 +53,7 @@ bench = false  # This option is required for Benchmark CI
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "potential_utf/serde", "icu_collections/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake", "icu_collections/databake", "icu_provider/export"]
-compiled_data = ["dep:icu_locale_data"]
+compiled_data = ["dep:icu_locale_data", "dep:icu_provider_baked"]
 
 [[bench]]
 name = "locale_canonicalizer"

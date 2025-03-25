@@ -178,6 +178,13 @@ void main() {
       'Mittwoch, 15. Januar 2025, 14:32',
     );
 
+    ///// TimeZoneFormatter /////
+
+    expect(
+      TimeZoneFormatter.genericLong(locale).format(zonedDateTimeIso.zone),
+      'Mitteleuropäische Zeit',
+    );
+
     ///// ZonedDateFormatter /////
 
     expect(
@@ -199,6 +206,16 @@ void main() {
         DateFormatter.ymd(locale),
       ).formatIso(zonedDateTimeIso.date, TimeZoneInfo.utc()),
       throwsA(DateTimeWriteError.missingInputField),
+    );
+
+    ///// ZonedTimeFormatter /////
+
+    expect(
+      ZonedTimeFormatter.specificLong(
+        locale,
+        timePrecision: TimePrecision.minuteOptional,
+      ).format(zonedDateTimeIso.time, zonedDateTimeIso.zone),
+      '14:32 Mitteleuropäische Normalzeit',
     );
 
     ///// ZonedDateTimeFormatter /////

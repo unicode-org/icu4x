@@ -146,6 +146,8 @@ pub mod time;
 pub mod time_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
+#[cfg(feature = "datetime")]
+pub mod timezone_formatter;
 #[cfg(feature = "experimental")]
 pub mod units_converter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
@@ -158,3 +160,5 @@ pub mod windows_parser;
 pub mod zoned_date_formatter;
 #[cfg(feature = "datetime")]
 pub mod zoned_datetime;
+#[cfg(feature = "datetime")]
+pub mod zoned_time_formatter;

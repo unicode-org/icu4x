@@ -202,6 +202,12 @@ export { TimeZone } from "./TimeZone"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
+export { TimeZoneFormatter } from "./TimeZoneFormatter"
+
+export { MeasureUnit } from "./MeasureUnit"
+
+export { MeasureUnitParser } from "./MeasureUnitParser"
+
 export { UnitsConverter } from "./UnitsConverter"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
@@ -219,6 +225,8 @@ export { WindowsParser } from "./WindowsParser"
 export { ZonedDateFormatter } from "./ZonedDateFormatter"
 
 export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian"
+
+export { ZonedTimeFormatter } from "./ZonedTimeFormatter"
 
 export { BidiDirection } from "./BidiDirection"
 
