@@ -1,6 +1,6 @@
 calendar/chinese/v1, <singleton>, 782B, 754B, 134f5ec7c9bdc494
 calendar/dangi/v1, <singleton>, 782B, 754B, 79d5d32449956411
-calendar/hijri/observational/v1, <singleton>, 532B, 504B, 18af87d272c76f14
+calendar/hijri/observational/mecca/v1, <singleton>, 532B, 504B, ad7346b38a43c235
 calendar/hijri/ummalqura/v1, <singleton>, 532B, 504B, ef6ac9ff14fd3f3
 calendar/japanese/extended/v1, <singleton>, 5238B, 5216B, 781ca7801695fa36
 calendar/japanese/modern/v1, <singleton>, 134B, 111B, b31e52deaf52706f

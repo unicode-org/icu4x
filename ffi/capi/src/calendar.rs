@@ -46,8 +46,8 @@ pub mod ffi {
         Hebrew = 11,
         /// The kind of a Hijri civil calendar
         HijriCivil = 12,
-        /// The kind of a Hijri observational calendar
-        HijriObservational = 13,
+        /// The kind of a Hijri observational, Mecca calendar
+        HijriObservationalMecca = 18,
         /// The kind of a Hijri tabular calendar
         HijriTabular = 14,
         /// The kind of a Hijri Umm al-Qura calendar

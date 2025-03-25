@@ -13,7 +13,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::cal::hijri::HijriYearInfo;
-use calendrical_calculations::islamic::IslamicBasedMarker;
+use calendrical_calculations::islamic::IslamicBased;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use icu_provider::prelude::*;
@@ -22,8 +22,8 @@ use zerovec::ZeroVec;
 
 icu_provider::data_marker!(
     /// Precomputed data for the Hijri obsevational calendar
-    CalendarHijriObservationalV1,
-    "calendar/hijri/observational/v1",
+    CalendarHijriObservationalMeccaV1,
+    "calendar/hijri/observational/mecca/v1",
     HijriCache<'static>,
     is_singleton = true,
 );
@@ -59,10 +59,10 @@ icu_provider::data_struct!(
 impl HijriCache<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
-    pub fn compute_for<IB: IslamicBasedMarker>(extended_years: core::ops::Range<i32>) -> Self {
+    pub fn compute_for<IB: IslamicBased>(extended_years: core::ops::Range<i32>, model: IB) -> Self {
         let data = extended_years
             .clone()
-            .map(|year| PackedHijriYearInfo::compute::<IB>(year))
+            .map(|year| PackedHijriYearInfo::compute(year, model))
             .collect();
         HijriCache {
             first_extended_year: extended_years.start,
@@ -71,7 +71,11 @@ impl HijriCache<'_> {
     }
 
     /// Get the cached data for a given extended year
-    pub(crate) fn get_for_extended_year(&self, extended_year: i32) -> Option<HijriYearInfo> {
+    pub(crate) fn get_for_extended_year<IB: IslamicBased>(
+        &self,
+        extended_year: i32,
+        model: IB,
+    ) -> Option<HijriYearInfo<IB>> {
         let delta = extended_year - self.first_extended_year;
         let delta = usize::try_from(delta).ok()?;
 
@@ -85,15 +89,16 @@ impl HijriCache<'_> {
             return None;
         };
 
-        Some(HijriYearInfo::new(prev_packed, this_packed, extended_year).0)
+        Some(HijriYearInfo::new(prev_packed, this_packed, extended_year, model).0)
     }
     /// Get the cached data for the Hijri Year corresponding to a given day.
     ///
     /// Also returns the corresponding extended year.
-    pub(crate) fn get_for_fixed<IB: IslamicBasedMarker>(
+    pub(crate) fn get_for_fixed<IB: IslamicBased>(
         &self,
         fixed: RataDie,
-    ) -> Option<(HijriYearInfo, i32)> {
+        model: IB,
+    ) -> Option<(HijriYearInfo<IB>, i32)> {
         let extended_year = IB::approximate_islamic_from_fixed(fixed);
 
         let delta = extended_year - self.first_extended_year;
@@ -114,6 +119,7 @@ impl HijriCache<'_> {
                 prev2_packed,
                 prev_packed,
                 extended_year - 1,
+                model,
             ));
         }
         let next_packed = self.data.get(delta + 1)?;
@@ -124,9 +130,15 @@ impl HijriCache<'_> {
                 this_packed,
                 next_packed,
                 extended_year + 1,
+                model,
             ))
         } else {
-            Some(HijriYearInfo::new(prev_packed, this_packed, extended_year))
+            Some(HijriYearInfo::new(
+                prev_packed,
+                this_packed,
+                extended_year,
+                model,
+            ))
         }
     }
 }
@@ -206,7 +218,7 @@ impl PackedHijriYearInfo {
         }
     }
     // Get the new year offset from the mean synodic new year
-    pub(crate) fn ny<IB: IslamicBasedMarker>(self, extended_year: i32) -> RataDie {
+    pub(crate) fn ny<IB: IslamicBased>(self, extended_year: i32) -> RataDie {
         let mean_synodic_ny = IB::mean_synodic_ny(extended_year);
         mean_synodic_ny + i64::from(self.ny_offset())
     }
@@ -243,8 +255,12 @@ impl PackedHijriYearInfo {
         self.last_day_of_month(12)
     }
 
-    pub(crate) fn compute_with_ny<IB: IslamicBasedMarker>(extended_year: i32, ny: RataDie) -> Self {
-        let month_lengths = IB::month_lengths_for_year(extended_year, ny);
+    pub(crate) fn compute_with_ny<IB: IslamicBased>(
+        extended_year: i32,
+        ny: RataDie,
+        model: IB,
+    ) -> Self {
+        let month_lengths = model.month_lengths_for_year(extended_year, ny);
         let ny_offset = ny - IB::mean_synodic_ny(extended_year);
         let ny_offset = if !(-7..=7).contains(&ny_offset) {
             0
@@ -254,9 +270,9 @@ impl PackedHijriYearInfo {
         Self::new(month_lengths, ny_offset)
     }
     #[cfg(feature = "datagen")]
-    pub(crate) fn compute<IB: IslamicBasedMarker>(extended_year: i32) -> Self {
-        let ny = IB::fixed_from_islamic(extended_year, 1, 1);
-        Self::compute_with_ny::<IB>(extended_year, ny)
+    pub(crate) fn compute<IB: IslamicBased>(extended_year: i32, model: IB) -> Self {
+        let ny = model.fixed_from_islamic(extended_year, 1, 1);
+        Self::compute_with_ny(extended_year, ny, model)
     }
 }
 

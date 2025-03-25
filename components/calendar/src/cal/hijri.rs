@@ -8,7 +8,7 @@
 //! use icu::calendar::cal::HijriObservational;
 //! use icu::calendar::Date;
 //!
-//! let hijri = HijriObservational::new_always_calculating();
+//! let hijri = HijriObservational::new_mecca_always_calculating();
 //! let hijri_date = Date::try_new_observational_hijri_with_calendar(
 //!     1348, 10, 11, hijri,
 //! )
@@ -24,15 +24,13 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::hijri::{
-    CalendarHijriObservationalV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
+    CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
 };
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
-use calendrical_calculations::islamic::{
-    IslamicBasedMarker, ObservationalIslamicMarker, SaudiIslamicMarker,
-};
+use calendrical_calculations::islamic::{IslamicBased, ObservationalIslamic, SaudiIslamic};
 use calendrical_calculations::rata_die::RataDie;
-use core::marker::PhantomData;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
@@ -58,9 +56,15 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct HijriObservational {
-    data: Option<DataPayload<CalendarHijriObservationalV1>>,
+    pub(crate) location: HijriObservationalLocation,
+    data: Option<DataPayload<ErasedMarker<HijriCache<'static>>>>,
+}
+
+#[derive(Clone, Debug, Copy, PartialEq)]
+pub(crate) enum HijriObservationalLocation {
+    Mecca,
 }
 
 /// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (civil epoch)
@@ -122,16 +126,17 @@ pub struct HijriUmmAlQura {
 pub struct HijriTabular;
 
 impl HijriObservational {
-    /// Creates a new [`HijriObservational`] with some compiled data containing precomputed calendrical calculations.
+    /// Creates a new [`HijriObservational`] for reference location Mecca, with some compiled data containing precomputed calendrical calculations.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
+    pub const fn new_mecca() -> Self {
         Self {
+            location: HijriObservationalLocation::Mecca,
             data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_OBSERVATIONAL_V1,
+                crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_OBSERVATIONAL_MECCA_V1,
             )),
         }
     }
@@ -139,23 +144,27 @@ impl HijriObservational {
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            try_new_mecca_with_buffer_provider,
+            try_new_mecca_unstable,
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<D: DataProvider<CalendarHijriObservationalV1> + ?Sized>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
+    pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriObservationalMeccaV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.payload),
+            location: HijriObservationalLocation::Mecca,
+            data: Some(provider.load(Default::default())?.payload.cast()),
         })
     }
 
-    /// Construct a new [`HijriObservational`] without any precomputed calendrical calculations.
-    pub fn new_always_calculating() -> Self {
-        Self { data: None }
+    /// Construct a new [`HijriObservational`] for reference location Mecca, without any precomputed calendrical calculations.
+    pub const fn new_mecca_always_calculating() -> Self {
+        Self {
+            location: HijriObservationalLocation::Mecca,
+            data: None,
+        }
     }
 }
 
@@ -232,6 +241,9 @@ impl Default for HijriYearLength {
 }
 
 impl HijriYearLength {
+    const LONG: u16 = 355;
+    const SHORT: u16 = 354;
+
     fn try_from_int(value: i64) -> Option<Self> {
         match value {
             355 => Some(Self::L355),
@@ -243,18 +255,18 @@ impl HijriYearLength {
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) struct HijriYearInfo {
+pub(crate) struct HijriYearInfo<IB: IslamicBased> {
     packed_data: PackedHijriYearInfo,
     prev_year_length: HijriYearLength,
+    model: IB,
 }
 
-impl HijriYearInfo {
-    pub(crate) const LONG_YEAR_LEN: u16 = 355;
-    const SHORT_YEAR_LEN: u16 = 354;
+impl<IB: IslamicBased> HijriYearInfo<IB> {
     pub(crate) fn new(
         prev_packed: PackedHijriYearInfo,
         this_packed: PackedHijriYearInfo,
         extended_year: i32,
+        model: IB,
     ) -> (Self, i32) {
         let days_in_year = prev_packed.days_in_year();
         let days_in_year = match HijriYearLength::try_from_int(days_in_year as i64) {
@@ -267,14 +279,15 @@ impl HijriYearInfo {
         let year_info = Self {
             prev_year_length: days_in_year,
             packed_data: this_packed,
+            model,
         };
         (year_info, extended_year)
     }
 
-    fn compute<IB: IslamicBasedMarker>(extended_year: i32) -> Self {
-        let ny = IB::fixed_from_islamic(extended_year, 1, 1);
-        let packed_data = PackedHijriYearInfo::compute_with_ny::<IB>(extended_year, ny);
-        let prev_ny = IB::fixed_from_islamic(extended_year - 1, 1, 1);
+    fn compute(extended_year: i32, model: IB) -> Self {
+        let ny = model.fixed_from_islamic(extended_year, 1, 1);
+        let packed_data = PackedHijriYearInfo::compute_with_ny(extended_year, ny, model);
+        let prev_ny = model.fixed_from_islamic(extended_year - 1, 1, 1);
         let rd_diff = ny - prev_ny;
         let rd_diff = match HijriYearLength::try_from_int(rd_diff) {
             Some(x) => x,
@@ -286,16 +299,17 @@ impl HijriYearInfo {
         Self {
             prev_year_length: rd_diff,
             packed_data,
+            model,
         }
     }
     /// Get the new year R.D. given the extended year that this yearinfo is for    
-    fn new_year<IB: IslamicBasedMarker>(self, extended_year: i32) -> RataDie {
+    fn new_year(self, extended_year: i32) -> RataDie {
         IB::mean_synodic_ny(extended_year) + i64::from(self.packed_data.ny_offset())
     }
 
     /// Get the date's R.D. given (y, m, d) in this info's year
-    fn rd_for<IB: IslamicBasedMarker>(self, extended_year: i32, month: u8, day: u8) -> RataDie {
-        let ny = self.new_year::<IB>(extended_year);
+    fn rd_for(self, extended_year: i32, month: u8, day: u8) -> RataDie {
+        let ny = self.new_year(extended_year);
         let month_offset = if month == 1 {
             0
         } else {
@@ -309,22 +323,26 @@ impl HijriYearInfo {
 /// Contains any loaded precomputed data. If constructed with Default, will
 /// *not* contain any extra data and will always compute stuff from scratch
 #[derive(Default)]
-pub(crate) struct HijriPrecomputedData<'a, IB: IslamicBasedMarker> {
+pub(crate) struct HijriPrecomputedData<'a, IB: IslamicBased> {
     data: Option<&'a HijriCache<'a>>,
-    _ib: PhantomData<IB>,
+    model: IB,
 }
 
-impl<IB: IslamicBasedMarker> PrecomputedDataSource<HijriYearInfo> for HijriPrecomputedData<'_, IB> {
-    fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo {
+impl<IB: IslamicBased> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPrecomputedData<'_, IB> {
+    fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo<IB> {
         self.data
-            .and_then(|d| d.get_for_extended_year(extended_year))
-            .unwrap_or_else(|| HijriYearInfo::compute::<IB>(extended_year))
+            .and_then(|d| d.get_for_extended_year(extended_year, self.model))
+            .unwrap_or_else(|| HijriYearInfo::compute(extended_year, self.model))
     }
 }
 
 /// Given a year info and the first month it is possible for this date to be in, return the
 /// month and day this is in
-fn compute_month_day(info: HijriYearInfo, mut possible_month: u8, day_of_year: u16) -> (u8, u8) {
+fn compute_month_day<IB: IslamicBased>(
+    info: HijriYearInfo<IB>,
+    mut possible_month: u8,
+    day_of_year: u16,
+) -> (u8, u8) {
     let mut last_day_of_month = info.packed_data.last_day_of_month(possible_month);
     let mut last_day_of_prev_month = if possible_month == 1 {
         0
@@ -345,17 +363,14 @@ fn compute_month_day(info: HijriYearInfo, mut possible_month: u8, day_of_year: u
     );
     (possible_month, day.unwrap_or(29))
 }
-impl<'b, IB: IslamicBasedMarker> HijriPrecomputedData<'b, IB> {
-    pub(crate) fn new(data: Option<&'b HijriCache<'b>>) -> Self {
-        Self {
-            data,
-            _ib: PhantomData,
-        }
+impl<'b, IB: IslamicBased> HijriPrecomputedData<'b, IB> {
+    pub(crate) fn new(data: Option<&'b HijriCache<'b>>, model: IB) -> Self {
+        Self { data, model }
     }
     /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the [`HijriYearInfo`] and extended year for that date, loading
     /// from cache or computing.
-    fn load_or_compute_info_for_iso(&self, fixed: RataDie) -> (HijriYearInfo, i32, u8, u8) {
-        let cached = self.data.and_then(|d| d.get_for_fixed::<IB>(fixed));
+    fn load_or_compute_info_for_iso(&self, fixed: RataDie) -> (HijriYearInfo<IB>, i32, u8, u8) {
+        let cached = self.data.and_then(|d| d.get_for_fixed(fixed, self.model));
         if let Some((cached, year)) = cached {
             let ny = cached.packed_data.ny::<IB>(year);
             let day_of_year = (fixed - ny) as u16 + 1;
@@ -369,8 +384,8 @@ impl<'b, IB: IslamicBasedMarker> HijriPrecomputedData<'b, IB> {
         };
         // compute
 
-        let (y, m, d) = IB::islamic_from_fixed(fixed);
-        let info = HijriYearInfo::compute::<IB>(y);
+        let (y, m, d) = self.model.islamic_from_fixed(fixed);
+        let info = HijriYearInfo::compute(y, self.model);
         let ny = info.packed_data.ny::<IB>(y);
         let day_of_year = (fixed - ny) as u16 + 1;
         // We can't use the m/d from islamic_from_fixed because that code
@@ -390,26 +405,26 @@ impl<'b, IB: IslamicBasedMarker> HijriPrecomputedData<'b, IB> {
 pub struct HijriDateInner(ArithmeticDate<HijriObservational>);
 
 impl CalendarArithmetic for HijriObservational {
-    type YearInfo = HijriYearInfo;
+    type YearInfo = HijriYearInfo<ObservationalIslamic>;
 
-    fn month_days(_year: i32, month: u8, year_info: HijriYearInfo) -> u8 {
+    fn month_days(_year: i32, month: u8, year_info: Self::YearInfo) -> u8 {
         year_info.packed_data.days_in_month(month)
     }
 
-    fn months_for_every_year(_year: i32, _year_info: HijriYearInfo) -> u8 {
+    fn months_for_every_year(_year: i32, _year_info: Self::YearInfo) -> u8 {
         12
     }
 
-    fn days_in_provided_year(_year: i32, year_info: HijriYearInfo) -> u16 {
+    fn days_in_provided_year(_year: i32, year_info: Self::YearInfo) -> u16 {
         year_info.packed_data.days_in_year()
     }
 
     // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, year_info: HijriYearInfo) -> bool {
-        year_info.packed_data.days_in_year() != HijriYearInfo::SHORT_YEAR_LEN
+    fn is_leap_year(_year: i32, year_info: Self::YearInfo) -> bool {
+        year_info.packed_data.days_in_year() != HijriYearLength::SHORT
     }
 
-    fn last_month_day_in_year(year: i32, year_info: HijriYearInfo) -> (u8, u8) {
+    fn last_month_day_in_year(year: i32, year_info: Self::YearInfo) -> (u8, u8) {
         let days = Self::month_days(year, 12, year_info);
 
         (12, days)
@@ -450,11 +465,10 @@ impl Calendar for HijriObservational {
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
-        let fixed = date.0.year_info.rd_for::<ObservationalIslamicMarker>(
-            date.0.year,
-            date.0.month,
-            date.0.day,
-        );
+        let fixed = date
+            .0
+            .year_info
+            .rd_for(date.0.year, date.0.month, date.0.day);
         Iso::from_fixed(fixed)
     }
 
@@ -519,8 +533,13 @@ impl Calendar for HijriObservational {
 }
 
 impl HijriObservational {
-    fn precomputed_data(&self) -> HijriPrecomputedData<ObservationalIslamicMarker> {
-        HijriPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
+    fn precomputed_data(&self) -> HijriPrecomputedData<ObservationalIslamic> {
+        match self.location {
+            HijriObservationalLocation::Mecca => HijriPrecomputedData::new(
+                self.data.as_ref().map(|x| x.get()),
+                ObservationalIslamic::mecca(),
+            ),
+        }
     }
 
     pub(crate) const DEBUG_NAME: &'static str = "Hijri (observational)";
@@ -535,7 +554,7 @@ impl<A: AsCalendar<Calendar = HijriObservational>> Date<A> {
     /// use icu::calendar::cal::HijriObservational;
     /// use icu::calendar::Date;
     ///
-    /// let hijri = HijriObservational::new_always_calculating();
+    /// let hijri = HijriObservational::new_mecca_always_calculating();
     ///
     /// let date_hijri =
     ///     Date::try_new_observational_hijri_with_calendar(1392, 4, 25, hijri)
@@ -566,26 +585,26 @@ impl<A: AsCalendar<Calendar = HijriObservational>> Date<A> {
 pub struct HijriUmmAlQuraDateInner(ArithmeticDate<HijriUmmAlQura>);
 
 impl CalendarArithmetic for HijriUmmAlQura {
-    type YearInfo = HijriYearInfo;
+    type YearInfo = HijriYearInfo<SaudiIslamic>;
 
-    fn month_days(_year: i32, month: u8, year_info: HijriYearInfo) -> u8 {
+    fn month_days(_year: i32, month: u8, year_info: HijriYearInfo<SaudiIslamic>) -> u8 {
         year_info.packed_data.days_in_month(month)
     }
 
-    fn months_for_every_year(_year: i32, _year_info: HijriYearInfo) -> u8 {
+    fn months_for_every_year(_year: i32, _year_info: HijriYearInfo<SaudiIslamic>) -> u8 {
         12
     }
 
-    fn days_in_provided_year(_year: i32, year_info: HijriYearInfo) -> u16 {
+    fn days_in_provided_year(_year: i32, year_info: HijriYearInfo<SaudiIslamic>) -> u16 {
         year_info.packed_data.days_in_year()
     }
 
     // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, year_info: HijriYearInfo) -> bool {
-        year_info.packed_data.days_in_year() != HijriYearInfo::SHORT_YEAR_LEN
+    fn is_leap_year(_year: i32, year_info: HijriYearInfo<SaudiIslamic>) -> bool {
+        year_info.packed_data.days_in_year() != HijriYearLength::SHORT
     }
 
-    fn last_month_day_in_year(year: i32, year_info: HijriYearInfo) -> (u8, u8) {
+    fn last_month_day_in_year(year: i32, year_info: HijriYearInfo<SaudiIslamic>) -> (u8, u8) {
         let days = Self::month_days(year, 12, year_info);
 
         (12, days)
@@ -628,10 +647,10 @@ impl Calendar for HijriUmmAlQura {
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed =
-            date.0
-                .year_info
-                .rd_for::<SaudiIslamicMarker>(date.0.year, date.0.month, date.0.day);
+        let fixed = date
+            .0
+            .year_info
+            .rd_for(date.0.year, date.0.month, date.0.day);
         Iso::from_fixed(fixed)
     }
 
@@ -692,8 +711,8 @@ impl Calendar for HijriUmmAlQura {
 }
 
 impl HijriUmmAlQura {
-    fn precomputed_data(&self) -> HijriPrecomputedData<SaudiIslamicMarker> {
-        HijriPrecomputedData::new(self.data.as_ref().map(|x| x.get()))
+    fn precomputed_data(&self) -> HijriPrecomputedData<SaudiIslamic> {
+        HijriPrecomputedData::new(self.data.as_ref().map(|x| x.get()), SaudiIslamic)
     }
 
     pub(crate) const DEBUG_NAME: &'static str = "Hijri (Umm al-Qura)";
@@ -761,9 +780,9 @@ impl CalendarArithmetic for HijriCivil {
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
         if Self::is_leap_year(year, ()) {
-            HijriYearInfo::LONG_YEAR_LEN
+            HijriYearLength::LONG
         } else {
-            HijriYearInfo::SHORT_YEAR_LEN
+            HijriYearLength::SHORT
         }
     }
 
@@ -943,9 +962,9 @@ impl CalendarArithmetic for HijriTabular {
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
         if Self::is_leap_year(year, ()) {
-            HijriYearInfo::LONG_YEAR_LEN
+            HijriYearLength::LONG
         } else {
-            HijriYearInfo::SHORT_YEAR_LEN
+            HijriYearLength::SHORT
         }
     }
 
@@ -1291,7 +1310,7 @@ mod test {
         DateCase {
             year: -1245,
             month: 12,
-            day: 11,
+            day: 10,
         },
         DateCase {
             year: -813,
@@ -1356,7 +1375,7 @@ mod test {
         DateCase {
             year: 793,
             month: 6,
-            day: 30,
+            day: 29,
         },
         DateCase {
             year: 839,
@@ -1426,7 +1445,7 @@ mod test {
         DateCase {
             year: 1362,
             month: 4,
-            day: 14,
+            day: 13,
         },
         DateCase {
             year: 1362,
@@ -1793,7 +1812,7 @@ mod test {
 
     #[test]
     fn test_observational_hijri_from_fixed() {
-        let calendar = HijriObservational::new();
+        let calendar = HijriObservational::new_mecca();
         let calendar = Ref(&calendar);
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_observational_hijri_with_calendar(
@@ -1808,7 +1827,7 @@ mod test {
 
     #[test]
     fn test_fixed_from_observational_hijri() {
-        let calendar = HijriObservational::new();
+        let calendar = HijriObservational::new_mecca();
         let calendar = Ref(&calendar);
         for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_observational_hijri_with_calendar(
@@ -1924,7 +1943,7 @@ mod test {
     #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_observational() {
-        let calendar = HijriObservational::new();
+        let calendar = HijriObservational::new_mecca();
         let calendar = Ref(&calendar);
         // -1245 1 1 = -214526 (R.D Date)
         // 1518 1 1 = 764589 (R.D Date)
@@ -1932,7 +1951,7 @@ mod test {
             .map(|year| {
                 HijriObservational::days_in_provided_year(
                     year,
-                    HijriYearInfo::compute::<ObservationalIslamicMarker>(year),
+                    HijriYearInfo::compute(year, ObservationalIslamic::mecca()),
                 ) as i64
             })
             .sum();
@@ -1962,7 +1981,7 @@ mod test {
             .map(|year| {
                 HijriUmmAlQura::days_in_provided_year(
                     year,
-                    HijriYearInfo::compute::<SaudiIslamicMarker>(year),
+                    HijriYearInfo::compute(year, SaudiIslamic),
                 ) as i64
             })
             .sum();

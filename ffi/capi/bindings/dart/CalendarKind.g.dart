@@ -46,8 +46,8 @@ enum CalendarKind {
   /// The kind of a Hijri civil calendar
   hijriCivil,
 
-  /// The kind of a Hijri observational calendar
-  hijriObservational,
+  /// The kind of a Hijri observational, Mecca calendar
+  hijriObservationalMecca,
 
   /// The kind of a Hijri tabular calendar
   hijriTabular,
@@ -60,6 +60,47 @@ enum CalendarKind {
 
   /// The kind of a Roc calendar
   roc;
+
+  int get _ffi {
+    switch (this) {
+      case iso:
+        return 0;
+      case gregorian:
+        return 1;
+      case buddhist:
+        return 2;
+      case japanese:
+        return 3;
+      case japaneseExtended:
+        return 4;
+      case ethiopian:
+        return 5;
+      case ethiopianAmeteAlem:
+        return 6;
+      case indian:
+        return 7;
+      case coptic:
+        return 8;
+      case dangi:
+        return 9;
+      case chinese:
+        return 10;
+      case hebrew:
+        return 11;
+      case hijriCivil:
+        return 12;
+      case hijriObservationalMecca:
+        return 18;
+      case hijriTabular:
+        return 14;
+      case hijriUmmAlQura:
+        return 15;
+      case persian:
+        return 16;
+      case roc:
+        return 17;
+    }
+  }
 }
 
 // dart format on
