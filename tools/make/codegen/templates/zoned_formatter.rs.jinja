@@ -67,8 +67,21 @@ pub mod ffi {
             {%- endif %}
             {%- if flavor.is_zone_only() %}
             icu_datetime::fieldsets::enums::ZoneFieldSet,
+            {%- else if flavor.has_date() && flavor.has_time() %}
+            icu_datetime::fieldsets::Combo<
+                icu_datetime::fieldsets::enums::DateAndTimeFieldSet,
+                icu_datetime::fieldsets::enums::ZoneFieldSet,
+            >
+            {%- else if flavor.has_date() %}
+            icu_datetime::fieldsets::Combo<
+                icu_datetime::fieldsets::enums::DateFieldSet,
+                icu_datetime::fieldsets::enums::ZoneFieldSet,
+            >
             {%- else %}
-            icu_datetime::fieldsets::enums::CompositeFieldSet,
+            icu_datetime::fieldsets::Combo<
+                icu_datetime::fieldsets::enums::TimeFieldSet,
+                icu_datetime::fieldsets::enums::ZoneFieldSet,
+            >
             {%- endif %}
         >,
     );
