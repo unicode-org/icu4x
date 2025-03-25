@@ -1,10 +1,6 @@
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-
 use core::str::FromStr;
 
-use crate::{AnyCalendarKind, AsCalendar, Calendar, Date, Iso, RangeError};
+use crate::{AnyCalendarKind, AsCalendar, Buddhist, Calendar, Date, Iso, RangeError};
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
@@ -117,6 +113,13 @@ impl<A: AsCalendar> Date<A> {
                 ));
             }
         }
-        Ok(iso.to_calendar(calendar))
+
+        let date = if calendar.as_calendar().any_calendar_kind() == Some(AnyCalendarKind::Buddhist) {
+            Date::try_new_buddhist(date_record.year, date_record.month, date_record.day)?
+        } else {
+            iso.to_calendar(calendar)
+        };
+
+        Ok(date)
     }
 }
