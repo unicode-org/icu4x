@@ -74,7 +74,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             trie: units_conversion_trie.convert_store(),
         };
 
-        let parser = MeasureUnitParser::from_payload(DataPayload::from_owned(units_trie));
+        let parser = MeasureUnitParser::try_new_unstable(FixedProvider::from_owned(units_trie));
 
         let conversion_info = convert_units_vec
             .iter()
