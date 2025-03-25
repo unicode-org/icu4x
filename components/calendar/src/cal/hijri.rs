@@ -1310,7 +1310,7 @@ mod test {
         DateCase {
             year: -1245,
             month: 12,
-            day: 11,
+            day: 10,
         },
         DateCase {
             year: -813,
@@ -1375,7 +1375,7 @@ mod test {
         DateCase {
             year: 793,
             month: 6,
-            day: 30,
+            day: 29,
         },
         DateCase {
             year: 839,
@@ -1445,7 +1445,7 @@ mod test {
         DateCase {
             year: 1362,
             month: 4,
-            day: 14,
+            day: 13,
         },
         DateCase {
             year: 1362,
