@@ -892,11 +892,13 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
             Gregory => Ok(AnyCalendarKind::Gregorian),
             Hebrew => Ok(AnyCalendarKind::Hebrew),
             Indian => Ok(AnyCalendarKind::Indian),
-            Hijri(None) => Ok(AnyCalendarKind::HijriObservationalMecca),
+            Hijri(None) => Err(()),
             Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => Ok(AnyCalendarKind::HijriUmmAlQura),
             Hijri(Some(HijriCalendarAlgorithm::Tbla)) => Ok(AnyCalendarKind::HijriTabular),
             Hijri(Some(HijriCalendarAlgorithm::Civil)) => Ok(AnyCalendarKind::HijriCivil),
-            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Err(()),
+            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => {
+                Ok(AnyCalendarKind::HijriObservationalMecca)
+            }
             Iso8601 => Ok(AnyCalendarKind::Iso),
             Japanese => Ok(AnyCalendarKind::Japanese),
             Persian => Ok(AnyCalendarKind::Persian),

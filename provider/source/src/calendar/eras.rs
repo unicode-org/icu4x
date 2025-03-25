@@ -222,7 +222,7 @@ fn process_era_dates_map(
         .into_iter()
         .for_each(replace_julian_by_iso);
 
-    data.get_mut("islamic")
+    data.get_mut("islamic-rgsa")
         .unwrap()
         .eras
         .get_mut("0")
@@ -466,7 +466,7 @@ fn test_calendar_eras() {
 
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
-            "generic" | "islamic-rgsa" => continue,
+            "generic" | "islamic" => continue,
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,

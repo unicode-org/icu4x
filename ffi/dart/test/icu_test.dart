@@ -95,7 +95,7 @@ void main() {
       VariantOffsetsCalculator(),
     );
 
-    var locale = Locale.fromString('de-u-ca-islamic');
+    var locale = Locale.fromString('de-u-ca-islamic-rgsa');
 
     ///// DateFormatter /////
 
