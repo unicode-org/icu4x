@@ -6,6 +6,14 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::Length, Enum)]
+    pub enum DateTimeLength {
+        Long,
+        Medium,
+        Short,
+    }
+
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
     pub enum DateTimeAlignment {

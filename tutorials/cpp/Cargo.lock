@@ -116,8 +116,10 @@ dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar_data",
+ "icu_locale",
  "icu_locale_core",
  "icu_provider",
+ "icu_provider_baked",
  "ixdtf",
  "serde",
  "tinystr",
@@ -128,10 +130,6 @@ dependencies = [
 [[package]]
 name = "icu_calendar_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_capi"
@@ -179,6 +177,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
+ "icu_provider_baked",
  "potential_utf",
  "serde",
  "writeable",
@@ -188,9 +187,6 @@ dependencies = [
 [[package]]
 name = "icu_casemap_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_collator"
@@ -199,10 +195,12 @@ dependencies = [
  "displaydoc",
  "icu_collator_data",
  "icu_collections",
+ "icu_locale",
  "icu_locale_core",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
+ "icu_provider_baked",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -213,10 +211,6 @@ dependencies = [
 [[package]]
 name = "icu_collator_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_collections"
@@ -240,10 +234,12 @@ dependencies = [
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
+ "icu_locale",
  "icu_locale_core",
  "icu_pattern",
  "icu_plurals",
  "icu_provider",
+ "icu_provider_baked",
  "icu_time",
  "litemap",
  "potential_utf",
@@ -257,10 +253,6 @@ dependencies = [
 [[package]]
 name = "icu_datetime_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_decimal"
@@ -269,8 +261,10 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
+ "icu_locale",
  "icu_locale_core",
  "icu_provider",
+ "icu_provider_baked",
  "serde",
  "tinystr",
  "writeable",
@@ -280,10 +274,6 @@ dependencies = [
 [[package]]
 name = "icu_decimal_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_experimental"
@@ -304,6 +294,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_provider_baked",
  "litemap",
  "num-bigint",
  "num-rational",
@@ -321,10 +312,6 @@ dependencies = [
 [[package]]
 name = "icu_experimental_data"
 version = "0.3.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_list"
@@ -332,7 +319,9 @@ version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_list_data",
+ "icu_locale",
  "icu_provider",
+ "icu_provider_baked",
  "regex-automata",
  "serde",
  "writeable",
@@ -342,10 +331,6 @@ dependencies = [
 [[package]]
 name = "icu_list_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_locale"
@@ -356,6 +341,7 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
+ "icu_provider_baked",
  "potential_utf",
  "serde",
  "tinystr",
@@ -377,9 +363,6 @@ dependencies = [
 [[package]]
 name = "icu_locale_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_normalizer"
@@ -390,6 +373,7 @@ dependencies = [
  "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
+ "icu_provider_baked",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -401,9 +385,6 @@ dependencies = [
 [[package]]
 name = "icu_normalizer_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_pattern"
@@ -423,8 +404,10 @@ version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
+ "icu_locale",
  "icu_plurals_data",
  "icu_provider",
+ "icu_provider_baked",
  "serde",
  "zerovec",
 ]
@@ -432,10 +415,6 @@ dependencies = [
 [[package]]
 name = "icu_plurals_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_properties"
@@ -446,6 +425,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
+ "icu_provider_baked",
  "potential_utf",
  "serde",
  "unicode-bidi",
@@ -456,9 +436,6 @@ dependencies = [
 [[package]]
 name = "icu_properties_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_provider"
@@ -533,8 +510,10 @@ dependencies = [
  "core_maths",
  "displaydoc",
  "icu_collections",
+ "icu_locale",
  "icu_locale_core",
  "icu_provider",
+ "icu_provider_baked",
  "icu_segmenter_data",
  "potential_utf",
  "serde",
@@ -545,10 +524,6 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_locale",
- "icu_provider_baked",
-]
 
 [[package]]
 name = "icu_time"
@@ -558,6 +533,7 @@ dependencies = [
  "displaydoc",
  "icu_calendar",
  "icu_provider",
+ "icu_provider_baked",
  "icu_time_data",
  "ixdtf",
  "serde",
@@ -570,9 +546,6 @@ dependencies = [
 [[package]]
 name = "icu_time_data"
 version = "2.0.0-beta2"
-dependencies = [
- "icu_provider_baked",
-]
 
 [[package]]
 name = "itoa"
