@@ -13,7 +13,7 @@ pub mod zerotrie;
 use crate::prelude::{DataIdentifierBorrowed, DataMarker, DataPayload};
 
 /// A backing store for baked data
-pub trait DataStore<M: DataMarker> {
+pub trait DataStore<M: DataMarker>: private::Sealed {
     /// Get the value for a key
     fn get(
         &self,
@@ -27,4 +27,8 @@ pub trait DataStore<M: DataMarker> {
     /// Iterate over all data
     #[cfg(feature = "alloc")]
     fn iter(&'static self) -> Self::IterReturn;
+}
+
+pub(crate) mod private {
+    pub trait Sealed {}
 }

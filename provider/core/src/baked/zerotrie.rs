@@ -83,6 +83,7 @@ impl<M: DataMarker> Data<M> {
     }
 }
 
+impl<M: DataMarker> super::private::Sealed for Data<M> {}
 impl<M: DataMarker> super::DataStore<M> for Data<M> {
     fn get(
         &self,
@@ -116,6 +117,13 @@ where
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
     values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
+}
+
+impl<M: DataMarker> super::private::Sealed for DataForVarULEs<M>
+where
+    M::DataStruct: MaybeAsVarULE,
+    M::DataStruct: ZeroFrom<'static, <M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
+{
 }
 
 impl<M: DataMarker> DataForVarULEs<M>

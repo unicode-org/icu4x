@@ -322,11 +322,7 @@ fn main() {
     // (they cannot be shared). Improve build times a little bit by making sure baked exporter
     // only uses proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
     // here.
-    let dep_list = get_dep_list(
-        "icu_provider_baked",
-        "normal,no-proc-macro",
-        "--features export",
-    );
+    let dep_list = get_dep_list("icu_provider_baked", "normal,no-proc-macro", "");
     if dep_list.iter().any(|x| x.crate_name == "syn") {
         eprintln!("icu_provider_baked/export depends on `syn` as a regular dependency!");
         process::exit(1);
