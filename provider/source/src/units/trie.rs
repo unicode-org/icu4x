@@ -86,13 +86,13 @@ fn test_basic() {
     let units_info = und_info.payload.get().to_owned();
     let meter_id = trie.get("meter").unwrap();
     let foot_id = trie.get("foot").unwrap();
-    let convert_infos = &units_info.convert_infos[meter_id];
+    let convert_infos = &units_info.conversion_info[meter_id];
     let basic_units = &convert_infos.basic_units();
 
     // Meter should have the same id as the one in the info because it is the `root` unit for length.
     assert_eq!(basic_units.first().unwrap().unit_id, meter_id as u16);
 
-    let convert_infos = &units_info.convert_infos[foot_id];
+    let convert_infos = &units_info.conversion_info[foot_id];
     let basic_units = &convert_infos.basic_units();
     // Foot should have the same id as meter because meter is the root unit for length.
     assert_eq!(basic_units.first().unwrap().unit_id, meter_id as u16);
