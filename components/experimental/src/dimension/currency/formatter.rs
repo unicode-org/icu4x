@@ -60,7 +60,7 @@ impl CurrencyFormatter {
         (prefs: CurrencyFormatterPreferences, options: super::options::CurrencyFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
