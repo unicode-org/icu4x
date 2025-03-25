@@ -2,7 +2,6 @@
 import type { CalendarKind } from "./CalendarKind"
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
-import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
@@ -16,32 +15,11 @@ export class Calendar {
     get ffiValue(): pointer;
 
     /** 
-     * Creates a new [`Calendar`] from the specified date and time, using compiled data.
+     * Creates a new [`Calendar`] for the specified kind, using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
      */
-    static createForLocale(locale: Locale): Calendar;
-
-    /** 
-     * Creates a new [`Calendar`] from the specified date and time, using compiled data.
-     *
-     * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
-     */
-    static createForKind(kind: CalendarKind): Calendar;
-
-    /** 
-     * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-     *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
-     */
-    static createForLocaleWithProvider(provider: DataProvider, locale: Locale): Calendar;
-
-    /** 
-     * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-     *
-     * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
-     */
-    static createForKindWithProvider(provider: DataProvider, kind: CalendarKind): Calendar;
+    static createWithProvider(provider: DataProvider, kind: CalendarKind): Calendar;
 
     /** 
      * Returns the kind of this calendar
@@ -49,4 +27,6 @@ export class Calendar {
      * See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
      */
     get kind(): CalendarKind;
+
+    constructor(kind: CalendarKind);
 }

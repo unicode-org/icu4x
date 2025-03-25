@@ -16,15 +16,13 @@ export function formatIso(dateFormatterLocaleName, dateFormatterLength, dateForm
 
     return out;
 }
-export function formatSameCalendar(dateFormatterLocaleName, dateFormatterLength, dateFormatterAlignment, dateFormatterYearStyle, dateYear, dateMonth, dateDay, dateCalendarLocaleName) {
+export function formatSameCalendar(dateFormatterLocaleName, dateFormatterLength, dateFormatterAlignment, dateFormatterYearStyle, dateYear, dateMonth, dateDay, dateCalendarKind) {
     
     let dateFormatterLocale = Locale.fromString(dateFormatterLocaleName);
     
     let dateFormatter = DateFormatter.createYmd(dateFormatterLocale,dateFormatterLength,dateFormatterAlignment,dateFormatterYearStyle);
     
-    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
-    
-    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    let dateCalendar = new Calendar(dateCalendarKind);
     
     let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
     

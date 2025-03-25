@@ -15,8 +15,6 @@ namespace capi { struct Calendar; }
 class Calendar;
 namespace capi { struct DataProvider; }
 class DataProvider;
-namespace capi { struct Locale; }
-class Locale;
 class CalendarKind;
 class DataError;
 }
@@ -36,32 +34,18 @@ class Calendar {
 public:
 
   /**
-   * Creates a new [`Calendar`] from the specified date and time, using compiled data.
+   * Creates a new [`Calendar`] for the specified kind, using compiled data.
    *
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_locale(const icu4x::Locale& locale);
+  inline static std::unique_ptr<icu4x::Calendar> create(icu4x::CalendarKind kind);
 
   /**
-   * Creates a new [`Calendar`] from the specified date and time, using compiled data.
+   * Creates a new [`Calendar`] for the specified kind, using a particular data source.
    *
-   * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind(icu4x::CalendarKind kind);
-
-  /**
-   * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-   *
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_locale_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
-
-  /**
-   * Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-   *
-   * See the [Rust documentation for `new_for_kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_kind) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_for_kind_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind);
+  inline static diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind);
 
   /**
    * Returns the kind of this calendar

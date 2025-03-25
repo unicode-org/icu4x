@@ -101,6 +101,19 @@ enum CalendarKind {
         return 17;
     }
   }
+
+  /// Creates a new [`CalendarKind`] for the specified locale, using compiled data.
+  ///
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+  static CalendarKind create(Locale locale) {
+    final result = _icu4x_CalendarKind_create_mv1(locale._ffi);
+    return CalendarKind.values.firstWhere((v) => v._ffi == result);
+  }
 }
+
+@_DiplomatFfiUse('icu4x_CalendarKind_create_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CalendarKind_create_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_CalendarKind_create_mv1(ffi.Pointer<ffi.Opaque> locale);
 
 // dart format on

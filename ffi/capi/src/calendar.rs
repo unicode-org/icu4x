@@ -9,9 +9,8 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
 
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    #[cfg(feature = "buffer_provider")]
     use crate::errors::ffi::DataError;
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
     use crate::provider::ffi::DataProvider;
@@ -58,60 +57,41 @@ pub mod ffi {
         Roc = 17,
     }
 
+    impl CalendarKind {
+        /// Creates a new [`CalendarKind`] for the specified locale, using compiled data.
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::new, FnInEnum)]
+        pub fn create(locale: &Locale) -> Self {
+            let prefs = (&locale.0).into();
+            icu_calendar::AnyCalendarKind::new(prefs).into()
+        }
+    }
+
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
     pub struct Calendar(pub Arc<icu_calendar::AnyCalendar>);
 
     impl Calendar {
-        /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new, FnInEnum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_locale")]
-        #[diplomat::demo(default_constructor)]
+        /// Creates a new [`Calendar`] for the specified kind, using compiled data.
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
+        #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_for_locale(locale: &Locale) -> Result<Box<Calendar>, DataError> {
-            let prefs = (&locale.0).into();
-            Ok(Box::new(Calendar(Arc::new(
-                icu_calendar::AnyCalendar::try_new(prefs)?,
+        pub fn create(kind: CalendarKind) -> Box<Calendar> {
+            Box::new(Calendar(Arc::new(icu_calendar::AnyCalendar::new(
+                kind.into(),
             ))))
         }
 
-        /// Creates a new [`Calendar`] from the specified date and time, using compiled data.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_for_kind(kind: CalendarKind) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(Arc::new(
-                icu_calendar::AnyCalendar::new_for_kind(kind.into()),
-            ))))
-        }
-
-        /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new, FnInEnum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_locale_with_provider")]
-        #[diplomat::demo(default_constructor)]
+        /// Creates a new [`Calendar`] for the specified kind, using a particular data source.
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "new_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_for_locale_with_provider(
-            provider: &DataProvider,
-            locale: &Locale,
-        ) -> Result<Box<Calendar>, DataError> {
-            let prefs = (&locale.0).into();
-
-            Ok(Box::new(Calendar(Arc::new(
-                icu_calendar::AnyCalendar::try_new_with_buffer_provider(provider.get()?, prefs)?,
-            ))))
-        }
-
-        /// Creates a new [`Calendar`] from the specified date and time, using a particular data source.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_kind, FnInEnum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_kind_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_for_kind_with_provider(
+        pub fn create_with_provider(
             provider: &DataProvider,
             kind: CalendarKind,
         ) -> Result<Box<Calendar>, DataError> {
             Ok(Box::new(Calendar(Arc::new(
-                icu_calendar::AnyCalendar::try_new_for_kind_with_buffer_provider(
+                icu_calendar::AnyCalendar::try_new_with_buffer_provider(
                     provider.get()?,
                     kind.into(),
                 )?,

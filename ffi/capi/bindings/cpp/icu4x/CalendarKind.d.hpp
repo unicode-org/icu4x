@@ -10,6 +10,12 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
+namespace icu4x {
+namespace capi { struct Locale; }
+class Locale;
+class CalendarKind;
+}
+
 
 namespace icu4x {
 namespace capi {
@@ -73,6 +79,13 @@ public:
   constexpr operator Value() const { return value; }
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
+
+  /**
+   * Creates a new [`CalendarKind`] for the specified locale, using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+   */
+  inline static icu4x::CalendarKind create(const icu4x::Locale& locale);
 
   inline icu4x::capi::CalendarKind AsFFI() const;
   inline static icu4x::CalendarKind FromFFI(icu4x::capi::CalendarKind c_enum);

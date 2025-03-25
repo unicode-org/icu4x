@@ -47,7 +47,7 @@ impl DecimalFormatterLoader for ExternalLoaderCompiledData {
 impl AnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, kind: AnyCalendarKind) -> Result<AnyCalendar, DataError> {
-        Ok(AnyCalendar::new_for_kind(kind))
+        Ok(AnyCalendar::new(kind))
     }
 }
 
@@ -77,7 +77,7 @@ where
 {
     #[inline]
     fn load(&self, kind: AnyCalendarKind) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_kind_with_buffer_provider(self.0, kind)
+        AnyCalendar::try_new_with_buffer_provider(self.0, kind)
     }
 }
 
@@ -112,6 +112,6 @@ where
 {
     #[inline]
     fn load(&self, kind: AnyCalendarKind) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_for_kind_unstable(self.0, kind)
+        AnyCalendar::try_new_unstable(self.0, kind)
     }
 }
