@@ -55,12 +55,6 @@ impl MeasureUnitParser {
         Ok(Self { payload })
     }
 
-    // TODO: remove this function after being able to use the `try_new_with_buffer_provider` constructor in `provider/source/src/units/info.rs`.
-    /// Creates a new [`MeasureUnitParser`] from a [`DataPayload`].
-    pub fn from_payload(payload: DataPayload<super::provider::trie::UnitsTrieV1>) -> Self {
-        Self { payload }
-    }
-
     /// Get the unit id.
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).

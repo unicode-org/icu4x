@@ -10,6 +10,7 @@ use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::measure::provider::trie::UnitsTrie;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
+use icu_provider_adapters::fixed::FixedProvider;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
@@ -74,7 +75,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             trie: units_conversion_trie.convert_store(),
         };
 
-        let parser = MeasureUnitParser::try_new_unstable(FixedProvider::from_owned(units_trie));
+        let parser = MeasureUnitParser::try_new_unstable(&FixedProvider::from_owned(units_trie))?;
 
         let conversion_info = convert_units_vec
             .iter()
@@ -128,9 +129,7 @@ fn test_basic() {
         })
         .unwrap();
 
-    let und_trie: DataResponse<UnitsTrieV1> = provider
-        .load(Default::default())
-        .unwrap();
+    let und_trie: DataResponse<UnitsTrieV1> = provider.load(Default::default()).unwrap();
 
     let units_info = und.payload.get().to_owned();
     let units_info_map = &und_trie.payload.get().trie;
