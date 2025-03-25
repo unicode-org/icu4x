@@ -9,6 +9,10 @@ import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
 import * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
 export * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
+import * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
+export * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
+import * as DateTimeFormatterGregorianDemo from "./DateTimeFormatterGregorian.mjs";
+export * as DateTimeFormatterGregorianDemo from "./DateTimeFormatterGregorian.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 import * as DecimalDemo from "./Decimal.mjs";
@@ -17,10 +21,6 @@ import * as ListFormatterDemo from "./ListFormatter.mjs";
 export * as ListFormatterDemo from "./ListFormatter.mjs";
 import * as LocaleDemo from "./Locale.mjs";
 export * as LocaleDemo from "./Locale.mjs";
-import * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
-export * as DateTimeFormatterDemo from "./DateTimeFormatter.mjs";
-import * as DateTimeFormatterGregorianDemo from "./DateTimeFormatterGregorian.mjs";
-export * as DateTimeFormatterGregorianDemo from "./DateTimeFormatterGregorian.mjs";
 import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
@@ -403,198 +403,6 @@ let termini = Object.assign({
         ]
     },
 
-    "DecimalFormatter.format": {
-        func: DecimalFormatterDemo.format,
-        // For avoiding webpacking minifying issues:
-        funcName: "DecimalFormatter.format",
-        parameters: [
-            
-            {
-                name: "DecimalFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "DecimalFormatter:GroupingStrategy",
-                type: "DecimalGroupingStrategy",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Value:F",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Magnitude",
-                type: "number",
-                typeUse: "number"
-            }
-            
-        ]
-    },
-
-    "Decimal.toString": {
-        func: DecimalDemo.toString,
-        // For avoiding webpacking minifying issues:
-        funcName: "Decimal.toString",
-        parameters: [
-            
-            {
-                name: "Decimal:F",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Decimal:Magnitude",
-                type: "number",
-                typeUse: "number"
-            }
-            
-        ]
-    },
-
-    "ListFormatter.format": {
-        func: ListFormatterDemo.format,
-        // For avoiding webpacking minifying issues:
-        funcName: "ListFormatter.format",
-        parameters: [
-            
-            {
-                name: "ListFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "ListFormatter:Length",
-                type: "ListLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "List",
-                type: "Array<string>",
-                typeUse: "Array<string>"
-            }
-            
-        ]
-    },
-
-    "Locale.basename": {
-        func: LocaleDemo.basename,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.basename",
-        parameters: [
-            
-            {
-                name: "Locale:Name",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "Locale.getUnicodeExtension": {
-        func: LocaleDemo.getUnicodeExtension,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.getUnicodeExtension",
-        parameters: [
-            
-            {
-                name: "Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "S",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "Locale.language": {
-        func: LocaleDemo.language,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.language",
-        parameters: [
-            
-            {
-                name: "Locale:Name",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "Locale.region": {
-        func: LocaleDemo.region,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.region",
-        parameters: [
-            
-            {
-                name: "Locale:Name",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "Locale.script": {
-        func: LocaleDemo.script,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.script",
-        parameters: [
-            
-            {
-                name: "Locale:Name",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "Locale.normalize": {
-        func: LocaleDemo.normalize,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.normalize",
-        parameters: [
-            
-            {
-                name: "S",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
-    "Locale.toString": {
-        func: LocaleDemo.toString,
-        // For avoiding webpacking minifying issues:
-        funcName: "Locale.toString",
-        parameters: [
-            
-            {
-                name: "Locale:Name",
-                type: "string",
-                typeUse: "string"
-            }
-            
-        ]
-    },
-
     "DateTimeFormatter.formatIso": {
         func: DateTimeFormatterDemo.formatIso,
         // For avoiding webpacking minifying issues:
@@ -839,6 +647,198 @@ let termini = Object.assign({
                 name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "DecimalFormatter.format": {
+        func: DecimalFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "DecimalFormatter.format",
+        parameters: [
+            
+            {
+                name: "DecimalFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "DecimalFormatter:GroupingStrategy",
+                type: "DecimalGroupingStrategy",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Value:F",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Value:Magnitude",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "Decimal.toString": {
+        func: DecimalDemo.toString,
+        // For avoiding webpacking minifying issues:
+        funcName: "Decimal.toString",
+        parameters: [
+            
+            {
+                name: "Decimal:F",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Decimal:Magnitude",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "ListFormatter.format": {
+        func: ListFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "ListFormatter.format",
+        parameters: [
+            
+            {
+                name: "ListFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ListFormatter:Length",
+                type: "ListLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "List",
+                type: "Array<string>",
+                typeUse: "Array<string>"
+            }
+            
+        ]
+    },
+
+    "Locale.basename": {
+        func: LocaleDemo.basename,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.basename",
+        parameters: [
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.getUnicodeExtension": {
+        func: LocaleDemo.getUnicodeExtension,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.getUnicodeExtension",
+        parameters: [
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "S",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.language": {
+        func: LocaleDemo.language,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.language",
+        parameters: [
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.region": {
+        func: LocaleDemo.region,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.region",
+        parameters: [
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.script": {
+        func: LocaleDemo.script,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.script",
+        parameters: [
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.normalize": {
+        func: LocaleDemo.normalize,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.normalize",
+        parameters: [
+            
+            {
+                name: "S",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "Locale.toString": {
+        func: LocaleDemo.toString,
+        // For avoiding webpacking minifying issues:
+        funcName: "Locale.toString",
+        parameters: [
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
             }
             
         ]

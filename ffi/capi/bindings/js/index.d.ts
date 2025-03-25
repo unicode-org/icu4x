@@ -74,6 +74,10 @@ export { DateFormatter } from "./DateFormatter"
 
 export { DateFormatterGregorian } from "./DateFormatterGregorian"
 
+export { DateTimeFormatter } from "./DateTimeFormatter"
+
+export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
+
 export { DecimalFormatter } from "./DecimalFormatter"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter"
@@ -111,14 +115,6 @@ export { Locale } from "./Locale"
 export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
-
-export { DateTimeFormatter } from "./DateTimeFormatter"
-
-export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
-
-export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
-
-export { ZonedDateTimeFormatterGregorian } from "./ZonedDateTimeFormatterGregorian"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
@@ -219,6 +215,10 @@ export { WindowsParser } from "./WindowsParser"
 export { ZonedDateFormatter } from "./ZonedDateFormatter"
 
 export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian"
+
+export { ZonedDateTimeFormatter } from "./ZonedDateTimeFormatter"
+
+export { ZonedDateTimeFormatterGregorian } from "./ZonedDateTimeFormatterGregorian"
 
 export { ZonedTimeFormatter } from "./ZonedTimeFormatter"
 
