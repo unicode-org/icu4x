@@ -643,6 +643,11 @@ impl DateTimeZonePatternSelectionData {
 
     /// Converts one of these into a corresponding [`builder::FieldSetBuilder`]
     pub(crate) fn to_builder(&self) -> builder::FieldSetBuilder {
+        let time_precision = if self.time.payload.is_payload() {
+            Some(self.options.time_precision.unwrap_or_default())
+        } else {
+            None
+        };
         let zone_style = self.zone.as_ref().map(|zone| {
             let ZonePatternSelectionData::SinglePatternItem(field_set, _) = zone;
             field_set.to_zone_style()
@@ -650,7 +655,7 @@ impl DateTimeZonePatternSelectionData {
         builder::FieldSetBuilder {
             length: self.options.length,
             date_fields: self.options.date_fields,
-            time_precision: self.options.time_precision,
+            time_precision,
             zone_style,
             alignment: self.options.alignment,
             year_style: self.options.year_style,
