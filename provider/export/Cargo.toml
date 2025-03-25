@@ -42,7 +42,7 @@ writeable = { workspace = true }
 # Exporters
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 icu_provider_fs = { workspace = true, features = ["export"], optional = true }
-icu_provider_baked = { workspace = true, features = ["export"], optional = true }
+icu_provider_baked = { workspace = true, optional = true }
 
 [dev-dependencies]
 elsa = { workspace = true }
@@ -54,7 +54,7 @@ icu_provider_source = { path = "../source" }
 
 [features]
 default = ["rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
-baked_exporter = ["dep:icu_provider_baked"]
+baked_exporter = ["dep:icu_provider_baked", "icu_locale/compiled_data"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
 rayon = ["dep:rayon"]

@@ -606,12 +606,12 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            self.dependencies.insert("icu_provider_baked");
+            self.dependencies.insert("icu_provider/baked");
 
             let search = if !needs_fallback {
                 quote! {
                     let metadata = #metadata_bake;
-                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
+                    let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
                         return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     };
                 }
@@ -620,7 +620,7 @@ impl DataExporter for BakedExporter {
                 quote! {
                     let mut metadata = #metadata_bake;
 
-                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
+                    let payload =  if let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
                     } else {
                         const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
@@ -628,7 +628,7 @@ impl DataExporter for BakedExporter {
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
                         let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {
-                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            if let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
@@ -681,7 +681,7 @@ impl DataExporter for BakedExporter {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                         fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                            Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
+                            Ok(icu_provider::baked::DataStore::iter(&Self::#data_ident).collect())
                         }
                     }
                 },
