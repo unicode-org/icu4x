@@ -74,8 +74,6 @@ export { DateFormatter } from "./DateFormatter"
 
 export { DateFormatterGregorian } from "./DateFormatterGregorian"
 
-export { NoCalendarFormatter } from "./NoCalendarFormatter"
-
 export { DecimalFormatter } from "./DecimalFormatter"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter"
@@ -248,9 +246,9 @@ export { CollatorStrength } from "./CollatorStrength"
 
 export { Weekday } from "./Weekday"
 
-export { DateTimeLength } from "./DateTimeLength"
-
 export { DateTimeAlignment } from "./DateTimeAlignment"
+
+export { DateTimeLength } from "./DateTimeLength"
 
 export { TimePrecision } from "./TimePrecision"
 

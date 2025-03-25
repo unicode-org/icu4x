@@ -72,8 +72,6 @@ export { DateFormatter } from "./DateFormatter.mjs"
 
 export { DateFormatterGregorian } from "./DateFormatterGregorian.mjs"
 
-export { NoCalendarFormatter } from "./NoCalendarFormatter.mjs"
-
 export { DecimalFormatter } from "./DecimalFormatter.mjs"
 
 export { LocaleDisplayNamesFormatter } from "./LocaleDisplayNamesFormatter.mjs"
@@ -246,9 +244,9 @@ export { CollatorStrength } from "./CollatorStrength.mjs"
 
 export { Weekday } from "./Weekday.mjs"
 
-export { DateTimeLength } from "./DateTimeLength.mjs"
-
 export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
+
+export { DateTimeLength } from "./DateTimeLength.mjs"
 
 export { TimePrecision } from "./TimePrecision.mjs"
 

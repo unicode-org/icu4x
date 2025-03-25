@@ -9,8 +9,6 @@ import * as DateFormatterDemo from "./DateFormatter.mjs";
 export * as DateFormatterDemo from "./DateFormatter.mjs";
 import * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
 export * as DateFormatterGregorianDemo from "./DateFormatterGregorian.mjs";
-import * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
-export * as NoCalendarFormatterDemo from "./NoCalendarFormatter.mjs";
 import * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 export * as DecimalFormatterDemo from "./DecimalFormatter.mjs";
 import * as DecimalDemo from "./Decimal.mjs";
@@ -398,51 +396,6 @@ let termini = Object.assign({
             
             {
                 name: "Date:Day",
-                type: "number",
-                typeUse: "number"
-            }
-            
-        ]
-    },
-
-    "NoCalendarFormatter.format": {
-        func: NoCalendarFormatterDemo.format,
-        // For avoiding webpacking minifying issues:
-        funcName: "NoCalendarFormatter.format",
-        parameters: [
-            
-            {
-                name: "NoCalendarFormatter:Locale:Name",
-                type: "string",
-                typeUse: "string"
-            },
-            
-            {
-                name: "NoCalendarFormatter:Length",
-                type: "DateTimeLength",
-                typeUse: "enumerator"
-            },
-            
-            {
-                name: "Value:Hour",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Minute",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Second",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Value:Subsecond",
                 type: "number",
                 typeUse: "number"
             }

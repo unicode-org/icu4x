@@ -118,7 +118,6 @@ part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
 part 'MeasureUnit.g.dart';
 part 'MeasureUnitParser.g.dart';
-part 'NoCalendarFormatter.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';
