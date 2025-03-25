@@ -22,6 +22,12 @@ pub struct MeasureUnitParser {
     payload: DataPayload<super::provider::trie::UnitsTrieV1>,
 }
 
+impl Default for MeasureUnitParser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MeasureUnitParser {
     /// Creates a new [`MeasureUnitParser`] from compiled data.
     ///
