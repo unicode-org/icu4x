@@ -19,26 +19,6 @@ fn load<IB: IslamicBased>(model: IB) -> HijriCache<'static> {
     HijriCache::compute_for(extended_start..extended_end, model)
 }
 
-impl DataProvider<CalendarHijriObservationalCairoV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CalendarHijriObservationalCairoV1>, DataError> {
-        self.check_req::<CalendarHijriObservationalCairoV1>(req)?;
-        let cache = load(ObservationalIslamic::cairo());
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(cache),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<CalendarHijriObservationalCairoV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
 impl DataProvider<CalendarHijriObservationalMeccaV1> for SourceDataProvider {
     fn load(
         &self,

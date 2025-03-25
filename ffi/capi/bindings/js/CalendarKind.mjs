@@ -28,7 +28,6 @@ export class CalendarKind {
         ["Chinese", 10],
         ["Hebrew", 11],
         ["HijriCivil", 12],
-        ["HijriObservationalCairo", 13],
         ["HijriObservationalMecca", 18],
         ["HijriTabular", 14],
         ["HijriUmmAlQura", 15],
@@ -94,7 +93,6 @@ export class CalendarKind {
         [10]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 10),
         [11]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 11),
         [12]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 12),
-        [13]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 13),
         [18]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 18),
         [14]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 14),
         [15]: new CalendarKind(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 15),
@@ -115,7 +113,6 @@ export class CalendarKind {
     static Chinese = CalendarKind.#objectValues[10];
     static Hebrew = CalendarKind.#objectValues[11];
     static HijriCivil = CalendarKind.#objectValues[12];
-    static HijriObservationalCairo = CalendarKind.#objectValues[13];
     static HijriObservationalMecca = CalendarKind.#objectValues[18];
     static HijriTabular = CalendarKind.#objectValues[14];
     static HijriUmmAlQura = CalendarKind.#objectValues[15];

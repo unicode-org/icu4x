@@ -1,7 +1,6 @@
 // @generated
 include!("calendar_hijri_observational_mecca_v1.rs.data");
 include!("calendar_japanese_extended_v1.rs.data");
-include!("calendar_hijri_observational_cairo_v1.rs.data");
 include!("calendar_japanese_modern_v1.rs.data");
 include!("calendar_week_v1.rs.data");
 include!("calendar_dangi_v1.rs.data");
@@ -38,7 +37,6 @@ macro_rules! impl_data_provider {
         make_provider!($provider);
         impl_calendar_hijri_observational_mecca_v1!($provider);
         impl_calendar_japanese_extended_v1!($provider);
-        impl_calendar_hijri_observational_cairo_v1!($provider);
         impl_calendar_japanese_modern_v1!($provider);
         impl_calendar_week_v1!($provider);
         impl_calendar_dangi_v1!($provider);

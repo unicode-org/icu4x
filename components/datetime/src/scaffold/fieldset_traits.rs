@@ -8,9 +8,8 @@ use crate::{
 };
 use icu_calendar::{
     provider::{
-        CalendarChineseV1, CalendarDangiV1, CalendarHijriObservationalCairoV1,
-        CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1, CalendarJapaneseExtendedV1,
-        CalendarJapaneseModernV1,
+        CalendarChineseV1, CalendarDangiV1, CalendarHijriObservationalMeccaV1,
+        CalendarHijriUmmalquraV1, CalendarJapaneseExtendedV1, CalendarJapaneseModernV1,
     },
     types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
     Date, Iso,
@@ -539,7 +538,6 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 pub trait AllAnyCalendarExternalDataMarkers:
     DataProvider<CalendarChineseV1>
     + DataProvider<CalendarDangiV1>
-    + DataProvider<CalendarHijriObservationalCairoV1>
     + DataProvider<CalendarHijriObservationalMeccaV1>
     + DataProvider<CalendarHijriUmmalquraV1>
     + DataProvider<CalendarJapaneseModernV1>
@@ -553,7 +551,6 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
         + DataProvider<CalendarChineseV1>
         + DataProvider<CalendarDangiV1>
-        + DataProvider<CalendarHijriObservationalCairoV1>
         + DataProvider<CalendarHijriObservationalMeccaV1>
         + DataProvider<CalendarHijriUmmalquraV1>
         + DataProvider<CalendarJapaneseModernV1>

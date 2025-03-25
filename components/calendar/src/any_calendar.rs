@@ -583,9 +583,6 @@ impl AnyCalendar {
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::HijriCivil => AnyCalendar::HijriCivil(HijriCivil),
-            AnyCalendarKind::HijriObservationalCairo => {
-                AnyCalendar::HijriObservational(HijriObservational::new_cairo())
-            }
             AnyCalendarKind::HijriObservationalMecca => {
                 AnyCalendar::HijriObservational(HijriObservational::new_mecca())
             }
@@ -629,9 +626,6 @@ impl AnyCalendar {
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::HijriCivil => AnyCalendar::HijriCivil(HijriCivil),
-            AnyCalendarKind::HijriObservationalCairo => AnyCalendar::HijriObservational(
-                HijriObservational::try_new_cairo_with_buffer_provider(provider)?,
-            ),
             AnyCalendarKind::HijriObservationalMecca => AnyCalendar::HijriObservational(
                 HijriObservational::try_new_mecca_with_buffer_provider(provider)?,
             ),
@@ -661,7 +655,6 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarHijriObservationalCairoV1>
             + DataProvider<crate::provider::CalendarHijriObservationalMeccaV1>
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
@@ -681,9 +674,6 @@ impl AnyCalendar {
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::HijriCivil => AnyCalendar::HijriCivil(HijriCivil),
-            AnyCalendarKind::HijriObservationalCairo => AnyCalendar::HijriObservational(
-                HijriObservational::try_new_cairo_unstable(provider)?,
-            ),
             AnyCalendarKind::HijriObservationalMecca => AnyCalendar::HijriObservational(
                 HijriObservational::try_new_mecca_unstable(provider)?,
             ),
@@ -736,7 +726,6 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarHijriObservationalCairoV1>
             + DataProvider<crate::provider::CalendarHijriObservationalMeccaV1>
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
@@ -815,7 +804,7 @@ impl AnyDateInner {
             AnyDateInner::Hebrew(_) => AnyCalendarKind::Hebrew,
             AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
             AnyDateInner::HijriCivil(_) => AnyCalendarKind::HijriCivil,
-            AnyDateInner::HijriObservational(_) => AnyCalendarKind::HijriObservationalCairo,
+            AnyDateInner::HijriObservational(_) => AnyCalendarKind::HijriObservationalMecca,
             AnyDateInner::HijriTabular(_) => AnyCalendarKind::HijriTabular,
             AnyDateInner::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
             AnyDateInner::Iso(_) => AnyCalendarKind::Iso,
@@ -851,8 +840,6 @@ pub enum AnyCalendarKind {
     Indian,
     /// The kind of an [`HijriCivil`] calendar
     HijriCivil,
-    /// The kind of an [`HijriObservational`], Cairo calendar
-    HijriObservationalCairo,
     /// The kind of an [`HijriObservational`], Mecca calendar
     HijriObservationalMecca,
     /// The kind of an [`HijriTabular`] calendar
@@ -884,7 +871,6 @@ impl AnyCalendarKind {
             AnyCalendarKind::Hebrew => Hebrew.debug_name(),
             AnyCalendarKind::Indian => Indian.debug_name(),
             AnyCalendarKind::HijriCivil => HijriCivil.debug_name(),
-            AnyCalendarKind::HijriObservationalCairo => HijriObservational::DEBUG_NAME,
             AnyCalendarKind::HijriObservationalMecca => HijriObservational::DEBUG_NAME,
             AnyCalendarKind::HijriTabular => HijriTabular.debug_name(),
             AnyCalendarKind::HijriUmmAlQura => HijriUmmAlQura::DEBUG_NAME,
@@ -1330,7 +1316,6 @@ impl IntoAnyCalendar for HijriObservational {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         match self.location {
-            HijriObservationalLocation::Cairo => AnyCalendarKind::HijriObservationalCairo,
             HijriObservationalLocation::Mecca => AnyCalendarKind::HijriObservationalMecca,
         }
     }
@@ -1698,7 +1683,7 @@ mod tests {
         let indian = AnyCalendar::new_for_kind(AnyCalendarKind::Indian);
         let hijri_civil: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::HijriCivil);
         let hijri_observational: AnyCalendar =
-            AnyCalendar::new_for_kind(AnyCalendarKind::HijriObservationalCairo);
+            AnyCalendar::new_for_kind(AnyCalendarKind::HijriObservationalMecca);
         let hijri_tabular: AnyCalendar = AnyCalendar::new_for_kind(AnyCalendarKind::HijriTabular);
         let hijri_umm_al_qura: AnyCalendar =
             AnyCalendar::new_for_kind(AnyCalendarKind::HijriUmmAlQura);

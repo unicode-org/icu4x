@@ -41,7 +41,6 @@ inline icu4x::CalendarKind icu4x::CalendarKind::FromFFI(icu4x::capi::CalendarKin
     case icu4x::capi::CalendarKind_Chinese:
     case icu4x::capi::CalendarKind_Hebrew:
     case icu4x::capi::CalendarKind_HijriCivil:
-    case icu4x::capi::CalendarKind_HijriObservationalCairo:
     case icu4x::capi::CalendarKind_HijriObservationalMecca:
     case icu4x::capi::CalendarKind_HijriTabular:
     case icu4x::capi::CalendarKind_HijriUmmAlQura:

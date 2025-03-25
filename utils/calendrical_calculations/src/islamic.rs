@@ -133,6 +133,8 @@ pub struct ObservationalIslamic(Location);
 
 impl ObservationalIslamic {
     /// Creates a new [`ObservationalIslamic`] for the Cairo, Egypt location
+    ///
+    /// Warning: These calculations do not take DST changes into account.
     pub const fn cairo() -> Self {
         Self(CAIRO)
     }

@@ -31,7 +31,6 @@ export class CalendarKind {
     static Chinese : CalendarKind;
     static Hebrew : CalendarKind;
     static HijriCivil : CalendarKind;
-    static HijriObservationalCairo : CalendarKind;
     static HijriObservationalMecca : CalendarKind;
     static HijriTabular : CalendarKind;
     static HijriUmmAlQura : CalendarKind;

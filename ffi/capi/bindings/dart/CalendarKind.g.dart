@@ -46,9 +46,6 @@ enum CalendarKind {
   /// The kind of a Hijri civil calendar
   hijriCivil,
 
-  /// The kind of a Hijri observational, Cairo calendar
-  hijriObservationalCairo,
-
   /// The kind of a Hijri observational, Mecca calendar
   hijriObservationalMecca,
 
@@ -92,8 +89,6 @@ enum CalendarKind {
         return 11;
       case hijriCivil:
         return 12;
-      case hijriObservationalCairo:
-        return 13;
       case hijriObservationalMecca:
         return 18;
       case hijriTabular:
