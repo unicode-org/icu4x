@@ -591,6 +591,8 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
 #[derive(Debug, Clone)]
 pub struct DateTimeNames<FSet: DateTimeNamesMarker> {
     inner: FixedCalendarDateTimeNames<(), FSet>,
+    // calendar.kind() is one of Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianAmeteAlem, Gregorian, Hebrew, Indian,
+    // HijriCivil, HijriObservationalMecca, HijriTabular, HijriUmmAlQura, Japanese, JapaneseExtended, Persian, Roc
     calendar: AnyCalendar,
 }
 
@@ -989,17 +991,6 @@ where
 }
 
 impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
-    /// Creates a completely empty instance, not even with number formatting.
-    pub fn new_without_number_formatting(
-        prefs: DateTimeFormatterPreferences,
-        calendar: AnyCalendar,
-    ) -> Self {
-        Self {
-            inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
-            calendar,
-        }
-    }
-
     /// Creates an instance with the names and calendar loaded in a [`DateTimeFormatter`].
     ///
     /// This function requires passing in the [`DateTimeFormatterPreferences`] because it is not
@@ -1077,39 +1068,6 @@ where
     ///
     /// The names in the current [`DateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::AnyCalendar;
-    /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::input::Time;
-    /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let names = DateTimeNames::new_without_number_formatting(
-    ///     locale!("es-MX").into(),
-    ///     AnyCalendar::try_new(locale!("es-MX").into()).unwrap(),
-    /// );
-    ///
-    /// let field_set = T::long().hm();
-    ///
-    /// // Cannot convert yet: no names are loaded
-    /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
-    ///
-    /// // Load the data we need:
-    /// names
-    ///     .as_mut()
-    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
-    ///     .unwrap();
-    /// names.as_mut().include_decimal_formatter().unwrap();
-    ///
-    /// // Now the conversion is successful:
-    /// let formatter = names.try_into_formatter(field_set).unwrap();
-    ///
-    /// assert_writeable_eq!(formatter.format(&Time::midnight()), "12:00 a.m.");
-    /// ```
     #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(

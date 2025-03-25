@@ -23,7 +23,7 @@ use crate::{external_loaders::*, DateTimeWriteError};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, CalendarPreferences};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, CalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
@@ -555,15 +555,57 @@ where
     fn try_new_internal<P, L>(
         provider: &P,
         loader: &L,
-        prefs: DateTimeFormatterPreferences,
+        mut prefs: DateTimeFormatterPreferences,
         field_set: CompositeFieldSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: DecimalFormatterLoader + AnyCalendarLoader,
     {
-        let calendar = AnyCalendarLoader::load(loader, (&prefs).into())
-            .map_err(DateTimeFormatterLoadError::Data)?;
+        match prefs.calendar_algorithm {
+            Some(
+                CalendarAlgorithm::Buddhist
+                | CalendarAlgorithm::Chinese
+                | CalendarAlgorithm::Coptic
+                | CalendarAlgorithm::Dangi
+                | CalendarAlgorithm::Ethioaa
+                | CalendarAlgorithm::Ethiopic
+                | CalendarAlgorithm::Gregory
+                | CalendarAlgorithm::Hebrew
+                | CalendarAlgorithm::Hijri(_)
+                | CalendarAlgorithm::Indian
+                | CalendarAlgorithm::Japanese
+                | CalendarAlgorithm::Persian
+                | CalendarAlgorithm::Roc,
+            ) => {}
+            // Calendar not supported by DateTimeFormatter
+            // Currently this is CalendarAlgorithm::Iso8601
+            // Let AnyCalendarKind constructor select an appropriate fallback
+            _ => prefs.calendar_algorithm = None,
+        }
+        let kind = AnyCalendarKind::new((&prefs).into());
+        // AnyCalendarKind constructor should not select an unsupported fallback
+        assert!(matches!(
+            kind,
+            AnyCalendarKind::Buddhist
+                | AnyCalendarKind::Chinese
+                | AnyCalendarKind::Coptic
+                | AnyCalendarKind::Dangi
+                | AnyCalendarKind::EthiopianAmeteAlem
+                | AnyCalendarKind::Ethiopian
+                | AnyCalendarKind::Gregorian
+                | AnyCalendarKind::Hebrew
+                | AnyCalendarKind::HijriCivil
+                | AnyCalendarKind::HijriObservationalMecca
+                | AnyCalendarKind::HijriTabular
+                | AnyCalendarKind::HijriUmmAlQura
+                | AnyCalendarKind::Indian
+                | AnyCalendarKind::Japanese
+                | AnyCalendarKind::Persian
+                | AnyCalendarKind::Roc
+        ));
+        let calendar =
+            AnyCalendarLoader::load(loader, kind).map_err(DateTimeFormatterLoadError::Data)?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
             provider, provider, loader, prefs, field_set, calendar, names,
@@ -571,6 +613,8 @@ where
         .map_err(|e| e.0)
     }
 
+    // calendar.kind() is one of Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianAmeteAlem, Gregorian, Hebrew, Indian,
+    // HijriCivil, HijriObservationalMecca, HijriTabular, HijriUmmAlQura, Japanese, JapaneseExtended, Persian, Roc
     #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
     pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
         provider_p: &P0,
@@ -594,7 +638,9 @@ where
     {
         let kind = calendar.kind();
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(provider_p, kind),
+            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new_unchecked(
+                provider_p, kind,
+            ),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
             prefs,
@@ -605,8 +651,12 @@ where
             Err(e) => return Err((DateTimeFormatterLoadError::Data(e), (calendar, names))),
         };
         let result = names.load_for_pattern(
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(provider, kind),
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(provider, kind),
+            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new_unchecked(
+                provider, kind,
+            ),
+            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new_unchecked(
+                provider, kind,
+            ),
             &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
             &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
             &<FSet::Z as ZoneMarkers>::EssentialsV1::bind(provider),

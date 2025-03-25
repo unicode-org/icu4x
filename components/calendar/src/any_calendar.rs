@@ -727,24 +727,7 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
-        // This will eventually need fallback data from the provider
-        let algo = prefs.calendar_algorithm.unwrap_or_else(|| {
-            let reg = prefs.locale_preferences.region();
-            if reg == Some(region!("th")) {
-                CalendarAlgorithm::Buddhist
-            } else if reg == Some(region!("af")) || reg == Some(region!("ir")) {
-                CalendarAlgorithm::Persian
-            } else {
-                CalendarAlgorithm::Gregory
-            }
-        });
-        let kind = if let Ok(kind) = algo.try_into() {
-            kind
-        } else {
-            debug_assert!(false, "unsupported calendar algorithm {algo:?}");
-            AnyCalendarKind::Gregorian
-        };
-        Self::try_new_for_kind_unstable(provider, kind)
+        Self::try_new_for_kind_unstable(provider, AnyCalendarKind::new(prefs))
     }
 
     /// The [`AnyCalendarKind`] corresponding to the calendar this contains
@@ -854,6 +837,24 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
+    /// Selects the [`AnyCalendarKind`] appropriate for the given [`CalendarPreferences`].
+    pub fn new(prefs: CalendarPreferences) -> Self {
+        let algo = prefs.calendar_algorithm;
+        let region = prefs.locale_preferences.region();
+        if let Some(kind) = algo.and_then(|a| a.try_into().ok()) {
+            return kind;
+        }
+        if region == Some(region!("TH")) {
+            AnyCalendarKind::Buddhist
+        } else if region == Some(region!("AF")) || region == Some(region!("IR")) {
+            AnyCalendarKind::Persian
+        } else if region == Some(region!("SA")) && algo == Some(CalendarAlgorithm::Hijri(None)) {
+            AnyCalendarKind::HijriObservationalMecca
+        } else {
+            AnyCalendarKind::Gregorian
+        }
+    }
+
     fn debug_name(self) -> &'static str {
         match self {
             AnyCalendarKind::Buddhist => Buddhist.debug_name(),

@@ -277,12 +277,14 @@ where
 
 pub(crate) struct AnyCalendarProvider<H, P> {
     provider: P,
+    // This is one of Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianAmeteAlem, Gregorian, Hebrew, Indian,
+    // HijriCivil, HijriObservationalMecca, HijriTabular, HijriUmmAlQura, Japanese, JapaneseExtended, Persian, Roc
     kind: AnyCalendarKind,
     _helper: PhantomData<H>,
 }
 
 impl<H, P> AnyCalendarProvider<H, P> {
-    pub(crate) fn new(provider: P, kind: AnyCalendarKind) -> Self {
+    pub(crate) fn new_unchecked(provider: P, kind: AnyCalendarKind) -> Self {
         Self {
             provider,
             kind,
@@ -335,10 +337,7 @@ where
             JapaneseExtended => H::JapaneseExtended::bind(p).load_bound(req),
             Persian => H::Persian::bind(p).load_bound(req),
             Roc => H::Roc::bind(p).load_bound(req),
-            _ => Err(
-                DataError::custom("Don't know how to load data for specified calendar")
-                    .with_debug_context(&self.kind),
-            ),
+            _ => unreachable!(),
         }
     }
     fn bound_marker(&self) -> DataMarkerInfo {
