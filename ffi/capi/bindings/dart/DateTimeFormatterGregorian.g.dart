@@ -25,7 +25,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.dt(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -38,9 +38,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
   ///
-  /// See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.dtWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -53,7 +51,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `MDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.mdt(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -66,7 +64,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `MDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.mdtWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -79,7 +77,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.ymdt(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -92,7 +90,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.ymdtWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -105,7 +103,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `DET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.det(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -118,7 +116,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `DET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.detWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -131,7 +129,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.mdet(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -144,7 +142,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.mdetWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -157,7 +155,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.ymdet(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -170,7 +168,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `YMDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.ymdetWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -183,7 +181,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.et(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
@@ -196,7 +194,7 @@ final class DateTimeFormatterGregorian implements ffi.Finalizable {
 
   /// See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateTimeFormatterGregorian.etWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
