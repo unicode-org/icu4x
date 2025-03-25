@@ -11,7 +11,6 @@
 #include <icu4x/ZonedTimeFormatter.hpp>
 #include <icu4x/ZonedDateTimeFormatter.hpp>
 #include <icu4x/TimeZoneFormatter.hpp>
-#include <icu4x/NoCalendarFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/IanaParser.hpp>
@@ -196,29 +195,23 @@ int main() {
     }
     std::cout << std::endl;
 
-    std::unique_ptr<NoCalendarFormatter> tf = NoCalendarFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
-    out = tf->format(*time.get());
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "13:06") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
-    }
-
-    std::unique_ptr<DateFormatterGregorian> df = DateFormatterGregorian::create_ymd(*locale.get(), DateTimeLength::Long, std::nullopt, std::nullopt).ok().value();
-    out = df->format_iso(*date.get());
-    std::cout << "Formatted value is " << out << std::endl;
+    std::unique_ptr<DateFormatterGregorian> fmt_ymd_g = DateFormatterGregorian::create_ymd(*locale.get(), DateTimeLength::Long, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ymd_g->format_iso(*date.get());
+    std::cout << "Formatted value is " << out;
     if (out != "11 de julio de 2022") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
     }
+    std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatterGregorian> dtf = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
-    out = dtf->format_iso(*date.get(), *time.get());
-    std::cout << "Formatted value is " << out << std::endl;
+    std::unique_ptr<DateTimeFormatterGregorian> fmt_ymdt_g = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ymdt_g->format_iso(*date.get(), *time.get());
+    std::cout << "Formatted value is " << out;
     if (out != "11 jul 2022, 13:06") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
     }
+    std::cout << std::endl;
 
     std::unique_ptr<IanaParser> parser = IanaParser::create();
 
