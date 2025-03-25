@@ -1624,10 +1624,21 @@ dependencies = [
 name = "icu_provider_baked"
 version = "2.0.0-beta2"
 dependencies = [
+ "icu_provider",
+ "writeable",
+ "zerotrie",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_provider_baked_export"
+version = "2.0.0-beta2"
+dependencies = [
  "crlify",
  "databake",
  "heck 0.5.0",
  "icu_provider",
+ "icu_provider_baked",
  "icu_provider_export",
  "icu_provider_registry",
  "log",
@@ -1666,7 +1677,7 @@ dependencies = [
  "icu",
  "icu_locale",
  "icu_provider",
- "icu_provider_baked",
+ "icu_provider_baked_export",
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_provider_source",

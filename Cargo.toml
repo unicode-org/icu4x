@@ -39,6 +39,7 @@ members = [
     # Provider
     "provider/adapters",
     "provider/baked",
+    "provider/baked_export",
     "provider/source",
     "provider/blob",
     "provider/export",
@@ -164,6 +165,7 @@ icu_provider_export = { version = "~2.0.0-beta2", path = "provider/export", defa
 icu_provider_source = { version = "~2.0.0-beta2", path = "provider/source", default-features = false }
 icu_provider_adapters = { version = "~2.0.0-beta2", path = "provider/adapters", default-features = false }
 icu_provider_baked = { version = "~2.0.0-beta2", path = "provider/baked", default-features = false }
+icu_provider_baked_export = { version = "~2.0.0-beta2", path = "provider/baked_export", default-features = false }
 icu_provider_blob = { version = "~2.0.0-beta2", path = "provider/blob", default-features = false }
 icu_provider_fs = { version = "~2.0.0-beta2", path = "provider/fs", default-features = false }
 icu_provider_registry = { version = "~2.0.0-beta2", path = "provider/registry", default-features = false }

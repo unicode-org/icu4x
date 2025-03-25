@@ -4,12 +4,10 @@
 
 //! Tooling for the baked provider.
 
-#![cfg_attr(not(feature = "export"), no_std)]
+#![no_std]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
-
-#[cfg(feature = "export")]
-pub mod export;
 
 pub use icu_provider::prelude::*;
 

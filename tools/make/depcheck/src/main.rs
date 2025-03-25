@@ -323,9 +323,8 @@ fn main() {
     // only uses proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
     // here.
     let dep_list = get_dep_list(
-        "icu_provider_baked",
+        "icu_provider_baked_export",
         "normal,no-proc-macro",
-        "--features export",
     );
     if dep_list.iter().any(|x| x.crate_name == "syn") {
         eprintln!("icu_provider_baked/export depends on `syn` as a regular dependency!");

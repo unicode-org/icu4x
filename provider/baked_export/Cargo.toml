@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_provider_baked"
-description = "Tooling for the ICU4X baked data provider"
+name = "icu_provider_baked_export"
+description = "Export ooling for the ICU4X baked data provider"
 
 version.workspace = true
 rust-version.workspace = true
@@ -17,13 +17,20 @@ categories.workspace = true
 include.workspace = true
 
 [dependencies]
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc", "export"] }
+icu_provider_baked = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
-zerotrie = { workspace = true, features = ["alloc"] }
+zerotrie = { workspace = true, features = ["alloc", "databake"] }
 zerovec = { workspace = true }
 
+crlify = { workspace = true }
+databake = { workspace = true}
+icu_provider_registry = { workspace = true }
+log = { workspace = true }
+proc-macro2 = { workspace = true }
+heck = { workspace = true }
+
 [dev-dependencies]
-icu_provider = { path = "../core", features = ["export"] }
+icu_provider_export = { path = "../export" }
 
 [features]
-alloc = ["icu_provider/alloc"]

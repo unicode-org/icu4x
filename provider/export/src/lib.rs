@@ -37,7 +37,7 @@
 //! # Cargo features
 //!
 //! * `baked_exporter`
-//!   * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked::export`]
+//!   * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked_export::export`]
 //! * `blob_exporter`
 //!   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
 //! * `fs_exporter`
@@ -66,7 +66,7 @@ use icu_provider::export::ExporterCloseMetadata;
 pub use locale_family::*;
 
 #[cfg(feature = "baked_exporter")]
-pub use icu_provider_baked::export as baked_exporter;
+pub use icu_provider_baked_export::export as baked_exporter;
 #[cfg(feature = "blob_exporter")]
 pub use icu_provider_blob::export as blob_exporter;
 #[cfg(feature = "fs_exporter")]
@@ -281,7 +281,7 @@ impl ExportDriver {
     /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
-    /// and [`BakedExporter`](icu_provider_baked::export).
+    /// and [`BakedExporter`](icu_provider_baked_export::export).
     pub fn export(
         self,
         provider: &impl ExportableProvider,

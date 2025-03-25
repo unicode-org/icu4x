@@ -36,7 +36,7 @@ ExportDriver::new(
 ## Cargo features
 
 * `baked_exporter`
-  * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked::export`]
+  * enables the [`baked_exporter`] module, a reexport of [`icu_provider_baked_export::export`]
 * `blob_exporter`
   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
 * `fs_exporter`
