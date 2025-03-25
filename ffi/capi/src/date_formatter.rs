@@ -16,6 +16,7 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date::ffi::{Date, IsoDate},
+        datetime::ffi::DateTime,
         datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
