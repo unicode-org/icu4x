@@ -215,7 +215,7 @@ impl TitlecaseMapper<CaseMapper> {
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
     functions: [
         new: skip,
-                try_new_with_buffer_provider,
+        try_new_with_buffer_provider,
         try_new_unstable,
         Self,
     ]);
