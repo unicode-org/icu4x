@@ -204,10 +204,6 @@ export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { TimeZoneFormatter } from "./TimeZoneFormatter"
 
-export { MeasureUnit } from "./MeasureUnit"
-
-export { MeasureUnitParser } from "./MeasureUnitParser"
-
 export { UnitsConverter } from "./UnitsConverter"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory"
