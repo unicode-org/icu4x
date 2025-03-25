@@ -23,16 +23,6 @@ pub struct MeasureUnitParser {
 }
 
 impl MeasureUnitParser {
-    icu_provider::gen_buffer_data_constructors!(
-        () -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-        ]
-    );
-
     /// Creates a new [`MeasureUnitParser`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -54,6 +44,16 @@ impl MeasureUnitParser {
 
         Ok(Self { payload })
     }
+
+    icu_provider::gen_buffer_data_constructors!(
+        () -> error: DataError,
+        functions: [
+            new: skip,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
 
     /// Get the unit id.
     /// NOTE:
