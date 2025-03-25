@@ -2,7 +2,7 @@ use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::error::DateError;
 use crate::types::IsoWeekOfYear;
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
-use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso, Buddhist};
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
@@ -129,7 +129,11 @@ impl<A: AsCalendar> Date<A> {
     /// Construct a date from an ISO date and some calendar representation
     #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
-        let inner = calendar.as_calendar().date_from_iso(iso);
+        let inner = if calendar.as_calendar().any_calendar_kind() == Some(AnyCalendarKind::Buddhist) {
+            Buddhist::date_from_iso(&calendar, iso)
+        } else {
+            calendar.as_calendar().date_from_iso(iso)
+        };
         Date { inner, calendar }
     }
 

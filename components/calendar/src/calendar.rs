@@ -91,4 +91,14 @@ pub trait Calendar {
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         None
     }
+
+    /// Additional methods for the Buddhist calendar
+    ///
+    /// This method should be implemented by the Buddhist calendar to handle era codes properly.
+    fn handle_era_codes(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+        match era {
+            Some("buddhist" | "be") | None => Ok(year - 543),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
 }
