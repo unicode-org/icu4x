@@ -14,6 +14,8 @@ mod get_field;
 mod names_storage;
 
 pub(crate) use calendar::AnyCalendarProvider;
+pub(crate) use calendar::AnyCalendarForFormatting;
+pub(crate) use calendar::AnyCalendarForFormattingKind;
 pub use calendar::CalMarkers;
 pub use calendar::CldrCalendar;
 pub use calendar::ConvertCalendar;
