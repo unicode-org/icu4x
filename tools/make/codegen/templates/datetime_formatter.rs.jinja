@@ -20,6 +20,7 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date::ffi::{Date, IsoDate},
+        datetime::ffi::DateTime,
         datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
@@ -169,7 +170,7 @@ pub mod ffi {
             {%- if flavor.has_date() %}
             let date = date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
             {%- if flavor.has_time() %}
-            let value = DateTime {
+            let value = icu_time::DateTime {
                 date,
                 time: time.0,
             };
@@ -187,12 +188,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_same_calendar(
             &self,
+            {%- if flavor.has_date() %}
             date: &Date,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time: &Time,
+            {%- endif %}
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
             let date = date.0.wrap_calendar_in_ref();
             {%- if flavor.has_time() %}
-            let value = DateTime {
+            let value = icu_time::DateTime {
                 date,
                 time: time.0,
             };

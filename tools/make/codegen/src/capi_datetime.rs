@@ -260,6 +260,10 @@ pub fn main() {
         flavor: FormatterFlavor::Time,
         variants: Vec::new(),
     };
+    let mut datetime_formatter_template = DateTimeFormatterTemplate {
+        flavor: FormatterFlavor::DateTime,
+        variants: Vec::new(),
+    };
     let mut zone_formatter_template = ZonedFormatterTemplate {
         flavor: FormatterFlavor::Zone,
         consumed_options: None,
@@ -290,6 +294,19 @@ pub fn main() {
             .variants
             .push(DateTimeFormatterVariant {
                 inner: DateTimeFormatterVariantInner::Date(*date_fields),
+                consumed_options,
+            });
+
+        builder.time_precision = Some(Default::default());
+        let Some(consumed_options) = ConsumedOptions::from_builder(builder.clone()) else {
+            // calendar period field set
+            continue;
+        };
+        assert!(consumed_options.length); // all constructors accept a length
+        datetime_formatter_template
+            .variants
+            .push(DateTimeFormatterVariant {
+                inner: DateTimeFormatterVariantInner::DateTime(*date_fields),
                 consumed_options,
             });
     }
@@ -355,6 +372,14 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", time_formatter_template).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("date_time_formatter.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", datetime_formatter_template).unwrap();
     }
 
     {
