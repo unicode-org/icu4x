@@ -22,6 +22,7 @@ pub struct MeasureUnitParser {
     payload: DataPayload<super::provider::trie::UnitsTrieV1>,
 }
 
+#[cfg(feature = "compiled_data")]
 impl Default for MeasureUnitParser {
     /// Creates a new [`MeasureUnitParser`] from compiled data.
     ///
