@@ -38,6 +38,18 @@ impl Default for MeasureUnitParser {
 }
 
 impl MeasureUnitParser {
+    /// Creates a new [`MeasureUnitParser`] from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_TRIE_V1),
+        }
+    }
+
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
