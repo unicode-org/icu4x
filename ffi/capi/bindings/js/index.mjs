@@ -232,8 +232,6 @@ export { TrailingCase } from "./TrailingCase.mjs"
 
 export { CollatorAlternateHandling } from "./CollatorAlternateHandling.mjs"
 
-export { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel.mjs"
-
 export { CollatorCaseFirst } from "./CollatorCaseFirst.mjs"
 
 export { CollatorCaseLevel } from "./CollatorCaseLevel.mjs"

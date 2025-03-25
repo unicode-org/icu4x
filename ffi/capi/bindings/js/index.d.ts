@@ -234,8 +234,6 @@ export { TrailingCase } from "./TrailingCase"
 
 export { CollatorAlternateHandling } from "./CollatorAlternateHandling"
 
-export { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel"
-
 export { CollatorCaseFirst } from "./CollatorCaseFirst"
 
 export { CollatorCaseLevel } from "./CollatorCaseLevel"
