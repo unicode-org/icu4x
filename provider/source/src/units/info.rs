@@ -129,10 +129,7 @@ fn test_basic() {
         .unwrap();
 
     let und_trie: DataResponse<UnitsTrieV1> = provider
-        .load(DataRequest {
-            id: DataIdentifierCow::from_locale(langid!("und").into()).as_borrowed(),
-            ..Default::default()
-        })
+        .load(Default::default())
         .unwrap();
 
     let units_info = und.payload.get().to_owned();
