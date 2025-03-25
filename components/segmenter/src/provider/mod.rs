@@ -41,7 +41,7 @@ const _: () = {
     pub mod icu {
         pub use crate as segmenter;
         pub use icu_collections as collections;
-        pub use icu_segmenter_data::icu_locale as locale;
+        pub use icu_locale as locale;
     }
     make_provider!(Baked);
     impl_segmenter_break_sentence_v1!(Baked);

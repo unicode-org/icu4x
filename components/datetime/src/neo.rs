@@ -23,7 +23,7 @@ use crate::{external_loaders::*, DateTimeWriteError};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::IntoAnyCalendar;
-use icu_calendar::{AnyCalendar, AnyCalendarPreferences};
+use icu_calendar::{AnyCalendar, CalendarPreferences};
 use icu_decimal::DecimalFormatterPreferences;
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_provider::prelude::*;
@@ -83,7 +83,7 @@ prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
     numbering_system
 });
 
-prefs_convert!(DateTimeFormatterPreferences, AnyCalendarPreferences, {
+prefs_convert!(DateTimeFormatterPreferences, CalendarPreferences, {
     calendar_algorithm
 });
 
@@ -804,7 +804,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     locale!("th").into(),
+    ///     locale!("th-TH").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap()
@@ -954,6 +954,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// equivalent_builder.date_fields = Some(DateFields::YMD);
     /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
     /// equivalent_builder.alignment = Some(Alignment::Column);
+    /// equivalent_builder.year_style = None;
     /// assert_eq!(
     ///     builder,
     ///     equivalent_builder,
@@ -1097,7 +1098,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter =
-    ///     DateTimeFormatter::try_new(locale!("th").into(), YMD::long()).unwrap();
+    ///     DateTimeFormatter::try_new(locale!("th-TH").into(), YMD::long()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_iso(2024, 12, 16).unwrap()),
@@ -1127,7 +1128,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// // Create a simple YMDT formatter:
     /// let formatter = DateTimeFormatter::try_new(
     ///     locale!("und").into(),
-    ///     YMDT::long().hm().with_alignment(Alignment::Column)
+    ///     YMDT::long().with_alignment(Alignment::Column)
     /// )
     /// .unwrap();
     ///
@@ -1138,8 +1139,9 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// let mut equivalent_builder = FieldSetBuilder::default();
     /// equivalent_builder.length = Some(Length::Long);
     /// equivalent_builder.date_fields = Some(DateFields::YMD);
-    /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
+    /// equivalent_builder.time_precision = Some(TimePrecision::Second); // set automatically
     /// equivalent_builder.alignment = Some(Alignment::Column);
+    /// equivalent_builder.year_style = None;
     /// assert_eq!(
     ///     builder,
     ///     equivalent_builder,

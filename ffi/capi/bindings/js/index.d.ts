@@ -114,6 +114,10 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
+export { MeasureUnit } from "./MeasureUnit"
+
+export { MeasureUnitParser } from "./MeasureUnitParser"
+
 export { DateTimeFormatter } from "./DateTimeFormatter"
 
 export { DateTimeFormatterGregorian } from "./DateTimeFormatterGregorian"
@@ -192,13 +196,13 @@ export { WordSegmenter } from "./WordSegmenter"
 
 export { Time } from "./Time"
 
+export { TimeFormatter } from "./TimeFormatter"
+
 export { TimeZone } from "./TimeZone"
 
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
-export { MeasureUnit } from "./MeasureUnit"
-
-export { MeasureUnitParser } from "./MeasureUnitParser"
+export { TimeZoneFormatter } from "./TimeZoneFormatter"
 
 export { UnitsConverter } from "./UnitsConverter"
 
@@ -218,6 +222,8 @@ export { ZonedDateFormatter } from "./ZonedDateFormatter"
 
 export { ZonedDateFormatterGregorian } from "./ZonedDateFormatterGregorian"
 
+export { ZonedTimeFormatter } from "./ZonedTimeFormatter"
+
 export { BidiDirection } from "./BidiDirection"
 
 export { CalendarKind } from "./CalendarKind"
@@ -227,8 +233,6 @@ export { LeadingAdjustment } from "./LeadingAdjustment"
 export { TrailingCase } from "./TrailingCase"
 
 export { CollatorAlternateHandling } from "./CollatorAlternateHandling"
-
-export { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel"
 
 export { CollatorCaseFirst } from "./CollatorCaseFirst"
 

@@ -93,7 +93,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParseError::IanaChar),
+        Err(ParseError::AnnotationClose),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -109,9 +109,7 @@ fn bad_zoned_date_time() {
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
         err,
-        Err(ParseError::AbruptEnd {
-            location: "IANATimeZoneName"
-        }),
+        Err(ParseError::AnnotationClose),
         "Invalid ZonedDateTime parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -500,20 +498,21 @@ fn invalid_time() {
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
-    // Attempts to parse UTC offset: -12, failing to parse "-0" as a minute.
+    // Attempts to parse UTC offset: -12, failing to parse "-08" at all and leaving an invalid end.
     let bad_value = "T19-12-08";
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParseError::TimeMinuteSecond),
+        Err(ParseError::InvalidEnd),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
+    // Valid example: T19:12-08:00 (fails to parse on offset minute with an abrupt end)
     let bad_value = "T19:12-089";
     let err = IxdtfParser::from_str(bad_value).parse_time();
     assert_eq!(
         err,
-        Err(ParseError::InvalidEnd),
+        Err(ParseError::AbruptEnd { location: "digit" }),
         "Invalid time parsing: \"{bad_value}\" should fail to parse."
     );
 
@@ -1079,6 +1078,14 @@ fn invalid_offset() {
         Err(ParseError::AnnotationClose),
         "Should enforce UtcMinutePrecision for annotations"
     );
+
+    let offset_leap_second = "2024-08-24T14:00:00-05:00[-05:00:60]";
+    let err = IxdtfParser::from_str(offset_leap_second).parse();
+    assert_eq!(
+        err,
+        Err(ParseError::AnnotationClose),
+        "Should enforce UtcMinutePrecision for annotations"
+    );
 }
 
 // Examples referenced from
@@ -1350,4 +1357,39 @@ fn subseconds_parsing_extended_truncated() {
             calendar: None,
         })
     );
+}
+
+#[test]
+fn tz_parser_offset_invalid() {
+    use super::TimeZoneParser;
+
+    let invalid_offset = "+0";
+    let err = TimeZoneParser::from_str(invalid_offset)
+        .parse_offset()
+        .unwrap_err();
+    assert_eq!(err, ParseError::AbruptEnd { location: "digit" });
+
+    let invalid_offset = "+08:00[";
+    let err = TimeZoneParser::from_str(invalid_offset)
+        .parse_offset()
+        .unwrap_err();
+    assert_eq!(err, ParseError::InvalidEnd);
+
+    let invalid_offset = "+08:00:00[";
+    let err = TimeZoneParser::from_str(invalid_offset)
+        .parse_offset()
+        .unwrap_err();
+    assert_eq!(err, ParseError::InvalidEnd);
+
+    let invalid_offset = "+08:0000";
+    let err = TimeZoneParser::from_str(invalid_offset)
+        .parse_offset()
+        .unwrap_err();
+    assert_eq!(err, ParseError::UtcTimeSeparator);
+
+    let invalid_offset = "+0800:00";
+    let err = TimeZoneParser::from_str(invalid_offset)
+        .parse_offset()
+        .unwrap_err();
+    assert_eq!(err, ParseError::UtcTimeSeparator);
 }

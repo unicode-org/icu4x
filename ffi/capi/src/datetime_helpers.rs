@@ -2,17 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+#![allow(dead_code)] // features in here are a mess
+
 use alloc::boxed::Box;
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 use icu_calendar::Gregorian;
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 use icu_datetime::{
     fieldsets::builder::BuilderError, fieldsets::enums::*, fieldsets::Combo, pattern::*,
     scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError, FixedCalendarDateTimeFormatter,
 };
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(crate) fn map_or_default<Input, Output>(input: Option<Input>) -> Output
 where
     Output: From<Input> + Default,
@@ -20,7 +18,6 @@ where
     input.map(Output::from).unwrap_or_default()
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn date_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<DateFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -46,7 +43,7 @@ where
     Zone: DateTimeMarkers + ZoneMarkers,
     <Zone as DateTimeMarkers>::Z: ZoneMarkers,
     Combo<DateFieldSet, Zone>: DateTimeNamesFrom<DateFieldSet>,
-    CompositeFieldSet: DateTimeNamesFrom<Combo<DateFieldSet, Zone>>,
+    Combo<DateFieldSet, ZoneFieldSet>: DateTimeNamesFrom<Combo<DateFieldSet, Zone>>,
 {
     let prefs = (&locale.0).into();
     let mut names = DateTimeNames::from_formatter(prefs, formatter.clone())
@@ -57,6 +54,7 @@ where
         .build_date()
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
+                // This can fail if the date fields are for a calendar period
                 crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
@@ -74,7 +72,6 @@ where
     ))
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn datetime_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<CompositeDateTimeFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -109,9 +106,15 @@ where
     let field_set = formatter
         .to_field_set_builder()
         .build_date_and_time()
-        .map_err(|e| {
-            debug_assert!(false, "should be infallible, but got: {e:?}");
-            crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                debug_assert!(false, "fields were already validated in DateTimeFormatter");
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
         })?
         .zone(zone);
     let formatter = to_formatter(names, field_set)
@@ -123,7 +126,6 @@ where
     )))
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn date_formatter_gregorian_with_zone<Zone>(
     formatter: &FixedCalendarDateTimeFormatter<Gregorian, DateFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -149,7 +151,7 @@ where
     Zone: DateTimeMarkers + ZoneMarkers,
     <Zone as DateTimeMarkers>::Z: ZoneMarkers,
     Combo<DateFieldSet, Zone>: DateTimeNamesFrom<DateFieldSet>,
-    CompositeFieldSet: DateTimeNamesFrom<Combo<DateFieldSet, Zone>>,
+    Combo<DateFieldSet, ZoneFieldSet>: DateTimeNamesFrom<Combo<DateFieldSet, Zone>>,
 {
     let prefs = (&locale.0).into();
     let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter.clone())
@@ -160,6 +162,7 @@ where
         .build_date()
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
+                // This can fail if the date fields are for a calendar period
                 crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
@@ -177,7 +180,6 @@ where
     ))
 }
 
-#[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
 pub(super) fn datetime_formatter_gregorian_with_zone<Zone>(
     formatter: &FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>,
     locale: &crate::locale_core::ffi::Locale,
@@ -212,9 +214,15 @@ where
     let field_set = formatter
         .to_field_set_builder()
         .build_date_and_time()
-        .map_err(|e| {
-            debug_assert!(false, "should be infallible, but got: {e:?}");
-            crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+        .map_err(|e| match e {
+            BuilderError::InvalidDateFields => {
+                debug_assert!(false, "fields were already validated in DateTimeFormatter");
+                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+            }
+            _ => {
+                debug_assert!(false, "should be infallible, but got: {e:?}");
+                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+            }
         })?
         .zone(zone);
     let formatter = to_formatter(names, field_set)

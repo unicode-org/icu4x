@@ -106,6 +106,8 @@ pub mod list;
 pub mod locale;
 #[cfg(feature = "locale")]
 pub mod locale_directionality;
+#[cfg(feature = "experimental")]
+pub mod measure_unit_parser;
 #[cfg(feature = "datetime")]
 pub mod neo_datetime;
 #[cfg(feature = "normalizer")]
@@ -140,8 +142,12 @@ pub mod segmenter_sentence;
 pub mod segmenter_word;
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod time;
+#[cfg(feature = "datetime")]
+pub mod time_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
 pub mod timezone;
+#[cfg(feature = "datetime")]
+pub mod timezone_formatter;
 #[cfg(feature = "experimental")]
 pub mod units_converter;
 #[cfg(any(feature = "datetime", feature = "timezone"))]
@@ -154,3 +160,5 @@ pub mod windows_parser;
 pub mod zoned_date_formatter;
 #[cfg(feature = "datetime")]
 pub mod zoned_datetime;
+#[cfg(feature = "datetime")]
+pub mod zoned_time_formatter;

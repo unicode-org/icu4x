@@ -16,8 +16,6 @@ final class _CollatorResolvedOptionsFfi extends ffi.Struct {
   external int caseLevel;
   @ffi.Int32()
   external int numeric;
-  @ffi.Int32()
-  external int backwardSecondLevel;
 }
 
 /// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
@@ -28,7 +26,6 @@ final class CollatorResolvedOptions {
   final CollatorMaxVariable maxVariable;
   final CollatorCaseLevel caseLevel;
   final CollatorNumericOrdering numeric;
-  final CollatorBackwardSecondLevel backwardSecondLevel;
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -42,8 +39,7 @@ final class CollatorResolvedOptions {
     caseFirst = CollatorCaseFirst.values[ffi.caseFirst],
     maxVariable = CollatorMaxVariable.values[ffi.maxVariable],
     caseLevel = CollatorCaseLevel.values[ffi.caseLevel],
-    numeric = CollatorNumericOrdering.values[ffi.numeric],
-    backwardSecondLevel = CollatorBackwardSecondLevel.values[ffi.backwardSecondLevel];
+    numeric = CollatorNumericOrdering.values[ffi.numeric];
 
   // ignore: unused_element
   _CollatorResolvedOptionsFfi _toFfi(ffi.Allocator temp) {
@@ -54,7 +50,6 @@ final class CollatorResolvedOptions {
     struct.maxVariable = maxVariable.index;
     struct.caseLevel = caseLevel.index;
     struct.numeric = numeric.index;
-    struct.backwardSecondLevel = backwardSecondLevel.index;
     return struct;
   }
 
@@ -66,8 +61,7 @@ final class CollatorResolvedOptions {
       other.caseFirst == caseFirst &&
       other.maxVariable == maxVariable &&
       other.caseLevel == caseLevel &&
-      other.numeric == numeric &&
-      other.backwardSecondLevel == backwardSecondLevel;
+      other.numeric == numeric;
 
   @override
   int get hashCode => Object.hashAll([
@@ -77,7 +71,6 @@ final class CollatorResolvedOptions {
         maxVariable,
         caseLevel,
         numeric,
-        backwardSecondLevel,
       ]);
 }
 

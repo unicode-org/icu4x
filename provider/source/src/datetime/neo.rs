@@ -370,11 +370,7 @@ fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
         | DatagenCalendar::JapaneseExtended
         | DatagenCalendar::Indian
         | DatagenCalendar::Persian
-        | DatagenCalendar::Islamic
-        | DatagenCalendar::IslamicCivil
-        | DatagenCalendar::IslamicRgsa
-        | DatagenCalendar::IslamicTabular
-        | DatagenCalendar::IslamicUmmAlQura
+        | DatagenCalendar::Hijri
         | DatagenCalendar::Roc => (12, false),
     }
 }
@@ -679,7 +675,7 @@ impl_symbols_datagen!(
 );
 impl_symbols_datagen!(
     HijriYearNamesV1,
-    DatagenCalendar::Islamic,
+    DatagenCalendar::Hijri,
     YEARS_KEY_LENGTHS,
     years_convert
 );
@@ -759,7 +755,7 @@ impl_symbols_datagen!(
 );
 impl_symbols_datagen!(
     HijriMonthNamesV1,
-    DatagenCalendar::Islamic,
+    DatagenCalendar::Hijri,
     NORMAL_KEY_LENGTHS,
     months_convert
 );

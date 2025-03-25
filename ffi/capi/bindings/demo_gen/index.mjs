@@ -27,10 +27,16 @@ import * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 export * as ComposingNormalizerDemo from "./ComposingNormalizer.mjs";
 import * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
 export * as DecomposingNormalizerDemo from "./DecomposingNormalizer.mjs";
+import * as TimeFormatterDemo from "./TimeFormatter.mjs";
+export * as TimeFormatterDemo from "./TimeFormatter.mjs";
+import * as TimeZoneFormatterDemo from "./TimeZoneFormatter.mjs";
+export * as TimeZoneFormatterDemo from "./TimeZoneFormatter.mjs";
 import * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 export * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 import * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
 export * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
+import * as ZonedTimeFormatterDemo from "./ZonedTimeFormatter.mjs";
+export * as ZonedTimeFormatterDemo from "./ZonedTimeFormatter.mjs";
 
 import RenderTerminiWordSegmenter from "./WordSegmenter.mjs";
 
@@ -915,6 +921,96 @@ let termini = Object.assign({
         ]
     },
 
+    "TimeFormatter.format": {
+        func: TimeFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "TimeFormatter.format",
+        parameters: [
+            
+            {
+                name: "TimeFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "TimeFormatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "TimeFormatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "TimeFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Subsecond",
+                type: "number",
+                typeUse: "number"
+            }
+            
+        ]
+    },
+
+    "TimeZoneFormatter.format": {
+        func: TimeZoneFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "TimeZoneFormatter.format",
+        parameters: [
+            
+            {
+                name: "TimeZoneFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
     "ZonedDateFormatter.formatIso": {
         func: ZonedDateFormatterDemo.formatIso,
         // For avoiding webpacking minifying issues:
@@ -1040,6 +1136,81 @@ let termini = Object.assign({
             
             {
                 name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "ZonedTimeFormatter.format": {
+        func: ZonedTimeFormatterDemo.format,
+        // For avoiding webpacking minifying issues:
+        funcName: "ZonedTimeFormatter.format",
+        parameters: [
+            
+            {
+                name: "ZonedTimeFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedTimeFormatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             },

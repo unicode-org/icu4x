@@ -3,38 +3,79 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use smallvec::SmallVec;
-use zerotrie::ZeroTrieSimpleAscii;
 
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::power::get_power;
 use crate::measure::si_prefix::get_si_prefix;
 use crate::units::InvalidUnitError;
 
+use icu_provider::prelude::*;
+use icu_provider::DataError;
+
 use super::provider::si_prefix::{Base, SiPrefix};
 use super::provider::single_unit::SingleUnit;
 
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
-pub struct MeasureUnitParser<'data> {
+pub struct MeasureUnitParser {
     /// Contains the trie for the unit identifiers.
-    units_trie: &'data ZeroTrieSimpleAscii<[u8]>,
+    payload: DataPayload<super::provider::trie::UnitsTrieV1>,
 }
 
-impl<'data> MeasureUnitParser<'data> {
-    // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
-    /// Creates a new MeasureUnitParser from a ZeroTrie payload.
-    pub fn from_payload(payload: &'data ZeroTrieSimpleAscii<[u8]>) -> Self {
+#[cfg(feature = "compiled_data")]
+impl Default for MeasureUnitParser {
+    /// Creates a new [`MeasureUnitParser`] from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    fn default() -> Self {
         Self {
-            units_trie: payload,
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_TRIE_V1),
         }
     }
+}
+
+impl MeasureUnitParser {
+    /// Creates a new [`MeasureUnitParser`] from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self {
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_TRIE_V1),
+        }
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: ?Sized + DataProvider<super::provider::trie::UnitsTrieV1>,
+    {
+        let payload = provider.load(DataRequest::default())?.payload;
+
+        Ok(Self { payload })
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        () -> error: DataError,
+        functions: [
+            new: skip,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
 
     /// Get the unit id.
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
     fn get_unit_id<'a>(&self, part: &'a [u8]) -> Result<(u16, &'a [u8]), InvalidUnitError> {
-        let mut cursor = self.units_trie.cursor();
+        let mut cursor = self.payload.get().trie.cursor();
         let mut longest_match = Err(InvalidUnitError);
 
         for (i, byte) in part.iter().enumerate() {
@@ -190,7 +231,7 @@ impl<'data> MeasureUnitParser<'data> {
 
 #[cfg(test)]
 mod tests {
-    use crate::units::converter_factory::ConverterFactory;
+    use crate::measure::parser::MeasureUnitParser;
 
     #[test]
     fn test_parser_cases() {
@@ -200,10 +241,9 @@ mod tests {
             ("portion-per-1000000000", 1, 1_000_000_000),
             ("liter-per-100-kilometer", 2, 100),
         ];
+        let parser = MeasureUnitParser::default();
 
         for (input, expected_len, expected_denominator) in test_cases {
-            let converter_factory = ConverterFactory::new();
-            let parser = converter_factory.parser();
             let measure_unit = parser.try_from_str(input).unwrap();
             assert_eq!(measure_unit.single_units.len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
@@ -268,8 +308,7 @@ mod tests {
                 continue;
             }
 
-            let converter_factory = ConverterFactory::new();
-            let parser = converter_factory.parser();
+            let parser = MeasureUnitParser::default();
             let measure_unit = parser.try_from_str(input);
             if measure_unit.is_ok() {
                 println!("OK:  {}", input);

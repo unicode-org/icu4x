@@ -38,12 +38,6 @@ icu::datetime::fieldsets::E::zone#FnInStruct
 icu::datetime::fieldsets::MD::zone#FnInStruct
 icu::datetime::fieldsets::MDE::zone#FnInStruct
 icu::datetime::fieldsets::T::hm#FnInStruct
-icu::datetime::fieldsets::T::long#FnInStruct
-icu::datetime::fieldsets::T::medium#FnInStruct
-icu::datetime::fieldsets::T::short#FnInStruct
-icu::datetime::fieldsets::T::with_alignment#FnInStruct
-icu::datetime::fieldsets::T::with_length#FnInStruct
-icu::datetime::fieldsets::T::with_time_precision#FnInStruct
 icu::datetime::fieldsets::T::zone#FnInStruct
 icu::datetime::fieldsets::YMD::zone#FnInStruct
 icu::datetime::fieldsets::YMDE::zone#FnInStruct

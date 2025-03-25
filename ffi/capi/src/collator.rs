@@ -29,7 +29,6 @@ pub mod ffi {
         pub alternate_handling: DiplomatOption<CollatorAlternateHandling>,
         pub max_variable: DiplomatOption<CollatorMaxVariable>,
         pub case_level: DiplomatOption<CollatorCaseLevel>,
-        pub backward_second_level: DiplomatOption<CollatorBackwardSecondLevel>,
     }
 
     // Note the flipped order of the words `Collator` and `Resolved`, because
@@ -45,7 +44,6 @@ pub mod ffi {
         pub max_variable: CollatorMaxVariable,
         pub case_level: CollatorCaseLevel,
         pub numeric: CollatorNumericOrdering,
-        pub backward_second_level: CollatorBackwardSecondLevel,
     }
 
     #[diplomat::rust_link(icu::collator::options::Strength, Enum)]
@@ -96,14 +94,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu::collator::options::NumericOrdering, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum CollatorNumericOrdering {
-        Off = 0,
-        On = 1,
-    }
-
-    #[diplomat::rust_link(icu::collator::options::BackwardSecondLevel, Enum)]
-    #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
-    #[diplomat::enum_convert(icu_collator::options::BackwardSecondLevel, needs_wildcard)]
-    pub enum CollatorBackwardSecondLevel {
         Off = 0,
         On = 1,
     }
@@ -194,7 +184,6 @@ impl From<ffi::CollatorOptionsV1> for CollatorOptions {
         result.alternate_handling = options.alternate_handling.into_converted_option();
         result.max_variable = options.max_variable.into_converted_option();
         result.case_level = options.case_level.into_converted_option();
-        result.backward_second_level = options.backward_second_level.into_converted_option();
 
         result
     }
@@ -209,7 +198,6 @@ impl From<ResolvedCollatorOptions> for ffi::CollatorResolvedOptionsV1 {
             max_variable: options.max_variable.into(),
             case_level: options.case_level.into(),
             numeric: options.numeric.into(),
-            backward_second_level: options.backward_second_level.into(),
         }
     }
 }

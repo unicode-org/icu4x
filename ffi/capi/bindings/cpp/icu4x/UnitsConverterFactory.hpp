@@ -14,7 +14,6 @@
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "MeasureUnit.hpp"
-#include "MeasureUnitParser.hpp"
 #include "UnitsConverter.hpp"
 
 
@@ -28,8 +27,6 @@ namespace capi {
     icu4x_UnitsConverterFactory_create_with_provider_mv1_result icu4x_UnitsConverterFactory_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     icu4x::capi::UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const icu4x::capi::UnitsConverterFactory* self, const icu4x::capi::MeasureUnit* from, const icu4x::capi::MeasureUnit* to);
-    
-    icu4x::capi::MeasureUnitParser* icu4x_UnitsConverterFactory_parser_mv1(const icu4x::capi::UnitsConverterFactory* self);
     
     
     void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
@@ -53,11 +50,6 @@ inline std::unique_ptr<icu4x::UnitsConverter> icu4x::UnitsConverterFactory::conv
     from.AsFFI(),
     to.AsFFI());
   return std::unique_ptr<icu4x::UnitsConverter>(icu4x::UnitsConverter::FromFFI(result));
-}
-
-inline std::unique_ptr<icu4x::MeasureUnitParser> icu4x::UnitsConverterFactory::parser() const {
-  auto result = icu4x::capi::icu4x_UnitsConverterFactory_parser_mv1(this->AsFFI());
-  return std::unique_ptr<icu4x::MeasureUnitParser>(icu4x::MeasureUnitParser::FromFFI(result));
 }
 
 inline const icu4x::capi::UnitsConverterFactory* icu4x::UnitsConverterFactory::AsFFI() const {

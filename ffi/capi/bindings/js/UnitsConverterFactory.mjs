@@ -2,7 +2,6 @@
 import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { MeasureUnit } from "./MeasureUnit.mjs"
-import { MeasureUnitParser } from "./MeasureUnitParser.mjs"
 import { UnitsConverter } from "./UnitsConverter.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -99,24 +98,6 @@ export class UnitsConverterFactory {
     
         try {
             return result === 0 ? null : new UnitsConverter(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    /** 
-     * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-     *
-     * See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
-     */
-    parser() {
-        // This lifetime edge depends on lifetimes 'a
-        let aEdges = [this];
-        
-        const result = wasm.icu4x_UnitsConverterFactory_parser_mv1(this.ffiValue);
-    
-        try {
-            return new MeasureUnitParser(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
         
         finally {}

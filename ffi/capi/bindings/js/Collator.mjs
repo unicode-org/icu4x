@@ -132,7 +132,7 @@ export class Collator {
      * See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
      */
     get resolvedOptions() {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 28, 4, false);
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 24, 4, false);
         
         const result = wasm.icu4x_Collator_resolved_options_v1_mv1(diplomatReceive.buffer, this.ffiValue);
     

@@ -15,15 +15,15 @@ use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, R
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::subtags::language;
+use icu_locale_core::subtags::region;
 use icu_provider::prelude::*;
 
 use core::fmt;
 
 define_preferences!(
-    /// The prefs for date formatting.
+    /// The preferences for calendars formatting.
     [Copy]
-    AnyCalendarPreferences,
+    CalendarPreferences,
     {
         /// The user's preferred calendar system.
         calendar_algorithm: CalendarAlgorithm
@@ -702,12 +702,12 @@ impl AnyCalendar {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(prefs: AnyCalendarPreferences) -> Result<Self, DataError> {
+    pub fn try_new(prefs: CalendarPreferences) -> Result<Self, DataError> {
         Self::try_new_unstable(&crate::provider::Baked, prefs)
     }
 
     icu_provider::gen_buffer_data_constructors!(
-        (prefs: AnyCalendarPreferences) -> error: DataError,
+        (prefs: CalendarPreferences) -> error: DataError,
         functions: [
             try_new: skip,
             try_new_with_buffer_provider,
@@ -717,10 +717,7 @@ impl AnyCalendar {
     );
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<P>(
-        provider: &P,
-        prefs: AnyCalendarPreferences,
-    ) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, prefs: CalendarPreferences) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
@@ -732,12 +729,10 @@ impl AnyCalendar {
     {
         // This will eventually need fallback data from the provider
         let algo = prefs.calendar_algorithm.unwrap_or_else(|| {
-            let lang = prefs.locale_preferences.language();
-            if lang == language!("th") {
+            let reg = prefs.locale_preferences.region();
+            if reg == Some(region!("th")) {
                 CalendarAlgorithm::Buddhist
-            } else if lang == language!("sa") {
-                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-            } else if lang == language!("af") || lang == language!("ir") {
+            } else if reg == Some(region!("af")) || reg == Some(region!("ir")) {
                 CalendarAlgorithm::Persian
             } else {
                 CalendarAlgorithm::Gregory
