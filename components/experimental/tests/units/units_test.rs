@@ -39,7 +39,7 @@ fn test_cldr_unit_tests() {
         .collect();
 
     let converter_factory = ConverterFactory::new();
-    let parser = MeasureUnitParser::new();
+    let parser = MeasureUnitParser::default();
 
     for test in tests {
         let input_unit = parser
@@ -208,7 +208,7 @@ fn test_units_non_convertible() {
     ];
 
     let converter_factory = ConverterFactory::new();
-    let parser = MeasureUnitParser::new();
+    let parser = MeasureUnitParser::default();
 
     for (input, output) in non_convertible_units.iter() {
         let input_unit = parser
@@ -286,7 +286,7 @@ fn test_unparsable_units() {
         "meter second",
     ];
 
-    let parser = MeasureUnitParser::new();
+    let parser = MeasureUnitParser::default();
 
     unparsable_units.iter().for_each(|unit| {
         assert!(

@@ -63,7 +63,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
         }
 
         // TODO: remove this once we can use the `try_new_with_buffer_provider` constructor in `components/experimental/src/measure/parser.rs`.
-        // OR just using `MeasureUnitParser::new()`
+        // OR just using `MeasureUnitParser::default()`
         let units_conversion_trie =
             ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
                 DataError::custom("Could not create ZeroTrie from units.json data")

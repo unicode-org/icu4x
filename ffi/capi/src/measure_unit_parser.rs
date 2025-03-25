@@ -36,7 +36,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<MeasureUnitParser> {
             Box::new(MeasureUnitParser(
-                icu_experimental::measure::parser::MeasureUnitParser::new(),
+                icu_experimental::measure::parser::MeasureUnitParser::default(),
             ))
         }
         /// Construct a new [`MeasureUnitParser`] instance using a particular data source.

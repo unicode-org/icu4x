@@ -22,19 +22,21 @@ pub struct MeasureUnitParser {
     payload: DataPayload<super::provider::trie::UnitsTrieV1>,
 }
 
-impl MeasureUnitParser {
+impl Default for MeasureUnitParser {
     /// Creates a new [`MeasureUnitParser`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
+    fn default() -> Self {
         Self {
             payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_TRIE_V1),
         }
     }
+}
 
+impl MeasureUnitParser {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
@@ -226,7 +228,7 @@ mod tests {
             ("portion-per-1000000000", 1, 1_000_000_000),
             ("liter-per-100-kilometer", 2, 100),
         ];
-        let parser = MeasureUnitParser::new();
+        let parser = MeasureUnitParser::default();
 
         for (input, expected_len, expected_denominator) in test_cases {
             let measure_unit = parser.try_from_str(input).unwrap();
@@ -293,7 +295,7 @@ mod tests {
                 continue;
             }
 
-            let parser = MeasureUnitParser::new();
+            let parser = MeasureUnitParser::default();
             let measure_unit = parser.try_from_str(input);
             if measure_unit.is_ok() {
                 println!("OK:  {}", input);
