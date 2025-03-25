@@ -114,6 +114,10 @@ export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
 
+export { MeasureUnit } from "./MeasureUnit.mjs"
+
+export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
+
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer.mjs"
@@ -192,10 +196,6 @@ export { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 
 export { TimeZoneFormatter } from "./TimeZoneFormatter.mjs"
 
-export { MeasureUnit } from "./MeasureUnit.mjs"
-
-export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
-
 export { UnitsConverter } from "./UnitsConverter.mjs"
 
 export { UnitsConverterFactory } from "./UnitsConverterFactory.mjs"
@@ -229,8 +229,6 @@ export { LeadingAdjustment } from "./LeadingAdjustment.mjs"
 export { TrailingCase } from "./TrailingCase.mjs"
 
 export { CollatorAlternateHandling } from "./CollatorAlternateHandling.mjs"
-
-export { CollatorBackwardSecondLevel } from "./CollatorBackwardSecondLevel.mjs"
 
 export { CollatorCaseFirst } from "./CollatorCaseFirst.mjs"
 

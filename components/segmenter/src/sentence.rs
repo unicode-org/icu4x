@@ -148,7 +148,7 @@ impl SentenceSegmenter {
         /// Constructs a [`SentenceSegmenter`] for a given options and using compiled data.
         functions: [
             try_new,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]

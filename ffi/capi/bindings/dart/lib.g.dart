@@ -36,7 +36,6 @@ part 'CodePointSetBuilder.g.dart';
 part 'CodePointSetData.g.dart';
 part 'Collator.g.dart';
 part 'CollatorAlternateHandling.g.dart';
-part 'CollatorBackwardSecondLevel.g.dart';
 part 'CollatorCaseFirst.g.dart';
 part 'CollatorCaseLevel.g.dart';
 part 'CollatorMaxVariable.g.dart';

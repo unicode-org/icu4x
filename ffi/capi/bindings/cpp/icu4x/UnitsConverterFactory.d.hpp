@@ -15,8 +15,6 @@ namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct MeasureUnit; }
 class MeasureUnit;
-namespace capi { struct MeasureUnitParser; }
-class MeasureUnitParser;
 namespace capi { struct UnitsConverter; }
 class UnitsConverter;
 namespace capi { struct UnitsConverterFactory; }
@@ -65,13 +63,6 @@ public:
    * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
    */
   inline std::unique_ptr<icu4x::UnitsConverter> converter(const icu4x::MeasureUnit& from, const icu4x::MeasureUnit& to) const;
-
-  /**
-   * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-   *
-   * See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
-   */
-  inline std::unique_ptr<icu4x::MeasureUnitParser> parser() const;
 
   inline const icu4x::capi::UnitsConverterFactory* AsFFI() const;
   inline icu4x::capi::UnitsConverterFactory* AsFFI();

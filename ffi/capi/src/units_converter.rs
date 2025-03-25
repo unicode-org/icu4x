@@ -6,6 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    use crate::measure_unit_parser::ffi::MeasureUnit;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
@@ -65,46 +66,7 @@ pub mod ffi {
                 .map(UnitsConverter)
                 .map(Box::new)
         }
-
-        /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-        #[diplomat::rust_link(
-            icu::experimental::units::converter_factory::ConverterFactory::parser,
-            FnInStruct
-        )]
-        pub fn parser<'a>(&'a self) -> Box<MeasureUnitParser<'a>> {
-            MeasureUnitParser(self.0.parser()).into()
-        }
     }
-
-    #[diplomat::opaque]
-    /// An ICU4X Measurement Unit parser object which is capable of parsing the CLDR unit identifier
-    /// (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-    #[diplomat::rust_link(icu::experimental::measure::parser::MeasureUnitParser, Struct)]
-    pub struct MeasureUnitParser<'a>(pub icu_experimental::measure::parser::MeasureUnitParser<'a>);
-
-    impl<'a> MeasureUnitParser<'a> {
-        /// Parses the CLDR unit identifier (e.g. `meter-per-square-second`) and returns the corresponding [`MeasureUnit`],
-        /// if the identifier is valid.
-        #[diplomat::rust_link(
-            icu::experimental::measure::parser::MeasureUnitParser::parse,
-            FnInStruct
-        )]
-        pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {
-            self.0
-                .try_from_utf8(unit_id)
-                .ok()
-                .map(MeasureUnit)
-                .map(Box::new)
-        }
-    }
-
-    #[diplomat::opaque]
-    /// An ICU4X Measurement Unit object which represents a single unit of measurement
-    /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
-    ///
-    /// You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse_measure_unit` method.
-    #[diplomat::rust_link(icu::experimental::measure::measureunit::MeasureUnit, Struct)]
-    pub struct MeasureUnit(pub icu_experimental::measure::measureunit::MeasureUnit);
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.

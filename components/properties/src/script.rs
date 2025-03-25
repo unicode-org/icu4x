@@ -319,7 +319,7 @@ impl ScriptWithExtensions {
         () -> result: Result<ScriptWithExtensions, DataError>,
         functions: [
             new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self,
         ]

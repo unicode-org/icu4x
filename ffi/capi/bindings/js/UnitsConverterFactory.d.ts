@@ -2,7 +2,6 @@
 import type { DataError } from "./DataError"
 import type { DataProvider } from "./DataProvider"
 import type { MeasureUnit } from "./MeasureUnit"
-import type { MeasureUnitParser } from "./MeasureUnitParser"
 import type { UnitsConverter } from "./UnitsConverter"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
@@ -36,13 +35,6 @@ export class UnitsConverterFactory {
      * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
      */
     converter(from: MeasureUnit, to: MeasureUnit): UnitsConverter | null;
-
-    /** 
-     * Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-     *
-     * See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
-     */
-    parser(): MeasureUnitParser;
 
     constructor();
 }

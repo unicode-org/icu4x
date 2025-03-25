@@ -58,16 +58,6 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     final result = _icu4x_UnitsConverterFactory_converter_mv1(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
-
-  /// Creates a parser to parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
-  ///
-  /// See the [Rust documentation for `parser`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.parser) for more information.
-  MeasureUnitParser parser() {
-    // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
-    final result = _icu4x_UnitsConverterFactory_parser_mv1(_ffi);
-    return MeasureUnitParser._fromFfi(result, [], aEdges);
-  }
 }
 
 @_DiplomatFfiUse('icu4x_UnitsConverterFactory_destroy_mv1')
@@ -89,10 +79,5 @@ external _ResultOpaqueInt32 _icu4x_UnitsConverterFactory_create_with_provider_mv
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_converter_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_converter_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> from, ffi.Pointer<ffi.Opaque> to);
-
-@_DiplomatFfiUse('icu4x_UnitsConverterFactory_parser_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UnitsConverterFactory_parser_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_UnitsConverterFactory_parser_mv1(ffi.Pointer<ffi.Opaque> self);
 
 // dart format on
