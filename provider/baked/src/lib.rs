@@ -13,7 +13,6 @@ pub mod export;
 
 pub use icu_provider::prelude::*;
 
-pub mod binary_search;
 pub mod zerotrie;
 
 pub trait DataStore<M: DataMarker> {
