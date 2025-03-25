@@ -90,7 +90,7 @@ pub(super) fn datetime_formatter_with_zone<Zone>(
         ),
     >,
 ) -> Result<
-    Box<crate::neo_datetime::ffi::ZonedDateTimeFormatter>,
+    Box<crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatter>,
     crate::errors::ffi::DateTimeFormatterLoadError,
 >
 where
@@ -121,9 +121,9 @@ where
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
         .cast_into_fset();
-    Ok(Box::new(crate::neo_datetime::ffi::ZonedDateTimeFormatter(
-        formatter,
-    )))
+    Ok(Box::new(
+        crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatter(formatter),
+    ))
 }
 
 pub(super) fn date_formatter_gregorian_with_zone<Zone>(
@@ -198,7 +198,7 @@ pub(super) fn datetime_formatter_gregorian_with_zone<Zone>(
         ),
     >,
 ) -> Result<
-    Box<crate::neo_datetime::ffi::ZonedDateTimeFormatterGregorian>,
+    Box<crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian>,
     crate::errors::ffi::DateTimeFormatterLoadError,
 >
 where
@@ -230,6 +230,6 @@ where
         .map_err(|(e, _)| e)?
         .cast_into_fset();
     Ok(Box::new(
-        crate::neo_datetime::ffi::ZonedDateTimeFormatterGregorian(formatter),
+        crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian(formatter),
     ))
 }
