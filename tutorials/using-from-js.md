@@ -6,7 +6,7 @@ The NPM package can be found under [`ffi/npm`], with docs [here](https://unicode
 
 _We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out_
 
-# Using the package
+## Using the package
 
 Similar to C++, the JS APIs mirror the Rust code in the `icu_capi` crate, which can be explored on [docs.rs][rust-docs], though the precise types used may be different.
 
