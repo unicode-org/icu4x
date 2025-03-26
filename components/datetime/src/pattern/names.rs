@@ -1053,9 +1053,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
-        let calendar =
-            AnyCalendarForFormatting::from_parts(*formatter.selection.niche(), formatter.calendar);
-        Self::from_parts(prefs, (calendar, formatter.names))
+        Self::from_parts(prefs, (formatter.calendar, formatter.names))
     }
 
     fn from_parts(

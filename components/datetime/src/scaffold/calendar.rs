@@ -360,11 +360,8 @@ impl AnyCalendarForFormatting {
         Some(Self { any_calendar, kind })
     }
 
-    pub(crate) fn from_parts(
-        kind: AnyCalendarForFormattingKind,
-        any_calendar: AnyCalendar,
-    ) -> Self {
-        Self { any_calendar, kind }
+    pub(crate) fn any_calendar(&self) -> &AnyCalendar {
+        &self.any_calendar
     }
 
     pub(crate) fn take_any_calendar(self) -> AnyCalendar {
