@@ -6,7 +6,7 @@
 //!
 //! # Fields
 //!
-//! In ICU4X, a [formattable time zone] consists of up to four different fields:
+//! In ICU4X, a [`TimeZoneInfo`] consists of up to four different fields:
 //!
 //! 1. The time zone ID
 //! 2. The offset from UTC
@@ -54,34 +54,6 @@
 //!
 //! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
-//!
-//! # Examples
-//!
-//! ```
-//! use icu::calendar::Date;
-//! use icu::time::zone::IanaParser;
-//! use icu::time::zone::TimeZoneVariant;
-//! use icu::time::Time;
-//! use icu::time::TimeZone;
-//! use icu::locale::subtags::subtag;
-//!
-//! // Parse the IANA ID
-//! let id = IanaParser::new().parse("America/Chicago");
-//!
-//! // Alternatively, use the BCP47 ID directly
-//! let id = TimeZone(subtag!("uschi"));
-//!
-//! // Create a TimeZoneInfo<Base> by associating the ID with an offset
-//! let time_zone = id.with_offset("-0600".parse().ok());
-//!
-//! // Extend to a TimeZoneInfo<AtTime> by adding a local time
-//! let time_zone_at_time = time_zone
-//!     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
-//!
-//! // Extend to a TimeZoneInfo<Full> by adding a zone variant
-//! let time_zone_with_variant =
-//!     time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
-//! ```
 
 pub mod iana;
 mod offset;
@@ -173,6 +145,8 @@ pub mod models {
 /// different identities in CLDR, as we want to be able to say "Norway Time" and
 /// "Germany Time". On the other hand `Europe/Belfast` and `Europe/London` are the same
 /// CLDR identity ("UK Time").
+///
+/// See the docs on [`zone`](crate::zone) for more information.
 ///
 /// ```
 /// use icu::time::zone::{IanaParser, TimeZone};
@@ -276,6 +250,36 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// A utility type that can hold time zone information.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+///
+/// See the docs on [`zone`](self) for more information.
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::Date;
+/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::TimeZoneVariant;
+/// use icu::time::Time;
+/// use icu::time::TimeZone;
+/// use icu::locale::subtags::subtag;
+///
+/// // Parse the IANA ID
+/// let id = IanaParser::new().parse("America/Chicago");
+///
+/// // Alternatively, use the BCP47 ID directly
+/// let id = TimeZone(subtag!("uschi"));
+///
+/// // Create a TimeZoneInfo<Base> by associating the ID with an offset
+/// let time_zone = id.with_offset("-0600".parse().ok());
+///
+/// // Extend to a TimeZoneInfo<AtTime> by adding a local time
+/// let time_zone_at_time = time_zone
+///     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
+///
+/// // Extend to a TimeZoneInfo<Full> by adding a zone variant
+/// let time_zone_with_variant =
+///     time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
+/// ```
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct TimeZoneInfo<Model: models::TimeZoneModel> {

@@ -179,9 +179,9 @@ fn test_normalize_canonicalize_iana_coverage() {
 
     for (iana_id, bcp47) in iana2bcp {
         let unnormalized = iana_id.to_ascii_uppercase();
-        let (tz, canonicalized, normalized) = parser.parse(&unnormalized);
-        assert_eq!(tz, *bcp47);
-        assert_eq!(&canonicalized, bcp2iana.get(bcp47).unwrap());
-        assert_eq!(&normalized, iana_id);
+        let r = parser.parse(&unnormalized);
+        assert_eq!(r.time_zone, *bcp47);
+        assert_eq!(r.canonical, bcp2iana.get(bcp47).unwrap());
+        assert_eq!(r.normalized, iana_id);
     }
 }

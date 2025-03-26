@@ -29,6 +29,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
+ */
 struct TimeZoneAndCanonical {
   std::unique_ptr<icu4x::TimeZone> time_zone;
   std::string_view canonical;

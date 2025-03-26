@@ -5,11 +5,8 @@
 //! Tools for parsing Windows timezone IDs.
 
 use core::fmt::Write;
-
-use icu_provider::{
-    prelude::icu_locale_core::subtags::{region, Region},
-    DataError, DataPayload, DataProvider,
-};
+use icu_locale_core::subtags::{region, Region};
+use icu_provider::{DataError, DataPayload, DataProvider};
 
 use crate::{
     provider::windows::{TimeZoneWindowsV1, WindowsZonesToBcp47Map},
