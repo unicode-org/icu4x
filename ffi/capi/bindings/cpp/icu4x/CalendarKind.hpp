@@ -11,11 +11,14 @@
 #include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
+#include "Locale.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
+    
+    icu4x::capi::CalendarKind icu4x_CalendarKind_create_mv1(const icu4x::capi::Locale* locale);
     
     
     } // extern "C"
@@ -50,5 +53,10 @@ inline icu4x::CalendarKind icu4x::CalendarKind::FromFFI(icu4x::capi::CalendarKin
     default:
       abort();
   }
+}
+
+inline icu4x::CalendarKind icu4x::CalendarKind::create(const icu4x::Locale& locale) {
+  auto result = icu4x::capi::icu4x_CalendarKind_create_mv1(locale.AsFFI());
+  return icu4x::CalendarKind::FromFFI(result);
 }
 #endif // icu4x_CalendarKind_HPP

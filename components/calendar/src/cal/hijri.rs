@@ -50,7 +50,7 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code, `islamic` (alias `ah`), Anno Hegirae.
+/// This calendar uses a single era code, `islamic-rgsa` (alias `ah`), Anno Hegirae.
 ///
 /// # Month codes
 ///
@@ -441,7 +441,7 @@ impl Calendar for HijriObservational {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("islamic" | "ah") | None => year,
+            Some("islamic-rgsa" | "ah") | None => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
         let Some((month, false)) = month_code.parsed() else {
@@ -508,7 +508,7 @@ impl Calendar for HijriObservational {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic"), date.0.year)
+        year_as_hijri(tinystr!(16, "islamic-rgsa"), date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

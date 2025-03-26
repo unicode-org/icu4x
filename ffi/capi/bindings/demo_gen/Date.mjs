@@ -1,11 +1,8 @@
 import { Calendar } from "icu4x"
 import { Date } from "icu4x"
-import { Locale } from "icu4x"
-export function monthCode(dateYear, dateMonth, dateDay, dateCalendarLocaleName) {
+export function monthCode(dateYear, dateMonth, dateDay, dateCalendarKind) {
     
-    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
-    
-    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    let dateCalendar = new Calendar(dateCalendarKind);
     
     let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
     
@@ -14,11 +11,9 @@ export function monthCode(dateYear, dateMonth, dateDay, dateCalendarLocaleName) 
 
     return out;
 }
-export function era(dateYear, dateMonth, dateDay, dateCalendarLocaleName) {
+export function era(dateYear, dateMonth, dateDay, dateCalendarKind) {
     
-    let dateCalendarLocale = Locale.fromString(dateCalendarLocaleName);
-    
-    let dateCalendar = Calendar.createForLocale(dateCalendarLocale);
+    let dateCalendar = new Calendar(dateCalendarKind);
     
     let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
     

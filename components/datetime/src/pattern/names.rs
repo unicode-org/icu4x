@@ -7,7 +7,7 @@ use super::{
     GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
     PatternLoadError,
 };
-use crate::error::ErrorField;
+use crate::error::{ErrorField, UnsupportedCalendarError};
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
 use crate::provider::neo::{marker_attrs, *};
@@ -591,7 +591,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
 #[derive(Debug, Clone)]
 pub struct DateTimeNames<FSet: DateTimeNamesMarker> {
     inner: FixedCalendarDateTimeNames<(), FSet>,
-    calendar: AnyCalendar,
+    calendar: AnyCalendarForFormatting,
 }
 
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
@@ -989,14 +989,19 @@ where
 }
 
 impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
-    /// Creates a completely empty instance, not even with number formatting.
-    pub fn new_without_number_formatting(
+    /// Creates a completely empty instance, not even with number formatting,
+    /// with the specified calendar.
+    pub fn try_new_with_calendar_without_number_formatting(
         prefs: DateTimeFormatterPreferences,
         calendar: AnyCalendar,
-    ) -> Self {
-        Self {
-            inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
-            calendar,
+    ) -> Result<Self, UnsupportedCalendarError> {
+        let kind = calendar.kind();
+        match AnyCalendarForFormatting::try_from_any_calendar(calendar) {
+            Some(calendar) => Ok(Self {
+                inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
+                calendar,
+            }),
+            None => Err(UnsupportedCalendarError { kind }),
         }
     }
 
@@ -1048,12 +1053,12 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
-        Self::from_parts(prefs, (formatter.calendar, formatter.names))
+        Self::from_parts(prefs, (formatter.calendar.into_tagged(), formatter.names))
     }
 
     fn from_parts(
         prefs: DateTimeFormatterPreferences,
-        parts: (AnyCalendar, RawDateTimeNames<FSet>),
+        parts: (AnyCalendarForFormatting, RawDateTimeNames<FSet>),
     ) -> Self {
         Self {
             inner: FixedCalendarDateTimeNames {
@@ -1081,17 +1086,21 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::AnyCalendar;
+    /// use icu::calendar::{AnyCalendar, AnyCalendarKind};
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let names = DateTimeNames::new_without_number_formatting(
+    /// let kind = AnyCalendarKind::new(locale!("es-MX").into());
+    /// let calendar = AnyCalendar::new(kind);
+    ///
+    /// let names = DateTimeNames::try_new_with_calendar_without_number_formatting(
     ///     locale!("es-MX").into(),
-    ///     AnyCalendar::try_new(locale!("es-MX").into()).unwrap(),
-    /// );
+    ///     calendar,
+    /// )
+    /// .expect("All locale-default calendars are supported");
     ///
     /// let field_set = T::long().hm();
     ///

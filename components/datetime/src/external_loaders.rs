@@ -4,10 +4,11 @@
 
 //! Internal traits and structs for loading data from other crates.
 
-use icu_calendar::{AnyCalendar, CalendarPreferences};
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_provider::prelude::*;
+
+use crate::scaffold::{AnyCalendarForFormatting, AnyCalendarForFormattingKind};
 
 /// Trait for loading a DecimalFormatter.
 ///
@@ -24,7 +25,10 @@ pub(crate) trait DecimalFormatterLoader {
 ///
 /// Implemented on the provider-specific loader types in this module.
 pub(crate) trait AnyCalendarLoader {
-    fn load(&self, prefs: CalendarPreferences) -> Result<AnyCalendar, DataError>;
+    fn load(
+        &self,
+        kind: AnyCalendarForFormattingKind,
+    ) -> Result<AnyCalendarForFormatting, DataError>;
 }
 
 /// Loader for types from other crates using compiled data.
@@ -46,8 +50,11 @@ impl DecimalFormatterLoader for ExternalLoaderCompiledData {
 #[cfg(feature = "compiled_data")]
 impl AnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
-    fn load(&self, prefs: CalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new(prefs)
+    fn load(
+        &self,
+        kind: AnyCalendarForFormattingKind,
+    ) -> Result<AnyCalendarForFormatting, DataError> {
+        AnyCalendarForFormatting::try_new(kind)
     }
 }
 
@@ -76,8 +83,11 @@ where
     P: ?Sized + BufferProvider,
 {
     #[inline]
-    fn load(&self, prefs: CalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_with_buffer_provider(self.0, prefs)
+    fn load(
+        &self,
+        kind: AnyCalendarForFormattingKind,
+    ) -> Result<AnyCalendarForFormatting, DataError> {
+        AnyCalendarForFormatting::try_new_with_buffer_provider(self.0, kind)
     }
 }
 
@@ -111,7 +121,10 @@ where
         + ?Sized,
 {
     #[inline]
-    fn load(&self, prefs: CalendarPreferences) -> Result<AnyCalendar, DataError> {
-        AnyCalendar::try_new_unstable(self.0, prefs)
+    fn load(
+        &self,
+        kind: AnyCalendarForFormattingKind,
+    ) -> Result<AnyCalendarForFormatting, DataError> {
+        AnyCalendarForFormatting::try_new_unstable(self.0, kind)
     }
 }

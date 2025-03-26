@@ -13,6 +13,8 @@ mod fieldset_traits;
 mod get_field;
 mod names_storage;
 
+pub(crate) use calendar::AnyCalendarForFormatting;
+pub(crate) use calendar::AnyCalendarForFormattingKind;
 pub(crate) use calendar::AnyCalendarProvider;
 pub use calendar::CalMarkers;
 pub use calendar::CldrCalendar;
@@ -21,6 +23,7 @@ pub use calendar::FullDataCalMarkers;
 pub use calendar::InFixedCalendar;
 pub use calendar::InSameCalendar;
 pub use calendar::NoDataCalMarkers;
+pub(crate) use calendar::UntaggedAnyCalendarForFormatting;
 
 pub(crate) use fieldset_traits::datetime_marker_helper;
 pub use fieldset_traits::AllAnyCalendarExternalDataMarkers;
