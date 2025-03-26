@@ -1053,7 +1053,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
-        Self::from_parts(prefs, (formatter.calendar, formatter.names))
+        Self::from_parts(prefs, (formatter.calendar.into_tagged(), formatter.names))
     }
 
     fn from_parts(

@@ -360,14 +360,6 @@ impl AnyCalendarForFormatting {
         Some(Self { any_calendar, kind })
     }
 
-    pub(crate) fn any_calendar(&self) -> &AnyCalendar {
-        &self.any_calendar
-    }
-
-    pub(crate) fn take_any_calendar(self) -> AnyCalendar {
-        self.any_calendar
-    }
-
     pub(crate) fn kind(&self) -> AnyCalendarForFormattingKind {
         self.kind
     }
@@ -484,6 +476,43 @@ impl AnyCalendarForFormatting {
             Roc => AnyCalendar::Roc(cal::Roc),
         };
         Ok(Self { any_calendar, kind })
+    }
+
+    pub(crate) fn into_untagged(self) -> UntaggedAnyCalendarForFormatting {
+        UntaggedAnyCalendarForFormatting {
+            any_calendar: self.any_calendar,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct UntaggedAnyCalendarForFormatting {
+    // Invariant: the kind must be representable as an AnyCalendarForFormattingKind
+    any_calendar: AnyCalendar,
+}
+
+/// A version of [`AnyCalendarForFormatting`] that is smaller on the stack.
+impl UntaggedAnyCalendarForFormatting {
+    pub(crate) fn into_tagged(self) -> AnyCalendarForFormatting {
+        let kind =
+            AnyCalendarForFormattingKind::try_from_any_calendar_kind(self.any_calendar.kind())
+                .unwrap_or_else(|| {
+                    debug_assert!(false, "unreachable by invariant");
+                    // fall back to something non-Gregorian to make errors more obvious
+                    AnyCalendarForFormattingKind::Coptic
+                });
+        AnyCalendarForFormatting {
+            any_calendar: self.any_calendar,
+            kind,
+        }
+    }
+
+    pub(crate) fn any_calendar(&self) -> &AnyCalendar {
+        &self.any_calendar
+    }
+
+    pub(crate) fn take_any_calendar(self) -> AnyCalendar {
+        self.any_calendar
     }
 }
 
