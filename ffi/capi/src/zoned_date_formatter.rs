@@ -16,6 +16,7 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
         date::ffi::IsoDate,
         datetime_helpers,
         datetime_helpers::map_or_default,

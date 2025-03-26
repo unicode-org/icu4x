@@ -11,73 +11,29 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
- * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.DateTimeFormatter.html) for more information.
  */
 
 
 export class ZonedDateTimeFormatter {
     
     get ffiValue(): pointer;
-
-    /** 
-     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
-     */
-    static createGenericShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
-     */
-    static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
-     */
-    static createGenericLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
-     */
-    static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
-     */
-    static createSpecificShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
-     */
-    static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
-     */
-    static createSpecificLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
-     */
-    static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
-     */
-    static createLocalizedOffsetShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
-     */
-    static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
-     */
-    static createLocalizedOffsetLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-
-    /** 
-     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
-     */
-    static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createSpecificLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createSpecificShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createLocalizedOffsetLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createLocalizedOffsetShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createGenericLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createGenericShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createLocation(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createExemplarCity(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
 
     /** 
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.

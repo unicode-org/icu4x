@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.DateTimeFormatter.html) for more information.
 final class ZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -23,73 +23,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ZonedDateTimeFormatter_destroy_mv1));
 
-  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
-  ///
-  /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.genericShort(Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(locale._ffi, formatter._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
-  ///
-  /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.genericShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
-  ///
-  /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.genericLong(Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(locale._ffi, formatter._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
-  ///
-  /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.genericLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
-  ///
-  /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.specificShort(Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(locale._ffi, formatter._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
-  ///
-  /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.specificShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
-    if (!result.isOk) {
-      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
-    }
-    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
-  }
-
-  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.specificLong(Locale locale, DateTimeFormatter formatter) {
@@ -100,7 +34,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.specificLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -111,29 +45,29 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.localizedOffsetShort(Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(locale._ffi, formatter._ffi);
+  factory ZonedDateTimeFormatter.specificShort(Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(locale._ffi, formatter._ffi);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
-  factory ZonedDateTimeFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
-    final result = _icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+  factory ZonedDateTimeFormatter.specificShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.localizedOffsetLong(Locale locale, DateTimeFormatter formatter) {
@@ -144,11 +78,121 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  /// 
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
     final result = _icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.localizedOffsetShort(Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.genericLong(Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.genericLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.genericShort(Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.genericShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.location(Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_location_mv1(locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.locationWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.exemplarCity(Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1(locale._ffi, formatter._ffi);
+    if (!result.isOk) {
+      throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterLoadError] on failure.
+  factory ZonedDateTimeFormatter.exemplarCityWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
+    final result = _icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1(provider._ffi, locale._ffi, formatter._ffi);
     if (!result.isOk) {
       throw DateTimeFormatterLoadError.values.firstWhere((v) => v._ffi == result.union.err);
     }
@@ -173,25 +217,15 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_ZonedDateTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_short_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_short_mv1')
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_specific_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_specific_long_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
-
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_long_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_long_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
-
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
 @_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_specific_short_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_specific_short_mv1')
@@ -203,15 +237,15 @@ external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_specific_short_
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_specific_long_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_specific_long_mv1')
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
 @_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1')
@@ -223,15 +257,45 @@ external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_localized_offse
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1')
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_long_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_long_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
-@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_short_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_short_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_location_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_location_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_location_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1(ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
+
+@_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> formatter);
 
 @_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_format_iso_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTimeFormatter_format_iso_mv1')
