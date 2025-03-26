@@ -1084,17 +1084,21 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::AnyCalendar;
+    /// use icu::calendar::{AnyCalendar, AnyCalendarKind};
     /// use icu::datetime::fieldsets::T;
     /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
+    /// 
+    /// let kind = AnyCalendarKind::new(locale!("es-MX").into());
+    /// let calendar = AnyCalendar::new(kind);
     ///
-    /// let names = DateTimeNames::new_without_number_formatting(
+    /// let names = DateTimeNames::try_new_with_calendar_without_number_formatting(
     ///     locale!("es-MX").into(),
-    ///     AnyCalendar::try_new(locale!("es-MX").into()).unwrap(),
-    /// );
+    ///     calendar,
+    /// )
+    /// .expect("All locale-default calendars are supported");
     ///
     /// let field_set = T::long().hm();
     ///

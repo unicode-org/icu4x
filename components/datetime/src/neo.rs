@@ -874,7 +874,8 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///     YMD::long(),
     /// )
     /// .unwrap()
-    /// .into_formatter(Hebrew::new());
+    /// .try_into_formatter(Hebrew::new())
+    /// .expect("Hebrew is supported in DateTimeFormatter");
     ///
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
