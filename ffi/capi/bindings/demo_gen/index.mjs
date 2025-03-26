@@ -33,6 +33,10 @@ import * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 export * as ZonedDateFormatterDemo from "./ZonedDateFormatter.mjs";
 import * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
 export * as ZonedDateFormatterGregorianDemo from "./ZonedDateFormatterGregorian.mjs";
+import * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
+export * as ZonedDateTimeFormatterDemo from "./ZonedDateTimeFormatter.mjs";
+import * as ZonedDateTimeFormatterGregorianDemo from "./ZonedDateTimeFormatterGregorian.mjs";
+export * as ZonedDateTimeFormatterGregorianDemo from "./ZonedDateTimeFormatterGregorian.mjs";
 import * as ZonedTimeFormatterDemo from "./ZonedTimeFormatter.mjs";
 export * as ZonedTimeFormatterDemo from "./ZonedTimeFormatter.mjs";
 
@@ -1089,6 +1093,216 @@ let termini = Object.assign({
             
             {
                 name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "ZonedDateTimeFormatter.formatIso": {
+        func: ZonedDateTimeFormatterDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "ZonedDateTimeFormatter.formatIso",
+        parameters: [
+            
+            {
+                name: "ZonedDateTimeFormatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatter:Formatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatter:Formatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatter:Formatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatter:Formatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatter:Formatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Subsecond",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Zone:TimeZoneId:Id",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:Offset:Offset",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Zone:ZoneVariant",
+                type: "TimeZoneVariant",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "ZonedDateTimeFormatterGregorian.formatIso": {
+        func: ZonedDateTimeFormatterGregorianDemo.formatIso,
+        // For avoiding webpacking minifying issues:
+        funcName: "ZonedDateTimeFormatterGregorian.formatIso",
+        parameters: [
+            
+            {
+                name: "ZonedDateTimeFormatterGregorian:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatterGregorian:Formatter:Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatterGregorian:Formatter:Length",
+                type: "DateTimeLength",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatterGregorian:Formatter:TimePrecision",
+                type: "TimePrecision",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatterGregorian:Formatter:Alignment",
+                type: "DateTimeAlignment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "ZonedDateTimeFormatterGregorian:Formatter:YearStyle",
+                type: "YearStyle",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Date:Year",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Month",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Date:Day",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Hour",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Minute",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Second",
+                type: "number",
+                typeUse: "number"
+            },
+            
+            {
+                name: "Time:Subsecond",
                 type: "number",
                 typeUse: "number"
             },
