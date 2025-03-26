@@ -903,7 +903,7 @@ macro_rules! impl_zone_marker {
         /// // Time zone info for America/Chicago in the summer
         /// let zone = TimeZone(subtag!("uschi"))
         ///     .with_offset("-05".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()))
         ///     .with_zone_variant(TimeZoneVariant::Daylight);
         ///
         /// assert_writeable_eq!(
@@ -1224,7 +1224,7 @@ pub mod zone {
         /// // Time zone info for Europe/Istanbul in the winter
         /// let zone = TimeZone(subtag!("trist"))
         ///     .with_offset("+02".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
+        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::start_of_day()))
         ///     .with_zone_variant(TimeZoneVariant::Standard);
         ///
         /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
@@ -1263,7 +1263,7 @@ pub mod zone {
         /// use icu::time::zone::TimeZoneVariant;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
+        /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::start_of_day() };
         /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset("-06".parse().ok());
         /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
         ///
@@ -1305,7 +1305,7 @@ pub mod zone {
         /// use icu::time::zone::TimeZoneVariant;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
+        /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::start_of_day() };
         /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset("-06".parse().ok());
         /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
         ///
@@ -1348,7 +1348,7 @@ pub mod zone {
         /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset(Some(utc_offset));
         ///
         /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
-        /// let time = Time::midnight();
+        /// let time = Time::start_of_day();
         /// let time_zone_at_time = time_zone_basic.at_time((date, time));
         ///
         /// let time_zone_full = time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
@@ -1413,7 +1413,7 @@ pub mod zone {
         /// // Time zone info for Europe/Istanbul
         /// let zone = TimeZone(subtag!("trist"))
         ///     .without_offset()
-        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::start_of_day()));
         ///
         /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
         ///     locale!("en").into(),
@@ -1451,7 +1451,7 @@ pub mod zone {
         /// let time_zone = IanaParser::new()
         ///     .parse("America/Chicago")
         ///     .with_offset("-05".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()));
         /// assert_writeable_eq!(
         ///     tzf.format(&time_zone),
         ///     "CT"
@@ -1461,7 +1461,7 @@ pub mod zone {
         /// let time_zone = IanaParser::new()
         ///     .parse("Pacific/Honolulu")
         ///     .with_offset("-10".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()));
         /// assert_writeable_eq!(
         ///     tzf.format(&time_zone),
         ///     "HST"
@@ -1471,7 +1471,7 @@ pub mod zone {
         /// let time_zone = IanaParser::new()
         ///     .parse("America/Chigagou")
         ///     .with_offset("-05".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()));
         /// assert_writeable_eq!(
         ///     tzf.format(&time_zone),
         ///     "GMT-5"

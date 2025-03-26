@@ -25,9 +25,9 @@ export class Time {
     /** 
      * Creates a new [`Time`] representing midnight (00:00.000).
      *
-     * See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
+     * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
      */
-    static midnight(): Time;
+    static startOfDay(): Time;
 
     /** 
      * Returns the hour in this time

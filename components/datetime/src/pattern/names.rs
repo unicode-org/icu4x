@@ -853,7 +853,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// assert_writeable_eq!(
     ///     formatter.format(&DateTime {
     ///         date: Date::try_new_gregorian(2025, 2, 13).unwrap(),
-    ///         time: Time::midnight(),
+    ///         time: Time::start_of_day(),
     ///     }),
     ///     "13 de febrero de 2025, 12:00 a.m."
     /// );
@@ -920,7 +920,7 @@ where
     /// // Now the conversion is successful:
     /// let formatter = names.try_into_formatter(field_set).unwrap();
     ///
-    /// assert_writeable_eq!(formatter.format(&Time::midnight()), "12:00 a.m.");
+    /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
     /// ```
     #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
@@ -1041,7 +1041,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// assert_writeable_eq!(
     ///     formatter.format(&DateTime {
     ///         date: Date::try_new_iso(2025, 2, 13).unwrap(),
-    ///         time: Time::midnight(),
+    ///         time: Time::start_of_day(),
     ///     }),
     ///     "13 de febrero de 2025, 12:00 a.m."
     /// );
@@ -1114,7 +1114,7 @@ where
     /// // Now the conversion is successful:
     /// let formatter = names.try_into_formatter(field_set).unwrap();
     ///
-    /// assert_writeable_eq!(formatter.format(&Time::midnight()), "12:00 a.m.");
+    /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
     /// ```
     #[allow(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
@@ -2580,7 +2580,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     /// let datetime = DateTime {
     ///     date: Date::try_new_gregorian(2023, 11, 20).unwrap(),
-    ///     time: Time::midnight(),
+    ///     time: Time::start_of_day(),
     /// };
     /// assert_try_writeable_eq!(
     ///     names.with_pattern_unchecked(&pattern).format(&datetime),

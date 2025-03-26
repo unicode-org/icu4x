@@ -54,11 +54,11 @@ final class Time implements ffi.Finalizable {
 
   /// Creates a new [`Time`] representing midnight (00:00.000).
   ///
-  /// See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
+  /// See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
   ///
   /// Throws [CalendarError] on failure.
-  factory Time.midnight() {
-    final result = _icu4x_Time_midnight_mv1();
+  factory Time.startOfDay() {
+    final result = _icu4x_Time_start_of_day_mv1();
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -113,10 +113,10 @@ external _ResultOpaqueInt32 _icu4x_Time_create_mv1(int hour, int minute, int sec
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(_SliceUtf8 v);
 
-@_DiplomatFfiUse('icu4x_Time_midnight_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_midnight_mv1')
+@_DiplomatFfiUse('icu4x_Time_start_of_day_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_start_of_day_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_Time_midnight_mv1();
+external _ResultOpaqueInt32 _icu4x_Time_start_of_day_mv1();
 
 @_DiplomatFfiUse('icu4x_Time_hour_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_hour_mv1')

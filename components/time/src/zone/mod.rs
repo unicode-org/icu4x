@@ -274,7 +274,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
 /// let time_zone_at_time = time_zone
-///     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
+///     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::start_of_day()));
 ///
 /// // Extend to a TimeZoneInfo<Full> by adding a zone variant
 /// let time_zone_with_variant =

@@ -148,8 +148,8 @@ impl Time {
         }
     }
 
-    /// Construct a new [`Time`] representing midnight (00:00.000)
-    pub const fn midnight() -> Self {
+    /// Construct a new [`Time`] representing the start of the day (00:00.000)
+    pub const fn start_of_day() -> Self {
         Self {
             hour: Hour::zero(),
             minute: Minute::zero(),

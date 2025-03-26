@@ -23,7 +23,7 @@ fn main() {
     let city_formatter =
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
-    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
+    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::start_of_day());
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 

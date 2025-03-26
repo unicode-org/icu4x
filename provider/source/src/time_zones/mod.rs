@@ -76,7 +76,7 @@ impl SourceDataProvider {
                     let mut curr_mz = mzs.next().unwrap();
 
                     let horizon =
-                        MinutesSinceEpoch::from((self.timezone_horizon, Time::midnight()));
+                        MinutesSinceEpoch::from((self.timezone_horizon, Time::start_of_day()));
 
                     while offsets.peek().is_some_and(|&(start, _)| start < horizon) {
                         curr_offset = offsets.next().unwrap();
