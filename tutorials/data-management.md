@@ -85,8 +85,7 @@ So far we've used it through the default `try_new` constructor by using the envi
 
 ```console
 $ cargo add icu_locale_core
-$ cargo add icu_provider
-$ cargo add icu_provider_baked
+$ cargo add icu_provider --feature baked
 $ cargo add zerotrie
 $ cargo add zerovec
 ```

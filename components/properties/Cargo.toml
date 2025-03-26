@@ -33,7 +33,6 @@ potential_utf = { workspace = true, features = ["zerovec"]}
 unicode-bidi = { workspace = true, optional = true }
 
 icu_properties_data = { workspace = true, optional = true }
-icu_provider_baked = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -43,5 +42,5 @@ default = ["compiled_data"]
 serde = ["dep:serde", "icu_locale_core/serde", "potential_utf/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "zerotrie/serde"]
 datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake", "icu_locale_core/databake", "zerotrie/databake", "icu_provider/export"]
 unicode_bidi = [ "dep:unicode-bidi" ]
-compiled_data = ["dep:icu_properties_data", "dep:icu_provider_baked"]
+compiled_data = ["dep:icu_properties_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_collections/alloc"]

@@ -31,7 +31,6 @@ serde = { workspace = true, features = ["derive"], optional = true }
 tinystr = { workspace = true }
 
 icu_decimal_data = { workspace = true, optional = true }
-icu_provider_baked = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -50,7 +49,7 @@ criterion = { workspace = true }
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export", "alloc"]
-compiled_data = ["dep:icu_decimal_data", "dep:icu_provider_baked", "dep:icu_locale", "icu_locale?/compiled_data"]
+compiled_data = ["dep:icu_decimal_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ryu = ["fixed_decimal/ryu"]
 alloc = ["serde?/alloc", "zerovec/alloc"]
 

@@ -97,6 +97,8 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+#[cfg(feature = "baked")]
+pub mod baked;
 pub mod buf;
 pub mod constructors;
 pub mod dynutil;
