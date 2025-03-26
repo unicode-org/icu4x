@@ -3,9 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{
-    DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError, GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue, PatternLoadError
+    DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
+    GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
+    PatternLoadError,
 };
-use crate::error::{UnsupportedCalendarError, ErrorField};
+use crate::error::{ErrorField, UnsupportedCalendarError};
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
 use crate::provider::neo::{marker_attrs, *};
@@ -999,7 +1001,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
                 inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
                 calendar,
             }),
-            None => Err(UnsupportedCalendarError { kind })
+            None => Err(UnsupportedCalendarError { kind }),
         }
     }
 
@@ -1090,7 +1092,7 @@ where
     /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
-    /// 
+    ///
     /// let kind = AnyCalendarKind::new(locale!("es-MX").into());
     /// let calendar = AnyCalendar::new(kind);
     ///

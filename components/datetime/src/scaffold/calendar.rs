@@ -9,8 +9,8 @@ use crate::scaffold::UnstableSealed;
 use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
 use core::marker::PhantomData;
 use icu_calendar::any_calendar::AnyCalendarKind;
-use icu_calendar::cal::{self, Chinese};
 use icu_calendar::cal::Roc;
+use icu_calendar::cal::{self, Chinese};
 use icu_calendar::cal::{
     Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriCivil, HijriObservational,
     HijriTabular, HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
@@ -317,7 +317,7 @@ impl AnyCalendarForFormattingKind {
             Roc => Self::Roc,
             _ => {
                 debug_assert!(false, "cross-crate exhaustive match");
-                return None
+                return None;
             }
         };
         Some(res)
@@ -357,10 +357,7 @@ pub(crate) struct AnyCalendarForFormatting {
 impl AnyCalendarForFormatting {
     pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Option<Self> {
         let kind = AnyCalendarForFormattingKind::try_from_any_calendar_kind(any_calendar.kind())?;
-        Some(Self {
-            any_calendar,
-            kind
-        })
+        Some(Self { any_calendar, kind })
     }
 
     pub(crate) fn any_calendar(&self) -> &AnyCalendar {
@@ -384,12 +381,16 @@ impl AnyCalendarForFormatting {
             Coptic => AnyCalendar::Coptic(cal::Coptic),
             Dangi => AnyCalendar::Dangi(cal::Dangi::new()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(cal::EthiopianEraStyle::AmeteAlem)),
+            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
+                cal::EthiopianEraStyle::AmeteAlem,
+            )),
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
             HijriCivil => AnyCalendar::HijriCivil(cal::HijriCivil),
-            HijriObservationalMecca => AnyCalendar::HijriObservational(cal::HijriObservational::new_mecca()),
+            HijriObservationalMecca => {
+                AnyCalendar::HijriObservational(cal::HijriObservational::new_mecca())
+            }
             HijriTabular => AnyCalendar::HijriTabular(cal::HijriTabular),
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
@@ -397,15 +398,16 @@ impl AnyCalendarForFormatting {
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
         };
-        Ok(Self {
-            any_calendar,
-            kind
-        })
+        Ok(Self { any_calendar, kind })
     }
 
     #[cfg(feature = "serde")]
-    pub(crate) fn try_new_with_buffer_provider<P>(provider: &P, kind: AnyCalendarForFormattingKind) -> Result<Self, DataError>
-    where P: ?Sized + BufferProvider
+    pub(crate) fn try_new_with_buffer_provider<P>(
+        provider: &P,
+        kind: AnyCalendarForFormattingKind,
+    ) -> Result<Self, DataError>
+    where
+        P: ?Sized + BufferProvider,
     {
         use AnyCalendarForFormattingKind::*;
         let any_calendar = match kind {
@@ -414,34 +416,44 @@ impl AnyCalendarForFormatting {
             Coptic => AnyCalendar::Coptic(cal::Coptic),
             Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_with_buffer_provider(provider)?),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(cal::EthiopianEraStyle::AmeteAlem)),
+            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
+                cal::EthiopianEraStyle::AmeteAlem,
+            )),
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
             HijriCivil => AnyCalendar::HijriCivil(cal::HijriCivil),
-            HijriObservationalMecca => AnyCalendar::HijriObservational(cal::HijriObservational::try_new_mecca_with_buffer_provider(provider)?),
+            HijriObservationalMecca => AnyCalendar::HijriObservational(
+                cal::HijriObservational::try_new_mecca_with_buffer_provider(provider)?,
+            ),
             HijriTabular => AnyCalendar::HijriTabular(cal::HijriTabular),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::try_new_with_buffer_provider(provider)?),
-            Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?),
-            JapaneseExtended => AnyCalendar::JapaneseExtended(cal::JapaneseExtended::try_new_with_buffer_provider(provider)?),
+            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(
+                cal::HijriUmmAlQura::try_new_with_buffer_provider(provider)?,
+            ),
+            Japanese => {
+                AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?)
+            }
+            JapaneseExtended => AnyCalendar::JapaneseExtended(
+                cal::JapaneseExtended::try_new_with_buffer_provider(provider)?,
+            ),
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
         };
-        Ok(Self {
-            any_calendar,
-            kind
-        })
+        Ok(Self { any_calendar, kind })
     }
 
-    pub(crate) fn try_new_unstable<P>(provider: &P, kind: AnyCalendarForFormattingKind) -> Result<Self, DataError>
+    pub(crate) fn try_new_unstable<P>(
+        provider: &P,
+        kind: AnyCalendarForFormattingKind,
+    ) -> Result<Self, DataError>
     where
-    P: ?Sized
-        + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-        + DataProvider<icu_calendar::provider::CalendarJapaneseExtendedV1>
-        + DataProvider<icu_calendar::provider::CalendarChineseV1>
-        + DataProvider<icu_calendar::provider::CalendarDangiV1>
-        + DataProvider<icu_calendar::provider::CalendarHijriObservationalMeccaV1>
-        + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>
+        P: ?Sized
+            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
+            + DataProvider<icu_calendar::provider::CalendarJapaneseExtendedV1>
+            + DataProvider<icu_calendar::provider::CalendarChineseV1>
+            + DataProvider<icu_calendar::provider::CalendarDangiV1>
+            + DataProvider<icu_calendar::provider::CalendarHijriObservationalMeccaV1>
+            + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>,
     {
         use AnyCalendarForFormattingKind::*;
         let any_calendar = match kind {
@@ -450,23 +462,28 @@ impl AnyCalendarForFormatting {
             Coptic => AnyCalendar::Coptic(cal::Coptic),
             Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_unstable(provider)?),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(cal::EthiopianEraStyle::AmeteAlem)),
+            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
+                cal::EthiopianEraStyle::AmeteAlem,
+            )),
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
             HijriCivil => AnyCalendar::HijriCivil(cal::HijriCivil),
-            HijriObservationalMecca => AnyCalendar::HijriObservational(cal::HijriObservational::try_new_mecca_unstable(provider)?),
+            HijriObservationalMecca => AnyCalendar::HijriObservational(
+                cal::HijriObservational::try_new_mecca_unstable(provider)?,
+            ),
             HijriTabular => AnyCalendar::HijriTabular(cal::HijriTabular),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::try_new_unstable(provider)?),
+            HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::try_new_unstable(provider)?)
+            }
             Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
-            JapaneseExtended => AnyCalendar::JapaneseExtended(cal::JapaneseExtended::try_new_unstable(provider)?),
+            JapaneseExtended => {
+                AnyCalendar::JapaneseExtended(cal::JapaneseExtended::try_new_unstable(provider)?)
+            }
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
         };
-        Ok(Self {
-            any_calendar,
-            kind
-        })
+        Ok(Self { any_calendar, kind })
     }
 }
 
@@ -571,28 +588,31 @@ macro_rules! impl_load_any_calendar {
     };
 }
 
-impl_load_any_calendar!([
-    (YearNamesV1, YearNamesV1),
-    (MonthNamesV1, MonthNamesV1),
-    (ErasedPackedPatterns, SkeletaV1)
-], [
-    Buddhist,
-    Chinese,
-    Coptic,
-    Dangi,
-    Ethiopian,
-    Gregorian,
-    Hebrew,
-    Indian,
-    HijriCivil,
-    HijriObservational,
-    HijriTabular,
-    HijriUmmAlQura,
-    Japanese,
-    JapaneseExtended,
-    Persian,
-    Roc
-]);
+impl_load_any_calendar!(
+    [
+        (YearNamesV1, YearNamesV1),
+        (MonthNamesV1, MonthNamesV1),
+        (ErasedPackedPatterns, SkeletaV1)
+    ],
+    [
+        Buddhist,
+        Chinese,
+        Coptic,
+        Dangi,
+        Ethiopian,
+        Gregorian,
+        Hebrew,
+        Indian,
+        HijriCivil,
+        HijriObservational,
+        HijriTabular,
+        HijriUmmAlQura,
+        Japanese,
+        JapaneseExtended,
+        Persian,
+        Roc
+    ]
+);
 
 /// A type that can be converted into a specific calendar system.
 // This trait is implementable

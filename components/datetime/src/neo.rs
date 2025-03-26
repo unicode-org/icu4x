@@ -596,7 +596,8 @@ where
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(
-                provider_p, calendar.kind(),
+                provider_p,
+                calendar.kind(),
             ),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
@@ -609,10 +610,12 @@ where
         };
         let result = names.load_for_pattern(
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(
-                provider, calendar.kind(),
+                provider,
+                calendar.kind(),
             ),
             &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(
-                provider, calendar.kind(),
+                provider,
+                calendar.kind(),
             ),
             &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
             &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
@@ -881,7 +884,10 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// assert_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
     /// ```
-    pub fn try_into_formatter(self, calendar: C) -> Result<DateTimeFormatter<FSet>, UnsupportedCalendarError>
+    pub fn try_into_formatter(
+        self,
+        calendar: C,
+    ) -> Result<DateTimeFormatter<FSet>, UnsupportedCalendarError>
     where
         C: IntoAnyCalendar,
     {

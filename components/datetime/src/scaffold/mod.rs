@@ -13,9 +13,9 @@ mod fieldset_traits;
 mod get_field;
 mod names_storage;
 
-pub(crate) use calendar::AnyCalendarProvider;
 pub(crate) use calendar::AnyCalendarForFormatting;
 pub(crate) use calendar::AnyCalendarForFormattingKind;
+pub(crate) use calendar::AnyCalendarProvider;
 pub use calendar::CalMarkers;
 pub use calendar::CldrCalendar;
 pub use calendar::ConvertCalendar;

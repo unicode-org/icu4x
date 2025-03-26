@@ -146,4 +146,3 @@ pub struct UnsupportedCalendarError {
 }
 
 impl core::error::Error for UnsupportedCalendarError {}
-
