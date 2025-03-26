@@ -14,6 +14,7 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::datetime::DateTimeFormatter#Struct
 icu::datetime::DateTimeFormatter::calendar#FnInStruct
 icu::datetime::DateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::DateTimeFormatter::to_field_set_builder#FnInStruct
@@ -25,6 +26,7 @@ icu::datetime::DateTimeInputUnchecked::set_time_zone_id#FnInStruct
 icu::datetime::DateTimeInputUnchecked::set_time_zone_local_time#FnInStruct
 icu::datetime::DateTimeInputUnchecked::set_time_zone_utc_offset#FnInStruct
 icu::datetime::DateTimeInputUnchecked::set_time_zone_variant#FnInStruct
+icu::datetime::FixedCalendarDateTimeFormatter#Struct
 icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder#FnInStruct
 icu::datetime::FixedCalendarDateTimeFormatter::try_new#FnInStruct
@@ -38,19 +40,26 @@ icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D::zone#FnInStruct
 icu::datetime::fieldsets::DE::zone#FnInStruct
 icu::datetime::fieldsets::DET::hm#FnInStruct
+icu::datetime::fieldsets::DET::zone#FnInStruct
 icu::datetime::fieldsets::DT::hm#FnInStruct
+icu::datetime::fieldsets::DT::zone#FnInStruct
 icu::datetime::fieldsets::E::zone#FnInStruct
 icu::datetime::fieldsets::ET::hm#FnInStruct
+icu::datetime::fieldsets::ET::zone#FnInStruct
 icu::datetime::fieldsets::MD::zone#FnInStruct
 icu::datetime::fieldsets::MDE::zone#FnInStruct
 icu::datetime::fieldsets::MDET::hm#FnInStruct
+icu::datetime::fieldsets::MDET::zone#FnInStruct
 icu::datetime::fieldsets::MDT::hm#FnInStruct
+icu::datetime::fieldsets::MDT::zone#FnInStruct
 icu::datetime::fieldsets::T::hm#FnInStruct
 icu::datetime::fieldsets::T::zone#FnInStruct
 icu::datetime::fieldsets::YMD::zone#FnInStruct
 icu::datetime::fieldsets::YMDE::zone#FnInStruct
 icu::datetime::fieldsets::YMDET::hm#FnInStruct
+icu::datetime::fieldsets::YMDET::zone#FnInStruct
 icu::datetime::fieldsets::YMDT::hm#FnInStruct
+icu::datetime::fieldsets::YMDT::zone#FnInStruct
 icu::datetime::fieldsets::builder::BuilderError#Enum
 icu::datetime::fieldsets::builder::DateFields#Enum
 icu::datetime::fieldsets::builder::FieldSetBuilder#Struct
@@ -76,7 +85,13 @@ icu::datetime::fieldsets::enums::TimeFieldSet#Enum
 icu::datetime::fieldsets::enums::TimeFieldSet::zone#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet#Enum
 icu::datetime::fieldsets::zone::ExemplarCity#Struct
+icu::datetime::fieldsets::zone::GenericLong#Struct
+icu::datetime::fieldsets::zone::GenericShort#Struct
+icu::datetime::fieldsets::zone::LocalizedOffsetLong#Struct
+icu::datetime::fieldsets::zone::LocalizedOffsetShort#Struct
 icu::datetime::fieldsets::zone::Location#Struct
+icu::datetime::fieldsets::zone::SpecificLong#Struct
+icu::datetime::fieldsets::zone::SpecificShort#Struct
 icu::datetime::options::Alignment#Enum
 icu::datetime::options::SubsecondDigits#Enum
 icu::datetime::options::SubsecondError#Enum
