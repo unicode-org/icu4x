@@ -113,9 +113,10 @@ impl ItemsAndOptions<'_> {
 // TODO: Use markers instead of an enum for DateTimeFormatter pattern storage.
 
 #[derive(Debug, Clone)]
-pub(crate) struct DateTimeZonePatternSelectionData {
+pub(crate) struct DateTimeZonePatternSelectionData<Niche> {
     options: RawOptions,
     prefs: RawPreferences,
+    niche: Niche, // there is currently padding of size 2 at this location
     date: DatePatternSelectionData,
     // The data for the overlap case is the same as for time, so we use the same intermediate
     // type. This means that we can't have overlap patterns with both a year and a time. This
@@ -397,7 +398,7 @@ impl<'a> ZonePatternDataBorrowed<'a> {
     }
 }
 
-impl DateTimeZonePatternSelectionData {
+impl<Niche> DateTimeZonePatternSelectionData<Niche> {
     #[allow(clippy::too_many_arguments)] // private function with lots of generics
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
@@ -405,6 +406,7 @@ impl DateTimeZonePatternSelectionData {
         glue_provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         skeleton: CompositeFieldSet,
+        niche: Niche,
     ) -> Result<Self, DataError> {
         match skeleton {
             CompositeFieldSet::Date(field_set) => {
@@ -417,6 +419,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
+                    niche,
                     date: selection,
                     time: TimePatternSelectionData::none(),
                     zone: None,
@@ -433,6 +436,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
+                    niche,
                     date: selection,
                     time: TimePatternSelectionData::none(),
                     zone: None,
@@ -450,6 +454,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
+                    niche,
                     date: DatePatternSelectionData::none(),
                     time: selection,
                     zone: None,
@@ -467,6 +472,7 @@ impl DateTimeZonePatternSelectionData {
                         time_precision: None,
                     },
                     prefs: Default::default(), // not used: no time
+                    niche,
                     date: DatePatternSelectionData::none(),
                     time: TimePatternSelectionData::none(),
                     zone: Some(selection),
@@ -492,6 +498,7 @@ impl DateTimeZonePatternSelectionData {
                         return Ok(Self {
                             options,
                             prefs,
+                            niche,
                             date: DatePatternSelectionData::none(),
                             time: overlap,
                             zone: None,
@@ -514,6 +521,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
+                    niche,
                     date,
                     time,
                     zone: None,
@@ -532,6 +540,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs: Default::default(), // not used: no time
+                    niche,
                     date,
                     time: TimePatternSelectionData::none(),
                     zone: Some(zone),
@@ -551,6 +560,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
+                    niche,
                     date: DatePatternSelectionData::none(),
                     time,
                     zone: Some(zone),
@@ -575,6 +585,7 @@ impl DateTimeZonePatternSelectionData {
                 Ok(Self {
                     options,
                     prefs,
+                    niche,
                     date,
                     time,
                     zone: Some(zone),
@@ -659,6 +670,25 @@ impl DateTimeZonePatternSelectionData {
             zone_style,
             alignment: self.options.alignment,
             year_style: self.options.year_style,
+        }
+    }
+
+    pub(crate) fn niche(&self) -> &Niche {
+        &self.niche
+    }
+
+    pub(crate) fn with_niche<NewNiche>(
+        self,
+        niche: NewNiche,
+    ) -> DateTimeZonePatternSelectionData<NewNiche> {
+        DateTimeZonePatternSelectionData {
+            options: self.options,
+            prefs: self.prefs,
+            niche: niche,
+            date: self.date,
+            time: self.time,
+            zone: self.zone,
+            glue: self.glue,
         }
     }
 }

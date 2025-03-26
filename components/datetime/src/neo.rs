@@ -138,7 +138,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 #[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
-    selection: DateTimeZonePatternSelectionData,
+    selection: DateTimeZonePatternSelectionData<()>,
     pub(crate) names: RawDateTimeNames<FSet>,
     _calendar: PhantomData<C>,
 }
@@ -266,6 +266,7 @@ where
             &FSet::GluePatternV1::bind(provider_p),
             prefs,
             field_set,
+            (),
         );
         let selection = match selection {
             Ok(selection) => selection,
@@ -453,9 +454,11 @@ size_test!(
 #[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug, Clone)]
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
-    selection: DateTimeZonePatternSelectionData,
+    // Store the kind in here for better niche optimization.
+    pub(crate) selection: DateTimeZonePatternSelectionData<AnyCalendarForFormattingKind>,
     pub(crate) names: RawDateTimeNames<FSet>,
-    pub(crate) calendar: AnyCalendarForFormatting,
+    // Invariant: the AnyCalendar has the same kind as the AnyCalendarForFormattingKind.
+    pub(crate) calendar: AnyCalendar,
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
@@ -603,6 +606,7 @@ where
             &FSet::GluePatternV1::bind(provider_p),
             prefs,
             field_set,
+            calendar.kind(),
         );
         let selection = match selection {
             Ok(selection) => selection,
@@ -641,7 +645,7 @@ where
         Ok(Self {
             selection,
             names,
-            calendar,
+            calendar: calendar.take_any_calendar(),
         })
     }
 }
@@ -706,7 +710,7 @@ where
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {
-        datetime.check_any_calendar_kind(self.calendar.any_calendar().kind())?;
+        datetime.check_any_calendar_kind(self.calendar.kind())?;
         let datetime = DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(
             datetime,
         );
@@ -765,7 +769,7 @@ where
         I: ?Sized + ConvertCalendar,
         I::Converted<'a>: Sized + AllInputMarkers<FSet>,
     {
-        let datetime = datetime.to_calendar(self.calendar.any_calendar());
+        let datetime = datetime.to_calendar(&self.calendar);
         let datetime = DateTimeInputUnchecked::extract_from_neo_input::<
             FSet::D,
             FSet::T,
@@ -896,9 +900,9 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
         let calendar = AnyCalendarForFormatting::try_from_any_calendar(any_calendar)
             .ok_or(UnsupportedCalendarError { kind })?;
         Ok(DateTimeFormatter {
-            selection: self.selection,
+            selection: self.selection.with_niche(calendar.kind()),
             names: self.names,
-            calendar,
+            calendar: calendar.take_any_calendar(),
         })
     }
 
@@ -1054,14 +1058,14 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     where
         C: CldrCalendar + IntoAnyCalendar,
     {
-        if let Err(cal) = C::from_any(self.calendar.take_any_calendar()) {
+        if let Err(cal) = C::from_any(self.calendar) {
             return Err(MismatchedCalendarError {
                 this_kind: cal.kind(),
                 date_kind: None,
             });
         }
         Ok(FixedCalendarDateTimeFormatter {
-            selection: self.selection,
+            selection: self.selection.with_niche(()),
             names: self.names,
             _calendar: PhantomData,
         })
@@ -1129,7 +1133,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
     /// ```
     pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
-        icu_calendar::Ref(self.calendar.any_calendar())
+        icu_calendar::Ref(&self.calendar)
     }
 
     /// Gets a [`FieldSetBuilder`] corresponding to the fields and options configured in this
