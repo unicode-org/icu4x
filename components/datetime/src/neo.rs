@@ -4,7 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::error::DateTimeFormatterLoadError;
+use crate::error::{DateTimeFormatterLoadError, UnsupportedCalendarError};
 use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
@@ -861,6 +861,9 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// This is useful if you need a [`DateTimeFormatter`] but know the calendar system ahead of time,
     /// so that you do not need to link extra data you aren't using.
     ///
+    /// [`DateTimeFormatter`] does not necesarily support all calendars that are supported by
+    /// [`FixedCalendarDateTimeFormatter`], which is why this function can fail.
+    ///
     /// # Examples
     ///
     /// ```
@@ -876,21 +879,29 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///     YMD::long(),
     /// )
     /// .unwrap()
-    /// .into_formatter(Hebrew::new());
+    /// .try_into_formatter(Hebrew::new())
+    /// .expect("Hebrew is supported in DateTimeFormatter");
     ///
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
     /// assert_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
     /// ```
-    pub fn into_formatter(self, calendar: C) -> DateTimeFormatter<FSet>
+    pub fn try_into_formatter(
+        self,
+        calendar: C,
+    ) -> Result<DateTimeFormatter<FSet>, UnsupportedCalendarError>
     where
         C: IntoAnyCalendar,
     {
-        DateTimeFormatter {
+        let any_calendar = calendar.to_any();
+        let kind = any_calendar.kind();
+        let calendar = AnyCalendarForFormatting::try_from_any_calendar(any_calendar)
+            .ok_or(UnsupportedCalendarError { kind })?;
+        Ok(DateTimeFormatter {
             selection: self.selection,
             names: self.names,
-            calendar: AnyCalendarForFormatting::from_cldr_calendar(calendar).into_untagged(),
-        }
+            calendar: calendar.into_untagged(),
+        })
     }
 
     /// Maps a [`FixedCalendarDateTimeFormatter`] of a specific `FSet` to a more general `FSet`.
