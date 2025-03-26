@@ -68,33 +68,29 @@ impl InternalTransliterator {
                 if let Cow::Owned(buf) = normalizer.as_borrowed().normalize(rep.as_str_modifiable())
                 {
                     rep.replace_modifiable_with_str(&buf);
-                } else {
-                    // input was already normalized, so no need to modify `rep`
                 }
             }
             Self::Decomposing(normalizer) => {
                 if let Cow::Owned(buf) = normalizer.as_borrowed().normalize(rep.as_str_modifiable())
                 {
                     rep.replace_modifiable_with_str(&buf);
-                } else {
-                    // input was already normalized, so no need to modify `rep`
                 }
             }
             Self::Lower(casemap) => {
-                // TODO: casemap should return a Cow
-                rep.replace_modifiable_with_str(
-                    &casemap
-                        .as_borrowed()
-                        .lowercase_to_string(rep.as_str_modifiable(), &Default::default()),
-                );
+                if let Cow::Owned(buf) = casemap
+                    .as_borrowed()
+                    .lowercase_to_string(rep.as_str_modifiable(), &Default::default())
+                {
+                    rep.replace_modifiable_with_str(&buf);
+                }
             }
             Self::Upper(casemap) => {
-                // TODO: casemap should return a Cow
-                rep.replace_modifiable_with_str(
-                    &casemap
-                        .as_borrowed()
-                        .uppercase_to_string(rep.as_str_modifiable(), &Default::default()),
-                );
+                if let Cow::Owned(buf) = casemap
+                    .as_borrowed()
+                    .uppercase_to_string(rep.as_str_modifiable(), &Default::default())
+                {
+                    rep.replace_modifiable_with_str(&buf);
+                }
             }
             Self::Hex(t) => t.transliterate(rep),
             Self::Null => (),
