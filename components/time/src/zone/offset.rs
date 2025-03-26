@@ -18,7 +18,9 @@ use zerovec::ZeroMap2d;
 #[allow(clippy::exhaustive_structs)]
 pub struct InvalidOffsetError;
 
-/// An offset from Coordinated Universal Time (UTC)
+/// An offset from Coordinated Universal Time (UTC).
+///
+/// Supports ±18:00:00.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default, PartialOrd, Ord)]

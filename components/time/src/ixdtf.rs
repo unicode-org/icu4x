@@ -569,7 +569,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), TimeZoneVariant::Daylight);
     /// let (_, _) = consistent_tz_from_both.zone.local_time();
     ///
-    /// // There is no name for America/Los_Angeles never at -05:00 (at least in 2024), so either the
+    /// // There is no name for America/Los_Angeles at -05:00 (at least in 2024), so either the
     /// // time zone or the offset are wrong.
     /// // The only valid way to display this zoned datetime is "GMT-5", so we drop the time zone.
     /// assert_eq!(
