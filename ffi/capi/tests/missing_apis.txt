@@ -32,6 +32,7 @@ icu::datetime::FormattedDateTimeUnchecked#Struct
 icu::datetime::FormattedDateTimeUnchecked::pattern#FnInStruct
 icu::datetime::FormattedDateTimeUnchecked::try_write_to_parts#FnInStruct
 icu::datetime::NoCalendarFormatter#Typedef
+icu::datetime::UnsupportedCalendarError#Struct
 icu::datetime::fieldsets::Combo#Struct
 icu::datetime::fieldsets::Combo::into_enums#FnInStruct
 icu::datetime::fieldsets::D::zone#FnInStruct
