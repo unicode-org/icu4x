@@ -355,6 +355,22 @@ pub(crate) struct AnyCalendarForFormatting {
 }
 
 impl AnyCalendarForFormatting {
+    pub(crate) fn from_cldr_calendar(calendar: impl CldrCalendar + IntoAnyCalendar) -> Self {
+        let any_calendar = calendar.to_any();
+        Self {
+            kind: AnyCalendarForFormattingKind::try_from_any_calendar_kind(any_calendar.kind())
+                .unwrap_or_else(|| {
+                    debug_assert!(
+                        false,
+                        "CldrCalendar returns unsupported AnyCalendarKind: {:?}",
+                        any_calendar.kind()
+                    );
+                    AnyCalendarForFormattingKind::Coptic
+                }),
+            any_calendar,
+        }
+    }
+
     pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Option<Self> {
         let kind = AnyCalendarForFormattingKind::try_from_any_calendar_kind(any_calendar.kind())?;
         Some(Self { any_calendar, kind })
