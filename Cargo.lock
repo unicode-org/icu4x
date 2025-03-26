@@ -955,7 +955,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_capi"
@@ -1014,7 +1014,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1053,7 +1053,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_collections"
@@ -1168,7 +1168,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_decimal"
@@ -1195,7 +1195,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_depcheck"
@@ -1296,7 +1296,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_locid"
@@ -1337,7 +1337,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_normalizer"
@@ -1365,7 +1365,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_pattern"
@@ -1406,7 +1406,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_properties"
@@ -1427,7 +1427,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_provider"
@@ -1546,7 +1546,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "icu_segmenter_lstm"
@@ -1588,7 +1588,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone_data"
-version = "1.5.0"
+version = "1.5.1"
 
 [[package]]
 name = "idna"
