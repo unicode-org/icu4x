@@ -4,11 +4,11 @@ This tutorial introduces data providers as well as the `icu4x-datagen` tool.
 
 If you're happy shipping your app with the recommended set of locales included in `ICU4X`, you can stop reading now. If you want to reduce code size, do runtime data loading, or build your own complex data pipelines, this tutorial is for you.
 
-# 1. Prerequisites
+## 1. Prerequisites
 
-This tutorial assumes you have finished the [introductory tutorial](intro.md) and continues where that tutorial left off. In particular, you should still have the latest version of code for `myapp`.
+This tutorial assumes you have finished the [introductory tutorial](quickstart.md) and continues where that tutorial left off. In particular, you should still have the latest version of code for `myapp`.
 
-# 2. Generating data
+## 2. Generating data
 
 Data generation is done using the `icu4x-datagen` tool, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data.
 
@@ -30,7 +30,7 @@ This will generate a `my_data` directory containing the data for all components 
 
 `icu4x-datagen` has many options, some of which we'll discover below. The default options should work for most purposes, but check out `icu4x-datagen --help` to learn more about fine-tuning your data.
 
-## Should you check in data to your repository?
+### Should you check in data to your repository?
 
 You can check in the generated data to your version control system, or you can add it to a build script. There are pros and cons of both approaches.
 
@@ -46,7 +46,7 @@ You should generate it automatically at build time if:
 
 If you check in the generated data, it is recommended that you configure a job in continuous integration that verifies that the data in your repository reflects the latest CLDR/Unicode releases; otherwise, your app may drift out of date.
 
-# 3. Using the generated data
+## 3. Using the generated data
 
 Once we have generated the data, we need to instruct `ICU4X` to use it. To do this, set the `ICU4X_DATA_DIR` during the compilation of your app:
 
@@ -56,7 +56,7 @@ ICU4X_DATA_DIR=$(pwd)/my_data cargo run
 
 This will replace the data that's bundled in `ICU4X` by your own. It should result in a smaller binary, as we're including only a single locale.
 
-# 4. The `DataProvider`
+## 4. The `DataProvider`
 
 Replacing `ICU4X`'s bundled data by your own can be useful if you don't require the full set of locales that would otherwise be bundled, but still requires including data at compile time, which is limiting. For more flexible data management, `ICU4X` provides a trait called `DataProvider` which can be used to provide data to `ICU4X` APIs. It also provides several implementations of `DataProvider`s, which all have their own use cases. Users are also free to design their own providers that best fit into their ecosystem requirements.
 
@@ -68,7 +68,7 @@ trait DataProvider<M: DataMarker> {
 
 As you can see, the `DataProvider` trait is fairly simple. It's generic in a `DataMarker`, which (statically) marks the type of data that an implementation returns, and there's a single method that loads the data for a given `DataRequest` (which contains the locale).
 
-## `BufferProvider`
+### `BufferProvider`
 
 Static markers that determine the type of data is great for data that is compiled into the binary, as it allows the compiler to eliminate unused data, but for runtime data loading it is too restrictive. For this reason `ICU4X` defines one more trait: `BufferProvider` abstracts over data providers that provide opaque byte buffers which can be deserialized.
 
@@ -77,7 +77,7 @@ Because of these three data provider types, every `ICU4X` API has four construct
 * `try_new_with_buffer_provider`: This loads data from a provided `&impl BufferProvider`, deserializing it
 * `try_new_unstable`: This loads data from a provided `&impl DataProvider<X + Y + ...>`. It is *semver unstable*, because the bounds on the provider might change in case more data is required in the future.
 
-# 5. Using the generated data explicitly
+## 5. Using the generated data explicitly
 
 The data we generated in section 2 is actually just Rust code defining `DataProvider` implementations for all markers using hardcoded data (go take a look!).
 
@@ -120,7 +120,7 @@ fn main() {
 }
 ```
 
-# 4. `BlobDataProvider`
+## 6. `BlobDataProvider`
 
 The baked data provider is great because it allows serialization-free access to data, but it needs to be known at compile time. `ICU4X`'s other main provider is the `BlobDataProvider` (`icu_provider_blob`), which is a `BufferProvider` that allows loading byte data at runtime.
 
@@ -141,7 +141,7 @@ $ icu4x-datagen --markers all --locales ja --format blob --out my_data_blob.post
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
 
-## Locale Fallbacking
+### Locale Fallbacking
 
 Unlike `BakedDataProvider`, `BlobDataProvider` (and `FsDataProvider`) does not perform locale fallbacking. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. To enable fallback, we can wrap the provider in a `LocaleFallbackProvider`.
 
@@ -188,7 +188,7 @@ fn main() {
 
 As you can see in the second `expect` message, it's not possible to statically tell whether the correct data markers are included. While `BakedDataProvider` would result in a compile error for missing `DataProvider<M>` implementations, `BlobDataProvider` returns runtime errors if markers are missing.
 
-# 5. Data slicing
+## 7. Data slicing
 
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--markers all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
@@ -246,10 +246,10 @@ Rebuilding the application and rerunning datagen rewards us with a 3KB data blob
 
 These API-level optimizations also apply to compiled data (there's no need to use `--markers-for-bin`, as the compiler will remove unused markers).
 
-# 6. Summary
+## 8. Summary
 
 We have learned how to generate data and load it into our programs, optimize data size, and gotten to know the different data providers that are part of `ICU4X`.
 
-For a deeper dive into configuring your data providers in code, see [data_provider.md].
+For a deeper dive into configuring your data providers in code, see [data-provider-runtime.md].
 
 You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_provider_export/latest/).
