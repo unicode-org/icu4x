@@ -20,6 +20,7 @@ pub mod ffi {
     #[allow(unused_imports)]
     use crate::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
+        date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
         date::ffi::IsoDate,
         datetime_helpers,
         datetime_helpers::map_or_default,
@@ -67,10 +68,7 @@ pub mod ffi {
             {%- if flavor.is_zone_only() %}
             icu_datetime::fieldsets::enums::ZoneFieldSet,
             {%- else if flavor.has_date() && flavor.has_time() %}
-            icu_datetime::fieldsets::Combo<
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet,
-                icu_datetime::fieldsets::enums::ZoneFieldSet,
-            >
+            icu_datetime::fieldsets::enums::CompositeFieldSet
             {%- else if flavor.has_date() %}
             icu_datetime::fieldsets::Combo<
                 icu_datetime::fieldsets::enums::DateFieldSet,
