@@ -40,7 +40,7 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "from_bcp47")]
         #[diplomat::demo(default_constructor)]
         pub fn create_from_bcp47(id: &DiplomatStr) -> Box<Self> {
-            tinystr::TinyAsciiStr::try_from_utf8(id)
+            icu_locale_core::subtags::Subtag::try_from_utf8(id)
                 .map(icu_time::TimeZone)
                 .map(TimeZone)
                 .map(Box::new)

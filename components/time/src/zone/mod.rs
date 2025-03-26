@@ -37,8 +37,8 @@
 //! ## Timestamp
 //!
 //! Some time zones change names over time, such as when changing "metazone". For example, Portugal changed from
-//! "Western European Time" to "Central European Time" and back in the 1990s, without changing time zone id
-//! (`Europe/Lisbon`/`ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
+//! "Western European Time" to "Central European Time" and back in the 1990s, without changing time zone ID
+//! (`Europe/Lisbon`, `ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
 //!
 //! It is not required to set the timestamp on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
@@ -63,13 +63,13 @@
 //! use icu::time::zone::TimeZoneVariant;
 //! use icu::time::Time;
 //! use icu::time::TimeZone;
-//! use tinystr::tinystr;
+//! use icu::locale::subtags::subtag;
 //!
 //! // Parse the IANA ID
 //! let id = IanaParser::new().parse("America/Chicago");
 //!
 //! // Alternatively, use the BCP47 ID directly
-//! let id = TimeZone(tinystr!(8, "uschi"));
+//! let id = TimeZone(subtag!("uschi"));
 //!
 //! // Create a TimeZoneInfo<Base> by associating the ID with an offset
 //! let time_zone = id.with_offset("-0600".parse().ok());
@@ -103,8 +103,8 @@ use crate::{scaffold::IntoOption, Time};
 use core::fmt;
 use core::ops::Deref;
 use icu_calendar::{Date, Iso};
+use icu_locale_core::subtags::{subtag, Subtag};
 use icu_provider::prelude::yoke;
-use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
@@ -176,30 +176,30 @@ pub mod models {
 ///
 /// ```
 /// use icu::time::zone::{IanaParser, TimeZone};
-/// use tinystr::tinystr;
+/// use icu::locale::subtags::subtag;
 ///
 /// let parser = IanaParser::new();
-/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
+/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(subtag!("noosl")));
 /// assert_eq!(
 ///     parser.parse("Europe/Berlin"),
-///     TimeZone(tinystr!(8, "deber"))
+///     TimeZone(subtag!("deber"))
 /// );
 /// assert_eq!(
 ///     parser.parse("Europe/Belfast"),
-///     TimeZone(tinystr!(8, "gblon"))
+///     TimeZone(subtag!("gblon"))
 /// );
 /// assert_eq!(
 ///     parser.parse("Europe/London"),
-///     TimeZone(tinystr!(8, "gblon"))
+///     TimeZone(subtag!("gblon"))
 /// );
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // This is a stable newtype
-pub struct TimeZone(pub TinyAsciiStr<8>);
+pub struct TimeZone(pub Subtag);
 
 impl TimeZone {
     /// The synthetic `Etc/Unknown` time zone.
@@ -207,7 +207,7 @@ impl TimeZone {
     /// This is the result of parsing unknown zones. It's important that such parsing does not
     /// fail, as new zones are added all the time, and ICU4X might not be up to date.
     pub const fn unknown() -> Self {
-        Self(tinystr::tinystr!(8, "unk"))
+        Self(subtag!("unk"))
     }
 }
 
@@ -245,7 +245,7 @@ pub(crate) mod ule {
 pub use ule::TimeZoneVariant;
 
 impl Deref for TimeZone {
-    type Target = TinyAsciiStr<8>;
+    type Target = Subtag;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -359,7 +359,7 @@ impl TimeZoneInfo<models::Base> {
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
     pub const fn utc() -> Self {
-        TimeZone(tinystr::tinystr!(8, "utc")).with_offset(Some(UtcOffset::zero()))
+        TimeZone(subtag!("utc")).with_offset(Some(UtcOffset::zero()))
     }
 
     /// Sets a local time on this time zone.

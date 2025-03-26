@@ -168,7 +168,7 @@ impl SourceDataProvider {
         let mut locations = BTreeMap::new();
 
         exemplar_cities.retain(|&k, v| {
-            if k.0 == "unk" {
+            if k == TimeZone::unknown() {
                 true
             } else if let Some(region) = primary_zones.get(&k) {
                 if let Some(region_name) = region_display_names.get(region) {

@@ -292,14 +292,14 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let zoc = VariantOffsetsCalculator::new();
     ///
     /// // America/Denver observes DST
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
-    ///         TimeZone(tinystr!(8, "usden")),
+    ///         TimeZone(subtag!("usden")),
     ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
     ///     )
     ///     .unwrap();
@@ -315,7 +315,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// // America/Phoenix does not
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
-    ///         TimeZone(tinystr!(8, "usphx")),
+    ///         TimeZone(subtag!("usphx")),
     ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
     ///     )
     ///     .unwrap();

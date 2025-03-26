@@ -57,26 +57,26 @@ use crate::{
 /// ```
 /// use icu::time::zone::IanaParser;
 /// use icu::time::TimeZone;
-/// use tinystr::tinystr;
+/// use icu::locale::subtags::subtag;
 ///
 /// let parser = IanaParser::new();
 ///
 /// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel":
 /// assert_eq!(
 ///     parser.parse("Australia/Melbourne"),
-///     TimeZone(tinystr!(8, "aumel"))
+///     TimeZone(subtag!("aumel"))
 /// );
 ///
 /// // Lookup is ASCII-case-insensitive:
 /// assert_eq!(
 ///     parser.parse("australia/melbourne"),
-///     TimeZone(tinystr!(8, "aumel"))
+///     TimeZone(subtag!("aumel"))
 /// );
 ///
 /// // The IANA zone "Australia/Victoria" is an alias:
 /// assert_eq!(
 ///     parser.parse("Australia/Victoria"),
-///     TimeZone(tinystr!(8, "aumel"))
+///     TimeZone(subtag!("aumel"))
 /// );
 ///
 /// // The IANA zone "Australia/Boing_Boing" does not exist
@@ -205,7 +205,7 @@ impl<'a> IanaParserBorrowed<'a> {
     ///
     /// let result = parser.parse("Asia/CALCUTTA");
     ///
-    /// assert_eq!(*result, "inccu");
+    /// assert_eq!(result.as_str(), "inccu");
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(parser.parse("America/San_Francisco"), TimeZone::unknown());
@@ -245,13 +245,13 @@ impl<'a> IanaParserBorrowed<'a> {
     /// use icu::time::zone::IanaParser;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParser::new();
     ///
     /// let ids = parser.iter().collect::<BTreeSet<_>>();
     ///
-    /// assert!(ids.contains(&TimeZone(tinystr!(8, "uaiev"))));
+    /// assert!(ids.contains(&TimeZone(subtag!("uaiev"))));
     /// ```
     pub fn iter(&self) -> TimeZoneIter<'a> {
         TimeZoneIter {
@@ -445,7 +445,7 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     ///
     /// let (tz, canonical, normalized) = parser.parse("Asia/CALCUTTA");
     ///
-    /// assert_eq!(*tz, "inccu");
+    /// assert_eq!(tz.as_str(), "inccu");
     /// assert_eq!(canonical, "Asia/Kolkata");
     /// assert_eq!(normalized, "Asia/Calcutta");
     ///
@@ -514,13 +514,13 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParserExtended::new();
     ///
     /// let ids = parser.iter().collect::<BTreeSet<_>>();
     ///
-    /// assert!(ids.contains(&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv")));
+    /// assert!(ids.contains(&(TimeZone(subtag!("uaiev")), "Europe/Kyiv")));
     /// assert_eq!(ids.len(), 445);
     /// ```
     pub fn iter(&self) -> TimeZoneAndCanonicalIter<'a> {
@@ -548,16 +548,16 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeMap;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParserExtended::new();
     ///
     /// let ids = parser.iter_all().enumerate().map(|(a, b)| (b, a)).collect::<std::collections::BTreeMap<_, _>>();
     ///
-    /// let kyiv_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kyiv")];
-    /// let kiev_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kiev")];
-    /// let uzgh_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Uzhgorod")];
-    /// let zapo_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Zaporozhye")];
+    /// let kyiv_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Kyiv")];
+    /// let kiev_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Kiev")];
+    /// let uzgh_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Uzhgorod")];
+    /// let zapo_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Zaporozhye")];
     ///
     /// // The order for a particular time zone is guaranteed
     /// assert!(kyiv_idx < kiev_idx && kiev_idx < uzgh_idx && uzgh_idx < zapo_idx);

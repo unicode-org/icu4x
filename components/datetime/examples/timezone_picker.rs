@@ -8,6 +8,7 @@ use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::Time;
+use icu_time::TimeZone;
 
 fn main() {
     let parser = icu::time::zone::IanaParser::new();
@@ -27,7 +28,7 @@ fn main() {
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
     for tz in parser.iter() {
-        if tz.0 == "unk" || tz.starts_with("utc") || tz.0 == "gmt" {
+        if tz == TimeZone::unknown() || tz.as_str().starts_with("utc") || tz.as_str() == "gmt" {
             continue;
         }
 

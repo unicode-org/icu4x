@@ -717,11 +717,9 @@ impl FormatTimeZone for Bcp47IdFormat {
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let time_zone_id = input
-            .time_zone_id
-            .unwrap_or(TimeZone(tinystr::tinystr!(8, "unk")));
+        let time_zone_id = input.time_zone_id.unwrap_or(TimeZone::unknown());
 
-        sink.write_str(&time_zone_id)?;
+        sink.write_str(time_zone_id.as_str())?;
 
         Ok(Ok(()))
     }
