@@ -337,7 +337,7 @@ impl AnyCalendarForFormattingKind {
         prefs.calendar_algorithm = None;
         let kind = AnyCalendarKind::new((&prefs).into());
         match Self::try_from_any_calendar_kind(kind) {
-            Some(res) => return res,
+            Some(res) => res,
             None => {
                 debug_assert!(false, "all locale-default calendars are supported");
                 // fall back to something non-Gregorian to make errors more obvious
