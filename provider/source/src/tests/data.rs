@@ -687,10 +687,9 @@ impl SourceDataProvider {
                         ("etcetera", include_bytes!("../../tests/data/tzdb/etcetera").as_slice()),
                         ("europe", include_bytes!("../../tests/data/tzdb/europe").as_slice()),
                         ("northamerica", include_bytes!("../../tests/data/tzdb/northamerica").as_slice()),
-                        ("southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice()),
-                        ("zone.tab", include_bytes!("../../tests/data/tzdb/zone.tab").as_slice())
+                        ("southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice())
                     ].into_iter().collect(),
-                ), transitions: Default::default(), zone_tab: Default::default() })),
+                ), transitions: Default::default() })),
                 ..SourceDataProvider::new_custom()
             })
             .clone()
