@@ -9,7 +9,7 @@ use icu_datagen::prelude::*;
 use std::path::Path;
 
 const REPO_VERSION: &str = "1.5.1";
-const EXPERIMENTAL_VERSION: &str = "0.1.0";
+const EXPERIMENTAL_VERSION: &str = "0.1.1";
 const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
     ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
