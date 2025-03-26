@@ -5,7 +5,7 @@
 //! Titlecasing-specific
 use crate::provider::CaseMapV1;
 use crate::{CaseMapper, CaseMapperBorrowed};
-use alloc::string::String;
+use alloc::borrow::Cow;
 use icu_locale_core::LanguageIdentifier;
 use icu_properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu_properties::provider::PropertyEnumGeneralCategoryV1;
@@ -472,14 +472,15 @@ impl<'a> TitlecaseMapperBorrowed<'a> {
     ///     "SpOngeBoB"
     /// );
     /// ```
-    pub fn titlecase_segment_to_string(
+    pub fn titlecase_segment_to_string<'s>(
         self,
-        src: &str,
+        src: &'s str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-    ) -> String {
-        self.titlecase_segment(src, langid, options)
-            .write_to_string()
-            .into_owned()
+    ) -> Cow<'s, str> {
+        writeable::to_string_or_borrow(
+            &self.titlecase_segment(src, langid, options),
+            src.as_bytes(),
+        )
     }
 }
