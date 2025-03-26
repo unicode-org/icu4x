@@ -49,8 +49,8 @@ criterion = { workspace = true }
 
 
 [features]
-default = ["compiled_data", "ixdtf"]
-ixdtf = ["dep:ixdtf"]
+default = ["compiled_data", "rfc_9557"]
+rfc_9557 = ["dep:ixdtf"]
 logging = ["calendrical_calculations/logging"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]

@@ -8,21 +8,21 @@ use crate::{AsCalendar, Calendar, Date, Iso, RangeError};
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
-use ixdtf::ParseError as IxdtfError;
+use ixdtf::ParseError as Rfc9557Error;
 
-/// An error returned from parsing an IXDTF string to an `icu_calendar` type.
+/// An error returned from parsing an RFC 9557 string to an `icu_calendar` type.
 #[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseError {
-    /// Syntax error in the IXDTF string.
-    #[displaydoc("Syntax error in the IXDTF string: {0}")]
-    Syntax(IxdtfError),
+    /// Syntax error.
+    #[displaydoc("Syntax error in the RFC 9557 string: {0}")]
+    Syntax(Rfc9557Error),
     /// Value is out of range.
     #[displaydoc("Value out of range: {0}")]
     Range(RangeError),
-    /// The IXDTF is missing fields required for parsing into the chosen type.
+    /// The RFC 9557 string is missing fields required for parsing into the chosen type.
     MissingFields,
-    /// The IXDTF specifies an unknown calendar.
+    /// The RFC 9557 string specifies an unknown calendar.
     UnknownCalendar,
     /// Expected a different calendar.
     #[displaydoc("Expected calendar {0:?} but found calendar {1:?}")]
@@ -35,26 +35,26 @@ impl From<RangeError> for ParseError {
     }
 }
 
-impl From<IxdtfError> for ParseError {
-    fn from(value: IxdtfError) -> Self {
+impl From<Rfc9557Error> for ParseError {
+    fn from(value: Rfc9557Error) -> Self {
         Self::Syntax(value)
     }
 }
 
 impl FromStr for Date<Iso> {
     type Err = ParseError;
-    fn from_str(ixdtf_str: &str) -> Result<Self, Self::Err> {
-        Self::try_from_str(ixdtf_str, Iso)
+    fn from_str(rfc_9557_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from_str(rfc_9557_str, Iso)
     }
 }
 
 impl<A: AsCalendar> Date<A> {
-    /// Creates a [`Date`] in the given calendar from an IXDTF syntax string.
+    /// Creates a [`Date`] in the given calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
     /// match the calendar argument, unless the argument is [`Iso`].
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
+    /// ✨ *Enabled with the `rfc_9557` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -74,20 +74,20 @@ impl<A: AsCalendar> Date<A> {
     /// );
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
-    pub fn try_from_str(ixdtf_str: &str, calendar: A) -> Result<Self, ParseError> {
-        Self::try_from_utf8(ixdtf_str.as_bytes(), calendar)
+    pub fn try_from_str(rfc_9557_str: &str, calendar: A) -> Result<Self, ParseError> {
+        Self::try_from_utf8(rfc_9557_str.as_bytes(), calendar)
     }
 
-    /// Creates a [`Date`] in the given calendar from an IXDTF syntax string.
+    /// Creates a [`Date`] in the given calendar from an RFC 9557 string.
     ///
     /// Returns an error if the string has a calendar annotation that does not
     /// match the calendar argument.
     ///
     /// See [`Self::try_from_str()`].
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
-    pub fn try_from_utf8(ixdtf_str: &[u8], calendar: A) -> Result<Self, ParseError> {
-        let ixdtf_record = IxdtfParser::from_utf8(ixdtf_str).parse()?;
+    /// ✨ *Enabled with the `rfc_9557` Cargo feature.*
+    pub fn try_from_utf8(rfc_9557_str: &[u8], calendar: A) -> Result<Self, ParseError> {
+        let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record, calendar)
     }
 
