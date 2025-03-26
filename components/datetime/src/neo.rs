@@ -153,6 +153,8 @@ where
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
+    /// This ignores the `calendar_kind` preference and instead uses the static calendar type.
+    ///
     /// Use this constructor for optimal data size and memory use
     /// if you know the required datetime components at build time.
     /// If you do not know the datetime components until runtime,
