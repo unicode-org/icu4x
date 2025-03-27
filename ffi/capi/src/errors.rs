@@ -131,6 +131,20 @@ pub mod ffi {
         UnsupportedLength = 0x08,
         UnsupportedField = 0x09,
     }
+
+    #[cfg(feature = "datetime")]
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
+    #[diplomat::rust_link(icu::datetime::fieldsets::builder::BuilderError, Enum, compact)]
+    pub enum DateTimeFieldSetBuilderError {
+        Unknown = 0x00,
+
+        MissingDateFields = 0x01,
+        MissingTimePrecision = 0x02,
+        MissingZoneStyle = 0x03,
+        InvalidDateFields = 0x04,
+        SuperfluousOptions = 0x05,
+    }
 }
 
 impl From<icu_provider::DataError> for DataError {
@@ -283,6 +297,21 @@ impl From<icu_datetime::DateTimeWriteError> for DateTimeWriteError {
             icu_datetime::DateTimeWriteError::MissingInputField(_) => Self::MissingInputField,
             icu_datetime::DateTimeWriteError::UnsupportedLength(_) => Self::UnsupportedLength,
             icu_datetime::DateTimeWriteError::UnsupportedField(_) => Self::UnsupportedField,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::fieldsets::builder::BuilderError> for DateTimeFieldSetBuilderError {
+    fn from(value: icu_datetime::fieldsets::builder::BuilderError) -> Self {
+        use icu_datetime::fieldsets::builder::BuilderError::*;
+        match value {
+            MissingDateFields => Self::MissingDateFields,
+            MissingTimePrecision => Self::MissingTimePrecision,
+            MissingZoneStyle => Self::MissingZoneStyle,
+            InvalidDateFields => Self::InvalidDateFields,
+            SuperfluousOptions(_) => Self::SuperfluousOptions,
             _ => Self::Unknown,
         }
     }
