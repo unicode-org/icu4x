@@ -47,7 +47,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_from_field_set_builder(
             locale: &Locale,
-            builder: &DateTimeFieldSetBuilder,
+            builder: DateTimeFieldSetBuilder,
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             let prefs = (&locale.0).into();
             let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
@@ -67,7 +67,7 @@ pub mod ffi {
         pub fn create_from_field_set_builder_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            builder: &DateTimeFieldSetBuilder,
+            builder: DateTimeFieldSetBuilder,
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             let provider = provider.get()?;
             let prefs = (&locale.0).into();
@@ -564,7 +564,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_from_field_set_builder(
             locale: &Locale,
-            builder: &DateTimeFieldSetBuilder,
+            builder: DateTimeFieldSetBuilder,
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             let prefs = (&locale.0).into();
             let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
@@ -584,7 +584,7 @@ pub mod ffi {
         pub fn create_from_field_set_builder_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-            builder: &DateTimeFieldSetBuilder,
+            builder: DateTimeFieldSetBuilder,
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             let provider = provider.get()?;
             let prefs = (&locale.0).into();

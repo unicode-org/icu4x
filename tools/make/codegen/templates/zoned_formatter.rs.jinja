@@ -89,7 +89,7 @@ pub mod ffi {
             provider: &DataProvider,
             {%- endif %}
             locale: &Locale,
-            builder: &DateTimeFieldSetBuilder,
+            builder: DateTimeFieldSetBuilder,
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             {%- if ctor.is_with_provider() %}
             let provider = provider.get()?;

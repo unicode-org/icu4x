@@ -64,8 +64,8 @@ impl From<icu_datetime::fieldsets::builder::FieldSetBuilder> for ffi::DateTimeFi
     }
 }
 
-impl From<&ffi::DateTimeFieldSetBuilder> for icu_datetime::fieldsets::builder::FieldSetBuilder {
-    fn from(value: &ffi::DateTimeFieldSetBuilder) -> Self {
+impl From<ffi::DateTimeFieldSetBuilder> for icu_datetime::fieldsets::builder::FieldSetBuilder {
+    fn from(value: ffi::DateTimeFieldSetBuilder) -> Self {
         let mut res = icu_datetime::fieldsets::builder::FieldSetBuilder::default();
         res.length = value.length.as_ref().ok().map(|x| (*x).into());
         res.date_fields = value.date_fields.as_ref().ok().map(|x| (*x).into());
