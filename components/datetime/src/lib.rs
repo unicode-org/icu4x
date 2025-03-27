@@ -138,7 +138,7 @@ pub mod preferences {
 
 /// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
 ///
-/// This module contains reexports from the [`icu_calendar`] and [`icu_time`] crates.
+/// This module contains re-exports from the [`icu_calendar`] and [`icu_time`] crates.
 pub mod input {
     pub use icu_calendar::Date;
     pub use icu_time::zone::UtcOffset;

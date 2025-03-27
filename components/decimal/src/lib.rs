@@ -134,7 +134,7 @@ pub mod preferences {
 
 /// Types that can be fed to [`DecimalFormatter`] and their utilities
 ///
-/// This module contains reexports from the [`fixed_decimal`] crate.
+/// This module contains re-exports from the [`fixed_decimal`] crate.
 pub mod input {
     pub use fixed_decimal::Decimal;
     #[cfg(feature = "ryu")]

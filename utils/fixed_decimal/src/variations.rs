@@ -22,7 +22,7 @@ pub enum Sign {
 
 /// Configuration for when to render the minus sign or plus sign.
 ///
-/// **This type originates from the [`fixed_decimal`](docs.rs/fixed_decimal) crate, though it may be found reexported elsewhere.**
+/// **The primary definition of this type is in the [`fixed_decimal`](docs.rs/fixed_decimal) crate. Other ICU4X crates re-export it for convenience.**
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum SignDisplay {

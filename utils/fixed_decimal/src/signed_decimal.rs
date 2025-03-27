@@ -17,7 +17,7 @@ use crate::{
 
 /// A Type containing a [`UnsignedDecimal`] and a [`Sign`] to represent a signed decimal number.
 ///
-/// **This type originates from the [`fixed_decimal`](docs.rs/fixed_decimal) crate, though it may be found reexported elsewhere.**
+/// **The primary definition of this type is in the [`fixed_decimal`](docs.rs/fixed_decimal) crate. Other ICU4X crates re-export it for convenience.**
 ///
 /// Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, as well as an optional sign; used for formatting and plural selection.
