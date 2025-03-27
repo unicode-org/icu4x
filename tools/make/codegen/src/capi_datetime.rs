@@ -42,10 +42,7 @@ enum ConstructorType {
 }
 
 impl ConstructorType {
-    pub const VALUES: &'static [Self] = &[
-        Self::CompiledData,
-        Self::WithProvider,
-    ];
+    pub const VALUES: &'static [Self] = &[Self::CompiledData, Self::WithProvider];
     pub fn is_with_provider(self) -> bool {
         matches!(self, Self::WithProvider)
     }
