@@ -11,7 +11,6 @@ use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
-use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use core::ops::Deref;
 
@@ -171,19 +170,7 @@ impl<A: AsCalendar> Date<A> {
     /// The day of the week for this date
     #[inline]
     pub fn day_of_week(&self) -> types::Weekday {
-        // RD 1 happens to be a Monday
-        const MONDAY: RataDie = RataDie::new(1);
-
-        match (Iso::to_fixed(self.to_iso()) - MONDAY).rem_euclid(7) {
-            0 => types::Weekday::Monday,
-            1 => types::Weekday::Tuesday,
-            2 => types::Weekday::Wednesday,
-            3 => types::Weekday::Thursday,
-            4 => types::Weekday::Friday,
-            5 => types::Weekday::Saturday,
-            6 => types::Weekday::Sunday,
-            _ => unreachable!(),
-        }
+        Iso::to_fixed(self.to_iso()).into()
     }
 
     /// Add a `duration` to this date, mutating it

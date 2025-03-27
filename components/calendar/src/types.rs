@@ -4,6 +4,7 @@
 
 //! This module contains various types used by `icu_calendar` and `icu::datetime`
 
+use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
@@ -420,23 +421,13 @@ pub enum Weekday {
     Sunday,
 }
 
-impl From<usize> for Weekday {
-    /// Convert from an ISO-8601 weekday number to an [`Weekday`] enum. 0 is automatically converted
-    /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::types::Weekday;
-    ///
-    /// assert_eq!(Weekday::Sunday, Weekday::from(0));
-    /// assert_eq!(Weekday::Monday, Weekday::from(1));
-    /// assert_eq!(Weekday::Sunday, Weekday::from(7));
-    /// assert_eq!(Weekday::Monday, Weekday::from(8));
-    /// ```
-    fn from(input: usize) -> Self {
+// RD 0 is a Sunday
+const SUNDAY: RataDie = RataDie::new(0);
+
+impl From<RataDie> for Weekday {
+    fn from(value: RataDie) -> Self {
         use Weekday::*;
-        match input % 7 {
+        match (value - SUNDAY).rem_euclid(7) {
             0 => Sunday,
             1 => Monday,
             2 => Tuesday,
@@ -450,6 +441,23 @@ impl From<usize> for Weekday {
 }
 
 impl Weekday {
+    /// Convert from an ISO-8601 weekday number to an [`Weekday`] enum. 0 is automatically converted
+    /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::Weekday;
+    ///
+    /// assert_eq!(Weekday::Sunday, Weekday::from_days_since_sunday(0));
+    /// assert_eq!(Weekday::Monday, Weekday::from_days_since_sunday(1));
+    /// assert_eq!(Weekday::Sunday, Weekday::from_days_since_sunday(7));
+    /// assert_eq!(Weekday::Monday, Weekday::from_days_since_sunday(8));
+    /// ```
+    pub fn from_days_since_sunday(input: isize) -> Self {
+        (SUNDAY + input as i64).into()
+    }
+
     /// Returns the day after the current day.
     pub(crate) fn next_day(self) -> Weekday {
         use Weekday::*;
