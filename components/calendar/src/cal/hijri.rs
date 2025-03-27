@@ -484,10 +484,6 @@ impl Calendar for HijriObservational {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
-        Iso.day_of_week(self.date_to_iso(date).inner())
-    }
-
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         date.0.offset_date(offset, &self.precomputed_data())
     }
@@ -839,10 +835,6 @@ impl Calendar for HijriCivil {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
-        Iso.day_of_week(self.date_to_iso(date).inner())
-    }
-
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         date.0.offset_date(offset, &())
     }
@@ -1018,10 +1010,6 @@ impl Calendar for HijriTabular {
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
         date.0.days_in_month()
-    }
-
-    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
-        Iso.day_of_week(self.date_to_iso(date).inner())
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
