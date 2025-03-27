@@ -471,12 +471,12 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     type YearInfo = ChineseBasedYearInfo;
 
-    fn month_days(_year: i32, month: u8, year_info: ChineseBasedYearInfo) -> u8 {
+    fn days_in_provided_month(_year: i32, month: u8, year_info: ChineseBasedYearInfo) -> u8 {
         year_info.days_in_month(month)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_for_every_year(_year: i32, year_info: ChineseBasedYearInfo) -> u8 {
+    fn months_in_provided_year(_year: i32, year_info: ChineseBasedYearInfo) -> u8 {
         if year_info.leap_month().is_some() {
             13
         } else {
@@ -485,7 +485,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     }
 
     /// Returns true if the given year is a leap year, and false if not.
-    fn is_leap_year(_year: i32, year_info: ChineseBasedYearInfo) -> bool {
+    fn provided_year_is_leap(_year: i32, year_info: ChineseBasedYearInfo) -> bool {
         year_info.leap_month().is_some()
     }
 
@@ -493,7 +493,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
     /// determined by finding the day immediately before the next new year and calculating the number
     /// of days since the last new moon (beginning of the last month in the year).
-    fn last_month_day_in_year(_year: i32, year_info: ChineseBasedYearInfo) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32, year_info: ChineseBasedYearInfo) -> (u8, u8) {
         if year_info.leap_month().is_some() {
             (13, year_info.days_in_month(13))
         } else {

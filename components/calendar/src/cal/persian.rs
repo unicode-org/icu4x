@@ -49,34 +49,34 @@ pub struct PersianDateInner(ArithmeticDate<Persian>);
 impl CalendarArithmetic for Persian {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             1..=6 => 31,
             7..=11 => 30,
-            12 if Self::is_leap_year(year, ()) => 30,
+            12 if Self::provided_year_is_leap(year, ()) => 30,
             12 => 29,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32, _data: ()) -> u8 {
         12
     }
 
-    fn is_leap_year(p_year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(p_year: i32, _data: ()) -> bool {
         calendrical_calculations::persian::is_leap_year(p_year, _data)
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+        if Self::provided_year_is_leap(year, ()) {
             366
         } else {
             365
         }
     }
 
-    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
-        if Self::is_leap_year(year, ()) {
+    fn last_month_day_in_provided_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::provided_year_is_leap(year, ()) {
             (12, 30)
         } else {
             (12, 29)
@@ -152,7 +152,7 @@ impl Calendar for Persian {
         )
     }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -379,7 +379,7 @@ mod tests {
             leap_years[index] = case.year;
         }
         for (year, bool) in leap_years.iter().zip(expected_values.iter()) {
-            assert_eq!(Persian::is_leap_year(*year, ()), *bool);
+            assert_eq!(Persian::provided_year_is_leap(*year, ()), *bool);
         }
     }
 
@@ -718,7 +718,7 @@ mod tests {
     #[test]
     fn test_calendar_ut_ac_ir_data() {
         for (p_year, leap, iso_year, iso_month, iso_day) in CALENDAR_UT_AC_IR_TEST_DATA.iter() {
-            assert_eq!(Persian::is_leap_year(*p_year, ()), *leap);
+            assert_eq!(Persian::provided_year_is_leap(*p_year, ()), *leap);
             let persian_date = Date::try_new_persian(*p_year, 1, 1).unwrap();
             let iso_date = persian_date.to_calendar(Iso);
             assert_eq!(iso_date.year().era_year_or_extended(), *iso_year);

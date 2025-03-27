@@ -71,11 +71,11 @@ pub struct EthiopianDateInner(ArithmeticDate<Ethiopian>);
 impl CalendarArithmetic for Ethiopian {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
         if (1..=12).contains(&month) {
             30
         } else if month == 13 {
-            if Self::is_leap_year(year, ()) {
+            if Self::provided_year_is_leap(year, ()) {
                 6
             } else {
                 5
@@ -85,16 +85,16 @@ impl CalendarArithmetic for Ethiopian {
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32, _data: ()) -> u8 {
         13
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32, _data: ()) -> bool {
         year.rem_euclid(4) == 3
     }
 
-    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
-        if Self::is_leap_year(year, ()) {
+    fn last_month_day_in_provided_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::provided_year_is_leap(year, ()) {
             (13, 6)
         } else {
             (13, 5)
@@ -102,7 +102,7 @@ impl CalendarArithmetic for Ethiopian {
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+        if Self::provided_year_is_leap(year, ()) {
             366
         } else {
             365
@@ -200,7 +200,7 @@ impl Calendar for Ethiopian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {

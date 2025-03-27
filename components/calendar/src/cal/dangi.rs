@@ -234,7 +234,7 @@ impl Calendar for Dangi {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0 .0.year, date.0 .0.year_info)
+        Self::provided_year_is_leap(date.0 .0.year, date.0 .0.year_info)
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::MonthInfo {

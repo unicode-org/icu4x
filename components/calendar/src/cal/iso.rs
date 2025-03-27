@@ -45,30 +45,30 @@ pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 impl CalendarArithmetic for Iso {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year, ()) => 29,
+            2 if Self::provided_year_is_leap(year, ()) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32, _data: ()) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32, _data: ()) -> bool {
         calendrical_calculations::iso::is_leap_year(year)
     }
 
-    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32, _data: ()) -> (u8, u8) {
         (12, 31)
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+        if Self::provided_year_is_leap(year, ()) {
             366
         } else {
             365
@@ -143,7 +143,7 @@ impl Calendar for Iso {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year, ())
     }
 
     /// The calendar-specific month represented by `date`
@@ -221,7 +221,7 @@ impl Iso {
         let mut month = 1;
         let mut day = year_day as i32;
         while month <= 12 {
-            let month_days = Self::month_days(year, month, ()) as i32;
+            let month_days = Self::days_in_provided_month(year, month, ()) as i32;
             if day <= month_days {
                 break;
             } else {
@@ -242,7 +242,7 @@ impl Iso {
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
         #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
         let mut offset = month_offset[date.0.month as usize - 1];
-        if Self::is_leap_year(date.0.year, ()) && date.0.month > 2 {
+        if Self::provided_year_is_leap(date.0.year, ()) && date.0.month > 2 {
             // Months after February in a leap year are offset by one less
             offset += 1;
         }

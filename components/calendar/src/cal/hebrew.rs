@@ -89,11 +89,11 @@ impl HebrewYearInfo {
 impl CalendarArithmetic for Hebrew {
     type YearInfo = HebrewYearInfo;
 
-    fn month_days(_h_year: i32, ordinal_month: u8, info: HebrewYearInfo) -> u8 {
+    fn days_in_provided_month(_h_year: i32, ordinal_month: u8, info: HebrewYearInfo) -> u8 {
         info.keviyah.month_len(ordinal_month)
     }
 
-    fn months_for_every_year(_h_year: i32, info: HebrewYearInfo) -> u8 {
+    fn months_in_provided_year(_h_year: i32, info: HebrewYearInfo) -> u8 {
         if info.keviyah.is_leap() {
             13
         } else {
@@ -105,11 +105,11 @@ impl CalendarArithmetic for Hebrew {
         info.keviyah.year_length()
     }
 
-    fn is_leap_year(_h_year: i32, info: HebrewYearInfo) -> bool {
+    fn provided_year_is_leap(_h_year: i32, info: HebrewYearInfo) -> bool {
         info.keviyah.is_leap()
     }
 
-    fn last_month_day_in_year(_h_year: i32, info: HebrewYearInfo) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_h_year: i32, info: HebrewYearInfo) -> (u8, u8) {
         info.keviyah.last_month_day_in_year()
     }
 }
@@ -254,12 +254,12 @@ impl Calendar for Hebrew {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, date.0.year_info)
+        Self::provided_year_is_leap(date.0.year, date.0.year_info)
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut ordinal = date.0.month;
-        let is_leap_year = Self::is_leap_year(date.0.year, date.0.year_info);
+        let is_leap_year = Self::provided_year_is_leap(date.0.year, date.0.year_info);
 
         if is_leap_year {
             if ordinal == 6 {

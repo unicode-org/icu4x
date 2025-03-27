@@ -253,7 +253,7 @@ impl Calendar for Chinese {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0 .0.year, date.0 .0.year_info)
+        Self::provided_year_is_leap(date.0 .0.year, date.0 .0.year_info)
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -692,7 +692,7 @@ mod test {
             (13, 30),
         ];
         for case in cases {
-            let days_in_month = Chinese::month_days(year, case.0, year_info);
+            let days_in_month = Chinese::days_in_provided_month(year, case.0, year_info);
             assert_eq!(
                 case.1, days_in_month,
                 "month_days test failed for case: {case:?}"

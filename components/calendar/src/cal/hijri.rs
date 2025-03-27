@@ -407,11 +407,11 @@ pub struct HijriDateInner(ArithmeticDate<HijriObservational>);
 impl CalendarArithmetic for HijriObservational {
     type YearInfo = HijriYearInfo<ObservationalIslamic>;
 
-    fn month_days(_year: i32, month: u8, year_info: Self::YearInfo) -> u8 {
+    fn days_in_provided_month(_year: i32, month: u8, year_info: Self::YearInfo) -> u8 {
         year_info.packed_data.days_in_month(month)
     }
 
-    fn months_for_every_year(_year: i32, _year_info: Self::YearInfo) -> u8 {
+    fn months_in_provided_year(_year: i32, _year_info: Self::YearInfo) -> u8 {
         12
     }
 
@@ -420,12 +420,12 @@ impl CalendarArithmetic for HijriObservational {
     }
 
     // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, year_info: Self::YearInfo) -> bool {
+    fn provided_year_is_leap(_year: i32, year_info: Self::YearInfo) -> bool {
         year_info.packed_data.days_in_year() != HijriYearLength::SHORT
     }
 
-    fn last_month_day_in_year(year: i32, year_info: Self::YearInfo) -> (u8, u8) {
-        let days = Self::month_days(year, 12, year_info);
+    fn last_month_day_in_provided_year(year: i32, year_info: Self::YearInfo) -> (u8, u8) {
+        let days = Self::days_in_provided_month(year, 12, year_info);
 
         (12, days)
     }
@@ -508,7 +508,7 @@ impl Calendar for HijriObservational {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, date.0.year_info)
+        Self::provided_year_is_leap(date.0.year, date.0.year_info)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -583,11 +583,11 @@ pub struct HijriUmmAlQuraDateInner(ArithmeticDate<HijriUmmAlQura>);
 impl CalendarArithmetic for HijriUmmAlQura {
     type YearInfo = HijriYearInfo<SaudiIslamic>;
 
-    fn month_days(_year: i32, month: u8, year_info: HijriYearInfo<SaudiIslamic>) -> u8 {
+    fn days_in_provided_month(_year: i32, month: u8, year_info: HijriYearInfo<SaudiIslamic>) -> u8 {
         year_info.packed_data.days_in_month(month)
     }
 
-    fn months_for_every_year(_year: i32, _year_info: HijriYearInfo<SaudiIslamic>) -> u8 {
+    fn months_in_provided_year(_year: i32, _year_info: HijriYearInfo<SaudiIslamic>) -> u8 {
         12
     }
 
@@ -596,12 +596,15 @@ impl CalendarArithmetic for HijriUmmAlQura {
     }
 
     // As an true lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32, year_info: HijriYearInfo<SaudiIslamic>) -> bool {
+    fn provided_year_is_leap(_year: i32, year_info: HijriYearInfo<SaudiIslamic>) -> bool {
         year_info.packed_data.days_in_year() != HijriYearLength::SHORT
     }
 
-    fn last_month_day_in_year(year: i32, year_info: HijriYearInfo<SaudiIslamic>) -> (u8, u8) {
-        let days = Self::month_days(year, 12, year_info);
+    fn last_month_day_in_provided_year(
+        year: i32,
+        year_info: HijriYearInfo<SaudiIslamic>,
+    ) -> (u8, u8) {
+        let days = Self::days_in_provided_month(year, 12, year_info);
 
         (12, days)
     }
@@ -686,7 +689,7 @@ impl Calendar for HijriUmmAlQura {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, date.0.year_info)
+        Self::provided_year_is_leap(date.0.year, date.0.year_info)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -760,34 +763,34 @@ pub struct HijriCivilDateInner(ArithmeticDate<HijriCivil>);
 impl CalendarArithmetic for HijriCivil {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
             2 | 4 | 6 | 8 | 10 => 29,
-            12 if Self::is_leap_year(year, ()) => 30,
+            12 if Self::provided_year_is_leap(year, ()) => 30,
             12 => 29,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_year: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_year: i32, _data: ()) -> u8 {
         12
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+        if Self::provided_year_is_leap(year, ()) {
             HijriYearLength::LONG
         } else {
             HijriYearLength::SHORT
         }
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32, _data: ()) -> bool {
         (14 + 11 * year).rem_euclid(30) < 11
     }
 
-    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
-        if Self::is_leap_year(year, ()) {
+    fn last_month_day_in_provided_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::provided_year_is_leap(year, ()) {
             (12, 30)
         } else {
             (12, 29)
@@ -859,7 +862,7 @@ impl Calendar for HijriCivil {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -938,34 +941,34 @@ pub struct HijriTabularDateInner(ArithmeticDate<HijriTabular>);
 impl CalendarArithmetic for HijriTabular {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
             2 | 4 | 6 | 8 | 10 => 29,
-            12 if Self::is_leap_year(year, ()) => 30,
+            12 if Self::provided_year_is_leap(year, ()) => 30,
             12 => 29,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_year: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_year: i32, _data: ()) -> u8 {
         12
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+        if Self::provided_year_is_leap(year, ()) {
             HijriYearLength::LONG
         } else {
             HijriYearLength::SHORT
         }
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32, _data: ()) -> bool {
         (14 + 11 * year).rem_euclid(30) < 11
     }
 
-    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
-        if Self::is_leap_year(year, ()) {
+    fn last_month_day_in_provided_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::provided_year_is_leap(year, ()) {
             (12, 30)
         } else {
             (12, 29)
@@ -1036,7 +1039,7 @@ impl Calendar for HijriTabular {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {

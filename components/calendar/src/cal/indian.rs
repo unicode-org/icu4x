@@ -46,9 +46,9 @@ pub struct IndianDateInner(ArithmeticDate<Indian>);
 impl CalendarArithmetic for Indian {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
         if month == 1 {
-            if Self::is_leap_year(year, ()) {
+            if Self::provided_year_is_leap(year, ()) {
                 31
             } else {
                 30
@@ -62,20 +62,20 @@ impl CalendarArithmetic for Indian {
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32, _data: ()) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
-        Iso::is_leap_year(year + 78, ())
+    fn provided_year_is_leap(year: i32, _data: ()) -> bool {
+        Iso::provided_year_is_leap(year + 78, ())
     }
 
-    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32, _data: ()) -> (u8, u8) {
         (12, 30)
     }
 
     fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+        if Self::provided_year_is_leap(year, ()) {
             366
         } else {
             365
@@ -185,7 +185,7 @@ impl Calendar for Indian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
