@@ -127,6 +127,14 @@ impl FormatterFlavor {
             FormatterFlavor::DateTime => "CompositeDateTimeFieldSet",
         }
     }
+    pub fn zoned_builder_fn(self) -> &'static str {
+        match self {
+            FormatterFlavor::Date => "zoned_date",
+            FormatterFlavor::Time => "zoned_time",
+            FormatterFlavor::Zone => "zone",
+            FormatterFlavor::DateTime => "zoned_datetime",
+        }
+    }
     pub fn has_date(self) -> bool {
         matches!(self, FormatterFlavor::Date | FormatterFlavor::DateTime)
     }

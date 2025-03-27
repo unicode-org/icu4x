@@ -24,7 +24,9 @@ pub mod ffi {
         date::ffi::IsoDate,
         datetime_helpers,
         datetime_helpers::map_or_default,
+        datetime_fieldset_builder::ffi::DateTimeFieldSetBuilder,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
+        errors::ffi::DateTimeFormatterBuildOrLoadError,
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
         locale_core::ffi::Locale,
@@ -78,6 +80,36 @@ pub mod ffi {
     );
 
     impl {{ ffi_type }} {
+        {%- for ctor in ConstructorType::VALUES %}
+        {%- let ctor_name = "from_field_set_builder" %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ ctor_name }}{{ ctor.suffix_ffi() }}")]
+        #[cfg(feature = "{{ ctor.cargo_feature() }}")]
+        pub fn create_{{ ctor_name }}{{ ctor.suffix_ffi() }}(
+            {%- if ctor.is_with_provider() %}
+            provider: &DataProvider,
+            {%- endif %}
+            locale: &Locale,
+            builder: &DateTimeFieldSetBuilder,
+        ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
+            {%- if ctor.is_with_provider() %}
+            let provider = provider.get()?;
+            {%- endif %}
+            let prefs = (&locale.0).into();
+            let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
+            let options = rust_builder.build_{{ flavor.zoned_builder_fn() }}()?;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::{{ formatter_kind.rust_type() }}
+                    ::try_new{{ ctor.suffix_rust() }}(
+                        {%- if ctor.is_with_provider() %}
+                        provider,
+                        {%- endif %}
+                        prefs,
+                        options
+                    )?
+            )))
+        }
+        {% endfor %}
         {%- for variant in variants %}
         {%- for ctor in ConstructorType::VALUES %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor.suffix_ffi() }}")]

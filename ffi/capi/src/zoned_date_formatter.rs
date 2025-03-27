@@ -20,7 +20,9 @@ pub mod ffi {
         date::ffi::IsoDate,
         datetime_helpers,
         datetime_helpers::map_or_default,
+        datetime_fieldset_builder::ffi::DateTimeFieldSetBuilder,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
+        errors::ffi::DateTimeFormatterBuildOrLoadError,
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
         locale_core::ffi::Locale,
@@ -41,6 +43,47 @@ pub mod ffi {
     );
 
     impl ZonedDateFormatter {
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_field_set_builder")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_from_field_set_builder(
+            locale: &Locale,
+            builder: &DateTimeFieldSetBuilder,
+        ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
+            let prefs = (&locale.0).into();
+            let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
+            let options = rust_builder.build_zoned_date()?;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+            )))
+        }
+        
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_field_set_builder_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_from_field_set_builder_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            builder: &DateTimeFieldSetBuilder,
+        ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
+            let provider = provider.get()?;
+            let prefs = (&locale.0).into();
+            let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
+            let options = rust_builder.build_zoned_date()?;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::DateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+            )))
+        }
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_long(
@@ -517,6 +560,47 @@ pub mod ffi {
     );
 
     impl ZonedDateFormatterGregorian {
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_field_set_builder")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_from_field_set_builder(
+            locale: &Locale,
+            builder: &DateTimeFieldSetBuilder,
+        ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
+            let prefs = (&locale.0).into();
+            let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
+            let options = rust_builder.build_zoned_date()?;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new(
+                        prefs,
+                        options
+                    )?
+            )))
+        }
+        
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "from_field_set_builder_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_from_field_set_builder_with_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            builder: &DateTimeFieldSetBuilder,
+        ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
+            let provider = provider.get()?;
+            let prefs = (&locale.0).into();
+            let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
+            let options = rust_builder.build_zoned_date()?;
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::FixedCalendarDateTimeFormatter
+                    ::try_new_with_buffer_provider(
+                        provider,
+                        prefs,
+                        options
+                    )?
+            )))
+        }
+        
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_long(

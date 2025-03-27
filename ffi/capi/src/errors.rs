@@ -94,7 +94,8 @@ pub mod ffi {
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
-        InvalidDateFields = 0x8_01,
+        InvalidDateFields = 0x4_04,
+
         UnsupportedLength = 0x8_03,
         ConflictingField = 0x8_09,
         FormatterTooSpecific = 0x8_0A,
@@ -122,6 +123,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::DateTimeWriteError, Enum, compact)]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
+
         InvalidMonthCode = 0x02,
         InvalidEra = 0x03,
         InvalidCyclicYear = 0x04,
@@ -136,14 +138,27 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::datetime::fieldsets::builder::BuilderError, Enum, compact)]
-    pub enum DateTimeFieldSetBuilderError {
+    pub enum DateTimeFormatterBuildOrLoadError {
         Unknown = 0x00,
 
-        MissingDateFields = 0x01,
-        MissingTimePrecision = 0x02,
-        MissingZoneStyle = 0x03,
-        InvalidDateFields = 0x04,
-        SuperfluousOptions = 0x05,
+        DataMarkerNotFound = 0x01,
+        DataIdentifierNotFound = 0x02,
+        DataInvalidRequest = 0x03,
+        DataInconsistentData = 0x04,
+        DataDowncast = 0x05,
+        DataDeserialize = 0x06,
+        DataCustom = 0x07,
+        DataIo = 0x08,
+
+        MissingDateFields = 0x4_01,
+        MissingTimePrecision = 0x4_02,
+        MissingZoneStyle = 0x4_03,
+        InvalidDateFields = 0x4_04,
+        SuperfluousOptions = 0x4_05,
+
+        UnsupportedLength = 0x8_03,
+        ConflictingField = 0x8_09,
+        FormatterTooSpecific = 0x8_0A,
     }
 }
 
@@ -303,7 +318,7 @@ impl From<icu_datetime::DateTimeWriteError> for DateTimeWriteError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::fieldsets::builder::BuilderError> for DateTimeFieldSetBuilderError {
+impl From<icu_datetime::fieldsets::builder::BuilderError> for DateTimeFormatterBuildOrLoadError {
     fn from(value: icu_datetime::fieldsets::builder::BuilderError) -> Self {
         use icu_datetime::fieldsets::builder::BuilderError::*;
         match value {
@@ -314,6 +329,42 @@ impl From<icu_datetime::fieldsets::builder::BuilderError> for DateTimeFieldSetBu
             SuperfluousOptions(_) => Self::SuperfluousOptions,
             _ => Self::Unknown,
         }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<DateTimeFormatterLoadError> for DateTimeFormatterBuildOrLoadError {
+    fn from(value: DateTimeFormatterLoadError) -> Self {
+        use DateTimeFormatterLoadError::*;
+        match value {
+            Unknown => Self::Unknown,
+            InvalidDateFields => Self::InvalidDateFields,
+            UnsupportedLength => Self::UnsupportedLength,
+            ConflictingField => Self::ConflictingField,
+            FormatterTooSpecific => Self::FormatterTooSpecific,
+            DataMarkerNotFound => Self::DataMarkerNotFound,
+            DataIdentifierNotFound => Self::DataIdentifierNotFound,
+            DataInvalidRequest => Self::DataInvalidRequest,
+            DataInconsistentData => Self::DataInconsistentData,
+            DataDowncast => Self::DataDowncast,
+            DataDeserialize => Self::DataDeserialize,
+            DataCustom => Self::DataCustom,
+            DataIo => Self::DataIo,
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_provider::DataError> for DateTimeFormatterBuildOrLoadError {
+    fn from(value: icu_provider::DataError) -> Self {
+        ffi::DateTimeFormatterLoadError::from(value).into()
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterBuildOrLoadError {
+    fn from(value: icu_datetime::DateTimeFormatterLoadError) -> Self {
+        ffi::DateTimeFormatterLoadError::from(value).into()
     }
 }
 
