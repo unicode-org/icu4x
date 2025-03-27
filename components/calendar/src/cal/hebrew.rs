@@ -242,7 +242,15 @@ impl Calendar for Hebrew {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Self::year_as_hebrew(date.0.year)
+        types::YearInfo::new(
+            date.0.year,
+            types::EraYear {
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
+                standard_era: tinystr!(16, "hebrew").into(),
+                era_year: date.0.year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            },
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -307,20 +315,6 @@ impl Calendar for Hebrew {
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
         Some(crate::any_calendar::IntoAnyCalendar::kind(self))
-    }
-}
-
-impl Hebrew {
-    fn year_as_hebrew(civil_year: i32) -> types::YearInfo {
-        types::YearInfo::new(
-            civil_year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-                standard_era: tinystr!(16, "hebrew").into(),
-                era_year: civil_year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
     }
 }
 

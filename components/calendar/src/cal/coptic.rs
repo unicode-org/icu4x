@@ -148,7 +148,28 @@ impl Calendar for Coptic {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_coptic(date.0.year)
+        let year = date.0.year;
+        if year > 0 {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "coptic").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                    era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "coptic-inverse").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
+                    era_year: 1 - year,
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+                },
+            )
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -214,29 +235,6 @@ impl Date<Coptic> {
     }
 }
 
-fn year_as_coptic(year: i32) -> types::YearInfo {
-    if year > 0 {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "coptic").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                era_year: year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
-    } else {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "coptic-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
-                era_year: 1 - year,
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            },
-        )
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::*;

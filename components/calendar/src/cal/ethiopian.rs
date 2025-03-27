@@ -175,7 +175,28 @@ impl Calendar for Ethiopian {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Self::year_as_ethiopian(date.0.year, self.0)
+        let year = date.0.year;
+        if self.0 || year <= INCARNATION_OFFSET {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethioaa").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
+                    era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year - INCARNATION_OFFSET,
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethiopic").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
+                    era_year: year - INCARNATION_OFFSET,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -248,30 +269,6 @@ impl Ethiopian {
             month,
             day,
         ))
-    }
-
-    fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::YearInfo {
-        if amete_alem || year <= INCARNATION_OFFSET {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ethioaa").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
-        } else {
-            types::YearInfo::new(
-                year - INCARNATION_OFFSET,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ethiopic").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
-                    era_year: year - INCARNATION_OFFSET,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
-        }
     }
 }
 

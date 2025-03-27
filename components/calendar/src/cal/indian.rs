@@ -173,7 +173,15 @@ impl Calendar for Indian {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_saka(date.0.year)
+        types::YearInfo::new(
+            date.0.year,
+            types::EraYear {
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
+                standard_era: tinystr!(16, "indian").into(),
+                era_year: date.0.year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            },
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -199,18 +207,6 @@ impl Calendar for Indian {
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
         Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
-}
-
-fn year_as_saka(year: i32) -> types::YearInfo {
-    types::YearInfo::new(
-        year,
-        types::EraYear {
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-            standard_era: tinystr!(16, "indian").into(),
-            era_year: year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        },
-    )
 }
 
 impl Indian {

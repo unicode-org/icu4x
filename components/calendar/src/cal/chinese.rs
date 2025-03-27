@@ -19,7 +19,7 @@
 
 use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedDateInner,
-    ChineseBasedPrecomputedData, ChineseBasedWithDataLoading, ChineseBasedYearInfo,
+    ChineseBasedPrecomputedData, ChineseBasedWithDataLoading,
 };
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::CalendarArithmetic;
@@ -243,7 +243,13 @@ impl Calendar for Chinese {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Self::format_chinese_year(date.0 .0.year, Some(date.0 .0.year_info))
+        let year = date.0 .0.year;
+        let cyclic = (year - 1).rem_euclid(60) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
+        let rata_die_in_year = date.0 .0.year_info.new_year::<ChineseCB>(year);
+        let iso_year = Iso::from_fixed(rata_die_in_year).year();
+        let related_iso = iso_year.era_year_or_extended();
+        types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -324,26 +330,6 @@ impl ChineseBasedWithDataLoading for Chinese {
     type CB = ChineseCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
         ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
-    }
-}
-
-impl Chinese {
-    /// Get a YearInfo from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
-    /// can be passed in for faster results.
-    fn format_chinese_year(
-        year: i32,
-        year_info_option: Option<ChineseBasedYearInfo>,
-    ) -> types::YearInfo {
-        let cyclic = (year - 1).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
-        let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year::<ChineseCB>(year)
-        } else {
-            Inner::fixed_mid_year_from_year(year)
-        };
-        let iso_year = Iso::from_fixed(rata_die_in_year).year();
-        let related_iso = iso_year.era_year_or_extended();
-        types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
 }
 

@@ -97,7 +97,33 @@ impl Calendar for Gregorian {
     }
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_gregorian(date.0 .0.year)
+        let year = date.0 .0.year;
+        if year > 0 {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "gregory").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
+                    era_year: year,
+                    ambiguity: match year {
+                        ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
+                        1000..=1949 => types::YearAmbiguity::CenturyRequired,
+                        1950..=2049 => types::YearAmbiguity::Unambiguous,
+                        2050.. => types::YearAmbiguity::CenturyRequired,
+                    },
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "gregory-inverse").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
+                    era_year: 1_i32.saturating_sub(year),
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+                },
+            )
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -146,35 +172,6 @@ impl Date<Gregorian> {
     /// ```
     pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Date<Gregorian>, RangeError> {
         Date::try_new_iso(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
-    }
-}
-
-fn year_as_gregorian(year: i32) -> types::YearInfo {
-    if year > 0 {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "gregory").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
-                era_year: year,
-                ambiguity: match year {
-                    ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
-                    1000..=1949 => types::YearAmbiguity::CenturyRequired,
-                    1950..=2049 => types::YearAmbiguity::Unambiguous,
-                    2050.. => types::YearAmbiguity::CenturyRequired,
-                },
-            },
-        )
-    } else {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "gregory-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
-                era_year: 1_i32.saturating_sub(year),
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            },
-        )
     }
 }
 

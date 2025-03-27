@@ -20,7 +20,7 @@
 
 use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
-    ChineseBasedWithDataLoading, ChineseBasedYearInfo,
+    ChineseBasedWithDataLoading,
 };
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
@@ -223,7 +223,14 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
-        Self::format_dangi_year(date.0 .0.year, Some(date.0 .0.year_info))
+        let year = date.0 .0.year;
+        // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
+        let cyclic = (year as i64 - 1 + 364).rem_euclid(60) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
+        let rata_die_in_year = date.0 .0.year_info.new_year::<DangiCB>(year);
+        let iso_year = Iso::from_fixed(rata_die_in_year).year();
+        let related_iso = iso_year.era_year_or_extended();
+        types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -293,27 +300,6 @@ impl ChineseBasedWithDataLoading for Dangi {
     type CB = DangiCB;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
         ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
-    }
-}
-
-impl Dangi {
-    /// Get a `YearInfo` from an integer Dangi year; optionally, a `ChineseBasedYearInfo`
-    /// can be passed in for faster results.
-    fn format_dangi_year(
-        year: i32,
-        year_info_option: Option<ChineseBasedYearInfo>,
-    ) -> types::YearInfo {
-        // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
-        let cyclic = (year as i64 - 1 + 364).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
-        let rata_die_in_year = if let Some(info) = year_info_option {
-            info.new_year::<DangiCB>(year)
-        } else {
-            Inner::fixed_mid_year_from_year(year)
-        };
-        let iso_year = Iso::from_fixed(rata_die_in_year).year();
-        let related_iso = iso_year.era_year_or_extended();
-        types::YearInfo::new_cyclic(year, cyclic, related_iso)
     }
 }
 

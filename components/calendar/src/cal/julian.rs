@@ -141,7 +141,28 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_julian(date.0.year)
+        let year = date.0.year;
+        if year > 0 {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "julian").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                    era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "julian-inverse").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
+                    era_year: 1_i32.saturating_sub(year),
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+                },
+            )
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -171,29 +192,6 @@ impl Calendar for Julian {
     }
 }
 
-fn year_as_julian(year: i32) -> types::YearInfo {
-    if year > 0 {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "julian").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                era_year: year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
-    } else {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "julian-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
-                era_year: 1_i32.saturating_sub(year),
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            },
-        )
-    }
-}
 impl Julian {
     /// Construct a new Julian Calendar
     pub fn new() -> Self {

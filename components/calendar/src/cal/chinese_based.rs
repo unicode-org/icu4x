@@ -385,10 +385,6 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         self.0.year_info.days_in_month(self.0.month)
     }
 
-    pub(crate) fn fixed_mid_year_from_year(year: i32) -> RataDie {
-        chinese_based::fixed_mid_year_from_year::<C::CB>(year)
-    }
-
     /// Calls days_in_year on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
         self.0.year_info.days_in_year()
