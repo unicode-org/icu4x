@@ -81,7 +81,7 @@ pub struct SourceDataProvider {
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
-    collation_han_database: CollationHanDatabase,
+    collation_root_han: CollationRootHan,
     pub(crate) timezone_horizon: Date<Iso>,
     #[allow(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
@@ -155,7 +155,7 @@ impl SourceDataProvider {
             tzdb_paths: None,
             trie_type: Default::default(),
             timezone_horizon: Date::try_new_iso(2015, 1, 1).unwrap(),
-            collation_han_database: Default::default(),
+            collation_root_han: Default::default(),
             requests_cache: Default::default(),
         }
     }
@@ -340,10 +340,10 @@ impl SourceDataProvider {
         }
     }
 
-    /// Set the [`CollationHanDatabase`] version.
-    pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
+    /// Set the [`CollationRootHan`] version.
+    pub fn with_collation_root_han(self, collation_root_han: CollationRootHan) -> Self {
         Self {
-            collation_han_database,
+            collation_root_han,
             ..self
         }
     }
@@ -366,8 +366,8 @@ impl SourceDataProvider {
         self.trie_type
     }
 
-    fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
+    fn collation_root_han(&self) -> CollationRootHan {
+        self.collation_root_han
     }
 
     /// List the locales for the given CLDR coverage levels
@@ -476,7 +476,7 @@ where
 /// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu::data/buildtool.md#collation-ucadata>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
-pub enum CollationHanDatabase {
+pub enum CollationRootHan {
     /// Implicit
     #[serde(rename = "implicit")]
     #[default]
@@ -486,11 +486,11 @@ pub enum CollationHanDatabase {
     Unihan,
 }
 
-impl std::fmt::Display for CollationHanDatabase {
+impl std::fmt::Display for CollationRootHan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
+            CollationRootHan::Implicit => write!(f, "implicithan"),
+            CollationRootHan::Unihan => write!(f, "unihan"),
         }
     }
 }
