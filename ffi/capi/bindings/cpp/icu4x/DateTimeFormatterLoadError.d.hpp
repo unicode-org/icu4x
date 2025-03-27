@@ -15,7 +15,7 @@ namespace icu4x {
 namespace capi {
     enum DateTimeFormatterLoadError {
       DateTimeFormatterLoadError_Unknown = 0,
-      DateTimeFormatterLoadError_InvalidDateFields = 2049,
+      DateTimeFormatterLoadError_InvalidDateFields = 1028,
       DateTimeFormatterLoadError_UnsupportedLength = 2051,
       DateTimeFormatterLoadError_ConflictingField = 2057,
       DateTimeFormatterLoadError_FormatterTooSpecific = 2058,
@@ -41,7 +41,7 @@ class DateTimeFormatterLoadError {
 public:
   enum Value {
     Unknown = 0,
-    InvalidDateFields = 2049,
+    InvalidDateFields = 1028,
     UnsupportedLength = 2051,
     ConflictingField = 2057,
     FormatterTooSpecific = 2058,

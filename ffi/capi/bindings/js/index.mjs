@@ -6,6 +6,8 @@ export { CollatorOptions } from "./CollatorOptions.mjs"
 
 export { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 
+export { DateTimeFieldSetBuilder } from "./DateTimeFieldSetBuilder.mjs"
+
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError.mjs"
@@ -242,6 +244,10 @@ export { CollatorStrength } from "./CollatorStrength.mjs"
 
 export { Weekday } from "./Weekday.mjs"
 
+export { DateFields } from "./DateFields.mjs"
+
+export { ZoneStyle } from "./ZoneStyle.mjs"
+
 export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
 
 export { DateTimeLength } from "./DateTimeLength.mjs"
@@ -263,6 +269,8 @@ export { CalendarError } from "./CalendarError.mjs"
 export { CalendarParseError } from "./CalendarParseError.mjs"
 
 export { DataError } from "./DataError.mjs"
+
+export { DateTimeFormatterBuildOrLoadError } from "./DateTimeFormatterBuildOrLoadError.mjs"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
 

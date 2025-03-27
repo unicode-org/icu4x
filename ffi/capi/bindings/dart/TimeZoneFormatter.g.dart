@@ -25,6 +25,30 @@ final class TimeZoneFormatter implements ffi.Finalizable {
 
   /// 
   ///
+  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
+  factory TimeZoneFormatter.fromFieldSetBuilder(Locale locale, DateTimeFieldSetBuilder builder) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1(locale._ffi, builder._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return TimeZoneFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
+  factory TimeZoneFormatter.fromFieldSetBuilderWithProvider(DataProvider provider, Locale locale, DateTimeFieldSetBuilder builder) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1(provider._ffi, locale._ffi, builder._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return TimeZoneFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.specificLong(Locale locale) {
     final result = _icu4x_TimeZoneFormatter_create_specific_long_mv1(locale._ffi);
@@ -216,6 +240,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TimeZoneFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
+
+@_DiplomatFfiUse('icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1(ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
+
+@_DiplomatFfiUse('icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
 
 @_DiplomatFfiUse('icu4x_TimeZoneFormatter_create_specific_long_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneFormatter_create_specific_long_mv1')

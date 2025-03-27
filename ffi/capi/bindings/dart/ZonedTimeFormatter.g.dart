@@ -25,6 +25,30 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
 
   /// 
   ///
+  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
+  factory ZonedTimeFormatter.fromFieldSetBuilder(Locale locale, DateTimeFieldSetBuilder builder) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1(locale._ffi, builder._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
+  /// Throws [DateTimeFormatterBuildOrLoadError] on failure.
+  factory ZonedTimeFormatter.fromFieldSetBuilderWithProvider(DataProvider provider, Locale locale, DateTimeFieldSetBuilder builder) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1(provider._ffi, locale._ffi, builder._toFfi(temp.arena));
+    if (!result.isOk) {
+      throw DateTimeFormatterBuildOrLoadError.values.firstWhere((v) => v._ffi == result.union.err);
+    }
+    return ZonedTimeFormatter._fromFfi(result.union.ok, []);
+  }
+
+  /// 
+  ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedTimeFormatter.specificLong(Locale locale, {DateTimeLength? length, TimePrecision? timePrecision, DateTimeAlignment? alignment}) {
     final result = _icu4x_ZonedTimeFormatter_create_specific_long_mv1(locale._ffi, length != null ? _ResultInt32Void.ok(length.index) : _ResultInt32Void.err(), timePrecision != null ? _ResultInt32Void.ok(timePrecision.index) : _ResultInt32Void.err(), alignment != null ? _ResultInt32Void.ok(alignment.index) : _ResultInt32Void.err());
@@ -216,6 +240,16 @@ final class ZonedTimeFormatter implements ffi.Finalizable {
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_ZonedTimeFormatter_destroy_mv1(ffi.Pointer<ffi.Void> self);
+
+@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1(ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
+
+@_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DateTimeFieldSetBuilderFfi)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale, _DateTimeFieldSetBuilderFfi builder);
 
 @_DiplomatFfiUse('icu4x_ZonedTimeFormatter_create_specific_long_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _ResultInt32Void, _ResultInt32Void, _ResultInt32Void)>(isLeaf: true, symbol: 'icu4x_ZonedTimeFormatter_create_specific_long_mv1')

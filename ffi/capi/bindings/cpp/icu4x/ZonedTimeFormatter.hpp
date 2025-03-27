@@ -13,6 +13,8 @@
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
 #include "DateTimeAlignment.hpp"
+#include "DateTimeFieldSetBuilder.hpp"
+#include "DateTimeFormatterBuildOrLoadError.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
 #include "DateTimeWriteError.hpp"
@@ -25,6 +27,12 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
+    
+    typedef struct icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1_result {union {icu4x::capi::ZonedTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1_result;
+    icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1_result icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
+    
+    typedef struct icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1_result {union {icu4x::capi::ZonedTimeFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1_result;
+    icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1_result icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
     
     typedef struct icu4x_ZonedTimeFormatter_create_specific_long_mv1_result {union {icu4x::capi::ZonedTimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedTimeFormatter_create_specific_long_mv1_result;
     icu4x_ZonedTimeFormatter_create_specific_long_mv1_result icu4x_ZonedTimeFormatter_create_specific_long_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
@@ -83,6 +91,19 @@ namespace capi {
     } // extern "C"
 } // namespace capi
 } // namespace
+
+inline diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::ZonedTimeFormatter::create_from_field_set_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_ZonedTimeFormatter_create_from_field_set_builder_mv1(locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::ZonedTimeFormatter>>(std::unique_ptr<icu4x::ZonedTimeFormatter>(icu4x::ZonedTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::ZonedTimeFormatter::create_from_field_set_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_ZonedTimeFormatter_create_from_field_set_builder_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::ZonedTimeFormatter>>(std::unique_ptr<icu4x::ZonedTimeFormatter>(icu4x::ZonedTimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
 
 inline diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::ZonedTimeFormatter::create_specific_long(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment) {
   auto result = icu4x::capi::icu4x_ZonedTimeFormatter_create_specific_long_mv1(locale.AsFFI(),

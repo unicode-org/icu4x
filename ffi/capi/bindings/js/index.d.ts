@@ -8,6 +8,8 @@ export { CollatorOptions } from "./CollatorOptions"
 
 export { IsoWeekOfYear } from "./IsoWeekOfYear"
 
+export { DateTimeFieldSetBuilder } from "./DateTimeFieldSetBuilder"
+
 export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
@@ -244,6 +246,10 @@ export { CollatorStrength } from "./CollatorStrength"
 
 export { Weekday } from "./Weekday"
 
+export { DateFields } from "./DateFields"
+
+export { ZoneStyle } from "./ZoneStyle"
+
 export { DateTimeAlignment } from "./DateTimeAlignment"
 
 export { DateTimeLength } from "./DateTimeLength"
@@ -265,6 +271,8 @@ export { CalendarError } from "./CalendarError"
 export { CalendarParseError } from "./CalendarParseError"
 
 export { DataError } from "./DataError"
+
+export { DateTimeFormatterBuildOrLoadError } from "./DateTimeFormatterBuildOrLoadError"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 
