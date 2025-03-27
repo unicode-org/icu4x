@@ -20,6 +20,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{year_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The [(proleptic) Gregorian Calendar](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar)
@@ -41,7 +42,7 @@ pub struct GregorianDateInner(pub(crate) IsoDateInner);
 
 impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -59,12 +60,20 @@ impl Calendar for Gregorian {
             .map(GregorianDateInner)
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> GregorianDateInner {
-        GregorianDateInner(*iso.inner())
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        GregorianDateInner(Iso.from_fixed(fixed))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        Date::from_raw(date.0, Iso)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_fixed(&date.0)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> GregorianDateInner {
+        GregorianDateInner(iso)
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        date.0
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -195,8 +204,8 @@ mod test {
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_fixed: Date<Iso> = Iso::from_fixed(case.fixed_date);
-        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
+        let iso_from_fixed = Date::from_fixed(case.fixed_date, Iso);
+        let greg_date_from_fixed = Date::from_fixed(case.fixed_date, Gregorian);
         assert_eq!(greg_date_from_fixed.year().era_year_or_extended(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nGreg: {greg_date_from_fixed:?}");
         assert_eq!(greg_date_from_fixed.year().standard_era().unwrap(), case.expected_era,
@@ -349,11 +358,11 @@ mod test {
         // than the other, without exception.
         for i in -100..100 {
             for j in -100..100 {
-                let iso_i: Date<Iso> = Iso::from_fixed(RataDie::new(i));
-                let iso_j: Date<Iso> = Iso::from_fixed(RataDie::new(j));
+                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
+                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
 
-                let greg_i: Date<Gregorian> = Date::new_from_iso(iso_i, Gregorian);
-                let greg_j: Date<Gregorian> = Date::new_from_iso(iso_j, Gregorian);
+                let greg_i = iso_i.to_calendar(Gregorian);
+                let greg_j = iso_j.to_calendar(Gregorian);
 
                 assert_eq!(
                     i.cmp(&j),

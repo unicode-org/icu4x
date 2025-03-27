@@ -2,15 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use calendrical_calculations::rata_die::RataDie;
+
 use crate::any_calendar::AnyCalendarKind;
+use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
-use crate::{types, Date, DateDuration, DateDurationUnit, Iso};
+use crate::{types, DateDuration, DateDurationUnit};
 use core::fmt;
 
 /// A calendar implementation
 ///
 /// Only implementors of [`Calendar`] should care about these methods, in general users of
-/// these calendars should use the methods on [`Date`] instead.
+/// these calendars should use the methods on [`Date`](crate::Date) instead.
 ///
 /// Individual [`Calendar`] implementations may have inherent utility methods
 /// allowing for direct construction, etc.
@@ -23,7 +26,8 @@ pub trait Calendar {
     /// Construct a date from era/month codes and fields
     ///
     /// The year is extended_year if no era is provided
-    fn date_from_codes(
+    #[allow(clippy::wrong_self_convention)]
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -32,9 +36,16 @@ pub trait Calendar {
     ) -> Result<Self::DateInner, DateError>;
 
     /// Construct the date from an ISO date
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
+    #[allow(clippy::wrong_self_convention)]
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner;
     /// Obtain an ISO date from this date
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso>;
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner;
+
+    /// Construct the date from a fixed day
+    #[allow(clippy::wrong_self_convention)]
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner;
+    /// Obtain a fixed day from this date
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie;
 
     /// Count the number of months in a given year, specified by providing a date
     /// from that year

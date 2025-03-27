@@ -21,6 +21,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -52,7 +53,7 @@ pub struct Buddhist;
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -67,12 +68,21 @@ impl Calendar for Buddhist {
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
-    fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
-        *iso.inner()
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        iso
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        Date::from_raw(*date, Iso)
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        *date
+    }
+
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        Iso.from_fixed(fixed)
+    }
+
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_fixed(date)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -177,10 +187,10 @@ mod test {
     fn test_buddhist_roundtrip_near_rd_zero() {
         for i in -10000..=10000 {
             let rd = RataDie::new(i);
-            let iso1 = Iso::from_fixed(rd);
+            let iso1 = Date::from_fixed(rd, Iso);
             let buddhist = iso1.to_calendar(Buddhist);
             let iso2 = buddhist.to_calendar(Iso);
-            let result = Iso::to_fixed(iso2);
+            let result = iso2.to_fixed();
             assert_eq!(rd, result);
         }
     }
@@ -190,10 +200,10 @@ mod test {
         // Buddhist epoch start RD: -198326
         for i in -208326..=-188326 {
             let rd = RataDie::new(i);
-            let iso1 = Iso::from_fixed(rd);
+            let iso1 = Date::from_fixed(rd, Iso);
             let buddhist = iso1.to_calendar(Buddhist);
             let iso2 = buddhist.to_calendar(Iso);
-            let result = Iso::to_fixed(iso2);
+            let result = iso2.to_fixed();
             assert_eq!(rd, result);
         }
     }
@@ -202,8 +212,8 @@ mod test {
     fn test_buddhist_directionality_near_rd_zero() {
         for i in -100..=100 {
             for j in -100..=100 {
-                let iso_i = Iso::from_fixed(RataDie::new(i));
-                let iso_j = Iso::from_fixed(RataDie::new(j));
+                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
+                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
 
                 let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
                 let buddhist_j = Date::new_from_iso(iso_j, Buddhist);
@@ -228,8 +238,8 @@ mod test {
         // Buddhist epoch start RD: -198326
         for i in -198426..=-198226 {
             for j in -198426..=-198226 {
-                let iso_i = Iso::from_fixed(RataDie::new(i));
-                let iso_j = Iso::from_fixed(RataDie::new(j));
+                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
+                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
 
                 let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
                 let buddhist_j = Date::new_from_iso(iso_j, Buddhist);

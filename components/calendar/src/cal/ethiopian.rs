@@ -16,7 +16,7 @@
 //! assert_eq!(date_ethiopian.day_of_month().0, 24);
 //! ```
 
-use crate::cal::iso::Iso;
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::{year_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
@@ -112,7 +112,7 @@ impl CalendarArithmetic for Ethiopian {
 
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -136,14 +136,37 @@ impl Calendar for Ethiopian {
         };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
     }
-    fn date_from_iso(&self, iso: Date<Iso>) -> EthiopianDateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-        Self::ethiopian_from_fixed(fixed_iso)
+
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        EthiopianDateInner(
+            match calendrical_calculations::ethiopian::ethiopian_from_fixed(fixed) {
+                Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
+                Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked(
+                    // calendrical calculations returns years in the Incarnation era
+                    year + INCARNATION_OFFSET,
+                    month,
+                    day,
+                ),
+            },
+        )
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_ethiopian = Ethiopian::fixed_from_ethiopian(date.0);
-        Iso::from_fixed(fixed_ethiopian)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        // calendrical calculations expects years in the Incarnation era
+        calendrical_calculations::ethiopian::fixed_from_ethiopian(
+            date.0.year - INCARNATION_OFFSET,
+            date.0.month,
+            date.0.day,
+        )
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> EthiopianDateInner {
+        self.from_fixed(Iso.to_fixed(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_fixed(self.to_fixed(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -241,34 +264,6 @@ impl Ethiopian {
         } else {
             EthiopianEraStyle::AmeteMihret
         }
-    }
-
-    fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> RataDie {
-        // calendrical calculations expects years in the Incarnation era
-        calendrical_calculations::ethiopian::fixed_from_ethiopian(
-            date.year - INCARNATION_OFFSET,
-            date.month,
-            date.day,
-        )
-    }
-
-    fn ethiopian_from_fixed(date: RataDie) -> EthiopianDateInner {
-        let (year, month, day) =
-            match calendrical_calculations::ethiopian::ethiopian_from_fixed(date) {
-                Err(I32CastError::BelowMin) => {
-                    return EthiopianDateInner(ArithmeticDate::min_date())
-                }
-                Err(I32CastError::AboveMax) => {
-                    return EthiopianDateInner(ArithmeticDate::max_date())
-                }
-                Ok(ymd) => ymd,
-            };
-        // calendrical calculations returns years in the Incarnation era
-        EthiopianDateInner(ArithmeticDate::new_unchecked(
-            year + INCARNATION_OFFSET,
-            month,
-            day,
-        ))
     }
 }
 

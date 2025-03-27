@@ -21,6 +21,7 @@ use crate::{
     cal::iso::IsoDateInner, calendar_arithmetic::ArithmeticDate, error::DateError, types, Calendar,
     Date, Iso, RangeError,
 };
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// Year of the beginning of the Taiwanese (ROC/Minguo) calendar.
@@ -56,7 +57,7 @@ pub struct RocDateInner(IsoDateInner);
 impl Calendar for Roc {
     type DateInner = RocDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -74,12 +75,20 @@ impl Calendar for Roc {
             .map(RocDateInner)
     }
 
-    fn date_from_iso(&self, iso: crate::Date<crate::Iso>) -> Self::DateInner {
-        RocDateInner(*iso.inner())
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        RocDateInner(Iso.from_fixed(fixed))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> crate::Date<crate::Iso> {
-        Date::from_raw(date.0, Iso)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_fixed(&date.0)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        RocDateInner(iso)
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        date.0
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -164,7 +173,7 @@ impl Date<Roc> {
     ///
     /// Years are specified in the "roc" era. This function accepts an extended year in that era, so dates
     /// before Minguo are negative and year 0 is 1 Before Minguo. To specify dates using explicit era
-    /// codes, use [`Roc::date_from_codes()`].
+    /// codes, use [`Date::try_new_from_codes()`].
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -212,8 +221,8 @@ mod test {
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_fixed = Iso::from_fixed(case.fixed_date);
-        let roc_from_fixed = Date::new_from_iso(iso_from_fixed, Roc);
+        let iso_from_fixed = Date::from_fixed(case.fixed_date, Iso);
+        let roc_from_fixed = Date::from_fixed(case.fixed_date, Roc);
         assert_eq!(roc_from_fixed.year().era_year().unwrap(), case.expected_year,
             "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
         assert_eq!(roc_from_fixed.year().standard_era().unwrap(), case.expected_era,
@@ -369,11 +378,11 @@ mod test {
         let rd_epoch_start = 697978;
         for i in (rd_epoch_start - 100)..=(rd_epoch_start + 100) {
             for j in (rd_epoch_start - 100)..=(rd_epoch_start + 100) {
-                let iso_i = Iso::from_fixed(RataDie::new(i));
-                let iso_j = Iso::from_fixed(RataDie::new(j));
+                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
+                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
 
-                let roc_i = iso_i.to_calendar(Roc);
-                let roc_j = iso_j.to_calendar(Roc);
+                let roc_i = Date::from_fixed(RataDie::new(i), Roc);
+                let roc_j = Date::from_fixed(RataDie::new(j), Roc);
 
                 assert_eq!(
                     i.cmp(&j),
@@ -394,11 +403,11 @@ mod test {
         // Same as `test_directionality_near_epoch`, but with a focus around RD 0
         for i in -100..=100 {
             for j in -100..100 {
-                let iso_i = Iso::from_fixed(RataDie::new(i));
-                let iso_j = Iso::from_fixed(RataDie::new(j));
+                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
+                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
 
-                let roc_i = iso_i.to_calendar(Roc);
-                let roc_j = iso_j.to_calendar(Roc);
+                let roc_i = Date::from_fixed(RataDie::new(i), Roc);
+                let roc_j = Date::from_fixed(RataDie::new(j), Roc);
 
                 assert_eq!(
                     i.cmp(&j),

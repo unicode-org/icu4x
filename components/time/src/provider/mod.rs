@@ -72,7 +72,7 @@ pub struct MinutesSinceEpoch(pub i32);
 impl From<(Date<Iso>, Time)> for MinutesSinceEpoch {
     fn from((d, t): (Date<Iso>, Time)) -> MinutesSinceEpoch {
         Self(
-            ((Iso::to_fixed(d) - Self::EPOCH) as i32 * 24 + t.hour.number() as i32) * 60
+            ((d.to_fixed() - Self::EPOCH) as i32 * 24 + t.hour.number() as i32) * 60
                 + t.minute.number() as i32,
         )
     }
@@ -113,7 +113,7 @@ impl serde::Serialize for MinutesSinceEpoch {
             let minute = self.0 % 60;
             let hour = self.0 / 60 % 24;
             let days = self.0 / 60 / 24;
-            let date = Iso::from_fixed(Self::EPOCH + days as i64);
+            let date = Date::from_fixed(Self::EPOCH + days as i64, Iso);
             let year = date.year().extended_year;
             let month = date.month().month_number();
             let day = date.day_of_month().0;

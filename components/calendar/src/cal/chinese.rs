@@ -21,13 +21,14 @@ use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedDateInner,
     ChineseBasedPrecomputedData, ChineseBasedWithDataLoading,
 };
-use crate::cal::iso::Iso;
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -166,7 +167,7 @@ impl Calendar for Chinese {
     type DateInner = ChineseDateInner;
 
     // Construct a date from era/month codes and fields
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -189,20 +190,22 @@ impl Calendar for Chinese {
             .map(ChineseDateInner)
     }
 
-    // Construct the date from an ISO date
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed = Iso::to_fixed(iso);
-        ChineseDateInner(Inner::chinese_based_date_from_fixed(
-            self,
-            fixed,
-            iso.inner.0,
-        ))
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        let iso = Iso.from_fixed(fixed);
+        ChineseDateInner(Inner::chinese_based_date_from_fixed(self, fixed, iso.0))
     }
 
-    // Obtain an ISO date from a Chinese date
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed = Inner::fixed_from_chinese_based_date_inner(date.0);
-        Iso::from_fixed(fixed)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        Inner::fixed_from_chinese_based_date_inner(date.0)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        let fixed = Iso.to_fixed(&iso);
+        ChineseDateInner(Inner::chinese_based_date_from_fixed(self, fixed, iso.0))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_fixed(self.to_fixed(date))
     }
 
     //Count the number of months in a given year, specified by providing a date
@@ -247,8 +250,7 @@ impl Calendar for Chinese {
         let cyclic = (year.value - 1).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         let rata_die_in_year = date.0 .0.year.new_year::<ChineseCB>();
-        let iso_year = Iso::from_fixed(rata_die_in_year).year();
-        let related_iso = iso_year.era_year_or_extended();
+        let related_iso = Iso.from_fixed(rata_die_in_year).0.year;
         types::YearInfo::new_cyclic(year.value, cyclic, related_iso)
     }
 
@@ -451,14 +453,13 @@ mod test {
         let chinese_cached = Chinese::new();
         for case in cases {
             let rata_die = RataDie::new(case.fixed);
-            let iso = Iso::from_fixed(rata_die);
+            let iso = Iso.from_fixed(rata_die);
 
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let chinese =
-                        Inner::chinese_based_date_from_fixed(chinese.0, rata_die, iso.inner.0);
+                    let chinese = Inner::chinese_based_date_from_fixed(chinese.0, rata_die, iso.0);
                     assert_eq!(
                         case.expected_year, chinese.0.year.value,
                         "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
@@ -532,14 +533,13 @@ mod test {
         let chinese_cached = Chinese::new();
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let iso = Iso::from_fixed(rata_die);
+            let iso = Iso.from_fixed(rata_die);
 
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let chinese =
-                        Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
+                    let chinese = Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.0);
                     let result = Inner::fixed_from_chinese_based_date_inner(chinese);
                     let result_debug = result.to_i64_date();
                     assert_eq!(result, rata_die, "[{calendar_type}] Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");

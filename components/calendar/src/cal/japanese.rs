@@ -28,6 +28,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::error::{year_check, DateError};
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
+use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
@@ -171,7 +172,7 @@ impl JapaneseExtended {
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -189,17 +190,25 @@ impl Calendar for Japanese {
         self.new_japanese_date_inner(era.unwrap_or("gregory"), year, month, day)
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
-        let (adjusted_year, era) = self.adjusted_year_for(*iso.inner());
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        self.from_iso(Iso.from_fixed(fixed))
+    }
+
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_fixed(&self.to_iso(date))
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> JapaneseDateInner {
+        let (adjusted_year, era) = self.adjusted_year_for(iso);
         JapaneseDateInner {
-            inner: *iso.inner(),
+            inner: iso,
             adjusted_year,
             era,
         }
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        Date::from_raw(date.inner, Iso)
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        date.inner
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -281,22 +290,30 @@ impl Calendar for Japanese {
 impl Calendar for JapaneseExtended {
     type DateInner = JapaneseDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        self.0.date_from_codes(era, year, month_code, day)
+        self.0.from_codes(era, year, month_code, day)
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
-        Japanese::date_from_iso(&self.0, iso)
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        Japanese::from_fixed(&self.0, fixed)
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        Japanese::date_to_iso(&self.0, date)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        Japanese::to_fixed(&self.0, date)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> JapaneseDateInner {
+        Japanese::from_iso(&self.0, iso)
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Japanese::to_iso(&self.0, date)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

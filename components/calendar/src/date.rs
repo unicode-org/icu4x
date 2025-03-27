@@ -12,6 +12,7 @@ use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
+use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use core::ops::Deref;
 
@@ -129,21 +130,36 @@ impl<A: AsCalendar> Date<A> {
     ) -> Result<Self, DateError> {
         let inner = calendar
             .as_calendar()
-            .date_from_codes(era, year, month_code, day)?;
+            .from_codes(era, year, month_code, day)?;
         Ok(Date { inner, calendar })
+    }
+
+    /// Construct a date from a fixed day and some calendar representation
+    #[inline]
+    pub fn from_fixed(fixed: RataDie, calendar: A) -> Self {
+        Date {
+            inner: calendar.as_calendar().from_fixed(fixed),
+            calendar,
+        }
+    }
+
+    /// Convert the Date to a fixed day
+    #[inline]
+    pub fn to_fixed(&self) -> RataDie {
+        self.calendar.as_calendar().to_fixed(self.inner())
     }
 
     /// Construct a date from an ISO date and some calendar representation
     #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
-        let inner = calendar.as_calendar().date_from_iso(iso);
+        let inner = calendar.as_calendar().from_iso(iso.inner);
         Date { inner, calendar }
     }
 
     /// Convert the Date to an ISO Date
     #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
-        self.calendar.as_calendar().date_to_iso(self.inner())
+        Date::from_raw(self.calendar.as_calendar().to_iso(self.inner()), Iso)
     }
 
     /// Convert the Date to a date in a different calendar
@@ -173,7 +189,7 @@ impl<A: AsCalendar> Date<A> {
     /// The day of the week for this date
     #[inline]
     pub fn day_of_week(&self) -> types::Weekday {
-        Iso::to_fixed(self.to_iso()).into()
+        self.to_fixed().into()
     }
 
     /// Add a `duration` to this date, mutating it
@@ -276,22 +292,6 @@ impl<A: AsCalendar> Date<A> {
 }
 
 impl Date<Iso> {
-    /// Calculates the number of days between two dates.
-    ///
-    /// ```rust
-    /// use icu::calendar::Date;
-    /// use icu::calendar::DateDurationUnit;
-    ///
-    /// let a = Date::try_new_iso(1994, 12, 10).unwrap();
-    /// let b = Date::try_new_iso(2024, 10, 30).unwrap();
-    ///
-    /// assert_eq!(b.days_since(a), 10_917);
-    /// ```
-    #[doc(hidden)] // unstable
-    pub fn days_since(&self, other: Date<Iso>) -> i32 {
-        (Iso::to_fixed(*self) - Iso::to_fixed(other)) as i32
-    }
-
     /// The ISO week of the year containing this date.
     ///
     /// # Examples

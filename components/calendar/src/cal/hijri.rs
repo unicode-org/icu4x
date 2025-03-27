@@ -19,7 +19,7 @@
 //! assert_eq!(hijri_date.day_of_month().0, 11);
 //! ```
 
-use crate::cal::Iso;
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
@@ -426,7 +426,7 @@ impl CalendarArithmetic for HijriObservational {
 
 impl Calendar for HijriObservational {
     type DateInner = HijriDateInner;
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -447,19 +447,24 @@ impl Calendar for HijriObservational {
         )?))
     }
 
-    fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
         let y = self
             .precomputed_data()
-            .load_or_compute_info_for_fixed(fixed_iso);
-        let (m, d) = y.md_from_fixed(fixed_iso);
+            .load_or_compute_info_for_fixed(fixed);
+        let (m, d) = y.md_from_fixed(fixed);
         HijriDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
-        let fixed = date.0.year.md_to_fixed(date.0.month, date.0.day);
-        Iso::from_fixed(fixed)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        date.0.year.md_to_fixed(date.0.month, date.0.day)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_fixed(Iso.to_fixed(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_fixed(self.to_fixed(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -599,7 +604,7 @@ impl CalendarArithmetic for HijriUmmAlQura {
 
 impl Calendar for HijriUmmAlQura {
     type DateInner = HijriUmmAlQuraDateInner;
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -620,19 +625,24 @@ impl Calendar for HijriUmmAlQura {
         )?))
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
         let y = self
             .precomputed_data()
-            .load_or_compute_info_for_fixed(fixed_iso);
-        let (m, d) = y.md_from_fixed(fixed_iso);
+            .load_or_compute_info_for_fixed(fixed);
+        let (m, d) = y.md_from_fixed(fixed);
         HijriUmmAlQuraDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed = date.0.year.md_to_fixed(date.0.month, date.0.day);
-        Iso::from_fixed(fixed)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        date.0.year.md_to_fixed(date.0.month, date.0.day)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_fixed(Iso.to_fixed(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_fixed(self.to_fixed(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -781,7 +791,7 @@ impl CalendarArithmetic for HijriCivil {
 impl Calendar for HijriCivil {
     type DateInner = HijriCivilDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -796,14 +806,27 @@ impl Calendar for HijriCivil {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriCivilDateInner)
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-        Self::hijri_from_fixed(fixed_iso).inner
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        let (y, m, d) = calendrical_calculations::islamic::islamic_civil_from_fixed(fixed);
+
+        debug_assert!(Date::try_new_hijri_civil_with_calendar(y, m, d, HijriCivil).is_ok());
+        HijriCivilDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_hijri = Self::fixed_from_hijri(*date);
-        Iso::from_fixed(fixed_hijri)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        calendrical_calculations::islamic::fixed_from_islamic_civil(
+            date.0.year,
+            date.0.month,
+            date.0.day,
+        )
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_fixed(Iso.to_fixed(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_fixed(self.to_fixed(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -859,26 +882,6 @@ impl Calendar for HijriCivil {
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
         Some(crate::any_calendar::IntoAnyCalendar::kind(self))
-    }
-}
-
-impl HijriCivil {
-    fn fixed_from_hijri(i_date: HijriCivilDateInner) -> RataDie {
-        calendrical_calculations::islamic::fixed_from_islamic_civil(
-            i_date.0.year,
-            i_date.0.month,
-            i_date.0.day,
-        )
-    }
-
-    fn hijri_from_fixed(date: RataDie) -> Date<HijriCivil> {
-        let (y, m, d) = calendrical_calculations::islamic::islamic_civil_from_fixed(date);
-
-        debug_assert!(Date::try_new_hijri_civil_with_calendar(y, m, d, HijriCivil).is_ok());
-        Date::from_raw(
-            HijriCivilDateInner(ArithmeticDate::new_unchecked(y, m, d)),
-            HijriCivil,
-        )
     }
 }
 
@@ -959,7 +962,7 @@ impl CalendarArithmetic for HijriTabular {
 impl Calendar for HijriTabular {
     type DateInner = HijriTabularDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -973,14 +976,27 @@ impl Calendar for HijriTabular {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriTabularDateInner)
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-        Self::hijri_from_fixed(fixed_iso).inner
+    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+        let (y, m, d) = calendrical_calculations::islamic::islamic_tabular_from_fixed(fixed);
+
+        debug_assert!(Date::try_new_hijri_civil_with_calendar(y, m, d, HijriCivil).is_ok());
+        HijriTabularDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_hijri = Self::fixed_from_hijri(*date);
-        Iso::from_fixed(fixed_hijri)
+    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+        calendrical_calculations::islamic::fixed_from_islamic_tabular(
+            date.0.year,
+            date.0.month,
+            date.0.day,
+        )
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_fixed(Iso.to_fixed(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_fixed(self.to_fixed(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -1036,26 +1052,6 @@ impl Calendar for HijriTabular {
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
         Some(crate::any_calendar::IntoAnyCalendar::kind(self))
-    }
-}
-
-impl HijriTabular {
-    fn fixed_from_hijri(i_date: HijriTabularDateInner) -> RataDie {
-        calendrical_calculations::islamic::fixed_from_islamic_tabular(
-            i_date.0.year,
-            i_date.0.month,
-            i_date.0.day,
-        )
-    }
-
-    fn hijri_from_fixed(date: RataDie) -> Date<HijriTabular> {
-        let (y, m, d) = calendrical_calculations::islamic::islamic_tabular_from_fixed(date);
-
-        debug_assert!(Date::try_new_hijri_civil_with_calendar(y, m, d, HijriCivil).is_ok());
-        Date::from_raw(
-            HijriTabularDateInner(ArithmeticDate::new_unchecked(y, m, d)),
-            HijriTabular,
-        )
     }
 }
 
@@ -1790,7 +1786,7 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let iso = Iso::from_fixed(RataDie::new(*f_date));
+            let iso = Date::from_fixed(RataDie::new(*f_date), Iso);
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }
@@ -1805,11 +1801,7 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(
-                Iso::to_fixed(date.to_iso()),
-                RataDie::new(*f_date),
-                "{case:?}"
-            );
+            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
@@ -1821,11 +1813,7 @@ mod test {
             let date =
                 Date::try_new_hijri_civil_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            assert_eq!(
-                Iso::to_fixed(date.to_iso()),
-                RataDie::new(*f_date),
-                "{case:?}"
-            );
+            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
@@ -1837,9 +1825,9 @@ mod test {
             let date =
                 Date::try_new_hijri_civil_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            let iso = Iso::from_fixed(RataDie::new(*f_date));
+            let date_fixed = Date::from_fixed(RataDie::new(*f_date), calendar);
 
-            assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
+            assert_eq!(date, date_fixed, "{case:?}");
         }
     }
 
@@ -1852,11 +1840,7 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(
-                Iso::to_fixed(date.to_iso()),
-                RataDie::new(*f_date),
-                "{case:?}"
-            );
+            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
@@ -1869,9 +1853,9 @@ mod test {
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let iso = Iso::from_fixed(RataDie::new(*f_date));
+            let date_fixed = Date::from_fixed(RataDie::new(*f_date), calendar);
 
-            assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
+            assert_eq!(date, date_fixed, "{case:?}");
         }
     }
 
@@ -1886,9 +1870,9 @@ mod test {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            let iso = Iso::from_fixed(RataDie::new(*f_date));
+            let date_fixed = Date::from_fixed(RataDie::new(*f_date), calendar);
 
-            assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
+            assert_eq!(date, date_fixed, "{case:?}");
         }
     }
 
@@ -1903,11 +1887,7 @@ mod test {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            assert_eq!(
-                Iso::to_fixed(date.to_iso()),
-                RataDie::new(*f_date),
-                "{case:?}"
-            );
+            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
@@ -1926,13 +1906,13 @@ mod test {
                 )) as i64
             })
             .sum();
-        let expected_number_of_days = (Iso::to_fixed(
-            (Date::try_new_observational_hijri_with_calendar(END_YEAR, 1, 1, calendar).unwrap())
-                .to_iso(),
-        )) - Iso::to_fixed(
-            (Date::try_new_observational_hijri_with_calendar(START_YEAR, 1, 1, calendar).unwrap())
-                .to_iso(),
-        ); // The number of days between Hijri years -1245 and 1518
+        let expected_number_of_days =
+            Date::try_new_observational_hijri_with_calendar(END_YEAR, 1, 1, calendar)
+                .unwrap()
+                .to_fixed()
+                - Date::try_new_observational_hijri_with_calendar(START_YEAR, 1, 1, calendar)
+                    .unwrap()
+                    .to_fixed(); // The number of days between Hijri years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
         assert!(
@@ -1956,11 +1936,12 @@ mod test {
                 )) as i64
             })
             .sum();
-        let expected_number_of_days = (Iso::to_fixed(
-            (Date::try_new_ummalqura_with_calendar(END_YEAR, 1, 1, calendar).unwrap()).to_iso(),
-        )) - Iso::to_fixed(
-            (Date::try_new_ummalqura_with_calendar(START_YEAR, 1, 1, calendar).unwrap()).to_iso(),
-        ); // The number of days between Umm al-Qura Hijri years -1245 and 1518
+        let expected_number_of_days =
+            Date::try_new_ummalqura_with_calendar(END_YEAR, 1, 1, calendar)
+                .unwrap()
+                .to_fixed()
+                - (Date::try_new_ummalqura_with_calendar(START_YEAR, 1, 1, calendar).unwrap())
+                    .to_fixed(); // The number of days between Umm al-Qura Hijri years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }
@@ -1983,7 +1964,7 @@ mod test {
         let era = "islamic-umalqura";
         let year = -6823;
         let month_code = MonthCode(tinystr!(4, "M01"));
-        let dt = cal.date_from_codes(Some(era), year, month_code, 1).unwrap();
+        let dt = cal.from_codes(Some(era), year, month_code, 1).unwrap();
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);
         assert_eq!(dt.0.year.value, -6823);
