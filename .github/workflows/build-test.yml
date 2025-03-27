@@ -76,6 +76,30 @@ jobs:
     - name: Check
       run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
+  msrv-zerofrom:
+    runs-on: ubuntu-latest
+    # Defined as a matrix so that features can start immediately, but
+    # be killed if check fails.
+    strategy:
+      fail-fast: true
+    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
+    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
+    env:
+      CARGO_HTTP_MULTIPLEXING: false
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # No toolchain boilerplate as this runs on MSRV
+
+    # Actual job
+    - name: Check
+      run: cargo make ci-job-msrv-zerofrom
 
   # ci-job-test
   test:
