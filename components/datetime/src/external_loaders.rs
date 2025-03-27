@@ -8,7 +8,7 @@ use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_provider::prelude::*;
 
-use crate::scaffold::{AnyCalendarForFormatting, AnyCalendarForFormattingKind};
+use crate::scaffold::{FormattableAnyCalendar, FormattableAnyCalendarKind};
 
 /// Trait for loading a DecimalFormatter.
 ///
@@ -24,11 +24,8 @@ pub(crate) trait DecimalFormatterLoader {
 /// Trait for loading an AnyCalendar.
 ///
 /// Implemented on the provider-specific loader types in this module.
-pub(crate) trait AnyCalendarLoader {
-    fn load(
-        &self,
-        kind: AnyCalendarForFormattingKind,
-    ) -> Result<AnyCalendarForFormatting, DataError>;
+pub(crate) trait FormattableAnyCalendarLoader {
+    fn load(&self, kind: FormattableAnyCalendarKind) -> Result<FormattableAnyCalendar, DataError>;
 }
 
 /// Loader for types from other crates using compiled data.
@@ -48,13 +45,10 @@ impl DecimalFormatterLoader for ExternalLoaderCompiledData {
 }
 
 #[cfg(feature = "compiled_data")]
-impl AnyCalendarLoader for ExternalLoaderCompiledData {
+impl FormattableAnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
-    fn load(
-        &self,
-        kind: AnyCalendarForFormattingKind,
-    ) -> Result<AnyCalendarForFormatting, DataError> {
-        AnyCalendarForFormatting::try_new(kind)
+    fn load(&self, kind: FormattableAnyCalendarKind) -> Result<FormattableAnyCalendar, DataError> {
+        FormattableAnyCalendar::try_new(kind)
     }
 }
 
@@ -78,16 +72,13 @@ where
 }
 
 #[cfg(feature = "serde")]
-impl<P> AnyCalendarLoader for ExternalLoaderBuffer<'_, P>
+impl<P> FormattableAnyCalendarLoader for ExternalLoaderBuffer<'_, P>
 where
     P: ?Sized + BufferProvider,
 {
     #[inline]
-    fn load(
-        &self,
-        kind: AnyCalendarForFormattingKind,
-    ) -> Result<AnyCalendarForFormatting, DataError> {
-        AnyCalendarForFormatting::try_new_with_buffer_provider(self.0, kind)
+    fn load(&self, kind: FormattableAnyCalendarKind) -> Result<FormattableAnyCalendar, DataError> {
+        FormattableAnyCalendar::try_new_with_buffer_provider(self.0, kind)
     }
 }
 
@@ -110,10 +101,9 @@ where
     }
 }
 
-impl<P> AnyCalendarLoader for ExternalLoaderUnstable<'_, P>
+impl<P> FormattableAnyCalendarLoader for ExternalLoaderUnstable<'_, P>
 where
     P: DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-        + DataProvider<icu_calendar::provider::CalendarJapaneseExtendedV1>
         + DataProvider<icu_calendar::provider::CalendarChineseV1>
         + DataProvider<icu_calendar::provider::CalendarDangiV1>
         + DataProvider<icu_calendar::provider::CalendarHijriObservationalMeccaV1>
@@ -121,10 +111,7 @@ where
         + ?Sized,
 {
     #[inline]
-    fn load(
-        &self,
-        kind: AnyCalendarForFormattingKind,
-    ) -> Result<AnyCalendarForFormatting, DataError> {
-        AnyCalendarForFormatting::try_new_unstable(self.0, kind)
+    fn load(&self, kind: FormattableAnyCalendarKind) -> Result<FormattableAnyCalendar, DataError> {
+        FormattableAnyCalendar::try_new_unstable(self.0, kind)
     }
 }

@@ -272,8 +272,32 @@ where
     type Roc = NeverMarker<M::DataStruct>;
 }
 
+/// A calendar type that is supported by [`DateTimeFormatter`](crate::DateTimeFormatter).
+///
+/// [`FixedCalendarDateTimeFormatter`](crate::FixedCalendarDateTimeFormatter) might support additional calendars.
+pub trait IntoFormattableAnyCalendar: CldrCalendar + IntoAnyCalendar {}
+
+// keep in sync with FormattableAnyCalendarKind
+impl IntoFormattableAnyCalendar for Buddhist {}
+impl IntoFormattableAnyCalendar for Chinese {}
+impl IntoFormattableAnyCalendar for Coptic {}
+impl IntoFormattableAnyCalendar for Dangi {}
+impl IntoFormattableAnyCalendar for Ethiopian {}
+impl IntoFormattableAnyCalendar for Gregorian {}
+impl IntoFormattableAnyCalendar for Hebrew {}
+impl IntoFormattableAnyCalendar for Indian {}
+impl IntoFormattableAnyCalendar for HijriCivil {}
+impl IntoFormattableAnyCalendar for HijriObservational {}
+impl IntoFormattableAnyCalendar for HijriTabular {}
+impl IntoFormattableAnyCalendar for HijriUmmAlQura {}
+impl IntoFormattableAnyCalendar for Japanese {}
+// _NOT_ JapaneseExtended
+impl IntoFormattableAnyCalendar for Persian {}
+impl IntoFormattableAnyCalendar for Roc {}
+
+// keep in sync with IntoFormattableAnyCalendar
 #[derive(Debug, Clone, Copy)]
-pub(crate) enum AnyCalendarForFormattingKind {
+pub(crate) enum FormattableAnyCalendarKind {
     Buddhist,
     Chinese,
     Coptic,
@@ -288,12 +312,12 @@ pub(crate) enum AnyCalendarForFormattingKind {
     HijriTabular,
     HijriUmmAlQura,
     Japanese,
-    JapaneseExtended,
+    // _NOT_ JapaneseExtended
     Persian,
     Roc,
 }
 
-impl AnyCalendarForFormattingKind {
+impl FormattableAnyCalendarKind {
     pub(crate) fn try_from_any_calendar_kind(kind: AnyCalendarKind) -> Option<Self> {
         use AnyCalendarKind::*;
         let res = match kind {
@@ -312,7 +336,7 @@ impl AnyCalendarForFormattingKind {
             HijriUmmAlQura => Self::HijriUmmAlQura,
             Iso => return None,
             Japanese => Self::Japanese,
-            JapaneseExtended => Self::JapaneseExtended,
+            JapaneseExtended => return None,
             Persian => Self::Persian,
             Roc => Self::Roc,
             _ => {
@@ -341,7 +365,7 @@ impl AnyCalendarForFormattingKind {
             None => {
                 debug_assert!(false, "all locale-default calendars are supported");
                 // fall back to something non-Gregorian to make errors more obvious
-                AnyCalendarForFormattingKind::Coptic
+                FormattableAnyCalendarKind::Coptic
             }
         }
     }
@@ -349,24 +373,35 @@ impl AnyCalendarForFormattingKind {
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
 #[derive(Debug, Clone)]
-pub(crate) struct AnyCalendarForFormatting {
+pub(crate) struct FormattableAnyCalendar {
     any_calendar: AnyCalendar,
-    kind: AnyCalendarForFormattingKind,
+    kind: FormattableAnyCalendarKind,
 }
 
-impl AnyCalendarForFormatting {
+impl FormattableAnyCalendar {
+    pub(crate) fn from_calendar(calendar: impl IntoFormattableAnyCalendar) -> Self {
+        let any_calendar = calendar.to_any();
+        let kind = any_calendar.kind();
+        let kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(any_calendar.kind())
+            .unwrap_or_else(|| {
+                debug_assert!(false, "{kind:?} is not a FormattableAnyCalendarKind");
+                FormattableAnyCalendarKind::Coptic
+            });
+        Self { any_calendar, kind }
+    }
+
     pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Option<Self> {
-        let kind = AnyCalendarForFormattingKind::try_from_any_calendar_kind(any_calendar.kind())?;
+        let kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(any_calendar.kind())?;
         Some(Self { any_calendar, kind })
     }
 
-    pub(crate) fn kind(&self) -> AnyCalendarForFormattingKind {
+    pub(crate) fn kind(&self) -> FormattableAnyCalendarKind {
         self.kind
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn try_new(kind: AnyCalendarForFormattingKind) -> Result<Self, DataError> {
-        use AnyCalendarForFormattingKind::*;
+    pub(crate) fn try_new(kind: FormattableAnyCalendarKind) -> Result<Self, DataError> {
+        use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
             Chinese => AnyCalendar::Chinese(cal::Chinese::new()),
@@ -386,7 +421,6 @@ impl AnyCalendarForFormatting {
             HijriTabular => AnyCalendar::HijriTabular(cal::HijriTabular),
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
-            JapaneseExtended => AnyCalendar::JapaneseExtended(cal::JapaneseExtended::new()),
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
         };
@@ -396,12 +430,12 @@ impl AnyCalendarForFormatting {
     #[cfg(feature = "serde")]
     pub(crate) fn try_new_with_buffer_provider<P>(
         provider: &P,
-        kind: AnyCalendarForFormattingKind,
+        kind: FormattableAnyCalendarKind,
     ) -> Result<Self, DataError>
     where
         P: ?Sized + BufferProvider,
     {
-        use AnyCalendarForFormattingKind::*;
+        use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
             Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_with_buffer_provider(provider)?),
@@ -425,9 +459,6 @@ impl AnyCalendarForFormatting {
             Japanese => {
                 AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?)
             }
-            JapaneseExtended => AnyCalendar::JapaneseExtended(
-                cal::JapaneseExtended::try_new_with_buffer_provider(provider)?,
-            ),
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
         };
@@ -436,18 +467,17 @@ impl AnyCalendarForFormatting {
 
     pub(crate) fn try_new_unstable<P>(
         provider: &P,
-        kind: AnyCalendarForFormattingKind,
+        kind: FormattableAnyCalendarKind,
     ) -> Result<Self, DataError>
     where
         P: ?Sized
             + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-            + DataProvider<icu_calendar::provider::CalendarJapaneseExtendedV1>
             + DataProvider<icu_calendar::provider::CalendarChineseV1>
             + DataProvider<icu_calendar::provider::CalendarDangiV1>
             + DataProvider<icu_calendar::provider::CalendarHijriObservationalMeccaV1>
             + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>,
     {
-        use AnyCalendarForFormattingKind::*;
+        use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
             Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_unstable(provider)?),
@@ -469,39 +499,35 @@ impl AnyCalendarForFormatting {
                 AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::try_new_unstable(provider)?)
             }
             Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
-            JapaneseExtended => {
-                AnyCalendar::JapaneseExtended(cal::JapaneseExtended::try_new_unstable(provider)?)
-            }
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
         };
         Ok(Self { any_calendar, kind })
     }
 
-    pub(crate) fn into_untagged(self) -> UntaggedAnyCalendarForFormatting {
-        UntaggedAnyCalendarForFormatting {
+    pub(crate) fn into_untagged(self) -> UntaggedFormattableAnyCalendar {
+        UntaggedFormattableAnyCalendar {
             any_calendar: self.any_calendar,
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct UntaggedAnyCalendarForFormatting {
-    // Invariant: the kind must be representable as an AnyCalendarForFormattingKind
+pub(crate) struct UntaggedFormattableAnyCalendar {
+    // Invariant: the kind must be representable as an FormattableAnyCalendarKind
     any_calendar: AnyCalendar,
 }
 
-/// A version of [`AnyCalendarForFormatting`] that is smaller on the stack.
-impl UntaggedAnyCalendarForFormatting {
-    pub(crate) fn into_tagged(self) -> AnyCalendarForFormatting {
-        let kind =
-            AnyCalendarForFormattingKind::try_from_any_calendar_kind(self.any_calendar.kind())
-                .unwrap_or_else(|| {
-                    debug_assert!(false, "unreachable by invariant");
-                    // fall back to something non-Gregorian to make errors more obvious
-                    AnyCalendarForFormattingKind::Coptic
-                });
-        AnyCalendarForFormatting {
+/// A version of [`FormattableAnyCalendar`] that is smaller on the stack.
+impl UntaggedFormattableAnyCalendar {
+    pub(crate) fn into_tagged(self) -> FormattableAnyCalendar {
+        let kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(self.any_calendar.kind())
+            .unwrap_or_else(|| {
+                debug_assert!(false, "unreachable by invariant");
+                // fall back to something non-Gregorian to make errors more obvious
+                FormattableAnyCalendarKind::Coptic
+            });
+        FormattableAnyCalendar {
             any_calendar: self.any_calendar,
             kind,
         }
@@ -516,14 +542,14 @@ impl UntaggedAnyCalendarForFormatting {
     }
 }
 
-pub(crate) struct AnyCalendarProvider<H, P> {
+pub(crate) struct FormattableAnyCalendarNamesLoader<H, P> {
     provider: P,
-    kind: AnyCalendarForFormattingKind,
+    kind: FormattableAnyCalendarKind,
     _helper: PhantomData<H>,
 }
 
-impl<H, P> AnyCalendarProvider<H, P> {
-    pub(crate) fn new(provider: P, kind: AnyCalendarForFormattingKind) -> Self {
+impl<H, P> FormattableAnyCalendarNamesLoader<H, P> {
+    pub(crate) fn new(provider: P, kind: FormattableAnyCalendarKind) -> Self {
         Self {
             provider,
             kind,
@@ -532,7 +558,7 @@ impl<H, P> AnyCalendarProvider<H, P> {
     }
 }
 
-impl<M, H, P> BoundDataProvider<M> for AnyCalendarProvider<H, P>
+impl<M, H, P> BoundDataProvider<M> for FormattableAnyCalendarNamesLoader<H, P>
 where
     M: DynamicDataMarker,
     H: CalMarkers<M>,
@@ -550,12 +576,11 @@ where
         + DataProvider<H::HijriTabular>
         + DataProvider<H::HijriUmmAlQura>
         + DataProvider<H::Japanese>
-        + DataProvider<H::JapaneseExtended>
         + DataProvider<H::Persian>
         + DataProvider<H::Roc>,
 {
     fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        use AnyCalendarForFormattingKind::*;
+        use FormattableAnyCalendarKind::*;
         let p = &self.provider;
         match self.kind {
             Buddhist => H::Buddhist::bind(p).load_bound(req),
@@ -572,13 +597,12 @@ where
             HijriTabular => H::HijriTabular::bind(p).load_bound(req),
             HijriUmmAlQura => H::HijriUmmAlQura::bind(p).load_bound(req),
             Japanese => H::Japanese::bind(p).load_bound(req),
-            JapaneseExtended => H::JapaneseExtended::bind(p).load_bound(req),
             Persian => H::Persian::bind(p).load_bound(req),
             Roc => H::Roc::bind(p).load_bound(req),
         }
     }
     fn bound_marker(&self) -> DataMarkerInfo {
-        use AnyCalendarForFormattingKind::*;
+        use FormattableAnyCalendarKind::*;
         match self.kind {
             Buddhist => H::Buddhist::INFO,
             Chinese => H::Chinese::INFO,
@@ -594,7 +618,6 @@ where
             HijriTabular => H::HijriTabular::INFO,
             HijriUmmAlQura => H::HijriUmmAlQura::INFO,
             Japanese => H::Japanese::INFO,
-            JapaneseExtended => H::JapaneseExtended::INFO,
             Persian => H::Persian::INFO,
             Roc => H::Roc::INFO,
         }

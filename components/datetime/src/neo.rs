@@ -4,7 +4,7 @@
 
 //! High-level entrypoints for Neo DateTime Formatter
 
-use crate::error::{DateTimeFormatterLoadError, UnsupportedCalendarError};
+use crate::error::DateTimeFormatterLoadError;
 use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
@@ -153,7 +153,8 @@ where
     /// Creates a new [`FixedCalendarDateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
-    /// This ignores the `calendar_kind` preference and instead uses the static calendar type.
+    /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
+    /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
     ///
     /// Use this constructor for optimal data size and memory use
     /// if you know the required datetime components at build time.
@@ -165,7 +166,7 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::cal::JapaneseExtended;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -179,8 +180,8 @@ where
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap()),
-    ///     "20 de diciembre de 2023"
+    ///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(JapaneseExtended::new())),
+    ///     "20 de diciembre de 5 Reiwa"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -457,7 +458,7 @@ size_test!(
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     selection: DateTimeZonePatternSelectionData,
     pub(crate) names: RawDateTimeNames<FSet>,
-    pub(crate) calendar: UntaggedAnyCalendarForFormatting,
+    pub(crate) calendar: UntaggedFormattableAnyCalendar,
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
@@ -562,10 +563,10 @@ where
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
-        L: DecimalFormatterLoader + AnyCalendarLoader,
+        L: DecimalFormatterLoader + FormattableAnyCalendarLoader,
     {
-        let kind = AnyCalendarForFormattingKind::from_preferences(prefs);
-        let calendar = AnyCalendarLoader::load(loader, kind)?;
+        let kind = FormattableAnyCalendarKind::from_preferences(prefs);
+        let calendar = FormattableAnyCalendarLoader::load(loader, kind)?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
             provider, provider, loader, prefs, field_set, calendar, names,
@@ -573,8 +574,6 @@ where
         .map_err(|e| e.0)
     }
 
-    // calendar.kind() is one of Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianAmeteAlem, Gregorian, Hebrew, Indian,
-    // HijriCivil, HijriObservationalMecca, HijriTabular, HijriUmmAlQura, Japanese, JapaneseExtended, Persian, Roc
     #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
     pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
         provider_p: &P0,
@@ -582,13 +581,13 @@ where
         loader: &L,
         prefs: DateTimeFormatterPreferences,
         field_set: CompositeFieldSet,
-        calendar: AnyCalendarForFormatting,
+        calendar: FormattableAnyCalendar,
         mut names: RawDateTimeNames<FSet>,
     ) -> Result<
         Self,
         (
             DateTimeFormatterLoadError,
-            (AnyCalendarForFormatting, RawDateTimeNames<FSet>),
+            (FormattableAnyCalendar, RawDateTimeNames<FSet>),
         ),
     >
     where
@@ -597,7 +596,7 @@ where
         L: DecimalFormatterLoader,
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Skel, _>::new(
+            &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Skel, _>::new(
                 provider_p,
                 calendar.kind(),
             ),
@@ -611,11 +610,11 @@ where
             Err(e) => return Err((DateTimeFormatterLoadError::Data(e), (calendar, names))),
         };
         let result = names.load_for_pattern(
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Year, _>::new(
+            &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Year, _>::new(
                 provider,
                 calendar.kind(),
             ),
-            &AnyCalendarProvider::<<FSet::D as DateDataMarkers>::Month, _>::new(
+            &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Month, _>::new(
                 provider,
                 calendar.kind(),
             ),
@@ -879,29 +878,21 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///     YMD::long(),
     /// )
     /// .unwrap()
-    /// .try_into_formatter(Hebrew::new())
-    /// .expect("Hebrew is supported in DateTimeFormatter");
+    /// .into_formatter(Hebrew::new());
     ///
     /// let date = Date::try_new_iso(2024, 10, 14).unwrap();
     ///
     /// assert_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
     /// ```
-    pub fn try_into_formatter(
-        self,
-        calendar: C,
-    ) -> Result<DateTimeFormatter<FSet>, UnsupportedCalendarError>
+    pub fn into_formatter(self, calendar: C) -> DateTimeFormatter<FSet>
     where
-        C: IntoAnyCalendar,
+        C: IntoFormattableAnyCalendar,
     {
-        let any_calendar = calendar.to_any();
-        let kind = any_calendar.kind();
-        let calendar = AnyCalendarForFormatting::try_from_any_calendar(any_calendar)
-            .ok_or(UnsupportedCalendarError { kind })?;
-        Ok(DateTimeFormatter {
+        DateTimeFormatter {
             selection: self.selection,
             names: self.names,
-            calendar: calendar.into_untagged(),
-        })
+            calendar: FormattableAnyCalendar::from_calendar(calendar).into_untagged(),
+        }
     }
 
     /// Maps a [`FixedCalendarDateTimeFormatter`] of a specific `FSet` to a more general `FSet`.

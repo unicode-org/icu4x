@@ -591,7 +591,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
 #[derive(Debug, Clone)]
 pub struct DateTimeNames<FSet: DateTimeNamesMarker> {
     inner: FixedCalendarDateTimeNames<(), FSet>,
-    calendar: AnyCalendarForFormatting,
+    calendar: FormattableAnyCalendar,
 }
 
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
@@ -996,13 +996,12 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         calendar: AnyCalendar,
     ) -> Result<Self, UnsupportedCalendarError> {
         let kind = calendar.kind();
-        match AnyCalendarForFormatting::try_from_any_calendar(calendar) {
-            Some(calendar) => Ok(Self {
-                inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
-                calendar,
-            }),
-            None => Err(UnsupportedCalendarError { kind }),
-        }
+        let calendar = FormattableAnyCalendar::try_from_any_calendar(calendar)
+            .ok_or(UnsupportedCalendarError { kind })?;
+        Ok(Self {
+            inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
+            calendar,
+        })
     }
 
     /// Creates an instance with the names and calendar loaded in a [`DateTimeFormatter`].
@@ -1058,7 +1057,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
 
     fn from_parts(
         prefs: DateTimeFormatterPreferences,
-        parts: (AnyCalendarForFormatting, RawDateTimeNames<FSet>),
+        parts: (FormattableAnyCalendar, RawDateTimeNames<FSet>),
     ) -> Self {
         Self {
             inner: FixedCalendarDateTimeNames {
