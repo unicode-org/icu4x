@@ -97,7 +97,7 @@ where
     Zone: DateTimeMarkers + ZoneMarkers,
     <Zone as DateTimeMarkers>::Z: ZoneMarkers,
     Combo<DateAndTimeFieldSet, Zone>: DateTimeNamesFrom<CompositeDateTimeFieldSet>,
-    CompositeFieldSet: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
+    Combo<DateAndTimeFieldSet, ZoneFieldSet>: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
 {
     let prefs = (&locale.0).into();
     let mut names = DateTimeNames::from_formatter(prefs, formatter.clone())
@@ -205,7 +205,7 @@ where
     Zone: DateTimeMarkers + ZoneMarkers,
     <Zone as DateTimeMarkers>::Z: ZoneMarkers,
     Combo<DateAndTimeFieldSet, Zone>: DateTimeNamesFrom<CompositeDateTimeFieldSet>,
-    CompositeFieldSet: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
+    Combo<DateAndTimeFieldSet, ZoneFieldSet>: DateTimeNamesFrom<Combo<DateAndTimeFieldSet, Zone>>,
 {
     let prefs = (&locale.0).into();
     let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter.clone())
