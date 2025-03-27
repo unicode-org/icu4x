@@ -68,46 +68,25 @@ pub mod ffi {
             {%- if flavor.is_zone_only() %}
             icu_datetime::fieldsets::enums::ZoneFieldSet,
             {%- else if flavor.has_date() && flavor.has_time() %}
-            icu_datetime::fieldsets::enums::CompositeFieldSet
+            icu_datetime::fieldsets::enums::ZonedDateAndTimeFieldSet
             {%- else if flavor.has_date() %}
-            icu_datetime::fieldsets::Combo<
-                icu_datetime::fieldsets::enums::DateFieldSet,
-                icu_datetime::fieldsets::enums::ZoneFieldSet,
-            >
+            icu_datetime::fieldsets::enums::ZonedDateFieldSet
             {%- else %}
-            icu_datetime::fieldsets::Combo<
-                icu_datetime::fieldsets::enums::TimeFieldSet,
-                icu_datetime::fieldsets::enums::ZoneFieldSet,
-            >
+            icu_datetime::fieldsets::enums::ZonedTimeFieldSet
             {%- endif %}
         >,
     );
 
     impl {{ ffi_type }} {
         {%- for variant in variants %}
-        {%- for is_with_provider in [false, true] %}
-        {%- let ctor_prefix %}
-        {%- let ctor_suffix_ffi %}
-        {%- let ctor_suffix_rust %}
-        {%- let cargo_feature %}
-        {%- if is_with_provider %}
-            {%- let ctor_prefix = "load_" %}
-            {%- let ctor_suffix_ffi = "_with_provider" %}
-            {%- let ctor_suffix_rust = "_with_buffer_provider" %}
-            {%- let cargo_feature = "buffer_provider" %}
-        {%- else %}
-            {%- let ctor_prefix = "include_" %}
-            {%- let ctor_suffix_ffi = "" %}
-            {%- let ctor_suffix_rust = "" %}
-            {%- let cargo_feature = "compiled_data" %}
-        {%- endif %}
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor_suffix_ffi }}")]
-        {%- if variant.is_default_constructor() && !is_with_provider %}
+        {%- for ctor in ConstructorType::VALUES %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor.suffix_ffi() }}")]
+        {%- if variant.is_default_constructor() && !ctor.is_with_provider() %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
-        #[cfg(feature = "{{ cargo_feature }}")]
-        pub fn create_{{ variant.name_lower() }}{{ ctor_suffix_ffi }}(
-            {%- if is_with_provider %}
+        #[cfg(feature = "{{ ctor.cargo_feature() }}")]
+        pub fn create_{{ variant.name_lower() }}{{ ctor.suffix_ffi() }}(
+            {%- if ctor.is_with_provider() %}
             provider: &DataProvider,
             {%- endif %}
             locale: &Locale,
@@ -125,7 +104,7 @@ pub mod ffi {
             formatter: &{{ ffi_base_type }},
             {%- endif %}
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
-            {%- if is_with_provider %}
+            {%- if ctor.is_with_provider() %}
             let provider = provider.get()?;
             {%- endif %}
             let zone = icu_datetime::fieldsets::zone::{{ variant.name_camel() }};
@@ -144,8 +123,8 @@ pub mod ffi {
             Ok(Box::new(Self(
                 icu_datetime
                     ::{{ formatter_kind.rust_type() }}
-                    ::try_new{{ ctor_suffix_rust }}(
-                        {%- if is_with_provider %}
+                    ::try_new{{ ctor.suffix_rust() }}(
+                        {%- if ctor.is_with_provider() %}
                         provider,
                         {%- endif %}
                         prefs,
@@ -165,7 +144,7 @@ pub mod ffi {
                 zone,
                 {%- endif %}
                 |names| {
-                    {%- if is_with_provider %}
+                    {%- if ctor.is_with_provider() %}
                     use icu_provider::buf::AsDeserializingBufferProvider;
                     let provider = provider.as_deserializing();
                     {%- endif %}
@@ -173,15 +152,15 @@ pub mod ffi {
                         {%- if !formatter_kind.is_fixed_calendar %}
                         .as_mut()
                         {%- endif %}
-                        .{{ ctor_prefix }}time_zone_{{ variant.load_fn() }}(
-                            {%- if is_with_provider %}
+                        .{{ ctor.prefix() }}time_zone_{{ variant.load_fn() }}(
+                            {%- if ctor.is_with_provider() %}
                             &provider
                             {%- endif %}
                         )?;
                     Ok(())
                 },
-                |names, field_set| names.try_into_formatter{{ ctor_suffix_rust }}(
-                    {%- if is_with_provider %}
+                |names, field_set| names.try_into_formatter{{ ctor.suffix_rust() }}(
+                    {%- if ctor.is_with_provider() %}
                     &provider,
                     {%- endif %}
                     field_set

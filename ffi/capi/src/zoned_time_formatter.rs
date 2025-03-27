@@ -36,10 +36,7 @@ pub mod ffi {
     pub struct ZonedTimeFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             (),
-            icu_datetime::fieldsets::Combo<
-                icu_datetime::fieldsets::enums::TimeFieldSet,
-                icu_datetime::fieldsets::enums::ZoneFieldSet,
-            >
+            icu_datetime::fieldsets::enums::ZonedTimeFieldSet
         >,
     );
 

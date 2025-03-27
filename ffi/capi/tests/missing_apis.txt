@@ -70,6 +70,9 @@ icu::datetime::fieldsets::builder::FieldSetBuilder::build_date#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_date_and_time#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_time#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::build_zone#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_zoned_date#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_zoned_date_and_time#FnInStruct
+icu::datetime::fieldsets::builder::FieldSetBuilder::build_zoned_time#FnInStruct
 icu::datetime::fieldsets::builder::FieldSetBuilder::new#FnInStruct
 icu::datetime::fieldsets::builder::ZoneStyle#Enum
 icu::datetime::fieldsets::enums::CalendarPeriodFieldSet#Enum
@@ -84,6 +87,9 @@ icu::datetime::fieldsets::enums::DateFieldSet::zone#FnInEnum
 icu::datetime::fieldsets::enums::TimeFieldSet#Enum
 icu::datetime::fieldsets::enums::TimeFieldSet::zone#FnInEnum
 icu::datetime::fieldsets::enums::ZoneFieldSet#Enum
+icu::datetime::fieldsets::enums::ZonedDateAndTimeFieldSet#Typedef
+icu::datetime::fieldsets::enums::ZonedDateFieldSet#Typedef
+icu::datetime::fieldsets::enums::ZonedTimeFieldSet#Typedef
 icu::datetime::fieldsets::zone::ExemplarCity#Struct
 icu::datetime::fieldsets::zone::GenericLong#Struct
 icu::datetime::fieldsets::zone::GenericShort#Struct
