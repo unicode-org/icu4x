@@ -187,7 +187,7 @@ impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
 impl UnstableSealed for Roc {}
 
-/// A collection of marker types associated with all calendars.
+/// A collection of marker types associated with all formattable calendars.
 ///
 /// This is used to group together the calendar-specific marker types that produce a common
 /// [`DynamicDataMarker`]. For example, this trait can be implemented for [`YearNamesV1`].
@@ -228,8 +228,6 @@ where
     type HijriUmmAlQura: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Japanese`] calendar
     type Japanese: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for a [`JapaneseExtended`] calendar
-    type JapaneseExtended: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Persian`] calendar
     type Persian: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Roc`] calendar
@@ -267,7 +265,6 @@ where
     type HijriTabular = NeverMarker<M::DataStruct>;
     type HijriUmmAlQura = NeverMarker<M::DataStruct>;
     type Japanese = NeverMarker<M::DataStruct>;
-    type JapaneseExtended = NeverMarker<M::DataStruct>;
     type Persian = NeverMarker<M::DataStruct>;
     type Roc = NeverMarker<M::DataStruct>;
 }
@@ -660,7 +657,6 @@ impl_load_any_calendar!(
         HijriTabular,
         HijriUmmAlQura,
         Japanese,
-        JapaneseExtended,
         Persian,
         Roc
     ]
