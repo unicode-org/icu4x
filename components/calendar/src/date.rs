@@ -311,7 +311,7 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                Iso::days_in_provided_year(self.inner.0.year.saturating_sub(1), ()),
+                Iso::days_in_provided_year(self.inner.0.year.saturating_sub(1)),
                 self.days_in_year(),
                 self.day_of_year().0,
                 self.day_of_week(),

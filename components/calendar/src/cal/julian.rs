@@ -50,32 +50,32 @@ pub struct Julian;
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
-    type YearInfo = ();
+    type YearInfo = i32;
 
-    fn days_in_provided_month(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::provided_year_is_leap(year, ()) => 29,
+            2 if Self::provided_year_is_leap(year) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
 
-    fn months_in_provided_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32) -> u8 {
         12
     }
 
-    fn provided_year_is_leap(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32) -> bool {
         calendrical_calculations::julian::is_leap_year(year)
     }
 
-    fn last_month_day_in_provided_year(_year: i32, _data: ()) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::provided_year_is_leap(year, ()) {
+    fn days_in_provided_year(year: i32) -> u16 {
+        if Self::provided_year_is_leap(year) {
             366
         } else {
             365
@@ -166,7 +166,7 @@ impl Calendar for Julian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -487,9 +487,9 @@ mod test {
 
     #[test]
     fn test_julian_leap_years() {
-        assert!(Julian::provided_year_is_leap(4, ()));
-        assert!(Julian::provided_year_is_leap(0, ()));
-        assert!(Julian::provided_year_is_leap(-4, ()));
+        assert!(Julian::provided_year_is_leap(4));
+        assert!(Julian::provided_year_is_leap(0));
+        assert!(Julian::provided_year_is_leap(-4));
 
         Date::try_new_julian(2020, 2, 29).unwrap();
     }
