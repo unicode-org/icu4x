@@ -25,7 +25,7 @@ use zerovec::ule::AsULE;
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 pub use crate::zone::ule::TimeZoneVariantULE;
-use crate::zone::TimeZone;
+pub use crate::zone::TimeZone;
 pub mod iana;
 pub mod windows;
 

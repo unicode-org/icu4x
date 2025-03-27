@@ -198,6 +198,7 @@ pub mod models {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // This is a stable newtype
 pub struct TimeZone(pub TinyAsciiStr<8>);
 
 impl TimeZone {
