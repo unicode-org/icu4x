@@ -88,7 +88,6 @@ mod offset;
 pub mod windows;
 
 #[doc(inline)]
-pub use crate::provider::{TimeZone, TimeZoneVariant};
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
 pub use offset::VariantOffsets;
@@ -102,7 +101,12 @@ pub use windows::WindowsParser;
 
 use crate::{scaffold::IntoOption, Time};
 use core::fmt;
+use core::ops::Deref;
 use icu_calendar::{Date, Iso};
+use icu_provider::prelude::yoke;
+use tinystr::TinyAsciiStr;
+use zerovec::ule::{AsULE, ULE};
+use zerovec::{ZeroSlice, ZeroVec};
 
 /// Time zone data model choices.
 pub mod models {
@@ -156,6 +160,116 @@ pub mod models {
         type TimeZoneVariant = TimeZoneVariant;
         type LocalTime = (Date<Iso>, Time);
     }
+}
+
+/// A CLDR time zone identity.
+///
+/// **This type originates from the [`icu_time`](docs.rs/icu_time) crate, though it may be found reexported elsewhere.**
+///
+/// This can be created directly from BCP-47 strings, or it can be parsed from IANA IDs.
+///
+/// CLDR uses difference equivalence classes than IANA. For example, `Europe/Oslo` is
+/// an alias to `Europe/Berlin` in IANA (because they agree since 1970), but these are
+/// different identities in CLDR, as we want to be able to say "Norway Time" and
+/// "Germany Time". On the other hand `Europe/Belfast` and `Europe/London` are the same
+/// CLDR identity ("UK Time").
+///
+/// ```
+/// use icu::time::zone::{IanaParser, TimeZone};
+/// use tinystr::tinystr;
+///
+/// let parser = IanaParser::new();
+/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
+/// assert_eq!(
+///     parser.parse("Europe/Berlin"),
+///     TimeZone(tinystr!(8, "deber"))
+/// );
+/// assert_eq!(
+///     parser.parse("Europe/Belfast"),
+///     TimeZone(tinystr!(8, "gblon"))
+/// );
+/// assert_eq!(
+///     parser.parse("Europe/London"),
+///     TimeZone(tinystr!(8, "gblon"))
+/// );
+/// ```
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct TimeZone(pub TinyAsciiStr<8>);
+
+impl TimeZone {
+    /// The synthetic `Etc/Unknown` time zone.
+    ///
+    /// This is the result of parsing unknown zones. It's important that such parsing does not
+    /// fail, as new zones are added all the time, and ICU4X might not be up to date.
+    pub const fn unknown() -> Self {
+        Self(tinystr::tinystr!(8, "unk"))
+    }
+}
+
+/// This module exists so we can cleanly reexport TimeZoneVariantULE from the provider module, whilst retaining a public stable TimeZoneVariant type.
+pub(crate) mod ule {
+    /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
+    ///
+    /// This should not generally be constructed by client code. Instead, use
+    /// * [`TimeZoneVariant::from_rearguard_isdst`]
+    /// * [`TimeZoneInfo::infer_zone_variant`](crate::TimeZoneInfo::infer_zone_variant)
+    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+    #[zerovec::make_ule(TimeZoneVariantULE)]
+    #[repr(u8)]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", databake(path = icu_time))]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    #[non_exhaustive]
+    pub enum TimeZoneVariant {
+        /// The variant corresponding to `"standard"` in CLDR.
+        ///
+        /// The semantics vary from time zone to time zone. The time zone display
+        /// name of this variant may or may not be called "Standard Time".
+        ///
+        /// This is the variant with the lower UTC offset.
+        Standard = 0,
+        /// The variant corresponding to `"daylight"` in CLDR.
+        ///
+        /// The semantics vary from time zone to time zone. The time zone display
+        /// name of this variant may or may not be called "Daylight Time".
+        ///
+        /// This is the variant with the higher UTC offset.
+        Daylight = 1,
+    }
+}
+pub use ule::TimeZoneVariant;
+
+impl Deref for TimeZone {
+    type Target = TinyAsciiStr<8>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl AsULE for TimeZone {
+    type ULE = Self;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
+    type Container = ZeroVec<'a, TimeZone>;
+    type Slice = ZeroSlice<TimeZone>;
+    type GetType = TimeZone;
+    type OwnedType = TimeZone;
 }
 
 /// A utility type that can hold time zone information.
