@@ -114,54 +114,6 @@ impl Calendar for Iso {
         date.0.days_in_month()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> types::Weekday {
-        // For the purposes of the calculation here, Monday is 0, Sunday is 6
-        // ISO has Monday=1, Sunday=7, which we transform in the last step
-
-        // The days of the week are the same every 400 years
-        // so we normalize to the nearest multiple of 400
-        let years_since_400 = date.0.year.rem_euclid(400);
-        debug_assert!(years_since_400 >= 0); // rem_euclid returns positive numbers
-        let years_since_400 = years_since_400 as u32;
-        let leap_years_since_400 = years_since_400 / 4 - years_since_400 / 100;
-        // The number of days to the current year
-        // Can never cause an overflow because years_since_400 has a maximum value of 399.
-        let days_to_current_year = 365 * years_since_400 + leap_years_since_400;
-        // The weekday offset from January 1 this year and January 1 2000
-        let year_offset = days_to_current_year % 7;
-
-        // Corresponding months from
-        // https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Corresponding_months
-        let month_offset = if Self::is_leap_year(date.0.year, ()) {
-            match date.0.month {
-                10 => 0,
-                5 => 1,
-                2 | 8 => 2,
-                3 | 11 => 3,
-                6 => 4,
-                9 | 12 => 5,
-                1 | 4 | 7 => 6,
-                _ => unreachable!(),
-            }
-        } else {
-            match date.0.month {
-                1 | 10 => 0,
-                5 => 1,
-                8 => 2,
-                2 | 3 | 11 => 3,
-                6 => 4,
-                9 | 12 => 5,
-                4 | 7 => 6,
-                _ => unreachable!(),
-            }
-        };
-        let january_1_2000 = 5; // Saturday
-        let day_offset = (january_1_2000 + year_offset + month_offset + date.0.day as u32) % 7;
-
-        // We calculated in a zero-indexed fashion, but ISO specifies one-indexed
-        types::Weekday::from((day_offset + 1) as usize)
-    }
-
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         date.0.offset_date(offset, &());
     }

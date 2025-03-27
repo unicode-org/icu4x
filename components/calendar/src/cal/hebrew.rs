@@ -497,10 +497,10 @@ mod tests {
         let cal = Hebrew::new();
         let era = "am";
         let month_code = MonthCode(tinystr!(4, "M01"));
-        let dt = cal.date_from_codes(Some(era), 3760, month_code, 1).unwrap();
+        let dt = Date::try_new_from_codes(Some(era), 3760, month_code, 1, cal).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1
-        assert_eq!(6, cal.day_of_week(&dt) as usize);
+        assert_eq!(6, dt.day_of_week() as usize);
     }
 }

@@ -126,7 +126,7 @@ impl WeekCalculator {
 /// Returns the weekday that's `num_days` after `weekday`.
 fn add_to_weekday(weekday: Weekday, num_days: i32) -> Weekday {
     let new_weekday = (7 + (weekday as i32) + (num_days % 7)) % 7;
-    Weekday::from(new_weekday as usize)
+    Weekday::from_days_since_sunday(new_weekday as isize)
 }
 
 /// Which year or month that a calendar assigns a week to relative to the year/month
@@ -409,13 +409,16 @@ mod tests {
         for min_week_days in 1..7 {
             for start_of_week in 1..7 {
                 let calendar = WeekCalculator {
-                    first_weekday: Weekday::from(start_of_week),
+                    first_weekday: Weekday::from_days_since_sunday(start_of_week),
                     min_week_days,
                 };
                 for unit_duration in super::MIN_UNIT_DAYS..400 {
                     for start_of_unit in 1..7 {
-                        let unit =
-                            UnitInfo::new(Weekday::from(start_of_unit), unit_duration).unwrap();
+                        let unit = UnitInfo::new(
+                            Weekday::from_days_since_sunday(start_of_unit),
+                            unit_duration,
+                        )
+                        .unwrap();
                         let expected = classify_days_of_unit(calendar, &unit);
                         for (index, expected_week_of) in expected.iter().enumerate() {
                             let day = index + 1;

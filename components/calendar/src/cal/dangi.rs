@@ -242,10 +242,6 @@ impl Calendar for Dangi {
         date.0 .0.day_of_year()
     }
 
-    fn day_of_week(&self, date: &Self::DateInner) -> crate::types::Weekday {
-        self.date_to_iso(date).day_of_week()
-    }
-
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
         Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
