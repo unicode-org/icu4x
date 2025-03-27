@@ -582,6 +582,33 @@ impl FieldSetBuilder {
         }
     }
 
+    /// Builds a [`Combo`] for a zoned date.
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_zoned_date(mut self) -> Result<Combo<DateFieldSet, ZoneFieldSet>, BuilderError> {
+        let zone_field_set = self.build_zone_without_checking_options()?;
+        let date_field_set = self.build_date()?;
+        Ok(date_field_set.zone(zone_field_set))
+    }
+
+    /// Builds a [`Combo`] for a zoned time.
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_zoned_time(mut self) -> Result<Combo<TimeFieldSet, ZoneFieldSet>, BuilderError> {
+        let zone_field_set = self.build_zone_without_checking_options()?;
+        let time_field_set = self.build_time()?;
+        Ok(time_field_set.zone(zone_field_set))
+    }
+
+    /// Builds a [`Combo`] for a zoned date and time.
+    ///
+    /// An error will occur if incompatible fields or options were set in the builder.
+    pub fn build_zoned_datetime(mut self) -> Result<Combo<DateAndTimeFieldSet, ZoneFieldSet>, BuilderError> {
+        let zone_field_set = self.build_zone_without_checking_options()?;
+        let datetime_field_set = self.build_date_and_time()?;
+        Ok(datetime_field_set.zone(zone_field_set))
+    }
+
     /// Builds a [`CompositeFieldSet`].
     ///
     /// An error will occur if incompatible fields or options were set in the builder.
