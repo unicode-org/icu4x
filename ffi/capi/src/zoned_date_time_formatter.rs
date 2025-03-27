@@ -36,10 +36,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
     pub struct ZonedDateTimeFormatter(
         pub  icu_datetime::DateTimeFormatter<
-            icu_datetime::fieldsets::Combo<
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet,
-                icu_datetime::fieldsets::enums::ZoneFieldSet,
-            >
+            icu_datetime::fieldsets::enums::ZonedDateAndTimeFieldSet
         >,
     );
 
@@ -517,10 +514,7 @@ pub mod ffi {
     pub struct ZonedDateTimeFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
-            icu_datetime::fieldsets::Combo<
-                icu_datetime::fieldsets::enums::DateAndTimeFieldSet,
-                icu_datetime::fieldsets::enums::ZoneFieldSet,
-            >
+            icu_datetime::fieldsets::enums::ZonedDateAndTimeFieldSet
         >,
     );
 

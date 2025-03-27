@@ -258,6 +258,21 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
     }
 }
 
+/// Type alias representing all possible date + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedDateFieldSet = Combo<DateFieldSet, ZoneFieldSet>;
+
+/// Type alias representing all possible time + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedTimeFieldSet = Combo<TimeFieldSet, ZoneFieldSet>;
+
+/// Type alias representing all possible date + time + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedDateAndTimeFieldSet = Combo<DateAndTimeFieldSet, ZoneFieldSet>;
+
 /// An enum supporting all possible field sets and options.
 ///
 /// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
@@ -275,11 +290,11 @@ pub enum CompositeFieldSet {
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
-    DateZone(Combo<DateFieldSet, ZoneFieldSet>),
+    DateZone(ZonedDateFieldSet),
     /// Field set for a time and a time zone together.
-    TimeZone(Combo<TimeFieldSet, ZoneFieldSet>),
+    TimeZone(ZonedTimeFieldSet),
     /// Field set for a date, a time, and a time zone together.
-    DateTimeZone(Combo<DateAndTimeFieldSet, ZoneFieldSet>),
+    DateTimeZone(ZonedDateAndTimeFieldSet),
 }
 
 macro_rules! first {
