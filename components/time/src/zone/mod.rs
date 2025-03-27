@@ -159,6 +159,8 @@ pub mod models {
 }
 
 /// A utility type that can hold time zone information.
+///
+/// **This type originates from the [`icu_time`](docs.rs/icu_time) crate, though it may be found reexported elsewhere.**
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct TimeZoneInfo<Model: models::TimeZoneModel> {

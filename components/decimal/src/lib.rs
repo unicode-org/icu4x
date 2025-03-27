@@ -133,18 +133,12 @@ pub mod preferences {
 }
 
 /// Types that can be fed to [`DecimalFormatter`] and their utilities
+///
+/// This module contains reexports from the [`fixed_decimal`] crate.
 pub mod input {
-    /// **This is a reexport of a type in [`fixed_decimal`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use fixed_decimal::Decimal;
-    /// **This is a reexport of a type in [`fixed_decimal`]**.
-    ///
-    /// This type can be made available with the `"ryu"` Cargo feature.
-    #[doc = "\n"] // prevent autoformatting
     #[cfg(feature = "ryu")]
     pub use fixed_decimal::FloatPrecision;
-    /// **This is a reexport of a type in [`fixed_decimal`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use fixed_decimal::SignDisplay;
 }
 

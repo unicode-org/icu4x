@@ -89,6 +89,8 @@ impl<C> Deref for Ref<'_, C> {
 
 /// A date for a given calendar.
 ///
+/// **This type originates from the [`icu_calendar`](docs.rs/icu_calendar) crate, though it may be found reexported elsewhere.**
+///
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///

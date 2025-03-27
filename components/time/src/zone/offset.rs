@@ -19,6 +19,8 @@ use zerovec::ZeroMap2d;
 pub struct InvalidOffsetError;
 
 /// An offset from Coordinated Universal Time (UTC)
+///
+/// **This type originates from the [`icu_time`](docs.rs/icu_time) crate, though it may be found reexported elsewhere.**
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default, PartialOrd, Ord)]
 pub struct UtcOffset(i32);
 

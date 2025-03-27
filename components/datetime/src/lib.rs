@@ -137,26 +137,14 @@ pub mod preferences {
 }
 
 /// Types that can be fed to [`DateTimeFormatter`]/[`FixedCalendarDateTimeFormatter`].
+///
+/// This module contains reexports from the [`icu_calendar`] and [`icu_time`] crates.
 pub mod input {
-    /// **This is a reexport of a type in [`icu_calendar`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_calendar::Date;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::zone::UtcOffset;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::DateTime;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::Time;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::TimeZone;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::TimeZoneInfo;
-    /// **This is a reexport of a type in [`icu_time`]**.
-    #[doc = "\n"] // prevent autoformatting
     pub use icu_time::ZonedDateTime;
 }

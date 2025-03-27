@@ -64,6 +64,8 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 
 /// A CLDR time zone identity.
 ///
+/// **This type originates from the [`icu_time`](docs.rs/icu_time) crate, though it may be found reexported elsewhere.**
+///
 /// This can be created directly from BCP-47 strings, or it can be parsed from IANA IDs.
 ///
 /// CLDR uses difference equivalence classes than IANA. For example, `Europe/Oslo` is
