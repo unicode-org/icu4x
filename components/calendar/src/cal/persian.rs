@@ -15,7 +15,7 @@
 //! assert_eq!(persian_date.day_of_month().0, 11);
 //! ```
 
-use crate::cal::iso::Iso;
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
@@ -86,7 +86,7 @@ impl CalendarArithmetic for Persian {
 
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -101,14 +101,30 @@ impl Calendar for Persian {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-        Self::fast_persian_from_fixed(fixed_iso)
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        PersianDateInner(
+            match calendrical_calculations::persian::fast_persian_from_fixed(rd) {
+                Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
+                Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+            },
+        )
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed_persian = Persian::fixed_from_fast_persian(*date);
-        Iso::from_fixed(fixed_persian)
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        calendrical_calculations::persian::fixed_from_fast_persian(
+            date.0.year,
+            date.0.month,
+            date.0.day,
+        )
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> PersianDateInner {
+        self.from_rata_die(Iso.to_rata_die(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -181,24 +197,6 @@ impl Persian {
     pub fn new() -> Self {
         Self
     }
-
-    fn fixed_from_fast_persian(p_date: PersianDateInner) -> RataDie {
-        calendrical_calculations::persian::fixed_from_fast_persian(
-            p_date.0.year,
-            p_date.0.month,
-            p_date.0.day,
-        )
-    }
-    fn fast_persian_from_fixed(date: RataDie) -> PersianDateInner {
-        let (year, month, day) =
-            match calendrical_calculations::persian::fast_persian_from_fixed(date) {
-                Err(I32CastError::BelowMin) => return PersianDateInner(ArithmeticDate::min_date()),
-                Err(I32CastError::AboveMax) => return PersianDateInner(ArithmeticDate::max_date()),
-                Ok(ymd) => ymd,
-            };
-
-        PersianDateInner(ArithmeticDate::new_unchecked(year, month, day))
-    }
 }
 
 impl Date<Persian> {
@@ -233,7 +231,7 @@ mod tests {
         day: u8,
     }
 
-    static TEST_FIXED_DATE: [i64; 21] = [
+    static TEST_RD: [i64; 21] = [
         656786, 664224, 671401, 694799, 702806, 704424, 708842, 709409, 709580, 727274, 728714,
         739330, 739331, 744313, 763436, 763437, 764652, 775123, 775488, 775489, 1317874,
     ];
@@ -357,13 +355,12 @@ mod tests {
     ];
 
     fn days_in_provided_year_core(year: i32) -> u16 {
-        let fixed_year =
+        let ny =
             calendrical_calculations::persian::fixed_from_fast_persian(year, 1, 1).to_i64_date();
-        let next_fixed_year =
-            calendrical_calculations::persian::fixed_from_fast_persian(year + 1, 1, 1)
-                .to_i64_date();
+        let next_ny = calendrical_calculations::persian::fixed_from_fast_persian(year + 1, 1, 1)
+            .to_i64_date();
 
-        (next_fixed_year - fixed_year) as u16
+        (next_ny - ny) as u16
     }
 
     #[test]
@@ -394,23 +391,19 @@ mod tests {
     }
 
     #[test]
-    fn test_fixed_from_persian() {
-        for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+    fn test_rd_from_persian() {
+        for (case, f_date) in CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_persian(case.year, case.month, case.day).unwrap();
 
-            assert_eq!(
-                Persian::fixed_from_fast_persian(*date.inner()).to_i64_date(),
-                *f_date,
-                "{case:?}"
-            );
+            assert_eq!(date.to_rata_die().to_i64_date(), *f_date, "{case:?}");
         }
     }
     #[test]
-    fn test_persian_from_fixed() {
-        for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+    fn test_persian_from_rd() {
+        for (case, f_date) in CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_persian(case.year, case.month, case.day).unwrap();
             assert_eq!(
-                Persian::fast_persian_from_fixed(RataDie::new(*f_date)),
+                Persian.from_rata_die(RataDie::new(*f_date)),
                 date.inner,
                 "{case:?}"
             );

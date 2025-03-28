@@ -483,11 +483,11 @@ fn test_calendar_eras() {
             let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
                 (Some(start), None) => {
                     let start = Date::try_new_iso(start.year, start.month, start.day).unwrap();
-                    (start, Iso::from_fixed(Iso::to_fixed(start) - 1))
+                    (start, Date::from_rata_die(start.to_rata_die() - 1, Iso))
                 }
                 (None, Some(end)) => {
                     let end = Date::try_new_iso(end.year, end.month, end.day).unwrap();
-                    (end, Iso::from_fixed(Iso::to_fixed(end) + 1))
+                    (end, Date::from_rata_die(end.to_rata_die() + 1, Iso))
                 }
                 _ => unreachable!(),
             };

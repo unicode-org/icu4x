@@ -40,11 +40,18 @@ class IsoDate {
 public:
 
   /**
-   * Creates a new [`IsoDate`] from the specified date and time.
+   * Creates a new [`IsoDate`] from the specified date.
    *
    * See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError> create(int32_t year, uint8_t month, uint8_t day);
+
+  /**
+   * Creates a new [`IsoDate`] from the given Rata Die
+   *
+   * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+   */
+  inline static std::unique_ptr<icu4x::IsoDate> from_rata_die(int64_t rd);
 
   /**
    * Creates a new [`IsoDate`] from an IXDTF string.
@@ -64,6 +71,13 @@ public:
    * See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
    */
   inline std::unique_ptr<icu4x::Date> to_any() const;
+
+  /**
+   * Returns this date's Rata Die
+   *
+   * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+   */
+  inline int64_t to_rata_die() const;
 
   /**
    * Returns the 1-indexed day in the year for this date

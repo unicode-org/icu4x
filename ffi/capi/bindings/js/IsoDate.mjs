@@ -48,7 +48,7 @@ export class IsoDate {
     }
 
     /** 
-     * Creates a new [`IsoDate`] from the specified date and time.
+     * Creates a new [`IsoDate`] from the specified date.
      *
      * See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
      */
@@ -68,6 +68,21 @@ export class IsoDate {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    /** 
+     * Creates a new [`IsoDate`] from the given Rata Die
+     *
+     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+     */
+    static fromRataDie(rd) {
+        const result = wasm.icu4x_IsoDate_from_rata_die_mv1(rd);
+    
+        try {
+            return new IsoDate(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
     }
 
     /** 
@@ -122,6 +137,21 @@ export class IsoDate {
     
         try {
             return new Date(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Returns this date's Rata Die
+     *
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     */
+    get rataDie() {
+        const result = wasm.icu4x_IsoDate_to_rata_die_mv1(this.ffiValue);
+    
+        try {
+            return result;
         }
         
         finally {}

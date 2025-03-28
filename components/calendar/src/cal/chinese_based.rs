@@ -150,7 +150,7 @@ impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
     /// from cache or computing.
     fn load_or_compute_info_for_iso(
         &self,
-        fixed: RataDie,
+        rd: RataDie,
         iso: ArithmeticDate<Iso>,
     ) -> ChineseBasedYearInfo {
         if let Some(cached) = self.data.and_then(|d| d.get_for_iso::<CB>(iso)) {
@@ -162,7 +162,7 @@ impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
         let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
         let year_bounds = YearBounds::compute::<CB>(mid_year);
         let YearBounds { new_year, .. } = year_bounds;
-        if fixed >= new_year {
+        if rd >= new_year {
             compute_cache_with_yb::<CB>(extended_year, year_bounds)
         } else {
             compute_cache::<CB>(extended_year - 1)
@@ -263,7 +263,7 @@ impl ChineseBasedYearInfo {
 impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBasedYearInfo>>
     ChineseBasedDateInner<C>
 {
-    /// Get a ChineseBasedDateInner from a fixed date and the cache/extended year associated with it
+    /// Get a ChineseBasedDateInner from a RD and the cache/extended year associated with it
     fn chinese_based_date_from_info(
         date: RataDie,
         year: ChineseBasedYearInfo,
@@ -304,18 +304,18 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         ChineseBasedDateInner(ArithmeticDate::new_unchecked(year, month, day_of_month))
     }
 
-    /// Get a ChineseBasedDateInner from a fixed date, with the related ISO date
+    /// Get a ChineseBasedDateInner from a RD, with the related ISO date
     /// (passed in to avoid recomputing)
-    pub(crate) fn chinese_based_date_from_fixed(
+    pub(crate) fn chinese_based_date_from_rd(
         cal: &C,
-        fixed: RataDie,
+        rd: RataDie,
         iso: ArithmeticDate<Iso>,
     ) -> ChineseBasedDateInner<C> {
         let data = cal.get_precomputed_data();
 
-        let year = data.load_or_compute_info_for_iso(fixed, iso);
+        let year = data.load_or_compute_info_for_iso(rd, iso);
 
-        Self::chinese_based_date_from_info(fixed, year)
+        Self::chinese_based_date_from_info(rd, year)
     }
 
     pub(crate) fn new_year(self) -> RataDie {
@@ -326,7 +326,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     ///
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
-    pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
+    pub(crate) fn rd_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
         let first_day_of_year = date.new_year();
         let day_of_year = date.day_of_year(); // 1 indexed
         first_day_of_year + i64::from(day_of_year) - 1

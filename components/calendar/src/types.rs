@@ -4,7 +4,7 @@
 
 //! This module contains various types used by `icu_calendar` and `icu::datetime`
 
-use calendrical_calculations::rata_die::RataDie;
+pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
