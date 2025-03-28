@@ -169,7 +169,11 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "indic_conjunct_break")]
         #[cfg(feature = "compiled_data")]
         pub fn create_indic_conjunct_break() -> Box<PropertyValueNameToEnumMapper> {
-            Box::new(PropertyValueNameToEnumMapper(icu_properties::PropertyParser::<icu_properties::props::IndicConjunctBreak>::new().static_to_owned().erase()))
+            Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::IndicConjunctBreak>::new()
+                    .static_to_owned()
+                    .erase(),
+            ))
         }
         /// Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using a particular data source.
         #[diplomat::rust_link(icu_properties::props::IndicConjunctBreak, Struct)]
