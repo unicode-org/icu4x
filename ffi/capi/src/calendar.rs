@@ -43,12 +43,12 @@ pub mod ffi {
         Chinese = 10,
         /// The kind of a Hebrew calendar
         Hebrew = 11,
-        /// The kind of a Hijri civil calendar
-        HijriCivil = 12,
+        /// The kind of a Hijri rule-based, civil epoch calendar
+        HijriRuleBasedCivil = 12,
         /// The kind of a Hijri observational, Mecca calendar
         HijriObservationalMecca = 18,
-        /// The kind of a Hijri tabular calendar
-        HijriTabular = 14,
+        /// The kind of a Hijri rule-based, astronomical epoch calendar
+        HijriRuleBasedAstronomical = 14,
         /// The kind of a Hijri Umm al-Qura calendar
         HijriUmmAlQura = 15,
         /// The kind of a Persian calendar

@@ -135,7 +135,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_hebrew_with_calendar",
         "icu::calendar::Date::try_new_indian",
         "icu::calendar::Date::try_new_hijri_civil_with_calendar",
-        "icu::calendar::Date::try_new_hijri_tabular_with_calendar",
+        "icu::calendar::Date::try_new_hijri_rule_based_with_calendar",
         "icu::calendar::Date::try_new_japanese_with_calendar",
         "icu::calendar::Date::try_new_japanese_extended_with_calendar",
         "icu::calendar::Date::try_new_julian",

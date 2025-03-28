@@ -26,7 +26,7 @@ pub use dangi::Dangi;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
-pub use hijri::{HijriCivil, HijriObservational, HijriTabular, HijriUmmAlQura};
+pub use hijri::{HijriObservational, HijriRuleBased, HijriUmmAlQura};
 pub use indian::Indian;
 pub use iso::Iso;
 pub use japanese::{Japanese, JapaneseExtended};
@@ -44,9 +44,7 @@ pub mod scaffold {
     pub use super::ethiopian::EthiopianDateInner;
     pub use super::gregorian::GregorianDateInner;
     pub use super::hebrew::HebrewDateInner;
-    pub use super::hijri::{
-        HijriCivilDateInner, HijriDateInner, HijriTabularDateInner, HijriUmmAlQuraDateInner,
-    };
+    pub use super::hijri::{HijriDateInner, HijriRuleBasedDateInner, HijriUmmAlQuraDateInner};
     pub use super::indian::Indian;
     pub use super::iso::Iso;
     pub use super::japanese::Japanese;
